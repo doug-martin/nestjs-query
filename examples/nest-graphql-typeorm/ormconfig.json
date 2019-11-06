@@ -1,0 +1,14 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5436,
+    "username": "graphqltypeorm",
+    "database": "graphql_typeorm",
+    "entities": ["dist/**/*.entity{.ts,.js}"],
+    "migrations": ["dist/migrations/**.js"],
+    seeds: ['seeds/**/*.seed.ts'],
+    "synchronize": false,
+    "cli": {
+        "migrationsDir": "./migrations"
+    }
+}

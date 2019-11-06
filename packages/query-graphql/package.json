@@ -1,0 +1,38 @@
+{
+  "name": "@nestjs-query/query-graphql",
+  "version": "1.0.0",
+  "description": "Nestjs graphql query adapter",
+  "author": "doug-martin <doug@dougamartin.com>",
+  "homepage": "https://github.com/doug-martin/nestjs-query#readme",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "directories": {
+    "lib": "dist"
+  },
+  "dependencies": {
+    "@nestjs-query/core": "^1.0.0",
+    "class-transformer": "^0.2.3",
+    "class-validator": "^0.10.2",
+    "graphql-relay": "latest",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^0.17.5"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doug-martin/nestjs-query.git"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
+    "compile": "tsc -b tsconfig.json"
+  },
+  "bugs": {
+    "url": "https://github.com/doug-martin/nestjs-query/issues"
+  },
+  "devDependencies": {
+    "@types/graphql-relay": "^0.4.11"
+  }
+}
