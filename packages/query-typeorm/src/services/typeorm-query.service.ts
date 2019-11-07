@@ -5,7 +5,7 @@ import { plainToClass } from 'class-transformer';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FilterQueryBuilder } from '../query';
 
-export abstract class TypeormQueryService<Entity> extends AbstractQueryService<Entity> {
+export class TypeormQueryService<Entity> extends AbstractQueryService<Entity> {
   constructor(protected repo: Repository<Entity>, readonly filterQueryBuilder = new FilterQueryBuilder(repo)) {
     super();
   }

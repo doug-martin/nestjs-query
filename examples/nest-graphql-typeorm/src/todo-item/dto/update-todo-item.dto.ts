@@ -10,7 +10,7 @@ class UpdateTodoItem {
   completed: boolean;
 }
 
-@InputType('UpdateTodoItem')
+@InputType('UpdateTodoItemInput')
 export class UpdateTodoItemDTO {
   @Field(() => ID)
   id: string;
@@ -19,7 +19,7 @@ export class UpdateTodoItemDTO {
   update: UpdateTodoItem;
 }
 
-@InputType('UpdateTodoItems')
+@InputType('UpdateTodoItemsInput')
 export class UpdateTodoItemsDTO {
   @Field(() => TodoItemQuery)
   query: TodoItemQuery;

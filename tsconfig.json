@@ -1,39 +1,14 @@
 {
-    "compileOnSave": false,
+    "extends": "./tsconfig.build",
     "compilerOptions": {
-        "sourceMap": true,
-        "declaration": true,
-        "moduleResolution": "node",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "importHelpers": true,
-        "target": "es2018",
-        "module": "commonjs",
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "typeRoots": ["node_modules/@types"],
-        "lib": ["es2019"],
-        "skipLibCheck": true,
-        "skipDefaultLibCheck": true,
-        "removeComments": true,
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
-        "forceConsistentCasingInFileNames": true,
-        "noEmitOnError": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitReturns": true,
-        "pretty": true,
-        "strict": true,
-        "noUnusedLocals": true,
-        "strictPropertyInitialization": false,
-        "composite": true,
-        "baseUrl": "./packages",
+        "baseUrl": ".",
         "paths": {
-            "@nestjs-query/core": ["core/src"],
-            "@nestjs-query/query-graphql": ["query-graphql/src"],
-            "@nestjs-query/query-typeorm": ["query-typeorm/src"]
+            "@nestjs-query/core": ["packages/core/src"],
+            "@nestjs-query/query-graphql": ["packages/query-graphql/src"],
+            "@nestjs-query/query-typeorm": ["packages/query-typeorm/src"],
+            "@nestjs-query/core/*": ["packages/core/src/*"],
+            "@nestjs-query/query-graphql/*": ["packages/query-graphql/src/*"],
+            "@nestjs-query/query-typeorm/*": ["packages/query-typeorm/src/*"]
         }
-    },
-
-    "exclude": ["node_modules", "**/*.spec.ts"]
+    }
 }

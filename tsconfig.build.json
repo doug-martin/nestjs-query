@@ -1,0 +1,31 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "sourceMap": true,
+        "declaration": true,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "target": "es2018",
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "typeRoots": ["node_modules/@types"],
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        "removeComments": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "forceConsistentCasingInFileNames": true,
+        "noEmitOnError": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "pretty": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "strictPropertyInitialization": false,
+        "baseUrl": "./"
+    },
+    "exclude": ["node_modules", "**/*.spec.ts"]
+}

@@ -1,13 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.build.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "."
   },
   "include": ["src", "test", "migrations"],
-  "references": [
-    { "path": "../../packages/core" },
-    { "path": "../../packages/query-typeorm" }
-  ],
   "exclude": ["node_modules", "dist"]
 }

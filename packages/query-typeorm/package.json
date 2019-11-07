@@ -14,7 +14,9 @@
     "dist"
   ],
   "dependencies": {
-    "@nestjs-query/core": "^1.0.0",
+    "@nestjs-query/core": "^1.0.0"
+  },
+  "peerDependencies": {
     "class-transformer": "^0.2.3",
     "typeorm": "^0.2.20"
   },
@@ -25,7 +27,7 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
-    "compile": "tsc -b tsconfig.json"
+    "compile": "tsc -p tsconfig.build.json"
   },
   "bugs": {
     "url": "https://github.com/doug-martin/nestjs-query/issues"

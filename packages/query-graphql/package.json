@@ -10,10 +10,12 @@
     "lib": "dist"
   },
   "dependencies": {
-    "@nestjs-query/core": "^1.0.0",
+    "@nestjs-query/core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "graphql-relay": "latest",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.2",
-    "graphql-relay": "latest",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^0.17.5"
   },
@@ -27,7 +29,7 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
-    "compile": "tsc -b tsconfig.json"
+    "compile": "tsc -p tsconfig.build.json"
   },
   "bugs": {
     "url": "https://github.com/doug-martin/nestjs-query/issues"

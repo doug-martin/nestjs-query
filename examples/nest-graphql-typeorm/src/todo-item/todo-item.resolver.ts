@@ -8,7 +8,11 @@ import {
   DeleteTodoItemDTO,
   DeleteTodoItemsDTO,
 } from './dto/delete-todo-item.dto';
-import { TodoItemConnection, TodoItemQuery } from './dto/todo-item.dto';
+import {
+  TodoItemConnection,
+  TodoItemDTO,
+  TodoItemQuery,
+} from './dto/todo-item.dto';
 import {
   UpdateTodoItemDTO,
   UpdateTodoItemsDTO,
@@ -28,7 +32,7 @@ export class TodoItemResolver {
     );
   }
 
-  @Mutation(() => TodoItemEntity)
+  @Mutation(() => TodoItemDTO)
   async updateTodoItem(
     @Args('input') input: UpdateTodoItemDTO,
   ): Promise<TodoItemEntity> {
@@ -45,21 +49,21 @@ export class TodoItemResolver {
     return this.service.updateMany(input.query, input.update);
   }
 
-  @Mutation(() => TodoItemEntity)
+  @Mutation(() => TodoItemDTO)
   async createTodoItem(
     @Args('input') input: CreateTodoItemDTO,
   ): Promise<TodoItemEntity> {
     return this.service.createOne(input);
   }
 
-  @Mutation(() => [TodoItemEntity])
+  @Mutation(() => [TodoItemDTO])
   async createTodoItems(
     @Args('input') input: CreateTodoItemsDTO,
   ): Promise<TodoItemEntity[]> {
     return this.service.createMany(input.todos);
   }
 
-  @Mutation(() => TodoItemEntity)
+  @Mutation(() => TodoItemDTO)
   async deleteTodoItem(
     @Args('input') input: DeleteTodoItemDTO,
   ): Promise<TodoItemEntity> {

@@ -33,7 +33,13 @@
   },
   "dependencies": {
     "@nestjs/common": "^6.8.5",
+    "@types/graphql-relay": "^0.4.11",
+    "class-transformer": "^0.2.3",
+    "class-validator": "^0.11.0",
+    "graphql": "^14.5.8",
+    "graphql-relay": "^0.6.0",
     "reflect-metadata": "^0.1.13",
-    "typeorm-seeding": "^1.2.0"
+    "type-graphql": "^0.17.5",
+    "typeorm": "^0.2.20"
   }
 }

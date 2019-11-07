@@ -20,16 +20,18 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migrate:up": "typeorm migration:run",
-    "migrate:generate": "npm run build && typeorm migration:generate -d ./migrations "
+    "migrate:generate": "npm run build && typeorm migration:generate -d ./migrations ",
+    "seed": "ts-node ./node_modules/typeorm-seeding/dist/cli.js --config ./ormconfig.json seed"
   },
   "dependencies": {
+    "@nestjs-query/core": "*",
+    "@nestjs-query/query-graphql": "*",
+    "@nestjs-query/query-typeorm": "*",
     "@nestjs/common": "^6.7.2",
     "@nestjs/core": "^6.7.2",
     "@nestjs/graphql": "^6.5.3",
     "@nestjs/platform-express": "^6.7.2",
     "@nestjs/typeorm": "^6.2.0",
-    "@nestjs-query/query-graphql": "*",
-    "@nestjs-query/query-typeorm": "*",
     "apollo-server-express": "^2.9.7",
     "graphql": "^14.5.8",
     "graphql-tools": "^4.0.6",
@@ -37,8 +39,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3",
-    "type-graphql": "^0.17.5",
-    "typeorm": "^0.2.20"
+    "typeorm-seeding": "^1.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.9.0",

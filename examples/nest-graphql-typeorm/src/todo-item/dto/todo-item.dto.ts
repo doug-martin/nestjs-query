@@ -8,7 +8,8 @@ import {
   Field,
   ID,
   GraphQLISODateTime,
-  ArgsType, InputType,
+  ArgsType,
+  InputType,
 } from 'type-graphql';
 
 @ObjectType('TodoItem')

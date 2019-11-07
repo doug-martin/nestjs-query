@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { Filter } from '@nestjs-query/core';
-import { FilterableField } from '@nestjs-query/query-graphql';
 import { Type } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { ObjectType } from 'type-graphql';
+import { FilterableField } from '../../decorators';
 import { GraphQLFilterType } from './filter.type';
 
 describe('GraphQLFilterType', (): void => {
