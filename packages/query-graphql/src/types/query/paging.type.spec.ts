@@ -185,6 +185,16 @@ describe('PagingType', (): void => {
     expect(paging.offset).toEqual(0);
   });
 
+  it('should return an undefined limit when the paging object is empty', () => {
+    const paging = new GraphQLCursorPaging();
+    expect(paging.limit).toBeUndefined();
+  });
+
+  it('should return an undefined offset when the paging object is empty', () => {
+    const paging = new GraphQLCursorPaging();
+    expect(paging.offset).toBeUndefined();
+  });
+
   it('convert the cursor paging to a limit and offset going forward', () =>
     assertLimitAndOffset(
       {

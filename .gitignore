@@ -74,3 +74,5 @@ tsconfig.tsbuildinfo
 
 # intelliJ workspace files
 .idea
+
+schema.gql

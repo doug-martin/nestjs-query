@@ -5,4 +5,4 @@ async function bootstrap(): Promise<any> {
   const app = await NestFactory.create(AppModule);
   await app.listen(3000);
 }
-bootstrap().catch(e => console.log(e.stack));
+bootstrap();

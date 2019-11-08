@@ -9,9 +9,9 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
+    "start": "APP_ROOT_PATH=. nest start",
+    "start:dev": "APP_ROOT_PATH=. nest start --watch",
+    "start:debug": "APP_ROOT_PATH=. nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migrate:up": "typeorm migration:run",
     "migrate:generate": "npm run build && typeorm migration:generate -d ./migrations ",
-    "seed": "ts-node ./node_modules/typeorm-seeding/dist/cli.js --config ./ormconfig.json seed"
+    "seed": "ts-node ../../node_modules/typeorm-seeding/dist/cli.js --config ./ormconfig.json seed"
   },
   "dependencies": {
     "@nestjs-query/core": "*",

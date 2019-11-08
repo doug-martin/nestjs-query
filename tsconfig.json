@@ -1,14 +1,14 @@
 {
-    "extends": "./tsconfig.build",
+    "extends": "./tsconfig.build.json",
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@nestjs-query/core": ["packages/core/src"],
-            "@nestjs-query/query-graphql": ["packages/query-graphql/src"],
-            "@nestjs-query/query-typeorm": ["packages/query-typeorm/src"],
-            "@nestjs-query/core/*": ["packages/core/src/*"],
-            "@nestjs-query/query-graphql/*": ["packages/query-graphql/src/*"],
-            "@nestjs-query/query-typeorm/*": ["packages/query-typeorm/src/*"]
+            "@nestjs-query/core": ["core/src"],
+            "@nestjs-query/query-graphql": ["query-graphql/src"],
+            "@nestjs-query/query-typeorm": ["query-typeorm/src"],
+            "@nestjs-query/core/*": ["core/src/*"],
+            "@nestjs-query/query-graphql/*": ["query-graphql/src/*"],
+            "@nestjs-query/query-typeorm/*": ["query-typeorm/src/*"]
         }
     }
 }

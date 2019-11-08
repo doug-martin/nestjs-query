@@ -7,9 +7,7 @@ import { TodoItemModule } from './todo-item/todo-item.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      entities: [`${__dirname}/../dist/**/*.entity{.ts,.js}`],
-    }),
+    TypeOrmModule.forRoot(),
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
     }),

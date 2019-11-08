@@ -24,7 +24,7 @@ import { TodoItemService } from './todo-item.service';
 export class TodoItemResolver {
   constructor(private readonly service: TodoItemService) {}
 
-  @Query()
+  @Query(() => TodoItemConnection)
   async todoItems(@Args() query: TodoItemQuery): Promise<TodoItemConnection> {
     return TodoItemConnection.create(
       query.paging,

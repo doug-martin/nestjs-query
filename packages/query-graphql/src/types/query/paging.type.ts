@@ -53,15 +53,18 @@ export class GraphQLCursorPaging implements CursorPagingType {
     if (this.isForwardPaging) {
       return this.first || 0;
     }
-    const { last = 0, before } = this;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const offset = cursorToOffset(before!) - last;
-    // Check to see if our before-page is underflowing past the 0th item
-    if (offset < 0) {
-      // Adjust the limit with the underflow value
-      return Math.max(last + offset, 0);
+    if (this.isBackwardPaging) {
+      const { last = 0, before } = this;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const offset = cursorToOffset(before!) - last;
+      // Check to see if our before-page is underflowing past the 0th item
+      if (offset < 0) {
+        // Adjust the limit with the underflow value
+        return Math.max(last + offset, 0);
+      }
+      return last;
     }
-    return last;
+    return undefined;
   }
 
   get offset(): number | undefined {
@@ -70,16 +73,22 @@ export class GraphQLCursorPaging implements CursorPagingType {
       const limit = after ? cursorToOffset(after) + 1 : 0;
       return Math.max(limit, 0);
     }
+    if (this.isBackwardPaging) {
+      const { last, before } = this;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const offset = last ? cursorToOffset(before!) - last : 0;
 
-    const { last, before } = this;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const offset = last ? cursorToOffset(before!) - last : 0;
-
-    // Check to see if our before-page is underflowing past the 0th item
-    return Math.max(offset, 0);
+      // Check to see if our before-page is underflowing past the 0th item
+      return Math.max(offset, 0);
+    }
+    return undefined;
   }
 
   private get isForwardPaging(): boolean {
     return !!this.first || !!this.after;
+  }
+
+  private get isBackwardPaging(): boolean {
+    return !!this.last || !!this.before;
   }
 }

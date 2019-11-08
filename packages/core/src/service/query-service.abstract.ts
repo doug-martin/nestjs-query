@@ -1,4 +1,4 @@
-import { FindManyResponse, Query } from '../interfaces';
+import { DeleteManyResponse, FindManyResponse, Query, UpdateManyResponse } from '../interfaces';
 
 export abstract class AbstractQueryService<T> {
   abstract query(query: Query<T>): Promise<FindManyResponse<T>>;
@@ -17,11 +17,11 @@ export abstract class AbstractQueryService<T> {
 
   abstract updateOne(query: Query<T>, dto: T): Promise<T>;
 
-  abstract updateMany(query: Query<T>, dto: T): Promise<number>;
+  abstract updateMany(query: Query<T>, dto: T): Promise<UpdateManyResponse>;
 
   abstract deleteOne(query: Query<T>): Promise<void | T>;
 
-  abstract deleteMany(query: Query<T>): Promise<number>;
+  abstract deleteMany(query: Query<T>): Promise<DeleteManyResponse>;
 
   /**
    * @param entities
@@ -29,5 +29,19 @@ export abstract class AbstractQueryService<T> {
    */
   protected createFindManyResponse(entities: T[], totalCount: number): FindManyResponse<T> {
     return { entities, totalCount };
+  }
+
+  /**
+   * @param updatedCount
+   */
+  protected createUpdateManyResponse(updatedCount: number): UpdateManyResponse {
+    return { updatedCount };
+  }
+
+  /**
+   * @param deletedCount
+   */
+  protected createDeleteManyResponse(deletedCount: number): DeleteManyResponse {
+    return { deletedCount };
   }
 }

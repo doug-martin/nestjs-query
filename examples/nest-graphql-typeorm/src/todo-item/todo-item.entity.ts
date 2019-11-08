@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class TodoItemEntity {
@@ -11,9 +11,9 @@ export class TodoItemEntity {
   @Column()
   completed: boolean;
 
-  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   created!: Date;
 
-  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn()
   updated!: Date;
 }

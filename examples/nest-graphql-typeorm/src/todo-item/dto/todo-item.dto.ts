@@ -5,7 +5,6 @@ import {
 } from '@nestjs-query/query-graphql';
 import {
   ObjectType,
-  Field,
   ID,
   GraphQLISODateTime,
   ArgsType,
@@ -17,10 +16,10 @@ export class TodoItemDTO {
   @FilterableField(() => ID)
   id: string;
 
-  @Field()
+  @FilterableField()
   title: string;
 
-  @Field()
+  @FilterableField()
   completed: boolean;
 
   @FilterableField(() => GraphQLISODateTime)
