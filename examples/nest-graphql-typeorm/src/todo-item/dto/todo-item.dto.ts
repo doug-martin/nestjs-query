@@ -1,15 +1,5 @@
-import {
-  FilterableField,
-  GraphQLConnection,
-  GraphQLQuery,
-} from '@nestjs-query/query-graphql';
-import {
-  ObjectType,
-  ID,
-  GraphQLISODateTime,
-  ArgsType,
-  InputType,
-} from 'type-graphql';
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
@@ -28,10 +18,3 @@ export class TodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-
-@ObjectType()
-export class TodoItemConnection extends GraphQLConnection(TodoItemDTO) {}
-
-@ArgsType()
-@InputType()
-export class TodoItemQuery extends GraphQLQuery(TodoItemDTO) {}

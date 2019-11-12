@@ -1,6 +1,18 @@
-import { AbstractQueryService, FindManyResponse, Query } from '@nestjs-query/core';
-import { DeleteManyResponse, UpdateManyResponse } from '@nestjs-query/core/src';
-import { DeepPartial, Repository } from 'typeorm';
+import {
+  AbstractQueryService,
+  FindManyResponse,
+  Query,
+  DeleteManyResponse,
+  DeleteOne,
+  DeleteMany,
+  UpdateManyResponse,
+  UpdateMany,
+  UpdateOne,
+  CreateOne,
+  CreateMany,
+  DeepPartial,
+} from '@nestjs-query/core';
+import { Repository, DeepPartial as TypeOrmDeepPartial } from 'typeorm';
 import { NotFoundException, Type } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -40,36 +52,39 @@ export class TypeormQueryService<Entity> extends AbstractQueryService<Entity> {
     return this.repo.findOne(id);
   }
 
-  async getById(id: string | number): Promise<Entity> {
+  getById(id: string | number): Promise<Entity> {
     return this.repo.findOneOrFail(id);
   }
 
-  createMany(dtos: DeepPartial<Entity>[]): Promise<Entity[]> {
-    return this.repo.save(dtos.map(dto => this.ensureIsEntity(dto)));
+  createMany<C extends DeepPartial<Entity>>(create: CreateMany<Entity, C>): Promise<Entity[]> {
+    return this.repo.save(create.items.map(item => this.ensureIsEntity(item)));
   }
 
-  createOne(dto: DeepPartial<Entity>): Promise<Entity> {
-    return this.repo.save(this.ensureIsEntity(dto));
+  createOne<C extends DeepPartial<Entity>>(create: CreateOne<Entity, C>): Promise<Entity> {
+    return this.repo.save(this.ensureIsEntity(create.item));
   }
 
-  async deleteMany(query: Query<Entity>): Promise<DeleteManyResponse> {
-    const deleteResult = await this.filterQueryBuilder.delete(query).execute();
-    return this.createDeleteManyResponse(deleteResult.affected || 0)
+  async deleteMany(deleteMany: DeleteMany<Entity>): Promise<DeleteManyResponse> {
+    const deleteResult = await this.filterQueryBuilder.delete({ filter: deleteMany.filter }).execute();
+    return this.createDeleteManyResponse(deleteResult.affected || 0);
   }
 
-  async deleteOne(query: Query<Entity>): Promise<Entity> {
-    const entity = await this.getOne(query);
+  async deleteOne(deleteOne: DeleteOne): Promise<Entity> {
+    const entity = await this.getById(deleteOne.id);
     return this.repo.remove(entity);
   }
 
-  async updateMany(query: Query<Entity>, dto: QueryDeepPartialEntity<Entity>): Promise<UpdateManyResponse> {
-    const updateResult = await this.filterQueryBuilder.update(query).set({...dto}).execute();
-    return this.createUpdateManyResponse(updateResult.affected || 0)
+  async updateMany<U extends DeepPartial<Entity>>(update: UpdateMany<Entity, U>): Promise<UpdateManyResponse> {
+    const updateResult = await this.filterQueryBuilder
+      .update({ filter: update.filter })
+      .set({ ...(update.update as QueryDeepPartialEntity<Entity>) })
+      .execute();
+    return this.createUpdateManyResponse(updateResult.affected || 0);
   }
 
-  async updateOne(query: Query<Entity>, dto: DeepPartial<Entity>): Promise<Entity> {
-    const entity = await this.getOne(query);
-    return this.repo.save(this.repo.merge(entity, dto));
+  async updateOne<U extends DeepPartial<Entity>>(update: UpdateOne<Entity, U>): Promise<Entity> {
+    const entity = await this.getById(update.id);
+    return this.repo.save(this.repo.merge(entity, update.update as TypeOrmDeepPartial<Entity>));
   }
 
   private ensureIsEntity(obj: DeepPartial<Entity>): Entity {

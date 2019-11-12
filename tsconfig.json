@@ -1,7 +1,8 @@
 {
     "extends": "./tsconfig.build.json",
     "compilerOptions": {
-        "baseUrl": ".",
+        "composite": true,
+        "baseUrl": "./packages",
         "paths": {
             "@nestjs-query/core": ["core/src"],
             "@nestjs-query/query-graphql": ["query-graphql/src"],

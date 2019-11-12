@@ -6,7 +6,7 @@
     "clean": "lerna run clean",
     "build": "lerna run build",
     "pub": "lerna publish",
-    "lint": "eslint --ext=.ts packages/**/src",
+    "lint": "eslint --ext=.ts packages/**/src examples/**",
     "test": "jest --runInBand -c=jest.config.js --coverage --verbose"
   },
   "devDependencies": {

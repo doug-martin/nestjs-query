@@ -1,4 +1,16 @@
-import { DeleteManyResponse, FindManyResponse, Query, UpdateManyResponse } from '../interfaces';
+import { DeepPartial } from '../common';
+import {
+  DeleteManyResponse,
+  FindManyResponse,
+  Query,
+  UpdateManyResponse,
+  UpdateOne,
+  UpdateMany,
+  DeleteOne,
+  DeleteMany,
+  CreateOne,
+  CreateMany,
+} from '../interfaces';
 
 export abstract class AbstractQueryService<T> {
   abstract query(query: Query<T>): Promise<FindManyResponse<T>>;
@@ -11,17 +23,17 @@ export abstract class AbstractQueryService<T> {
 
   abstract getById(id: string | number): Promise<T>;
 
-  abstract createOne(dto: T): Promise<T>;
+  abstract createOne<C extends DeepPartial<T>>(create: CreateOne<T, C>): Promise<T>;
 
-  abstract createMany(dto: T[]): Promise<T[]>;
+  abstract createMany<C extends DeepPartial<T>>(create: CreateMany<T, C>): Promise<T[]>;
 
-  abstract updateOne(query: Query<T>, dto: T): Promise<T>;
+  abstract updateOne<U extends DeepPartial<T>>(update: UpdateOne<T, U>): Promise<T>;
 
-  abstract updateMany(query: Query<T>, dto: T): Promise<UpdateManyResponse>;
+  abstract updateMany<U extends DeepPartial<T>>(update: UpdateMany<T, U>): Promise<UpdateManyResponse>;
 
-  abstract deleteOne(query: Query<T>): Promise<void | T>;
+  abstract deleteOne(deleteOne: DeleteOne): Promise<T>;
 
-  abstract deleteMany(query: Query<T>): Promise<DeleteManyResponse>;
+  abstract deleteMany(deleteMany: DeleteMany<T>): Promise<DeleteManyResponse>;
 
   /**
    * @param entities

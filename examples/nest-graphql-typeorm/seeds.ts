@@ -3,6 +3,7 @@ import { Connection } from 'typeorm';
 import { TodoItemEntity } from './src/todo-item/todo-item.entity';
 
 export default class CreateUsers implements Seeder {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async run(factory: Factory, connection: Connection): Promise<any> {
     await connection
       .createQueryBuilder()

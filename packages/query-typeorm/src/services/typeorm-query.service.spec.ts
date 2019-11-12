@@ -1,8 +1,8 @@
+import { Query, DeleteMany, DeleteOne, UpdateMany, UpdateOne } from '@nestjs-query/core';
 import { NotFoundException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { deepEqual, instance, mock, objectContaining, when } from 'ts-mockito';
 import { DeleteQueryBuilder, EntityMetadata, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
-import { Query } from '@nestjs-query/core';
 import { TestEntity } from '../../test/__fixtures__/test.entity';
 import { FilterQueryBuilder } from '../query';
 import { TypeormQueryService } from './typeorm-query.service';
@@ -135,7 +135,7 @@ describe('TypeormQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstances))).thenResolve(entityInstances);
-      const queryResult = await queryService.createMany(entities);
+      const queryResult = await queryService.createMany({ items: entities });
       expect(queryResult).toEqual(entityInstances);
     });
 
@@ -145,7 +145,7 @@ describe('TypeormQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstances))).thenResolve(entityInstances);
-      const queryResult = await queryService.createMany(entityInstances);
+      const queryResult = await queryService.createMany({ items: entityInstances });
       expect(queryResult).toEqual(entityInstances);
     });
   });
@@ -157,7 +157,7 @@ describe('TypeormQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstance))).thenResolve(entityInstance);
-      const queryResult = await queryService.createOne(entity);
+      const queryResult = await queryService.createOne({ item: entity });
       expect(queryResult).toEqual(entityInstance);
     });
 
@@ -167,7 +167,7 @@ describe('TypeormQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstance))).thenResolve(entityInstance);
-      const queryResult = await queryService.createOne(entityInstance);
+      const queryResult = await queryService.createOne({ item: entityInstance });
       expect(queryResult).toEqual(entityInstance);
     });
   });
@@ -175,50 +175,44 @@ describe('TypeormQueryService', (): void => {
   describe('#deleteMany', () => {
     it('create a delete query builder and call execute', async () => {
       const affected = 10;
-      const query: Query<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
+      const deleteMany: DeleteMany<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
       const { queryService, mockQueryBuilder } = createQueryService();
       const deleteQueryBuilder: DeleteQueryBuilder<TestEntity> = mock(DeleteQueryBuilder);
-      when(mockQueryBuilder.delete(query)).thenReturn(instance(deleteQueryBuilder));
+      when(mockQueryBuilder.delete(objectContaining(deleteMany))).thenReturn(instance(deleteQueryBuilder));
       when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined, affected });
-      const queryResult = await queryService.deleteMany(query);
-      expect(queryResult).toEqual(affected);
+      const queryResult = await queryService.deleteMany(deleteMany);
+      expect(queryResult).toEqual({ deletedCount: affected });
     });
 
     it('should return 0 if affected is not returned', async () => {
-      const query: Query<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
+      const deleteMany: DeleteMany<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
       const { queryService, mockQueryBuilder } = createQueryService();
       const deleteQueryBuilder: DeleteQueryBuilder<TestEntity> = mock(DeleteQueryBuilder);
-      when(mockQueryBuilder.delete(query)).thenReturn(instance(deleteQueryBuilder));
+      when(mockQueryBuilder.delete(objectContaining(deleteMany))).thenReturn(instance(deleteQueryBuilder));
       when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined });
-      const queryResult = await queryService.deleteMany(query);
-      expect(queryResult).toEqual(0);
+      const queryResult = await queryService.deleteMany(deleteMany);
+      expect(queryResult).toEqual({ deletedCount: 0 });
     });
   });
 
   describe('#deleteOne', () => {
     it('call getOne and then remove the entity', async () => {
       const entity = testEntities()[0];
-      const query: Query<TestEntity> = { filter: { id: { eq: entity.id } } };
-      const expectedQuery = { ...query, paging: { limit: 1, offset: 0 } };
-      const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
-      const mockSelectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
-      when(mockQueryBuilder.select(objectContaining(expectedQuery))).thenReturn(instance(mockSelectQueryBuilder));
-      when(mockSelectQueryBuilder.getOne()).thenResolve(entity);
+      const deleteOne: DeleteOne = { id: entity.id };
+      const { queryService, mockRepo } = createQueryService();
+      when(mockRepo.findOneOrFail(deleteOne.id)).thenResolve(entity);
       when(mockRepo.remove(entity)).thenResolve(entity);
-      const queryResult = await queryService.deleteOne(query);
+      const queryResult = await queryService.deleteOne(deleteOne);
       expect(queryResult).toEqual(entity);
     });
 
     it('call fail if the entity is not found', async () => {
       const entity = testEntities()[0];
-      const query: Query<TestEntity> = { filter: { id: { eq: entity.id } } };
-      const expectedQuery = { ...query, paging: { limit: 1, offset: 0 } };
-      const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
-      const mockSelectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
-      when(mockQueryBuilder.select(objectContaining(expectedQuery))).thenReturn(instance(mockSelectQueryBuilder));
-      when(mockSelectQueryBuilder.getOne()).thenResolve(undefined);
-      when(mockRepo.metadata).thenReturn({ targetName: 'TestEntity' } as EntityMetadata);
-      return expect(queryService.deleteOne(query)).rejects.toThrowError(NotFoundException);
+      const deleteOne: DeleteOne = { id: entity.id };
+      const err = new Error('not found');
+      const { queryService, mockRepo } = createQueryService();
+      when(mockRepo.findOneOrFail(deleteOne.id)).thenReject(err);
+      return expect(queryService.deleteOne(deleteOne)).rejects.toThrowError(err);
     });
   });
 
@@ -226,32 +220,36 @@ describe('TypeormQueryService', (): void => {
     it('create a query to update all entities', async () => {
       const entity = testEntities()[0];
       const update = { stringType: 'baz' };
-      const query: Query<TestEntity> = { filter: { id: { eq: entity.id } } };
+      const updateMany: UpdateMany<TestEntity, Partial<TestEntity>> = { filter: { id: { eq: entity.id } }, update };
       const affected = 10;
       const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
       const mockUpdateQueryBuilder: UpdateQueryBuilder<TestEntity> = mock(UpdateQueryBuilder);
       const mockUpdateQueryBuilderInstance = instance(mockUpdateQueryBuilder);
-      when(mockQueryBuilder.update(objectContaining(query))).thenReturn(mockUpdateQueryBuilderInstance);
+      when(mockQueryBuilder.update(objectContaining({ filter: updateMany.filter }))).thenReturn(
+        mockUpdateQueryBuilderInstance,
+      );
       when(mockUpdateQueryBuilder.set(objectContaining(update))).thenReturn(mockUpdateQueryBuilderInstance);
       when(mockUpdateQueryBuilder.execute()).thenResolve({ generatedMaps: [], raw: undefined, affected });
       when(mockRepo.remove(entity)).thenResolve(entity);
-      const queryResult = await queryService.updateMany(query, update);
-      expect(queryResult).toEqual(affected);
+      const queryResult = await queryService.updateMany(updateMany);
+      expect(queryResult).toEqual({ updatedCount: affected });
     });
 
     it('should return 0 if affected is not defined', async () => {
       const entity = testEntities()[0];
       const update = { stringType: 'baz' };
-      const query: Query<TestEntity> = { filter: { id: { eq: entity.id } } };
+      const updateMany: UpdateMany<TestEntity, Partial<TestEntity>> = { filter: { id: { eq: entity.id } }, update };
       const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
       const mockUpdateQueryBuilder: UpdateQueryBuilder<TestEntity> = mock(UpdateQueryBuilder);
       const mockUpdateQueryBuilderInstance = instance(mockUpdateQueryBuilder);
-      when(mockQueryBuilder.update(objectContaining(query))).thenReturn(mockUpdateQueryBuilderInstance);
+      when(mockQueryBuilder.update(objectContaining({ filter: updateMany.filter }))).thenReturn(
+        mockUpdateQueryBuilderInstance,
+      );
       when(mockUpdateQueryBuilder.set(objectContaining(update))).thenReturn(mockUpdateQueryBuilderInstance);
       when(mockUpdateQueryBuilder.execute()).thenResolve({ generatedMaps: [], raw: undefined });
       when(mockRepo.remove(entity)).thenResolve(entity);
-      const queryResult = await queryService.updateMany(query, update);
-      expect(queryResult).toEqual(0);
+      const queryResult = await queryService.updateMany(updateMany);
+      expect(queryResult).toEqual({ updatedCount: 0 });
     });
   });
 
@@ -260,29 +258,23 @@ describe('TypeormQueryService', (): void => {
       const entity = testEntities()[0];
       const update = { stringType: 'baz' };
       const savedEntity = plainToClass(TestEntity, { ...entity, ...update });
-      const query: Query<TestEntity> = { filter: { id: { eq: entity.id } } };
-      const expectedQuery = { ...query, paging: { limit: 1, offset: 0 } };
-      const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
-      const mockSelectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
-      when(mockQueryBuilder.select(objectContaining(expectedQuery))).thenReturn(instance(mockSelectQueryBuilder));
-      when(mockSelectQueryBuilder.getOne()).thenResolve(entity);
-      when(mockRepo.merge(entity, update)).thenReturn(savedEntity);
+      const updateOne: UpdateOne<TestEntity, Partial<TestEntity>> = { id: entity.id, update };
+      const { queryService, mockRepo } = createQueryService();
+      when(mockRepo.findOneOrFail(updateOne.id)).thenResolve(entity);
+      when(mockRepo.merge(entity, updateOne.update)).thenReturn(savedEntity);
       when(mockRepo.save(deepEqual(savedEntity))).thenResolve(savedEntity);
-      const queryResult = await queryService.updateOne(query, update);
+      const queryResult = await queryService.updateOne(updateOne);
       expect(queryResult).toEqual(savedEntity);
     });
 
     it('call fail if the entity is not found', async () => {
       const entity = testEntities()[0];
       const update = { stringType: 'baz' };
-      const query: Query<TestEntity> = { filter: { id: { eq: entity.id } } };
-      const expectedQuery = { ...query, paging: { limit: 1, offset: 0 } };
-      const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
-      const mockSelectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
-      when(mockQueryBuilder.select(objectContaining(expectedQuery))).thenReturn(instance(mockSelectQueryBuilder));
-      when(mockSelectQueryBuilder.getOne()).thenResolve(undefined);
-      when(mockRepo.metadata).thenReturn({ targetName: 'TestEntity' } as EntityMetadata);
-      return expect(queryService.updateOne(query, update)).rejects.toThrowError(NotFoundException);
+      const updateOne: UpdateOne<TestEntity, Partial<TestEntity>> = { id: entity.id, update };
+      const err = new Error('not found');
+      const { queryService, mockRepo } = createQueryService();
+      when(mockRepo.findOneOrFail(updateOne.id)).thenReject(err);
+      return expect(queryService.updateOne(updateOne)).rejects.toThrowError(err);
     });
   });
 });

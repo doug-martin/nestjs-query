@@ -6,6 +6,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -27,8 +28,8 @@
     "@nestjs-query/core": "*",
     "@nestjs-query/query-graphql": "*",
     "@nestjs-query/query-typeorm": "*",
-    "@nestjs/common": "^6.7.2",
-    "@nestjs/core": "^6.7.2",
+    "@nestjs/common": "^6.8.5",
+    "@nestjs/core": "^6.8.5",
     "@nestjs/graphql": "^6.5.3",
     "@nestjs/platform-express": "^6.7.2",
     "@nestjs/typeorm": "^6.2.0",
@@ -46,8 +47,8 @@
     "@nestjs/schematics": "^6.7.0",
     "@nestjs/testing": "^6.7.1",
     "@types/express": "^4.17.1",
-    "@types/jest": "^24.0.18",
-    "@types/node": "^12.7.5",
+    "@types/jest": "^24.0.21",
+    "@types/node": "^12.12.0",
     "@types/supertest": "^2.0.8",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
@@ -57,7 +58,7 @@
     "ts-node": "^8.4.1",
     "tsconfig-paths": "^3.9.0",
     "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.4"
   },
   "jest": {
     "moduleFileExtensions": [

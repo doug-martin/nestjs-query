@@ -1,4 +1,5 @@
 import { Type } from '@nestjs/common';
+import { FieldMetadata } from 'type-graphql/dist/metadata/definitions';
 import { ObjectClassMetadata } from 'type-graphql/dist/metadata/definitions/object-class-metdata';
 import { getMetadataStorage } from 'type-graphql/dist/metadata/getMetadataStorage';
 import { MetadataStorage } from 'type-graphql/dist/metadata/metadata-storage';
@@ -37,7 +38,18 @@ export class GraphQLQueryMetadataStorage {
     return typeGraphqlMetadataStorage().objectTypes.find(o => o.target === objType);
   }
 
+  getTypeGraphqlFieldsForType<T>(objType: Type<T>): FieldMetadata[] | undefined {
+    const typeGraphqlStorage = typeGraphqlMetadataStorage();
+    typeGraphqlStorage.build();
+    let graphqlObjType = typeGraphqlStorage.objectTypes.find(o => o.target === objType);
+    if (!graphqlObjType) {
+      graphqlObjType = typeGraphqlStorage.inputTypes.find(o => o.target === objType);
+    }
+    return graphqlObjType ? graphqlObjType.fields : undefined;
+  }
+
   clear(): void {
+    typeGraphqlMetadataStorage().clear();
     this.filterableObjectStorage.clear();
   }
 }

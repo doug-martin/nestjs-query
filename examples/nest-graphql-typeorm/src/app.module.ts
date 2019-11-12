@@ -9,7 +9,7 @@ import { TodoItemModule } from './todo-item/todo-item.module';
   imports: [
     TypeOrmModule.forRoot(),
     GraphQLModule.forRoot({
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: 'schema.gql'
     }),
     TodoItemModule,
   ],
