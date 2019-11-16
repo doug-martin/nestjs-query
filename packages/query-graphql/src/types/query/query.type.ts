@@ -44,6 +44,5 @@ export const GraphQLQuery = <T>(TClass: Type<T>): Type<GraphQLQueryType<T>> & St
     @TransformType(() => S)
     sorting?: SortField<T>[];
   }
-
   return QueryImpl;
 };

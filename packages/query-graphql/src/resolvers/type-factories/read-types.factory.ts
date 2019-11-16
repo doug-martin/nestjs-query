@@ -22,7 +22,7 @@ export function readResolverTypesFactory<DTO>(
   DTOClass: Type<DTO>,
   opts: ReadResolverTypesOpts,
 ): ReadResolverTypes<DTO> {
-  const baseName = opts.name ? opts.name : DTOClass.name;
+  const baseName = opts.name ?? DTOClass.name;
 
   @ArgsType()
   class QueryType extends GraphQLQuery(DTOClass) {}

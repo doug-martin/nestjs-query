@@ -30,7 +30,7 @@ export function deleteResolverTypesFactory<DTO, D extends DeepPartial<DTO>>(
   DTOClass: Type<DTO>,
   opts: DeleteResolverTypesOpts<DTO, D>,
 ): DeleteResolverTypes<DTO, D> {
-  const baseName = opts.name ? opts.name : DTOClass.name;
+  const baseName = opts.name ?? DTOClass.name;
 
   const { DeleteType = defaultDeleteType<DTO, D>(DTOClass, baseName) } = opts;
 

@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import {
   AbstractQueryService,
   CreateMany,
@@ -23,6 +22,19 @@ import {
 } from './type-factories';
 import { GraphQLResolver, StaticGraphQLResolver } from './graphql-query-resolver.interface';
 import { UpdateManyResponseType, DeleteManyResponseType, GraphQLConnectionType, GraphQLQueryType } from '../types';
+import { ResolverMethod, ResolverMethodOptions } from '../decorators';
+
+export type MethodOptions = {
+  queries?: ResolverMethodOptions;
+  query?: ResolverMethodOptions;
+  mutations?: ResolverMethodOptions;
+  createOne?: ResolverMethodOptions;
+  createMany?: ResolverMethodOptions;
+  updateOne?: ResolverMethodOptions;
+  updateMany?: ResolverMethodOptions;
+  deleteOne?: ResolverMethodOptions;
+  deleteMany?: ResolverMethodOptions;
+};
 
 export type GraphQLQueryResolverOpts<
   DTO,
@@ -34,6 +46,7 @@ export type GraphQLQueryResolverOpts<
   CreateType?: () => Type<C>;
   UpdateType?: () => Type<U>;
   DeleteType?: () => Type<D>;
+  methods?: MethodOptions;
 };
 
 export function GraphQLQueryResolver<
@@ -45,7 +58,7 @@ export function GraphQLQueryResolver<
   DTOClass: Type<DTO>,
   opts: GraphQLQueryResolverOpts<DTO, C, U, D> = {},
 ): Type<GraphQLResolver<DTO, C, U, D>> & StaticGraphQLResolver<DTO, C, U, D> {
-  const baseName = opts.name ? opts.name : DTOClass.name;
+  const baseName = opts.name ?? DTOClass.name;
 
   const { CreateManyInputType, CreateOneInputType } = createResolverTypesFactory(DTOClass, opts);
   const { QueryType, ConnectionType } = readResolverTypesFactory(DTOClass, opts);
@@ -83,42 +96,49 @@ export function GraphQLQueryResolver<
     constructor(private readonly service: AbstractQueryService<DTO>) {}
 
     @Query(() => ConnectionType, { name: `${pluralizeBaseNameLower}` })
+    @ResolverMethod(opts.methods?.queries || {}, opts.methods?.query || {})
     async query(@Args({ type: () => QueryType }) query: GraphQLQueryType<DTO>): Promise<GraphQLConnectionType<DTO>> {
       return ConnectionType.create(query.paging, await this.service.query(query));
     }
 
-    @Mutation(() => [DTOClass], { name: `createMany${pluralizedBaseName}` })
-    createMany(@Args({ name: 'input', type: () => CreateManyInputType }) input: CreateMany<DTO, C>): Promise<DTO[]> {
-      return this.service.createMany(input);
-    }
-
     @Mutation(() => DTOClass, { name: `createOne${baseName}` })
+    @ResolverMethod(opts.methods?.mutations || {}, opts.methods?.createOne || {})
     createOne(@Args({ name: 'input', type: () => CreateOneInputType }) input: CreateOne<DTO, C>): Promise<DTO> {
       return this.service.createOne(input);
     }
 
-    @Mutation(() => DeleteManyResponseType, { name: `deleteMany${pluralizedBaseName}` })
-    deleteMany(
-      @Args({ name: 'input', type: () => DeleteManyInputType }) input: DeleteMany<DTO>,
-    ): Promise<DeleteManyResponse> {
-      return this.service.deleteMany(input);
+    @Mutation(() => [DTOClass], { name: `createMany${pluralizedBaseName}` })
+    @ResolverMethod(opts.methods?.mutations || {}, opts.methods?.createMany || {})
+    createMany(@Args({ name: 'input', type: () => CreateManyInputType }) input: CreateMany<DTO, C>): Promise<DTO[]> {
+      return this.service.createMany(input);
     }
 
-    @Mutation(() => DeleteType, { name: `deleteOne${baseName}` })
-    deleteOne(@Args({ name: 'input', type: () => DeleteOneInputType }) input: DeleteOne): Promise<Partial<DTO>> {
-      return this.service.deleteOne(input);
+    @Mutation(() => DTOClass, { name: `updateOne${baseName}` })
+    @ResolverMethod(opts.methods?.mutations || {}, opts.methods?.updateOne || {})
+    updateOne(@Args({ name: 'input', type: () => UpdateOneInputType }) input: UpdateOne<DTO, U>): Promise<DTO> {
+      return this.service.updateOne(input);
     }
 
     @Mutation(() => UpdateManyResponseType, { name: `updateMany${pluralizedBaseName}` })
+    @ResolverMethod(opts.methods?.mutations || {}, opts.methods?.updateMany || {})
     updateMany(
       @Args({ name: 'input', type: () => UpdateManyInputType }) input: UpdateMany<DTO, U>,
     ): Promise<UpdateManyResponse> {
       return this.service.updateMany(input);
     }
 
-    @Mutation(() => DTOClass, { name: `updateOne${baseName}` })
-    updateOne(@Args({ name: 'input', type: () => UpdateOneInputType }) input: UpdateOne<DTO, U>): Promise<DTO> {
-      return this.service.updateOne(input);
+    @Mutation(() => DeleteType, { name: `deleteOne${baseName}` })
+    @ResolverMethod(opts.methods?.mutations || {}, opts.methods?.deleteOne || {})
+    deleteOne(@Args({ name: 'input', type: () => DeleteOneInputType }) input: DeleteOne): Promise<Partial<DTO>> {
+      return this.service.deleteOne(input);
+    }
+
+    @Mutation(() => DeleteManyResponseType, { name: `deleteMany${pluralizedBaseName}` })
+    @ResolverMethod(opts.methods?.mutations || {}, opts.methods?.deleteMany || {})
+    deleteMany(
+      @Args({ name: 'input', type: () => DeleteManyInputType }) input: DeleteMany<DTO>,
+    ): Promise<DeleteManyResponse> {
+      return this.service.deleteMany(input);
     }
   }
 

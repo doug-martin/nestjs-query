@@ -8,12 +8,16 @@ import { CreateTodoItem } from './dto/create-todo-item.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { UpdateTodoItem } from './dto/update-todo-item.dto';
 import { TodoItemService } from './todo-item.service';
+import { AuthGuard } from '../auth.guard';
 
 @Resolver()
 export class TodoItemResolver extends GraphQLQueryResolver(TodoItemDTO, {
   name: 'TodoItem',
   CreateType: () => CreateTodoItem,
   UpdateType: () => UpdateTodoItem,
+  methods: {
+    mutations: { guards: [AuthGuard] },
+  },
 }) {
   constructor(readonly service: TodoItemService) {
     super(service);
@@ -22,7 +26,7 @@ export class TodoItemResolver extends GraphQLQueryResolver(TodoItemDTO, {
   @Query(() => TodoItemResolver.ConnectionType)
   completedTodos(
     @Args({ type: () => TodoItemResolver.QueryType })
-      query: GraphQLQueryType<TodoItemDTO>,
+    query: GraphQLQueryType<TodoItemDTO>,
   ): Promise<GraphQLConnectionType<TodoItemDTO>> {
     const filter = { ...query.filter, ...{ completed: { is: true } } };
     return this.query({ ...query, ...{ filter } });
@@ -31,7 +35,7 @@ export class TodoItemResolver extends GraphQLQueryResolver(TodoItemDTO, {
   @Query(() => TodoItemResolver.ConnectionType)
   uncompletedTodos(
     @Args({ type: () => TodoItemResolver.QueryType })
-      query: GraphQLQueryType<TodoItemDTO>,
+    query: GraphQLQueryType<TodoItemDTO>,
   ): Promise<GraphQLConnectionType<TodoItemDTO>> {
     const filter = { ...query.filter, ...{ completed: { is: false } } };
     return this.query({ ...query, ...{ filter } });

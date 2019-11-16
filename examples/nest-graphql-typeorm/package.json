@@ -28,7 +28,7 @@
     "@nestjs-query/core": "*",
     "@nestjs-query/query-graphql": "*",
     "@nestjs-query/query-typeorm": "*",
-    "@nestjs/common": "^6.8.5",
+    "@nestjs/common": "^6.9.0",
     "@nestjs/core": "^6.8.5",
     "@nestjs/graphql": "^6.5.3",
     "@nestjs/platform-express": "^6.7.2",
@@ -47,18 +47,18 @@
     "@nestjs/schematics": "^6.7.0",
     "@nestjs/testing": "^6.7.1",
     "@types/express": "^4.17.1",
-    "@types/jest": "^24.0.21",
-    "@types/node": "^12.12.0",
+    "@types/jest": "^24.0.23",
+    "@types/node": "^12.12.7",
     "@types/supertest": "^2.0.8",
     "jest": "^24.9.0",
-    "prettier": "^1.18.2",
+    "prettier": "^1.19.1",
     "supertest": "^4.0.2",
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.1.1",
     "ts-node": "^8.4.1",
     "tsconfig-paths": "^3.9.0",
     "tslint": "^5.20.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.7.0"
   },
   "jest": {
     "moduleFileExtensions": [

@@ -1,0 +1,1 @@
+export const AUTH_HEADER_NAME:string = 'authorization';

@@ -33,7 +33,7 @@ export function updateResolverTypesFactory<DTO, U extends DeepPartial<DTO>>(
   DTOClass: Type<DTO>,
   opts: UpdateResolverTypesOpts<DTO, U>,
 ): UpdateResolverTypes<DTO, U> {
-  const baseName = opts.name ? opts.name : DTOClass.name;
+  const baseName = opts.name ?? DTOClass.name;
 
   const { UpdateType = defaultUpdateInput<DTO, U>(DTOClass, baseName) } = opts;
   const UpdateInputType: Type<U> = UpdateType();

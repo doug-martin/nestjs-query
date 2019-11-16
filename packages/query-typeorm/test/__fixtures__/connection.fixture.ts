@@ -18,5 +18,5 @@ export function closeTestConnection(): Promise<void> {
 }
 
 export function getTestConnection(): Connection {
-  return getConnection()
+  return getConnection();
 }

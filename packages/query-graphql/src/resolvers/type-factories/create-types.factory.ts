@@ -32,7 +32,7 @@ export function createResolverTypesFactory<DTO, C extends DeepPartial<DTO>>(
   DTOClass: Type<DTO>,
   opts: CreateResolverTypesOpts<DTO, C>,
 ): CreateResolverTypes<DTO, C> {
-  const baseName = opts.name ? opts.name : DTOClass.name;
+  const baseName = opts.name ?? DTOClass.name;
 
   const { CreateType = defaultCreateInput<DTO, C>(DTOClass, baseName) } = opts;
   const CreateInputType: Type<C> = CreateType();

@@ -34,7 +34,7 @@ describe('GraphQLFilterType', (): void => {
 
   it('should convert and filters to filter class', () => {
     const filterObject: Filter<TestDto> = {
-      and: [{ stringType: { eq: 'foo' } }],
+      and: [{ stringField: { eq: 'foo' } }],
     };
     const filterInstance = plainToClass(TestDtoFilter, filterObject);
     expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
@@ -42,7 +42,7 @@ describe('GraphQLFilterType', (): void => {
 
   it('should convert or filters to filter class', () => {
     const filterObject: Filter<TestDto> = {
-      or: [{ stringType: { eq: 'foo' } }],
+      or: [{ stringField: { eq: 'foo' } }],
     };
     const filterInstance = plainToClass(TestDtoFilter, filterObject);
     expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
