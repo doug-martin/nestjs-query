@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { DeleteOne } from '@nestjs-query/core';
 import { Type } from '@nestjs/common';
 import { Field, ID, InputType } from 'type-graphql';

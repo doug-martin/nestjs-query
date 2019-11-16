@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { UpdateMany, DeepPartial, Filter } from '@nestjs-query/core';
 import { Type } from '@nestjs/common';
 import { Field, InputType } from 'type-graphql';
