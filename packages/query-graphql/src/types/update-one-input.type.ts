@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { UpdateOne, DeepPartial } from '@nestjs-query/core';
 import { Type } from '@nestjs/common';
 import { Field, ID, InputType } from 'type-graphql';
@@ -7,10 +6,10 @@ export function GraphQLUpdateOneInput<T, U extends DeepPartial<T>>(UpdateType: T
   @InputType({ isAbstract: true })
   class UpdateOneImp implements UpdateOne<T, U> {
     @Field(() => ID)
-    id: string | number;
+    id!: string | number;
 
     @Field(() => UpdateType)
-    update: U;
+    update!: U;
   }
   return UpdateOneImp;
 }

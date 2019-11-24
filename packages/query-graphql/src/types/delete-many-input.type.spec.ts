@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import * as typeGraphql from 'type-graphql';
 import { GraphQLDeleteManyInput } from './delete-many-input.type';
 

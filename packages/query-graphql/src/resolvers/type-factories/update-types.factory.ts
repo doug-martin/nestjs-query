@@ -4,7 +4,7 @@ import { InputType } from 'type-graphql';
 import { GraphQLUpdateManyInput, GraphQLUpdateOneInput, PartialInputType } from '../../types';
 
 export type UpdateResolverTypesOpts<DTO, U extends DeepPartial<DTO>> = {
-  name?: string;
+  typeName?: string;
   UpdateType?: () => Type<U>;
   FilterType: Type<Filter<DTO>>;
 };
@@ -33,7 +33,7 @@ export function updateResolverTypesFactory<DTO, U extends DeepPartial<DTO>>(
   DTOClass: Type<DTO>,
   opts: UpdateResolverTypesOpts<DTO, U>,
 ): UpdateResolverTypes<DTO, U> {
-  const baseName = opts.name ?? DTOClass.name;
+  const baseName = opts.typeName ?? DTOClass.name;
 
   const { UpdateType = defaultUpdateInput<DTO, U>(DTOClass, baseName) } = opts;
   const UpdateInputType: Type<U> = UpdateType();

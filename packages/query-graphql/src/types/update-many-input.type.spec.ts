@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Filter } from '@nestjs-query/core';
 import * as typeGraphql from 'type-graphql';
 import { GraphQLUpdateManyInput } from './update-many-input.type';

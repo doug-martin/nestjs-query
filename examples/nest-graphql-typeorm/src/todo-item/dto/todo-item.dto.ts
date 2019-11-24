@@ -4,13 +4,13 @@ import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
 @ObjectType('TodoItem')
 export class TodoItemDTO {
   @FilterableField(() => ID)
-  id: string;
+  id!: string;
 
   @FilterableField()
-  title: string;
+  title!: string;
 
   @FilterableField()
-  completed: boolean;
+  completed!: boolean;
 
   @FilterableField(() => GraphQLISODateTime)
   created!: Date;

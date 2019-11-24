@@ -7,7 +7,7 @@ describe('ConnectionType', (): void => {
   @ObjectType('Test')
   class TestDto {
     @Field()
-    stringField: string;
+    stringField!: string;
   }
 
   // @ts-ignore
@@ -62,7 +62,7 @@ type TestEdge {
   it('should throw an error if the object is not registered with type-graphql', () => {
     class TestBadDto {
       @Field()
-      stringField: string;
+      stringField!: string;
     }
 
     expect(() => GraphQLConnection(TestBadDto)).toThrow(

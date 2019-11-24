@@ -1,64 +1,107 @@
-import { printSchema } from 'graphql';
 import 'reflect-metadata';
-import { buildSchemaSync, ID, Int, ObjectType, Query, Resolver } from 'type-graphql';
+import * as typeGraphql from 'type-graphql';
 import { FilterableField } from '../decorators/filterable-field.decorator';
-import { OmitObjectType } from './omit.type';
+import { OmitInputType, OmitObjectType } from './omit.type';
 
 describe('OmitType', (): void => {
-  @ObjectType('TestOmitDto')
-  class TestDto {
-    @FilterableField(() => ID)
-    idField: number;
+  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
 
-    @FilterableField(() => Int, { nullable: true })
-    field1?: number;
+  beforeEach(() => fieldSpy.mockClear());
 
-    @FilterableField()
-    field2: string;
-  }
+  describe('OmitObjectType', () => {
+    const objectTypeSpy = jest.spyOn(typeGraphql, 'ObjectType');
 
-  // @ts-ignore
-  @ObjectType()
-  class TestOmitNoFields extends OmitObjectType(TestDto) {}
+    beforeEach(() => objectTypeSpy.mockClear());
 
-  @ObjectType()
-  class TestOmitFields extends OmitObjectType(TestDto, 'idField', 'field2') {}
+    @typeGraphql.ObjectType('TestOmitDto')
+    class TestDto {
+      @FilterableField(() => typeGraphql.ID)
+      idField!: number;
 
-  @Resolver(TestDto)
-  class TestResolver {
-    @Query(() => TestOmitFields)
-    query1(): TestOmitNoFields {
-      return { idField: 1, field1: 2, field2: '3' };
+      @FilterableField(() => typeGraphql.Int, { nullable: true })
+      field1?: number;
+
+      @FilterableField()
+      field2!: string;
     }
 
-    query2(): TestOmitFields {
-      return { field1: 2 };
+    it('should throw an error if the type is not a registered graphql object', () => {
+      expect(() => OmitObjectType(class {})).toThrow('Unable to find fields for type-graphql type');
+    });
+
+    it('should throw an error if the type does not have any registered fields', () => {
+      @typeGraphql.ObjectType()
+      class BadClass {}
+
+      expect(() => OmitObjectType(BadClass)).toThrow('Unable to find fields for type-graphql type BadClass');
+    });
+
+    it('should create a copy of the object if no fields are specified', () => {
+      OmitObjectType(TestDto);
+      expect(objectTypeSpy).toBeCalledWith({ isAbstract: true });
+      expect(fieldSpy).toBeCalledTimes(3);
+      expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.ID);
+      expect(fieldSpy.mock.calls[0]![1]).toEqual({});
+      expect(fieldSpy.mock.calls[1]![0]!()).toEqual(typeGraphql.Int);
+      expect(fieldSpy.mock.calls[1]![1]).toEqual({ nullable: true });
+      expect(fieldSpy.mock.calls[2]![0]!()).toEqual(String);
+      expect(fieldSpy.mock.calls[2]![1]).toEqual({});
+    });
+
+    it('should create an object with the specified fields excluded', () => {
+      OmitObjectType(TestDto, 'idField', 'field2');
+      expect(objectTypeSpy).toBeCalledWith({ isAbstract: true });
+      expect(fieldSpy).toBeCalledTimes(1);
+      expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.Int);
+      expect(fieldSpy.mock.calls[0]![1]).toEqual({ nullable: true });
+    });
+  });
+
+  describe('OmitInputType', () => {
+    const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
+    beforeEach(() => inputTypeSpy.mockClear());
+    @typeGraphql.InputType('TestOmitDto')
+    class TestDto {
+      @typeGraphql.Field(() => typeGraphql.ID)
+      idField!: number;
+
+      @typeGraphql.Field(() => typeGraphql.Int, { nullable: true })
+      field1?: number;
+
+      @typeGraphql.Field()
+      field2!: string;
     }
-  }
 
-  it('create a query for string fields', () => {
-    const schema = buildSchemaSync({ resolvers: [TestResolver] });
-    expect(printSchema(schema)).toContain(
-      `type Query {
-  query1: TestOmitFields!
-}
+    it('should throw an error if the type is not a registered graphql object', () => {
+      expect(() => OmitInputType(class {})).toThrow('Unable to find fields for type-graphql type');
+    });
 
-type TestOmitDto {
-  idField: ID!
-  field1: Int
-  field2: String!
-}
+    it('should throw an error if the type does not have any registered fields', () => {
 
-type TestOmitFields {
-  field1: Int
-}
+      @typeGraphql.ObjectType()
+      class BadClass {}
 
-type TestOmitNoFields {
-  idField: ID!
-  field1: Int
-  field2: String!
-}
-`,
-    );
+      expect(() => OmitInputType(BadClass)).toThrow('Unable to find fields for type-graphql type BadClass');
+    });
+
+    it('should create a copy of the object if no fields are specified', () => {
+      OmitInputType(TestDto);
+      expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
+      expect(fieldSpy).toBeCalledTimes(3);
+      expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.ID);
+      expect(fieldSpy.mock.calls[0]![1]).toEqual({});
+      expect(fieldSpy.mock.calls[1]![0]!()).toEqual(typeGraphql.Int);
+      expect(fieldSpy.mock.calls[1]![1]).toEqual({ nullable: true });
+      expect(fieldSpy.mock.calls[2]![0]!()).toEqual(String);
+      expect(fieldSpy.mock.calls[2]![1]).toEqual({});
+    });
+
+    it('should create an object with the specified fields excluded', () => {
+      OmitInputType(TestDto, 'idField', 'field2');
+      expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
+      expect(fieldSpy).toBeCalledTimes(1);
+      expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.Int);
+      expect(fieldSpy.mock.calls[0]![1]).toEqual({ nullable: true });
+    });
   });
 });

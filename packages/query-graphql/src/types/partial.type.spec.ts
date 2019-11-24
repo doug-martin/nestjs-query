@@ -1,52 +1,90 @@
-import { printSchema } from 'graphql';
 import 'reflect-metadata';
-import { buildSchemaSync, ID, Int, ObjectType, Query, Resolver } from 'type-graphql';
+import * as typeGraphql from 'type-graphql';
 import { FilterableField } from '../decorators/filterable-field.decorator';
-import { PartialType } from './partial.type';
+import { PartialInputType, PartialType } from './partial.type';
 
 describe('PartialType', (): void => {
-  @ObjectType('TestPartialDto')
-  class TestDto {
-    @FilterableField(() => ID)
-    idField: number;
+  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
 
-    @FilterableField(() => Int, { nullable: true })
-    field1?: number;
+  beforeEach(() => fieldSpy.mockClear());
 
-    @FilterableField()
-    field2: string;
-  }
+  describe('PartialType', () => {
+    const objectTypeSpy = jest.spyOn(typeGraphql, 'ObjectType');
 
-  @ObjectType()
-  class TestPartialFields extends PartialType(TestDto) {}
+    beforeEach(() => objectTypeSpy.mockClear());
 
-  @Resolver(TestDto)
-  class TestResolver {
-    @Query(() => TestPartialFields)
-    query1(): TestPartialFields {
-      return { idField: 1, field1: 2, field2: '3' };
+    @typeGraphql.ObjectType('TestPartialDto')
+    class TestDto {
+      @FilterableField(() => typeGraphql.ID)
+      idField!: number;
+
+      @FilterableField(() => typeGraphql.Int, { nullable: true })
+      field1?: number;
+
+      @FilterableField()
+      field2!: string;
     }
-  }
 
-  it('should create an object with all partial fields', () => {
-    const schema = buildSchemaSync({ resolvers: [TestResolver] });
-    expect(printSchema(schema)).toContain(
-      `type Query {
-  query1: TestPartialFields!
-}
+    it('should throw an error if the type is not a registered graphql object', () => {
+      expect(() => PartialType(class {})).toThrow('Unable to find fields for type-graphql type');
+    });
 
-type TestPartialDto {
-  idField: ID!
-  field1: Int
-  field2: String!
-}
+    it('should throw an error if the type does not have any registered fields', () => {
+      @typeGraphql.ObjectType()
+      class BadClass {}
 
-type TestPartialFields {
-  idField: ID
-  field1: Int
-  field2: String
-}
-`,
-    );
+      expect(() => PartialType(BadClass)).toThrow('Unable to find fields for type-graphql type BadClass');
+    });
+
+    it('should create a copy of the object with all fields optional', () => {
+      PartialType(TestDto);
+      expect(objectTypeSpy).toBeCalledWith({ isAbstract: true });
+      expect(fieldSpy).toBeCalledTimes(3);
+      expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.ID);
+      expect(fieldSpy.mock.calls[0]![1]).toEqual({ nullable: true });
+      expect(fieldSpy.mock.calls[1]![0]!()).toEqual(typeGraphql.Int);
+      expect(fieldSpy.mock.calls[1]![1]).toEqual({ nullable: true });
+      expect(fieldSpy.mock.calls[2]![0]!()).toEqual(String);
+      expect(fieldSpy.mock.calls[2]![1]).toEqual({ nullable: true });
+    });
+  });
+
+  describe('PartialInputType', () => {
+    const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
+    beforeEach(() => inputTypeSpy.mockClear());
+    @typeGraphql.InputType('TestPartialDto')
+    class TestDto {
+      @typeGraphql.Field(() => typeGraphql.ID)
+      idField!: number;
+
+      @typeGraphql.Field(() => typeGraphql.Int, { nullable: true })
+      field1?: number;
+
+      @typeGraphql.Field()
+      field2!: string;
+    }
+
+    it('should throw an error if the type is not a registered graphql object', () => {
+      expect(() => PartialInputType(class {})).toThrow('Unable to find fields for type-graphql type');
+    });
+
+    it('should throw an error if the type does not have any registered fields', () => {
+      @typeGraphql.ObjectType()
+      class BadClass {}
+
+      expect(() => PartialInputType(BadClass)).toThrow('Unable to find fields for type-graphql type BadClass');
+    });
+
+    it('should create a copy of the object with all fields optional', () => {
+      PartialInputType(TestDto);
+      expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
+      expect(fieldSpy).toBeCalledTimes(3);
+      expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.ID);
+      expect(fieldSpy.mock.calls[0]![1]).toEqual({ nullable: true });
+      expect(fieldSpy.mock.calls[1]![0]!()).toEqual(typeGraphql.Int);
+      expect(fieldSpy.mock.calls[1]![1]).toEqual({ nullable: true });
+      expect(fieldSpy.mock.calls[2]![0]!()).toEqual(String);
+      expect(fieldSpy.mock.calls[2]![1]).toEqual({ nullable: true });
+    });
   });
 });

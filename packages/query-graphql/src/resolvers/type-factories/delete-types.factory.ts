@@ -4,7 +4,7 @@ import { InputType, ObjectType } from 'type-graphql';
 import { GraphQLDeleteManyInput, GraphQLDeleteOneInput, PartialType } from '../../types';
 
 export type DeleteResolverTypesOpts<DTO, D extends DeepPartial<DTO>> = {
-  name?: string;
+  typeName?: string;
   DeleteType?: () => Type<D>;
   FilterType: Type<Filter<DTO>>;
 };
@@ -30,7 +30,7 @@ export function deleteResolverTypesFactory<DTO, D extends DeepPartial<DTO>>(
   DTOClass: Type<DTO>,
   opts: DeleteResolverTypesOpts<DTO, D>,
 ): DeleteResolverTypes<DTO, D> {
-  const baseName = opts.name ?? DTOClass.name;
+  const baseName = opts.typeName ?? DTOClass.name;
 
   const { DeleteType = defaultDeleteType<DTO, D>(DTOClass, baseName) } = opts;
 

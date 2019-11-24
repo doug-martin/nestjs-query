@@ -12,7 +12,7 @@ import { AuthGuard } from '../auth.guard';
 
 @Resolver()
 export class TodoItemResolver extends GraphQLQueryResolver(TodoItemDTO, {
-  name: 'TodoItem',
+  typeName: 'TodoItem',
   CreateType: () => CreateTodoItem,
   UpdateType: () => UpdateTodoItem,
   methods: {

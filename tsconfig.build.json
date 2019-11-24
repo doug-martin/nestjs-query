@@ -24,7 +24,6 @@
         "pretty": true,
         "strict": true,
         "noUnusedLocals": true,
-        "strictPropertyInitialization": false,
         "baseUrl": "./"
     },
     "exclude": ["node_modules", "**/*.spec.ts"]

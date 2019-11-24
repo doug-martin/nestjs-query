@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { CreateOne, DeepPartial } from '@nestjs-query/core';
 import { Type } from '@nestjs/common';
 import { Field, InputType } from 'type-graphql';
@@ -7,7 +6,7 @@ export function GraphQLCreateOneInput<T, C extends DeepPartial<T>>(ITemClass: Ty
   @InputType({ isAbstract: true })
   class CreateOneImpl implements CreateOne<T, C> {
     @Field(() => ITemClass)
-    item: C;
+    item!: C;
   }
   return CreateOneImpl;
 }

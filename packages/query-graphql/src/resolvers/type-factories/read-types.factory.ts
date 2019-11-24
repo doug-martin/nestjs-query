@@ -10,7 +10,7 @@ import {
 } from '../../types';
 
 export type ReadResolverTypesOpts = {
-  name?: string;
+  typeName?: string;
 };
 
 export type ReadResolverTypes<DTO> = {
@@ -22,7 +22,7 @@ export function readResolverTypesFactory<DTO>(
   DTOClass: Type<DTO>,
   opts: ReadResolverTypesOpts,
 ): ReadResolverTypes<DTO> {
-  const baseName = opts.name ?? DTOClass.name;
+  const baseName = opts.typeName ?? DTOClass.name;
 
   @ArgsType()
   class QueryType extends GraphQLQuery(DTOClass) {}

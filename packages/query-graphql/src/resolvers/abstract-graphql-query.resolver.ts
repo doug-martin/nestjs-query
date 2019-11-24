@@ -1,3 +1,4 @@
+import pick from 'lodash.pick';
 import {
   AbstractQueryService,
   CreateMany,
@@ -36,18 +37,18 @@ export type MethodOptions = {
   deleteMany?: ResolverMethodOptions;
 };
 
-export type GraphQLQueryResolverOpts<
+export interface GraphQLQueryResolverOpts<
   DTO,
   C extends DeepPartial<DTO>,
   U extends DeepPartial<DTO>,
   D extends DeepPartial<DTO>
-> = {
-  name?: string;
-  CreateType?: () => Type<C>;
-  UpdateType?: () => Type<U>;
-  DeleteType?: () => Type<D>;
+> {
+  typeName?: string;
+  CreateType?(): Type<C>;
+  UpdateType?(): Type<U>;
+  DeleteType?(): Type<D>;
   methods?: MethodOptions;
-};
+}
 
 export function GraphQLQueryResolver<
   DTO,
@@ -57,17 +58,20 @@ export function GraphQLQueryResolver<
 >(
   DTOClass: Type<DTO>,
   opts: GraphQLQueryResolverOpts<DTO, C, U, D> = {},
-): Type<GraphQLResolver<DTO, C, U, D>> & StaticGraphQLResolver<DTO, C, U, D> {
-  const baseName = opts.name ?? DTOClass.name;
+): StaticGraphQLResolver<DTO, C, U, D> {
+  const baseName = opts.typeName ?? DTOClass.name;
 
-  const { CreateManyInputType, CreateOneInputType } = createResolverTypesFactory(DTOClass, opts);
-  const { QueryType, ConnectionType } = readResolverTypesFactory(DTOClass, opts);
+  const { CreateManyInputType, CreateOneInputType } = createResolverTypesFactory(
+    DTOClass,
+    pick(opts || {}, 'typeName', 'CreateType'),
+  );
+  const { QueryType, ConnectionType } = readResolverTypesFactory(DTOClass, pick(opts, 'typeName'));
   const { UpdateManyInputType, UpdateOneInputType } = updateResolverTypesFactory(DTOClass, {
-    ...opts,
+    ...pick(opts || {}, 'typeName', 'UpdateType'),
     FilterType: QueryType.FilterType,
   });
   const { DeleteType, DeleteManyInputType, DeleteOneInputType } = deleteResolverTypesFactory(DTOClass, {
-    ...opts,
+    ...pick(opts || {}, 'typeName', 'DeleteType'),
     FilterType: QueryType.FilterType,
   });
 

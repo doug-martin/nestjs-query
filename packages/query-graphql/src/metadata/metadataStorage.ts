@@ -45,7 +45,7 @@ export class GraphQLQueryMetadataStorage {
     if (!graphqlObjType) {
       graphqlObjType = typeGraphqlStorage.inputTypes.find(o => o.target === objType);
     }
-    return graphqlObjType ? graphqlObjType.fields : undefined;
+    return graphqlObjType?.fields;
   }
 
   clear(): void {

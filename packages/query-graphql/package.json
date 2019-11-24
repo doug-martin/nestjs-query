@@ -10,8 +10,9 @@
     "lib": "dist"
   },
   "dependencies": {
-    "@nestjs-query/core": "^1.0.0",
+    "@types/lodash.pick": "^4.4.6",
     "change-case": "^3.1.0",
+    "lodash.pick": "^4.4.0",
     "pluralize": "^8.0.0"
   },
   "peerDependencies": {
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@types/graphql-relay": "^0.4.11",
-    "@types/pluralize": "0.0.29"
+    "@types/pluralize": "0.0.29",
+    "@nestjs-query/core": "^1.0.0"
   }
 }

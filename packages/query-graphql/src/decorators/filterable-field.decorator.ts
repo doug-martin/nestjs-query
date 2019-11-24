@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Field } from 'type-graphql';
 import { Type } from '@nestjs/common';
 import { AdvancedOptions, MethodAndPropDecorator, ReturnTypeFunc } from '../external/type-graphql.types';

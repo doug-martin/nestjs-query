@@ -23,49 +23,49 @@ describe('QueryType', (): void => {
   @ObjectType('TestQuery')
   class TestDto {
     @FilterableField(() => ID)
-    idField: number;
+    idField!: number;
 
     @FilterableField(() => ID, { nullable: true })
     idFieldOption?: number;
 
     @FilterableField()
-    stringField: string;
+    stringField!: string;
 
     @FilterableField({ nullable: true })
     stringFieldOptional?: string;
 
     @FilterableField()
-    booleanField: boolean;
+    booleanField!: boolean;
 
     @FilterableField({ nullable: true })
     booleanFieldOptional?: boolean;
 
     @FilterableField()
-    numberField: number;
+    numberField!: number;
 
     @FilterableField({ nullable: true })
     numberFieldOptional?: number;
 
     @FilterableField(() => Float)
-    floatField: number;
+    floatField!: number;
 
     @FilterableField(() => Float, { nullable: true })
     floatFieldOptional?: number;
 
     @FilterableField(() => Int)
-    intField: number;
+    intField!: number;
 
     @FilterableField(() => Int, { nullable: true })
     intFieldOptional?: number;
 
     @FilterableField(() => GraphQLTimestamp)
-    timestampField: Date;
+    timestampField!: Date;
 
     @FilterableField(() => GraphQLTimestamp, { nullable: true })
     timestampFieldOptional?: Date;
 
     @FilterableField(() => GraphQLISODateTime)
-    date: Date;
+    date!: Date;
 
     @FilterableField(() => GraphQLISODateTime, { nullable: true })
     dateOptional?: Date;

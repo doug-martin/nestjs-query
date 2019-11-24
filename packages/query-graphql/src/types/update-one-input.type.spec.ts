@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { ID } from 'type-graphql';
 import * as typeGraphql from 'type-graphql';
 import { GraphQLUpdateOneInput } from './update-one-input.type';

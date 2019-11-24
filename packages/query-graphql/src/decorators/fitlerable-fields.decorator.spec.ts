@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Float, ObjectType } from 'type-graphql';
 import { FilterableField } from './filterable-field.decorator';
 import { getMetadataStorage } from '../metadata';
@@ -11,7 +12,7 @@ describe('FilterableField decorator', (): void => {
     @ObjectType('test')
     class TestDto {
       @FilterableField()
-      stringField: string;
+      stringField!: string;
 
       @FilterableField({ nullable: true })
       stringOptionalField?: string;

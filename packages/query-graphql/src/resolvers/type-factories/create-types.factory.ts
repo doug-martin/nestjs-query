@@ -3,9 +3,9 @@ import { Type } from '@nestjs/common';
 import { InputType } from 'type-graphql';
 import { GraphQLCreateManyInput, GraphQLCreateOneInput, PartialInputType } from '../../types';
 
-export type CreateResolverTypesOpts<DTO, C extends DeepPartial<DTO>> = {
-  name?: string;
-  CreateType?: () => Type<C>;
+export interface CreateResolverTypesOpts<DTO, C extends DeepPartial<DTO>> {
+  typeName?: string;
+  CreateType?(): Type<C>;
 };
 
 export type CreateResolverTypes<DTO, C extends DeepPartial<DTO>> = {
@@ -32,7 +32,7 @@ export function createResolverTypesFactory<DTO, C extends DeepPartial<DTO>>(
   DTOClass: Type<DTO>,
   opts: CreateResolverTypesOpts<DTO, C>,
 ): CreateResolverTypes<DTO, C> {
-  const baseName = opts.name ?? DTOClass.name;
+  const baseName = opts.typeName ?? DTOClass.name;
 
   const { CreateType = defaultCreateInput<DTO, C>(DTOClass, baseName) } = opts;
   const CreateInputType: Type<C> = CreateType();

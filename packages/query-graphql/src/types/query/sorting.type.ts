@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { SortDirection, SortField, SortNulls } from '@nestjs-query/core';
 import { Type } from '@nestjs/common';
 import { Field, InputType, registerEnumType } from 'type-graphql';
@@ -34,11 +33,11 @@ export const GraphQLSortType = <T>(TClass: Type<T>): Type<SortField<T>> => {
   class Sort {
     @Field(() => fieldNameMap)
     @IsIn(fieldNames)
-    field: keyof T;
+    field!: keyof T;
 
     @Field(() => SortDirection)
     @IsEnum(SortDirection)
-    direction: SortDirection;
+    direction!: SortDirection;
 
     @Field(() => SortNulls, { nullable: true })
     @IsUndefined()

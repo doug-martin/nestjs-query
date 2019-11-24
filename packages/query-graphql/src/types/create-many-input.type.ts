@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { CreateMany, DeepPartial } from '@nestjs-query/core';
 import { Type } from '@nestjs/common';
 import { Field, InputType } from 'type-graphql';
@@ -7,7 +6,7 @@ export function GraphQLCreateManyInput<T, C extends DeepPartial<T>>(ITemClass: T
   @InputType({ isAbstract: true })
   class CreateManyImpl implements CreateMany<T, C> {
     @Field(() => [ITemClass])
-    items: C[];
+    items!: C[];
   }
   return CreateManyImpl;
 }

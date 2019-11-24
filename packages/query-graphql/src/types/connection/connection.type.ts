@@ -25,7 +25,7 @@ export const GraphQLConnection = <TItem>(
       const { entities, totalCount } = findMany;
       return connectionFromArraySlice(entities, pagingInfo || {}, {
         arrayLength: totalCount,
-        sliceStart: pagingInfo ? pagingInfo.offset || 0 : 0,
+        sliceStart: pagingInfo?.offset ?? 0,
       });
     }
 

@@ -10,7 +10,7 @@ describe('GraphQLFilterType', (): void => {
   @ObjectType('TestFilterDto')
   class TestDto {
     @FilterableField()
-    stringField: string;
+    stringField!: string;
   }
   const TestGraphQLFilter: Type<Filter<TestDto>> = GraphQLFilterType(TestDto);
   class TestDtoFilter extends TestGraphQLFilter {}

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import * as typeGraphql from 'type-graphql';
 import { GraphQLCreateManyInput } from './create-many-input.type';
 

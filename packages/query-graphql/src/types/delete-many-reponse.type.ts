@@ -4,5 +4,5 @@ import { Field, Int, ObjectType } from 'type-graphql';
 @ObjectType()
 export class DeleteManyResponseType implements DeleteManyResponse {
   @Field(() => Int)
-  deletedCount: number;
+  deletedCount!: number;
 }
