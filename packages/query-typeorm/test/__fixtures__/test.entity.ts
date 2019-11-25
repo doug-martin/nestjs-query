@@ -17,4 +17,3 @@ export class TestEntity {
   @Column({ name: 'date_type' })
   dateType!: Date;
 }
-

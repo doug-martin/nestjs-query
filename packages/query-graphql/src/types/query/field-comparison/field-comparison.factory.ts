@@ -27,10 +27,10 @@ const createPrefixFromClass = <T>(TClass: Type<T>): string => {
   return `${clsName.charAt(0).toUpperCase()}${clsName.slice(1)}`;
 };
 
-export const createFilterComparisonType = <T>(
+export function createFilterComparisonType<T>(
   TClass: Type<T>,
   returnTypeFunc?: ReturnTypeFunc,
-): Type<FilterFieldComparison<T>> => {
+): Type<FilterFieldComparison<T>> {
   const fieldType = returnTypeFunc ? (returnTypeFunc() as Type<unknown>) : TClass;
   const inputName = `${createPrefixFromClass(fieldType)}FilterComparison`;
   const generator = filterComparisonMap.get(inputName);
@@ -89,4 +89,4 @@ export const createFilterComparisonType = <T>(
 
   filterComparisonMap.set(inputName, () => Fc);
   return Fc as Type<FilterFieldComparison<T>>;
-};
+}

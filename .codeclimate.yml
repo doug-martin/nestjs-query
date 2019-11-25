@@ -1,0 +1,18 @@
+plugins:
+  eslint:
+    enabled: true
+    channel: "eslint-6"
+
+exclude_patterns:
+  - "**/*.spec.ts"
+  - "packages/core/node_modules/"
+  - "packages/core/dist/"
+  - "packages/query-graphql/node_modules/"
+  - "packages/query-graphql/dist/"
+  - "packages/query-typeorm/node_modules/"
+  - "packages/query-typeorm/dist/"
+  - "examples/nest-graphql-typeorm/node_modules/"
+  - "examples/nest-graphql-typeorm/dist/"
+  - "**/test/"
+  - "coverage/"
+  - "node_modules/"

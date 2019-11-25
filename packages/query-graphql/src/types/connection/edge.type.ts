@@ -8,7 +8,7 @@ export interface EdgeType<TItem> {
   cursor: ConnectionCursor;
 }
 
-export const EdgeType = <TItem>(TItemClass: Type<TItem>): Type<EdgeType<TItem>> => {
+export function EdgeType<TItem>(TItemClass: Type<TItem>): Type<EdgeType<TItem>> {
   const objMetadata = getMetadataStorage().getTypeGraphqlObjectMetadata(TItemClass);
   if (!objMetadata) {
     throw new Error(`unable to make edge for class not registered with type-graphql ${TItemClass.name}`);
@@ -24,4 +24,4 @@ export const EdgeType = <TItem>(TItemClass: Type<TItem>): Type<EdgeType<TItem>> 
     cursor!: ConnectionCursor;
   }
   return AbstractEdge;
-};
+}

@@ -11,7 +11,7 @@ describe('OmitType', (): void => {
   describe('OmitObjectType', () => {
     const objectTypeSpy = jest.spyOn(typeGraphql, 'ObjectType');
 
-    beforeEach(() => objectTypeSpy.mockClear());
+    beforeEach(() => jest.clearAllMocks());
 
     @typeGraphql.ObjectType('TestOmitDto')
     class TestDto {
@@ -59,7 +59,7 @@ describe('OmitType', (): void => {
 
   describe('OmitInputType', () => {
     const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
-    beforeEach(() => inputTypeSpy.mockClear());
+    beforeEach(() => jest.clearAllMocks());
     @typeGraphql.InputType('TestOmitDto')
     class TestDto {
       @typeGraphql.Field(() => typeGraphql.ID)
@@ -77,7 +77,6 @@ describe('OmitType', (): void => {
     });
 
     it('should throw an error if the type does not have any registered fields', () => {
-
       @typeGraphql.ObjectType()
       class BadClass {}
 

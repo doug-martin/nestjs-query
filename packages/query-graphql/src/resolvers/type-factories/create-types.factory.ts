@@ -6,7 +6,7 @@ import { GraphQLCreateManyInput, GraphQLCreateOneInput, PartialInputType } from 
 export interface CreateResolverTypesOpts<DTO, C extends DeepPartial<DTO>> {
   typeName?: string;
   CreateType?(): Type<C>;
-};
+}
 
 export type CreateResolverTypes<DTO, C extends DeepPartial<DTO>> = {
   CreateInputType: Type<C>;

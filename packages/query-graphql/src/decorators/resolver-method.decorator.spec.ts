@@ -39,7 +39,6 @@ describe('ResolverMethod decorator', (): void => {
     };
   }
 
-
   function createTestResolver(...opts: ResolverMethodOptions[]): void {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // @ts-ignore

@@ -6,7 +6,7 @@ import { ValidateNested } from 'class-validator';
 import { getMetadataStorage } from '../../metadata';
 import { createFilterComparisonType } from './field-comparison';
 
-export const GraphQLFilterType = <T>(TClass: Type<T>): Type<Filter<T>> => {
+export function GraphQLFilterType<T>(TClass: Type<T>): Type<Filter<T>> {
   const metadataStorage = getMetadataStorage();
   const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TClass);
   if (!objMetadata) {
@@ -38,4 +38,4 @@ export const GraphQLFilterType = <T>(TClass: Type<T>): Type<Filter<T>> => {
     TransformType(() => FC)(GraphQLFilter.prototype, propertyName);
   });
   return GraphQLFilter as Type<Filter<T>>;
-};
+}

@@ -15,7 +15,7 @@ registerEnumType(SortNulls, {
   description: 'Sort Nulls Options', // this one is optional
 });
 
-export const GraphQLSortType = <T>(TClass: Type<T>): Type<SortField<T>> => {
+export function GraphQLSortType<T>(TClass: Type<T>): Type<SortField<T>> {
   const metadataStorage = getMetadataStorage();
   const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TClass);
   if (!objMetadata) {
@@ -46,4 +46,4 @@ export const GraphQLSortType = <T>(TClass: Type<T>): Type<SortField<T>> => {
   }
 
   return Sort;
-};
+}

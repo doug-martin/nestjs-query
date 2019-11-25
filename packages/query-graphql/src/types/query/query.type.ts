@@ -11,12 +11,13 @@ export interface StaticGraphQLQueryType<T> {
   SortType: Type<SortField<T>>;
   PageType: Type<CursorPagingType>;
   FilterType: Type<Filter<T>>;
+  new (): GraphQLQueryType<T>;
 }
 export interface GraphQLQueryType<T> extends Query<T> {
   paging?: CursorPagingType;
 }
 
-export const GraphQLQuery = <T>(TClass: Type<T>): Type<GraphQLQueryType<T>> & StaticGraphQLQueryType<T> => {
+export function GraphQLQuery<T>(TClass: Type<T>): StaticGraphQLQueryType<T> {
   const F = GraphQLFilterType(TClass);
   const S = GraphQLSortType(TClass);
 
@@ -45,4 +46,4 @@ export const GraphQLQuery = <T>(TClass: Type<T>): Type<GraphQLQueryType<T>> & St
     sorting?: SortField<T>[];
   }
   return QueryImpl;
-};
+}

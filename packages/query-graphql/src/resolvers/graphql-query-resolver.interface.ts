@@ -19,8 +19,8 @@ export interface StaticGraphQLResolver<
   U extends DeepPartial<DTO>,
   D extends DeepPartial<DTO>
 > {
-  QueryType: Type<GraphQLQueryType<DTO>> & StaticGraphQLQueryType<DTO>;
-  ConnectionType: Type<GraphQLConnectionType<DTO>> & StaticGraphQLConnectionType<DTO>;
+  QueryType: StaticGraphQLQueryType<DTO>;
+  ConnectionType: StaticGraphQLConnectionType<DTO>;
   CreateOneInputType: Type<CreateOne<DTO, C>>;
   CreateManyInputType: Type<CreateMany<DTO, C>>;
   UpdateOneInputType: Type<UpdateOne<DTO, U>>;

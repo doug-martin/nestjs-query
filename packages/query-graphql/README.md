@@ -5,7 +5,7 @@
 ## Usage
 
 ```
-const graphqlQuery = require('@nestjs-query/query-graphql');
+const graphqlQuery = require('@nestjs-query/graphql');
 
 // TODO: DEMONSTRATE API
 ```

@@ -6,12 +6,10 @@ import { PartialInputType, PartialType } from './partial.type';
 describe('PartialType', (): void => {
   const fieldSpy = jest.spyOn(typeGraphql, 'Field');
 
-  beforeEach(() => fieldSpy.mockClear());
+  beforeEach(() => jest.clearAllMocks());
 
   describe('PartialType', () => {
     const objectTypeSpy = jest.spyOn(typeGraphql, 'ObjectType');
-
-    beforeEach(() => objectTypeSpy.mockClear());
 
     @typeGraphql.ObjectType('TestPartialDto')
     class TestDto {
@@ -51,7 +49,6 @@ describe('PartialType', (): void => {
 
   describe('PartialInputType', () => {
     const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
-    beforeEach(() => inputTypeSpy.mockClear());
     @typeGraphql.InputType('TestPartialDto')
     class TestDto {
       @typeGraphql.Field(() => typeGraphql.ID)

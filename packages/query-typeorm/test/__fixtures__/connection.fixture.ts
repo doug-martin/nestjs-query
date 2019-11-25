@@ -9,7 +9,7 @@ export function createTestConnection(): Promise<Connection> {
     dropSchema: true,
     entities: [TestEntity],
     synchronize: true,
-    logging: false
+    logging: false,
   });
 }
 

@@ -5,16 +5,17 @@ const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const compilerOptions = tsconfig.load_file_sync('./tsconfig.jest.json', __dirname);
 
 module.exports = {
+  preset: 'ts-jest',
   setupFilesAfterEnv: ['jest-extended'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: '<rootDir>/packages/'
   }),
-  moduleFileExtensions: ['ts', 'js'],
+  // moduleFileExtensions: ['ts', 'js'],
   testRegex: '\\.spec.ts$',
   rootDir: '.',
-  transform: {
-    '^.+\\.ts$': 'ts-jest'
-  },
+  // transform: {
+  //   '^.+\\.ts$': 'ts-jest'
+  // },
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.jest.json'
@@ -24,13 +25,9 @@ module.exports = {
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
     'packages/**/*.ts',
-    '!packages/**/*.d.ts',
     '!packages/**/index.ts',
-    '!packages/**/*.interface.ts',
-    '!**/node_modules/**',
-    '!**/__stubs__/**',
-    '!**/__fixture__/**',
-    '!integration/*'
+    '!**/dist/**',
+    '!**/node_modules/**'
   ],
   coverageThreshold: {
     global: {
