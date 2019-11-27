@@ -1,13 +1,12 @@
-import { FindManyResponse } from '@nestjs-query/core';
 import { Type } from '@nestjs/common';
-import { connectionFromArraySlice } from 'graphql-relay';
+import { connectionFromPromisedArray } from 'graphql-relay';
 import { Field, ObjectType } from 'type-graphql';
 import { CursorPagingType } from '../query/paging.type';
 import { PageInfoType } from './page-info.type';
 import { EdgeType } from './edge.type';
 
 export interface StaticGraphQLConnectionType<TItem> {
-  create(pagingInfo: CursorPagingType | undefined, findMany: FindManyResponse<TItem>): GraphQLConnectionType<TItem>;
+  create(findMany: Promise<TItem[]>, pagingInfo?: CursorPagingType): Promise<GraphQLConnectionType<TItem>>;
   new (): GraphQLConnectionType<TItem>;
 }
 
@@ -20,13 +19,8 @@ export function GraphQLConnection<TItem>(TItemClass: Type<TItem>): StaticGraphQL
   const E = EdgeType(TItemClass);
   @ObjectType({ isAbstract: true })
   class AbstractConnection implements GraphQLConnectionType<TItem> {
-    static create(pagingInfo: CursorPagingType | undefined, findMany: FindManyResponse<TItem>): AbstractConnection {
-      const { entities, totalCount } = findMany;
-      const sliceStart = pagingInfo?.offset || 0;
-      return connectionFromArraySlice(entities, pagingInfo || {}, {
-        arrayLength: totalCount,
-        sliceStart,
-      });
+    static create(entities: Promise<TItem[]>, pagingInfo?: CursorPagingType): Promise<AbstractConnection> {
+      return connectionFromPromisedArray(entities, pagingInfo ?? {});
     }
 
     @Field()

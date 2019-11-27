@@ -72,10 +72,7 @@ type TestEdge {
 
   describe('.create', () => {
     it('should create a connections response with no connection args', async () => {
-      const response = TestConnection.create(undefined, {
-        entities: [{ stringField: 'foo1' }, { stringField: 'foo2' }],
-        totalCount: 20,
-      });
+      const response = await TestConnection.create(Promise.resolve([{ stringField: 'foo1' }, { stringField: 'foo2' }]));
       expect(response).toEqual({
         edges: [
           {
@@ -102,11 +99,8 @@ type TestEdge {
 
     it('should create a connections response with just a first arg', async () => {
       const response = await TestConnection.create(
+        Promise.resolve([{ stringField: 'foo1' }, { stringField: 'foo2' }]),
         { first: 2 },
-        {
-          entities: [{ stringField: 'foo1' }, { stringField: 'foo2' }],
-          totalCount: 20,
-        },
       );
       expect(response).toEqual({
         edges: [
@@ -125,7 +119,7 @@ type TestEdge {
         ],
         pageInfo: {
           endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
-          hasNextPage: true,
+          hasNextPage: false,
           hasPreviousPage: false,
           startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
         },
@@ -133,13 +127,9 @@ type TestEdge {
     });
 
     it('should create a connections response with just a last arg', async () => {
-      const response = TestConnection.create(
-        { last: 2 },
-        {
-          entities: [{ stringField: 'foo1' }, { stringField: 'foo2' }],
-          totalCount: 20,
-        },
-      );
+      const response = await TestConnection.create(Promise.resolve([{ stringField: 'foo1' }, { stringField: 'foo2' }]), {
+        last: 2,
+      });
       expect(response).toEqual({
         edges: [
           {

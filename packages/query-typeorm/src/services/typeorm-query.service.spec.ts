@@ -37,17 +37,13 @@ describe('TypeormQueryService', (): void => {
   describe('#query', () => {
     it('call select and return the result', async () => {
       const entities = testEntities();
-      const totalCount = entities.length + 1;
       const query: Query<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
       const { queryService, mockQueryBuilder } = createQueryService();
       const selectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
       when(mockQueryBuilder.select(query)).thenReturn(instance(selectQueryBuilder));
-      when(selectQueryBuilder.getManyAndCount()).thenResolve([entities, entities.length + 1]);
+      when(selectQueryBuilder.getMany()).thenResolve(entities);
       const queryResult = await queryService.query(query);
-      expect(queryResult).toEqual({
-        entities,
-        totalCount,
-      });
+      expect(queryResult).toEqual(entities);
     });
   });
 

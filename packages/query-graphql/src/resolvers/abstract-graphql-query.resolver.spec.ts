@@ -5,7 +5,6 @@ import {
   AbstractQueryService,
   CreateOne,
   CreateMany,
-  FindManyResponse,
   UpdateOne,
   UpdateMany,
   UpdateManyResponse,
@@ -317,19 +316,17 @@ describe('GraphQLQueryResolver', () => {
             stringField: { eq: 'foo' },
           },
         };
-        const output: FindManyResponse<TestResolverDTO> = {
-          entities: [
-            {
-              id: 'id-1',
-              stringField: 'foo',
-            },
-          ],
-          totalCount: 2,
-        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
         const resolver = new TestResolver(instance(mockService));
         when(mockService.query(query)).thenResolve(output);
         const result = await resolver.query(query);
-        return expect(result).toEqual(TestResolver.ConnectionType.create(undefined, output));
+        const expected = await TestResolver.ConnectionType.create(Promise.resolve(output));
+        return expect(result).toEqual(expected);
       });
     });
   });

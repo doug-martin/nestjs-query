@@ -1,6 +1,5 @@
 import {
   AbstractQueryService,
-  FindManyResponse,
   Query,
   DeleteManyResponse,
   DeleteOne,
@@ -31,9 +30,8 @@ export class TypeormQueryService<Entity> extends AbstractQueryService<Entity> {
     return this.repo.metadata.targetName;
   }
 
-  async query(query: Query<Entity>): Promise<FindManyResponse<Entity>> {
-    const [entities, totalCount] = await this.filterQueryBuilder.select(query).getManyAndCount();
-    return this.createFindManyResponse(entities, totalCount);
+  async query(query: Query<Entity>): Promise<Entity[]> {
+    return this.filterQueryBuilder.select(query).getMany();
   }
 
   async queryOne(query: Query<Entity>): Promise<Entity | undefined> {

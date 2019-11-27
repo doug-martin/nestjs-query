@@ -106,7 +106,7 @@ export function GraphQLQueryResolver<
       opts.methods?.query || {},
     )
     async query(@Args({ type: () => QueryType }) query: GraphQLQueryType<DTO>): Promise<GraphQLConnectionType<DTO>> {
-      return ConnectionType.create(query.paging, await this.service.query(query));
+      return ConnectionType.create(this.service.query(query), query.paging);
     }
 
     @ResolverMutation(

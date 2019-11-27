@@ -1,7 +1,6 @@
 import { DeepPartial } from '../common';
 import {
   DeleteManyResponse,
-  FindManyResponse,
   Query,
   UpdateManyResponse,
   UpdateOne,
@@ -13,7 +12,7 @@ import {
 } from '../interfaces';
 
 export abstract class AbstractQueryService<T> {
-  abstract query(query: Query<T>): Promise<FindManyResponse<T>>;
+  abstract query(query: Query<T>): Promise<T[]>;
 
   abstract queryOne(query: Query<T>): Promise<T | undefined>;
 
@@ -34,14 +33,6 @@ export abstract class AbstractQueryService<T> {
   abstract deleteOne(deleteOne: DeleteOne): Promise<T>;
 
   abstract deleteMany(deleteMany: DeleteMany<T>): Promise<DeleteManyResponse>;
-
-  /**
-   * @param entities
-   * @param totalCount
-   */
-  protected createFindManyResponse(entities: T[], totalCount: number): FindManyResponse<T> {
-    return { entities, totalCount };
-  }
 
   /**
    * @param updatedCount
