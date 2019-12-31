@@ -30,7 +30,7 @@ export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> 
 
   private get paramName(): string {
     const param = `param${this.paramCount}`;
-    this.paramCount = this.paramCount + 1;
+    this.paramCount += 1;
     return param;
   }
 

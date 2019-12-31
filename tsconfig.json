@@ -4,9 +4,9 @@
         "baseUrl": "./packages",
         "composite": true,
         "paths": {
-            "@nestjs-query/core": ["core/src"],
-            "@nestjs-query/query-graphql": ["query-graphql/src"],
-            "@nestjs-query/query-typeorm": ["query-typeorm/src"]
+            "@nestjs-query/core": ["core"],
+            "@nestjs-query/query-graphql": ["query-graphql"],
+            "@nestjs-query/query-typeorm": ["query-typeorm"]
         }
     },
     "references": [

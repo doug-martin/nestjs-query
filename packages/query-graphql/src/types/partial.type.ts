@@ -1,8 +1,8 @@
-import { Type } from '@nestjs/common';
+import { Class } from '@nestjs-query/core';
 import { Field, InputType, ObjectType } from 'type-graphql';
 import { getMetadataStorage } from '../metadata';
 
-export function PartialType<T>(TClass: Type<T>): Type<Partial<T>> {
+export function PartialType<T>(TClass: Class<T>): Class<Partial<T>> {
   const graphQLFields = getMetadataStorage().getTypeGraphqlFieldsForType(TClass);
   if (!(graphQLFields && graphQLFields.length)) {
     throw new Error(`Unable to find fields for type-graphql type ${TClass.name}`);
@@ -12,10 +12,10 @@ export function PartialType<T>(TClass: Type<T>): Type<Partial<T>> {
   graphQLFields.forEach(f =>
     Field(f.getType, { ...f.typeOptions, nullable: true })(PartialObjectType.prototype, f.name),
   );
-  return PartialObjectType as Type<Partial<T>>;
+  return PartialObjectType as Class<Partial<T>>;
 }
 
-export function PartialInputType<T>(TClass: Type<T>): Type<Partial<T>> {
+export function PartialInputType<T>(TClass: Class<T>): Class<Partial<T>> {
   const graphQLFields = getMetadataStorage().getTypeGraphqlFieldsForType(TClass);
   if (!(graphQLFields && graphQLFields.length)) {
     throw new Error(`Unable to find fields for type-graphql type ${TClass.name}`);
@@ -23,5 +23,5 @@ export function PartialInputType<T>(TClass: Type<T>): Type<Partial<T>> {
   @InputType({ isAbstract: true })
   class PartialInptType {}
   graphQLFields.forEach(f => Field(f.getType, { ...f.typeOptions, nullable: true })(PartialInptType.prototype, f.name));
-  return PartialInptType as Type<Partial<T>>;
+  return PartialInptType as Class<Partial<T>>;
 }

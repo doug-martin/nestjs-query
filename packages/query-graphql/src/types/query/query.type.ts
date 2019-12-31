@@ -1,25 +1,25 @@
-import { Filter, Query, SortField } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { Class, Filter, Query, SortField } from '@nestjs-query/core';
 import { ArgsType, Field, InputType } from 'type-graphql';
 import { ValidateNested } from 'class-validator';
-import { Type as TransformType } from 'class-transformer';
-import { GraphQLFilterType } from './filter.type';
-import { GraphQLSortType } from './sorting.type';
-import { CursorPagingType, GraphQLCursorPaging } from './paging.type';
+import { Type } from 'class-transformer';
+import { FilterType } from './filter.type';
+import { SortType } from './sorting.type';
+import { CursorPagingType } from './paging.type';
 
-export interface StaticGraphQLQueryType<T> {
-  SortType: Type<SortField<T>>;
-  PageType: Type<CursorPagingType>;
-  FilterType: Type<Filter<T>>;
-  new (): GraphQLQueryType<T>;
+export interface StaticQueryType<T> {
+  SortType: Class<SortField<T>>;
+  PageType: Class<CursorPagingType>;
+  FilterType: Class<Filter<T>>;
+  new (): QueryType<T>;
 }
-export interface GraphQLQueryType<T> extends Query<T> {
+export interface QueryType<T> extends Query<T> {
   paging?: CursorPagingType;
 }
 
-export function GraphQLQuery<T>(TClass: Type<T>): StaticGraphQLQueryType<T> {
-  const F = GraphQLFilterType(TClass);
-  const S = GraphQLSortType(TClass);
+export function QueryType<T>(TClass: Class<T>): StaticQueryType<T> {
+  const F = FilterType(TClass);
+  const S = SortType(TClass);
+  const P = CursorPagingType();
 
   @ArgsType()
   @InputType({ isAbstract: true })
@@ -28,21 +28,21 @@ export function GraphQLQuery<T>(TClass: Type<T>): StaticGraphQLQueryType<T> {
 
     static FilterType = F;
 
-    static PageType = GraphQLCursorPaging;
+    static PageType = P;
 
-    @Field(() => GraphQLCursorPaging, { defaultValue: new GraphQLCursorPaging() })
+    @Field(() => P, { defaultValue: new P() })
     @ValidateNested()
-    @TransformType(() => GraphQLCursorPaging)
+    @Type(() => P)
     paging?: CursorPagingType;
 
     @Field(() => F, { defaultValue: new F() })
     @ValidateNested()
-    @TransformType(() => F)
+    @Type(() => F)
     filter?: Filter<T>;
 
     @Field(() => [S], { defaultValue: [] })
     @ValidateNested()
-    @TransformType(() => S)
+    @Type(() => S)
     sorting?: SortField<T>[];
   }
   return QueryImpl;

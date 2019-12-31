@@ -1,5 +1,4 @@
 {
-    "compileOnSave": false,
     "compilerOptions": {
         "sourceMap": true,
         "declaration": true,
@@ -10,10 +9,6 @@
         "target": "es2018",
         "module": "commonjs",
         "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "typeRoots": ["node_modules/@types"],
-        "skipLibCheck": true,
-        "skipDefaultLibCheck": true,
         "removeComments": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
@@ -23,8 +18,7 @@
         "noImplicitReturns": true,
         "pretty": true,
         "strict": true,
-        "noUnusedLocals": true,
-        "baseUrl": "./"
+        "noUnusedLocals": true
     },
-    "exclude": ["node_modules", "**/*.spec.ts"]
+    "exclude": ["node_modules"]
 }

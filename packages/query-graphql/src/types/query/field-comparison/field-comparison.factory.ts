@@ -1,5 +1,4 @@
-import { FilterFieldComparison } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { IsBoolean } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 import { ReturnTypeFunc } from '../../../external/type-graphql.types';
@@ -12,7 +11,7 @@ import { getOrCreateNumberFieldComparison } from './number-field-comparison.type
 import { getOrCreateDateFieldComparison } from './date-field-comparision.type';
 import { getOrCreateTimestampFieldComparison } from './timestamp-field-comparison.type';
 
-const filterComparisonMap = new Map<string, () => Type<FilterFieldComparison<unknown>>>();
+const filterComparisonMap = new Map<string, () => Class<FilterFieldComparison<unknown>>>();
 filterComparisonMap.set('StringFilterComparison', getOrCreateStringFieldComparison);
 filterComparisonMap.set('NumberFilterComparison', getOrCreateNumberFieldComparison);
 filterComparisonMap.set('IntFilterComparison', getOrCreateIntFieldComparison);
@@ -22,20 +21,20 @@ filterComparisonMap.set('DateFilterComparison', getOrCreateDateFieldComparison);
 filterComparisonMap.set('DateTimeFilterComparison', getOrCreateDateFieldComparison);
 filterComparisonMap.set('TimestampFilterComparison', getOrCreateTimestampFieldComparison);
 
-const createPrefixFromClass = <T>(TClass: Type<T>): string => {
+const createPrefixFromClass = <T>(TClass: Class<T>): string => {
   const clsName = TClass.name;
   return `${clsName.charAt(0).toUpperCase()}${clsName.slice(1)}`;
 };
 
 export function createFilterComparisonType<T>(
-  TClass: Type<T>,
+  TClass: Class<T>,
   returnTypeFunc?: ReturnTypeFunc,
-): Type<FilterFieldComparison<T>> {
-  const fieldType = returnTypeFunc ? (returnTypeFunc() as Type<unknown>) : TClass;
+): Class<FilterFieldComparison<T>> {
+  const fieldType = returnTypeFunc ? (returnTypeFunc() as Class<unknown>) : TClass;
   const inputName = `${createPrefixFromClass(fieldType)}FilterComparison`;
   const generator = filterComparisonMap.get(inputName);
   if (generator) {
-    return generator() as Type<FilterFieldComparison<T>>;
+    return generator() as Class<FilterFieldComparison<T>>;
   }
 
   @InputType(inputName)
@@ -88,5 +87,5 @@ export function createFilterComparisonType<T>(
   }
 
   filterComparisonMap.set(inputName, () => Fc);
-  return Fc as Type<FilterFieldComparison<T>>;
+  return Fc as Class<FilterFieldComparison<T>>;
 }

@@ -1,30 +1,30 @@
-import { Type } from '@nestjs/common';
 import { ArgsType, ObjectType } from 'type-graphql';
-import { GraphQLConnection, GraphQLQuery, StaticGraphQLConnectionType, StaticGraphQLQueryType } from '../../types';
+import { Class } from '@nestjs-query/core';
+import { ConnectionType, QueryType, StaticConnectionType, StaticQueryType } from '../../types';
 
 export type ReadResolverTypesOpts = {
   typeName?: string;
 };
 
 export type ReadResolverTypes<DTO> = {
-  QueryType: StaticGraphQLQueryType<DTO>;
-  ConnectionType: StaticGraphQLConnectionType<DTO>;
+  QueryType: StaticQueryType<DTO>;
+  ConnectionType: StaticConnectionType<DTO>;
 };
 
 export function readResolverTypesFactory<DTO>(
-  DTOClass: Type<DTO>,
+  DTOClass: Class<DTO>,
   opts: ReadResolverTypesOpts,
 ): ReadResolverTypes<DTO> {
   const baseName = opts.typeName ?? DTOClass.name;
 
   @ArgsType()
-  class QueryType extends GraphQLQuery(DTOClass) {}
+  class QueryTypeImpl extends QueryType(DTOClass) {}
 
   @ObjectType(`${baseName}Connection`)
-  class ConnectionType extends GraphQLConnection(DTOClass) {}
+  class ConnectionTypeImpl extends ConnectionType(DTOClass) {}
 
   return {
-    QueryType,
-    ConnectionType,
+    QueryType: QueryTypeImpl,
+    ConnectionType: ConnectionTypeImpl,
   };
 }

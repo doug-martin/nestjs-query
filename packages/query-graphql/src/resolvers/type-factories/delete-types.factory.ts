@@ -1,33 +1,35 @@
-import { DeepPartial, DeleteMany, DeleteOne, Filter } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { Class, DeepPartial, DeleteMany, DeleteOne, Filter } from '@nestjs-query/core';
 import { InputType, ObjectType } from 'type-graphql';
-import { GraphQLDeleteManyInput, GraphQLDeleteOneInput, PartialType } from '../../types';
+import { DeleteManyInputType, DeleteOneInputType, PartialType } from '../../types';
 
 export type DeleteResolverTypesOpts<DTO, D extends DeepPartial<DTO>> = {
   typeName?: string;
-  DeleteType?: () => Type<D>;
-  FilterType: Type<Filter<DTO>>;
+  DeleteType?: () => Class<D>;
+  FilterType: Class<Filter<DTO>>;
 };
 
 export type DeleteResolverTypes<DTO, D extends DeepPartial<DTO>> = {
-  DeleteType: Type<D>;
-  DeleteOneInputType: Type<DeleteOne>;
-  DeleteManyInputType: Type<DeleteMany<DTO>>;
+  DeleteType: Class<D>;
+  DeleteOneInputType: Class<DeleteOne>;
+  DeleteManyInputType: Class<DeleteMany<DTO>>;
 };
 
-const defaultDeleteType = <DTO, D extends DeepPartial<DTO>>(DTOClass: Type<DTO>, baseName: string): (() => Type<D>) => {
-  return (): Type<D> => {
+const defaultDeleteType = <DTO, D extends DeepPartial<DTO>>(
+  DTOClass: Class<DTO>,
+  baseName: string,
+): (() => Class<D>) => {
+  return (): Class<D> => {
     @ObjectType(`Delete${baseName}Partial`)
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     class PartialObj extends PartialType(DTOClass) {}
 
-    return PartialObj as Type<D>;
+    return PartialObj as Class<D>;
   };
 };
 
 export function deleteResolverTypesFactory<DTO, D extends DeepPartial<DTO>>(
-  DTOClass: Type<DTO>,
+  DTOClass: Class<DTO>,
   opts: DeleteResolverTypesOpts<DTO, D>,
 ): DeleteResolverTypes<DTO, D> {
   const baseName = opts.typeName ?? DTOClass.name;
@@ -35,14 +37,14 @@ export function deleteResolverTypesFactory<DTO, D extends DeepPartial<DTO>>(
   const { DeleteType = defaultDeleteType<DTO, D>(DTOClass, baseName) } = opts;
 
   @InputType(`${baseName}DeleteOneInput`)
-  class DeleteOneInputType extends GraphQLDeleteOneInput() {}
+  class DeleteOneInputTypeImpl extends DeleteOneInputType() {}
 
   @InputType(`${baseName}DeleteManyInput`)
-  class DeleteManyInputType extends GraphQLDeleteManyInput(opts.FilterType) {}
+  class DeleteManyInputTypeImpl extends DeleteManyInputType(opts.FilterType) {}
 
   return {
     DeleteType: DeleteType(),
-    DeleteOneInputType,
-    DeleteManyInputType,
+    DeleteOneInputType: DeleteOneInputTypeImpl,
+    DeleteManyInputType: DeleteManyInputTypeImpl,
   };
 }

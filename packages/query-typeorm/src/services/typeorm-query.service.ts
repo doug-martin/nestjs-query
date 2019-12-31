@@ -10,9 +10,10 @@ import {
   CreateOne,
   CreateMany,
   DeepPartial,
+  Class,
 } from '@nestjs-query/core';
 import { Repository, DeepPartial as TypeOrmDeepPartial } from 'typeorm';
-import { NotFoundException, Type } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FilterQueryBuilder } from '../query';
@@ -22,8 +23,8 @@ export class TypeormQueryService<Entity> extends AbstractQueryService<Entity> {
     super();
   }
 
-  private get entityType(): Type<Entity> {
-    return this.repo.target as Type<Entity>;
+  private get entityType(): Class<Entity> {
+    return this.repo.target as Class<Entity>;
   }
 
   private get alias(): string {

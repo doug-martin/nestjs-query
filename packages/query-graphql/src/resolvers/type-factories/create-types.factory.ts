@@ -1,47 +1,46 @@
-import { DeepPartial, CreateMany, CreateOne } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { DeepPartial, CreateMany, CreateOne, Class } from '@nestjs-query/core';
 import { InputType } from 'type-graphql';
-import { GraphQLCreateManyInput, GraphQLCreateOneInput, PartialInputType } from '../../types';
+import { CreateManyInputType, CreateOneInputType, PartialInputType } from '../../types';
 
 export interface CreateResolverTypesOpts<DTO, C extends DeepPartial<DTO>> {
   typeName?: string;
-  CreateType?(): Type<C>;
+  CreateType?(): Class<C>;
 }
 
 export type CreateResolverTypes<DTO, C extends DeepPartial<DTO>> = {
-  CreateInputType: Type<C>;
-  CreateOneInputType: Type<CreateOne<DTO, C>>;
-  CreateManyInputType: Type<CreateMany<DTO, C>>;
+  CreateInputType: Class<C>;
+  CreateOneInputType: Class<CreateOne<DTO, C>>;
+  CreateManyInputType: Class<CreateMany<DTO, C>>;
 };
 
 const defaultCreateInput = <DTO, C extends DeepPartial<DTO>>(
-  DTOClass: Type<DTO>,
+  DTOClass: Class<DTO>,
   baseName: string,
-): (() => Type<C>) => {
-  return (): Type<C> => {
+): (() => Class<C>) => {
+  return (): Class<C> => {
     @InputType(`Create${baseName}PartialInput`)
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     class PartialInput extends PartialInputType(DTOClass) {}
 
-    return PartialInput as Type<C>;
+    return PartialInput as Class<C>;
   };
 };
 
 export function createResolverTypesFactory<DTO, C extends DeepPartial<DTO>>(
-  DTOClass: Type<DTO>,
+  DTOClass: Class<DTO>,
   opts: CreateResolverTypesOpts<DTO, C>,
 ): CreateResolverTypes<DTO, C> {
   const baseName = opts.typeName ?? DTOClass.name;
 
   const { CreateType = defaultCreateInput<DTO, C>(DTOClass, baseName) } = opts;
-  const CreateInputType: Type<C> = CreateType();
+  const CreateInputType: Class<C> = CreateType();
 
   @InputType(`${baseName}CreateOneInput`)
-  class CreateOneInputType extends GraphQLCreateOneInput(CreateInputType) {}
+  class CreateOneInputTypeImpl extends CreateOneInputType(CreateInputType) {}
 
   @InputType(`${baseName}CreateManyInput`)
-  class CreateManyInputType extends GraphQLCreateManyInput(CreateInputType) {}
+  class CreateManyInputTypeImpl extends CreateManyInputType(CreateInputType) {}
 
-  return { CreateInputType, CreateOneInputType, CreateManyInputType };
+  return { CreateInputType, CreateOneInputType: CreateOneInputTypeImpl, CreateManyInputType: CreateManyInputTypeImpl };
 }

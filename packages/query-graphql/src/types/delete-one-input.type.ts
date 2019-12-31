@@ -1,8 +1,7 @@
-import { DeleteOne } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { Class, DeleteOne } from '@nestjs-query/core';
 import { Field, ID, InputType } from 'type-graphql';
 
-export function GraphQLDeleteOneInput(): Type<DeleteOne> {
+export function DeleteOneInputType(): Class<DeleteOne> {
   @InputType({ isAbstract: true })
   class DeleteOneImpl implements DeleteOne {
     @Field(() => ID)

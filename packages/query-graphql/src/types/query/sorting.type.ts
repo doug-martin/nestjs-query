@@ -1,5 +1,4 @@
-import { SortDirection, SortField, SortNulls } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { Class, SortDirection, SortField, SortNulls } from '@nestjs-query/core';
 import { Field, InputType, registerEnumType } from 'type-graphql';
 import { IsEnum, IsIn } from 'class-validator';
 import { getMetadataStorage } from '../../metadata';
@@ -15,7 +14,7 @@ registerEnumType(SortNulls, {
   description: 'Sort Nulls Options', // this one is optional
 });
 
-export function GraphQLSortType<T>(TClass: Type<T>): Type<SortField<T>> {
+export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
   const metadataStorage = getMetadataStorage();
   const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TClass);
   if (!objMetadata) {

@@ -1,7 +1,7 @@
 import {
-  GraphQLConnectionType,
+  ConnectionType,
   GraphQLQueryResolver,
-  GraphQLQueryType,
+  QueryType,
 } from '@nestjs-query/query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { CreateTodoItem } from './dto/create-todo-item.dto';
@@ -26,8 +26,8 @@ export class TodoItemResolver extends GraphQLQueryResolver(TodoItemDTO, {
   @Query(() => TodoItemResolver.ConnectionType)
   completedTodos(
     @Args({ type: () => TodoItemResolver.QueryType })
-    query: GraphQLQueryType<TodoItemDTO>,
-  ): Promise<GraphQLConnectionType<TodoItemDTO>> {
+    query: QueryType<TodoItemDTO>,
+  ): Promise<ConnectionType<TodoItemDTO>> {
     const filter = { ...query.filter, ...{ completed: { is: true } } };
     return this.query({ ...query, ...{ filter } });
   }
@@ -35,8 +35,8 @@ export class TodoItemResolver extends GraphQLQueryResolver(TodoItemDTO, {
   @Query(() => TodoItemResolver.ConnectionType)
   uncompletedTodos(
     @Args({ type: () => TodoItemResolver.QueryType })
-    query: GraphQLQueryType<TodoItemDTO>,
-  ): Promise<GraphQLConnectionType<TodoItemDTO>> {
+    query: QueryType<TodoItemDTO>,
+  ): Promise<ConnectionType<TodoItemDTO>> {
     const filter = { ...query.filter, ...{ completed: { is: false } } };
     return this.query({ ...query, ...{ filter } });
   }

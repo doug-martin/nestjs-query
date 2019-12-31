@@ -1,5 +1,6 @@
 import {
   AbstractQueryService,
+  Class,
   CreateMany,
   CreateOne,
   DeepPartial,
@@ -10,8 +11,7 @@ import {
   UpdateManyResponse,
   UpdateOne,
 } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
-import { GraphQLConnectionType, GraphQLQueryType, StaticGraphQLConnectionType, StaticGraphQLQueryType } from '../types';
+import { ConnectionType, QueryType, StaticConnectionType, StaticQueryType } from '../types';
 
 export interface StaticGraphQLResolver<
   DTO,
@@ -19,14 +19,14 @@ export interface StaticGraphQLResolver<
   U extends DeepPartial<DTO>,
   D extends DeepPartial<DTO>
 > {
-  QueryType: StaticGraphQLQueryType<DTO>;
-  ConnectionType: StaticGraphQLConnectionType<DTO>;
-  CreateOneInputType: Type<CreateOne<DTO, C>>;
-  CreateManyInputType: Type<CreateMany<DTO, C>>;
-  UpdateOneInputType: Type<UpdateOne<DTO, U>>;
-  UpdateManyInputType: Type<UpdateMany<DTO, U>>;
-  DeleteOneInputType: Type<DeleteOne>;
-  DeleteManyInputType: Type<DeleteMany<DTO>>;
+  QueryType: StaticQueryType<DTO>;
+  ConnectionType: StaticConnectionType<DTO>;
+  CreateOneInputType: Class<CreateOne<DTO, C>>;
+  CreateManyInputType: Class<CreateMany<DTO, C>>;
+  UpdateOneInputType: Class<UpdateOne<DTO, U>>;
+  UpdateManyInputType: Class<UpdateMany<DTO, U>>;
+  DeleteOneInputType: Class<DeleteOne>;
+  DeleteManyInputType: Class<DeleteMany<DTO>>;
   new (service: AbstractQueryService<DTO>): GraphQLResolver<DTO, C, U, D>;
 }
 
@@ -36,7 +36,7 @@ export interface GraphQLResolver<
   U extends DeepPartial<DTO>,
   D extends DeepPartial<DTO>
 > {
-  query(query: GraphQLQueryType<DTO>): Promise<GraphQLConnectionType<DTO>>;
+  query(query: QueryType<DTO>): Promise<ConnectionType<DTO>>;
 
   createOne(input: CreateOne<DTO, C>): Promise<DTO>;
 

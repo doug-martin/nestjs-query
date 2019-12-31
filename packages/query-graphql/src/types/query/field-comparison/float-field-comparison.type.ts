@@ -1,12 +1,11 @@
-import { FilterFieldComparison } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { Field, Float, InputType } from 'type-graphql';
 import { IsBoolean, IsNumber } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
-let floatFieldComparison: Type<FilterFieldComparison<number>>;
+let floatFieldComparison: Class<FilterFieldComparison<number>>;
 
-export function getOrCreateFloatFieldComparison(): Type<FilterFieldComparison<number>> {
+export function getOrCreateFloatFieldComparison(): Class<FilterFieldComparison<number>> {
   if (!floatFieldComparison) {
     @InputType()
     class FloatFieldComparison implements FilterFieldComparison<number> {

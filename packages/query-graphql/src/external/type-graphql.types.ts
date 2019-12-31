@@ -1,8 +1,8 @@
-import { Type } from '@nestjs/common';
+import { Class } from '@nestjs-query/core';
 import { GraphQLScalarType } from 'graphql';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export declare type TypeValue = Type<any> | GraphQLScalarType | Function | object | symbol;
+export declare type TypeValue = Class<any> | GraphQLScalarType | Function | object | symbol;
 export declare type ReturnTypeFuncValue = TypeValue | [TypeValue];
 export declare type ReturnTypeFunc = (returns?: void) => ReturnTypeFuncValue;
 export declare type NullableListOptions = 'items' | 'itemsAndList';

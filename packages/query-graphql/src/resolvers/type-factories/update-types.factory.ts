@@ -1,48 +1,47 @@
-import { DeepPartial, UpdateMany, UpdateOne, Filter } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { DeepPartial, UpdateMany, UpdateOne, Filter, Class } from '@nestjs-query/core';
 import { InputType } from 'type-graphql';
-import { GraphQLUpdateManyInput, GraphQLUpdateOneInput, PartialInputType } from '../../types';
+import { PartialInputType, UpdateManyInputType, UpdateOneInputType } from '../../types';
 
 export type UpdateResolverTypesOpts<DTO, U extends DeepPartial<DTO>> = {
   typeName?: string;
-  UpdateType?: () => Type<U>;
-  FilterType: Type<Filter<DTO>>;
+  UpdateType?: () => Class<U>;
+  FilterType: Class<Filter<DTO>>;
 };
 
 export type UpdateResolverTypes<DTO, U extends DeepPartial<DTO>> = {
-  UpdateInputType: Type<U>;
-  UpdateOneInputType: Type<UpdateOne<DTO, U>>;
-  UpdateManyInputType: Type<UpdateMany<DTO, U>>;
+  UpdateInputType: Class<U>;
+  UpdateOneInputType: Class<UpdateOne<DTO, U>>;
+  UpdateManyInputType: Class<UpdateMany<DTO, U>>;
 };
 
 const defaultUpdateInput = <DTO, U extends DeepPartial<DTO>>(
-  DTOClass: Type<DTO>,
+  DTOClass: Class<DTO>,
   baseName: string,
-): (() => Type<U>) => {
-  return (): Type<U> => {
+): (() => Class<U>) => {
+  return (): Class<U> => {
     @InputType(`Update${baseName}PartialInput`)
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     class PartialInput extends PartialInputType(DTOClass) {}
 
-    return PartialInput as Type<U>;
+    return PartialInput as Class<U>;
   };
 };
 
 export function updateResolverTypesFactory<DTO, U extends DeepPartial<DTO>>(
-  DTOClass: Type<DTO>,
+  DTOClass: Class<DTO>,
   opts: UpdateResolverTypesOpts<DTO, U>,
 ): UpdateResolverTypes<DTO, U> {
   const baseName = opts.typeName ?? DTOClass.name;
 
   const { UpdateType = defaultUpdateInput<DTO, U>(DTOClass, baseName) } = opts;
-  const UpdateInputType: Type<U> = UpdateType();
+  const UpdateInputType: Class<U> = UpdateType();
 
   @InputType(`${baseName}UpdateOneInput`)
-  class UpdateOneInputType extends GraphQLUpdateOneInput(UpdateInputType) {}
+  class UpdateOneInputTypeImpl extends UpdateOneInputType(UpdateInputType) {}
 
   @InputType(`${baseName}UpdateManyInput`)
-  class UpdateManyInputType extends GraphQLUpdateManyInput(opts.FilterType, UpdateInputType) {}
+  class UpdateManyInputTypeImpl extends UpdateManyInputType(opts.FilterType, UpdateInputType) {}
 
-  return { UpdateInputType, UpdateOneInputType, UpdateManyInputType };
+  return { UpdateInputType, UpdateOneInputType: UpdateOneInputTypeImpl, UpdateManyInputType: UpdateManyInputTypeImpl };
 }

@@ -1,11 +1,10 @@
-import { UpdateMany, DeepPartial, Filter } from '@nestjs-query/core';
-import { Type } from '@nestjs/common';
+import { UpdateMany, DeepPartial, Filter, Class } from '@nestjs-query/core';
 import { Field, InputType } from 'type-graphql';
 
-export function GraphQLUpdateManyInput<T, U extends DeepPartial<T>, F extends Filter<T>>(
-  FilterType: Type<F>,
-  UpdateType: Type<U>,
-): Type<UpdateMany<T, U>> {
+export function UpdateManyInputType<T, U extends DeepPartial<T>, F extends Filter<T>>(
+  FilterType: Class<F>,
+  UpdateType: Class<U>,
+): Class<UpdateMany<T, U>> {
   @InputType({ isAbstract: true })
   class UpdateManyImpl implements UpdateMany<T, U> {
     @Field(() => FilterType)

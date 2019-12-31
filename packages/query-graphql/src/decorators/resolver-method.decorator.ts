@@ -4,19 +4,19 @@ import {
   ExceptionFilter,
   NestInterceptor,
   PipeTransform,
-  Type,
   UseFilters,
   UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
+import { Class } from '@nestjs-query/core';
 
 export type ResolverMethodOptions = {
   disabled?: boolean;
-  guards?: Type<CanActivate>[];
-  interceptors?: Type<NestInterceptor<any, any>>[];
-  pipes?: Type<PipeTransform<any, any>>[];
-  filters?: Type<ExceptionFilter<any>>[];
+  guards?: Class<CanActivate>[];
+  interceptors?: Class<NestInterceptor<any, any>>[];
+  pipes?: Class<PipeTransform<any, any>>[];
+  filters?: Class<ExceptionFilter<any>>[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -32,18 +32,18 @@ export function isDisabled(opts: ResolverMethodOptions[]): boolean {
 export function ResolverMethod(...opts: ResolverMethodOptions[]) {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return <T>(target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<T>): void => {
-    UseGuards(...createSetArray<Type<CanActivate>>(...opts.map(o => o.guards ?? [])))(target, propertyKey, descriptor);
-    UseInterceptors(...createSetArray<Type<NestInterceptor<any, any>>>(...opts.map(o => o.interceptors ?? [])))(
+    UseGuards(...createSetArray<Class<CanActivate>>(...opts.map(o => o.guards ?? [])))(target, propertyKey, descriptor);
+    UseInterceptors(...createSetArray<Class<NestInterceptor<any, any>>>(...opts.map(o => o.interceptors ?? [])))(
       target,
       propertyKey,
       descriptor,
     );
-    UsePipes(...createSetArray<Type<PipeTransform<any, any>>>(...opts.map(o => o.pipes ?? [])))(
+    UsePipes(...createSetArray<Class<PipeTransform<any, any>>>(...opts.map(o => o.pipes ?? [])))(
       target,
       propertyKey,
       descriptor,
     );
-    UseFilters(...createSetArray<Type<ExceptionFilter<any>>>(...opts.map(o => o.filters ?? [])))(
+    UseFilters(...createSetArray<Class<ExceptionFilter<any>>>(...opts.map(o => o.filters ?? [])))(
       target,
       propertyKey,
       descriptor,

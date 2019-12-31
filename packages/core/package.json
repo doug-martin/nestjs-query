@@ -1,12 +1,15 @@
 {
   "name": "@nestjs-query/core",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Base query package",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
   "license": "ISC",
-  "main": "dist/index.js",
-  "files": [ "dist" ],
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist/src/**"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/doug-martin/nestjs-query.git"
@@ -18,5 +21,8 @@
   },
   "bugs": {
     "url": "https://github.com/doug-martin/nestjs-query/issues"
+  },
+  "devDependencies": {
+    "typescript": "^3.7.0"
   }
 }

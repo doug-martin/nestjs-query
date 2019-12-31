@@ -1,6 +1,6 @@
 import { GraphQLScalarType, Kind } from 'graphql';
 
-export type ConnectionCursor = string;
+export type ConnectionCursorType = string;
 
 export const ConnectionCursorScalar = new GraphQLScalarType({
   name: 'ConnectionCursor',

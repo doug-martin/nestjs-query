@@ -1,17 +1,32 @@
 import { Field, ObjectType } from 'type-graphql';
-import { ConnectionCursor, ConnectionCursorScalar } from '../cursor.scalar';
+import { Class } from '@nestjs-query/core';
+import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
 
-@ObjectType('PageInfo')
-export class PageInfoType {
-  @Field(() => Boolean, { nullable: true })
+export interface PageInfoType {
   hasNextPage?: boolean | null;
-
-  @Field(() => Boolean, { nullable: true })
   hasPreviousPage?: boolean | null;
-
-  @Field(() => ConnectionCursorScalar, { nullable: true })
-  startCursor?: ConnectionCursor | null;
-
-  @Field(() => ConnectionCursorScalar, { nullable: true })
-  endCursor?: ConnectionCursor | null;
+  startCursor?: ConnectionCursorType | null;
+  endCursor?: ConnectionCursorType | null;
 }
+
+let pageInfoType: Class<PageInfoType> | null = null;
+export const PageInfoType = (): Class<PageInfoType> => {
+  if (!pageInfoType) {
+    @ObjectType('PageInfo')
+    class PageInfoTypeImpl {
+      @Field(() => Boolean, { nullable: true })
+      hasNextPage?: boolean | null;
+
+      @Field(() => Boolean, { nullable: true })
+      hasPreviousPage?: boolean | null;
+
+      @Field(() => ConnectionCursorScalar, { nullable: true })
+      startCursor?: ConnectionCursorType | null;
+
+      @Field(() => ConnectionCursorScalar, { nullable: true })
+      endCursor?: ConnectionCursorType | null;
+    }
+    pageInfoType = PageInfoTypeImpl;
+  }
+  return pageInfoType;
+};

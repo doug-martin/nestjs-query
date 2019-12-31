@@ -1,11 +1,11 @@
 import { Field } from 'type-graphql';
-import { Type } from '@nestjs/common';
+import { Class } from '@nestjs-query/core';
 import { AdvancedOptions, MethodAndPropDecorator, ReturnTypeFunc } from '../external/type-graphql.types';
 import { getMetadataStorage } from '../metadata';
 
 export interface FilterableFieldDescriptor<T> {
   propertyName: string;
-  type: Type<T>;
+  type: Class<T>;
   returnTypeFunc?: ReturnTypeFunc;
   advancedOptions?: AdvancedOptions;
 }
@@ -36,7 +36,7 @@ export function FilterableField(
     descriptor: TypedPropertyDescriptor<D>,
   ): TypedPropertyDescriptor<D> | void => {
     const Ctx = Reflect.getMetadata('design:type', target.constructor.prototype, propertyName);
-    getMetadataStorage().addFilterableObjectField(target.constructor as Type<unknown>, {
+    getMetadataStorage().addFilterableObjectField(target.constructor as Class<unknown>, {
       propertyName: propertyName.toString(),
       type: Ctx,
       returnTypeFunc,
