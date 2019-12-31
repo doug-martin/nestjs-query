@@ -1,3 +1,3 @@
 export * from './interfaces';
-export * from './service';
+export * from './services';
 export * from './common';

@@ -1,6 +1,6 @@
 import pick from 'lodash.pick';
 import {
-  AbstractQueryService,
+  QueryService,
   Class,
   CreateMany,
   CreateOne,
@@ -100,7 +100,7 @@ export function GraphQLQueryResolver<
 
     static DeleteManyInputType = DeleteManyInputType;
 
-    constructor(private readonly service: AbstractQueryService<DTO>) {}
+    constructor(private readonly service: QueryService<DTO>) {}
 
     @ResolverQuery(
       () => CT,

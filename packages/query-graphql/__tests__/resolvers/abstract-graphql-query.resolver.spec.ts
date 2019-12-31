@@ -2,7 +2,7 @@
 import 'reflect-metadata';
 import * as nestGraphql from '@nestjs/graphql';
 import {
-  AbstractQueryService,
+  QueryService,
   CreateOne,
   CreateMany,
   UpdateOne,
@@ -54,7 +54,7 @@ describe('GraphQLQueryResolver', () => {
   }
 
   class TestResolver extends GraphQLQueryResolver(TestResolverDTO) {
-    constructor(service: AbstractQueryService<TestResolverDTO>) {
+    constructor(service: QueryService<TestResolverDTO>) {
       super(service);
     }
   }
@@ -116,13 +116,13 @@ describe('GraphQLQueryResolver', () => {
     assertResolverMutationCall(2, TestResolverDTO, { name: 'updateOneTestResolverDTO' }, {}, {});
     assertArgsCall(3, { name: 'input', type: () => UpdateOneInputType });
 
-    assertResolverMutationCall(3, UpdateManyResponseType, { name: 'updateManyTestResolverDTOS' }, {}, {});
+    assertResolverMutationCall(3, UpdateManyResponseType(), { name: 'updateManyTestResolverDTOS' }, {}, {});
     assertArgsCall(4, { name: 'input', type: () => UpdateManyInputType });
 
     assertResolverMutationCall(4, DeleteType, { name: 'deleteOneTestResolverDTO' }, {}, {});
     assertArgsCall(5, { name: 'input', type: () => DeleteOneInputType });
 
-    assertResolverMutationCall(5, DeleteManyResponseType, { name: 'deleteManyTestResolverDTOS' }, {}, {});
+    assertResolverMutationCall(5, DeleteManyResponseType(), { name: 'deleteManyTestResolverDTOS' }, {}, {});
     assertArgsCall(6, { name: 'input', type: () => DeleteManyInputType });
   });
 
@@ -188,7 +188,7 @@ describe('GraphQLQueryResolver', () => {
       });
 
       it('should call the service createOne with the provided input', async () => {
-        const mockService = mock<AbstractQueryService<TestResolverDTO>>();
+        const mockService = mock<QueryService<TestResolverDTO>>();
         const input: CreateOne<TestResolverDTO, Partial<TestResolverDTO>> = {
           item: {
             stringField: 'foo',
@@ -245,7 +245,7 @@ describe('GraphQLQueryResolver', () => {
       });
 
       it('should call the service createMany with the provided input', async () => {
-        const mockService = mock<AbstractQueryService<TestResolverDTO>>();
+        const mockService = mock<QueryService<TestResolverDTO>>();
         const input: CreateMany<TestResolverDTO, Partial<TestResolverDTO>> = {
           items: [
             {
@@ -315,7 +315,7 @@ describe('GraphQLQueryResolver', () => {
       });
 
       it('should call the service query with the provided input', async () => {
-        const mockService = mock<AbstractQueryService<TestResolverDTO>>();
+        const mockService = mock<QueryService<TestResolverDTO>>();
         const query: GraphQLQueryType<TestResolverDTO> = {
           filter: {
             stringField: { eq: 'foo' },
@@ -363,7 +363,7 @@ describe('GraphQLQueryResolver', () => {
       assertResolverMutationCall(2, TestResolverDTO, { name: 'updateOneTestObj' }, {}, {});
       assertArgsCall(3, { name: 'input', type: () => UpdateOneInputType });
 
-      assertResolverMutationCall(3, UpdateManyResponseType, { name: 'updateManyTestObjs' }, {}, {});
+      assertResolverMutationCall(3, UpdateManyResponseType(), { name: 'updateManyTestObjs' }, {}, {});
       assertArgsCall(4, { name: 'input', type: () => UpdateManyInputType });
     });
 
@@ -402,12 +402,18 @@ describe('GraphQLQueryResolver', () => {
         );
         assertArgsCall(3, { name: 'input', type: () => UpdateOneInputType });
 
-        assertResolverMutationCall(3, UpdateManyResponseType, { name: 'updateManyTestResolverDTOS' }, mutationOpts, {});
+        assertResolverMutationCall(
+          3,
+          UpdateManyResponseType(),
+          { name: 'updateManyTestResolverDTOS' },
+          mutationOpts,
+          {},
+        );
         assertArgsCall(4, { name: 'input', type: () => UpdateManyInputType });
       });
 
       it('should call the service updateOne with the provided input', async () => {
-        const mockService = mock<AbstractQueryService<TestResolverDTO>>();
+        const mockService = mock<QueryService<TestResolverDTO>>();
         const input: UpdateOne<TestResolverDTO, Partial<TestResolverDTO>> = {
           id: 'id-1',
           update: {
@@ -456,7 +462,7 @@ describe('GraphQLQueryResolver', () => {
 
         assertResolverMutationCall(
           3,
-          UpdateManyResponseType,
+          UpdateManyResponseType(),
           { name: 'updateManyTestResolverDTOS' },
           mutationOpts,
           updateManyOpts,
@@ -465,7 +471,7 @@ describe('GraphQLQueryResolver', () => {
       });
 
       it('should call the service updateMany with the provided input', async () => {
-        const mockService = mock<AbstractQueryService<TestResolverDTO>>();
+        const mockService = mock<QueryService<TestResolverDTO>>();
         const input: UpdateMany<TestResolverDTO, Partial<TestResolverDTO>> = {
           filter: {
             id: { in: ['id-1'] },
@@ -519,7 +525,7 @@ describe('GraphQLQueryResolver', () => {
       assertResolverMutationCall(4, DeleteType, { name: 'deleteOneTestObj' }, {}, {});
       assertArgsCall(5, { name: 'input', type: () => DeleteOneInputType });
 
-      assertResolverMutationCall(5, DeleteManyResponseType, { name: 'deleteManyTestObjs' }, {}, {});
+      assertResolverMutationCall(5, DeleteManyResponseType(), { name: 'deleteManyTestObjs' }, {}, {});
       assertArgsCall(6, { name: 'input', type: () => DeleteManyInputType });
     });
 
@@ -556,12 +562,18 @@ describe('GraphQLQueryResolver', () => {
         assertResolverMutationCall(4, DeleteType, { name: 'deleteOneTestResolverDTO' }, mutationOpts, deleteOneOpts);
         assertArgsCall(5, { name: 'input', type: () => DeleteOneInputType });
 
-        assertResolverMutationCall(5, DeleteManyResponseType, { name: 'deleteManyTestResolverDTOS' }, mutationOpts, {});
+        assertResolverMutationCall(
+          5,
+          DeleteManyResponseType(),
+          { name: 'deleteManyTestResolverDTOS' },
+          mutationOpts,
+          {},
+        );
         assertArgsCall(6, { name: 'input', type: () => DeleteManyInputType });
       });
 
       it('should call the service deleteOne with the provided input', async () => {
-        const mockService = mock<AbstractQueryService<TestResolverDTO>>();
+        const mockService = mock<QueryService<TestResolverDTO>>();
         const input: DeleteOne = {
           id: 'id-1',
         };
@@ -611,7 +623,7 @@ describe('GraphQLQueryResolver', () => {
 
         assertResolverMutationCall(
           5,
-          DeleteManyResponseType,
+          DeleteManyResponseType(),
           { name: 'deleteManyTestResolverDTOS' },
           mutationOpts,
           deleteManyOpts,
@@ -620,7 +632,7 @@ describe('GraphQLQueryResolver', () => {
       });
 
       it('should call the service deleteMany with the provided input', async () => {
-        const mockService = mock<AbstractQueryService<TestResolverDTO>>();
+        const mockService = mock<QueryService<TestResolverDTO>>();
         const input: DeleteMany<TestResolverDTO> = {
           filter: {
             id: { in: ['id-1'] },

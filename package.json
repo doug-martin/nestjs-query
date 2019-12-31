@@ -7,7 +7,7 @@
     "build": "lerna run build",
     "pub": "lerna publish from-git",
     "version": "lerna version",
-    "test": "npm run lint && npm run jest && npm run examples",
+    "test": "npm run lint && npm run jest",
     "lint": "eslint --ext=.ts .",
     "jest": "jest --runInBand --coverage",
     "coverage": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
@@ -23,6 +23,7 @@
     "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-jest": "^23.1.1",
     "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^3.1.0",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
     "lerna": "^3.20.0",

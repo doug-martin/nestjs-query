@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { buildSchemaSync, Query, Resolver } from 'type-graphql';
 import { printSchema } from 'graphql';
-import { UpdateManyResponseType } from '../../src';
 import { UpdateManyResponse } from '@nestjs-query/core';
+import { UpdateManyResponseType } from '../../src';
 
 describe('UpdateManyResponseType', (): void => {
   const URT = UpdateManyResponseType();

@@ -1,5 +1,4 @@
 import {
-  AbstractQueryService,
   Query,
   DeleteManyResponse,
   DeleteOne,
@@ -11,6 +10,7 @@ import {
   CreateMany,
   DeepPartial,
   Class,
+  QueryService,
 } from '@nestjs-query/core';
 import { Repository, DeepPartial as TypeOrmDeepPartial } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
@@ -18,10 +18,8 @@ import { plainToClass } from 'class-transformer';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FilterQueryBuilder } from '../query';
 
-export class TypeormQueryService<Entity> extends AbstractQueryService<Entity> {
-  constructor(protected repo: Repository<Entity>, readonly filterQueryBuilder = new FilterQueryBuilder(repo)) {
-    super();
-  }
+export class TypeormQueryService<Entity> implements QueryService<Entity> {
+  constructor(protected repo: Repository<Entity>, readonly filterQueryBuilder = new FilterQueryBuilder(repo)) {}
 
   private get entityType(): Class<Entity> {
     return this.repo.target as Class<Entity>;
@@ -65,7 +63,7 @@ export class TypeormQueryService<Entity> extends AbstractQueryService<Entity> {
 
   async deleteMany(deleteMany: DeleteMany<Entity>): Promise<DeleteManyResponse> {
     const deleteResult = await this.filterQueryBuilder.delete({ filter: deleteMany.filter }).execute();
-    return this.createDeleteManyResponse(deleteResult.affected || 0);
+    return { deletedCount: deleteResult.affected || 0 };
   }
 
   async deleteOne(deleteOne: DeleteOne): Promise<Entity> {
@@ -78,7 +76,7 @@ export class TypeormQueryService<Entity> extends AbstractQueryService<Entity> {
       .update({ filter: update.filter })
       .set({ ...(update.update as QueryDeepPartialEntity<Entity>) })
       .execute();
-    return this.createUpdateManyResponse(updateResult.affected || 0);
+    return { updatedCount: updateResult.affected || 0 };
   }
 
   async updateOne<U extends DeepPartial<Entity>>(update: UpdateOne<Entity, U>): Promise<Entity> {

@@ -11,5 +11,4 @@ export * from './update-many.interface';
 export * from './delete-many-response.interface';
 export * from './delete-one.interface';
 export * from './delete-many.interface';
-export * from './class.type';
-
+export * from './class.interface';

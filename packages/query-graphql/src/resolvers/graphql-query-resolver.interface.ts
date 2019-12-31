@@ -1,5 +1,4 @@
 import {
-  AbstractQueryService,
   Class,
   CreateMany,
   CreateOne,
@@ -7,6 +6,7 @@ import {
   DeleteMany,
   DeleteManyResponse,
   DeleteOne,
+  QueryService,
   UpdateMany,
   UpdateManyResponse,
   UpdateOne,
@@ -27,7 +27,7 @@ export interface StaticGraphQLResolver<
   UpdateManyInputType: Class<UpdateMany<DTO, U>>;
   DeleteOneInputType: Class<DeleteOne>;
   DeleteManyInputType: Class<DeleteMany<DTO>>;
-  new (service: AbstractQueryService<DTO>): GraphQLResolver<DTO, C, U, D>;
+  new (service: QueryService<DTO>): GraphQLResolver<DTO, C, U, D>;
 }
 
 export interface GraphQLResolver<
