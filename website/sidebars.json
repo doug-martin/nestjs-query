@@ -1,0 +1,9 @@
+{
+  "docs": {
+    "Introduction": ["getting-started"],
+    "Core": ["core"],
+    "Graphql": ["graphql"],
+    "Typeorm": ["typeorm"],
+    "API": ["api"]
+  }
+}
