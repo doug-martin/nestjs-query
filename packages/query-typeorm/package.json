@@ -12,8 +12,11 @@
     "test": "__tests__"
   },
   "files": [
-    "dist"
+    "dist/src/**"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@nestjs-query/core": "^0.0.1-alpha.0"
   },

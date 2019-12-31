@@ -11,8 +11,11 @@
     "lib": "dist"
   },
   "files": [
-    "lib"
+    "dist/src/**"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/doug-martin/nestjs-query.git",
