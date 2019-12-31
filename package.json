@@ -1,0 +1,36 @@
+{
+  "name": "nestjs-query",
+  "private": true,
+  "scripts": {
+    "bootstrap": "lerna bootstrap --hoist",
+    "clean": "lerna run clean",
+    "build": "lerna run build",
+    "pub": "lerna publish from-git",
+    "version": "lerna version",
+    "test": "npm run lint && npm run jest",
+    "lint": "eslint --ext=.ts .",
+    "jest": "jest --runInBand --coverage",
+    "coverage": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@typescript-eslint/eslint-plugin": "^2.13.0",
+    "@typescript-eslint/parser": "^2.13.0",
+    "coveralls": "^3.0.9",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^3.1.0",
+    "jest": "^24.9.0",
+    "jest-extended": "^0.11.2",
+    "lerna": "^3.20.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.2.0",
+    "tsconfig-extends": "^1.0.1",
+    "typescript": "^3.7.0"
+  }
+}

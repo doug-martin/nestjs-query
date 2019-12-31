@@ -1,0 +1,46 @@
+{
+  "name": "@nestjs-query/query-typeorm",
+  "version": "0.0.0",
+  "description": "Typeorm adapter for @nestjs-query/core",
+  "author": "doug-martin <doug@dougamartin.com>",
+  "homepage": "https://github.com/doug-martin/nestjs-query#readme",
+  "license": "ISC",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "directories": {
+    "lib": "dist",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@nestjs-query/core": "^0.0.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^6.9.0",
+    "class-transformer": "^0.2.3",
+    "typeorm": "^0.2.20"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^6.9.0",
+    "class-transformer": "^0.2.3",
+    "typeorm": "^0.2.20",
+    "sqlite3": "^4.1.0",
+    "ts-mockito": "^2.5.0",
+    "typescript": "^3.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doug-martin/nestjs-query.git",
+    "directory": "packages/query-typeorm"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
+    "compile": "tsc -p tsconfig.build.json"
+  },
+  "bugs": {
+    "url": "https://github.com/doug-martin/nestjs-query/issues"
+  }
+}

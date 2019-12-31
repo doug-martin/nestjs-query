@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  postgres:
+    image: "postgres:11.5"
+    environment:
+      - "POSTGRES_USER=graphqltypeorm"
+      - "POSTGRES_DB=graphql_typeorm"
+    expose:
+      - "5432"
+    ports:
+      - "5436:5432"

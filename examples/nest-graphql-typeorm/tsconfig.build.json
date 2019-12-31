@@ -1,0 +1,9 @@
+{
+    "extends": "../../tsconfig.build.json",
+    "compilerOptions": {
+        "declaration": false,
+        "outDir": "./dist"
+    },
+    "include": ["src", "migrations"],
+    "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+}
