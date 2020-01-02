@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 The core of `nestjs-query` is the query type. The query interface contains three optional fields.
 
-### `paging` 
+### `paging`
 
 The `core` package defines a basic paging interface has two optional fields `limit` and `offset`. 
 
@@ -61,8 +61,7 @@ The `core` package defines a basic paging interface has two optional fields `lim
 The `filter` field allows the filtering of fields based on the shape of the object the filter is used for.
 
 **NOTE** The `Filter` interface is typesafe and will complain if you include extra fields that are not present on the
-type you
-are creating the query for.
+type you are creating the query for.
 
 For example
 
@@ -206,12 +205,12 @@ The `core` package defines a `QueryService` interface that has the following met
 * `deleteMany` - delete multiple records.
 * `deleteOne` - delete a single record.
 
-The `@nestjs-query/query-typeorm` package defines a base class `TypeormQueryService` that uses a `typeorm` repositories
-to provide a base implementation.
+The `@nestjs-query/query-typeorm` package defines a base class `TypeormQueryService` that uses a `typeorm` repository
+to create and execute queries.
 
 You can create your own service as long as it implements the `QueryService` interface.
 
-To create a typeorm service you just need to extend the `TypeormQueryService`
+To create a typeorm service extend the `TypeormQueryService`
 
 ```ts
 import { Injectable } from '@nestjs/common';
@@ -231,7 +230,7 @@ export class EntityService extends TypeormQueryService<Entity> {
 
 ```
 
-You can then define other methods on your class that encapsulates your business logic.
+You can also define other methods on your class that encapsulates your business logic.
 
 ```ts
 async markAllAsCompleted(): Promise<number> {
@@ -248,7 +247,126 @@ async markAllAsCompleted(): Promise<number> {
 
 ## DTOs
 
+You can read about DTOs [here](https://martinfowler.com/eaaCatalog/dataTransferObject.html)
+
+**NOTE** You can combine your entity and DTO but all examples in the docs have them split to easily show what is
+specific to the persistence layer and the web layer.
+
+The `query-graphql` package leverages most decorators from [`@nestjs/graphql`](https://docs.nestjs.com/graphql/quick-start) and [TypeGraphQL](https://typegraphql.ml), with the exception of `FilterableField`.
+
+### `@FilterableField`
+
+The `FilterableField` decorator works the same as the [`Field`](https://typegraphql.ml/docs/types-and-fields.html) from
+TypeGraphQL. Its purpose is to mark the field as filterable when querying through `graphql`. If you use the TypeGraphQL
+Field decorator it will not be exposed in the query type for the DTO.
+
+For example assume you have the following DTO.
+
+```ts
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from 'type-graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+The fields you will be able to filter on are `id`, `title`, and `completed`
+
 ## Resolvers
 
- 
+### GraphQLQueryResolver
 
+Resolvers work the same as they do in [`@nestjs/graphql`](https://docs.nestjs.com/graphql/resolvers-map). The only
+difference is you extend `GraphQLQueryResolver` which will add a base set of CRUD methods.
+
+For example assume you have the following resolver.
+
+```ts
+import { GraphQLQueryResolver } from '@nestjs-query/query-graphql';
+import { Resolver, Query, Args } from '@nestjs/graphql';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver()
+export class TodoItemResolver extends GraphQLQueryResolver(TodoItemDTO, {
+  // the name you want all the generated types to use with.
+  typeName: 'TodoItem',
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+
+```
+
+The following graphql methods will be exposed:
+
+**Queries**
+
+* `todoItems` - Find multiple `TodoItem`s.
+
+**Mutations**
+
+* `createManyTodoItems` - create multiple `TodoItems`.
+* `createOneTodoItems` - create one `TodoItem`.
+* `updateManyTodoItems` - update multiple `TodoItems`.
+* `updateOneTodoItems` - update one `TodoItem`.
+* `deleteManyTodoItems` - delete multiple `TodoItems`.
+* `deleteOneTodoItems` - delete one `TodoItem`.
+
+### Custom Methods
+
+You can define new methods leveraging methods and types from the base class.
+
+The `GraphQLQueryResolver` will also add the following static fields to be used in custom methods.
+
+* QueryType - `graphql` args type for queries.
+* ConnectionType - `graphql` object type for [connections](https://facebook.github.io/relay/graphql/connections.htm)
+.
+* CreateOneInputType - `graphql` input type to create a record.
+* CreateManyInputType - `graphql` input type to create multiple records.
+* UpdateOneInputType - `graphql` input type to update a record.
+* UpdateManyInputType - `graphql` input type to update multiple records.
+* DeleteOneInputType -  `graphql` input type to delete a record.
+* DeleteManyInputType - `graphql` input type to delete multiple records.
+
+For example you can use the `QueryType` and `ConnectionType` to create a custom query method.
+
+```ts
+// import { ConnectionType, QueryType } from '@nestjs-query/query-graphql';
+// import { Query, Args } from '@nestjs/graphql';
+// import { Filter } from '@nestjs-query/core';
+
+// Set the return type to the generated ConnectionType
+@Query(() => TodoItemResolver.ConnectionType)
+completedTodoItems(
+  // Set the type to the generated QueryType
+  @Args({ type: () => TodoItemResolver.QueryType })
+  query: QueryType<TodoItemDTO>,
+): Promise<ConnectionType<TodoItemDTO>> {
+  // add the completed filter the user provided filter
+  const filter: Filter<TodoItemDTO> = {
+    ...query.filter,
+    ...{ completed: { is: true } },
+  };
+
+  // call the original query method with the new query
+  return this.query({ ...query, ...{ filter } });
+}
+```
