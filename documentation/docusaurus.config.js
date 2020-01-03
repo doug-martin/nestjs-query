@@ -1,6 +1,6 @@
 module.exports = {
   title: 'Nestjs-query',
-  tagline: 'Graphql and Typeorm query library written on top of nestjs.',
+  tagline: 'Easy CRUD for GraphQL.',
   url: 'https://doug-martin.github.io', // Your website URL
   baseUrl: '/nestjs-query/',
   favicon: 'img/favicon.ico',
@@ -34,8 +34,8 @@ module.exports = {
               to: 'docs/introduction-getting-started',
             },
             {
-              label: 'Second Doc',
-              to: 'docs/doc2',
+              label: 'Example',
+              to: 'docs/introduction-example',
             },
           ],
         },
