@@ -3,7 +3,12 @@ id: introduction-getting-started
 title: Getting Started
 sidebar_label: Getting Started
 ---
-Nestjs-Query is collection of packages to make crud for `graphql` (and potentially other transports) easier. 
+
+Nestjs-Query is collection of packages to make crud for `graphql` (and potentially other transports) easier.
+
+## Why?
+
+While working on projects in nestjs it was very easy to get up and running with typeorm and graphql however, there were many patterns that were common between the resolvers. In particular querying, sorting and paging.  
 
 ## Install 
 

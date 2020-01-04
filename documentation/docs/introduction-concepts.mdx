@@ -210,41 +210,6 @@ to create and execute queries.
 
 You can create your own service as long as it implements the `QueryService` interface.
 
-To create a typeorm service extend the `TypeormQueryService`
-
-```ts
-import { Injectable } from '@nestjs/common';
-import { TypeormQueryService } from '@nestjs-query/query-typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Entity } from './entity';
-
-@Injectable()
-export class EntityService extends TypeormQueryService<Entity> {
-  constructor(
-    @InjectRepository(Entity) repo: Repository<Entity>,
-  ) {
-    super(repo);
-  }
-}
-
-```
-
-You can also define other methods on your class that encapsulates your business logic.
-
-```ts
-async markAllAsCompleted(): Promise<number> {
-   const entities = await this.query({ filter: { completed: { is: true } } });
-   
-   const { updatedCount } = await this.updateMany({
-     filter: { id: { in: entities.map(e => e.id) } },
-     update: { completed: true },
-   });
-   // do some other business logic
-   return updatedCount;
-}
-```
-
 ## DTOs
 
 You can read about DTOs [here](https://martinfowler.com/eaaCatalog/dataTransferObject.html)
