@@ -1,0 +1,337 @@
+---
+id: introduction-concepts
+title: Concepts
+sidebar_label: Concepts
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Queries
+
+The core of `nestjs-query` is the query type. The query interface contains three optional fields.
+
+### `paging`
+
+The `core` package defines a basic paging interface has two optional fields `limit` and `offset`. 
+
+**NOTE** The `graphql` package expands on that providing a cursor based paging mechanism that uses `graphql-relay` under
+ the covers.
+
+<Tabs
+  defaultValue="limit-offset"
+  values={[
+    { label: 'Limit And Offset', value: 'limit-offset', },
+    { label: 'Limit', value: 'limit', },
+    { label: 'Offset', value: 'offset', },
+  ]
+}>
+<TabItem value="limit-offset">
+
+```ts
+{
+    limit: 10,
+    offset: 1,
+}
+```
+
+</TabItem>
+<TabItem value="limit">
+
+```ts
+{
+    limit: 10,
+}
+```
+
+</TabItem>
+<TabItem value="offset">
+
+```ts
+{
+    offset: 1,
+}
+```
+
+</TabItem>
+</Tabs>
+
+### `filter`
+
+The `filter` field allows the filtering of fields based on the shape of the object the filter is used for.
+
+**NOTE** The `Filter` interface is typesafe and will complain if you include extra fields that are not present on the
+type you are creating the query for.
+
+For example
+
+```ts
+import { Query } from '@nestjs-query/core';
+
+interface Entity {
+  title: string;
+  completed: true;
+  age: number;
+}
+const q: Query<Entity> = {
+  filter: {
+    // the fields will be ANDed together by default
+    completed: { is: true },
+    age: {gt: 10},
+    title: {like: 'Foo%'},
+  },
+};
+```
+
+The filter also allows for creating more complex `and` and `or` filters.
+
+<Tabs
+  defaultValue="and"
+  values={[
+    { label: 'And', value: 'and', },
+    { label: 'Or', value: 'or', },
+    { label: 'And with Or', value: 'and-or', },
+  ]
+}>
+<TabItem value="and">
+
+```ts
+const q: Query<Entity> = {
+  filter: {
+    // age >= 10 AND age <= 20
+    and: [
+      { age: { gte: 10 } },
+      { age: { lte: 20 } },
+    ],
+  },
+};
+```
+
+</TabItem>
+<TabItem value="or">
+
+```ts
+const q: Query<Entity> = {
+  filter: {
+    // age >= 10 OR title NOT LIKE '%bar'
+    or: [
+      { age: { gte: 10 } },
+      { title: { notLike: '%bar' } },
+    ],
+  },
+};
+
+```
+
+</TabItem>
+<TabItem value="and-or">
+
+```ts
+const q: Query<Entity> = {
+  filter: {
+    // age >= 10 AND (title LIKE '%bar' OR title = 'foobar')
+    and: [
+      { age: { gte: 10 } },
+      {
+        or: [
+          { title: { like: '%bar' } },
+          { title: { eq: 'foobar' } },
+        ],
+      },
+    ],
+  },
+};
+```
+
+</TabItem>
+</Tabs>
+
+### `sorting`
+
+The `sorting` field allows to specify the sort order for your query.
+
+The `sorting` field is an array of object containing:
+ * `field` - the field to sort on
+ * `direction` - `ASC` or `DESC`
+ * `nulls?` - Optional nulls sort, `NULLS_FIRST` or `NULLS_LAST`
+
+<Tabs
+  defaultValue="single"
+  values={[
+    { label: 'Single Field', value: 'single', },
+    { label: 'Multi-Sort', value: 'multi', },
+  ]
+}>
+<TabItem value="single">
+
+```ts
+// import { SortDirection } from '@nestjs-query/core';
+
+const q: Query<Entity> = {
+    sorting: [{field: 'title', direction: SortDirection.DESC}],
+};
+```
+
+ </TabItem>
+ <TabItem value="multi">
+
+```ts
+// import { SortDirection } from '@nestjs-query/core';
+
+const q: Query<Entity> = {
+    sorting: [
+        {field: 'title', direction: SortDirection.DESC},
+        {field: 'age', direction: SortDirection.ASC},
+    ],
+};
+
+```
+
+</TabItem>
+</Tabs>
+
+## Services
+
+The `core` package defines a `QueryService` interface that has the following methods.
+
+* `query` - find multiple records.
+* `queryOne` - find one record.
+* `findById` - find a record by its id.
+* `getById` - get a record by its id or return a rejected promise with a NotFound error.
+* `createMany` - create multiple records.
+* `createOne` - create one record.
+* `updateMany` - update many records.
+* `updateOne` - update a single record.
+* `deleteMany` - delete multiple records.
+* `deleteOne` - delete a single record.
+
+The `@nestjs-query/query-typeorm` package defines a base class `TypeormQueryService` that uses a `typeorm` repository
+to create and execute queries.
+
+You can create your own service as long as it implements the `QueryService` interface.
+
+## DTOs
+
+You can read about DTOs [here](https://martinfowler.com/eaaCatalog/dataTransferObject.html)
+
+**NOTE** You can combine your entity and DTO but all examples in the docs have them split to easily show what is
+specific to the persistence layer and the web layer.
+
+The `query-graphql` package leverages most decorators from [`@nestjs/graphql`](https://docs.nestjs.com/graphql/quick-start) and [TypeGraphQL](https://typegraphql.ml), with the exception of `FilterableField`.
+
+### `@FilterableField`
+
+The `FilterableField` decorator works the same as the [`Field`](https://typegraphql.ml/docs/types-and-fields.html) from
+TypeGraphQL. Its purpose is to mark the field as filterable when querying through `graphql`. If you use the TypeGraphQL
+Field decorator it will not be exposed in the query type for the DTO.
+
+For example assume you have the following DTO.
+
+```ts
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from 'type-graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+The fields you will be able to filter on are `id`, `title`, and `completed`
+
+## Resolvers
+
+### GraphQLQueryResolver
+
+Resolvers work the same as they do in [`@nestjs/graphql`](https://docs.nestjs.com/graphql/resolvers-map). The only
+difference is you extend `GraphQLQueryResolver` which will add a base set of CRUD methods.
+
+For example assume you have the following resolver.
+
+```ts
+import { GraphQLQueryResolver } from '@nestjs-query/query-graphql';
+import { Resolver, Query, Args } from '@nestjs/graphql';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver()
+export class TodoItemResolver extends GraphQLQueryResolver(TodoItemDTO, {
+  // the name you want all the generated types to use with.
+  typeName: 'TodoItem',
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+
+```
+
+The following graphql methods will be exposed:
+
+**Queries**
+
+* `todoItems` - Find multiple `TodoItem`s.
+
+**Mutations**
+
+* `createManyTodoItems` - create multiple `TodoItems`.
+* `createOneTodoItems` - create one `TodoItem`.
+* `updateManyTodoItems` - update multiple `TodoItems`.
+* `updateOneTodoItems` - update one `TodoItem`.
+* `deleteManyTodoItems` - delete multiple `TodoItems`.
+* `deleteOneTodoItems` - delete one `TodoItem`.
+
+### Custom Methods
+
+You can define new methods leveraging methods and types from the base class.
+
+The `GraphQLQueryResolver` will also add the following static fields to be used in custom methods.
+
+* QueryType - `graphql` args type for queries.
+* ConnectionType - `graphql` object type for [connections](https://facebook.github.io/relay/graphql/connections.htm)
+.
+* CreateOneInputType - `graphql` input type to create a record.
+* CreateManyInputType - `graphql` input type to create multiple records.
+* UpdateOneInputType - `graphql` input type to update a record.
+* UpdateManyInputType - `graphql` input type to update multiple records.
+* DeleteOneInputType -  `graphql` input type to delete a record.
+* DeleteManyInputType - `graphql` input type to delete multiple records.
+
+For example you can use the `QueryType` and `ConnectionType` to create a custom query method.
+
+```ts
+// import { ConnectionType, QueryType } from '@nestjs-query/query-graphql';
+// import { Query, Args } from '@nestjs/graphql';
+// import { Filter } from '@nestjs-query/core';
+
+// Set the return type to the generated ConnectionType
+@Query(() => TodoItemResolver.ConnectionType)
+completedTodoItems(
+  // Set the type to the generated QueryType
+  @Args({ type: () => TodoItemResolver.QueryType })
+  query: QueryType<TodoItemDTO>,
+): Promise<ConnectionType<TodoItemDTO>> {
+  // add the completed filter the user provided filter
+  const filter: Filter<TodoItemDTO> = {
+    ...query.filter,
+    ...{ completed: { is: true } },
+  };
+
+  // call the original query method with the new query
+  return this.query({ ...query, ...{ filter } });
+}
+```
