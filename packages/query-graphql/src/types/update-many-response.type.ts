@@ -9,7 +9,6 @@ export const UpdateManyResponseType = (): Class<UpdateManyResponse> => {
       @Field(() => Int)
       updatedCount!: number;
     }
-
     updateManyResponseType = UpdateManyResponseTypeImpl;
   }
   return updateManyResponseType;

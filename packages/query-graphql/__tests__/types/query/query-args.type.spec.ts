@@ -16,7 +16,7 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { QueryType, FilterableField } from '../../../src';
+import { QueryArgsType, FilterableField } from '../../../src';
 
 describe('QueryType', (): void => {
   @ObjectType('TestQuery')
@@ -72,7 +72,7 @@ describe('QueryType', (): void => {
 
   // @ts-ignore
   @ArgsType()
-  class TestQuery extends QueryType(TestDto) {}
+  class TestQuery extends QueryArgsType(TestDto) {}
 
   @Resolver(TestDto)
   class TestResolver {
@@ -302,7 +302,7 @@ input TimestampFieldComparison {
   });
 
   it('should paging to the correct instance of paging', () => {
-    const queryObj: QueryType<TestDto> = {
+    const queryObj: QueryArgsType<TestDto> = {
       paging: {
         first: 10,
         after: 'YXJyYXljb25uZWN0aW9uOjEw',
@@ -314,7 +314,7 @@ input TimestampFieldComparison {
   });
 
   it('should sorting to the correct instance of sorting', () => {
-    const queryObj: QueryType<TestDto> = {
+    const queryObj: QueryArgsType<TestDto> = {
       sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
     };
     const queryInstance = plainToClass(TestQuery, queryObj);
@@ -323,7 +323,7 @@ input TimestampFieldComparison {
   });
 
   it('should make filter to the correct instance of sorting', () => {
-    const queryObj: QueryType<TestDto> = {
+    const queryObj: QueryArgsType<TestDto> = {
       filter: {
         stringField: { eq: 'foo' },
       },

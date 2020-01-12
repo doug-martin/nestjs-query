@@ -4,12 +4,17 @@ import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { getMetadataStorage } from '../../metadata';
 import { createFilterComparisonType } from './field-comparison';
+import { UnregisteredObjectType } from '../type.errors';
 
 export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
   const metadataStorage = getMetadataStorage();
+  const existing = metadataStorage.getFilterType<T>(TClass);
+  if (existing) {
+    return existing;
+  }
   const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TClass);
   if (!objMetadata) {
-    throw new Error(`unable to make filter for class not registered with type-graphql ${TClass.name}`);
+    throw new UnregisteredObjectType(TClass, 'No fields found to create FilterType.');
   }
   const prefix = objMetadata.name;
   const fields = metadataStorage.getFilterableObjectFields(TClass);
@@ -36,5 +41,6 @@ export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
     Field(() => FC, { nullable: true })(GraphQLFilter.prototype, propertyName);
     Type(() => FC)(GraphQLFilter.prototype, propertyName);
   });
+  metadataStorage.addFilterableType(TClass, GraphQLFilter as Class<Filter<T>>);
   return GraphQLFilter as Class<Filter<T>>;
 }

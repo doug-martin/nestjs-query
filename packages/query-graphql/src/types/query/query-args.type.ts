@@ -1,5 +1,5 @@
 import { Class, Filter, Query, SortField } from '@nestjs-query/core';
-import { ArgsType, Field, InputType } from 'type-graphql';
+import { ArgsType, Field } from 'type-graphql';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { FilterType } from './filter.type';
@@ -10,20 +10,19 @@ export interface StaticQueryType<T> {
   SortType: Class<SortField<T>>;
   PageType: Class<CursorPagingType>;
   FilterType: Class<Filter<T>>;
-  new (): QueryType<T>;
+  new (): QueryArgsType<T>;
 }
-export interface QueryType<T> extends Query<T> {
+export interface QueryArgsType<T> extends Query<T> {
   paging?: CursorPagingType;
 }
 
-export function QueryType<T>(TClass: Class<T>): StaticQueryType<T> {
+export function QueryArgsType<T>(TClass: Class<T>): StaticQueryType<T> {
   const F = FilterType(TClass);
   const S = SortType(TClass);
   const P = CursorPagingType();
 
   @ArgsType()
-  @InputType({ isAbstract: true })
-  class QueryImpl implements Query<T> {
+  class QueryArgs implements QueryArgsType<T> {
     static SortType = S;
 
     static FilterType = F;
@@ -45,5 +44,5 @@ export function QueryType<T>(TClass: Class<T>): StaticQueryType<T> {
     @Type(() => S)
     sorting?: SortField<T>[];
   }
-  return QueryImpl;
+  return QueryArgs;
 }

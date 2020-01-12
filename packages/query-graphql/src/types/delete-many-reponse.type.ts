@@ -10,7 +10,6 @@ export const DeleteManyResponseType = (): Class<DeleteManyResponse> => {
       @Field(() => Int)
       deletedCount!: number;
     }
-
     deleteManyResponseType = DeleteManyResponseTypeImpl;
   }
   return deleteManyResponseType;

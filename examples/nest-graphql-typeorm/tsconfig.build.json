@@ -1,9 +1,17 @@
 {
     "extends": "../../tsconfig.build.json",
     "compilerOptions": {
-        "declaration": false,
-        "outDir": "./dist"
+        "outDir": "./dist",
+        "rootDir": ".",
+        "skipLibCheck": true
     },
-    "include": ["src", "migrations"],
-    "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+    "include": [
+        "src",
+        "migrations"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*spec.ts"
+    ]
 }

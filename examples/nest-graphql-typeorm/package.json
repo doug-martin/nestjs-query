@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "APP_ROOT_PATH=. nest start --watch",
     "start:prod": "node dist/main",
@@ -32,7 +32,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3",
-    "typeorm-seeding": "^1.2.0"
+    "typeorm-seeding": "^1.2.0",
+    "type-graphql": "^0.17.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.9.0",

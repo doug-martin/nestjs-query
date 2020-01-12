@@ -5,10 +5,12 @@
     "bootstrap": "lerna bootstrap --hoist",
     "clean": "lerna run clean",
     "build": "lerna run build",
+    "compile": "lerna run compile",
     "pub": "lerna publish from-git",
     "version": "lerna version",
     "test": "npm run lint && npm run jest",
     "lint": "eslint --ext=.ts .",
+    "lint:fix": "eslint --fix --ext=.ts .",
     "jest": "jest --runInBand --coverage",
     "coverage": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
   },

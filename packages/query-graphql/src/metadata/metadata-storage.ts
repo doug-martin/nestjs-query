@@ -1,8 +1,7 @@
-import { FieldMetadata } from 'type-graphql/dist/metadata/definitions';
 import { ObjectClassMetadata } from 'type-graphql/dist/metadata/definitions/object-class-metdata';
 import { getMetadataStorage } from 'type-graphql/dist/metadata/getMetadataStorage';
 import { MetadataStorage } from 'type-graphql/dist/metadata/metadata-storage';
-import { Class } from '@nestjs-query/core';
+import { Class, Filter } from '@nestjs-query/core';
 import { AdvancedOptions, ReturnTypeFunc } from '../external/type-graphql.types';
 
 export interface FilterableFieldDescriptor<T> {
@@ -17,8 +16,11 @@ const typeGraphqlMetadataStorage: () => MetadataStorage = () => getMetadataStora
 export class GraphQLQueryMetadataStorage {
   readonly filterableObjectStorage: Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>;
 
+  readonly filterTypeObjectStorage: Map<Class<unknown>, Class<Filter<unknown>>>;
+
   constructor() {
     this.filterableObjectStorage = new Map();
+    this.filterTypeObjectStorage = new Map();
   }
 
   addFilterableObjectField<T>(type: Class<T>, field: FilterableFieldDescriptor<unknown>): void {
@@ -34,18 +36,16 @@ export class GraphQLQueryMetadataStorage {
     return this.filterableObjectStorage.get(type);
   }
 
-  getTypeGraphqlObjectMetadata<T>(objType: Class<T>): ObjectClassMetadata | undefined {
-    return typeGraphqlMetadataStorage().objectTypes.find(o => o.target === objType);
+  addFilterableType<T>(type: Class<T>, filterType: Class<Filter<T>>): void {
+    this.filterTypeObjectStorage.set(type, filterType);
   }
 
-  getTypeGraphqlFieldsForType<T>(objType: Class<T>): FieldMetadata[] | undefined {
-    const typeGraphqlStorage = typeGraphqlMetadataStorage();
-    typeGraphqlStorage.build();
-    let graphqlObjType = typeGraphqlStorage.objectTypes.find(o => o.target === objType);
-    if (!graphqlObjType) {
-      graphqlObjType = typeGraphqlStorage.inputTypes.find(o => o.target === objType);
-    }
-    return graphqlObjType?.fields;
+  getFilterType<T>(type: Class<T>): Class<Filter<T>> | undefined {
+    return this.filterTypeObjectStorage.get(type);
+  }
+
+  getTypeGraphqlObjectMetadata<T>(objType: Class<T>): ObjectClassMetadata | undefined {
+    return typeGraphqlMetadataStorage().objectTypes.find(o => o.target === objType);
   }
 
   clear(): void {

@@ -9,11 +9,15 @@ describe('SortingType', (): void => {
 
   it('should throw an error if the class is not annotated with @ObjectType', () => {
     class TestSort {}
-    expect(() => SortType(TestSort)).toThrow('unable to make sort for class not registered with type-graphql TestSort');
+    expect(() => SortType(TestSort)).toThrow(
+      'Unable to make SortType. Ensure TestSort is annotated with type-graphql @ObjectType',
+    );
   });
   it('should throw an error if no fields are found', () => {
     @ObjectType()
     class TestSort {}
-    expect(() => SortType(TestSort)).toThrow('No fields found to create Sort for TestSort');
+    expect(() => SortType(TestSort)).toThrow(
+      'No fields found to create SortType for TestSort. Ensure fields are annotated with @FilterableField',
+    );
   });
 });

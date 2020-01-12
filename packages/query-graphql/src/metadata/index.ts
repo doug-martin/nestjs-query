@@ -1,4 +1,4 @@
-import { GraphQLQueryMetadataStorage } from './metadataStorage';
+import { GraphQLQueryMetadataStorage } from './metadata-storage';
 
 let storage: GraphQLQueryMetadataStorage;
 export function getMetadataStorage(): GraphQLQueryMetadataStorage {

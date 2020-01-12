@@ -3,6 +3,7 @@ import { Field, InputType, registerEnumType } from 'type-graphql';
 import { IsEnum, IsIn } from 'class-validator';
 import { getMetadataStorage } from '../../metadata';
 import { IsUndefined } from '../validators';
+import { UnregisteredObjectType } from '../type.errors';
 
 registerEnumType(SortDirection, {
   name: 'SortDirection', // this one is mandatory
@@ -18,11 +19,13 @@ export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
   const metadataStorage = getMetadataStorage();
   const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TClass);
   if (!objMetadata) {
-    throw new Error(`unable to make sort for class not registered with type-graphql ${TClass.name}`);
+    throw new UnregisteredObjectType(TClass, 'Unable to make SortType.');
   }
   const fields = metadataStorage.getFilterableObjectFields(TClass);
   if (!fields) {
-    throw new Error(`No fields found to create Sort for ${TClass.name}`);
+    throw new Error(
+      `No fields found to create SortType for ${TClass.name}. Ensure fields are annotated with @FilterableField`,
+    );
   }
   const prefix = objMetadata.name;
   const fieldNames = fields.map(f => f.propertyName);

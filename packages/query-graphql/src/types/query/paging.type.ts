@@ -59,7 +59,8 @@ export const CursorPagingType = (): Class<CursorPagingType> => {
         if (this.isBackwardPaging) {
           const { last = 0, before } = this;
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const offset = cursorToOffset(before!) - last;
+          const offsetFromCursor = cursorToOffset(before!);
+          const offset = offsetFromCursor - last;
           // Check to see if our before-page is underflowing past the 0th item
           if (offset < 0) {
             // Adjust the limit with the underflow value

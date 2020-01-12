@@ -76,3 +76,5 @@ tsconfig.tsbuildinfo
 .idea
 
 schema.gql
+
+documentation/.docusaurus

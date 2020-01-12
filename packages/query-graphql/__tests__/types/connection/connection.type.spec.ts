@@ -10,14 +10,12 @@ describe('ConnectionType', (): void => {
     stringField!: string;
   }
 
-  // @ts-ignore
-  @ObjectType()
-  class TestConnection extends ConnectionType(TestDto) {}
+  const TestConnection = ConnectionType(TestDto);
 
   @Resolver(TestDto)
   class TestConnectionTypeResolver {
     @Query(() => TestConnection)
-    findConnection(): TestConnection | undefined {
+    findConnection(): ConnectionType<TestDto> | undefined {
       return undefined;
     }
   }
@@ -25,7 +23,7 @@ describe('ConnectionType', (): void => {
   it('should store metadata', () => {
     const schema = buildSchemaSync({ resolvers: [TestConnectionTypeResolver] });
 
-    expect(printSchema(schema)).toContain(
+    expect(printSchema(schema)).toEqual(
       `"""Cursor for paging through collections"""
 scalar ConnectionCursor
 
@@ -51,8 +49,6 @@ type TestConnection {
 
 type TestEdge {
   node: Test!
-
-  """Used in \`before\` and \`after\` args"""
   cursor: ConnectionCursor!
 }
 `,
@@ -66,13 +62,16 @@ type TestEdge {
     }
 
     expect(() => ConnectionType(TestBadDto)).toThrow(
-      'unable to make edge for class not registered with type-graphql TestBadDto',
+      'Unable to make ConnectionType. Ensure TestBadDto is annotated with type-graphql @ObjectType',
     );
   });
 
-  describe('.create', () => {
+  describe('.createFromPromise', () => {
     it('should create a connections response with no connection args', async () => {
-      const response = await TestConnection.create(Promise.resolve([{ stringField: 'foo1' }, { stringField: 'foo2' }]));
+      const response = await TestConnection.createFromPromise(
+        Promise.resolve([{ stringField: 'foo1' }, { stringField: 'foo2' }]),
+        {},
+      );
       expect(response).toEqual({
         edges: [
           {
@@ -98,7 +97,7 @@ type TestEdge {
     });
 
     it('should create a connections response with just a first arg', async () => {
-      const response = await TestConnection.create(
+      const response = await TestConnection.createFromPromise(
         Promise.resolve([{ stringField: 'foo1' }, { stringField: 'foo2' }]),
         { first: 2 },
       );
@@ -119,7 +118,7 @@ type TestEdge {
         ],
         pageInfo: {
           endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
-          hasNextPage: false,
+          hasNextPage: true,
           hasPreviousPage: false,
           startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
         },
@@ -127,7 +126,7 @@ type TestEdge {
     });
 
     it('should create a connections response with just a last arg', async () => {
-      const response = await TestConnection.create(
+      const response = await TestConnection.createFromPromise(
         Promise.resolve([{ stringField: 'foo1' }, { stringField: 'foo2' }]),
         {
           last: 2,
@@ -153,6 +152,19 @@ type TestEdge {
           hasNextPage: false,
           hasPreviousPage: false,
           startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+        },
+      });
+    });
+
+    it('should create an empty connection', async () => {
+      const response = await TestConnection.createFromPromise(Promise.resolve([]), {
+        first: 2,
+      });
+      expect(response).toEqual({
+        edges: [],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
         },
       });
     });

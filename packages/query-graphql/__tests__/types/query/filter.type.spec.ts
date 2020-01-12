@@ -17,7 +17,7 @@ describe('GraphQLFilterType', (): void => {
     class TestInvalidFilter {}
 
     expect(() => FilterType(TestInvalidFilter)).toThrow(
-      'unable to make filter for class not registered with type-graphql TestInvalidFilter',
+      'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with type-graphql @ObjectType',
     );
   });
 
