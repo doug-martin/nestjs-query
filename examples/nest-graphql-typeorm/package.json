@@ -1,6 +1,6 @@
 {
   "name": "nest-graphql-typeorm",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.3-alpha.0",
   "description": "",
   "author": "",
   "private": true,
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@nestjs-query/core": "^0.0.2-alpha.0",
-    "@nestjs-query/query-graphql": "^0.0.2-alpha.0",
+    "@nestjs-query/query-graphql": "^0.0.3-alpha.0",
     "@nestjs-query/query-typeorm": "^0.0.2-alpha.0",
     "@nestjs/common": "^6.9.0",
     "@nestjs/core": "^6.8.5",
@@ -32,8 +32,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3",
-    "typeorm-seeding": "^1.2.0",
-    "type-graphql": "^0.17.5"
+    "type-graphql": "^0.17.5",
+    "typeorm-seeding": "^1.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.9.0",
