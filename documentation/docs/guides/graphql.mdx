@@ -1,0 +1,444 @@
+---
+title: Working with Graphql
+sidebar_label: Graphql
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# DTOs
+
+You can read about DTOs [here](https://martinfowler.com/eaaCatalog/dataTransferObject.html)
+
+**NOTE** You can combine your entity and DTO but all examples in the docs have them split to easily show what is
+specific to the persistence layer and the web layer.
+
+The `query-graphql` package leverages most decorators from [`@nestjs/graphql`](https://docs.nestjs.com/graphql/quick-start) and [TypeGraphQL](https://typegraphql.ml), with the exception of `FilterableField`.
+
+## `@FilterableField`
+
+The `FilterableField` decorator works the same as the [`Field`](https://typegraphql.ml/docs/types-and-fields.html) from
+TypeGraphQL. Its purpose is to mark the field as filterable when querying through `graphql`. If you use the TypeGraphQL
+Field decorator it will not be exposed in the query type for the DTO.
+
+For example assume you have the following DTO.
+
+```ts
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from 'type-graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+The fields you will be able to filter on are `id`, `title`, and `completed`
+
+# CRUDResolver
+
+Resolvers work the same as they do in [`@nestjs/graphql`](https://docs.nestjs.com/graphql/resolvers-map). The only difference is you extend `CRUDResolver` which will add a base set of CRUD methods.
+
+For example assume you have the following resolver for the DTO defined above.
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver, Query, Args } from '@nestjs/graphql';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver()
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  // the name you want all the generated types to use with.
+  typeName: 'TodoItem',
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+
+```
+
+## Queries
+
+### Find All Records
+
+The resolver above will expose a `todoItems` query method to find items. The result will be a [`connection`]
+(https://facebook.github.io/relay/graphql/connections.htm) that you can use to page through results
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems{
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges{
+      node{
+        id
+        title
+        completed
+        created
+        updated
+      }
+      cursor
+    }
+  }
+}
+```
+
+
+</TabItem>
+<TabItem value="response">
+
+
+```json
+{
+  "data": {
+    "todoItems": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+        "endCursor": "YXJyYXljb25uZWN0aW9uOjI="
+      },
+      "edges": [
+        {
+          "node": {
+            "id": "1",
+            "title": "Create One Todo Item",
+            "completed": false,
+            "created": "2020-01-01T00:43:16.000Z",
+            "updated": "2020-01-01T00:43:16.000Z"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjA="
+        },
+        {
+          "node": {
+            "id": "2",
+            "title": "Create Many Todo Items - 1",
+            "completed": false,
+            "created": "2020-01-01T00:49:01.000Z",
+            "updated": "2020-01-01T00:49:01.000Z"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE="
+        },
+        {
+          "node": {
+            "id": "3",
+            "title": "Create Many Todo Items - 2",
+            "completed": true,
+            "created": "2020-01-01T00:49:01.000Z",
+            "updated": "2020-01-01T00:49:01.000Z"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI="
+        }
+      ]
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+### Filter Records
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems(filter: {completed: {is: true}}){
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges{
+      node{
+        id
+        title
+        completed
+        created
+        updated
+      }
+      cursor
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": {
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+        "endCursor": "YXJyYXljb25uZWN0aW9uOjA="
+      },
+      "edges": [
+        {
+          "node": {
+            "id": "3",
+            "title": "Create Many Todo Items - 2",
+            "completed": true,
+            "created": "2020-01-01T00:49:01.000Z",
+            "updated": "2020-01-01T00:49:01.000Z"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjA="
+        }
+      ]
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+### Paging Records
+
+In this example we'll fetch the first 2 records.
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems(paging: {first: 2}) {
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges{
+      node{
+        id
+        title
+        completed
+        created
+        updated
+      }
+      cursor
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": {
+      "pageInfo": {
+        "hasNextPage": true,
+        "hasPreviousPage": false,
+        "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+        "endCursor": "YXJyYXljb25uZWN0aW9uOjE="
+      },
+      "edges": [
+        {
+          "node": {
+            "id": "4",
+            "title": "Create One Todo Item",
+            "completed": false,
+            "created": "2020-01-04T09:17:30.132Z",
+            "updated": "2020-01-04T09:17:30.132Z"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjA="
+        },
+        {
+          "node": {
+            "id": "5",
+            "title": "Create Many Todo Items - 1",
+            "completed": false,
+            "created": "2020-01-04T09:17:32.032Z",
+            "updated": "2020-01-04T09:17:32.032Z"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE="
+        }
+      ]
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+Lets take a look the `pageInfo` from the previous example
+
+```json
+{
+  "pageInfo": {
+    "hasNextPage": true,
+    "hasPreviousPage": false,
+    "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+    "endCursor": "YXJyYXljb25uZWN0aW9uOjE="
+  },
+}
+```
+
+Notice how `hasNextPage` is `true` and there is an `endCursor` we can use that to fetch the next page.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems(paging: { after: "YXJyYXljb25uZWN0aW9uOjE=", first: 2 }) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges {
+      node {
+        id
+        title
+        completed
+        created
+        updated
+      }
+      cursor
+    }
+  }
+}
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": {
+      "pageInfo": {
+        "hasNextPage": true,
+        "hasPreviousPage": false,
+        "startCursor": "YXJyYXljb25uZWN0aW9uOjI=",
+        "endCursor": "YXJyYXljb25uZWN0aW9uOjM="
+      },
+      "edges": [
+        {
+          "node": {
+            "id": "6",
+            "title": "Create Many Todo Items - 2",
+            "completed": true,
+            "created": "2020-01-04T09:17:32.032Z",
+            "updated": "2020-01-04T09:17:32.032Z"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI="
+        },
+        {
+          "node": {
+            "id": "7",
+            "title": "Create Many Todo Items - 3",
+            "completed": false,
+            "created": "2020-01-04T09:18:03.017Z",
+            "updated": "2020-01-04T09:18:03.017Z"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjM="
+        }
+      ]
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+
+
+**Mutations**
+
+* `createManyTodoItems` - create multiple `TodoItems`.
+* `createOneTodoItems` - create one `TodoItem`.
+* `updateManyTodoItems` - update multiple `TodoItems`.
+* `updateOneTodoItems` - update one `TodoItem`.
+* `deleteManyTodoItems` - delete multiple `TodoItems`.
+* `deleteOneTodoItems` - delete one `TodoItem`.
+
+## Custom Methods
+
+You can define new methods leveraging methods and types from the base class.
+
+For example you can use the `QueryType` and `ConnectionType` to create a custom query method.
+
+```ts
+// import { ConnectionType, QueryType } from '@nestjs-query/query-graphql';
+// import { Query, Args } from '@nestjs/graphql';
+// import { Filter } from '@nestjs-query/core';
+
+// Set the return type to the generated ConnectionType
+@Query(() => TodoItemResolver.ConnectionType)
+completedTodoItems(
+  // Set the type to the generated QueryType
+  @Args({ type: () => TodoItemResolver.QueryType })
+  query: QueryType<TodoItemDTO>,
+): Promise<ConnectionType<TodoItemDTO>> {
+  // add the completed filter the user provided filter
+  const filter: Filter<TodoItemDTO> = {
+    ...query.filter,
+    ...{ completed: { is: true } },
+  };
+
+  // call the original query method with the new query
+  return this.query({ ...query, ...{ filter } });
+}
+```

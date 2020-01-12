@@ -1,7 +1,6 @@
 {
   "skipCI": false,
   "hooks": {
-    "pre-commit": "npm test",
-    "post-checkout": "npm install && npm run bootstrap && npm run build"
+    "pre-commit": "npm test"
   }
 }

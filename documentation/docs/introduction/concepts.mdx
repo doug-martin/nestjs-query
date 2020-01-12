@@ -1,0 +1,234 @@
+---
+title: Concepts
+sidebar_label: Concepts
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Queries
+
+The core of `nestjs-query` is the query type. The query interface contains three optional fields.
+
+### `paging`
+
+The `core` package defines a basic paging interface has two optional fields `limit` and `offset`. 
+
+**NOTE** The `graphql` package expands on that providing a cursor based paging mechanism that uses `graphql-relay` under
+ the covers.
+
+<Tabs
+  defaultValue="limit-offset"
+  values={[
+    { label: 'Limit And Offset', value: 'limit-offset', },
+    { label: 'Limit', value: 'limit', },
+    { label: 'Offset', value: 'offset', },
+  ]
+}>
+<TabItem value="limit-offset">
+
+```ts
+{
+    limit: 10,
+    offset: 1,
+}
+```
+
+</TabItem>
+<TabItem value="limit">
+
+```ts
+{
+    limit: 10,
+}
+```
+
+</TabItem>
+<TabItem value="offset">
+
+```ts
+{
+    offset: 1,
+}
+```
+
+</TabItem>
+</Tabs>
+
+### `filter`
+
+The `filter` field allows the filtering of fields based on the shape of the object the filter is used for.
+
+**NOTE** The `Filter` interface is typesafe and will complain if you include extra fields that are not present on the
+type you are creating the query for.
+
+For example
+
+```ts
+import { Query } from '@nestjs-query/core';
+
+interface Entity {
+  title: string;
+  completed: true;
+  age: number;
+}
+const q: Query<Entity> = {
+  filter: {
+    // the fields will be ANDed together by default
+    completed: { is: true },
+    age: {gt: 10},
+    title: {like: 'Foo%'},
+  },
+};
+```
+
+The filter also allows for creating more complex `and` and `or` filters.
+
+<Tabs
+  defaultValue="and"
+  values={[
+    { label: 'And', value: 'and', },
+    { label: 'Or', value: 'or', },
+    { label: 'And with Or', value: 'and-or', },
+  ]
+}>
+<TabItem value="and">
+
+```ts
+const q: Query<Entity> = {
+  filter: {
+    // age >= 10 AND age <= 20
+    and: [
+      { age: { gte: 10 } },
+      { age: { lte: 20 } },
+    ],
+  },
+};
+```
+
+</TabItem>
+<TabItem value="or">
+
+```ts
+const q: Query<Entity> = {
+  filter: {
+    // age >= 10 OR title NOT LIKE '%bar'
+    or: [
+      { age: { gte: 10 } },
+      { title: { notLike: '%bar' } },
+    ],
+  },
+};
+
+```
+
+</TabItem>
+<TabItem value="and-or">
+
+```ts
+const q: Query<Entity> = {
+  filter: {
+    // age >= 10 AND (title LIKE '%bar' OR title = 'foobar')
+    and: [
+      { age: { gte: 10 } },
+      {
+        or: [
+          { title: { like: '%bar' } },
+          { title: { eq: 'foobar' } },
+        ],
+      },
+    ],
+  },
+};
+```
+
+</TabItem>
+</Tabs>
+
+### `sorting`
+
+The `sorting` field allows to specify the sort order for your query.
+
+The `sorting` field is an array of object containing:
+ * `field` - the field to sort on
+ * `direction` - `ASC` or `DESC`
+ * `nulls?` - Optional nulls sort, `NULLS_FIRST` or `NULLS_LAST`
+
+<Tabs
+  defaultValue="single"
+  values={[
+    { label: 'Single Field', value: 'single', },
+    { label: 'Multi-Sort', value: 'multi', },
+  ]
+}>
+<TabItem value="single">
+
+```ts
+// import { SortDirection } from '@nestjs-query/core';
+
+const q: Query<Entity> = {
+    sorting: [{field: 'title', direction: SortDirection.DESC}],
+};
+```
+
+ </TabItem>
+ <TabItem value="multi">
+
+```ts
+// import { SortDirection } from '@nestjs-query/core';
+
+const q: Query<Entity> = {
+    sorting: [
+        {field: 'title', direction: SortDirection.DESC},
+        {field: 'age', direction: SortDirection.ASC},
+    ],
+};
+
+```
+
+</TabItem>
+</Tabs>
+
+## Services
+
+The `core` package defines a `QueryService` interface that has the following methods.
+
+* `query` - find multiple records.
+* `queryOne` - find one record.
+* `findById` - find a record by its id.
+* `getById` - get a record by its id or return a rejected promise with a NotFound error.
+* `createMany` - create multiple records.
+* `createOne` - create one record.
+* `updateMany` - update many records.
+* `updateOne` - update a single record.
+* `deleteMany` - delete multiple records.
+* `deleteOne` - delete a single record.
+
+The `@nestjs-query/query-typeorm` package defines a base class `TypeormQueryService` that uses a `typeorm` repository
+to create and execute queries. [Read about the TypeormQueryService](../guides/typeorm)
+
+You can create your own service as long as it implements the `QueryService` interface.
+
+## Resolvers
+
+### CRUDResolver
+
+Resolvers work the same as they do in [`@nestjs/graphql`](https://docs.nestjs.com/graphql/resolvers-map). The only
+difference is you extend `CRUDResolver` which will add a base set of CRUD methods.
+
+**Queries**
+
+* `todoItems` - Find multiple `TodoItem`s.
+* `todoItem` - Find one `TodoItem`. This method still takes query arguments however it will will only find one record.
+
+**Mutations**
+
+* `createManyTodoItems` - create multiple `TodoItems`.
+* `createOneTodoItems` - create one `TodoItem`.
+* `updateManyTodoItems` - update multiple `TodoItems`.
+* `updateOneTodoItems` - update one `TodoItem`.
+* `deleteManyTodoItems` - delete multiple `TodoItems`.
+* `deleteOneTodoItems` - delete one `TodoItem`.
+
+
+Yuu can read more about the graphql features [here](../guides/graphql)
