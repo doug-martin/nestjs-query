@@ -33,7 +33,7 @@
     "@nestjs-query/core": "^0.0.2-alpha.0",
     "@types/lodash.pick": "^4.4.6",
     "change-case": "^3.1.0",
-    "lodash.pick": "^4.4.0",
+    "lodash.omit": "^4.4.0",
     "pluralize": "^8.0.0"
   },
   "peerDependencies": {
@@ -53,7 +53,7 @@
     "@types/graphql-relay": "^0.4.11",
     "@types/node-fetch": "^2.5.4",
     "@types/pluralize": "0.0.29",
-    "@types/lodash.pick": "^4.4.6",
+    "@types/lodash.omit": "^4.4.6",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.2",
     "graphql": "^14.5.8",

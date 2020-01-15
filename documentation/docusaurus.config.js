@@ -14,7 +14,7 @@ module.exports = {
         src: 'img/logo.svg',
       },
       links: [
-        { to: 'docs/introduction-getting-started', label: 'Docs', position: 'left' },
+        { to: 'docs/introduction/getting-started', label: 'Docs', position: 'left' },
         { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/doug-martin/nestjs-query',
@@ -31,11 +31,11 @@ module.exports = {
           items: [
             {
               label: 'Getting Started',
-              to: 'docs/introduction-getting-started',
+              to: 'docs/introduction/getting-started',
             },
             {
               label: 'Example',
-              to: 'docs/introduction-example',
+              to: 'docs/introduction/example',
             },
           ],
         },

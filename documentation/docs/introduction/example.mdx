@@ -31,24 +31,25 @@ Install extra dependencies for the example.
 npm i pg apollo-server-express
 ```
 
-## Generate files module
+## Generate the Module
 
-Create the todo-item module, service, resolver, entity and DTO.
+From the root of your project run:
 
 ```sh
-# module
 npx nest g mo todo-item
 ```
 
 ## Create the Entity
 
-Generate the entity from the root of your project.
+From the root of your project run:
 
 ```sh
 npx nest g cl todo-item.entity todo-item
 ```
 
-Now lets fill out the entity that will be used by `typeorm`. Add the following to `src/todo-item/todo-item.entity.ts`. 
+Now lets fill out the entity that will be used by `typeorm`.
+
+Add the following to `src/todo-item/todo-item.entity.ts`.
 
 ```ts
 import {
@@ -87,11 +88,11 @@ The DTO is where you can:
 * Define fields that should be rendered by graphql.
 * Define fields that should be filterable using the `@FilterableField` decorator.
 * Define validation that will be used by mutations. 
- 
-The DTO can be combined with the entity, but a DTO defines a nice separation between the view model and database entity. In this example we will keep the separate.
 
-Generate the DTO from the root of your project. 
+In this example the DTO and entity are two different classes to clearly demonstrate what is required for `graphql` vs
+`typeorm`. However, you can combine the two into a single class.
 
+From the root of your project run:
 ```sh
 npx nest g cl todo-item.dto todo-item
 ```
@@ -102,7 +103,7 @@ Now lets fill out the DTO. Add the following to `src/todo-item/todo-item.dto.ts`
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
 
-@ObjectType('TodoItem')
+@ObjectType('TodoItem') // Name that will be used in the graphql schema.
 export class TodoItemDTO {
   @FilterableField(() => ID)
   id!: string;
@@ -122,7 +123,8 @@ export class TodoItemDTO {
 
 ```
 
-Notice the use of `@FilterableField` this will let `@nestjs-query/query-graphql` know to allow filtering on that field. If you just use `@Field` then you will not be able to filter on that field.
+Notice the use of `@FilterableField` this will let `@nestjs-query/query-graphql` know to allow filtering on the
+corresponding field. If you just use `@Field` then you will not be able to filter on the corresponding field.
 
 ## Create the Service
 
@@ -171,15 +173,14 @@ The important piece is extending `TypeormQueryService` from `@nestjs-query/query
 
 ## Create the Resolver
 
-The resolver will extend `@nestjs-query/query-graphql` `CRUDResolver`.
+To create the resolver extend `CRUDResolver` from `@nestjs-query/query-graphql`.
 
-The `CRUDResolver` will expose the following graphql queries and mutations.
-
-**NOTE** the names created for the queries and mutations will be based on the name specified in the `@ObjectType`.
+The `CRUDResolver` will by default expose expose the following graphql queries and mutations.
 
 **Queries**
 
-* `todoItems` - Find multiple `TodoItem`s.
+* `todoItems` - find multiple `TodoItem`s.
+* `todoItem` - find one `TodoItem`.
 
 **Mutations**
 
@@ -188,14 +189,16 @@ The `CRUDResolver` will expose the following graphql queries and mutations.
 * `updateManyTodoItems` - update multiple `TodoItems`.
 * `updateOneTodoItems` - update one `TodoItem`.
 * `deleteManyTodoItems` - delete multiple `TodoItems`s.
-* `deleteOneTodoItems` - delete one `TodoItem`. 
+* `deleteOneTodoItems` - delete one `TodoItem`.
+
+**NOTE** By default `CRUDResolver` will use the name used by `type-graphql` when the DTO is annotated with `@ObjectType`.
 
 Generate the resolver file.
 ```sh
 npx nest g r todo-item
 ```
 
-Now add the following to `src/todo-item/todo-item.resolver.ts`.
+Once the resolver is generated paste the following into `src/todo-item/todo-item.resolver.ts`.
 
 ```ts
 import { CRUDResolver } from '@nestjs-query/query-graphql';
@@ -213,9 +216,8 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 
 ```
 
-Notice how `CRUDResolver` is extended, this will automatically add all of the crud graphql queries and mutations.
-
-By default `CRUDResolver` will use the name used by `type-graphql` when the DTO is annotated with `@ObjectType`.
+Notice how `TodoItemResolver` extends `CRUDResolver` and the class is annotated with `@Resolver`. Without the annotation
+ the resolver **WILL NOT** be exposed in the graphql schema.
 
 ## Wire everything up.
 
@@ -322,7 +324,7 @@ Visit http://localhost:3000/graphql where you should see the playground
 ```graphql
 mutation {
   createOneTodoItem(
-    input: { item: { title: "Create One Todo Item", completed: false } }
+    input: { title: "Create One Todo Item", completed: false }
   ) {
     id
     title
@@ -367,12 +369,10 @@ mutation {
 ```graphql
 mutation {
   createManyTodoItems(
-    input: {
-      items: [
-        { title: "Create Many Todo Items - 1", completed: false }
-        { title: "Create Many Todo Items - 2", completed: true }
-      ]
-    }
+    input: [
+      { title: "Create Many Todo Items - 1", completed: false }
+      { title: "Create Many Todo Items - 2", completed: true }
+    ]
   ) {
     id
     title
@@ -412,7 +412,7 @@ mutation {
 </TabItem>
 </Tabs>
 
-### Query For TodoItems
+### Query For Multiple TodoItems
 
 #### Query for all todo items
 
@@ -427,15 +427,15 @@ mutation {
 
 ```graphql
 {
-  todoItems{
-    pageInfo{
+  todoItems {
+    pageInfo {
       hasNextPage
       hasPreviousPage
       startCursor
       endCursor
     }
-    edges{
-      node{
+    edges {
+      node {
         id
         title
         completed
@@ -570,6 +570,54 @@ mutation {
 </TabItem>
 </Tabs>
 
+### Query For One TodoItem
+
+#### Query by id
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItem(filter: { id: { eq: 1 } }) {
+    id
+    title
+    completed
+    created
+    updated
+  }
+}
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+
+```json
+{
+  "data": {
+    "todoItem": {
+      "id": "1",
+      "title": "Create One Todo Item",
+      "completed": false,
+      "created": "2020-01-13T06:19:17.543Z",
+      "updated": "2020-01-13T06:19:17.543Z"
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+
 ### Update a TodoItem
 
 Lets update the completed `TodoItem` we created earlier to not be completed.
@@ -584,7 +632,7 @@ Lets update the completed `TodoItem` we created earlier to not be completed.
 
 ```graphql
 mutation {
-  updateOneTodoItem(input: { id: "3", update: { completed: false } }) {
+  updateOneTodoItem(id: "3", input: { completed: false }) {
     id
     title
     completed
@@ -604,8 +652,8 @@ mutation {
       "id": "3",
       "title": "Create Many Todo Items - 2",
       "completed": false,
-      "created": "2020-01-01T00:49:01.000Z",
-      "updated": "2020-01-01T01:06:09.000Z"
+      "created": "2020-01-13T09:19:46.727Z",
+      "updated": "2020-01-13T09:23:37.658Z"
     }
   }
 }
@@ -629,12 +677,12 @@ Lets update the completed `TodoItem` we created earlier to not be completed.
 ```graphql
 mutation {
   updateManyTodoItems(
-    input: { filter: { id: { in: ["1", "2"] } }, update: { completed: true } }
+    filter: { id: { in: ["1", "2"] } }
+    input: { completed: true }
   ) {
     updatedCount
   }
 }
-
 ```
 
 </TabItem>
@@ -670,7 +718,7 @@ Lets update delete the first `TodoItem`.
 
 ```graphql
 mutation {
-  deleteOneTodoItem(input: {id: "1"}){
+  deleteOneTodoItem(id: 1) {
     id
     title
     completed
@@ -690,8 +738,8 @@ mutation {
       "id": null,
       "title": "Create One Todo Item",
       "completed": true,
-      "created": "2020-01-01T14:30:19.222Z",
-      "updated": "2020-01-01T14:30:29.518Z"
+      "created": "2020-01-13T09:44:41.176Z",
+      "updated": "2020-01-13T09:44:54.822Z"
     }
   }
 }
@@ -715,13 +763,10 @@ Lets update delete the create many todo items `TodoItem` using a filter.
 
 ```graphql
 mutation {
-  deleteManyTodoItems(
-    input: { filter: { title: { like: "Create Many Todo Items%" } } }
-  ) {
+  deleteManyTodoItems(filter: { title: { like: "Create Many Todo Items%" } }) {
     deletedCount
   }
 }
-
 ```
 
 </TabItem>

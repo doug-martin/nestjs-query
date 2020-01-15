@@ -1,15 +1,16 @@
-import { Resolver } from '@nestjs/graphql';
-
 import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { AuthGuard } from '../auth.guard';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
-import { CreateTodoItem } from './dto/create-todo-item.dto';
-import { UpdateTodoItem } from './dto/update-todo-item.dto';
+
+const guards = [AuthGuard];
 
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
-  CreateDTOClass: CreateTodoItem,
-  UpdateDTOClass: UpdateTodoItem,
+  create: { many: { guards } },
+  update: { many: { guards } },
+  delete: { many: { guards } },
 }) {
   constructor(readonly service: TodoItemService) {
     super(service);
