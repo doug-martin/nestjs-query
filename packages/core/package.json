@@ -7,9 +7,10 @@
   "license": "ISC",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "files": [
-    "dist/src/**"
-  ],
+  "directories": {
+    "lib": "dist/src",
+    "test": "__tests__"
+  },
   "publishConfig": {
     "access": "public"
   },

@@ -10,7 +10,12 @@ export interface EdgeType<TItem> {
 }
 
 export function EdgeType<DTO>(DTOClass: Class<DTO>): Class<EdgeType<DTO>> {
-  const objMetadata = getMetadataStorage().getTypeGraphqlObjectMetadata(DTOClass);
+  const metaDataStorage = getMetadataStorage();
+  const existing = metaDataStorage.getEdgeType(DTOClass);
+  if (existing) {
+    return existing;
+  }
+  const objMetadata = metaDataStorage.getTypeGraphqlObjectMetadata(DTOClass);
   if (!objMetadata) {
     throw new UnregisteredObjectType(DTOClass, 'Unable to make EdgeType for class.');
   }
@@ -23,6 +28,6 @@ export function EdgeType<DTO>(DTOClass: Class<DTO>): Class<EdgeType<DTO>> {
     @Field(() => ConnectionCursorScalar)
     cursor!: ConnectionCursorType;
   }
-
+  metaDataStorage.addEdgeType(DTOClass, AbstractEdge);
   return AbstractEdge;
 }

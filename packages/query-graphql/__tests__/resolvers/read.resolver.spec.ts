@@ -154,28 +154,29 @@ describe('ReadResolver', () => {
     });
   });
 
-  describe('#findById', () => {
-    it('should provide the findById options to the findById ResolverMethod decorator', () => {
-      const findById: decorators.ResolverMethodOptions = {
+  describe('#queryOne', () => {
+    it('should provide the queryOne options to the queryOne ResolverMethod decorator', () => {
+      const queryOne: decorators.ResolverMethodOptions = {
         disabled: false,
         filters: [],
         guards: [FakeCanActivate],
         interceptors: [],
         pipes: [],
       };
-      ReadResolver(TestResolverDTO, { one: findById });
+      ReadResolver(TestResolverDTO, { one: queryOne });
       expect(queryArgsTypeSpy).toBeCalledWith(TestResolverDTO);
       expect(connectionTypeSpy).toBeCalledWith(TestResolverDTO);
       const Connection = connectionTypeSpy.mock.results[0].value;
 
       expect(resolverQuerySpy).toBeCalledTimes(2);
-      assertResolverQueryCall(0, TestResolverDTO, { name: 'readResolverDTO', nullable: true }, {}, findById);
+      assertResolverQueryCall(0, TestResolverDTO, { name: 'readResolverDTO', nullable: true }, {}, queryOne);
       assertResolverQueryCall(1, Connection, { name: 'readResolverDTOS' }, {}, {});
-      expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
+      const opts = argsSpy.mock.calls[0][0];
+      expect(opts.type!()).toEqual(ID);
     });
 
-    it('should call the service findById with the provided input', async () => {
+    it('should call the service queryOne with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
       const input = 'id-1';
       const output: TestResolverDTO = {
@@ -317,28 +318,28 @@ describe('Readable', () => {
     });
   });
 
-  describe('#findById', () => {
-    it('should provide the findById options to the findById ResolverMethod decorator', () => {
-      const findById: decorators.ResolverMethodOptions = {
+  describe('#queryOne', () => {
+    it('should provide the queryOne options to the queryOne ResolverMethod decorator', () => {
+      const queryOne: decorators.ResolverMethodOptions = {
         disabled: false,
         filters: [],
         guards: [FakeCanActivate],
         interceptors: [],
         pipes: [],
       };
-      Readable(TestResolverDTO, { one: findById })(BaseResolver);
+      Readable(TestResolverDTO, { one: queryOne })(BaseResolver);
       expect(queryArgsTypeSpy).toBeCalledWith(TestResolverDTO);
       expect(connectionTypeSpy).toBeCalledWith(TestResolverDTO);
       const Connection = connectionTypeSpy.mock.results[0].value;
 
       expect(resolverQuerySpy).toBeCalledTimes(2);
-      assertResolverQueryCall(0, TestResolverDTO, { name: 'readResolverDTO', nullable: true }, {}, findById);
+      assertResolverQueryCall(0, TestResolverDTO, { name: 'readResolverDTO', nullable: true }, {}, queryOne);
       assertResolverQueryCall(1, Connection, { name: 'readResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
 
-    it('should call the service findById with the provided input', async () => {
+    it('should call the service queryOne with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
       const input = 'id-1';
       const output: TestResolverDTO = {

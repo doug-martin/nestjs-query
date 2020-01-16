@@ -6,9 +6,7 @@ import { TodoItemEntity } from './todo-item.entity';
 
 @Injectable()
 export class TodoItemService extends TypeormQueryService<TodoItemEntity> {
-  constructor(
-    @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
-  ) {
+  constructor(@InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>) {
     super(repo);
   }
 }

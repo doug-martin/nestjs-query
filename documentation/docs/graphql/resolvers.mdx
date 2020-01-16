@@ -408,31 +408,89 @@ export class TodoItemResolver extends ReadAndUpdateResolver(TodoItemDTO) {
 }
 ```
 
-# Custom Methods
+## Custom Methods
 
-You can define new methods leveraging methods and types from the base class.
+You can also create custom methods that build on the methods added by CRUDResolver.
 
-For example you can use the `QueryType` and `ConnectionType` to create a custom query method.
+Lets create a new query endpoint that only returns completed `TodoItems`.
+
+First create a file named `types.ts`. And add the following.
 
 ```ts
-// import { ConnectionType, QueryType } from '@nestjs-query/query-graphql';
-// import { Query, Args } from '@nestjs/graphql';
-// import { Filter } from '@nestjs-query/core';
+import { ConnectionType, QueryArgsType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
 
-// Set the return type to the generated ConnectionType
-@Query(() => TodoItemResolver.ConnectionType)
-completedTodoItems(
-  // Set the type to the generated QueryType
-  @Args({ type: () => TodoItemResolver.QueryType })
-  query: QueryType<TodoItemDTO>,
-): Promise<ConnectionType<TodoItemDTO>> {
+export const TodoItemConnection = ConnectionType(TodoItemDTO);
+
+@ArgsType()
+export class TodoItemQuery extends QueryArgsType(TodoItemDTO) {}
+```
+
+In the code above we export two types. `TodoItemConnection` and `TodoItemQuery`. Because of the way `type-graphql` and
+`nest` work we need to extend the `QueryArgsType` so that it will know the type to serialize into.
+
+**NOTE** `ConnectionType` will return the same Class each time you call it for a given type to prevent
+ duplicate type errors when generating the graphql schema.
+
+In your resolver you can now create a new `completedTodoItems` method with the following:
+
+```ts
+// Set the return type to the TodoItemConnection
+@Query(() => TodoItemConnection)
+completedTodoItems(@Args() query: TodoItemQuery): Promise<ConnectionType<TodoItemDTO>> {
   // add the completed filter the user provided filter
   const filter: Filter<TodoItemDTO> = {
     ...query.filter,
     ...{ completed: { is: true } },
   };
 
-  // call the original query method with the new query
-  return this.query({ ...query, ...{ filter } });
+  // call the original queryMany method with the new query
+  return this.queryMany({ ...query, ...{ filter } });
 }
 ```
+Lets break this down so you know what is going on.
+
+In the above code we annotate the new method with
+```ts
+@Query(() => TodoItemConnection)
+```
+The return type passed to query lets graphql know what the generated schema type is.
+
+The next piece to pay attention to is
+```ts
+completedTodoItems(@Args() query: TodoItemQuery)
+```
+We use the `TodoItemQuery` we created for the arguments type and annotate with `@Args` when you look at the generated
+schema in it will look like.
+
+```graphql
+completedTodoItems(
+  paging: CursorPaging = {}
+  filter: TodoItemFilter = {}
+  sorting: [TodoItemSort!] = []
+): TodoItemConnection!
+```
+Notice how there is not a query arg but instead the you see the fields of `TodoItemQuery` that is because we used
+`@Args` without a name.
+
+The next piece is
+
+```ts
+// add the completed filter the user provided filter
+const filter: Filter<TodoItemDTO> = {
+  ...query.filter,
+  ...{ completed: { is: true } },
+};
+```
+
+Here we do a shallow copy of the `filter` and add `completed: { is: true }`. This will override any completed arguments
+that an end user may have provided to ensure we always query for completed todos.
+
+Finally we call the `queryMany` method from the `CRUDResolver` with the new filter set on the query.
+
+```ts
+// call the original queryMany method with the new query
+return this.queryMany({ ...query, ...{ filter } });
+```
+
