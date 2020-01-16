@@ -59,28 +59,29 @@ describe('CreateResolver', () => {
     CreateResolver(TestResolverDTO, { dtoName: 'Test', CreateOneArgs });
 
     expect(createOneArgsTypeSpy).not.toBeCalled();
-    expect(createManyArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+    expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneTest' }, {});
-    assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyTests' }, {});
+    assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneTest' }, {}, {});
+    assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyTests' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
 
   it('should use the class name if name not found in object metadata', () => {
+    @ObjectType()
     class UnnamedTestResolverDTO {
       @decorators.FilterableField(() => ID)
       id!: string;
     }
     CreateResolver(UnnamedTestResolverDTO);
 
-    expect(createOneArgsTypeSpy).toBeCalledWith(UnnamedTestResolverDTO);
-    expect(createManyArgsTypeSpy).toBeCalledWith(UnnamedTestResolverDTO);
+    expect(createOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+    expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, UnnamedTestResolverDTO, { name: 'createOneUnnamedTestResolverDTO' }, {});
-    assertResolverMutationCall(1, [UnnamedTestResolverDTO], { name: 'createManyUnnamedTestResolverDTOS' }, {});
+    assertResolverMutationCall(0, UnnamedTestResolverDTO, { name: 'createOneUnnamedTestResolverDTO' }, {}, {});
+    assertResolverMutationCall(1, [UnnamedTestResolverDTO], { name: 'createManyUnnamedTestResolverDTOS' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -92,11 +93,11 @@ describe('CreateResolver', () => {
       CreateResolver(TestResolverDTO, { CreateOneArgs });
 
       expect(createOneArgsTypeSpy).not.toBeCalled();
-      expect(createManyArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {});
-      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -109,13 +110,13 @@ describe('CreateResolver', () => {
         interceptors: [],
         pipes: [],
       };
-      CreateResolver(TestResolverDTO, { createOne: createOneOpts });
-      expect(createOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-      expect(createManyArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      CreateResolver(TestResolverDTO, { one: createOneOpts });
+      expect(createOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, createOneOpts);
-      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, createOneOpts);
+      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -144,12 +145,12 @@ describe('CreateResolver', () => {
       jest.clearAllMocks(); // reset
       CreateResolver(TestResolverDTO, { CreateManyArgs });
 
-      expect(createOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(createOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
       expect(createManyArgsTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {});
-      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -162,13 +163,13 @@ describe('CreateResolver', () => {
         interceptors: [],
         pipes: [],
       };
-      CreateResolver(TestResolverDTO, { createMany: createManyOpts });
-      expect(createOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-      expect(createManyArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      CreateResolver(TestResolverDTO, { many: createManyOpts });
+      expect(createOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {});
-      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, createManyOpts);
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {}, createManyOpts);
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -226,28 +227,29 @@ describe('Creatable', () => {
     Creatable(TestResolverDTO, { dtoName: 'Test', CreateOneArgs })(BaseResolver);
 
     expect(createOneArgsTypeSpy).not.toBeCalled();
-    expect(createManyArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+    expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneTest' }, {});
-    assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyTests' }, {});
+    assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneTest' }, {}, {});
+    assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyTests' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
 
   it('should use the class name if name not found in object metadata', () => {
+    @ObjectType()
     class UnnamedTestResolverDTO {
       @decorators.FilterableField(() => ID)
       id!: string;
     }
     Creatable(UnnamedTestResolverDTO)(BaseResolver);
 
-    expect(createOneArgsTypeSpy).toBeCalledWith(UnnamedTestResolverDTO);
-    expect(createManyArgsTypeSpy).toBeCalledWith(UnnamedTestResolverDTO);
+    expect(createOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+    expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, UnnamedTestResolverDTO, { name: 'createOneUnnamedTestResolverDTO' }, {});
-    assertResolverMutationCall(1, [UnnamedTestResolverDTO], { name: 'createManyUnnamedTestResolverDTOS' }, {});
+    assertResolverMutationCall(0, UnnamedTestResolverDTO, { name: 'createOneUnnamedTestResolverDTO' }, {}, {});
+    assertResolverMutationCall(1, [UnnamedTestResolverDTO], { name: 'createManyUnnamedTestResolverDTOS' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -259,11 +261,11 @@ describe('Creatable', () => {
       Creatable(TestResolverDTO, { CreateOneArgs })(BaseResolver);
 
       expect(createOneArgsTypeSpy).not.toBeCalled();
-      expect(createManyArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {});
-      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -276,13 +278,13 @@ describe('Creatable', () => {
         interceptors: [],
         pipes: [],
       };
-      Creatable(TestResolverDTO, { createOne: createOneOpts })(BaseResolver);
-      expect(createOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-      expect(createManyArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      Creatable(TestResolverDTO, { one: createOneOpts })(BaseResolver);
+      expect(createOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, createOneOpts);
-      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, createOneOpts);
+      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -311,12 +313,12 @@ describe('Creatable', () => {
       jest.clearAllMocks(); // reset
       Creatable(TestResolverDTO, { CreateManyArgs })(BaseResolver);
 
-      expect(createOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(createOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
       expect(createManyArgsTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {});
-      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -329,13 +331,13 @@ describe('Creatable', () => {
         interceptors: [],
         pipes: [],
       };
-      Creatable(TestResolverDTO, { createMany: createManyOpts })(BaseResolver);
-      expect(createOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-      expect(createManyArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      Creatable(TestResolverDTO, { many: createManyOpts })(BaseResolver);
+      expect(createOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(createManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {});
-      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, createManyOpts);
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, [TestResolverDTO], { name: 'createManyCreateResolverDTOS' }, {}, createManyOpts);
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });

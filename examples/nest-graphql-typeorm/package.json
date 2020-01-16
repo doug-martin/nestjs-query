@@ -33,6 +33,7 @@
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3",
     "type-graphql": "^0.17.5",
+    "typeorm": "^0.2.20",
     "typeorm-seeding": "^1.2.0"
   },
   "devDependencies": {

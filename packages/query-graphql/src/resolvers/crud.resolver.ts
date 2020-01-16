@@ -11,10 +11,10 @@ export type CRUDResolverArgs<
 > = {
   CreateDTOClass?: Class<C>;
   UpdateDTOClass?: Class<U>;
-  createArgs?: CreateResolverArgs<DTO, C>;
-  readArgs?: ReadResolverArgs<DTO>;
-  updateArgs?: UpdateResolverArgs<DTO, U>;
-  deleteArgs?: DeleteResolverArgs<DTO>;
+  create?: CreateResolverArgs<DTO, C>;
+  read?: ReadResolverArgs<DTO>;
+  update?: UpdateResolverArgs<DTO, U>;
+  delete?: DeleteResolverArgs<DTO>;
 };
 
 type CRUDResolver<DTO, C extends DeepPartial<DTO>, U extends DeepPartial<DTO>> = Class<CreateResolver<DTO, C>> &
@@ -29,13 +29,13 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
   const {
     CreateDTOClass,
     UpdateDTOClass,
-    createArgs = CreateDTOClass ? { CreateDTOClass } : {},
-    readArgs = {},
-    updateArgs = UpdateDTOClass ? { UpdateDTOClass } : {},
-    deleteArgs = {},
+    create = CreateDTOClass ? { CreateDTOClass } : {},
+    read = {},
+    update = UpdateDTOClass ? { UpdateDTOClass } : {},
+    delete: deleteArgs = {},
   } = args;
   return Creatable(
     DTOClass,
-    createArgs,
-  )(Readable(DTOClass, readArgs)(Updateable(DTOClass, updateArgs)(DeleteResolver(DTOClass, deleteArgs))));
+    create,
+  )(Readable(DTOClass, read)(Updateable(DTOClass, update)(DeleteResolver(DTOClass, deleteArgs))));
 };

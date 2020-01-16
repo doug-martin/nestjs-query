@@ -65,8 +65,8 @@ describe('DeleteResolver', () => {
     expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, {});
-    assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {});
+    assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
+    assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -80,8 +80,8 @@ describe('DeleteResolver', () => {
     expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneTest' }, {});
-    assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyTests' }, {});
+    assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneTest' }, {}, {});
+    assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyTests' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -96,8 +96,8 @@ describe('DeleteResolver', () => {
       expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, {});
-      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {});
+      assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -110,13 +110,13 @@ describe('DeleteResolver', () => {
         interceptors: [],
         pipes: [],
       };
-      DeleteResolver(TestResolverDTO, { deleteOne: deleteOneOpts });
+      DeleteResolver(TestResolverDTO, { one: deleteOneOpts });
       expect(deleteOneArgsTypeSpy).toBeCalledWith();
       expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, deleteOneOpts);
-      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {});
+      assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, deleteOneOpts);
+      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -147,8 +147,8 @@ describe('DeleteResolver', () => {
       expect(deleteManyArgsTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, {});
-      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {});
+      assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -161,13 +161,19 @@ describe('DeleteResolver', () => {
         interceptors: [],
         pipes: [],
       };
-      DeleteResolver(TestResolverDTO, { deleteMany: deleteManyOpts });
+      DeleteResolver(TestResolverDTO, { many: deleteManyOpts });
       expect(deleteOneArgsTypeSpy).toBeCalledWith();
       expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, {});
-      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, deleteManyOpts);
+      assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
+      assertResolverMutationCall(
+        1,
+        DeleteManyResponseType(),
+        { name: 'deleteManyDeleteResolverDTOS' },
+        {},
+        deleteManyOpts,
+      );
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -217,8 +223,8 @@ describe('Deletable', () => {
     expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, {});
-    assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {});
+    assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
+    assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -232,8 +238,8 @@ describe('Deletable', () => {
     expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneTest' }, {});
-    assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyTests' }, {});
+    assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneTest' }, {}, {});
+    assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyTests' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -248,8 +254,8 @@ describe('Deletable', () => {
       expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, {});
-      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {});
+      assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -262,13 +268,13 @@ describe('Deletable', () => {
         interceptors: [],
         pipes: [],
       };
-      Deletable(TestResolverDTO, { deleteOne: deleteOneOpts })(BaseResolver);
+      Deletable(TestResolverDTO, { one: deleteOneOpts })(BaseResolver);
       expect(deleteOneArgsTypeSpy).toBeCalledWith();
       expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, deleteOneOpts);
-      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {});
+      assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, deleteOneOpts);
+      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -299,8 +305,8 @@ describe('Deletable', () => {
       expect(deleteManyArgsTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, {});
-      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {});
+      assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -313,13 +319,19 @@ describe('Deletable', () => {
         interceptors: [],
         pipes: [],
       };
-      Deletable(TestResolverDTO, { deleteMany: deleteManyOpts })(BaseResolver);
+      Deletable(TestResolverDTO, { many: deleteManyOpts })(BaseResolver);
       expect(deleteOneArgsTypeSpy).toBeCalledWith();
       expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'deleteOneDeleteResolverDTO' }, {});
-      assertResolverMutationCall(1, DeleteManyResponseType(), { name: 'deleteManyDeleteResolverDTOS' }, deleteManyOpts);
+      assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
+      assertResolverMutationCall(
+        1,
+        DeleteManyResponseType(),
+        { name: 'deleteManyDeleteResolverDTOS' },
+        {},
+        deleteManyOpts,
+      );
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });

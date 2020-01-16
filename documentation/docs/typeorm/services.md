@@ -1,10 +1,6 @@
 ---
-id: guides-typeorm
-title: Typeorm 
-sidebar_label: Typeorm
+title: Service 
 ---
-
-# TypeormQueryService
 
 The `TypeormQueryService` is an implementation of the `QueryService` from the `core` package.
 
@@ -54,7 +50,7 @@ export class TodoItemService extends TypeormQueryService<TodoItemEntity> {
 
 ## Querying
 
-To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities.
+To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](./query).
 
 #### Example
 
@@ -177,6 +173,8 @@ const createdRecords = await this.service.createMany({
 });
 ```
 
+## Updating
+
 ### Update One 
 
 To update a single record use the `updateOne` method.
@@ -208,6 +206,8 @@ const { updatedCount } = await this.service.updateMany({
   update: {completed: true},
 });
 ```
+
+## Deleting
 
 ### Delete One 
 

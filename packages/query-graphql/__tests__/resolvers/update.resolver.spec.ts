@@ -61,12 +61,12 @@ describe('UpdateResolver', () => {
   it('should create an UpdateResolver with the default DTO', () => {
     UpdateResolver(TestResolverDTO);
 
-    expect(updateOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+    expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {});
-    assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {});
+    assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
+    assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -77,11 +77,11 @@ describe('UpdateResolver', () => {
     UpdateResolver(TestResolverDTO, { dtoName: 'Test', UpdateOneArgs });
 
     expect(updateOneArgsTypeSpy).not.toBeCalled();
-    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneTest' }, {});
-    assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyTests' }, {});
+    assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneTest' }, {}, {});
+    assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyTests' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -93,11 +93,11 @@ describe('UpdateResolver', () => {
       UpdateResolver(TestResolverDTO, { UpdateOneArgs });
 
       expect(updateOneArgsTypeSpy).not.toBeCalled();
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {});
-      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -110,13 +110,13 @@ describe('UpdateResolver', () => {
         interceptors: [],
         pipes: [],
       };
-      UpdateResolver(TestResolverDTO, { updateOne: updateOneOpts });
-      expect(updateOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+      UpdateResolver(TestResolverDTO, { one: updateOneOpts });
+      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, updateOneOpts);
-      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, updateOneOpts);
+      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -146,12 +146,12 @@ describe('UpdateResolver', () => {
       jest.clearAllMocks(); // reset
       UpdateResolver(TestResolverDTO, { UpdateManyArgs });
 
-      expect(updateOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
       expect(updateManyArgsTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {});
-      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -164,13 +164,19 @@ describe('UpdateResolver', () => {
         interceptors: [],
         pipes: [],
       };
-      UpdateResolver(TestResolverDTO, { updateMany: updateManyOpts });
-      expect(updateOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+      UpdateResolver(TestResolverDTO, { many: updateManyOpts });
+      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {});
-      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, updateManyOpts);
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
+      assertResolverMutationCall(
+        1,
+        UpdateManyResponseType(),
+        { name: 'updateManyUpdateResolverDTOS' },
+        {},
+        updateManyOpts,
+      );
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -219,12 +225,12 @@ describe('Updateable', () => {
   it('should create an UpdateResolver with the default DTO', () => {
     Updateable<TestResolverDTO, Partial<TestResolverDTO>>(TestResolverDTO)(BaseResolver);
 
-    expect(updateOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+    expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {});
-    assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {});
+    assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
+    assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -235,11 +241,11 @@ describe('Updateable', () => {
     Updateable(TestResolverDTO, { dtoName: 'Test', UpdateOneArgs })(BaseResolver);
 
     expect(updateOneArgsTypeSpy).not.toBeCalled();
-    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
-    assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneTest' }, {});
-    assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyTests' }, {});
+    assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneTest' }, {}, {});
+    assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyTests' }, {}, {});
     expect(argsSpy).toBeCalledWith();
     expect(argsSpy).toBeCalledTimes(2);
   });
@@ -251,11 +257,11 @@ describe('Updateable', () => {
       Updateable(TestResolverDTO, { UpdateOneArgs })(BaseResolver);
 
       expect(updateOneArgsTypeSpy).not.toBeCalled();
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {});
-      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -268,13 +274,13 @@ describe('Updateable', () => {
         interceptors: [],
         pipes: [],
       };
-      Updateable(TestResolverDTO, { updateOne: updateOneOpts })(BaseResolver);
-      expect(updateOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+      Updateable(TestResolverDTO, { one: updateOneOpts })(BaseResolver);
+      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, updateOneOpts);
-      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, updateOneOpts);
+      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -304,12 +310,12 @@ describe('Updateable', () => {
       jest.clearAllMocks(); // reset
       UpdateResolver(TestResolverDTO, { UpdateManyArgs });
 
-      expect(updateOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
       expect(updateManyArgsTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {});
-      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {});
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
+      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });
@@ -322,13 +328,19 @@ describe('Updateable', () => {
         interceptors: [],
         pipes: [],
       };
-      UpdateResolver(TestResolverDTO, { updateMany: updateManyOpts });
-      expect(updateOneArgsTypeSpy).toBeCalledWith(TestResolverDTO);
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), TestResolverDTO);
+      UpdateResolver(TestResolverDTO, { many: updateManyOpts });
+      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
-      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {});
-      assertResolverMutationCall(1, UpdateManyResponseType(), { name: 'updateManyUpdateResolverDTOS' }, updateManyOpts);
+      assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
+      assertResolverMutationCall(
+        1,
+        UpdateManyResponseType(),
+        { name: 'updateManyUpdateResolverDTOS' },
+        {},
+        updateManyOpts,
+      );
       expect(argsSpy).toBeCalledWith();
       expect(argsSpy).toBeCalledTimes(2);
     });

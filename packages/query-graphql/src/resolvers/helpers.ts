@@ -6,11 +6,11 @@ import { validate } from 'class-validator';
 import { ArgumentValidationError } from 'type-graphql';
 import { getMetadataStorage } from '../metadata';
 
-type DTONamesOpts = {
+export type DTONamesOpts = {
   dtoName?: string;
 };
 
-type DTONames = {
+export type DTONames = {
   baseName: string;
   baseNameLower: string;
   pluralBaseName: string;

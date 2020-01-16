@@ -7,8 +7,8 @@
 
 module.exports = {
   docs: {
-    Introduction: ['introduction-getting-started', 'introduction-concepts', 'introduction-example'],
-    Guides: ['guides-typeorm', 'guides-dtos', 'guides-graphql', 'guides-query'],
-    API: ['api-core', 'api-graphql', 'api-typeorm'],
+    Introduction: ['introduction/getting-started', 'introduction/concepts', 'introduction/example'],
+    Typeorm: ['typeorm/services', 'typeorm/query'],
+    GraphQL: ['graphql/dtos', 'graphql/resolvers', 'graphql/queries', 'graphql/mutations'],
   },
 };
