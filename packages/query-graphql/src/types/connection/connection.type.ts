@@ -71,10 +71,10 @@ export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionTyp
       return plainToClass(E, { node: dto, cursor: offsetToCursor(initialOffset + index) });
     }
 
-    @Field(() => PIT)
+    @Field(() => PIT, { description: 'Paging information' })
     pageInfo!: PageInfoType;
 
-    @Field(() => [E])
+    @Field(() => [E], { description: 'Array of edges.' })
     edges!: EdgeType<DTO>[];
   }
   metadataStorage.addConnectionType(TItemClass, AbstractConnection);

@@ -1,5 +1,6 @@
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator';
 
+/** @internal */
 @ValidatorConstraint({ async: false })
 export class CannotUseWith implements ValidatorConstraintInterface {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

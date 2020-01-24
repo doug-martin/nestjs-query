@@ -3,8 +3,10 @@ import { Field, InputType } from 'type-graphql';
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { IsUndefined } from '../../validators';
 
+/** @internal */
 let booleanFieldComparison: Class<FilterFieldComparison<boolean>>;
 
+/** @internal */
 export function getOrCreateBooleanFieldComparison(): Class<FilterFieldComparison<boolean>> {
   if (booleanFieldComparison) {
     return booleanFieldComparison;

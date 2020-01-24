@@ -21,8 +21,6 @@ While working on projects in nestjs it was very easy to get up and running with 
 npm i @nestjs-query/core
 ```
 
-To add to an existing application.
-
 `@nestjs-query/query-graphql`
 
 ```sh

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as nest from '@nestjs/common';
 import { Class } from '@nestjs-query/core';
-import { ResolverMethod, ResolverMethodOptions } from '../../src/decorators/resolver-method.decorator';
+import { ResolverMethod, ResolverMethodOpts } from '../../src/decorators/resolver-method.decorator';
 
 describe('ResolverMethod decorator', (): void => {
   const useGuardsSpy = jest.spyOn(nest, 'UseGuards');
@@ -41,7 +41,7 @@ describe('ResolverMethod decorator', (): void => {
     };
   }
 
-  function createTestResolver(...opts: ResolverMethodOptions[]): void {
+  function createTestResolver(...opts: ResolverMethodOpts[]): void {
     // @ts-ignore
     class TestResolver {
       @ResolverMethod(...opts)

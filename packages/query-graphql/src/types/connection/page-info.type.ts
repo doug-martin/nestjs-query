@@ -8,7 +8,7 @@ export interface PageInfoType {
   startCursor?: ConnectionCursorType | null;
   endCursor?: ConnectionCursorType | null;
 }
-
+/** @internal */
 let pageInfoType: Class<PageInfoType> | null = null;
 export const PageInfoType = (): Class<PageInfoType> => {
   if (pageInfoType) {
@@ -16,16 +16,19 @@ export const PageInfoType = (): Class<PageInfoType> => {
   }
   @ObjectType('PageInfo')
   class PageInfoTypeImpl {
-    @Field(() => Boolean, { nullable: true })
+    @Field(() => Boolean, { nullable: true, description: 'true if paging forward and there are more records.' })
     hasNextPage?: boolean | null;
 
-    @Field(() => Boolean, { nullable: true })
+    @Field(() => Boolean, { nullable: true, description: 'true if paging backwards and there are more records.' })
     hasPreviousPage?: boolean | null;
 
-    @Field(() => ConnectionCursorScalar, { nullable: true })
+    @Field(() => ConnectionCursorScalar, { nullable: true, description: 'The cursor of the first returned record.' })
     startCursor?: ConnectionCursorType | null;
 
-    @Field(() => ConnectionCursorScalar, { nullable: true })
+    @Field(() => ConnectionCursorScalar, {
+      nullable: true,
+      description: 'The cursor of the last returned record.',
+    })
     endCursor?: ConnectionCursorType | null;
   }
   pageInfoType = PageInfoTypeImpl;

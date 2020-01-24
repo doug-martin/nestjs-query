@@ -10,9 +10,9 @@ const guards = [AuthGuard];
 
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
-  create: { many: { guards } },
-  update: { many: { guards } },
-  delete: { many: { guards } },
+  create: { guards },
+  update: { guards },
+  delete: { guards },
 }) {
   constructor(readonly service: TodoItemService) {
     super(service);

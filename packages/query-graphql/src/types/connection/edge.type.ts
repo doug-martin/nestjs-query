@@ -22,10 +22,10 @@ export function EdgeType<DTO>(DTOClass: Class<DTO>): Class<EdgeType<DTO>> {
 
   @ObjectType(`${objMetadata.name}Edge`)
   class AbstractEdge implements EdgeType<DTO> {
-    @Field(() => DTOClass)
+    @Field(() => DTOClass, { description: `The node containing the ${objMetadata.name}` })
     node!: DTO;
 
-    @Field(() => ConnectionCursorScalar)
+    @Field(() => ConnectionCursorScalar, { description: 'Cursor for this node.' })
     cursor!: ConnectionCursorType;
   }
   metaDataStorage.addEdgeType(DTOClass, AbstractEdge);

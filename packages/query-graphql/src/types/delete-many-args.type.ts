@@ -1,11 +1,15 @@
-import { Filter, DeleteMany, Class } from '@nestjs-query/core';
+import { Filter, Class } from '@nestjs-query/core';
 import { Field, ArgsType } from 'type-graphql';
 
-export function DeleteManyArgsType<T, F extends Filter<T>>(FilterType: Class<F>): Class<DeleteMany<T>> {
+export interface DeleteManyArgsType<T> {
+  input: Filter<T>;
+}
+
+export function DeleteManyArgsType<T>(FilterType: Class<Filter<T>>): Class<DeleteManyArgsType<T>> {
   @ArgsType()
-  class DeleteManyArgs implements DeleteMany<T> {
-    @Field(() => FilterType)
-    filter!: F;
+  class DeleteManyArgs implements DeleteManyArgsType<T> {
+    @Field(() => FilterType, { description: 'Filter to find records to delete' })
+    input!: Filter<T>;
   }
   return DeleteManyArgs;
 }

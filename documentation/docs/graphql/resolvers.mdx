@@ -44,6 +44,8 @@ The methods that will be exposed for the `TodoItemDTO` are
 
 You can read more about the methods in the [Queries](./queries) and [Mutations](./mutations) docs.
 
+---
+
 ## Options
 
 The Crud Resolver accepts a number of options to control your endpoints.
@@ -87,6 +89,8 @@ The `create`, `read`, `update`, and `delete` options above all accept the follow
     * `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to the endpoint.
     * `filters=[]` - An array of [filters](https://docs.nestjs.com/exception-filters) to add to the endpoint.
 
+
+---
 
 ## Examples
 
@@ -142,6 +146,8 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
 }
 ```
 
+---
+
 ### Disabling Endpoints.
 
 There may be scenarios where you wish to disable certain methods.
@@ -190,6 +196,8 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   }
 }
 ```
+
+---
 
 ### Guards, Pipes, Filters, and Interceptors
 
@@ -275,7 +283,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   }
 }
 ```
-
+---
 
 ## Individual Resolvers
 
@@ -305,6 +313,8 @@ export class TodoItemResolver extends CreateResolver(TodoItemDTO) {
 }
 ```
 
+---
+
 ### `ReadResolver`
 
 The `ReadResolver` will only expose the `query` and `findById` endpoints. The [options](#options) described for `read`
@@ -325,6 +335,7 @@ export class TodoItemResolver extends ReadResolver(TodoItemDTO) {
   }
 }
 ```
+---
 
 ### `UpdateResolver`
 
@@ -347,6 +358,7 @@ export class TodoItemResolver extends UpdateResolver(TodoItemDTO) {
   }
 }
 ```
+---
 
 ### `DeleteResolver`
 
@@ -368,45 +380,7 @@ export class TodoItemResolver extends DeleteResolver(TodoItemDTO) {
   }
 }
 ```
-
-### Mixins
-
-There are mixins for each of the resolvers described above.
-
-* `Creatable` - Mixin to add `CreateResolver` endpoints.
-* `Readable` - Mixin to add `ReadResolver` endpoints.
-* `Updateable` - Mixin to add `UpdateResolver` endpoints.
-* `Deletable` -  Mixin to add `DeleteResolver` endpoints.
-
-The same options used to extend a resolver are used for mixins.
-
-Lets create a new custom read and update resolver
-
-```ts
-import { Class } from '@nestjs-query/core';
-import {
-  Readable,
-  ReadResolver,
-  UpdateResolver,
-} from '@nestjs-query/query-graphql/src';
-
-export const ReadAndUpdateResolver = <DTO>(
-  DTOClass: Class<DTO>,
-): Class<ReadResolver<DTO>> & Class<UpdateResolver<DTO, DTO>> => {
-  return Readable(DTOClass)(UpdateResolver(DTOClass));
-};
-```
-
-Now we can use it to create other resolvers with only read and update endpoints.
-
-```ts
-@Resolver(() => TodoItemDTO)
-export class TodoItemResolver extends ReadAndUpdateResolver(TodoItemDTO) {
-  constructor(readonly service: TodoItemService) {
-    super(service);
-  }
-}
-```
+---
 
 ## Custom Methods
 

@@ -1,8 +1,8 @@
-import { Query, DeleteMany, DeleteOne, UpdateMany, UpdateOne } from '@nestjs-query/core';
-import { NotFoundException } from '@nestjs/common';
+import { Query } from '@nestjs-query/core';
+import { Filter } from '@nestjs-query/core/src';
 import { plainToClass } from 'class-transformer';
 import { deepEqual, instance, mock, objectContaining, when } from 'ts-mockito';
-import { DeleteQueryBuilder, EntityMetadata, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
+import { DeleteQueryBuilder, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { FilterQueryBuilder } from '../../src/query';
 import { TypeormQueryService } from '../../src';
@@ -47,56 +47,6 @@ describe('TypeormQueryService', (): void => {
     });
   });
 
-  describe('#queryOne', () => {
-    it('call select and return the result', async () => {
-      const entity = testEntities()[0];
-      const query: Query<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
-      const expectedQuery = { ...query, paging: { limit: 1, offset: 0 } };
-      const { queryService, mockQueryBuilder } = createQueryService();
-      const selectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
-      when(mockQueryBuilder.select(objectContaining(expectedQuery))).thenReturn(instance(selectQueryBuilder));
-      when(selectQueryBuilder.getOne()).thenResolve(entity);
-      const queryResult = await queryService.queryOne(query);
-      expect(queryResult).toEqual(entity);
-    });
-
-    it('call select and return an undefined result', async () => {
-      const query: Query<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
-      const expectedQuery = { ...query, paging: { limit: 1, offset: 0 } };
-      const { queryService, mockQueryBuilder } = createQueryService();
-      const selectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
-      when(mockQueryBuilder.select(objectContaining(expectedQuery))).thenReturn(instance(selectQueryBuilder));
-      when(selectQueryBuilder.getOne()).thenResolve(undefined);
-      const queryResult = await queryService.queryOne(query);
-      expect(queryResult).toBeUndefined();
-    });
-  });
-
-  describe('#getOne', () => {
-    it('call select and return the result', async () => {
-      const entity = testEntities()[0];
-      const query: Query<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
-      const expectedQuery = { ...query, paging: { limit: 1, offset: 0 } };
-      const { queryService, mockQueryBuilder } = createQueryService();
-      const selectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
-      when(mockQueryBuilder.select(objectContaining(expectedQuery))).thenReturn(instance(selectQueryBuilder));
-      when(selectQueryBuilder.getOne()).thenResolve(entity);
-      const queryResult = await queryService.getOne(query);
-      expect(queryResult).toEqual(entity);
-    });
-
-    it('throw an error for an undefined type', async () => {
-      const query: Query<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
-      const expectedQuery = { ...query, paging: { limit: 1, offset: 0 } };
-      const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
-      const selectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
-      when(mockRepo.metadata).thenReturn({ targetName: 'TestEntity' } as EntityMetadata);
-      when(mockQueryBuilder.select(objectContaining(expectedQuery))).thenReturn(instance(selectQueryBuilder));
-      when(selectQueryBuilder.getOne()).thenResolve(undefined);
-      return expect(queryService.getOne(query)).rejects.toThrowError(NotFoundException);
-    });
-  });
-
   describe('#findById', () => {
     it('call findOne on the repo', async () => {
       const entity = testEntities()[0];
@@ -131,7 +81,7 @@ describe('TypeormQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstances))).thenResolve(entityInstances);
-      const queryResult = await queryService.createMany({ items: entities });
+      const queryResult = await queryService.createMany(entities);
       expect(queryResult).toEqual(entityInstances);
     });
 
@@ -141,7 +91,7 @@ describe('TypeormQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstances))).thenResolve(entityInstances);
-      const queryResult = await queryService.createMany({ items: entityInstances });
+      const queryResult = await queryService.createMany(entityInstances);
       expect(queryResult).toEqual(entityInstances);
     });
   });
@@ -153,7 +103,7 @@ describe('TypeormQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstance))).thenResolve(entityInstance);
-      const queryResult = await queryService.createOne({ item: entity });
+      const queryResult = await queryService.createOne(entityInstance);
       expect(queryResult).toEqual(entityInstance);
     });
 
@@ -163,7 +113,7 @@ describe('TypeormQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstance))).thenResolve(entityInstance);
-      const queryResult = await queryService.createOne({ item: entityInstance });
+      const queryResult = await queryService.createOne(entity);
       expect(queryResult).toEqual(entityInstance);
     });
   });
@@ -171,20 +121,20 @@ describe('TypeormQueryService', (): void => {
   describe('#deleteMany', () => {
     it('create a delete query builder and call execute', async () => {
       const affected = 10;
-      const deleteMany: DeleteMany<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
+      const deleteMany: Filter<TestEntity> = { stringType: { eq: 'foo' } };
       const { queryService, mockQueryBuilder } = createQueryService();
       const deleteQueryBuilder: DeleteQueryBuilder<TestEntity> = mock(DeleteQueryBuilder);
-      when(mockQueryBuilder.delete(objectContaining(deleteMany))).thenReturn(instance(deleteQueryBuilder));
+      when(mockQueryBuilder.delete(objectContaining({ filter: deleteMany }))).thenReturn(instance(deleteQueryBuilder));
       when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined, affected });
       const queryResult = await queryService.deleteMany(deleteMany);
       expect(queryResult).toEqual({ deletedCount: affected });
     });
 
     it('should return 0 if affected is not returned', async () => {
-      const deleteMany: DeleteMany<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
+      const deleteMany: Filter<TestEntity> = { stringType: { eq: 'foo' } };
       const { queryService, mockQueryBuilder } = createQueryService();
       const deleteQueryBuilder: DeleteQueryBuilder<TestEntity> = mock(DeleteQueryBuilder);
-      when(mockQueryBuilder.delete(objectContaining(deleteMany))).thenReturn(instance(deleteQueryBuilder));
+      when(mockQueryBuilder.delete(objectContaining({ filter: deleteMany }))).thenReturn(instance(deleteQueryBuilder));
       when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined });
       const queryResult = await queryService.deleteMany(deleteMany);
       expect(queryResult).toEqual({ deletedCount: 0 });
@@ -194,21 +144,21 @@ describe('TypeormQueryService', (): void => {
   describe('#deleteOne', () => {
     it('call getOne and then remove the entity', async () => {
       const entity = testEntities()[0];
-      const deleteOne: DeleteOne = { id: entity.id };
+      const { id } = entity;
       const { queryService, mockRepo } = createQueryService();
-      when(mockRepo.findOneOrFail(deleteOne.id)).thenResolve(entity);
+      when(mockRepo.findOneOrFail(id)).thenResolve(entity);
       when(mockRepo.remove(entity)).thenResolve(entity);
-      const queryResult = await queryService.deleteOne(deleteOne);
+      const queryResult = await queryService.deleteOne(id);
       expect(queryResult).toEqual(entity);
     });
 
     it('call fail if the entity is not found', async () => {
       const entity = testEntities()[0];
-      const deleteOne: DeleteOne = { id: entity.id };
+      const { id } = entity;
       const err = new Error('not found');
       const { queryService, mockRepo } = createQueryService();
-      when(mockRepo.findOneOrFail(deleteOne.id)).thenReject(err);
-      return expect(queryService.deleteOne(deleteOne)).rejects.toThrowError(err);
+      when(mockRepo.findOneOrFail(id)).thenReject(err);
+      return expect(queryService.deleteOne(id)).rejects.toThrowError(err);
     });
   });
 
@@ -216,35 +166,31 @@ describe('TypeormQueryService', (): void => {
     it('create a query to update all entities', async () => {
       const entity = testEntities()[0];
       const update = { stringType: 'baz' };
-      const updateMany: UpdateMany<TestEntity, Partial<TestEntity>> = { filter: { id: { eq: entity.id } }, update };
+      const filter: Filter<TestEntity> = { id: { eq: entity.id } };
       const affected = 10;
       const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
       const mockUpdateQueryBuilder: UpdateQueryBuilder<TestEntity> = mock(UpdateQueryBuilder);
       const mockUpdateQueryBuilderInstance = instance(mockUpdateQueryBuilder);
-      when(mockQueryBuilder.update(objectContaining({ filter: updateMany.filter }))).thenReturn(
-        mockUpdateQueryBuilderInstance,
-      );
+      when(mockQueryBuilder.update(objectContaining({ filter }))).thenReturn(mockUpdateQueryBuilderInstance);
       when(mockUpdateQueryBuilder.set(objectContaining(update))).thenReturn(mockUpdateQueryBuilderInstance);
       when(mockUpdateQueryBuilder.execute()).thenResolve({ generatedMaps: [], raw: undefined, affected });
       when(mockRepo.remove(entity)).thenResolve(entity);
-      const queryResult = await queryService.updateMany(updateMany);
+      const queryResult = await queryService.updateMany(update, filter);
       expect(queryResult).toEqual({ updatedCount: affected });
     });
 
     it('should return 0 if affected is not defined', async () => {
       const entity = testEntities()[0];
       const update = { stringType: 'baz' };
-      const updateMany: UpdateMany<TestEntity, Partial<TestEntity>> = { filter: { id: { eq: entity.id } }, update };
+      const filter: Filter<TestEntity> = { id: { eq: entity.id } };
       const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
       const mockUpdateQueryBuilder: UpdateQueryBuilder<TestEntity> = mock(UpdateQueryBuilder);
       const mockUpdateQueryBuilderInstance = instance(mockUpdateQueryBuilder);
-      when(mockQueryBuilder.update(objectContaining({ filter: updateMany.filter }))).thenReturn(
-        mockUpdateQueryBuilderInstance,
-      );
+      when(mockQueryBuilder.update(objectContaining({ filter }))).thenReturn(mockUpdateQueryBuilderInstance);
       when(mockUpdateQueryBuilder.set(objectContaining(update))).thenReturn(mockUpdateQueryBuilderInstance);
       when(mockUpdateQueryBuilder.execute()).thenResolve({ generatedMaps: [], raw: undefined });
       when(mockRepo.remove(entity)).thenResolve(entity);
-      const queryResult = await queryService.updateMany(updateMany);
+      const queryResult = await queryService.updateMany(update, filter);
       expect(queryResult).toEqual({ updatedCount: 0 });
     });
   });
@@ -252,25 +198,25 @@ describe('TypeormQueryService', (): void => {
   describe('#updateOne', () => {
     it('call getOne and then remove the entity', async () => {
       const entity = testEntities()[0];
+      const updateId = entity.id;
       const update = { stringType: 'baz' };
       const savedEntity = plainToClass(TestEntity, { ...entity, ...update });
-      const updateOne: UpdateOne<TestEntity, Partial<TestEntity>> = { id: entity.id, update };
       const { queryService, mockRepo } = createQueryService();
-      when(mockRepo.findOneOrFail(updateOne.id)).thenResolve(entity);
-      when(mockRepo.merge(entity, updateOne.update)).thenReturn(savedEntity);
+      when(mockRepo.findOneOrFail(updateId)).thenResolve(entity);
+      when(mockRepo.merge(entity, update)).thenReturn(savedEntity);
       when(mockRepo.save(deepEqual(savedEntity))).thenResolve(savedEntity);
-      const queryResult = await queryService.updateOne(updateOne);
+      const queryResult = await queryService.updateOne(updateId, update);
       expect(queryResult).toEqual(savedEntity);
     });
 
     it('call fail if the entity is not found', async () => {
       const entity = testEntities()[0];
+      const updateId = entity.id;
       const update = { stringType: 'baz' };
-      const updateOne: UpdateOne<TestEntity, Partial<TestEntity>> = { id: entity.id, update };
       const err = new Error('not found');
       const { queryService, mockRepo } = createQueryService();
-      when(mockRepo.findOneOrFail(updateOne.id)).thenReject(err);
-      return expect(queryService.updateOne(updateOne)).rejects.toThrowError(err);
+      when(mockRepo.findOneOrFail(updateId)).thenReject(err);
+      return expect(queryService.updateOne(updateId, update)).rejects.toThrowError(err);
     });
   });
 });

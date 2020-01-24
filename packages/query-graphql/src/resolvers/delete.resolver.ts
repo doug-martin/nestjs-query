@@ -1,34 +1,43 @@
-import { Class, DeepPartial, DeleteMany, DeleteManyResponse, DeleteOne } from '@nestjs-query/core';
+import { Class, DeleteManyResponse } from '@nestjs-query/core';
 import omit from 'lodash.omit';
 import { ArgsType, ObjectType } from 'type-graphql';
 import { Resolver, Args } from '@nestjs/graphql';
-import { BaseServiceResolver, ResolverOptions, ServiceResolver } from './resolver.interface';
+import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { DeleteManyArgsType, DeleteManyResponseType, DeleteOneArgsType, FilterType, PartialType } from '../types';
 import { ResolverMutation } from '../decorators';
 import { DTONamesOpts, getDTONames, transformAndValidate } from './helpers';
 
-export interface DeleteResolver<DTO> extends ServiceResolver<DTO> {
-  deleteOne(input: DeleteOne): Promise<Partial<DTO>>;
-
-  deleteMany(input: DeleteMany<DTO>): Promise<DeleteManyResponse>;
+export interface DeleteResolverOpts<DTO> extends DTONamesOpts, ResolverOpts {
+  /**
+   * ArgsType for deleteOne mutation.
+   */
+  DeleteOneArgs?: Class<DeleteOneArgsType>;
+  /**
+   * ArgsType for deleteMany mutation.
+   */
+  DeleteManyArgs?: Class<DeleteManyArgsType<DTO>>;
 }
 
-export type DeleteResolverArgs<DTO> = DTONamesOpts &
-  ResolverOptions & {
-    DeleteOneArgs?: Class<DeleteOne>;
-    DeleteManyArgs?: Class<DeleteMany<DTO>>;
-  };
+export interface DeleteResolver<DTO> extends ServiceResolver<DTO> {
+  deleteOne(input: DeleteOneArgsType): Promise<Partial<DTO>>;
 
-export const Deletable = <DTO>(DTOClass: Class<DTO>, args: DeleteResolverArgs<DTO> = {}) => <
+  deleteMany(input: DeleteManyArgsType<DTO>): Promise<DeleteManyResponse>;
+}
+
+/**
+ * @internal
+ * Mixin to add `delete` graphql endpoints.
+ */
+export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DTO>) => <
   B extends Class<ServiceResolver<DTO>>
 >(
   BaseClass: B,
 ): Class<DeleteResolver<DTO>> & B => {
-  const { baseName, pluralBaseName } = getDTONames(args, DTOClass);
-  const { DeleteOneArgs = DeleteOneArgsType(), DeleteManyArgs = DeleteManyArgsType(FilterType(DTOClass)) } = args;
+  const { baseName, pluralBaseName } = getDTONames(opts, DTOClass);
+  const { DeleteOneArgs = DeleteOneArgsType(), DeleteManyArgs = DeleteManyArgsType(FilterType(DTOClass)) } = opts;
   const DMR = DeleteManyResponseType();
 
-  const commonResolverOptions = omit(args, 'dtoName', 'one', 'many', 'DeleteOneArgs', 'DeleteManyArgs');
+  const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneArgs', 'DeleteManyArgs');
 
   @ObjectType(`${baseName}DeleteResponse`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -43,24 +52,23 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, args: DeleteResolverArgs<DT
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ResolverBase extends BaseClass {
-    @ResolverMutation(() => DeleteOneResponse, { name: `deleteOne${baseName}` }, commonResolverOptions, args.one ?? {})
+    @ResolverMutation(() => DeleteOneResponse, { name: `deleteOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async deleteOne(@Args() input: DO): Promise<Partial<DTO>> {
-      const deleteOne = await transformAndValidate(DO, input as DeepPartial<DO>);
-      return this.service.deleteOne(deleteOne);
+      const deleteOne = await transformAndValidate(DO, input);
+      return this.service.deleteOne(deleteOne.input);
     }
 
-    @ResolverMutation(() => DMR, { name: `deleteMany${pluralBaseName}` }, commonResolverOptions, args.many ?? {})
+    @ResolverMutation(() => DMR, { name: `deleteMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
     async deleteMany(@Args() input: DM): Promise<DeleteManyResponse> {
-      const deleteMany = await transformAndValidate(DM, input as DeepPartial<DM>);
-      return this.service.deleteMany(deleteMany);
+      const deleteMany = await transformAndValidate(DM, input);
+      return this.service.deleteMany(deleteMany.input);
     }
   }
 
   return ResolverBase;
 };
 
-type DeleteResolverType<DTO> = Class<DeleteResolver<DTO>> & Class<BaseServiceResolver<DTO>>;
 export const DeleteResolver = <DTO>(
   DTOClass: Class<DTO>,
-  args: DeleteResolverArgs<DTO> = {},
-): DeleteResolverType<DTO> => Deletable(DTOClass, args)(BaseServiceResolver);
+  opts: DeleteResolverOpts<DTO> = {},
+): ResolverClass<DTO, DeleteResolver<DTO>> => Deletable(DTOClass, opts)(BaseServiceResolver);

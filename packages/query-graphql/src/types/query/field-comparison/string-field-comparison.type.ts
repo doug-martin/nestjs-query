@@ -3,8 +3,10 @@ import { Field, InputType } from 'type-graphql';
 import { IsBoolean, IsString } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
+/** @internal */
 let stringFieldComparison: Class<FilterFieldComparison<string>>;
 
+/** @internal */
 export function getOrCreateStringFieldComparison(): Class<FilterFieldComparison<string>> {
   if (stringFieldComparison) {
     return stringFieldComparison;

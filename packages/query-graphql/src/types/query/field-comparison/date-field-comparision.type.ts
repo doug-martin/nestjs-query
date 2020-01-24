@@ -3,8 +3,10 @@ import { Field, GraphQLISODateTime, InputType } from 'type-graphql';
 import { IsBoolean, IsDate } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
+/** @internal */
 let dateFieldComparison: Class<FilterFieldComparison<Date>>;
 
+/** @internal */
 export function getOrCreateDateFieldComparison(): Class<FilterFieldComparison<Date>> {
   if (dateFieldComparison) {
     return dateFieldComparison;

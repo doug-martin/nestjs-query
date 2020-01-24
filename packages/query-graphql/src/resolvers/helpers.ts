@@ -1,22 +1,24 @@
 import { plural } from 'pluralize';
 import { lowerCaseFirst } from 'change-case';
-import { Class, DeepPartial } from '@nestjs-query/core';
+import { Class } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { ArgumentValidationError } from 'type-graphql';
 import { getMetadataStorage } from '../metadata';
 
-export type DTONamesOpts = {
+export interface DTONamesOpts {
   dtoName?: string;
-};
+}
 
-export type DTONames = {
+/** @internal */
+export interface DTONames {
   baseName: string;
   baseNameLower: string;
   pluralBaseName: string;
   pluralBaseNameLower: string;
-};
+}
 
+/** @internal */
 export const getDTONames = <DTO>(opts: DTONamesOpts, DTOClass: Class<DTO>): DTONames => {
   const baseName = opts.dtoName ?? getMetadataStorage().getTypeGraphqlObjectMetadata(DTOClass)?.name ?? DTOClass.name;
   const pluralBaseName = plural(baseName);
@@ -30,7 +32,8 @@ export const getDTONames = <DTO>(opts: DTONamesOpts, DTOClass: Class<DTO>): DTON
   };
 };
 
-export const transformAndValidate = async <T>(TClass: Class<T>, partial: DeepPartial<T>): Promise<T> => {
+/** @internal */
+export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Promise<T> => {
   if (partial instanceof TClass) {
     return partial;
   }

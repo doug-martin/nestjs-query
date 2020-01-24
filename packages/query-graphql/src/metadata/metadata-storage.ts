@@ -6,15 +6,24 @@ import { Class, Filter, SortField } from '@nestjs-query/core';
 import { AdvancedOptions, ReturnTypeFunc } from '../external/type-graphql.types';
 import { EdgeType, StaticConnectionType } from '../types/connection';
 
-export interface FilterableFieldDescriptor<T> {
+/**
+ * @internal
+ */
+interface FilterableFieldDescriptor<T> {
   propertyName: string;
   type: Class<T>;
   returnTypeFunc?: ReturnTypeFunc;
   advancedOptions?: AdvancedOptions;
 }
 
+/**
+ * @internal
+ */
 const typeGraphqlMetadataStorage: () => MetadataStorage = () => getMetadataStorage();
 
+/**
+ * @internal
+ */
 export class GraphQLQueryMetadataStorage {
   private readonly filterableObjectStorage: Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>;
 

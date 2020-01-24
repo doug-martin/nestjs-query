@@ -9,6 +9,6 @@ module.exports = {
   docs: {
     Introduction: ['introduction/getting-started', 'introduction/concepts', 'introduction/example'],
     Typeorm: ['typeorm/services', 'typeorm/query'],
-    GraphQL: ['graphql/dtos', 'graphql/resolvers', 'graphql/queries', 'graphql/mutations'],
+    GraphQL: ['graphql/dtos', 'graphql/resolvers', 'graphql/queries', 'graphql/mutations', 'graphql/types'],
   },
 };

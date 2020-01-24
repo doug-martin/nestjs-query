@@ -3,8 +3,10 @@ import { Field, InputType } from 'type-graphql';
 import { IsBoolean, IsNumber } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
+/** @internal */
 let numberFieldComparison: Class<FilterFieldComparison<number>>;
 
+/** @internal */
 export function getOrCreateNumberFieldComparison(): Class<FilterFieldComparison<number>> {
   if (numberFieldComparison) {
     return numberFieldComparison;

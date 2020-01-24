@@ -12,7 +12,9 @@ export interface CursorPagingType extends Paging {
   last?: number;
 }
 
+/** @internal */
 let graphQLCursorPaging: Class<CursorPagingType> | null = null;
+
 export const CursorPagingType = (): Class<CursorPagingType> => {
   if (graphQLCursorPaging) {
     return graphQLCursorPaging;

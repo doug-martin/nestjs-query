@@ -2,12 +2,21 @@ import { Brackets, Repository, WhereExpression } from 'typeorm';
 import { Filter, FilterComparisonOperators, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
 import { EntityComparisonField, SQLComparisionBuilder } from './sql-comparison.builder';
 
+/**
+ * @internal
+ * Builds a WHERE clause from a Filter.
+ */
 export class WhereBuilder<Entity> {
   constructor(
     readonly repository: Repository<Entity>,
     readonly sqlComparisionBuilder: SQLComparisionBuilder<Entity> = new SQLComparisionBuilder<Entity>(repository),
   ) {}
 
+  /**
+   * Builds a WHERE clause from a Filter.
+   * @param where - the `typeorm` WhereExpression
+   * @param filter - the filter to build the WHERE clause from.
+   */
   build<Where extends WhereExpression>(where: Where, filter: Filter<Entity>): Where {
     const { and, or } = filter;
     if (and && and.length) {
@@ -19,18 +28,43 @@ export class WhereBuilder<Entity> {
     return this.filterFields(where, filter);
   }
 
-  private filterAnd<Where extends WhereExpression>(where: Where, filter: Filter<Entity>[]): Where {
-    return filter.reduce((w, f) => w.andWhere(this.createBrackets(f)), where);
+  /**
+   * ANDs multiple filters together. This will properly group every clause to ensure proper precedence.
+   *
+   * @param where - the `typeorm` WhereExpression
+   * @param filters - the array of filters to AND together
+   */
+  private filterAnd<Where extends WhereExpression>(where: Where, filters: Filter<Entity>[]): Where {
+    return filters.reduce((w, f) => w.andWhere(this.createBrackets(f)), where);
   }
 
+  /**
+   * ORs multiple filters together. This will properly group every clause to ensure proper precedence.
+   *
+   * @param where - the `typeorm` WhereExpression
+   * @param filters - the array of filters to OR together
+   */
   private filterOr<Where extends WhereExpression>(where: Where, filter: Filter<Entity>[]): Where {
     return filter.reduce((w, f) => where.orWhere(this.createBrackets(f)), where);
   }
 
+  /**
+   * Wraps a filter in brackes to ensure precedence.
+   * ```
+   * {a: { eq: 1 } } // "(a = 1)"
+   * {a: { eq: 1 }, b: { gt: 2 } } // "((a = 1) AND (b > 2))"
+   * ```
+   * @param filter - the filter to wrap in brackets.
+   */
   private createBrackets(filter: Filter<Entity>): Brackets {
     return new Brackets(qb => this.build(qb, filter));
   }
 
+  /**
+   * Creates field comparisons from a filter. This method will ignore and/or properties.
+   * @param where - the `typeorm` WhereExpression
+   * @param filters - the filter with fields to create comparisons for.
+   */
   private filterFields<Where extends WhereExpression>(where: Where, filter: Filter<Entity>): Where {
     return Object.keys(filter).reduce((w, field) => {
       if (field !== 'and' && field !== 'or') {

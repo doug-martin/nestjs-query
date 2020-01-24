@@ -3,8 +3,10 @@ import { Field, GraphQLTimestamp, InputType } from 'type-graphql';
 import { IsBoolean, IsDate } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
+/** @internal */
 let timestampFieldComparison: Class<FilterFieldComparison<Date>>;
 
+/** @internal */
 export function getOrCreateTimestampFieldComparison(): Class<FilterFieldComparison<Date>> {
   if (timestampFieldComparison) {
     return timestampFieldComparison;

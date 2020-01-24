@@ -13,6 +13,7 @@ module.exports = {
         'prettier',
         'import',
         'jest',
+        'eslint-plugin-tsdoc',
     ],
     extends: [
         'airbnb-base',
@@ -24,6 +25,7 @@ module.exports = {
     ],
     ignorePatterns: ['**/dist', '**/node_modules'],
     rules: {
+        "tsdoc/syntax": "warn",
         'import/extensions': [
             'error',
             'ignorePackages',

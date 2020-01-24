@@ -2,9 +2,20 @@ import { ObjectLiteral, Repository } from 'typeorm';
 import { FilterComparisonOperators } from '@nestjs-query/core';
 import { AbstractQueryBuilder } from './query-builder.abstract';
 
+/**
+ * @internal
+ */
 type CmpSQLType = { sql: string; params: ObjectLiteral };
+
+/**
+ * @internal
+ */
 export type EntityComparisonField<Entity, F extends keyof Entity> = Entity[F] | Entity[F][] | true | false | null;
 
+/**
+ * @internal
+ * Builder to create SQL Comparisons. (=, !=, \>, etc...)
+ */
 export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> {
   paramCount = 0;
 
@@ -34,6 +45,13 @@ export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> 
     return param;
   }
 
+  /**
+   * Creates a valid SQL fragment with parameters.
+   *
+   * @param field - the property in Entity to create the comparison for.
+   * @param cmp - the FilterComparisonOperator (eq, neq, gt, etc...)
+   * @param val - the value to compare to.
+   */
   build<F extends keyof Entity>(
     field: F,
     cmp: FilterComparisonOperators<Entity[F]>,
@@ -42,16 +60,24 @@ export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> 
     const col = this.fieldToDbCol(field);
     const normalizedCmp = (cmp as string).toLowerCase();
     if (this.comparisonMap[normalizedCmp]) {
+      // comparison operator (e.b. =, !=, >, <)
       return this.createComparisonSQL(normalizedCmp, col, val);
     }
     if (normalizedCmp === 'is') {
-      return this.isSQLCmp(col, val);
+      // is comparision (IS TRUE, IS FALSE, IS NULL)
+      return this.isComparisonSQL(col, val);
+    }
+    if (normalizedCmp === 'isnot') {
+      // is comparision (IS NOT TRUE, IS NOT FALSE, IS NOT NULL, etc...)
+      return this.isNotComparisonSQL(col, val);
     }
     if (normalizedCmp === 'in') {
-      return this.inSQLCmp(col, val);
+      // in comparision (field IN (1,2,3))
+      return this.inComparisonSQL(col, val);
     }
     if (normalizedCmp === 'notin') {
-      return this.notInSQLCmp(col, val);
+      // in comparision (field IN (1,2,3))
+      return this.notInComparisionSQL(col, val);
     }
     throw new Error(`unknown operator "${cmp}"`);
   }
@@ -66,7 +92,7 @@ export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> 
     return { sql: `${col} ${operator} :${paramName}`, params: { [paramName]: val } };
   }
 
-  private isSQLCmp<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
+  private isComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
     if (val === null) {
       return { sql: `${col} IS NULL`, params: {} };
     }
@@ -79,7 +105,20 @@ export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> 
     throw new Error(`unexpected is operator param ${val}`);
   }
 
-  private inSQLCmp<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
+  private isNotComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
+    if (val === null) {
+      return { sql: `${col} IS NOT NULL`, params: {} };
+    }
+    if (val === true) {
+      return { sql: `${col} IS NOT TRUE`, params: {} };
+    }
+    if (val === false) {
+      return { sql: `${col} IS NOT FALSE`, params: {} };
+    }
+    throw new Error(`unexpected isNot operator param ${val}`);
+  }
+
+  private inComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
     this.checkNonEmptyArray(val);
     const { paramName } = this;
     return {
@@ -88,7 +127,7 @@ export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> 
     };
   }
 
-  private notInSQLCmp<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
+  private notInComparisionSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
     this.checkNonEmptyArray(val);
     const { paramName } = this;
     return {
