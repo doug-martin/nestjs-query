@@ -1,24 +1,26 @@
-import { Class, DeepPartial, UpdateMany, UpdateManyResponse, UpdateOne } from '@nestjs-query/core';
+import { Class, DeepPartial, UpdateManyResponse } from '@nestjs-query/core';
 import { ArgsType, InputType } from 'type-graphql';
 import { Resolver, Args } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { FilterType, PartialInputType, UpdateManyArgsType, UpdateManyResponseType, UpdateOneArgsType } from '../types';
-import { BaseServiceResolver, ResolverOptions, ServiceResolver } from './resolver.interface';
+import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { ResolverMutation } from '../decorators';
 import { DTONamesOpts, getDTONames, transformAndValidate } from './helpers';
 
-export interface UpdateResolver<DTO, U extends DeepPartial<DTO>> {
+export interface UpdateResolverOpts<DTO, U extends DeepPartial<DTO> = DeepPartial<DTO>>
+  extends DTONamesOpts,
+    ResolverOpts {
+  UpdateDTOClass?: Class<U>;
+  UpdateOneArgs?: Class<UpdateOneArgsType<DTO, U>>;
+  UpdateManyArgs?: Class<UpdateManyArgsType<DTO, U>>;
+}
+
+export interface UpdateResolver<DTO, U extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
   updateOne(input: UpdateOneArgsType<DTO, U>): Promise<DTO>;
   updateMany(input: UpdateManyArgsType<DTO, U>): Promise<UpdateManyResponse>;
 }
 
-export type UpdateResolverArgs<DTO, U extends DeepPartial<DTO> = DeepPartial<DTO>> = DTONamesOpts &
-  ResolverOptions & {
-    UpdateDTOClass?: Class<U>;
-    UpdateOneArgs?: Class<UpdateOneArgsType<DTO, U>>;
-    UpdateManyArgs?: Class<UpdateManyArgsType<DTO, U>>;
-  };
-
+/** @internal */
 const defaultUpdateInput = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>, baseName: string): Class<U> => {
   @InputType(`Update${baseName}`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -28,28 +30,25 @@ const defaultUpdateInput = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO
   return PartialInput as Class<U>;
 };
 
-export const Updateable = <DTO, U extends DeepPartial<DTO>>(
-  DTOClass: Class<DTO>,
-  args: UpdateResolverArgs<DTO, U> = {},
-) => <B extends Class<ServiceResolver<DTO>>>(BaseClass: B): Class<UpdateResolver<DTO, U>> & B => {
-  const { baseName, pluralBaseName } = getDTONames(args, DTOClass);
+/**
+ * @internal
+ * Mixin to add `update` graphql endpoints.
+ */
+export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>, opts: UpdateResolverOpts<DTO, U>) => <
+  B extends Class<ServiceResolver<DTO>>
+>(
+  BaseClass: B,
+): Class<UpdateResolver<DTO, U>> & B => {
+  const { baseName, pluralBaseName } = getDTONames(opts, DTOClass);
   const UMR = UpdateManyResponseType();
 
   const {
     UpdateDTOClass = defaultUpdateInput(DTOClass, baseName),
     UpdateOneArgs = UpdateOneArgsType(UpdateDTOClass),
     UpdateManyArgs = UpdateManyArgsType(FilterType(DTOClass), UpdateDTOClass),
-  } = args;
+  } = opts;
 
-  const commonResolverOptions = omit(
-    args,
-    'dtoName',
-    'one',
-    'many',
-    'UpdateDTOClass',
-    'UpdateOneArgs',
-    'UpdateManyArgs',
-  );
+  const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'UpdateDTOClass', 'UpdateOneArgs', 'UpdateManyArgs');
 
   @ArgsType()
   class UO extends UpdateOneArgs {}
@@ -59,34 +58,23 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ResolverBase extends BaseClass {
-    @ResolverMutation(() => DTOClass, { name: `updateOne${baseName}` }, commonResolverOptions, args.one ?? {})
+    @ResolverMutation(() => DTOClass, { name: `updateOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async updateOne(@Args() input: UO): Promise<DTO> {
-      const updateOne = await transformAndValidate(UO, input as DeepPartial<UO>);
-      return this.service.updateOne(ResolverBase.transformUpdateOneArgs(updateOne));
+      const updateOne = await transformAndValidate(UO, input);
+      return this.service.updateOne(updateOne.id, updateOne.input);
     }
 
-    @ResolverMutation(() => UMR, { name: `updateMany${pluralBaseName}` }, commonResolverOptions, args.many ?? {})
+    @ResolverMutation(() => UMR, { name: `updateMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
     async updateMany(@Args() input: UM): Promise<UpdateManyResponse> {
-      const updateMany = await transformAndValidate(UM, input as DeepPartial<UM>);
-      return this.service.updateMany(ResolverBase.transformUpdateManyArgs(updateMany));
-    }
-
-    static transformUpdateOneArgs(uo: UO): UpdateOne<DTO, DeepPartial<DTO>> {
-      return { id: uo.id, update: uo.input };
-    }
-
-    static transformUpdateManyArgs(um: UM): UpdateMany<DTO, DeepPartial<DTO>> {
-      return { filter: um.filter, update: um.input };
+      const updateMany = await transformAndValidate(UM, input);
+      return this.service.updateMany(updateMany.input, updateMany.filter);
     }
   }
 
   return ResolverBase;
 };
 
-type UpdateResolverType<DTO, U extends DeepPartial<DTO>> = Class<UpdateResolver<DTO, U>> &
-  Class<BaseServiceResolver<DTO>>;
-
 export const UpdateResolver = <DTO, U extends DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
-  args: UpdateResolverArgs<DTO, U> = {},
-): UpdateResolverType<DTO, U> => Updateable(DTOClass, args)(BaseServiceResolver);
+  opts: UpdateResolverOpts<DTO, U> = {},
+): ResolverClass<DTO, UpdateResolver<DTO, U>> => Updateable(DTOClass, opts)(BaseServiceResolver);

@@ -16,10 +16,11 @@ describe('UpdateManyResponseType', (): void => {
     }
     const schema = buildSchemaSync({ resolvers: [UpdateManyResponseTypeResolver] });
     expect(printSchema(schema)).toEqual(`type Query {
-  updateTest: UpdateManyResponseType!
+  updateTest: UpdateManyResponse!
 }
 
-type UpdateManyResponseType {
+type UpdateManyResponse {
+  """The number of records updated."""
   updatedCount: Int!
 }
 `);

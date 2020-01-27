@@ -1,10 +1,10 @@
 ---
-title: Service 
+title: TypeormQueryService 
 ---
 
 The `TypeormQueryService` is an implementation of the `QueryService` from the `core` package.
 
-All examples assume the following entity
+All examples assume the following [entity](https://typeorm.io/#/entities).
 
 ```ts
 // todo-item.entity.ts
@@ -28,6 +28,8 @@ export class TodoItemEntity {
 }
 ```
 
+[Read more about typeorm entities](https://typeorm.io/#/entities).
+
 To create a typeorm service extend the `TypeormQueryService`
 
 ```ts
@@ -50,7 +52,7 @@ export class TodoItemService extends TypeormQueryService<TodoItemEntity> {
 
 ## Querying
 
-To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](./query).
+To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](../concepts/query).
 
 #### Example
 
@@ -107,37 +109,27 @@ const records = await this.service.query({
 });
 ```
 
-### Find One Record
+### Find By Id
 
-To find a single record you can use the `queryOne` method. The `queryOne` method still uses a `query` however it ignores the paging option setting it to `{ limit: 1, offset: 0 }`
+To find a single record you can use the `findById` method.
 
 #### Example
-
-To find the first `TodoItem` with a title that starts with `Foo`.
 
 ```ts
-const records = await this.service.queryOne({
-  filter: { title: { like: 'Foo%' } },
-  sorting: [{ field: 'id', direction: SortDirection.ASC }],
-});
+const records = await this.service.findById(1);
 ```
 
-### Get One Record
+### Get By Id
 
-The `getOne` method is the same as the `findOne` with one key difference, it will throw an exception if the record is not found.
+The `getById` method is the same as the `findById` with one key difference, it will throw an exception if the record is not found.
 
 #### Example
-
-To find the first `TodoItem` with a title that starts with `Foo`, and throw an error if a record is not found.
 
 ```ts
 try {
-  const records = await this.service.getOne({
-    filter: { title: { like: 'Foo%' } },
-    sorting: [{ field: 'id', direction: SortDirection.ASC }],
-  });
+  const records = await this.service.getById(1);
 } catch (e) {
-    console.error('Unable to find record starting with Foo');
+  console.error('Unable to get record with id = 1');
 }
 ```
 
@@ -151,10 +143,8 @@ To create a single record use the `createOne` method.
 
 ```ts
 const createdRecord = await this.service.createOne({
-  item: {
-    title: 'Foo',
-    completed: false,
-  },
+  title: 'Foo',
+  completed: false,
 });
 ```
 
@@ -165,12 +155,10 @@ To create multiple records use the `createMany` method.
 #### Example
 
 ```ts
-const createdRecords = await this.service.createMany({
-  items: [
-    { title: 'Foo', completed: false },
-    { title: 'Bar', completed: true },
-  ],
-});
+const createdRecords = await this.service.createMany([
+  { title: 'Foo', completed: false },
+  { title: 'Bar', completed: true },
+]);
 ```
 
 ## Updating
@@ -184,10 +172,7 @@ To update a single record use the `updateOne` method.
 Updates the record with an id equal to 1 to completed. 
 
 ```ts
-const updatedRecord = await this.service.updateOne({
-  id: 1,
-  update: {completed: true},
-});
+const updatedRecord = await this.service.updateOne(1, { completed: true });
 ```
 
 ### Update Many 
@@ -198,13 +183,13 @@ To update multiple records use the `updateMany` method.
 
 #### Example
 
-Updates all `TodoItemEntities` as completed if their title ends in `Bar`
+Updates all `TodoItemEntities` to completed if their title ends in `Bar`
 
 ```ts
-const { updatedCount } = await this.service.updateMany({
-  filter: {completed: {is: false}, title: {like: '%Bar'}},
-  update: {completed: true},
-});
+const { updatedCount } = await this.service.updateMany(
+  {completed: true}, // update
+  {completed: {is: false}, title: {like: '%Bar'}} // filter
+);
 ```
 
 ## Deleting
@@ -218,9 +203,7 @@ To delete a single record use the `deleteOne` method.
 Delete the record with an id equal to 1. 
 
 ```ts
-const deletedRecord = await this.service.deleteOne({
-  id: 1,
-});
+const deletedRecord = await this.service.deleteOne(1);
 ```
 
 ### Delete Many 
@@ -234,9 +217,9 @@ To delete multiple records use the `deleteMany` method.
 Delete all `TodoItemEntities` older than `Jan 1, 2019`.
 
 ```ts
-const { deletedCount } = await this.service.deleteMany({
-  filter: {created: {lte: new Date('2019-1-1')}},
-});
+const { deletedCount } = await this.service.deleteMany(
+  { created: { lte: new Date('2019-1-1') } } // filter
+);
 ```
 
 ## Custom Methods
@@ -247,10 +230,10 @@ You can also define other methods on your service class that encapsulates your b
 async markAllAsCompleted(): Promise<number> {
    const entities = await this.query({ filter: { completed: { is: true } } });
    
-   const { updatedCount } = await this.updateMany({
-     filter: { id: { in: entities.map(e => e.id) } },
-     update: { completed: true },
-   });
+   const { updatedCount } = await this.updateMany(
+     { completed: true }, // update
+     { id: { in: entities.map(e => e.id) } } // filter
+   );
    // do some other business logic
    return updatedCount;
 }

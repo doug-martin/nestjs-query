@@ -9,10 +9,10 @@ export interface UpdateOneArgsType<DTO, U extends DeepPartial<DTO>> {
 export function UpdateOneArgsType<T, U extends DeepPartial<T>>(UpdateType: Class<U>): Class<UpdateOneArgsType<T, U>> {
   @ArgsType()
   class UpdateOneArgs implements UpdateOneArgsType<T, U> {
-    @Field(() => ID)
+    @Field(() => ID, { description: 'The id of the record to update' })
     id!: string | number;
 
-    @Field(() => UpdateType)
+    @Field(() => UpdateType, { description: 'The update to apply.' })
     input!: U;
   }
   return UpdateOneArgs;

@@ -28,9 +28,16 @@ describe('ConnectionType', (): void => {
 scalar ConnectionCursor
 
 type PageInfo {
+  """true if paging forward and there are more records."""
   hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
   hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
   startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
   endCursor: ConnectionCursor
 }
 
@@ -43,12 +50,18 @@ type Test {
 }
 
 type TestConnection {
+  """Paging information"""
   pageInfo: PageInfo!
+
+  """Array of edges."""
   edges: [TestEdge!]!
 }
 
 type TestEdge {
+  """The node containing the Test"""
   node: Test!
+
+  """Cursor for this node."""
   cursor: ConnectionCursor!
 }
 `,

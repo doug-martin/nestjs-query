@@ -11,6 +11,7 @@ import { getOrCreateNumberFieldComparison } from './number-field-comparison.type
 import { getOrCreateDateFieldComparison } from './date-field-comparision.type';
 import { getOrCreateTimestampFieldComparison } from './timestamp-field-comparison.type';
 
+/** @internal */
 const filterComparisonMap = new Map<string, () => Class<FilterFieldComparison<unknown>>>();
 filterComparisonMap.set('StringFilterComparison', getOrCreateStringFieldComparison);
 filterComparisonMap.set('NumberFilterComparison', getOrCreateNumberFieldComparison);
@@ -21,11 +22,13 @@ filterComparisonMap.set('DateFilterComparison', getOrCreateDateFieldComparison);
 filterComparisonMap.set('DateTimeFilterComparison', getOrCreateDateFieldComparison);
 filterComparisonMap.set('TimestampFilterComparison', getOrCreateTimestampFieldComparison);
 
+/** @internal */
 const createPrefixFromClass = <T>(TClass: Class<T>): string => {
   const clsName = TClass.name;
   return `${clsName.charAt(0).toUpperCase()}${clsName.slice(1)}`;
 };
 
+/** @internal */
 export function createFilterComparisonType<T>(
   TClass: Class<T>,
   returnTypeFunc?: ReturnTypeFunc,

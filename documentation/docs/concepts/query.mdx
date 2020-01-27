@@ -1,13 +1,13 @@
 ---
 title: Queries
-sidebar_label: Queries
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+The core of `nestjs-query` is the `Query`, it is used by both `@nestjs-query/query-graphql` and `@nestjs-query/query-typeorm`.
 
-The core of `nestjs-query` is the query type. The query interface contains three optional fields.
+The query interface contains three optional fields.
 
 * `filter`
 * `paging`
@@ -110,6 +110,8 @@ const q: Query<Entity> = {
 };
 ```
 
+---
+
 ## Paging
 
 The `core` package defines a basic paging interface has two optional fields `limit` and `offset`.s
@@ -157,6 +159,8 @@ const q: Query<Entity> = {
 
 </TabItem>
 </Tabs>
+
+---
 
 ## Sorting
 

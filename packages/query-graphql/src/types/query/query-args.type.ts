@@ -29,17 +29,17 @@ export function QueryArgsType<T>(TClass: Class<T>): StaticQueryType<T> {
 
     static PageType = P;
 
-    @Field(() => P, { defaultValue: new P() })
+    @Field(() => P, { defaultValue: new P(), description: 'Limit or page results' })
     @ValidateNested()
     @Type(() => P)
     paging?: CursorPagingType;
 
-    @Field(() => F, { defaultValue: new F() })
+    @Field(() => F, { defaultValue: new F(), description: 'Specify to filter the records returned.' })
     @ValidateNested()
     @Type(() => F)
     filter?: Filter<T>;
 
-    @Field(() => [S], { defaultValue: [] })
+    @Field(() => [S], { defaultValue: [], description: 'Specify to sort results' })
     @ValidateNested()
     @Type(() => S)
     sorting?: SortField<T>[];

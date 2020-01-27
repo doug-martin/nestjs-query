@@ -21,7 +21,12 @@ export interface ConnectionType<TItem> {
 }
 
 export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionType<DTO> {
-  const objMetadata = getMetadataStorage().getTypeGraphqlObjectMetadata(TItemClass);
+  const metadataStorage = getMetadataStorage();
+  const existing = metadataStorage.getConnectionType(TItemClass);
+  if (existing) {
+    return existing;
+  }
+  const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TItemClass);
   if (!objMetadata) {
     throw new UnregisteredObjectType(TItemClass, 'Unable to make ConnectionType.');
   }
@@ -66,11 +71,12 @@ export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionTyp
       return plainToClass(E, { node: dto, cursor: offsetToCursor(initialOffset + index) });
     }
 
-    @Field(() => PIT)
+    @Field(() => PIT, { description: 'Paging information' })
     pageInfo!: PageInfoType;
 
-    @Field(() => [E])
+    @Field(() => [E], { description: 'Array of edges.' })
     edges!: EdgeType<DTO>[];
   }
+  metadataStorage.addConnectionType(TItemClass, AbstractConnection);
   return AbstractConnection;
 }

@@ -41,6 +41,6 @@ export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
     Field(() => FC, { nullable: true })(GraphQLFilter.prototype, propertyName);
     Type(() => FC)(GraphQLFilter.prototype, propertyName);
   });
-  metadataStorage.addFilterableType(TClass, GraphQLFilter as Class<Filter<T>>);
+  metadataStorage.addFilterType(TClass, GraphQLFilter as Class<Filter<T>>);
   return GraphQLFilter as Class<Filter<T>>;
 }

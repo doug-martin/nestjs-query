@@ -134,6 +134,36 @@ describe('SQLComparisionBuilder', (): void => {
     });
   });
 
+  describe('isNot comparisons', () => {
+    it('should build is true', (): void => {
+      expect(createSQLComparisionBuilder().build('boolType', 'isNot', true)).toEqual({
+        sql: '"bool_type" IS NOT TRUE',
+        params: {},
+      });
+    });
+
+    it('should build is false', (): void => {
+      expect(createSQLComparisionBuilder().build('boolType', 'isNot', false)).toEqual({
+        sql: '"bool_type" IS NOT FALSE',
+        params: {},
+      });
+    });
+
+    it('should build is null', (): void => {
+      expect(createSQLComparisionBuilder().build('boolType', 'isNot', null)).toEqual({
+        sql: '"bool_type" IS NOT NULL',
+        params: {},
+      });
+    });
+
+    it('should throw an error for values other than null true or false', () => {
+      // @ts-ignore
+      expect(() => createSQLComparisionBuilder().build('boolType', 'isNot', 'foo')).toThrowError(
+        'unexpected isNot operator param foo',
+      );
+    });
+  });
+
   describe('in comparisons', () => {
     it('should build in comparisons', (): void => {
       const arr = [1, 2, 3];

@@ -15,12 +15,13 @@ describe('DeleteManyResponseType', (): void => {
       }
     }
     const schema = buildSchemaSync({ resolvers: [TestDeleteManyResponseResolver] });
-    expect(printSchema(schema)).toEqual(`type DeleteManyResponseType {
+    expect(printSchema(schema)).toEqual(`type DeleteManyResponse {
+  """The number of records deleted."""
   deletedCount: Int!
 }
 
 type Query {
-  deleteTest: DeleteManyResponseType!
+  deleteTest: DeleteManyResponse!
 }
 `);
   });

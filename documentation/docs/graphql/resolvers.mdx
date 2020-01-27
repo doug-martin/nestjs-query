@@ -44,6 +44,8 @@ The methods that will be exposed for the `TodoItemDTO` are
 
 You can read more about the methods in the [Queries](./queries) and [Mutations](./mutations) docs.
 
+---
+
 ## Options
 
 The Crud Resolver accepts a number of options to control your endpoints.
@@ -87,6 +89,8 @@ The `create`, `read`, `update`, and `delete` options above all accept the follow
     * `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to the endpoint.
     * `filters=[]` - An array of [filters](https://docs.nestjs.com/exception-filters) to add to the endpoint.
 
+
+---
 
 ## Examples
 
@@ -142,6 +146,8 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
 }
 ```
 
+---
+
 ### Disabling Endpoints.
 
 There may be scenarios where you wish to disable certain methods.
@@ -190,6 +196,8 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   }
 }
 ```
+
+---
 
 ### Guards, Pipes, Filters, and Interceptors
 
@@ -275,7 +283,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   }
 }
 ```
-
+---
 
 ## Individual Resolvers
 
@@ -305,6 +313,8 @@ export class TodoItemResolver extends CreateResolver(TodoItemDTO) {
 }
 ```
 
+---
+
 ### `ReadResolver`
 
 The `ReadResolver` will only expose the `query` and `findById` endpoints. The [options](#options) described for `read`
@@ -325,6 +335,7 @@ export class TodoItemResolver extends ReadResolver(TodoItemDTO) {
   }
 }
 ```
+---
 
 ### `UpdateResolver`
 
@@ -347,6 +358,7 @@ export class TodoItemResolver extends UpdateResolver(TodoItemDTO) {
   }
 }
 ```
+---
 
 ### `DeleteResolver`
 
@@ -368,71 +380,91 @@ export class TodoItemResolver extends DeleteResolver(TodoItemDTO) {
   }
 }
 ```
+---
 
-### Mixins
+## Custom Methods
 
-There are mixins for each of the resolvers described above.
+You can also create custom methods that build on the methods added by CRUDResolver.
 
-* `Creatable` - Mixin to add `CreateResolver` endpoints.
-* `Readable` - Mixin to add `ReadResolver` endpoints.
-* `Updateable` - Mixin to add `UpdateResolver` endpoints.
-* `Deletable` -  Mixin to add `DeleteResolver` endpoints.
+Lets create a new query endpoint that only returns completed `TodoItems`.
 
-The same options used to extend a resolver are used for mixins.
-
-Lets create a new custom read and update resolver
+First create a file named `types.ts`. And add the following.
 
 ```ts
-import { Class } from '@nestjs-query/core';
-import {
-  Readable,
-  ReadResolver,
-  UpdateResolver,
-} from '@nestjs-query/query-graphql/src';
+import { ConnectionType, QueryArgsType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
 
-export const ReadAndUpdateResolver = <DTO>(
-  DTOClass: Class<DTO>,
-): Class<ReadResolver<DTO>> & Class<UpdateResolver<DTO, DTO>> => {
-  return Readable(DTOClass)(UpdateResolver(DTOClass));
-};
+export const TodoItemConnection = ConnectionType(TodoItemDTO);
+
+@ArgsType()
+export class TodoItemQuery extends QueryArgsType(TodoItemDTO) {}
 ```
 
-Now we can use it to create other resolvers with only read and update endpoints.
+In the code above we export two types. `TodoItemConnection` and `TodoItemQuery`. Because of the way `type-graphql` and
+`nest` work we need to extend the `QueryArgsType` so that it will know the type to serialize into.
+
+**NOTE** `ConnectionType` will return the same Class each time you call it for a given type to prevent
+ duplicate type errors when generating the graphql schema.
+
+In your resolver you can now create a new `completedTodoItems` method with the following:
 
 ```ts
-@Resolver(() => TodoItemDTO)
-export class TodoItemResolver extends ReadAndUpdateResolver(TodoItemDTO) {
-  constructor(readonly service: TodoItemService) {
-    super(service);
-  }
-}
-```
-
-# Custom Methods
-
-You can define new methods leveraging methods and types from the base class.
-
-For example you can use the `QueryType` and `ConnectionType` to create a custom query method.
-
-```ts
-// import { ConnectionType, QueryType } from '@nestjs-query/query-graphql';
-// import { Query, Args } from '@nestjs/graphql';
-// import { Filter } from '@nestjs-query/core';
-
-// Set the return type to the generated ConnectionType
-@Query(() => TodoItemResolver.ConnectionType)
-completedTodoItems(
-  // Set the type to the generated QueryType
-  @Args({ type: () => TodoItemResolver.QueryType })
-  query: QueryType<TodoItemDTO>,
-): Promise<ConnectionType<TodoItemDTO>> {
+// Set the return type to the TodoItemConnection
+@Query(() => TodoItemConnection)
+completedTodoItems(@Args() query: TodoItemQuery): Promise<ConnectionType<TodoItemDTO>> {
   // add the completed filter the user provided filter
   const filter: Filter<TodoItemDTO> = {
     ...query.filter,
     ...{ completed: { is: true } },
   };
 
-  // call the original query method with the new query
-  return this.query({ ...query, ...{ filter } });
+  // call the original queryMany method with the new query
+  return this.queryMany({ ...query, ...{ filter } });
 }
 ```
+Lets break this down so you know what is going on.
+
+In the above code we annotate the new method with
+```ts
+@Query(() => TodoItemConnection)
+```
+The return type passed to query lets graphql know what the generated schema type is.
+
+The next piece to pay attention to is
+```ts
+completedTodoItems(@Args() query: TodoItemQuery)
+```
+We use the `TodoItemQuery` we created for the arguments type and annotate with `@Args` when you look at the generated
+schema in it will look like.
+
+```graphql
+completedTodoItems(
+  paging: CursorPaging = {}
+  filter: TodoItemFilter = {}
+  sorting: [TodoItemSort!] = []
+): TodoItemConnection!
+```
+Notice how there is not a query arg but instead the you see the fields of `TodoItemQuery` that is because we used
+`@Args` without a name.
+
+The next piece is
+
+```ts
+// add the completed filter the user provided filter
+const filter: Filter<TodoItemDTO> = {
+  ...query.filter,
+  ...{ completed: { is: true } },
+};
+```
+
+Here we do a shallow copy of the `filter` and add `completed: { is: true }`. This will override any completed arguments
+that an end user may have provided to ensure we always query for completed todos.
+
+Finally we call the `queryMany` method from the `CRUDResolver` with the new filter set on the query.
+
+```ts
+// call the original queryMany method with the new query
+return this.queryMany({ ...query, ...{ filter } });
+```
+

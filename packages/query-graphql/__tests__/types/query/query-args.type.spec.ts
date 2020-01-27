@@ -183,7 +183,16 @@ input NumberFieldComparison {
 }
 
 type Query {
-  findConnection(paging: CursorPaging = {}, filter: TestQueryFilter = {}, sorting: [TestQuerySort!] = []): String!
+  findConnection(
+    """Limit or page results"""
+    paging: CursorPaging = {}
+
+    """Specify to filter the records returned."""
+    filter: TestQueryFilter = {}
+
+    """Specify to sort results"""
+    sorting: [TestQuerySort!] = []
+  ): String!
 }
 
 """Sort Directions"""

@@ -1,1 +1,2 @@
-export * from './deep-partial';
+export * from './deep-partial.type';
+export * from './class.type';

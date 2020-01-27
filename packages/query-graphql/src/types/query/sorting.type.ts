@@ -17,6 +17,10 @@ registerEnumType(SortNulls, {
 
 export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
   const metadataStorage = getMetadataStorage();
+  const existing = metadataStorage.getSortType<T>(TClass);
+  if (existing) {
+    return existing;
+  }
   const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TClass);
   if (!objMetadata) {
     throw new UnregisteredObjectType(TClass, 'Unable to make SortType.');
@@ -46,6 +50,6 @@ export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
     @IsEnum(SortNulls)
     nulls?: SortNulls;
   }
-
+  metadataStorage.addSortType(TClass, Sort);
   return Sort;
 }

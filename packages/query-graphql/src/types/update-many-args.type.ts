@@ -12,10 +12,10 @@ export function UpdateManyArgsType<T, U extends DeepPartial<T>>(
 ): Class<UpdateManyArgsType<T, U>> {
   @ArgsType()
   class UpdateManyArgs implements UpdateManyArgsType<T, U> {
-    @Field(() => FilterType)
+    @Field(() => FilterType, { description: 'Filter used to find fields to update' })
     filter!: Filter<T>;
 
-    @Field(() => UpdateType)
+    @Field(() => UpdateType, { description: 'The update to apply to all records found using the filter' })
     input!: U;
   }
 

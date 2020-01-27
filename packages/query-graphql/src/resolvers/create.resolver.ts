@@ -1,25 +1,40 @@
-import { Class, CreateMany, CreateOne, DeepPartial } from '@nestjs-query/core';
+/**
+ * This is the doc comment for file1.ts
+ * @packageDocumentation
+ */
+import { Class, DeepPartial } from '@nestjs-query/core';
 import omit from 'lodash.omit';
 import { ArgsType, InputType } from 'type-graphql';
 import { Resolver, Args } from '@nestjs/graphql';
-import { BaseServiceResolver, ResolverOptions, ServiceResolver } from './resolver.interface';
+import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { CreateManyArgsType, CreateOneArgsType, PartialInputType } from '../types';
 import { ResolverMutation } from '../decorators';
 import { DTONamesOpts, getDTONames, transformAndValidate } from './helpers';
 
-export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
-  createOne(input: CreateOneArgsType<DTO, C>): Promise<DTO>;
-
-  createMany(input: CreateManyArgsType<DTO, C>): Promise<DTO[]>;
+export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>>
+  extends DTONamesOpts,
+    ResolverOpts {
+  /**
+   * The Input DTO that should be used to create records.
+   */
+  CreateDTOClass?: Class<C>;
+  /**
+   * The class to be used for `createOne` input.
+   */
+  CreateOneArgs?: Class<CreateOneArgsType<C>>;
+  /**
+   * The class to be used for `createMany` input.
+   */
+  CreateManyArgs?: Class<CreateManyArgsType<C>>;
 }
 
-export type CreateResolverArgs<DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>> = DTONamesOpts &
-  ResolverOptions & {
-    CreateDTOClass?: Class<C>;
-    CreateOneArgs?: Class<CreateOneArgsType<DTO, C>>;
-    CreateManyArgs?: Class<CreateManyArgsType<DTO, C>>;
-  };
+export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
+  createOne(input: CreateOneArgsType<C>): Promise<DTO>;
 
+  createMany(input: CreateManyArgsType<C>): Promise<DTO[]>;
+}
+
+/** @internal */
 const defaultCreateInput = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>, baseName: string): Class<C> => {
   @InputType(`Create${baseName}`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -29,26 +44,23 @@ const defaultCreateInput = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO
   return PartialInput as Class<C>;
 };
 
-export const Creatable = <DTO, C extends DeepPartial<DTO>>(
-  DTOClass: Class<DTO>,
-  args: CreateResolverArgs<DTO, C> = {},
-) => <B extends Class<ServiceResolver<DTO>>>(BaseClass: B): Class<CreateResolver<DTO, C>> & B => {
-  const { baseName, pluralBaseName } = getDTONames(args, DTOClass);
+/**
+ * @internal
+ * Mixin to add `create` graphql endpoints.
+ */
+export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>, opts: CreateResolverOpts<DTO, C>) => <
+  B extends Class<ServiceResolver<DTO>>
+>(
+  BaseClass: B,
+): Class<CreateResolver<DTO, C>> & B => {
+  const { baseName, pluralBaseName } = getDTONames(opts, DTOClass);
   const {
     CreateDTOClass = defaultCreateInput(DTOClass, baseName),
     CreateOneArgs = CreateOneArgsType(CreateDTOClass),
     CreateManyArgs = CreateManyArgsType(CreateDTOClass),
-  } = args;
+  } = opts;
 
-  const commonResolverOptions = omit(
-    args,
-    'dtoName',
-    'one',
-    'many',
-    'CreateDTOClass',
-    'CreateOneArgs',
-    'CreateManyArgs',
-  );
+  const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'CreateDTOClass', 'CreateOneArgs', 'CreateManyArgs');
 
   @ArgsType()
   class CO extends CreateOneArgs {}
@@ -58,34 +70,43 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ResolverBase extends BaseClass {
-    @ResolverMutation(() => DTOClass, { name: `createOne${baseName}` }, commonResolverOptions, args.one ?? {})
+    @ResolverMutation(() => DTOClass, { name: `createOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async createOne(@Args() input: CO): Promise<DTO> {
-      const createOne = await transformAndValidate(CO, input as DeepPartial<CO>);
-      return this.service.createOne(ResolverBase.transformCreateOneArgs(createOne));
+      const createOne = await transformAndValidate(CO, input);
+      return this.service.createOne(createOne.input);
     }
 
-    @ResolverMutation(() => [DTOClass], { name: `createMany${pluralBaseName}` }, commonResolverOptions, args.many ?? {})
+    @ResolverMutation(() => [DTOClass], { name: `createMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
     async createMany(@Args() input: CM): Promise<DTO[]> {
       const createMany = await transformAndValidate(CM, input);
-      return this.service.createMany(ResolverBase.transformCreateManyArgs(createMany));
-    }
-
-    private static transformCreateOneArgs(co: CO): CreateOne<DTO, DeepPartial<DTO>> {
-      return { item: co.input };
-    }
-
-    private static transformCreateManyArgs(cm: CM): CreateMany<DTO, DeepPartial<DTO>> {
-      return { items: cm.input };
+      return this.service.createMany(createMany.input);
     }
   }
 
   return ResolverBase;
 };
 
-type CreateResolverType<DTO, C extends DeepPartial<DTO>> = Class<CreateResolver<DTO, C>> &
-  Class<BaseServiceResolver<DTO>>;
-
+/**
+ * Factory to create a new abstract class that can be extended to add `create` endpoints.
+ *
+ * Assume we have `TodoItemDTO`, you can create a resolver with `createOneTodoItem` and `createManyTodoItems` graphql
+ * query endpoints using the following code.
+ *
+ * ```ts
+ * @Resolver(() => TodoItemDTO)
+ * export class TodoItemResolver extends CreateResolver(TodoItemDTO) {
+ *   constructor(readonly service: TodoItemService) {
+ *    super(service);
+ *   }
+ * }
+ * ```
+ *
+ * @param DTOClass - The DTO class that should be returned from the `createOne` and `createMany` endpoint.
+ * @param opts - Options to customize endpoints.
+ * @typeparam DTO - The type of DTO that should be created.
+ * @typeparam C - The create DTO type.
+ */
 export const CreateResolver = <DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
-  args: CreateResolverArgs<DTO, C> = {},
-): CreateResolverType<DTO, C> => Creatable(DTOClass, args)(BaseServiceResolver);
+  opts: CreateResolverOpts<DTO, C> = {},
+): ResolverClass<DTO, CreateResolver<DTO, C>> => Creatable(DTOClass, opts)(BaseServiceResolver);

@@ -3,15 +3,39 @@ import { Class } from '@nestjs-query/core';
 import { AdvancedOptions, MethodAndPropDecorator, ReturnTypeFunc } from '../external/type-graphql.types';
 import { getMetadataStorage } from '../metadata';
 
-export interface FilterableFieldDescriptor<T> {
-  propertyName: string;
-  type: Class<T>;
-  returnTypeFunc?: ReturnTypeFunc;
-  advancedOptions?: AdvancedOptions;
-}
-
+/** @internal */
 export const filterFieldMetaDataKey = 'filter:field';
 
+/**
+ * Decorator for Fields that should be filterable through a [[FilterType]]
+ *
+ * @example
+ *
+ * In the following DTO `id`, `title` and `completed` are filterable.
+ *
+ * ```ts
+ * import { FilterableField } from '@nestjs-query/query-graphql';
+ * import { ObjectType, ID, GraphQLISODateTime, Field } from 'type-graphql';
+ *
+ * @ObjectType('TodoItem')
+ * export class TodoItemDTO {
+ *   @FilterableField(() => ID)
+ *   id!: string;
+ *
+ *   @FilterableField()
+ *   title!: string;
+ *
+ *   @FilterableField()
+ *   completed!: boolean;
+ *
+ *   @Field(() => GraphQLISODateTime)
+ *   created!: Date;
+ *
+ *   @Field(() => GraphQLISODateTime)
+ *   updated!: Date;
+ * }
+ * ```
+ */
 export function FilterableField(): MethodAndPropDecorator;
 export function FilterableField(options: AdvancedOptions): MethodAndPropDecorator;
 export function FilterableField(returnTypeFunction?: ReturnTypeFunc, options?: AdvancedOptions): MethodAndPropDecorator;
