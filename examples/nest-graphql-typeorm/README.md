@@ -10,6 +10,8 @@ Start the backing services
 docker-compose up -d
 ```
 
+From the root of the repo run the following commands.
+
 ```sh
 npm install & npm run bootstrap && npm run build && npx lerna run migrate:up && npx lerna run seed
 ```
