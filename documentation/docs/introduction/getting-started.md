@@ -1,6 +1,5 @@
 ---
 title: Getting Started
-sidebar_label: Getting Started
 ---
 
 Nestjs-Query is collection of packages to make crud for `graphql` (and potentially other transports) easier.
@@ -11,23 +10,10 @@ While working on projects in nestjs it was very easy to get up and running with 
 
 ## Install 
 
-```sh
-npm i @nestjs-query/core
-```
+Check out each packages getting started section 
 
-`@nestjs-query/query-graphql`
-
-```sh
-npm i @nestjs-query/query-graphql @nestjs/common @nestjs/graphql graphql graphql-relay class-transformer class-validator reflect-metadata type-graphql
-```
-
-`@nestjs-query/query-typeorm`
-
-```sh
-npm i @nestjs-query/query-typeorm @nestjs/typeorm @nestjs/common class-transformer typeorm
-```
-
-**NOTE** `@nestjs-query/query-graphql` and `@nestjs-query/query-typeorm` have opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
+* [@nestjs-query/query-typeorm](../typeorm/getting-started)
+* [@nestjs-query/query-graphql](../graphql/getting-started)
 
 ## Packages
 

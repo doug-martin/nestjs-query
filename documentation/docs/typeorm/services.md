@@ -1,10 +1,10 @@
 ---
-title: Service 
+title: TypeormQueryService 
 ---
 
 The `TypeormQueryService` is an implementation of the `QueryService` from the `core` package.
 
-All examples assume the following entity
+All examples assume the following [entity](https://typeorm.io/#/entities).
 
 ```ts
 // todo-item.entity.ts
@@ -28,6 +28,8 @@ export class TodoItemEntity {
 }
 ```
 
+[Read more about typeorm entities](https://typeorm.io/#/entities).
+
 To create a typeorm service extend the `TypeormQueryService`
 
 ```ts
@@ -50,7 +52,7 @@ export class TodoItemService extends TypeormQueryService<TodoItemEntity> {
 
 ## Querying
 
-To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](./query).
+To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](../concepts/query).
 
 #### Example
 
