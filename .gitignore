@@ -59,3 +59,22 @@ typings/
 
 # next.js build output
 .next
+
+# node modules
+node_modules
+
+# built ts files
+dist
+
+# typescript build file
+tsconfig.tsbuildinfo
+
+# macos meta file
+.DS_Store
+
+# intelliJ workspace files
+.idea
+
+schema.gql
+
+documentation/.docusaurus

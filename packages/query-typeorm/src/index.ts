@@ -1,0 +1,1 @@
+export { TypeormQueryService } from './services';

@@ -1,0 +1,616 @@
+---
+title: Types
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+`@nestjs-query/query-graphql` provides a number of types. Most will be automatically generated for you when you create a
+ resolver. However, you can use many of the types in your own code for custom endpoints.
+
+The following examples are based on the following `TodoItemDTO`
+
+```ts
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+## ArgsTypes
+
+### QueryArgsType
+
+Args type used in `read` endpoints to allow `filtering`, `paging`, and `sorting`.
+
+The `QueryArgsType` will generate an `ArgsType` that will require the user to provide three arguments.
+* `filter?` - A filter that should be used to find records to update. See [FilterType](#filtertype)
+* `paging?` - Options to page of result. See [CursorPagingType](#cursorpagingtype)
+* `sorting?` - Optional array to allow sorting of results. See [SortType](#sorttype).
+
+#### Usage
+
+```ts
+import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@ArgsType()
+export class TodoItemQuery extends QueryArgsType(TodoItemDTO) {}
+```
+---
+
+### CreateOneArgsType
+
+Args type for `createOne` mutations.
+
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+
+**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
+specify the `created` or `updated` fields so you would create a new DTO just for input.
+
+#### Usage
+
+```ts
+import { CreateOneArgsType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@ArgsType()
+export class CreateOneTodoItemArgs extends CreateOneArgsType(TodoItemDTO) {}
+```
+---
+
+### CreateManyArgsType
+
+Args type for `createMany` mutations.
+
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+
+**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
+specify the `created` or `updated` fields so you would create a new DTO just for input.
+
+#### Usage
+
+```ts
+import { CreateManyArgsType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@ArgsType()
+export class CreateManyTodoItemsArgs extends CreateManyArgsType(TodoItemDTO) {}
+```
+
+### UpdateOneArgsType
+
+Args type for `updateOne` mutations.
+
+The `UpdateOneArgsType` will generate an `ArgsType` that will require the user to provide two arguments.
+* `id` - The id of the recrord to update
+* `input` - A record with fields to update.
+
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+
+**NOTE** Your DTO should be one that you want to use for updates. For example you may not want to let the end user to
+update the `created` or `updated` fields so you would create a new DTO just for updates.
+
+#### Usage
+
+```ts
+import { UpdateOneArgsType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@ArgsType()
+export class UpdateOneTodoItem extends UpdateOneArgsType(TodoItemDTO) {}
+```
+---
+
+### UpdateManyArgsType
+
+Args type for `updateMany` mutations.
+
+The `UpdateOneArgsType` will generate an `ArgsType` that will require the user to provide two arguments.
+* `filter` - The filter that should be used to find records to update. See [FilterType](#filtertype)
+* `input` - The update to apply to each record found.
+
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+
+**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
+specify the `created` or `updated` fields so you would create a new DTO just for input.
+
+#### Usage
+
+In this example we use the read DTO for the FilterType, and a different update DTO.
+
+```ts
+import { CreateOneArgsType, FilterType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@ArgsType()
+export class CreateOneTodoItemArgs extends UpdateManyArgsType(
+  FilterType(TodoItemDTO), // filter
+  TodoItemUpdateDTO // update DTO
+) {}
+```
+---
+
+### DeleteOneArgsType
+
+Args type for `deleteOne` mutations.
+
+The `DeleteOneArgsType` will generate an `ArgsType` that will require the user to provide two arguments.
+* `input` - The id of the record to delete.
+
+#### Usage
+
+```ts
+import { DeleteOneArgsType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@ArgsType()
+export class DeleteOneArgs extends DeleteOneArgsType() {}
+```
+---
+
+### DeleteManyArgsType
+
+Args type type for `deleteMany` mutations.
+
+The `DeleteManyArgsType` will generate an `ArgsType` that will require the user to provide:
+* `input` - A filter used to find records to delete. See [FilterType](#filtertype)
+
+#### Usage
+
+```ts
+import { CreateOneArgsType, FilterType } from '@nestjs-query/query-graphql';
+import { ArgsType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@ArgsType()
+export class CreateOneTodoItemArgs extends DeleteManyArgsType(FilterType(TodoItemDTO)) {}
+```
+---
+
+## ObjectTypes
+
+### ConnectionType
+
+Implementation of [connections](https://facebook.github.io/relay/graphql/connections.htm). Useful for large result sets
+where the end user should be able to page through the results.
+
+#### Usage
+
+<Tabs
+  defaultValue="code"
+  values={[
+    { label: 'Code', value: 'code', },
+    { label: 'Schema', value: 'schema', },
+  ]
+}>
+<TabItem value="code">
+
+```ts
+import { ConnectionType } from '@nestjs-query/query-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+export const TodoItemConnection = ConnectionType(TodoItemDTO);
+```
+
+
+</TabItem>
+<TabItem value="schema">
+
+
+```graphql
+scalar ConnectionCursor
+
+type TodoItemConnection {
+  pageInfo: PageInfo!
+  edges: [TodoItemEdge!]!
+}
+
+type TodoItemEdge {
+  node: TodoItem!
+  cursor: ConnectionCursor!
+}
+
+type PageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor: ConnectionCursor
+  endCursor: ConnectionCursor
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### UpdateManyResponseType
+
+Response from `updateMany` mutations.
+
+#### Usage
+
+<Tabs
+  defaultValue="code"
+  values={[
+    { label: 'Code', value: 'code', },
+    { label: 'Schema', value: 'schema', },
+  ]
+}>
+<TabItem value="code">
+
+```ts
+import { UpdateManyResponseType } from '@nestjs-query/query-graphql';
+
+export const UpdateManyResponse = UpdateManyResponseType()
+```
+
+
+</TabItem>
+<TabItem value="schema">
+
+
+```graphql
+type UpdateManyResponse {
+  updatedCount: Int!
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### DeleteManyResponseType
+
+Response from `deleteMany` mutations.
+
+#### Usage
+
+<Tabs
+  defaultValue="code"
+  values={[
+    { label: 'Code', value: 'code', },
+    { label: 'Schema', value: 'schema', },
+  ]
+}>
+<TabItem value="code">
+
+```ts
+import { DeleteManyResponseType } from '@nestjs-query/query-graphql';
+
+export const UpdateManyResponse = DeleteManyResponseType()
+```
+
+
+</TabItem>
+<TabItem value="schema">
+
+
+```graphql
+type DeleteManyResponse {
+  deletedCount: Int!
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+## InputTypes
+
+### FilterType
+
+GraphQL implementation of the `@nestjs-query/core` `Filter` type.
+
+The `FilterType` is dynamically created based on the fields in the `DTO` annotated with [@FilterableField](./dtos.md#filterablefield).
+
+Along with the dynamically create fields filter also has the following static fields:
+
+* `and` - Allows for joining multiple `Filters` with using an `AND` condition.
+
+  For example, find all todo items that `start with 'Foo' AND end in 'Bar'`.
+
+  ```graphql
+  todoItems(filter: {
+    and: [
+      {title: {like: "Foo%"}},
+      {title: {like: "%Bar"}},
+    ]
+  }) {
+    #...select your fields
+  }
+  ```
+
+* `or` - Allows for joining multiple `Filters` using an `OR` condition.
+
+    For example, find all todo items that ``(are completed AND start with 'Foo') OR (are not completed and end in 'Bar')``.
+
+  ```graphql
+  todoItems(filter: {
+    or: [
+      {title: {eq: "Foo"}, completed: {is: true}},
+      {title: {eq: "Bar"}, completed: {is: false}},
+    ]
+  }) {
+    #...select your fields
+  }
+  ```
+
+<Tabs
+  defaultValue="code"
+  values={[
+    { label: 'Code', value: 'code', },
+    { label: 'Schema', value: 'schema', },
+  ]
+}>
+<TabItem value="code">
+
+```ts
+import { FilterType } from '@nestjs-query/query-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+export const TodoItemFilter = FilterType(TodoItemDTO)
+```
+
+</TabItem>
+<TabItem value="schema">
+
+
+```graphql
+input TodoItemFilter {
+  and: [TodoItemFilter!]
+  or: [TodoItemFilter!]
+  id: IDFilterComparison
+  title: StringFieldComparison
+  completed: BooleanFieldComparison
+  created: DateFieldComparison
+  updated: DateFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### CursorPagingType
+
+The `CursorPagingType` allows you to limit or page through a [ConnectionType](#ConnectionType).
+
+**NOTE** This type is automatically created when using [QueryArgsType](#queryargstype).
+
+For more comprehensive examples take a look at the [Paging Docs](./queries.mdx#paging)
+
+#### Forward Paging
+
+* `first` - The number of records to return. This is the equivalent to an `limit`.
+* `after?` - The cursor of the `node` from a connection to start from.
+    * The most common use case is to set this to the `endCursor` from a [ConnectionType](#connectiontype).
+
+#### Backward Paging
+
+* `before` - The cursor of the node in a connection to start from.
+    * The most common use case is to set this to the `startCursor` from a [ConnectionType](#connectiontype).
+* `last` - The number of records before the `before` parameter to return.
+
+<Tabs
+  defaultValue="code"
+  values={[
+    { label: 'Code', value: 'code', },
+    { label: 'Schema', value: 'schema', },
+  ]
+}>
+<TabItem value="code">
+
+```ts
+import { CursorPagingType } from '@nestjs-query/query-graphql';
+
+export const CursorPaging = CursorPagingType()
+```
+
+</TabItem>
+<TabItem value="schema">
+
+
+```graphql
+scalar ConnectionCursor
+
+input CursorPaging {
+  before: ConnectionCursor
+  after: ConnectionCursor
+  first: Int
+  last: Int
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### SortType
+
+The `SortType` allows you to sort results.
+
+**NOTE** This type is automatically created when using [QueryArgsType](#queryargstype).
+
+For more comprehensive examples take a look at the [Sorting Docs](./queries.mdx#sorting)
+
+#### Fields
+
+* `field` - The field to sort on. The is an ENUM of [@FilterableFields](./dtos.md#filterablefield) defined in the DTO.
+* `direction` - The direction to sort the field `ASC` or `DESC`.
+* `nulls?` - On supported storage engines you can specify the null sort order `NULLS_FIRST`, `NULLS_LAST`
+
+<Tabs
+  defaultValue="code"
+  values={[
+    { label: 'Code', value: 'code', },
+    { label: 'Schema', value: 'schema', },
+  ]
+}>
+<TabItem value="code">
+
+```ts
+import { CursorPagingType } from '@nestjs-query/query-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+export const TodoItemSort = SortType(TodoItemDTO)
+```
+
+</TabItem>
+<TabItem value="schema">
+
+
+```graphql
+input TodoItemSort {
+  field: TodoItemSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TodoItemSortFields {
+  id
+  title
+  completed
+  created
+  updated
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### PartialInputType
+
+Utility type to create a `Partial` from an `ObjectType`.
+
+This is the type used by resolvers when a `CreateDTOClass` or `UpdateDTOClass` are not specified.
+
+<Tabs
+  defaultValue="code"
+  values={[
+    { label: 'Code', value: 'code', },
+    { label: 'Schema', value: 'schema', },
+  ]
+}>
+<TabItem value="code">
+
+```ts
+import { CursorPagingType } from '@nestjs-query/query-graphql';
+import { InputType } from `type-graphql`;
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@InputType()
+export class TodoItemPartialInput extends PartialInput(TodoItemDTO) { }
+```
+
+</TabItem>
+<TabItem value="schema">
+
+
+```graphql
+type TodoItemPartialInput {
+  id: ID
+  title: String
+  completed: Boolean
+  created: DateTime
+  updated: DateTime
+}
+```
+
+</TabItem>
+</Tabs>
+
+---

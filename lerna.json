@@ -1,0 +1,8 @@
+{
+  "tagVersionPrefix": "v",
+  "packages": [
+    "examples/*",
+    "packages/*"
+  ],
+  "version": "0.0.5-alpha.0"
+}

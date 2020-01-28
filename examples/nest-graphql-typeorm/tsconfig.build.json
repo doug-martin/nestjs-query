@@ -1,0 +1,17 @@
+{
+    "extends": "../../tsconfig.build.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "rootDir": ".",
+        "skipLibCheck": true
+    },
+    "include": [
+        "src",
+        "migrations"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*spec.ts"
+    ]
+}
