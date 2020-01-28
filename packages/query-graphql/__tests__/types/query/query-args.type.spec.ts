@@ -74,7 +74,7 @@ describe('QueryType', (): void => {
   @ArgsType()
   class TestQuery extends QueryArgsType(TestDto) {}
 
-  @Resolver(TestDto)
+  @Resolver()
   class TestResolver {
     @Query()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

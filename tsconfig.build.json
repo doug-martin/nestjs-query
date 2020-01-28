@@ -9,7 +9,6 @@
         "target": "es2018",
         "module": "commonjs",
         "esModuleInterop": true,
-        "removeComments": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
         "forceConsistentCasingInFileNames": true,

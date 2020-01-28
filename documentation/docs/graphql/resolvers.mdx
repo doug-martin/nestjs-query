@@ -135,7 +135,7 @@ import { TodoItemInputDTO } from './dto/create-todo-item.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   CreateDTOClass: TodoItemInputDTO,
   UpdateDTOClass: TodoItemInputDTO,
@@ -162,7 +162,7 @@ import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   create: { disabled: true },
 }) {
@@ -185,7 +185,7 @@ import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   create: { many: { disabled: true } },
   update: { many: { disabled: true } },
@@ -246,7 +246,7 @@ import { TodoItemService } from './todo-item.service';
 
 const guards = [AuthGuard];
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   create: { guards },
   update: { guards },
@@ -272,7 +272,7 @@ import { TodoItemService } from './todo-item.service';
 
 const guards = [AuthGuard];
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   create: { many: { guards } },
   update: { many: { guards } },
@@ -305,7 +305,7 @@ import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends CreateResolver(TodoItemDTO) {
   constructor(readonly service: TodoItemService) {
     super(service);
@@ -328,7 +328,7 @@ import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends ReadResolver(TodoItemDTO) {
   constructor(readonly service: TodoItemService) {
     super(service);
@@ -351,7 +351,7 @@ import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends UpdateResolver(TodoItemDTO) {
   constructor(readonly service: TodoItemService) {
     super(service);
@@ -373,7 +373,7 @@ import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends DeleteResolver(TodoItemDTO) {
   constructor(readonly service: TodoItemService) {
     super(service);

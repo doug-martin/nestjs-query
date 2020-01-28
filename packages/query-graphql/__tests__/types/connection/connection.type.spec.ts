@@ -12,7 +12,7 @@ describe('ConnectionType', (): void => {
 
   const TestConnection = ConnectionType(TestDto);
 
-  @Resolver(TestDto)
+  @Resolver()
   class TestConnectionTypeResolver {
     @Query(() => TestConnection)
     findConnection(): ConnectionType<TestDto> | undefined {

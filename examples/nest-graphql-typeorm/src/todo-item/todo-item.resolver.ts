@@ -8,7 +8,7 @@ import { TodoItemConnection, TodoItemQuery } from './types';
 
 const guards = [AuthGuard];
 
-@Resolver(() => TodoItemDTO)
+@Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   create: { guards },
   update: { guards },

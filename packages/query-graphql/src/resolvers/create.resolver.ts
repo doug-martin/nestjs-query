@@ -93,7 +93,7 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
  * query endpoints using the following code.
  *
  * ```ts
- * @Resolver(() => TodoItemDTO)
+ * @Resolver()
  * export class TodoItemResolver extends CreateResolver(TodoItemDTO) {
  *   constructor(readonly service: TodoItemService) {
  *    super(service);

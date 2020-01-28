@@ -10,7 +10,13 @@ export interface CRUDResolverOpts<
   C extends DeepPartial<DTO> = DeepPartial<DTO>,
   U extends DeepPartial<DTO> = DeepPartial<DTO>
 > {
+  /**
+   * The DTO that should be used as input for create endpoints.
+   */
   CreateDTOClass?: Class<C>;
+  /**
+   * The DTO that should be used as input for update endpoints.
+   */
   UpdateDTOClass?: Class<U>;
   create?: CreateResolverOpts<DTO, C>;
   read?: ReadResolverOpts<DTO>;
@@ -34,7 +40,7 @@ export interface CRUDResolver<DTO, C extends DeepPartial<DTO>, U extends DeepPar
  * import { TodoItemDTO } from './dto/todo-item.dto';
  * import { TodoItemService } from './todo-item.service';
  *
- * @Resolver(() => TodoItemDTO)
+ * @Resolver()
  * export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
  *   constructor(readonly service: TodoItemService) {
  *     super(service);
