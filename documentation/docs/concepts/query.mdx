@@ -18,7 +18,7 @@ All examples will be based on the following class.
 ```ts
 interface Entity {
   title: string;
-  completed: true;
+  completed: boolean;
   age: number;
 }
 ```
@@ -114,7 +114,7 @@ const q: Query<Entity> = {
 
 ## Paging
 
-The `core` package defines a basic paging interface has two optional fields `limit` and `offset`.s
+The `core` package defines a basic paging interface has two optional fields `limit` and `offset`.
 
 <Tabs
   defaultValue="limit-offset"
