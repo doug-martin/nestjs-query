@@ -5,9 +5,9 @@ import { deepEqual, instance, mock, objectContaining, when } from 'ts-mockito';
 import { DeleteQueryBuilder, Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { FilterQueryBuilder } from '../../src/query';
-import { TypeormQueryService } from '../../src';
+import { TypeOrmQueryService } from '../../src';
 
-describe('TypeormQueryService', (): void => {
+describe('TypeOrmQueryService', (): void => {
   const testEntities: () => TestEntity[] = (): TestEntity[] => [
     { id: 'id1', stringType: 'foo', boolType: true, dateType: new Date(), numberType: 1 },
     { id: 'id2', stringType: 'bar', boolType: false, dateType: new Date(), numberType: 2 },
@@ -15,21 +15,21 @@ describe('TypeormQueryService', (): void => {
 
   type MockQueryService = {
     mockRepo: Repository<TestEntity>;
-    queryService: TypeormQueryService<TestEntity>;
+    queryService: TypeOrmQueryService<TestEntity>;
     mockQueryBuilder: FilterQueryBuilder<TestEntity>;
   };
 
   function createQueryService(): MockQueryService {
     const mockQueryBuilder = mock<FilterQueryBuilder<TestEntity>>(FilterQueryBuilder);
     const mockRepo = mock<Repository<TestEntity>>(Repository);
-    const queryService = new TypeormQueryService<TestEntity>(instance(mockRepo), instance(mockQueryBuilder));
+    const queryService = new TypeOrmQueryService<TestEntity>(instance(mockRepo), instance(mockQueryBuilder));
     return { mockQueryBuilder, mockRepo, queryService };
   }
 
   it('should create a filterQuery based on the repo passed in if not provided', () => {
     const mockRepo = mock<Repository<TestEntity>>(Repository);
     const repoInstance = instance(mockRepo);
-    const queryService = new TypeormQueryService<TestEntity>(repoInstance);
+    const queryService = new TypeOrmQueryService<TestEntity>(repoInstance);
     expect(queryService.filterQueryBuilder).toBeInstanceOf(FilterQueryBuilder);
     expect(queryService.filterQueryBuilder.repo).toEqual(repoInstance);
   });

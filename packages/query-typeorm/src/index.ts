@@ -1,1 +1,1 @@
-export { TypeormQueryService } from './services';
+export { TypeOrmQueryService } from './services';

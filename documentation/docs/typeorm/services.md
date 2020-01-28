@@ -1,8 +1,8 @@
 ---
-title: TypeormQueryService 
+title: TypeOrmQueryService 
 ---
 
-The `TypeormQueryService` is an implementation of the `QueryService` from the `core` package.
+The `TypeOrmQueryService` is an implementation of the `QueryService` from the `core` package.
 
 All examples assume the following [entity](https://typeorm.io/#/entities).
 
@@ -30,17 +30,17 @@ export class TodoItemEntity {
 
 [Read more about typeorm entities](https://typeorm.io/#/entities).
 
-To create a typeorm service extend the `TypeormQueryService`
+To create a typeorm service extend the `TypeOrmQueryService`
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { TypeormQueryService } from '@nestjs-query/query-typeorm';
+import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoItemEntity } from './todo-item.entity';
 
 @Injectable()
-export class TodoItemService extends TypeormQueryService<TodoItemEntity> {
+export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
   constructor(
     @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
   ) {

@@ -128,9 +128,9 @@ corresponding field. If you just use `@Field` then you will not be able to filte
 
 ## Create the Service
 
-The service in this example is extending the `@nestjs-query/query-typeorm` `TypeormQueryService`.
+The service in this example is extending the `@nestjs-query/query-typeorm` `TypeOrmQueryService`.
 
-The `TypeormQueryService` will provide implementations for:
+The `TypeOrmQueryService` will provide implementations for:
 
 * `query` - find multiple records.
 * `findById` - find a record by its id.
@@ -152,13 +152,13 @@ Now add the following to `src/todo-item/todo-item.service.ts`.
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { TypeormQueryService } from '@nestjs-query/query-typeorm';
+import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoItemEntity } from './todo-item.entity';
 
 @Injectable()
-export class TodoItemService extends TypeormQueryService<TodoItemEntity> {
+export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
   constructor(
     @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
   ) {
@@ -168,7 +168,7 @@ export class TodoItemService extends TypeormQueryService<TodoItemEntity> {
 
 ```
 
-The important piece is extending `TypeormQueryService` from `@nestjs-query/query-typeorm` this will give you all of the crud methods that your resolver will use.
+The important piece is extending `TypeOrmQueryService` from `@nestjs-query/query-typeorm` this will give you all of the crud methods that your resolver will use.
 
 ## Create the Resolver
 
