@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/core",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Base query package",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
