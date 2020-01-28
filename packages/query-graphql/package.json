@@ -4,7 +4,7 @@
   "description": "Nestjs graphql query adapter",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
-  "license": "ISC",
+  "license": "MIT",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "directories": {
