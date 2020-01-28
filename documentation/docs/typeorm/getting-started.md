@@ -16,4 +16,4 @@ npm i @nestjs-query/query-typeorm @nestjs/typeorm @nestjs/common class-transform
 
 ## Docs
 
-* [TypeormQueryService](./services) - Documentation about the `TypeormQueryService` and its usage.
+* [TypeOrmQueryService](./services) - Documentation about the `TypeOrmQueryService` and its usage.

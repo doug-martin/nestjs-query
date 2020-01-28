@@ -19,7 +19,7 @@ import { FilterQueryBuilder } from '../query';
  *
  * ```ts
  * @Injectable()
- * export class TodoItemService extends TypeormQueryService<TodoItemEntity> {
+ * export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
  *   constructor(
  *      @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
  *   ) {
@@ -28,7 +28,7 @@ import { FilterQueryBuilder } from '../query';
  * }
  * ```
  */
-export class TypeormQueryService<Entity> implements QueryService<Entity> {
+export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
   /**
    * Creates a new QueryService for the passed in repository.
    * @param repo - the `typeorm` Repository.
