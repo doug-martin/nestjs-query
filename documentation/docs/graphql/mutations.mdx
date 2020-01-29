@@ -223,6 +223,7 @@ mutation {
 The `CRUDResolver` will by default expose an `updateMany` mutation that takes two arguments:
 
 * `filter`: The filter to use to find the records to update.
+    * **NOTE** The filter **CANNOT** be an empty object. This prevents accidental updating of all records.
 * `input`: The values to update on the record. This is a partial so you only have to pass in the values you want to
 change.
 
@@ -322,6 +323,8 @@ mutation {
 ### Delete Many
 
 The CRUDResolver will by default expose a `deleteMany` mutation that takes a `filter`:
+
+**NOTE** The filter **CANNOT** be an empty object. This prevents accidental deletion of all records.
 
 #### Examples
 

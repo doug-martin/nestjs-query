@@ -1,3 +1,7 @@
+# v0.0.6
+
+* Dont allow empty filters with `updateMany` or `deleteMany` operations.
+
 # v0.0.5
 
 * Add ability to specify query defaults.
