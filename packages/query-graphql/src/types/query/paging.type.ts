@@ -1,6 +1,6 @@
 import { Class, Paging } from '@nestjs-query/core';
-import { Min, Validate } from 'class-validator';
-import { ArgsType, Field, InputType, Int } from 'type-graphql';
+import { Min, Validate, IsPositive } from 'class-validator';
+import { Field, InputType, Int } from 'type-graphql';
 import { cursorToOffset } from 'graphql-relay';
 import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
 import { CannotUseWith, CannotUseWithout, IsUndefined } from '../validators';
@@ -19,7 +19,7 @@ export const CursorPagingType = (): Class<CursorPagingType> => {
   if (graphQLCursorPaging) {
     return graphQLCursorPaging;
   }
-  @ArgsType()
+  // based on https://github.com/MichalLytek/type-graphql/issues/142#issuecomment-433120114
   @InputType('CursorPaging')
   class GraphQLCursorPagingImpl implements CursorPagingType {
     @Field(() => ConnectionCursorScalar, {
@@ -42,6 +42,7 @@ export const CursorPagingType = (): Class<CursorPagingType> => {
 
     @Field(() => Int, { nullable: true, description: 'Paginate first' })
     @IsUndefined()
+    @IsPositive()
     @Min(1)
     @Validate(CannotUseWith, ['before', 'last'])
     first?: number;
@@ -54,6 +55,7 @@ export const CursorPagingType = (): Class<CursorPagingType> => {
     @Validate(CannotUseWithout, ['before'])
     @Validate(CannotUseWith, ['after', 'first'])
     @Min(1)
+    @IsPositive()
     last?: number;
 
     get limit(): number | undefined {

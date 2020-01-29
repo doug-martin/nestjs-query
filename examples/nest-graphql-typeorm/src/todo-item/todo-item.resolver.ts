@@ -1,6 +1,6 @@
 import { Filter } from '@nestjs-query/core';
-import { CRUDResolver, ConnectionType } from '@nestjs-query/query-graphql';
-import { Resolver, Args, Query } from '@nestjs/graphql';
+import { ConnectionType, CRUDResolver } from '@nestjs-query/query-graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth.guard';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
@@ -10,6 +10,7 @@ const guards = [AuthGuard];
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  read: { defaultFilter: { completed: { is: true } } },
   create: { guards },
   update: { guards },
   delete: { guards },

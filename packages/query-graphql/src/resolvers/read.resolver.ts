@@ -2,12 +2,13 @@ import { Class } from '@nestjs-query/core';
 import omit from 'lodash.omit';
 import { ArgsType, ID } from 'type-graphql';
 import { Resolver, Args } from '@nestjs/graphql';
+import { QueryArgsTypeOpts } from '../types/query/query-args.type';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { ConnectionType, QueryArgsType, StaticConnectionType, StaticQueryType } from '../types';
 import { ResolverQuery } from '../decorators';
 import { DTONamesOpts, getDTONames, transformAndValidate } from './helpers';
 
-export interface ReadResolverOpts<DTO> extends DTONamesOpts, ResolverOpts {
+export interface ReadResolverOpts<DTO> extends DTONamesOpts, ResolverOpts, QueryArgsTypeOpts<DTO> {
   QueryArgs?: StaticQueryType<DTO>;
   Connection?: StaticConnectionType<DTO>;
 }
@@ -26,7 +27,7 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
 >(
   BaseClass: B,
 ): Class<ReadResolver<DTO>> & B => {
-  const { QueryArgs = QueryArgsType(DTOClass), Connection = ConnectionType(DTOClass) } = opts;
+  const { QueryArgs = QueryArgsType(DTOClass, opts), Connection = ConnectionType(DTOClass) } = opts;
   const { baseNameLower, pluralBaseNameLower } = getDTONames(opts, DTOClass);
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
