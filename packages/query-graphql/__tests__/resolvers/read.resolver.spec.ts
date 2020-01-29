@@ -86,9 +86,10 @@ describe('ReadResolver', () => {
     it('should not create a new type if the Connection is supplied', () => {
       const Connection = ConnectionType(TestResolverDTO);
       jest.clearAllMocks(); // reset
-      ReadResolver(TestResolverDTO, { Connection });
+      const opts = { Connection };
+      ReadResolver(TestResolverDTO, opts);
 
-      expect(queryArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(queryArgsTypeSpy).toBeCalledWith(TestResolverDTO, opts);
       expect(connectionTypeSpy).not.toBeCalled();
 
       expect(resolverQuerySpy).toBeCalledTimes(2);
@@ -107,7 +108,7 @@ describe('ReadResolver', () => {
         pipes: [],
       };
       ReadResolver(TestResolverDTO, { many: queryOpts });
-      expect(queryArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(queryArgsTypeSpy).toBeCalledWith(TestResolverDTO, { many: queryOpts });
       expect(connectionTypeSpy).toBeCalledWith(TestResolverDTO);
       const Connection = connectionTypeSpy.mock.results[0].value;
 
@@ -164,7 +165,7 @@ describe('ReadResolver', () => {
         pipes: [],
       };
       ReadResolver(TestResolverDTO, { one: findById });
-      expect(queryArgsTypeSpy).toBeCalledWith(TestResolverDTO);
+      expect(queryArgsTypeSpy).toBeCalledWith(TestResolverDTO, { one: findById });
       expect(connectionTypeSpy).toBeCalledWith(TestResolverDTO);
       const Connection = connectionTypeSpy.mock.results[0].value;
 

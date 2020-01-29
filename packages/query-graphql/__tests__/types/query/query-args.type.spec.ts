@@ -1,30 +1,22 @@
-import { SortDirection, SortNulls } from '@nestjs-query/core';
+import 'reflect-metadata';
+import { SortDirection, SortField, SortNulls } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { printSchema } from 'graphql';
-import 'reflect-metadata';
-import {
-  Args,
-  ArgsType,
-  buildSchemaSync,
-  Float,
-  GraphQLISODateTime,
-  GraphQLTimestamp,
-  ID,
-  Int,
-  ObjectType,
-  Query,
-  Resolver,
-} from 'type-graphql';
+import * as typeGraphql from 'type-graphql';
 import { QueryArgsType, FilterableField } from '../../../src';
 
 describe('QueryType', (): void => {
-  @ObjectType('TestQuery')
+  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+
+  afterEach(() => jest.clearAllMocks());
+
+  @typeGraphql.ObjectType('TestQuery')
   class TestDto {
-    @FilterableField(() => ID)
+    @FilterableField(() => typeGraphql.ID)
     idField!: number;
 
-    @FilterableField(() => ID, { nullable: true })
+    @FilterableField(() => typeGraphql.ID, { nullable: true })
     idFieldOption?: number;
 
     @FilterableField()
@@ -45,46 +37,46 @@ describe('QueryType', (): void => {
     @FilterableField({ nullable: true })
     numberFieldOptional?: number;
 
-    @FilterableField(() => Float)
+    @FilterableField(() => typeGraphql.Float)
     floatField!: number;
 
-    @FilterableField(() => Float, { nullable: true })
+    @FilterableField(() => typeGraphql.Float, { nullable: true })
     floatFieldOptional?: number;
 
-    @FilterableField(() => Int)
+    @FilterableField(() => typeGraphql.Int)
     intField!: number;
 
-    @FilterableField(() => Int, { nullable: true })
+    @FilterableField(() => typeGraphql.Int, { nullable: true })
     intFieldOptional?: number;
 
-    @FilterableField(() => GraphQLTimestamp)
+    @FilterableField(() => typeGraphql.GraphQLTimestamp)
     timestampField!: Date;
 
-    @FilterableField(() => GraphQLTimestamp, { nullable: true })
+    @FilterableField(() => typeGraphql.GraphQLTimestamp, { nullable: true })
     timestampFieldOptional?: Date;
 
-    @FilterableField(() => GraphQLISODateTime)
+    @FilterableField(() => typeGraphql.GraphQLISODateTime)
     date!: Date;
 
-    @FilterableField(() => GraphQLISODateTime, { nullable: true })
+    @FilterableField(() => typeGraphql.GraphQLISODateTime, { nullable: true })
     dateOptional?: Date;
   }
 
   // @ts-ignore
-  @ArgsType()
+  @typeGraphql.ArgsType()
   class TestQuery extends QueryArgsType(TestDto) {}
 
-  @Resolver()
+  @typeGraphql.Resolver()
   class TestResolver {
-    @Query()
+    @typeGraphql.Query()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    findConnection(@Args() query: TestQuery): string {
+    findConnection(@typeGraphql.Args() query: TestQuery): string {
       return 'hello';
     }
   }
 
   it('create a query for string fields', () => {
-    const schema = buildSchemaSync({ resolvers: [TestResolver] });
+    const schema = typeGraphql.buildSchemaSync({ resolvers: [TestResolver] });
     expect(printSchema(schema)).toEqual(
       `input BooleanFieldComparison {
   is: Boolean
@@ -184,13 +176,13 @@ input NumberFieldComparison {
 
 type Query {
   findConnection(
-    """Limit or page results"""
-    paging: CursorPaging = {}
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
 
     """Specify to filter the records returned."""
     filter: TestQueryFilter = {}
 
-    """Specify to sort results"""
+    """Specify to sort results."""
     sorting: [TestQuerySort!] = []
   ): String!
 }
@@ -340,5 +332,111 @@ input TimestampFieldComparison {
     const queryInstance = plainToClass(TestQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
     expect(queryInstance.filter).toBeInstanceOf(TestQuery.FilterType);
+  });
+
+  describe('options', () => {
+    it('by default first should be set to 10 in the paging object', () => {
+      QueryArgsType(TestDto);
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: { first: 10 },
+        description: 'Limit or page results.',
+      });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: {},
+        description: 'Specify to filter the records returned.',
+      });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: [],
+        description: 'Specify to sort results.',
+      });
+    });
+
+    it('allow specifying a defaultResultSize', () => {
+      QueryArgsType(TestDto, { defaultResultSize: 2 });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: { first: 2 },
+        description: 'Limit or page results.',
+      });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: {},
+        description: 'Specify to filter the records returned.',
+      });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: [],
+        description: 'Specify to sort results.',
+      });
+    });
+
+    it('allow validate a maxResultsSize for paging.first', () => {
+      const queryObj: QueryArgsType<TestDto> = {
+        paging: { first: 10 },
+      };
+      const QT = QueryArgsType(TestDto, { maxResultsSize: 5 });
+      const queryInstance = plainToClass(QT, queryObj);
+      expect(validateSync(queryInstance)).toEqual([
+        {
+          children: [],
+          constraints: {
+            PropertyMax: 'Field paging.first max allowed value is `5`.',
+          },
+          property: 'paging',
+          target: queryObj,
+          value: queryObj.paging,
+        },
+      ]);
+    });
+
+    it('allow validate a maxResultsSize for paging.last', () => {
+      const queryObj: QueryArgsType<TestDto> = {
+        paging: { last: 10, before: 'abc' },
+      };
+      const QT = QueryArgsType(TestDto, { maxResultsSize: 5 });
+      const queryInstance = plainToClass(QT, queryObj);
+      expect(validateSync(queryInstance)).toEqual([
+        {
+          children: [],
+          constraints: {
+            PropertyMax: 'Field paging.last max allowed value is `5`.',
+          },
+          property: 'paging',
+          target: queryObj,
+          value: queryObj.paging,
+        },
+      ]);
+    });
+
+    it('allow specifying a default filter', () => {
+      const filter = { booleanField: { is: true } };
+      QueryArgsType(TestDto, { defaultFilter: filter });
+      expect(fieldSpy).toHaveBeenNthCalledWith(1, expect.any(Function), {
+        defaultValue: { first: 10 },
+        description: 'Limit or page results.',
+      });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: filter,
+        description: 'Specify to filter the records returned.',
+      });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: [],
+        description: 'Specify to sort results.',
+      });
+    });
+
+    it('allow specifying a default sort', () => {
+      const sort: SortField<TestDto>[] = [{ field: 'booleanField', direction: SortDirection.DESC }];
+      QueryArgsType(TestDto, { defaultSort: sort });
+      expect(fieldSpy).toHaveBeenNthCalledWith(1, expect.any(Function), {
+        defaultValue: { first: 10 },
+        description: 'Limit or page results.',
+      });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: {},
+        description: 'Specify to filter the records returned.',
+      });
+      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+        defaultValue: sort,
+        description: 'Specify to sort results.',
+      });
+    });
   });
 });
