@@ -23,6 +23,11 @@ module.exports = {
         },
       ],
     },
+    algolia: {
+      apiKey: '2bec315c442a99da17e68f485900e339',
+      indexName: 'nestjs-query',
+      algoliaOptions: {}, // Optional, if provided by Algolia
+    },
     footer: {
       style: 'dark',
       links: [
