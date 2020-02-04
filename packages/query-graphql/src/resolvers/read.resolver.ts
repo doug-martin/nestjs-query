@@ -6,9 +6,9 @@ import { QueryArgsTypeOpts } from '../types/query/query-args.type';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { ConnectionType, QueryArgsType, StaticConnectionType, StaticQueryType } from '../types';
 import { ResolverQuery } from '../decorators';
-import { DTONamesOpts, getDTONames, transformAndValidate } from './helpers';
+import { getDTONames, transformAndValidate } from './helpers';
 
-export interface ReadResolverOpts<DTO> extends DTONamesOpts, ResolverOpts, QueryArgsTypeOpts<DTO> {
+export interface ReadResolverOpts<DTO> extends ResolverOpts, QueryArgsTypeOpts<DTO> {
   QueryArgs?: StaticQueryType<DTO>;
   Connection?: StaticConnectionType<DTO>;
 }

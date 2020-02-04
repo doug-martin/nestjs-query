@@ -5,9 +5,9 @@ import { Resolver, Args } from '@nestjs/graphql';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { DeleteManyArgsType, DeleteManyResponseType, DeleteOneArgsType, FilterType, PartialType } from '../types';
 import { ResolverMutation } from '../decorators';
-import { DTONamesOpts, getDTONames, transformAndValidate } from './helpers';
+import { getDTONames, transformAndValidate } from './helpers';
 
-export interface DeleteResolverOpts<DTO> extends DTONamesOpts, ResolverOpts {
+export interface DeleteResolverOpts<DTO> extends ResolverOpts {
   /**
    * ArgsType for deleteOne mutation.
    */

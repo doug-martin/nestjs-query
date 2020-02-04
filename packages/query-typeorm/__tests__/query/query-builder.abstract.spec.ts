@@ -21,9 +21,9 @@ describe('AbstractQueryBuilder', (): void => {
       expect(getQueryBuilder().fieldToDbCol('stringType')).toEqual('"string_type"');
     });
 
-    it('should just escape the field if the field is not on the entity', () => {
+    it('should throw an error if the field is not on the entity', () => {
       // @ts-ignore
-      expect(getQueryBuilder().fieldToDbCol('fooBar')).toEqual('"fooBar"');
+      expect(() => getQueryBuilder().fieldToDbCol('fooBar')).toThrow('Unknown column fooBar on table test_entity');
     });
   });
 });

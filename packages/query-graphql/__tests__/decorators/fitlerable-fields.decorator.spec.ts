@@ -25,20 +25,20 @@ describe('FilterableField decorator', (): void => {
     }
     const fields = getMetadataStorage().getFilterableObjectFields(TestDto);
     expect(fields).toMatchObject([
-      { propertyName: 'stringField', type: String, advancedOptions: undefined, returnTypeFunc: undefined },
+      { propertyName: 'stringField', target: String, advancedOptions: undefined, returnTypeFunc: undefined },
       {
         propertyName: 'stringOptionalField',
-        type: String,
+        target: String,
         advancedOptions: { nullable: true },
         returnTypeFunc: undefined,
       },
       {
         propertyName: 'floatField',
-        type: Number,
+        target: Number,
         advancedOptions: { nullable: true },
         returnTypeFunc: floatReturnFunc,
       },
-      { propertyName: 'numberField', type: Number, advancedOptions: { nullable: true }, returnTypeFunc: undefined },
+      { propertyName: 'numberField', target: Number, advancedOptions: { nullable: true }, returnTypeFunc: undefined },
     ]);
   });
 });

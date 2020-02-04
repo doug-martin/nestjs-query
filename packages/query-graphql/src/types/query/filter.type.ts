@@ -35,8 +35,8 @@ export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
     or?: Filter<T>[];
   }
 
-  fields.forEach(({ propertyName, type, returnTypeFunc }) => {
-    const FC = createFilterComparisonType(type, returnTypeFunc);
+  fields.forEach(({ propertyName, target, returnTypeFunc }) => {
+    const FC = createFilterComparisonType(target, returnTypeFunc);
     ValidateNested()(GraphQLFilter.prototype, propertyName);
     Field(() => FC, { nullable: true })(GraphQLFilter.prototype, propertyName);
     Type(() => FC)(GraphQLFilter.prototype, propertyName);

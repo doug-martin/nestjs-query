@@ -18,4 +18,5 @@ npm i  @nestjs-query/query-graphql @nestjs-query/core @nestjs/common @nestjs/gra
 * [Resolvers](./resolvers) - Documentation about crud resolvers and their usage.
 * [Queries](./queries) - Documentation about the provided graphql query endpoints.
 * [Mutations](./mutations) -  Documentation about the provided graphql mutation endpoints.
+* [Relations](./relations) -  Documentation about specifying relations in your resolvers.
 * [Types](./types) - Documentation for the provided graphql types.

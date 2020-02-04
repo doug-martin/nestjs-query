@@ -1,0 +1,503 @@
+---
+title: Relations
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+When using the [CRUDResolver](./resolvers#crudresolver) you can specify relations that should be exposed for the DTO using the `relations` option.
+
+The `relations` option has two properties.
+
+* `one` - Relations that return a single record. The `key` is the name of the `relation` and the value contains [options for the relation](#relation-options).
+* `many` - Relations that return multiple records. The `key` is the name of the `relation` and the value contains [options for the relation](#relation-options).
+
+### Relation Options
+
+* `DTO` - The relation DTO. This is the `@ObjectType` that will be used for read, update and remove endpoints.
+* `relationName` - The name of the relation to use when looking up the relation from the `QueryService`
+* `nullable` - Set to `true` if the relation is nullable.
+* `disableRead` -  Set to `true` to disable read operations.
+* `disableUpdate` -  Set to `true` to disable update operations.
+* `disableRemove` -  Set to `true` to disable remove operations.
+* `guards=[]` - An array of [guards](https://docs.nestjs.com/guards) to add to `update` and `remove` endpoints.
+* `interceptors=[]` - An array of [interceptors](https://docs.nestjs.com/interceptors) to add to `update` and `remove` endpoints.
+* `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to `update` and `remove` endpoints.
+* `filters=[]` - An array of [filters](https://docs.nestjs.com/exception-filters) to add to `update` and `remove` endpoints.
+
+**NOTE** `guards`, `pipes`, `interceptors` and `filters` will not work by default with `read` endpoints. See https://github.com/nestjs/graphql/issues/295
+
+## Examples
+
+In the following examples we are going to use the following `typeorm` entities and DTOs.
+
+<Tabs
+  defaultValue="todoitementity"
+  values={[
+    { label: 'TodoItemEntity', value: 'todoitementity', },
+    { label: 'TodoItemDTO', value: 'todoitemdto', },
+    { label: 'SubTaskEntity', value: 'subtaskentity', },
+    { label: 'SubTaskDTO', value: 'subtaskdto', },
+  ]
+}>
+<TabItem value="todoitementity">
+
+```ts
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { SubTaskEntity } from '../sub-task/sub-task.entity';
+
+@Entity()
+export class TodoItemEntity {
+  @PrimaryGeneratedColumn()
+  id!: string;
+
+  @Column()
+  title!: string;
+
+  @Column()
+  completed!: boolean;
+
+  @OneToMany(
+    () => SubTaskEntity,
+    subTask => subTask.todoItem,
+  )
+  subTasks!: SubTaskEntity[];
+
+  @CreateDateColumn()
+  created!: Date;
+
+  @UpdateDateColumn()
+  updated!: Date;
+}
+
+```
+
+</TabItem>
+<TabItem value="todoitemdto">
+
+```ts
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+</TabItem>
+<TabItem value="subtaskentity">
+
+```ts
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ObjectType,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { TodoItemEntity } from '../todo-item/todo-item.entity';
+
+@Entity()
+export class SubTaskEntity {
+  @PrimaryGeneratedColumn()
+  id!: string;
+
+  @Column()
+  title!: string;
+
+  @Column()
+  completed!: boolean;
+
+  @Column({ nullable: false })
+  todoItemId!: string;
+
+  @ManyToOne(
+    (): ObjectType<TodoItemEntity> => TodoItemEntity,
+    td => td.subTasks,
+    { onDelete: 'CASCADE', nullable: false },
+  )
+  @JoinColumn()
+  todoItem!: TodoItemEntity;
+
+  @CreateDateColumn()
+  created!: Date;
+
+  @UpdateDateColumn()
+  updated!: Date;
+}
+
+```
+</TabItem>
+<TabItem value="subtaskdto">
+
+```ts
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
+
+@ObjectType('SubTask')
+export class SubTaskDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+
+  @FilterableField()
+  todoItemId!: string;
+}
+
+
+```
+</TabItem>
+</Tabs>
+
+### One Relation
+
+Based on the entity and DTO definitions above we can create a `SubTask` resolver using the `relations.one` options.
+
+When specifying a `one` relation a couple of endpoints will automatically be generated. In this example the following are generated.
+
+* `subTask.todoItem` - A `query` to retrieve the `SubTasks` `TodoItem`
+* `setTodoItemOnSubTask` - A `mutation` to set the `TodoItem` on a `SubTask`.
+* `removeTodoItemFromSubTask` - A `mutation` to remove a `TodoItem`/`SubTask` relation.
+    * **NOTE** This does not typically remove either record just breaks the relation.
+
+In this example we `disableRemove` because `todoItem` is not nullable.
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from '../todo-item/dto/todo-item.dto';
+import { SubTaskDTO } from './dto/sub-task.dto';
+import { SubTaskService } from './sub-task.service';
+
+@Resolver(() => SubTaskDTO)
+export class SubTaskResolver extends CRUDResolver(SubTaskDTO, {
+  relations: {
+    one: { todoItem: { DTO: TodoItemDTO, disableRemove: true } },
+  },
+}) {
+  constructor(readonly service: SubTaskService) {
+    super(service);
+  }
+}
+
+```
+
+In the above example the relations option was set to
+
+```ts
+relations: {
+  one: { todoItem: { DTO: TodoItemDTO, disableRemove: true } },
+}
+```
+
+This set of options lets `@nestjs-query/query-graphql` know that `SubTask` has a single `TodoItem` relation. The generated schema will contain a `SubTask` type like the following.
+
+```graphql
+type SubTask {
+  id: ID!
+  title: String!
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  todoItemId: String!
+  todoItem: TodoItem!
+}
+```
+
+The following mutations will also be automatically exposed.
+
+```graphql
+type Mutation {
+  setTodoItemOnSubTask(
+    id: ID!
+    relationId: ID!
+  ): SubTask!
+}
+```
+
+If `disableRemove` was set to `false` or not specified a `removeTodoItemFromSubTask` mutation would also be exposed with the same arguments as `setTodoItemOnSubTask`.
+
+### Many Relation
+
+Based on the entity and DTO definitions above we can create a `TodoItem` resolver using the `relations.many` options.
+
+When specifying a `many` relation a couple of endpoints will automatically be generated. In this example the following are generated.
+
+* `todoItem.subTasks` - A `query` to retrieve a `TodoItems` `SubTasks`.
+    * The `subTasks` property will accept a [query](../concepts/query) to allow you to filter, page and sort results.
+    * The `subTasks` property will return a [connection](./types#connectiontype) to page through results.
+* `addSubTasksToTodoItem` - A `mutation` to add `SubTasks` to a `TodoItem`.
+* `removeSubTasksFromTodoItem` - A `mutation` to remove a `SubTaks` from a `TodoItem`.
+    * **NOTE** This does not typically remove either record just breaks the relation.
+
+In this example we `disableRemove` because `SubTasks` cannot exist without a `TodoItem`.
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  relations: {
+    many: { subTasks: { DTO: SubTaskDTO, disableRemove: true } },
+  },
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+
+```
+In the above example the relations option was set to
+
+```ts
+relations: {
+  many: { subTasks: { DTO: SubTaskDTO, disableRemove: true } },
+}
+```
+
+This objects tells `@nestjs-query/query-graphql` that the `TodoItem` has multiple `SubTasks`. The generated schema will contain a `TodoItem` type like the following.
+
+```graphql
+type TodoItem {
+  id: ID!
+  title: String!
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  subTasks(
+    paging: CursorPaging = { first: 10 }
+
+    filter: SubTaskFilter = {}
+
+    sorting: [SubTaskSort!] = []
+  ): SubTaskConnection!
+}
+```
+
+The following mutations will also be automatically exposed.
+
+```graphql
+type Mutation {
+  addSubTasksToTodoItem(
+    id: ID!
+    relationIds: [ID!]!
+  ): TodoItem!
+}
+```
+
+If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodoItem` mutation would also be exposed with the same arguments as `addSubTasksToTodoItem`.
+
+### Custom Relation Name
+
+Sometimes you may want to expose a relation that has a different name when persisted from the graphql property. To do this use the `relationName` property.
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  relations: {
+    many: { allSubTasks: { DTO: SubTaskDTO, relationName: 'subTasks' } },
+  },
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+
+```
+
+In this example the `subTasks` key will be used to look up the relation from from the `QueryService` and `todoItems.allSubTasks` will be exposed in the `graphql` schema.
+
+```graphql
+type TodoItem {
+  id: ID!
+  title: String!
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  allSubTasks(
+    paging: CursorPaging = { first: 10 }
+
+    filter: SubTaskFilter = {}
+
+    sorting: [SubTaskSort!] = []
+  ): SubTaskConnection!
+}
+```
+
+### Disable Reads
+
+To disable the `read` `queries` you can set the `disableRead` option to `true`.
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  relations: {
+    many: { subTasks: { DTO: SubTaskDTO, disableRead: true } },
+  },
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+
+```
+
+In this example only `addSubTasksToTodoItem` and `removeSubTasksFromTodoItem` will be exposed.
+
+### Disable Updates
+
+To disable the `update` `mutations` you can set the `disableUpdate` option to `true`.
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  relations: {
+    many: { subTasks: { DTO: SubTaskDTO, disableUpdates: true } },
+  },
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+
+```
+
+In this example only `todoItem.subTasks` and `removeSubTasksFromTodoItem` will be exposed.
+
+### Disable Removes
+
+To disable the `remove` `mutations` you can set the `disableRemove` option to `true`.
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  relations: {
+    many: { subTasks: { DTO: SubTaskDTO, disableRemove: true } },
+  },
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+
+```
+
+In this example only `todoItem.subTasks` and `addSubTasksToTodoItem` will be exposed.
+
+### Guards, Pipes and Filters
+
+**NOTE** `guards`, `pipes`, `interceptors` and `filters` will not work by default with `read` endpoints. See https://github.com/nestjs/graphql/issues/295
+
+In this example we'll just demonstrate using a `guard` but the same pattern applies for `pipes`, `filters` and
+`interceptors`
+
+To set up a [guard](https://docs.nestjs.com/guards) for endpoint you can use the `guards` option.
+
+Assume we have the following auth guard that checks for a certain header and value.
+
+```ts
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { AUTH_HEADER_NAME } from './constants';
+import { config } from './config';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  private logger = new Logger(AuthGuard.name);
+
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const ctx = GqlExecutionContext.create(context);
+    const req = ctx.getContext().request;
+    this.logger.log(`Req = ${req.headers}`);
+    return req.headers[AUTH_HEADER_NAME] === config.auth.header;
+  }
+}
+```
+
+We can then add it to our relations
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { AuthGuard } from '../auth.guard';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+const guards = [AuthGuard];
+
+@Resolver()
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  many: { subTasks: { DTO: SubTaskDTO, guards } },
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+```
+
+Now any requests that go to the `update` or `remove` endpoints will require the guard.

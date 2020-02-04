@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { TestRelation } from './test-relation.entity';
 
 @Entity()
 export class TestEntity {
@@ -16,4 +17,10 @@ export class TestEntity {
 
   @Column({ name: 'date_type' })
   dateType!: Date;
+
+  @OneToMany(
+    () => TestRelation,
+    tr => tr.testEntity,
+  )
+  testRelations?: TestRelation[];
 }

@@ -11,7 +11,7 @@ import { EdgeType, StaticConnectionType } from '../types/connection';
  */
 interface FilterableFieldDescriptor<T> {
   propertyName: string;
-  type: Class<T>;
+  target: Class<T>;
   returnTypeFunc?: ReturnTypeFunc;
   advancedOptions?: AdvancedOptions;
 }

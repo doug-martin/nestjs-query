@@ -9,11 +9,9 @@ import { Resolver, Args } from '@nestjs/graphql';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { CreateManyArgsType, CreateOneArgsType, PartialInputType } from '../types';
 import { ResolverMutation } from '../decorators';
-import { DTONamesOpts, getDTONames, transformAndValidate } from './helpers';
+import { getDTONames, transformAndValidate } from './helpers';
 
-export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>>
-  extends DTONamesOpts,
-    ResolverOpts {
+export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>> extends ResolverOpts {
   /**
    * The Input DTO that should be used to create records.
    */

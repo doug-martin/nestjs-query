@@ -7,7 +7,7 @@ import {
   QueryService,
   Filter,
 } from '@nestjs-query/core';
-import { Repository, DeepPartial as TypeOrmDeepPartial } from 'typeorm';
+import { Repository, DeepPartial as TypeOrmDeepPartial, RelationQueryBuilder } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FilterQueryBuilder } from '../query';
@@ -59,6 +59,54 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
   }
 
   /**
+   * Query for an array of relations.
+   * @param entity - The entity to query relations for.
+   * @param relationName - The name of relation to query for.
+   * @param query - A query to filter, page or sort relations.
+   */
+  queryRelations<Relation>(entity: Entity, relationName: string, query: Query<Relation>): Promise<Relation[]> {
+    return this.filterQueryBuilder.selectRelation(this.ensureIsEntity(entity), relationName, query).getMany();
+  }
+
+  /**
+   * Finds a single relation.
+   * @param entity - The entity to find the relation on.
+   * @param relationName - The name of the relation to query for.
+   */
+  findRelation<Relation>(entity: Entity, relationName: string): Promise<Relation | undefined> {
+    return this.createRelationQueryBuilder(this.ensureIsEntity(entity), relationName).loadOne<Relation>();
+  }
+
+  /**
+   * Add a single relation.
+   * @param id - The id of the entity to add the relation to.
+   * @param relationName - The name of the relation to query for.
+   * @param relationIds - The ids of relations to add.
+   */
+  async addRelations<Relation>(
+    id: string | number,
+    relationName: string,
+    relationIds: (string | number)[],
+  ): Promise<Entity> {
+    const entity = await this.getById(id);
+    await this.createRelationQueryBuilder(entity, relationName).add(relationIds);
+    return entity;
+  }
+
+  /**
+   * Set the relation on the entity.
+   *
+   * @param id - The id of the entity to set the relation on.
+   * @param relationName - The name of the relation to query for.
+   * @param relationId - The id of the relation to set on the entity.
+   */
+  async setRelation<Relation>(id: string | number, relationName: string, relationId: string | number): Promise<Entity> {
+    const entity = await this.getById(id);
+    await this.createRelationQueryBuilder(entity, relationName).set(relationId);
+    return entity;
+  }
+
+  /**
    * Find an entity by it's `id`.
    *
    * @example
@@ -69,6 +117,39 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    */
   findById(id: string | number): Promise<Entity | undefined> {
     return this.repo.findOne(id);
+  }
+
+  /**
+   * Removes multiple relations.
+   * @param id - The id of the entity to add the relation to.
+   * @param relationName - The name of the relation to query for.
+   * @param relationIds - The ids of the relations to add.
+   */
+  async removeRelations<Relation>(
+    id: string | number,
+    relationName: string,
+    relationIds: (string | number)[],
+  ): Promise<Entity> {
+    const entity = await this.getById(id);
+    await this.createRelationQueryBuilder(entity, relationName).remove(relationIds);
+    return entity;
+  }
+
+  /**
+   * Remove the relation on the entity.
+   *
+   * @param id - The id of the entity to set the relation on.
+   * @param relationName - The name of the relation to query for.
+   * @param relationId - The id of the relation to set on the entity.
+   */
+  async removeRelation<Relation>(
+    id: string | number,
+    relationName: string,
+    relationId: string | number,
+  ): Promise<Entity> {
+    const entity = await this.getById(id);
+    await this.createRelationQueryBuilder(entity, relationName).remove(relationId);
+    return entity;
   }
 
   /**
@@ -197,5 +278,12 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
       return obj as Entity;
     }
     return plainToClass(this.entityType, obj);
+  }
+
+  private createRelationQueryBuilder(entity: Entity, relationName: string): RelationQueryBuilder<Entity> {
+    return this.repo
+      .createQueryBuilder()
+      .relation(relationName)
+      .of(entity);
   }
 }

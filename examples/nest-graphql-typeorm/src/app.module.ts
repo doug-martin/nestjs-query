@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TodoItemModule } from './todo-item/todo-item.module';
+import { SubTaskModule } from './sub-task/sub-task.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { TodoItemModule } from './todo-item/todo-item.module';
       autoSchemaFile: 'schema.gql',
       context: ({ req }) => ({ request: req }),
     }),
+    SubTaskModule,
     TodoItemModule,
   ],
   controllers: [AppController],
