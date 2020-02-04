@@ -1,5 +1,5 @@
 import { plural } from 'pluralize';
-import { lowerCaseFirst } from 'change-case';
+import { lowerCaseFirst, upperCaseFirst } from 'change-case';
 import { Class } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
@@ -20,7 +20,9 @@ export interface DTONames {
 
 /** @internal */
 export const getDTONames = <DTO>(opts: DTONamesOpts, DTOClass: Class<DTO>): DTONames => {
-  const baseName = opts.dtoName ?? getMetadataStorage().getTypeGraphqlObjectMetadata(DTOClass)?.name ?? DTOClass.name;
+  const baseName = upperCaseFirst(
+    opts.dtoName ?? getMetadataStorage().getTypeGraphqlObjectMetadata(DTOClass)?.name ?? DTOClass.name,
+  );
   const pluralBaseName = plural(baseName);
   const baseNameLower = lowerCaseFirst(baseName);
   const pluralBaseNameLower = plural(baseNameLower);

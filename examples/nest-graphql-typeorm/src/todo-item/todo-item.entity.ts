@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { SubTaskEntity } from '../sub-task/sub-task.entity';
 
 @Entity()
 export class TodoItemEntity {
@@ -10,6 +11,12 @@ export class TodoItemEntity {
 
   @Column()
   completed!: boolean;
+
+  @OneToMany(
+    () => SubTaskEntity,
+    subTask => subTask.todoItem,
+  )
+  subTasks!: SubTaskEntity[];
 
   @CreateDateColumn()
   created!: Date;

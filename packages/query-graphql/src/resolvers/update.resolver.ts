@@ -5,11 +5,9 @@ import omit from 'lodash.omit';
 import { FilterType, PartialInputType, UpdateManyArgsType, UpdateManyResponseType, UpdateOneArgsType } from '../types';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { ResolverMutation } from '../decorators';
-import { DTONamesOpts, getDTONames, transformAndValidate } from './helpers';
+import { getDTONames, transformAndValidate } from './helpers';
 
-export interface UpdateResolverOpts<DTO, U extends DeepPartial<DTO> = DeepPartial<DTO>>
-  extends DTONamesOpts,
-    ResolverOpts {
+export interface UpdateResolverOpts<DTO, U extends DeepPartial<DTO> = DeepPartial<DTO>> extends ResolverOpts {
   UpdateDTOClass?: Class<U>;
   UpdateOneArgs?: Class<UpdateOneArgsType<DTO, U>>;
   UpdateManyArgs?: Class<UpdateManyArgsType<DTO, U>>;

@@ -20,7 +20,7 @@ export abstract class AbstractQueryBuilder<Entity> {
   fieldToDbCol<F extends keyof Entity>(field: F): string {
     const colMetaData = this.entityMetadata.findColumnWithPropertyName(field as string);
     if (!colMetaData) {
-      return this.escape(field as string);
+      throw new Error(`Unknown column ${field} on table ${this.entityMetadata.tableName}`);
     }
     return this.escape(colMetaData.databasePath);
   }

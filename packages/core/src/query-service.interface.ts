@@ -22,6 +22,55 @@ export interface QueryService<T> {
   findById(id: string | number): Promise<T | undefined>;
 
   /**
+   * Query for an array of relations.
+   * @param entity - The entity to query relations for.
+   * @param relationName - The name of relation to query for.
+   * @param query - A query to filter, page or sort relations.
+   */
+  queryRelations<Relation>(entity: T, relationName: string, query: Query<Relation>): Promise<Relation[]>;
+
+  /**
+   * Finds a single relation.
+   * @param entity - The entity to find the relation on.
+   * @param relationName - The name of the relation to query for.
+   */
+  findRelation<Relation>(entity: T, relationName: string): Promise<Relation | undefined>;
+
+  /**
+   * Adds multiple relations.
+   * @param id - The id of the entity to add the relation to.
+   * @param relationName - The name of the relation to query for.
+   * @param relationIds - The ids of the relations to add.
+   */
+  addRelations<Relation>(id: string | number, relationName: string, relationIds: (string | number)[]): Promise<T>;
+
+  /**
+   * Set the relation on the entity.
+   *
+   * @param id - The id of the entity to set the relation on.
+   * @param relationName - The name of the relation to query for.
+   * @param relationId - The id of the relation to set on the entity.
+   */
+  setRelation<Relation>(id: string | number, relationName: string, relationId: string | number): Promise<T>;
+
+  /**
+   * Removes multiple relations.
+   * @param id - The id of the entity to add the relation to.
+   * @param relationName - The name of the relation to query for.
+   * @param relationIds - The ids of the relations to add.
+   */
+  removeRelations<Relation>(id: string | number, relationName: string, relationIds: (string | number)[]): Promise<T>;
+
+  /**
+   * Remove the relation on the entity.
+   *
+   * @param id - The id of the entity to set the relation on.
+   * @param relationName - The name of the relation to query for.
+   * @param relationId - The id of the relation to set on the entity.
+   */
+  removeRelation<Relation>(id: string | number, relationName: string, relationId: string | number): Promise<T>;
+
+  /**
    * Gets a record by `id`.
    *
    * **NOTE** This method will return a rejected Promise if the record is not found.

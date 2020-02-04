@@ -1,3 +1,7 @@
+# v0.1.0
+
+* Add `relations` to resolvers. See https://doug-martin.github.io/nestjs-query/docs/graphql/relations
+
 # v0.0.6
 
 * Dont allow empty filters with `updateMany` or `deleteMany` operations.

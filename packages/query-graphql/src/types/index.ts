@@ -10,3 +10,5 @@ export { DeleteOneArgsType } from './delete-one-args.type';
 export { DeleteManyArgsType } from './delete-many-args.type';
 export { ConnectionCursorType, ConnectionCursorScalar } from './cursor.scalar';
 export { PartialType, PartialInputType } from './partial.type';
+export { RelationsArgsType } from './relations-args.type';
+export { RelationArgsType } from './relation-args.type';

@@ -1,4 +1,4 @@
-import { Filter, Paging, Query, SortField } from '@nestjs-query/core';
+import { Class, Filter, Paging, Query, SortField } from '@nestjs-query/core';
 import {
   DeleteQueryBuilder,
   QueryBuilder,
@@ -29,6 +29,11 @@ interface Pageable<Entity> extends QueryBuilder<Entity> {
   offset(offset?: number): this;
 }
 
+interface RelationMetadata<Relation> {
+  inverseSidePropertyPath: string;
+  type: Class<Relation>;
+}
+
 /**
  * @internal
  *
@@ -51,6 +56,16 @@ export class FilterQueryBuilder<Entity> extends AbstractQueryBuilder<Entity> {
     let qb = this.applyFilter(this.createQueryBuilder(), query.filter);
     qb = this.applySorting(qb, query.sorting);
     qb = this.applyPaging(qb, query.paging);
+    return qb;
+  }
+
+  selectRelation<Relation>(entity: Entity, relation: string, query: Query<Relation>): SelectQueryBuilder<Relation> {
+    const { type } = this.getRelationMeta<Relation>(relation);
+    const typeormRelationBuilder = this.createRelationQueryBuilder<Relation>(entity, relation);
+    const relationFilterBuilder = new FilterQueryBuilder<Relation>(this.repo.manager.getRepository(type));
+    let qb = relationFilterBuilder.applyFilter(typeormRelationBuilder.select(), query.filter);
+    qb = relationFilterBuilder.applySorting(qb, query.sorting);
+    qb = relationFilterBuilder.applyPaging(qb, query.paging);
     return qb;
   }
 
@@ -118,5 +133,22 @@ export class FilterQueryBuilder<Entity> extends AbstractQueryBuilder<Entity> {
    */
   private createQueryBuilder(): SelectQueryBuilder<Entity> {
     return this.repo.createQueryBuilder();
+  }
+
+  private createRelationQueryBuilder<Relation>(entity: Entity, relationName: string): SelectQueryBuilder<Relation> {
+    const { type, inverseSidePropertyPath } = this.getRelationMeta(relationName);
+    return this.repo.manager
+      .getRepository<Relation>(type)
+      .createQueryBuilder()
+      .select()
+      .where({ [inverseSidePropertyPath]: entity });
+  }
+
+  private getRelationMeta<Relation>(relationName: string): RelationMetadata<Relation> {
+    const relationMeta = this.repo.metadata.relations.find(r => r.propertyName === relationName);
+    if (!relationMeta) {
+      throw new Error(`Unable to find entity for relation '${relationName}'`);
+    }
+    return (relationMeta as unknown) as RelationMetadata<Relation>;
   }
 }

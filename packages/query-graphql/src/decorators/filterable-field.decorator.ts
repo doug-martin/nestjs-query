@@ -62,7 +62,7 @@ export function FilterableField(
     const Ctx = Reflect.getMetadata('design:type', target.constructor.prototype, propertyName);
     getMetadataStorage().addFilterableObjectField(target.constructor as Class<unknown>, {
       propertyName: propertyName.toString(),
-      type: Ctx,
+      target: Ctx,
       returnTypeFunc,
       advancedOptions,
     });
