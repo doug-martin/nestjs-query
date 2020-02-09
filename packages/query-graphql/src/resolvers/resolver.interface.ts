@@ -59,13 +59,13 @@ export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
 }
 
 /** @internal */
-export interface ServiceResolver<Entity> {
-  service: QueryService<Entity>;
+export interface ServiceResolver<DTO> {
+  service: QueryService<DTO>;
 }
 
 /** @internal */
-export interface ResolverClass<Entity, Resolver extends ServiceResolver<Entity>> {
-  new (service: QueryService<Entity>): Resolver;
+export interface ResolverClass<DTO, Resolver extends ServiceResolver<DTO>> {
+  new (service: QueryService<DTO>): Resolver;
 }
 
 /**

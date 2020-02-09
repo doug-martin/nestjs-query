@@ -3,7 +3,7 @@
  *
  * @typeparam T - the class instance type the constructor returns.
  */
-export type Class<T> = {
+export interface Class<T> extends Function {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new (...args: any[]): T;
-};
+}

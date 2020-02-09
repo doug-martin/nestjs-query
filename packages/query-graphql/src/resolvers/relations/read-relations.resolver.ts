@@ -23,7 +23,7 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
   class Mixin extends Base {
     @ResolverProperty(baseNameLower, () => relationDTO, { nullable: relation.nullable }, commonResolverOpts)
     [`find${baseName}`](@Parent() dto: DTO): Promise<Relation | undefined> {
-      return this.service.findRelation(dto, relationName);
+      return this.service.findRelation(relationDTO, relationName, dto);
     }
   }
   return Mixin;
@@ -50,7 +50,7 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
     @ResolverProperty(pluralBaseNameLower, () => CT, { nullable: relation.nullable }, commonResolverOpts)
     async [`query${pluralBaseName}`](@Parent() dto: DTO, @Args() q: RelationQA): Promise<ConnectionType<Relation>> {
       const qa = await transformAndValidate(RelationQA, q);
-      return CT.createFromPromise(this.service.queryRelations(dto, relationName, qa), qa.paging || {});
+      return CT.createFromPromise(this.service.queryRelations(relationDTO, relationName, dto, qa), qa.paging || {});
     }
   }
   return Mixin;

@@ -1,4 +1,5 @@
 import { ResolveProperty } from '@nestjs/graphql';
+import { applyDecorators } from '@nestjs/common';
 import { AdvancedOptions, ReturnTypeFunc } from '../external/type-graphql.types';
 import { isDisabled, ResolverMethod, ResolverMethodOpts } from './resolver-method.decorator';
 
@@ -15,13 +16,9 @@ export function ResolverProperty(
   typeFunc: ReturnTypeFunc,
   options?: AdvancedOptions,
   ...opts: ResolverMethodOpts[]
-) {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  return <T>(target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<T>): void => {
-    if (isDisabled(opts)) {
-      return;
-    }
-    ResolveProperty(name, typeFunc, options)(target, propertyKey, descriptor);
-    ResolverMethod(...opts)(target, propertyKey, descriptor);
-  };
+): MethodDecorator {
+  if (isDisabled(opts)) {
+    return () => undefined;
+  }
+  return applyDecorators(ResolveProperty(name, typeFunc, options), ResolverMethod(...opts));
 }

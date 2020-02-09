@@ -1,4 +1,5 @@
 import { Query } from '@nestjs/graphql';
+import { applyDecorators } from '@nestjs/common';
 import { isDisabled, ResolverMethod, ResolverMethodOpts } from './resolver-method.decorator';
 import { AdvancedOptions, ReturnTypeFunc } from '../external/type-graphql.types';
 
@@ -9,13 +10,13 @@ import { AdvancedOptions, ReturnTypeFunc } from '../external/type-graphql.types'
  * @param options - `type-graphql` options to apply to the mutation.
  * @param opts -  [[ResolverMethodOpts]] to apply to the mutation
  */
-export function ResolverQuery(typeFunc: ReturnTypeFunc, options?: AdvancedOptions, ...opts: ResolverMethodOpts[]) {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  return <T>(target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<T>): void => {
-    if (isDisabled(opts)) {
-      return;
-    }
-    Query(typeFunc, options)(target, propertyKey, descriptor);
-    ResolverMethod(...opts)(target, propertyKey, descriptor);
-  };
+export function ResolverQuery(
+  typeFunc: ReturnTypeFunc,
+  options?: AdvancedOptions,
+  ...opts: ResolverMethodOpts[]
+): MethodDecorator {
+  if (isDisabled(opts)) {
+    return () => undefined;
+  }
+  return applyDecorators(Query(typeFunc, options), ResolverMethod(...opts));
 }
