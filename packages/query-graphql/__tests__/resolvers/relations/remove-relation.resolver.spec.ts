@@ -117,7 +117,7 @@ describe('RemoveRelationsResolver', () => {
       };
       const R = RemoveRelationsResolver(RemoveRelationDTO, { one: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.removeRelation(args.id, 'relation', args.relationId)).thenResolve(output);
+      when(mockService.removeRelation('relation', args.id, args.relationId)).thenResolve(output);
       // @ts-ignore
       const result = await resolver.removeRelationFromRemoveRelation(args);
       return expect(result).toEqual(output);
@@ -137,7 +137,7 @@ describe('RemoveRelationsResolver', () => {
         one: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.removeRelation(args.id, 'other', args.relationId)).thenResolve(output);
+      when(mockService.removeRelation('other', args.id, args.relationId)).thenResolve(output);
       // @ts-ignore
       const result = await resolver.removeRelationFromRemoveRelation(args);
       return expect(result).toEqual(output);
@@ -202,7 +202,7 @@ describe('RemoveRelationsResolver', () => {
       };
       const R = RemoveRelationsResolver(RemoveRelationDTO, { many: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.removeRelations(args.id, 'relations', deepEqual(args.relationIds))).thenResolve(output);
+      when(mockService.removeRelations('relations', args.id, deepEqual(args.relationIds))).thenResolve(output);
       // @ts-ignore
       const result = await resolver.removeRelationsFromRemoveRelation(args);
       return expect(result).toEqual(output);
@@ -222,7 +222,7 @@ describe('RemoveRelationsResolver', () => {
         many: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.removeRelations(args.id, 'other', deepEqual(args.relationIds))).thenResolve(output);
+      when(mockService.removeRelations('other', args.id, deepEqual(args.relationIds))).thenResolve(output);
       // @ts-ignore
       const result = await resolver.removeRelationsFromRemoveRelation(args);
       return expect(result).toEqual(output);

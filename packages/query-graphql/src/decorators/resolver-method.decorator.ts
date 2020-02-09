@@ -8,6 +8,7 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
+  applyDecorators,
 } from '@nestjs/common';
 import { Class } from '@nestjs-query/core';
 
@@ -53,20 +54,11 @@ export function isDisabled(opts: ResolverMethodOpts[]): boolean {
  *
  * @param opts - the [[ResolverMethodOpts]] to apply.
  */
-export function ResolverMethod(...opts: ResolverMethodOpts[]) {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  return <T>(target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<T>): void => {
-    UseGuards(...createSetArray<Class<CanActivate>>(...opts.map(o => o.guards ?? [])))(target, propertyKey, descriptor);
-    UseInterceptors(...createSetArray<Class<NestInterceptor>>(...opts.map(o => o.interceptors ?? [])))(
-      target,
-      propertyKey,
-      descriptor,
-    );
-    UsePipes(...createSetArray<Class<PipeTransform>>(...opts.map(o => o.pipes ?? [])))(target, propertyKey, descriptor);
-    UseFilters(...createSetArray<Class<ExceptionFilter>>(...opts.map(o => o.filters ?? [])))(
-      target,
-      propertyKey,
-      descriptor,
-    );
-  };
+export function ResolverMethod(...opts: ResolverMethodOpts[]): MethodDecorator {
+  return applyDecorators(
+    UseGuards(...createSetArray<Class<CanActivate>>(...opts.map(o => o.guards ?? []))),
+    UseInterceptors(...createSetArray<Class<NestInterceptor>>(...opts.map(o => o.interceptors ?? []))),
+    UsePipes(...createSetArray<Class<PipeTransform>>(...opts.map(o => o.pipes ?? []))),
+    UseFilters(...createSetArray<Class<ExceptionFilter>>(...opts.map(o => o.filters ?? []))),
+  );
 }

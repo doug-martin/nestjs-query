@@ -3,6 +3,7 @@ import { ConnectionType, CRUDResolver } from '@nestjs-query/query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth.guard';
 import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
+import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 import { TodoItemConnection, TodoItemQuery } from './types';
@@ -11,6 +12,8 @@ const guards = [AuthGuard];
 
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  CreateDTOClass: TodoItemInputDTO,
+  UpdateDTOClass: TodoItemInputDTO,
   create: { guards },
   update: { guards },
   delete: { guards },

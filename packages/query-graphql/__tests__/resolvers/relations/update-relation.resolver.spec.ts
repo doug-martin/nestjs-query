@@ -117,7 +117,7 @@ describe('UpdateRelationsResolver', () => {
       };
       const R = UpdateRelationsResolver(UpdateRelationDTO, { one: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.setRelation(args.id, 'relation', args.relationId)).thenResolve(output);
+      when(mockService.setRelation('relation', args.id, args.relationId)).thenResolve(output);
       // @ts-ignore
       const result = await resolver.setRelationOnUpdateRelation(args);
       return expect(result).toEqual(output);
@@ -137,7 +137,7 @@ describe('UpdateRelationsResolver', () => {
         one: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.setRelation(args.id, 'other', args.relationId)).thenResolve(output);
+      when(mockService.setRelation('other', args.id, args.relationId)).thenResolve(output);
       // @ts-ignore
       const result = await resolver.setRelationOnUpdateRelation(args);
       return expect(result).toEqual(output);
@@ -202,7 +202,7 @@ describe('UpdateRelationsResolver', () => {
       };
       const R = UpdateRelationsResolver(UpdateRelationDTO, { many: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.addRelations(args.id, 'relations', deepEqual(args.relationIds))).thenResolve(output);
+      when(mockService.addRelations('relations', args.id, deepEqual(args.relationIds))).thenResolve(output);
       // @ts-ignore
       const result = await resolver.addRelationsToUpdateRelation(args);
       return expect(result).toEqual(output);
@@ -222,7 +222,7 @@ describe('UpdateRelationsResolver', () => {
         many: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.addRelations(args.id, 'other', deepEqual(args.relationIds))).thenResolve(output);
+      when(mockService.addRelations('other', args.id, deepEqual(args.relationIds))).thenResolve(output);
       // @ts-ignore
       const result = await resolver.addRelationsToUpdateRelation(args);
       return expect(result).toEqual(output);

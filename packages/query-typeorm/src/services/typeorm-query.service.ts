@@ -1,4 +1,5 @@
 import {
+  AssemblerService,
   Query,
   DeleteManyResponse,
   UpdateManyResponse,
@@ -6,9 +7,10 @@ import {
   Class,
   QueryService,
   Filter,
+  Assembler,
+  getQueryServiceDTO,
 } from '@nestjs-query/core';
 import { Repository, DeepPartial as TypeOrmDeepPartial, RelationQueryBuilder } from 'typeorm';
-import { plainToClass } from 'class-transformer';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FilterQueryBuilder } from '../query';
 
@@ -18,8 +20,8 @@ import { FilterQueryBuilder } from '../query';
  * @example
  *
  * ```ts
- * @Injectable()
- * export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
+ * @QueryService(TodoItemDTO)
+ * export class TodoItemService extends TypeOrmQueryService<TodoItemDTO, TodoItemEntity> {
  *   constructor(
  *      @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
  *   ) {
@@ -28,17 +30,35 @@ import { FilterQueryBuilder } from '../query';
  * }
  * ```
  */
-export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
-  /**
-   * Creates a new QueryService for the passed in repository.
-   * @param repo - the `typeorm` Repository.
-   * @param filterQueryBuilder - **Should not need to provide through user code**. But allows you to specify the
-   * FilterQueryBuilder, can be useful for testing.
-   */
-  constructor(protected repo: Repository<Entity>, readonly filterQueryBuilder = new FilterQueryBuilder(repo)) {}
+export abstract class TypeOrmQueryService<DTO, Entity = DTO> implements QueryService<DTO> {
+  readonly assemblerService: AssemblerService;
 
-  private get entityType(): Class<Entity> {
+  readonly DTOClass: Class<DTO>;
+
+  readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
+
+  protected constructor(
+    readonly repo: Repository<Entity>,
+    assemblerService?: AssemblerService,
+    filterQueryBuilder?: FilterQueryBuilder<Entity>,
+  ) {
+    const DTOClass = getQueryServiceDTO(this.constructor as Class<QueryService<DTO>>);
+    if (!DTOClass) {
+      throw new Error(
+        `Unable to determine DTO type for ${this.constructor.name}. Did you annotate your service with @QueryService?`,
+      );
+    }
+    this.filterQueryBuilder = filterQueryBuilder ?? new FilterQueryBuilder<Entity>(this.repo);
+    this.assemblerService = assemblerService ?? AssemblerService.getInstance();
+    this.DTOClass = DTOClass;
+  }
+
+  get EntityClass(): Class<Entity> {
     return this.repo.target as Class<Entity>;
+  }
+
+  private get assembler(): Assembler<DTO, Entity> {
+    return this.assemblerService.getAssembler(this.DTOClass, this.EntityClass);
   }
 
   /**
@@ -54,27 +74,50 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param query - The Query used to filter, page, and sort rows.
    */
-  query(query: Query<Entity>): Promise<Entity[]> {
-    return this.filterQueryBuilder.select(query).getMany();
+  async query(query: Query<DTO>): Promise<DTO[]> {
+    return this.assembler.convertAsyncToDTOs(
+      this.filterQueryBuilder.select(this.assembler.convertQuery(query)).getMany(),
+    );
   }
 
   /**
    * Query for an array of relations.
-   * @param entity - The entity to query relations for.
+   * @param RelationClass - The class to serialize the relations into.
+   * @param dto - The dto to query relations for.
    * @param relationName - The name of relation to query for.
    * @param query - A query to filter, page or sort relations.
    */
-  queryRelations<Relation>(entity: Entity, relationName: string, query: Query<Relation>): Promise<Relation[]> {
-    return this.filterQueryBuilder.selectRelation(this.ensureIsEntity(entity), relationName, query).getMany();
+  async queryRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    query: Query<Relation>,
+  ): Promise<Relation[]> {
+    const assembler = this.assemblerService.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    return assembler.convertAsyncToDTOs(
+      this.filterQueryBuilder
+        .selectRelation(this.assembler.convertToEntity(dto), relationName, assembler.convertQuery(query))
+        .getMany(),
+    );
   }
 
   /**
    * Finds a single relation.
-   * @param entity - The entity to find the relation on.
+   * @param RelationClass - The class to serialize the relation into.
+   * @param dto - The dto to find the relation for.
    * @param relationName - The name of the relation to query for.
    */
-  findRelation<Relation>(entity: Entity, relationName: string): Promise<Relation | undefined> {
-    return this.createRelationQueryBuilder(this.ensureIsEntity(entity), relationName).loadOne<Relation>();
+  async findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+  ): Promise<Relation | undefined> {
+    const assembler = this.assemblerService.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationEntity = await this.createRelationQueryBuilder(
+      this.assembler.convertToEntity(dto),
+      relationName,
+    ).loadOne<Relation>();
+    return relationEntity ? assembler.convertToDTO(relationEntity) : undefined;
   }
 
   /**
@@ -84,13 +127,13 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * @param relationIds - The ids of relations to add.
    */
   async addRelations<Relation>(
-    id: string | number,
     relationName: string,
+    id: string | number,
     relationIds: (string | number)[],
-  ): Promise<Entity> {
-    const entity = await this.getById(id);
+  ): Promise<DTO> {
+    const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).add(relationIds);
-    return entity;
+    return this.assembler.convertToDTO(entity);
   }
 
   /**
@@ -100,10 +143,10 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * @param relationName - The name of the relation to query for.
    * @param relationId - The id of the relation to set on the entity.
    */
-  async setRelation<Relation>(id: string | number, relationName: string, relationId: string | number): Promise<Entity> {
-    const entity = await this.getById(id);
+  async setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
+    const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).set(relationId);
-    return entity;
+    return this.assembler.convertToDTO(entity);
   }
 
   /**
@@ -115,8 +158,12 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param id - The id of the record to find.
    */
-  findById(id: string | number): Promise<Entity | undefined> {
-    return this.repo.findOne(id);
+  async findById(id: string | number): Promise<DTO | undefined> {
+    const entity = await this.repo.findOne(id);
+    if (!entity) {
+      return undefined;
+    }
+    return this.assembler.convertToDTO(entity);
   }
 
   /**
@@ -129,10 +176,10 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
     id: string | number,
     relationName: string,
     relationIds: (string | number)[],
-  ): Promise<Entity> {
-    const entity = await this.getById(id);
+  ): Promise<DTO> {
+    const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).remove(relationIds);
-    return entity;
+    return this.assembler.convertToDTO(entity);
   }
 
   /**
@@ -142,14 +189,10 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * @param relationName - The name of the relation to query for.
    * @param relationId - The id of the relation to set on the entity.
    */
-  async removeRelation<Relation>(
-    id: string | number,
-    relationName: string,
-    relationId: string | number,
-  ): Promise<Entity> {
-    const entity = await this.getById(id);
+  async removeRelation<Relation>(id: string | number, relationName: string, relationId: string | number): Promise<DTO> {
+    const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).remove(relationId);
-    return entity;
+    return this.assembler.convertToDTO(entity);
   }
 
   /**
@@ -165,8 +208,8 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param id - The id of the record to find.
    */
-  getById(id: string | number): Promise<Entity> {
-    return this.repo.findOneOrFail(id);
+  async getById(id: string | number): Promise<DTO> {
+    return this.assembler.convertAsyncToDTO(this.repo.findOneOrFail(id));
   }
 
   /**
@@ -178,8 +221,9 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param record - The entity to create.
    */
-  createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
-    return this.repo.save(this.ensureIsEntity(record));
+  async createOne<C extends DeepPartial<DTO>>(record: C): Promise<DTO> {
+    const c = this.assembler.convertToEntity((record as unknown) as DTO);
+    return this.assembler.convertAsyncToDTO(this.repo.save(c));
   }
 
   /**
@@ -194,8 +238,10 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param records - The entities to create.
    */
-  createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
-    return this.repo.save(records.map(item => this.ensureIsEntity(item)));
+  createMany<C extends DeepPartial<DTO>>(records: C[]): Promise<DTO[]> {
+    const { assembler } = this;
+    const converted = records.map(c => assembler.convertToEntity((c as unknown) as DTO));
+    return this.assembler.convertAsyncToDTOs(this.repo.save(converted));
   }
 
   /**
@@ -208,9 +254,11 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * @param id - The `id` of the record.
    * @param update - A `Partial` of the entity with fields to update.
    */
-  async updateOne<U extends DeepPartial<Entity>>(id: number | string, update: U): Promise<Entity> {
-    const entity = await this.getById(id);
-    return this.repo.save(this.repo.merge(entity, update as TypeOrmDeepPartial<Entity>));
+  async updateOne<U extends DeepPartial<DTO>>(id: number | string, update: U): Promise<DTO> {
+    const entity = await this.repo.findOneOrFail(id);
+    return this.assembler.convertAsyncToDTO(
+      this.repo.save(this.repo.merge(entity, update as TypeOrmDeepPartial<Entity>)),
+    );
   }
 
   /**
@@ -226,9 +274,9 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    * @param update - A `Partial` of entity with the fields to update
    * @param filter - A Filter used to find the records to update
    */
-  async updateMany<U extends DeepPartial<Entity>>(update: U, filter: Filter<Entity>): Promise<UpdateManyResponse> {
+  async updateMany<U extends DeepPartial<DTO>>(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {
     const updateResult = await this.filterQueryBuilder
-      .update({ filter })
+      .update(this.assembler.convertQuery({ filter }))
       .set({ ...(update as QueryDeepPartialEntity<Entity>) })
       .execute();
     return { updatedCount: updateResult.affected || 0 };
@@ -245,9 +293,9 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    *
    * @param id - The `id` of the entity to delete.
    */
-  async deleteOne(id: string | number): Promise<Entity> {
-    const entity = await this.getById(id);
-    return this.repo.remove(entity);
+  async deleteOne(id: string | number): Promise<DTO> {
+    const entity = await this.repo.findOneOrFail(id);
+    return this.assembler.convertAsyncToDTO(this.repo.remove(entity));
   }
 
   /**
@@ -263,21 +311,9 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
    *
    * @param filter - A `Filter` to find records to delete.
    */
-  async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
-    const deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
+  async deleteMany(filter: Filter<DTO>): Promise<DeleteManyResponse> {
+    const deleteResult = await this.filterQueryBuilder.delete(this.assembler.convertQuery({ filter })).execute();
     return { deletedCount: deleteResult.affected || 0 };
-  }
-
-  /**
-   * Covert an object to the `Entity` type if it is not an instance already.
-   *
-   * @param obj - The object to covert to an `Entity`
-   */
-  private ensureIsEntity(obj: DeepPartial<Entity>): Entity {
-    if (obj instanceof this.entityType) {
-      return obj as Entity;
-    }
-    return plainToClass(this.entityType, obj);
   }
 
   private createRelationQueryBuilder(entity: Entity, relationName: string): RelationQueryBuilder<Entity> {
@@ -285,5 +321,13 @@ export class TypeOrmQueryService<Entity> implements QueryService<Entity> {
       .createQueryBuilder()
       .relation(relationName)
       .of(entity);
+  }
+
+  private getRelationEntity(relationName: string): Class<unknown> {
+    const relationMeta = this.repo.metadata.relations.find(r => r.propertyName === relationName);
+    if (!relationMeta) {
+      throw new Error(`Unable to find relation ${relationName} on ${this.EntityClass.name}`);
+    }
+    return relationMeta.type as Class<unknown>;
   }
 }

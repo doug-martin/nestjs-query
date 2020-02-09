@@ -27,7 +27,7 @@ const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
   class Mixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
     [`remove${baseName}From${dtoNames.baseName}`](@Args() input: SetArgs): Promise<DTO> {
-      return this.service.removeRelation(input.id, relationName, input.relationId);
+      return this.service.removeRelation(relationName, input.id, input.relationId);
     }
   }
   return Mixin;
@@ -53,7 +53,7 @@ const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation:
   class Mixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
     [`remove${pluralBaseName}From${dtoNames.baseName}`](@Args() input: AddArgs): Promise<DTO> {
-      return this.service.removeRelations(input.id, relationName, input.relationIds);
+      return this.service.removeRelations(relationName, input.id, input.relationIds);
     }
   }
   return Mixin;

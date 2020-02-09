@@ -28,7 +28,7 @@ const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
     async [`set${baseName}On${dtoNames.baseName}`](@Args() input: SetArgs): Promise<DTO> {
       const args = await transformAndValidate(SetArgs, input);
-      return this.service.setRelation(args.id, relationName, args.relationId);
+      return this.service.setRelation(relationName, args.id, args.relationId);
     }
   }
   return Mixin;
@@ -55,7 +55,7 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
     async [`add${pluralBaseName}To${dtoNames.baseName}`](@Args() input: AddArgs): Promise<DTO> {
       const args = await transformAndValidate(AddArgs, input);
-      return this.service.addRelations(args.id, relationName, args.relationIds);
+      return this.service.addRelations(relationName, args.id, args.relationIds);
     }
   }
   return Mixin;

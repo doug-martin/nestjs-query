@@ -60,18 +60,20 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
     CreateDTOClass,
     UpdateDTOClass,
     relations = {},
-    create = CreateDTOClass ? { CreateDTOClass } : {},
+    create = {},
     read = {},
-    update = UpdateDTOClass ? { UpdateDTOClass } : {},
+    update = {},
     delete: deleteArgs = {},
   } = opts;
   return Relatable(
     DTOClass,
     relations,
   )(
-    Creatable(
-      DTOClass,
-      create,
-    )(Readable(DTOClass, read)(Updateable(DTOClass, update)(DeleteResolver(DTOClass, deleteArgs)))),
+    Creatable(DTOClass, { CreateDTOClass, ...create })(
+      Readable(
+        DTOClass,
+        read,
+      )(Updateable(DTOClass, { UpdateDTOClass, ...update })(DeleteResolver(DTOClass, deleteArgs))),
+    ),
   );
 };

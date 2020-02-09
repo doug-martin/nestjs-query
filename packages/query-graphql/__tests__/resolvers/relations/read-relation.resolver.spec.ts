@@ -145,7 +145,7 @@ describe('ReadRelationsResolver', () => {
       };
       const R = ReadRelationsResolver(ReadRelationDTO, { one: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.findRelation(dto, 'relation')).thenResolve(output);
+      when(mockService.findRelation(RelationDTO, 'relation', dto)).thenResolve(output);
       // @ts-ignore
       const result = await resolver.findRelation(dto);
       return expect(result).toEqual(output);
@@ -165,7 +165,7 @@ describe('ReadRelationsResolver', () => {
         one: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.findRelation(dto, 'other')).thenResolve(output);
+      when(mockService.findRelation(RelationDTO, 'other', dto)).thenResolve(output);
       // @ts-ignore
       const result = await resolver.findRelation(dto);
       return expect(result).toEqual(output);
@@ -259,7 +259,7 @@ describe('ReadRelationsResolver', () => {
       ];
       const R = ReadRelationsResolver(ReadRelationDTO, { many: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.queryRelations(dto, 'relations', objectContaining(query))).thenResolve(output);
+      when(mockService.queryRelations(RelationDTO, 'relations', dto, objectContaining(query))).thenResolve(output);
       // @ts-ignore
       const result = await resolver.queryRelations(dto, query);
       return expect(result).toEqual({
@@ -300,7 +300,7 @@ describe('ReadRelationsResolver', () => {
         many: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.queryRelations(dto, 'other', objectContaining(query))).thenResolve(output);
+      when(mockService.queryRelations(RelationDTO, 'other', dto, objectContaining(query))).thenResolve(output);
       // @ts-ignore
       const result = await resolver.queryRelations(dto, query);
       return expect(result).toEqual({
