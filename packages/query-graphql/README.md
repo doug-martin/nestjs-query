@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://doug-martin.github.io/nestjs-query/img/logo.svg" width="120" alt="Nestjs-query Logo" /></a>
+  <a href="https://doug-martin.github.io/nestjs-query" target="blank"><img src="https://doug-martin.github.io/nestjs-query/img/logo.svg" width="120" alt="Nestjs-query Logo" /></a>
 </p>
 
 [![npm version](https://img.shields.io/npm/v/@nestjs-query/query-graphql.svg)](https://www.npmjs.org/package/@nestjs-query/query-graphql)
