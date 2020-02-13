@@ -16,7 +16,7 @@ The query interface contains three optional fields.
 All examples will be based on the following class.
 
 ```ts
-interface Entity {
+interface MyClass {
   title: string;
   completed: boolean;
   age: number;
@@ -37,7 +37,7 @@ Lets create a simple filter that would allow us to filter for titles equal to `'
 ```ts
 import { Query } from '@nestjs-query/core';
 
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
   filter: {
     title: {eq: 'Foo Bar'},
   },
@@ -51,7 +51,7 @@ You can also filter on multiple fields.
 ```ts
 import { Query } from '@nestjs-query/core';
 
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
   filter: {
     // the fields will be ANDed together by default
     title: {eq: 'Foo Bar'},
@@ -69,7 +69,7 @@ for nested complex queries.
 In this example we `AND` two filters for the same property together: `age >= 10 AND age <= 20`.
 
 ```ts
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
   filter: {
     and: [
       { age: { gte: 10 } },
@@ -82,7 +82,7 @@ const q: Query<Entity> = {
 In this example a simple `OR` condition is created: `age >= 10 OR title NOT LIKE '%bar'`
 
 ```ts
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
   filter: {
     or: [
       { age: { gte: 10 } },
@@ -95,7 +95,7 @@ const q: Query<Entity> = {
 This example combines `AND` and `OR` filters: `age >= 10 AND (title LIKE '%bar' OR title = 'foobar')`.
 
 ```ts
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
   filter: {
     and: [
       { age: { gte: 10 } },
@@ -127,7 +127,7 @@ The `core` package defines a basic paging interface has two optional fields `lim
 <TabItem value="limit-offset">
 
 ```ts
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
   paging: {
     limit: 10,
     offset: 10,
@@ -139,7 +139,7 @@ const q: Query<Entity> = {
 <TabItem value="limit">
 
 ```ts
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
   paging: {
     limit: 20,
   },
@@ -150,7 +150,7 @@ const q: Query<Entity> = {
 <TabItem value="offset">
 
 ```ts
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
   paging: {
     offset: 10,
   },
@@ -183,7 +183,7 @@ The `sorting` field is an array of object containing:
 ```ts
 // import { SortDirection } from '@nestjs-query/core';
 
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
     sorting: [{field: 'title', direction: SortDirection.DESC}],
 };
 ```
@@ -194,7 +194,7 @@ const q: Query<Entity> = {
 ```ts
 // import { SortDirection } from '@nestjs-query/core';
 
-const q: Query<Entity> = {
+const q: Query<MyClass> = {
     sorting: [
         {field: 'title', direction: SortDirection.DESC},
         {field: 'age', direction: SortDirection.ASC},
