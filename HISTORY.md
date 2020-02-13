@@ -1,3 +1,7 @@
+# v0.2.0
+
+* Add `Assemblers` to convert DTOs and Entities that are a different shape. See https://doug-martin.github.io/nestjs-query/docs/concepts/assemblers
+
 # v0.1.0
 
 * Add `relations` to resolvers. See https://doug-martin.github.io/nestjs-query/docs/graphql/relations
