@@ -17,7 +17,7 @@ nest new nestjs-query-getting-started
 
 ## Install Dependencies
 ```sh
-npm i @nestjs-query/core
+npm i @nestjs-query/core @nestjs/common class-transformer
 ```
 ```sh
 npm i @nestjs-query/query-graphql @nestjs/common @nestjs/graphql graphql graphql-relay class-transformer class-validator reflect-metadata type-graphql
@@ -151,14 +151,15 @@ npx nest g s todo-item
 Now add the following to `src/todo-item/todo-item.service.ts`.
 
 ```ts
-import { Injectable } from '@nestjs/common';
+import { QueryService } from '@nestjs-query/core';
 import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
-@Injectable()
-export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
+@QueryService(TodoItemDTO)
+export class TodoItemService extends TypeOrmQueryService<TodoItemDTO, TodoItemEntity> {
   constructor(
     @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
   ) {

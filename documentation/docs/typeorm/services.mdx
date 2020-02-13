@@ -1,13 +1,27 @@
 ---
-title: TypeOrmQueryService 
+title: TypeOrmQueryService
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 The `TypeOrmQueryService` is an implementation of the `QueryService` from the `core` package.
 
-All examples assume the following [entity](https://typeorm.io/#/entities).
+All examples assume the following [entity](https://typeorm.io/#/entities) and DTO.
+
+**NOTE** In this example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
+
+<Tabs
+  defaultValue="todoitementity"
+  values={[
+    { label: 'TodoItemEntity', value: 'todoitementity', },
+    { label: 'TodoItemDTO', value: 'todoitemdto', },
+  ]
+}>
+<TabItem value="todoitementity">
 
 ```ts
-// todo-item.entity.ts
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class TodoItemEntity {
@@ -26,9 +40,37 @@ export class TodoItemEntity {
   @UpdateDateColumn()
   updated!: Date;
 }
+
 ```
 
-[Read more about typeorm entities](https://typeorm.io/#/entities).
+</TabItem>
+<TabItem value="todoitemdto">
+
+```ts
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+</TabItem>
+</Tabs>
 
 To create a typeorm service extend the `TypeOrmQueryService`
 
@@ -38,9 +80,10 @@ import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
 
-@Injectable()
-export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
+@QueryService(TodoItemDTO)
+export class TodoItemService extends TypeOrmQueryService<TodoItemDTO, TodoItemEntity> {
   constructor(
     @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
   ) {
@@ -50,9 +93,11 @@ export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
 
 ```
 
+Notice how the `TodoItemDTO` is passed into `@QueryService` decorator, which registers this query service for the `TodoItemDTO`. This is used internally be the QueryService to know what type to translate the entity into when returning results.
+
 ## Querying
 
-To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](../concepts/query).
+To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](../concepts/queries).
 
 #### Example
 
@@ -64,7 +109,7 @@ const records = await this.service.query({});
 
 ### Filtering
 
-The `filter` option is translated to a `WHERE` clause in `typeorm`.  
+The `filter` option is translated to a `WHERE` clause in `typeorm`.
 
 #### Example
 
@@ -101,7 +146,7 @@ The `paging` option is translated to `LIMIT` and `OFFSET`.
 
 #### Example
 
-Skip the first 20 records and return the next 10. 
+Skip the first 20 records and return the next 10.
 
 ```ts
 const records = await this.service.query({
@@ -133,9 +178,9 @@ try {
 }
 ```
 
-## Creating 
+## Creating
 
-### Create One 
+### Create One
 
 To create a single record use the `createOne` method.
 
@@ -148,7 +193,7 @@ const createdRecord = await this.service.createOne({
 });
 ```
 
-### Create Many 
+### Create Many
 
 To create multiple records use the `createMany` method.
 
@@ -163,19 +208,19 @@ const createdRecords = await this.service.createMany([
 
 ## Updating
 
-### Update One 
+### Update One
 
 To update a single record use the `updateOne` method.
 
 #### Example
 
-Updates the record with an id equal to 1 to completed. 
+Updates the record with an id equal to 1 to completed.
 
 ```ts
 const updatedRecord = await this.service.updateOne(1, { completed: true });
 ```
 
-### Update Many 
+### Update Many
 
 To update multiple records use the `updateMany` method.
 
@@ -194,19 +239,19 @@ const { updatedCount } = await this.service.updateMany(
 
 ## Deleting
 
-### Delete One 
+### Delete One
 
 To delete a single record use the `deleteOne` method.
 
 #### Example
 
-Delete the record with an id equal to 1. 
+Delete the record with an id equal to 1.
 
 ```ts
 const deletedRecord = await this.service.deleteOne(1);
 ```
 
-### Delete Many 
+### Delete Many
 
 To delete multiple records use the `deleteMany` method.
 
@@ -229,7 +274,7 @@ You can also define other methods on your service class that encapsulates your b
 ```ts
 async markAllAsCompleted(): Promise<number> {
    const entities = await this.query({ filter: { completed: { is: true } } });
-   
+
    const { updatedCount } = await this.updateMany(
      { completed: true }, // update
      { id: { in: entities.map(e => e.id) } } // filter

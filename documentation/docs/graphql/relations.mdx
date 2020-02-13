@@ -253,7 +253,7 @@ Based on the entity and DTO definitions above we can create a `TodoItem` resolve
 When specifying a `many` relation a couple of endpoints will automatically be generated. In this example the following are generated.
 
 * `todoItem.subTasks` - A `query` to retrieve a `TodoItems` `SubTasks`.
-    * The `subTasks` property will accept a [query](../concepts/query) to allow you to filter, page and sort results.
+    * The `subTasks` property will accept a [query](../concepts/queries) to allow you to filter, page and sort results.
     * The `subTasks` property will return a [connection](./types#connectiontype) to page through results.
 * `addSubTasksToTodoItem` - A `mutation` to add `SubTasks` to a `TodoItem`.
 * `removeSubTasksFromTodoItem` - A `mutation` to remove a `SubTaks` from a `TodoItem`.

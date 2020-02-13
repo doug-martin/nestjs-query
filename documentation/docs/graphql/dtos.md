@@ -2,11 +2,6 @@
 title: DTOs
 ---
 
-If you have never heard of a DTO before you can read about them [here](https://martinfowler.com/eaaCatalog/dataTransferObject.html)
-
-**NOTE** You can combine your entity and DTO but all examples in the docs have them split to easily show what is
-specific to the persistence layer and the web layer.
-
 The `query-graphql` package leverages most decorators from [`@nestjs/graphql`](https://docs.nestjs.com/graphql/quick-start) and [TypeGraphQL](https://typegraphql.ml), with the exception of `FilterableField`.
 
 ## `@FilterableField`
