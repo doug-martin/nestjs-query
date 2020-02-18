@@ -9,6 +9,9 @@ export class SubTaskDTO {
   @FilterableField()
   title!: string;
 
+  @FilterableField({ nullable: true })
+  description?: string;
+
   @FilterableField()
   completed!: boolean;
 

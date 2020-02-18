@@ -1,6 +1,6 @@
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { Field, GraphQLTimestamp, InputType } from 'type-graphql';
-import { IsBoolean, IsDate } from 'class-validator';
+import { IsBoolean, IsDate, IsOptional } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
 /** @internal */
@@ -15,12 +15,12 @@ export function getOrCreateTimestampFieldComparison(): Class<FilterFieldComparis
   class TimestampFieldComparison implements FilterFieldComparison<Date> {
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
-    @IsUndefined()
+    @IsOptional()
     is?: boolean | null;
 
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
-    @IsUndefined()
+    @IsOptional()
     isNot?: boolean | null;
 
     @Field(() => GraphQLTimestamp, { nullable: true })

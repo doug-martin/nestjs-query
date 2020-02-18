@@ -16,8 +16,8 @@ export abstract class AbstractAssembler<DTO, Entity> implements Assembler<DTO, E
   readonly EntityClass: Class<Entity>;
 
   /**
-   * @param DTOClass - Optional class definition for the DTO. If not provided it will be looked up from the @Assembler annotation.
-   * @param EntityClass - Optional class definition for the entity. If not provided it will be looked up from the @Assembler annotation.
+   * @param DTOClass - Optional class definition for the DTO. If not provided it will be looked up from the \@Assembler annotation.
+   * @param EntityClass - Optional class definition for the entity. If not provided it will be looked up from the \@Assembler annotation.
    */
   constructor(DTOClass?: Class<DTO>, EntityClass?: Class<Entity>) {
     const classes = getCoreMetadataStorage().getAssemblerClasses(this.constructor as Class<Assembler<DTO, Entity>>);
