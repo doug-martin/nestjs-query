@@ -1,9 +1,12 @@
 import 'reflect-metadata';
-import { Float, ObjectType } from 'type-graphql';
+import * as typeGraphql from 'type-graphql';
 import { FilterableField } from '../../src';
 import { getMetadataStorage } from '../../src/metadata';
 
+const { Float, ObjectType } = typeGraphql;
+
 describe('FilterableField decorator', (): void => {
+  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
   beforeEach(() => getMetadataStorage().clear());
   afterEach(() => getMetadataStorage().clear());
 
@@ -40,5 +43,10 @@ describe('FilterableField decorator', (): void => {
       },
       { propertyName: 'numberField', target: Number, advancedOptions: { nullable: true }, returnTypeFunc: undefined },
     ]);
+    expect(fieldSpy).toBeCalledTimes(4);
+    expect(fieldSpy).toHaveBeenNthCalledWith(1);
+    expect(fieldSpy).toHaveBeenNthCalledWith(2, { nullable: true });
+    expect(fieldSpy).toHaveBeenNthCalledWith(3, floatReturnFunc, { nullable: true });
+    expect(fieldSpy).toHaveBeenNthCalledWith(4, { nullable: true });
   });
 });

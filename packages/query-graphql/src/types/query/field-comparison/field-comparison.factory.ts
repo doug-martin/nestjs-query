@@ -1,8 +1,7 @@
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
-import { IsBoolean } from 'class-validator';
+import { IsBoolean, IsOptional } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 import { ReturnTypeFunc } from '../../../external/type-graphql.types';
-import { IsUndefined } from '../../validators';
 import { getOrCreateFloatFieldComparison } from './float-field-comparison.type';
 import { getOrCreateIntFieldComparison } from './int-field-comparison.type';
 import { getOrCreateStringFieldComparison } from './string-field-comparison.type';
@@ -44,12 +43,12 @@ export function createFilterComparisonType<T>(
   class Fc {
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
-    @IsUndefined()
+    @IsOptional()
     is?: boolean | null;
 
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
-    @IsUndefined()
+    @IsOptional()
     isNot?: boolean | null;
 
     @Field(() => fieldType, { nullable: true })

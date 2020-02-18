@@ -9,6 +9,9 @@ export class TodoItemEntity {
   @Column()
   title!: string;
 
+  @Column({ nullable: true })
+  description?: string;
+
   @Column()
   completed!: boolean;
 

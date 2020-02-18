@@ -1,7 +1,6 @@
-import { IsBoolean } from 'class-validator';
+import { IsBoolean, IsOptional } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
-import { IsUndefined } from '../../validators';
 
 /** @internal */
 let booleanFieldComparison: Class<FilterFieldComparison<boolean>>;
@@ -15,12 +14,12 @@ export function getOrCreateBooleanFieldComparison(): Class<FilterFieldComparison
   class BooleanFieldComparison implements FilterFieldComparison<boolean> {
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
-    @IsUndefined()
+    @IsOptional()
     is?: boolean | null;
 
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
-    @IsUndefined()
+    @IsOptional()
     isNot?: boolean | null;
   }
   booleanFieldComparison = BooleanFieldComparison;

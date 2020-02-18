@@ -220,11 +220,11 @@ type TestQuery {
   idField: ID!
   idFieldOption: ID
   stringField: String!
-  stringFieldOptional: String!
+  stringFieldOptional: String
   booleanField: Boolean!
-  booleanFieldOptional: Boolean!
+  booleanFieldOptional: Boolean
   numberField: Float!
-  numberFieldOptional: Float!
+  numberFieldOptional: Float
   floatField: Float!
   floatFieldOptional: Float
   intField: Int!

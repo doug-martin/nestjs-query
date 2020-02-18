@@ -1,6 +1,6 @@
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { Field, InputType } from 'type-graphql';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsString, IsOptional } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
 /** @internal */
@@ -15,12 +15,12 @@ export function getOrCreateStringFieldComparison(): Class<FilterFieldComparison<
   class StringFieldComparison implements FilterFieldComparison<string> {
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
-    @IsUndefined()
+    @IsOptional()
     is?: boolean | null;
 
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
-    @IsUndefined()
+    @IsOptional()
     isNot?: boolean | null;
 
     @Field({ nullable: true })

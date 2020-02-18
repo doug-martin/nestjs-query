@@ -66,6 +66,12 @@ export function FilterableField(
       returnTypeFunc,
       advancedOptions,
     });
-    return Field(returnTypeFunc, advancedOptions)(target, propertyName, descriptor);
+    if (returnTypeFunc) {
+      return Field(returnTypeFunc, advancedOptions)(target, propertyName, descriptor);
+    }
+    if (advancedOptions) {
+      return Field(advancedOptions)(target, propertyName, descriptor);
+    }
+    return Field()(target, propertyName, descriptor);
   };
 }
