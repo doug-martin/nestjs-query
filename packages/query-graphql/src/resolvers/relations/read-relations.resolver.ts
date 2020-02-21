@@ -1,7 +1,9 @@
 import { Class } from '@nestjs-query/core';
 import { ArgsType } from 'type-graphql';
-import { Resolver, Parent, Args } from '@nestjs/graphql';
+import { Resolver, Parent, Args, Context } from '@nestjs/graphql';
+import { ExecutionContext } from '@nestjs/common';
 import { ResolverProperty } from '../../decorators';
+import { FindRelationsLoader, DataLoaderFactory, QueryRelationsLoader } from '../../loader';
 import { ConnectionType, QueryArgsType } from '../../types';
 import { getDTONames, transformAndValidate } from '../helpers';
 import { ResolverRelation, RelationsOpts, ServiceResolver, BaseServiceResolver } from '../resolver.interface';
@@ -19,11 +21,14 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
   const relationDTO = relation.DTO;
   const { baseNameLower, baseName } = getDTONames({ dtoName: relation.dtoName }, relationDTO);
   const relationName = relation.relationName ?? baseNameLower;
+  const loaderName = `load${baseName}For${DTOClass.name}`;
+  const findLoader = new FindRelationsLoader<DTO, Relation>(relationDTO, relationName);
+
   @Resolver(() => DTOClass, { isAbstract: true })
   class Mixin extends Base {
     @ResolverProperty(baseNameLower, () => relationDTO, { nullable: relation.nullable }, commonResolverOpts)
-    [`find${baseName}`](@Parent() dto: DTO): Promise<Relation | undefined> {
-      return this.service.findRelation(relationDTO, relationName, dto);
+    [`find${baseName}`](@Parent() dto: DTO, @Context() context: ExecutionContext): Promise<Relation | undefined> {
+      return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load(dto);
     }
   }
   return Mixin;
@@ -41,6 +46,8 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   const relationDTO = relation.DTO;
   const { pluralBaseNameLower, pluralBaseName } = getDTONames({ dtoName: relation.dtoName }, relationDTO);
   const relationName = relation.relationName ?? pluralBaseNameLower;
+  const loaderName = `load${pluralBaseName}For${DTOClass.name}`;
+  const queryLoader = new QueryRelationsLoader<DTO, Relation>(relationDTO, relationName);
   @ArgsType()
   class RelationQA extends QueryArgsType(relationDTO) {}
 
@@ -48,9 +55,14 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   @Resolver(() => DTOClass, { isAbstract: true })
   class Mixin extends Base {
     @ResolverProperty(pluralBaseNameLower, () => CT, { nullable: relation.nullable }, commonResolverOpts)
-    async [`query${pluralBaseName}`](@Parent() dto: DTO, @Args() q: RelationQA): Promise<ConnectionType<Relation>> {
+    async [`query${pluralBaseName}`](
+      @Parent() dto: DTO,
+      @Args() q: RelationQA,
+      @Context() context: ExecutionContext,
+    ): Promise<ConnectionType<Relation>> {
       const qa = await transformAndValidate(RelationQA, q);
-      return CT.createFromPromise(this.service.queryRelations(relationDTO, relationName, dto, qa), qa.paging || {});
+      const loader = DataLoaderFactory.getOrCreateLoader(context, loaderName, queryLoader.createLoader(this.service));
+      return CT.createFromPromise(loader.load({ dto, query: qa }), qa.paging || {});
     }
   }
   return Mixin;

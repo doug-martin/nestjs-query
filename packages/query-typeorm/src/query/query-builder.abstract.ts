@@ -29,7 +29,7 @@ export abstract class AbstractQueryBuilder<Entity> {
    * Escapes a string to be safe to in a query.
    * @param str - the string to escape.
    */
-  private escape(str: string): string {
+  protected escape(str: string): string {
     return this.repository.manager.connection.driver.escape(str);
   }
 }

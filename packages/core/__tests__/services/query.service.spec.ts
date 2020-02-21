@@ -55,7 +55,22 @@ describe('query service', () => {
       RelationClass: Class<Relation>,
       relationName: string,
       entity: TestDTO,
-    ): Promise<Relation | undefined> {
+    ): Promise<Relation | undefined>;
+
+    findRelation<Relation>(
+      RelationClass: Class<Relation>,
+      relationName: string,
+      entity: TestDTO[],
+    ): Promise<Map<TestDTO, Relation | undefined>>;
+
+    findRelation<Relation>(
+      RelationClass: Class<Relation>,
+      relationName: string,
+      entity: TestDTO | TestDTO[],
+    ): Promise<(Relation | undefined) | Map<TestDTO, Relation | undefined>> {
+      if (Array.isArray(entity)) {
+        return Promise.resolve(new Map());
+      }
       return Promise.resolve(undefined);
     }
 
@@ -70,9 +85,26 @@ describe('query service', () => {
     queryRelations<Relation>(
       RelationClass: Class<Relation>,
       relationName: string,
+      dtos: TestDTO[],
+      query: Query<Relation>,
+    ): Promise<Map<TestDTO, Relation[]>>;
+
+    queryRelations<Relation>(
+      RelationClass: Class<Relation>,
+      relationName: string,
       entity: TestDTO,
       query: Query<Relation>,
-    ): Promise<Relation[]> {
+    ): Promise<Relation[]>;
+
+    queryRelations<Relation>(
+      RelationClass: Class<Relation>,
+      relationName: string,
+      entity: TestDTO | TestDTO[],
+      query: Query<Relation>,
+    ): Promise<Relation[] | Map<TestDTO, Relation[]>> {
+      if (Array.isArray(entity)) {
+        return Promise.resolve(new Map());
+      }
       return Promise.resolve([]);
     }
 

@@ -8,7 +8,14 @@ describe('WhereBuilder', (): void => {
   afterEach(closeTestConnection);
 
   const baseQuery =
-    'SELECT "TestEntity"."id" AS "TestEntity_id", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type" FROM "test_entity" "TestEntity"';
+    'SELECT' +
+    ' "TestEntity"."testEntityPk" AS "TestEntity_testEntityPk",' +
+    ' "TestEntity"."string_type" AS "TestEntity_string_type",' +
+    ' "TestEntity"."bool_type" AS "TestEntity_bool_type",' +
+    ' "TestEntity"."number_type" AS "TestEntity_number_type",' +
+    ' "TestEntity"."date_type" AS "TestEntity_date_type",' +
+    ' "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"' +
+    ' FROM "test_entity" "TestEntity"';
 
   const getRepo = () => getTestConnection().getRepository(TestEntity);
   const getQueryBuilder = () => getRepo().createQueryBuilder();

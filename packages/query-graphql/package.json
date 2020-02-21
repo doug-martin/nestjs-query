@@ -4,6 +4,7 @@
   "description": "Nestjs graphql query adapter",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
+  "keywords": ["graphql", "crud", "nestjs", "dataloader"],
   "license": "MIT",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -23,6 +24,7 @@
     "directory": "packages/query-graphql"
   },
   "scripts": {
+    "prepare": "npm run build",
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
     "compile": "tsc -p tsconfig.build.json"
@@ -44,7 +46,8 @@
     "graphql": "^14.5.8",
     "graphql-relay": "^0.6.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^0.17.5"
+    "type-graphql": "^0.17.5",
+    "dataloader": "2.0.0"
   },
   "devDependencies": {
     "@nestjs/common": "^6.9.0",
@@ -59,6 +62,7 @@
     "graphql": "^14.5.8",
     "graphql-relay": "^0.6.0",
     "reflect-metadata": "^0.1.13",
+    "dataloader": "2.0.0",
     "ts-mockito": "^2.5.0",
     "type-graphql": "^0.17.5",
     "typescript": "^3.7.0"
