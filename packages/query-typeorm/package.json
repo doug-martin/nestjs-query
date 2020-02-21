@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-typeorm",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Typeorm adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "^0.2.1",
+    "@nestjs-query/core": "^0.3.0",
     "lodash.filter": "^4.6.0"
   },
   "peerDependencies": {
@@ -27,8 +27,8 @@
     "typeorm": "^0.2.20"
   },
   "devDependencies": {
-    "@types/lodash.filter": "^4.6.6",
     "@nestjs/common": "^6.9.0",
+    "@types/lodash.filter": "^4.6.6",
     "class-transformer": "^0.2.3",
     "sqlite3": "^4.1.0",
     "ts-mockito": "^2.5.0",

@@ -1,10 +1,15 @@
 {
   "name": "@nestjs-query/query-graphql",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Nestjs graphql query adapter",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
-  "keywords": ["graphql", "crud", "nestjs", "dataloader"],
+  "keywords": [
+    "graphql",
+    "crud",
+    "nestjs",
+    "dataloader"
+  ],
   "license": "MIT",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -33,7 +38,7 @@
     "url": "https://github.com/doug-martin/nestjs-query/issues"
   },
   "dependencies": {
-    "@nestjs-query/core": "^0.2.1",
+    "@nestjs-query/core": "^0.3.0",
     "change-case": "^3.1.0",
     "lodash.omit": "^4.4.0",
     "pluralize": "^8.0.0"
@@ -43,11 +48,11 @@
     "@nestjs/graphql": "^6.5.3",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.2",
+    "dataloader": "2.0.0",
     "graphql": "^14.5.8",
     "graphql-relay": "^0.6.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^0.17.5",
-    "dataloader": "2.0.0"
+    "type-graphql": "^0.17.5"
   },
   "devDependencies": {
     "@nestjs/common": "^6.9.0",
@@ -59,10 +64,10 @@
     "@types/pluralize": "0.0.29",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.2",
+    "dataloader": "2.0.0",
     "graphql": "^14.5.8",
     "graphql-relay": "^0.6.0",
     "reflect-metadata": "^0.1.13",
-    "dataloader": "2.0.0",
     "ts-mockito": "^2.5.0",
     "type-graphql": "^0.17.5",
     "typescript": "^3.7.0"
