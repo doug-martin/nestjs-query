@@ -5,10 +5,10 @@ export interface CreateManyArgsType<C> {
   input: C[];
 }
 
-export function CreateManyArgsType<C>(ITemClass: Class<C>): Class<CreateManyArgsType<C>> {
+export function CreateManyArgsType<C>(ItemClass: Class<C>): Class<CreateManyArgsType<C>> {
   @ArgsType()
   class CreateManyArgs implements CreateManyArgsType<C> {
-    @Field(() => [ITemClass], { description: 'Array of records to create' })
+    @Field(() => [ItemClass], { description: 'Array of records to create' })
     input!: C[];
   }
   return CreateManyArgs;
