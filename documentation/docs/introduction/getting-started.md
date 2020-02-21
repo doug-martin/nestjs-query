@@ -8,6 +8,14 @@ Nestjs-Query is collection of packages to make crud for `graphql` (and potential
 
 While working on projects in nestjs it was very easy to get up and running with typeorm and graphql however, there were many patterns that were common between the resolvers. In particular querying, sorting and paging.  
 
+## Features
+
+* Built on top of [nestjs](https://nestjs.com/)
+* Out of the box [CRUD for GraphQL](../graphql/resolvers) using [TypeORM](https://typeorm.io/)
+* Support for one to one, one to many, many to one and many to many [relations](../graphql/relations).
+* Built in [dataloader](https://github.com/graphql/dataloader) avoiding the `n+1` problem
+* Relay [connections](https://facebook.github.io/relay/graphql/connections.htm) for paging results  
+
 ## Install 
 
 Check out each packages getting started section 

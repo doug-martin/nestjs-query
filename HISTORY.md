@@ -1,3 +1,8 @@
+# 0.3.0
+
+* Added dataloader support!
+* Fixed issue with loading of many-to-many relations [#22](https://github.com/doug-martin/nestjs-query/issues/22)
+
 # v0.2.1
 
 * Fixed case where `@FilterableField` decorator was not passing arguments correctly to `@Field` decorator [#20](https://github.com/doug-martin/nestjs-query/issues/20)

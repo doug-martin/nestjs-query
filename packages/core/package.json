@@ -22,6 +22,7 @@
     "url": "git+https://github.com/doug-martin/nestjs-query.git"
   },
   "scripts": {
+    "prepare": "npm run build",
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
     "compile": "tsc -p tsconfig.build.json"

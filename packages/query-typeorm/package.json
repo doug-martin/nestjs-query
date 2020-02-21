@@ -18,7 +18,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "^0.2.1"
+    "@nestjs-query/core": "^0.2.1",
+    "lodash.filter": "^4.6.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^6.9.0",
@@ -26,6 +27,7 @@
     "typeorm": "^0.2.20"
   },
   "devDependencies": {
+    "@types/lodash.filter": "^4.6.6",
     "@nestjs/common": "^6.9.0",
     "class-transformer": "^0.2.3",
     "sqlite3": "^4.1.0",
@@ -39,6 +41,7 @@
     "directory": "packages/query-typeorm"
   },
   "scripts": {
+    "prepare": "npm run build",
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
     "compile": "tsc -p tsconfig.build.json"

@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Query, QueryService } from '@nestjs-query/core';
 import { ID, ObjectType } from 'type-graphql';
 import * as nestGraphql from '@nestjs/graphql';
-import { mock, instance, when, objectContaining } from 'ts-mockito';
+import { mock, instance, when, objectContaining, deepEqual } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { ReadRelationsResolver } from '../../../src/resolvers/relations';
 import * as decorators from '../../../src/decorators';
@@ -133,7 +133,7 @@ describe('ReadRelationsResolver', () => {
       expect(argsSpy).not.toBeCalled();
     });
 
-    it('should call the service findRelation with the provided dto and correct relation name', async () => {
+    it('should call the service findRelation with the provided dto', async () => {
       const mockService = mock<QueryService<ReadRelationDTO>>();
       const dto: ReadRelationDTO = {
         id: 'id-1',
@@ -145,9 +145,9 @@ describe('ReadRelationsResolver', () => {
       };
       const R = ReadRelationsResolver(ReadRelationDTO, { one: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.findRelation(RelationDTO, 'relation', dto)).thenResolve(output);
+      when(mockService.findRelation(RelationDTO, 'relation', deepEqual([dto]))).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
-      const result = await resolver.findRelation(dto);
+      const result = await resolver.findRelation(dto, {});
       return expect(result).toEqual(output);
     });
 
@@ -165,9 +165,9 @@ describe('ReadRelationsResolver', () => {
         one: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.findRelation(RelationDTO, 'other', dto)).thenResolve(output);
+      when(mockService.findRelation(RelationDTO, 'other', deepEqual([dto]))).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
-      const result = await resolver.findRelation(dto);
+      const result = await resolver.findRelation(dto, {});
       return expect(result).toEqual(output);
     });
   });
@@ -242,7 +242,7 @@ describe('ReadRelationsResolver', () => {
       expect(argsSpy).not.toBeCalled();
     });
 
-    it('should call the service findRelation with the provided dto and correct relation name', async () => {
+    it('should call the service findRelation with the provided dto', async () => {
       const mockService = mock<QueryService<ReadRelationDTO>>();
       const dto: ReadRelationDTO = {
         id: 'id-1',
@@ -259,9 +259,11 @@ describe('ReadRelationsResolver', () => {
       ];
       const R = ReadRelationsResolver(ReadRelationDTO, { many: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.queryRelations(RelationDTO, 'relations', dto, objectContaining(query))).thenResolve(output);
+      when(mockService.queryRelations(RelationDTO, 'relations', deepEqual([dto]), objectContaining(query))).thenResolve(
+        new Map([[dto, output]]),
+      );
       // @ts-ignore
-      const result = await resolver.queryRelations(dto, query);
+      const result = await resolver.queryRelations(dto, query, {});
       return expect(result).toEqual({
         edges: [
           {
@@ -300,9 +302,11 @@ describe('ReadRelationsResolver', () => {
         many: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.queryRelations(RelationDTO, 'other', dto, objectContaining(query))).thenResolve(output);
+      when(mockService.queryRelations(RelationDTO, 'other', deepEqual([dto]), objectContaining(query))).thenResolve(
+        new Map([[dto, output]]),
+      );
       // @ts-ignore
-      const result = await resolver.queryRelations(dto, query);
+      const result = await resolver.queryRelations(dto, query, {});
       return expect(result).toEqual({
         edges: [
           {

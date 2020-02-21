@@ -7,6 +7,8 @@ import TabItem from '@theme/TabItem';
 
 When using the [CRUDResolver](./resolvers#crudresolver) you can specify relations that should be exposed for the DTO using the `relations` option.
 
+When loading relations a [dataloader](https://github.com/graphql/dataloader) that is scoped to the request will be used. This prevents the n+1 problem.
+
 The `relations` option has two properties.
 
 * `one` - Relations that return a single record. The `key` is the name of the `relation` and the value contains [options for the relation](#relation-options).

@@ -3,6 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
 
@@ -15,6 +16,7 @@ import { SubTaskModule } from './sub-task/sub-task.module';
     }),
     SubTaskModule,
     TodoItemModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService],

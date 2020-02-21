@@ -10,9 +10,10 @@ import {
   Assembler,
   getQueryServiceDTO,
 } from '@nestjs-query/core';
-import { Repository, DeepPartial as TypeOrmDeepPartial, RelationQueryBuilder } from 'typeorm';
+import { Repository, DeepPartial as TypeOrmDeepPartial } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FilterQueryBuilder } from '../query';
+import { RelationQueryService } from './relation-query.service';
 
 /**
  * Base class for all query services that use a `typeorm` Repository.
@@ -30,7 +31,8 @@ import { FilterQueryBuilder } from '../query';
  * }
  * ```
  */
-export abstract class TypeOrmQueryService<DTO, Entity = DTO> implements QueryService<DTO> {
+export abstract class TypeOrmQueryService<DTO, Entity = DTO> extends RelationQueryService<DTO, Entity>
+  implements QueryService<DTO> {
   readonly assemblerService: AssemblerService;
 
   readonly DTOClass: Class<DTO>;
@@ -42,6 +44,7 @@ export abstract class TypeOrmQueryService<DTO, Entity = DTO> implements QuerySer
     assemblerService?: AssemblerService,
     filterQueryBuilder?: FilterQueryBuilder<Entity>,
   ) {
+    super();
     const DTOClass = getQueryServiceDTO(this.constructor as Class<QueryService<DTO>>);
     if (!DTOClass) {
       throw new Error(
@@ -57,7 +60,7 @@ export abstract class TypeOrmQueryService<DTO, Entity = DTO> implements QuerySer
     return this.repo.target as Class<Entity>;
   }
 
-  private get assembler(): Assembler<DTO, Entity> {
+  get assembler(): Assembler<DTO, Entity> {
     return this.assemblerService.getAssembler(this.DTOClass, this.EntityClass);
   }
 
@@ -81,75 +84,6 @@ export abstract class TypeOrmQueryService<DTO, Entity = DTO> implements QuerySer
   }
 
   /**
-   * Query for an array of relations.
-   * @param RelationClass - The class to serialize the relations into.
-   * @param dto - The dto to query relations for.
-   * @param relationName - The name of relation to query for.
-   * @param query - A query to filter, page or sort relations.
-   */
-  async queryRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: DTO,
-    query: Query<Relation>,
-  ): Promise<Relation[]> {
-    const assembler = this.assemblerService.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    return assembler.convertAsyncToDTOs(
-      this.filterQueryBuilder
-        .selectRelation(this.assembler.convertToEntity(dto), relationName, assembler.convertQuery(query))
-        .getMany(),
-    );
-  }
-
-  /**
-   * Finds a single relation.
-   * @param RelationClass - The class to serialize the relation into.
-   * @param dto - The dto to find the relation for.
-   * @param relationName - The name of the relation to query for.
-   */
-  async findRelation<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: DTO,
-  ): Promise<Relation | undefined> {
-    const assembler = this.assemblerService.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationEntity = await this.createRelationQueryBuilder(
-      this.assembler.convertToEntity(dto),
-      relationName,
-    ).loadOne<Relation>();
-    return relationEntity ? assembler.convertToDTO(relationEntity) : undefined;
-  }
-
-  /**
-   * Add a single relation.
-   * @param id - The id of the entity to add the relation to.
-   * @param relationName - The name of the relation to query for.
-   * @param relationIds - The ids of relations to add.
-   */
-  async addRelations<Relation>(
-    relationName: string,
-    id: string | number,
-    relationIds: (string | number)[],
-  ): Promise<DTO> {
-    const entity = await this.repo.findOneOrFail(id);
-    await this.createRelationQueryBuilder(entity, relationName).add(relationIds);
-    return this.assembler.convertToDTO(entity);
-  }
-
-  /**
-   * Set the relation on the entity.
-   *
-   * @param id - The id of the entity to set the relation on.
-   * @param relationName - The name of the relation to query for.
-   * @param relationId - The id of the relation to set on the entity.
-   */
-  async setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
-    const entity = await this.repo.findOneOrFail(id);
-    await this.createRelationQueryBuilder(entity, relationName).set(relationId);
-    return this.assembler.convertToDTO(entity);
-  }
-
-  /**
    * Find an entity by it's `id`.
    *
    * @example
@@ -163,35 +97,6 @@ export abstract class TypeOrmQueryService<DTO, Entity = DTO> implements QuerySer
     if (!entity) {
       return undefined;
     }
-    return this.assembler.convertToDTO(entity);
-  }
-
-  /**
-   * Removes multiple relations.
-   * @param id - The id of the entity to add the relation to.
-   * @param relationName - The name of the relation to query for.
-   * @param relationIds - The ids of the relations to add.
-   */
-  async removeRelations<Relation>(
-    id: string | number,
-    relationName: string,
-    relationIds: (string | number)[],
-  ): Promise<DTO> {
-    const entity = await this.repo.findOneOrFail(id);
-    await this.createRelationQueryBuilder(entity, relationName).remove(relationIds);
-    return this.assembler.convertToDTO(entity);
-  }
-
-  /**
-   * Remove the relation on the entity.
-   *
-   * @param id - The id of the entity to set the relation on.
-   * @param relationName - The name of the relation to query for.
-   * @param relationId - The id of the relation to set on the entity.
-   */
-  async removeRelation<Relation>(id: string | number, relationName: string, relationId: string | number): Promise<DTO> {
-    const entity = await this.repo.findOneOrFail(id);
-    await this.createRelationQueryBuilder(entity, relationName).remove(relationId);
     return this.assembler.convertToDTO(entity);
   }
 
@@ -314,20 +219,5 @@ export abstract class TypeOrmQueryService<DTO, Entity = DTO> implements QuerySer
   async deleteMany(filter: Filter<DTO>): Promise<DeleteManyResponse> {
     const deleteResult = await this.filterQueryBuilder.delete(this.assembler.convertQuery({ filter })).execute();
     return { deletedCount: deleteResult.affected || 0 };
-  }
-
-  private createRelationQueryBuilder(entity: Entity, relationName: string): RelationQueryBuilder<Entity> {
-    return this.repo
-      .createQueryBuilder()
-      .relation(relationName)
-      .of(entity);
-  }
-
-  private getRelationEntity(relationName: string): Class<unknown> {
-    const relationMeta = this.repo.metadata.relations.find(r => r.propertyName === relationName);
-    if (!relationMeta) {
-      throw new Error(`Unable to find relation ${relationName} on ${this.EntityClass.name}`);
-    }
-    return relationMeta.type as Class<unknown>;
   }
 }

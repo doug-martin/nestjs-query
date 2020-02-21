@@ -12,7 +12,7 @@
     "lint": "eslint --ext=.ts .",
     "lint:fix": "eslint --fix --ext=.ts .",
     "jest": "jest --runInBand --coverage",
-    "coverage": "jest --runInBand --coverage --coverageReporters=text-lcov | coveralls"
+    "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
     "@types/jest": "^24.0.25",

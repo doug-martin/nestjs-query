@@ -37,6 +37,13 @@ export interface QueryService<DTO> {
     query: Query<Relation>,
   ): Promise<Relation[]>;
 
+  queryRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    query: Query<Relation>,
+  ): Promise<Map<DTO, Relation[]>>;
+
   /**
    * Finds a single relation.
    * @param RelationClass - The class to serialize the Relation into
@@ -48,6 +55,19 @@ export interface QueryService<DTO> {
     relationName: string,
     entity: DTO,
   ): Promise<Relation | undefined>;
+
+  /**
+   * Finds a single relation for each DTO passed in.
+   *
+   * @param RelationClass - The class to serialize the Relation into
+   * @param entity - The entity to find the relation on.
+   * @param relationName - The name of the relation to query for.
+   */
+  findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+  ): Promise<Map<DTO, Relation | undefined>>;
 
   /**
    * Adds multiple relations.
