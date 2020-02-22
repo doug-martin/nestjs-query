@@ -11,6 +11,12 @@ import {
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
 import { TagEntity } from '../tag/tag.entity';
 
+class TodoItemChecklist {
+  name!: string;
+
+  completed!: boolean;
+}
+
 @Entity()
 export class TodoItemEntity {
   @PrimaryGeneratedColumn()
@@ -30,6 +36,9 @@ export class TodoItemEntity {
     subTask => subTask.todoItem,
   )
   subTasks!: SubTaskEntity[];
+
+  @Column('jsonb', { nullable: true })
+  checklist?: TodoItemChecklist[];
 
   @CreateDateColumn()
   created!: Date;

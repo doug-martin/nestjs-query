@@ -12,7 +12,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "APP_ROOT_PATH=. nest start --watch",
     "start:prod": "node dist/main",
-    "migrate:up": "typeorm migration:run",
+    "migrate:up": "npm run build && typeorm migration:run",
     "migrate:generate": "npm run build && typeorm migration:generate -d ./migrations ",
     "seed": "ts-node ../../node_modules/typeorm-seeding/dist/cli.js --config ./ormconfig.json seed"
   },

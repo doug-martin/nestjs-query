@@ -13,10 +13,8 @@ const guards = [AuthGuard];
 
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
-  CreateDTOClass: TodoItemInputDTO,
-  UpdateDTOClass: TodoItemInputDTO,
-  create: { guards },
-  update: { guards },
+  create: { guards, CreateDTOClass: TodoItemInputDTO },
+  update: { guards, UpdateDTOClass: TodoItemInputDTO },
   delete: { guards },
   relations: {
     many: {
