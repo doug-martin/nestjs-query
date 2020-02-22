@@ -3,7 +3,7 @@
 </p>
 
 [![npm version](https://img.shields.io/npm/v/@nestjs-query/core.svg)](https://www.npmjs.org/package/@nestjs-query/core)
-[![Build Status](https://travis-ci.org/doug-martin/nestjs-query.svg?branch=master)](https://travis-ci.org/doug-martin/nestjs-query)
+![Test](https://github.com/doug-martin/nestjs-query/workflows/Test/badge.svg?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/doug-martin/nestjs-query/badge.svg?branch=master)](https://coveralls.io/github/doug-martin/nestjs-query?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/github/doug-martin/nestjs-query/badge.svg?targetFile=packages/core/package.json)](https://snyk.io/test/github/doug-martin/nestjs-query?targetFile=packages/core/package.json)
 
