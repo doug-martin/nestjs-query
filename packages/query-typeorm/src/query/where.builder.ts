@@ -16,16 +16,17 @@ export class WhereBuilder<Entity> {
    * Builds a WHERE clause from a Filter.
    * @param where - the `typeorm` WhereExpression
    * @param filter - the filter to build the WHERE clause from.
+   * @param alias - optional alias to use to qualify an identifier
    */
-  build<Where extends WhereExpression>(where: Where, filter: Filter<Entity>): Where {
+  build<Where extends WhereExpression>(where: Where, filter: Filter<Entity>, alias?: string): Where {
     const { and, or } = filter;
     if (and && and.length) {
-      this.filterAnd(where, and);
+      this.filterAnd(where, and, alias);
     }
     if (or && or.length) {
-      this.filterOr(where, or);
+      this.filterOr(where, or, alias);
     }
-    return this.filterFields(where, filter);
+    return this.filterFields(where, filter, alias);
   }
 
   /**
@@ -33,9 +34,10 @@ export class WhereBuilder<Entity> {
    *
    * @param where - the `typeorm` WhereExpression
    * @param filters - the array of filters to AND together
+   * @param alias - optional alias to use to qualify an identifier
    */
-  private filterAnd<Where extends WhereExpression>(where: Where, filters: Filter<Entity>[]): Where {
-    return filters.reduce((w, f) => w.andWhere(this.createBrackets(f)), where);
+  private filterAnd<Where extends WhereExpression>(where: Where, filters: Filter<Entity>[], alias?: string): Where {
+    return filters.reduce((w, f) => w.andWhere(this.createBrackets(f, alias)), where);
   }
 
   /**
@@ -43,9 +45,10 @@ export class WhereBuilder<Entity> {
    *
    * @param where - the `typeorm` WhereExpression
    * @param filters - the array of filters to OR together
+   * @param alias - optional alias to use to qualify an identifier
    */
-  private filterOr<Where extends WhereExpression>(where: Where, filter: Filter<Entity>[]): Where {
-    return filter.reduce((w, f) => where.orWhere(this.createBrackets(f)), where);
+  private filterOr<Where extends WhereExpression>(where: Where, filter: Filter<Entity>[], alias?: string): Where {
+    return filter.reduce((w, f) => where.orWhere(this.createBrackets(f, alias)), where);
   }
 
   /**
@@ -55,20 +58,27 @@ export class WhereBuilder<Entity> {
    * {a: { eq: 1 }, b: { gt: 2 } } // "((a = 1) AND (b > 2))"
    * ```
    * @param filter - the filter to wrap in brackets.
+   * @param alias - optional alias to use to qualify an identifier
    */
-  private createBrackets(filter: Filter<Entity>): Brackets {
-    return new Brackets(qb => this.build(qb, filter));
+  private createBrackets(filter: Filter<Entity>, alias?: string): Brackets {
+    return new Brackets(qb => this.build(qb, filter, alias));
   }
 
   /**
    * Creates field comparisons from a filter. This method will ignore and/or properties.
    * @param where - the `typeorm` WhereExpression
-   * @param filters - the filter with fields to create comparisons for.
+   * @param filter - the filter with fields to create comparisons for.
+   * @param alias - optional alias to use to qualify an identifier
    */
-  private filterFields<Where extends WhereExpression>(where: Where, filter: Filter<Entity>): Where {
+  private filterFields<Where extends WhereExpression>(where: Where, filter: Filter<Entity>, alias?: string): Where {
     return Object.keys(filter).reduce((w, field) => {
       if (field !== 'and' && field !== 'or') {
-        return this.withFilterComparison(where, field as keyof Entity, this.getField(filter, field as keyof Entity));
+        return this.withFilterComparison(
+          where,
+          field as keyof Entity,
+          this.getField(filter, field as keyof Entity),
+          alias,
+        );
       }
       return w;
     }, where);
@@ -85,12 +95,13 @@ export class WhereBuilder<Entity> {
     where: Where,
     field: T,
     cmp: FilterFieldComparison<Entity[T]>,
+    alias?: string,
   ): Where {
     return where.andWhere(
       new Brackets(qb => {
         const opts = Object.keys(cmp) as FilterComparisonOperators<Entity[T]>[];
         const sqlComparisons = opts.map(cmpType =>
-          this.sqlComparisionBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>),
+          this.sqlComparisionBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias),
         );
         sqlComparisons.map(({ sql, params }) => qb.orWhere(sql, params));
       }),

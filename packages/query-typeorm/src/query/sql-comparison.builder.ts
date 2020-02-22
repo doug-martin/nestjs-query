@@ -56,8 +56,9 @@ export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> 
     field: F,
     cmp: FilterComparisonOperators<Entity[F]>,
     val: EntityComparisonField<Entity, F>,
+    alias?: string,
   ): CmpSQLType {
-    const col = this.fieldToDbCol(field);
+    const col = alias ? `${alias}.${field}` : `${field}`;
     const normalizedCmp = (cmp as string).toLowerCase();
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)

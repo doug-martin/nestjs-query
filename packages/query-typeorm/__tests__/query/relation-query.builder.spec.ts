@@ -13,7 +13,9 @@ describe('RelationQueryBuilder', (): void => {
     ` FROM "test_entity" "testEntity"` +
     ` INNER JOIN "test_relation" "TestRelation" ON "TestRelation"."test_entity_id" = "testEntity"."testEntityPk"`;
 
-  const baseManyToOneFromSubQuery = `"testEntity"."testEntityPk" IN (SELECT "testEntity"."testEntityPk" AS "testEntity_testEntityPk"${baseManyToOneFrom} WHERE "TestRelation"."testRelationPk" = ?)`;
+  const manyToOneEntityClause = '"TestRelation"."testRelationPk" = ?';
+
+  const baseManyToOneFromSubQuery = `"testEntity"."testEntityPk" IN (SELECT "testEntity"."testEntityPk" AS "testEntity_testEntityPk"${baseManyToOneFrom} WHERE ${manyToOneEntityClause})`;
 
   const manyToOneOrderBy = `ORDER BY "TestRelation"."testRelationPk" ASC`;
 
@@ -41,7 +43,10 @@ describe('RelationQueryBuilder', (): void => {
     ` "manyTestEntities"."oneTestRelationTestRelationPk" AS "manyTestEntities_oneTestRelationTestRelationPk",` +
     ` "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" AS "__nestjsQueryEntityId_testRelationPk__"`}${baseManyToManyNonOwnerSelectQueryFrom}`;
 
-  const manyToManyNonOwnerInSubQuery = `"manyTestEntities"."testEntityPk" IN (SELECT "manyTestEntities"."testEntityPk" AS "manyTestEntities_testEntityPk"${baseManyToManyNonOwnerSelectQueryFrom} WHERE "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = ?)`;
+  const manyToManyNonOwnerEntityClause =
+    '"test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = ?';
+
+  const manyToManyNonOwnerInSubQuery = `"manyTestEntities"."testEntityPk" IN (SELECT "manyTestEntities"."testEntityPk" AS "manyTestEntities_testEntityPk"${baseManyToManyNonOwnerSelectQueryFrom} WHERE ${manyToManyNonOwnerEntityClause})`;
 
   const manyToManyOrderBy = `ORDER BY "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" ASC`;
 
@@ -53,8 +58,9 @@ describe('RelationQueryBuilder', (): void => {
     ` "testRelations"."test_entity_id" AS "__nestjsQueryEntityId_testEntityPk__"` +
     ` FROM "test_relation" "testRelations"`;
 
-  const baseOneToManySubQuery =
-    '"testRelations"."testRelationPk" IN (SELECT "testRelations"."testRelationPk" AS "testRelations_testRelationPk" FROM "test_relation" "testRelations" WHERE "testRelations"."test_entity_id" = ?)';
+  const oneToManyEntityClause = `"testRelations"."test_entity_id" = ?`;
+
+  const baseOneToManySubQuery = `"testRelations"."testRelationPk" IN (SELECT "testRelations"."testRelationPk" AS "testRelations_testRelationPk" FROM "test_relation" "testRelations" WHERE ${oneToManyEntityClause})`;
 
   const baseManyToManyOwnerFrom =
     ` FROM "test_relation" "manyTestRelations"` +
@@ -66,13 +72,16 @@ describe('RelationQueryBuilder', (): void => {
     ' "manyTestRelations"."test_entity_id" AS "manyTestRelations_test_entity_id",' +
     ' "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" AS "__nestjsQueryEntityId_testEntityPk__"'}${baseManyToManyOwnerFrom}`;
 
-  const manyToManyOwnerSubQuery = `"manyTestRelations"."testRelationPk" IN (SELECT "manyTestRelations"."testRelationPk" AS "manyTestRelations_testRelationPk"${baseManyToManyOwnerFrom} WHERE "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = ?)`;
+  const manyToManyOwnerEntityClause = '"test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = ?';
+
+  const manyToManyOwnerSubQuery = `"manyTestRelations"."testRelationPk" IN (SELECT "manyTestRelations"."testRelationPk" AS "manyTestRelations_testRelationPk"${baseManyToManyOwnerFrom} WHERE ${manyToManyOwnerEntityClause})`;
 
   const baseOneToOneOwnerFrom =
     ` FROM "test_relation" "oneTestRelation"` +
     ` INNER JOIN "test_entity" "TestEntity" ON "TestEntity"."oneTestRelationTestRelationPk" = "oneTestRelation"."testRelationPk"`;
 
-  const baseOneToOneOwnerSubQuery = `"oneTestRelation"."testRelationPk" IN (SELECT "oneTestRelation"."testRelationPk" AS "oneTestRelation_testRelationPk"${baseOneToOneOwnerFrom} WHERE "TestEntity"."testEntityPk" = ?)`;
+  const oneToOneOwnerEntityClause = '"TestEntity"."testEntityPk" = ?';
+  const baseOneToOneOwnerSubQuery = `"oneTestRelation"."testRelationPk" IN (SELECT "oneTestRelation"."testRelationPk" AS "oneTestRelation_testRelationPk"${baseOneToOneOwnerFrom} WHERE ${oneToOneOwnerEntityClause})`;
 
   const oneToOneOwnerOrderBy = `ORDER BY "TestEntity"."testEntityPk" ASC`;
 
@@ -85,8 +94,8 @@ describe('RelationQueryBuilder', (): void => {
     `${baseOneToOneOwnerFrom}`;
 
   const baseOneToOneNonOwnerFrom = ` FROM "test_entity" "oneTestEntity"`;
-
-  const baseOneToOneNonOwnerSubQuery = `"oneTestEntity"."testEntityPk" IN (SELECT "oneTestEntity"."testEntityPk" AS "oneTestEntity_testEntityPk"${baseOneToOneNonOwnerFrom} WHERE "oneTestEntity"."oneTestRelationTestRelationPk" = ?)`;
+  const oneToOneNonOwnerEntityClause = '"oneTestEntity"."oneTestRelationTestRelationPk" = ?';
+  const baseOneToOneNonOwnerSubQuery = `"oneTestEntity"."testEntityPk" IN (SELECT "oneTestEntity"."testEntityPk" AS "oneTestEntity_testEntityPk"${baseOneToOneNonOwnerFrom} WHERE ${oneToOneNonOwnerEntityClause})`;
 
   const manyToOneNonOwnerOrderBy = `ORDER BY "oneTestEntity"."oneTestRelationTestRelationPk" ASC`;
 
@@ -160,8 +169,8 @@ describe('RelationQueryBuilder', (): void => {
           testEntity,
           'testRelations',
           {},
-          ` WHERE (${baseOneToManySubQuery}) ORDER BY "testRelations"."test_entity_id" ASC`,
-          [testEntity.testEntityPk],
+          ` WHERE ((${oneToManyEntityClause})) AND ((${baseOneToManySubQuery})) ORDER BY "testRelations"."test_entity_id" ASC`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -170,8 +179,8 @@ describe('RelationQueryBuilder', (): void => {
           [testEntity, { ...testEntity, testEntityPk: 'id-2' }, { ...testEntity, testEntityPk: 'id-3' }],
           'testRelations',
           {},
-          ` WHERE (${baseOneToManySubQuery}) OR (${baseOneToManySubQuery}) OR (${baseOneToManySubQuery}) ORDER BY "testRelations"."test_entity_id" ASC`,
-          [testEntity.testEntityPk, 'id-2', 'id-3'],
+          ` WHERE ((${oneToManyEntityClause}) OR (${oneToManyEntityClause}) OR (${oneToManyEntityClause})) AND ((${baseOneToManySubQuery}) OR (${baseOneToManySubQuery}) OR (${baseOneToManySubQuery})) ORDER BY "testRelations"."test_entity_id" ASC`,
+          [testEntity.testEntityPk, 'id-2', 'id-3', testEntity.testEntityPk, 'id-2', 'id-3'],
         );
       });
     });
@@ -182,8 +191,8 @@ describe('RelationQueryBuilder', (): void => {
           testRelation,
           'testEntity',
           {},
-          ` WHERE (${baseManyToOneFromSubQuery}) ${manyToOneOrderBy}`,
-          [testRelation.testRelationPk],
+          ` WHERE ((${manyToOneEntityClause})) AND ((${baseManyToOneFromSubQuery})) ${manyToOneOrderBy}`,
+          [testRelation.testRelationPk, testRelation.testRelationPk],
         );
       });
 
@@ -192,8 +201,8 @@ describe('RelationQueryBuilder', (): void => {
           [testRelation, { ...testRelation, testRelationPk: 'id-2' }, { ...testRelation, testRelationPk: 'id-3' }],
           'testEntity',
           {},
-          ` WHERE (${baseManyToOneFromSubQuery}) OR (${baseManyToOneFromSubQuery}) OR (${baseManyToOneFromSubQuery}) ${manyToOneOrderBy}`,
-          [testRelation.testRelationPk, 'id-2', 'id-3'],
+          ` WHERE ((${manyToOneEntityClause}) OR (${manyToOneEntityClause}) OR (${manyToOneEntityClause})) AND ((${baseManyToOneFromSubQuery}) OR (${baseManyToOneFromSubQuery}) OR (${baseManyToOneFromSubQuery})) ${manyToOneOrderBy}`,
+          [testRelation.testRelationPk, 'id-2', 'id-3', testRelation.testRelationPk, 'id-2', 'id-3'],
         );
       });
     });
@@ -205,8 +214,8 @@ describe('RelationQueryBuilder', (): void => {
             testEntity,
             'manyTestRelations',
             {},
-            ` WHERE (${manyToManyOwnerSubQuery}) ORDER BY "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" ASC`,
-            [testEntity.testEntityPk],
+            ` WHERE ((${manyToManyOwnerEntityClause})) AND ((${manyToManyOwnerSubQuery})) ORDER BY "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" ASC`,
+            [testEntity.testEntityPk, testEntity.testEntityPk],
           );
         });
 
@@ -215,8 +224,8 @@ describe('RelationQueryBuilder', (): void => {
             [testEntity, { ...testEntity, testEntityPk: 'id-2' }, { ...testEntity, testEntityPk: 'id-3' }],
             'manyTestRelations',
             {},
-            ` WHERE (${manyToManyOwnerSubQuery}) OR (${manyToManyOwnerSubQuery}) OR (${manyToManyOwnerSubQuery}) ORDER BY "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" ASC`,
-            [testEntity.testEntityPk, 'id-2', 'id-3'],
+            ` WHERE ((${manyToManyOwnerEntityClause}) OR (${manyToManyOwnerEntityClause}) OR (${manyToManyOwnerEntityClause})) AND ((${manyToManyOwnerSubQuery}) OR (${manyToManyOwnerSubQuery}) OR (${manyToManyOwnerSubQuery})) ORDER BY "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" ASC`,
+            [testEntity.testEntityPk, 'id-2', 'id-3', testEntity.testEntityPk, 'id-2', 'id-3'],
           );
         });
       });
@@ -227,8 +236,8 @@ describe('RelationQueryBuilder', (): void => {
             testRelation,
             'manyTestEntities',
             {},
-            ` WHERE (${manyToManyNonOwnerInSubQuery}) ${manyToManyOrderBy}`,
-            [testRelation.testRelationPk],
+            ` WHERE ((${manyToManyNonOwnerEntityClause})) AND ((${manyToManyNonOwnerInSubQuery})) ${manyToManyOrderBy}`,
+            [testRelation.testRelationPk, testRelation.testRelationPk],
           );
         });
 
@@ -237,8 +246,8 @@ describe('RelationQueryBuilder', (): void => {
             [testRelation, { ...testRelation, testRelationPk: 'id-2' }, { ...testRelation, testRelationPk: 'id-3' }],
             'manyTestEntities',
             {},
-            ` WHERE (${manyToManyNonOwnerInSubQuery}) OR (${manyToManyNonOwnerInSubQuery}) OR (${manyToManyNonOwnerInSubQuery}) ${manyToManyOrderBy}`,
-            [testRelation.testRelationPk, 'id-2', 'id-3'],
+            ` WHERE ((${manyToManyNonOwnerEntityClause}) OR (${manyToManyNonOwnerEntityClause}) OR (${manyToManyNonOwnerEntityClause})) AND ((${manyToManyNonOwnerInSubQuery}) OR (${manyToManyNonOwnerInSubQuery}) OR (${manyToManyNonOwnerInSubQuery})) ${manyToManyOrderBy}`,
+            [testRelation.testRelationPk, 'id-2', 'id-3', testRelation.testRelationPk, 'id-2', 'id-3'],
           );
         });
       });
@@ -251,8 +260,8 @@ describe('RelationQueryBuilder', (): void => {
             testEntity,
             'oneTestRelation',
             {},
-            ` WHERE (${baseOneToOneOwnerSubQuery}) ${oneToOneOwnerOrderBy}`,
-            [testEntity.testEntityPk],
+            ` WHERE ((${oneToOneOwnerEntityClause})) AND ((${baseOneToOneOwnerSubQuery})) ${oneToOneOwnerOrderBy}`,
+            [testEntity.testEntityPk, testEntity.testEntityPk],
           );
         });
 
@@ -261,8 +270,8 @@ describe('RelationQueryBuilder', (): void => {
             [testEntity, { ...testEntity, testEntityPk: 'id-2' }, { ...testEntity, testEntityPk: 'id-3' }],
             'oneTestRelation',
             {},
-            ` WHERE (${baseOneToOneOwnerSubQuery}) OR (${baseOneToOneOwnerSubQuery}) OR (${baseOneToOneOwnerSubQuery}) ${oneToOneOwnerOrderBy}`,
-            [testEntity.testEntityPk, 'id-2', 'id-3'],
+            ` WHERE ((${oneToOneOwnerEntityClause}) OR (${oneToOneOwnerEntityClause}) OR (${oneToOneOwnerEntityClause})) AND ((${baseOneToOneOwnerSubQuery}) OR (${baseOneToOneOwnerSubQuery}) OR (${baseOneToOneOwnerSubQuery})) ${oneToOneOwnerOrderBy}`,
+            [testEntity.testEntityPk, 'id-2', 'id-3', testEntity.testEntityPk, 'id-2', 'id-3'],
           );
         });
       });
@@ -273,8 +282,8 @@ describe('RelationQueryBuilder', (): void => {
             testRelation,
             'oneTestEntity',
             {},
-            ` WHERE (${baseOneToOneNonOwnerSubQuery}) ${manyToOneNonOwnerOrderBy}`,
-            [testRelation.testRelationPk],
+            ` WHERE ((${oneToOneNonOwnerEntityClause})) AND ((${baseOneToOneNonOwnerSubQuery})) ${manyToOneNonOwnerOrderBy}`,
+            [testRelation.testRelationPk, testRelation.testRelationPk],
           );
         });
 
@@ -283,8 +292,8 @@ describe('RelationQueryBuilder', (): void => {
             [testRelation, { ...testRelation, testRelationPk: 'id-2' }, { ...testRelation, testRelationPk: 'id-3' }],
             'oneTestEntity',
             {},
-            ` WHERE (${baseOneToOneNonOwnerSubQuery}) OR (${baseOneToOneNonOwnerSubQuery}) OR (${baseOneToOneNonOwnerSubQuery}) ${manyToOneNonOwnerOrderBy}`,
-            [testRelation.testRelationPk, 'id-2', 'id-3'],
+            ` WHERE ((${oneToOneNonOwnerEntityClause}) OR (${oneToOneNonOwnerEntityClause}) OR (${oneToOneNonOwnerEntityClause})) AND ((${baseOneToOneNonOwnerSubQuery}) OR (${baseOneToOneNonOwnerSubQuery}) OR (${baseOneToOneNonOwnerSubQuery})) ${manyToOneNonOwnerOrderBy}`,
+            [testRelation.testRelationPk, 'id-2', 'id-3', testRelation.testRelationPk, 'id-2', 'id-3'],
           );
         });
       });
@@ -297,23 +306,22 @@ describe('RelationQueryBuilder', (): void => {
           testEntity,
           'testRelations',
           query,
-          ` WHERE ("testRelations"."testRelationPk" IN (SELECT "testRelations"."testRelationPk" AS "testRelations_testRelationPk" FROM "test_relation" "testRelations" WHERE "testRelations"."test_entity_id" = ? AND ("relation_name" = ?))) ${orderByTestRelationsTestEntityId}`,
-          [testEntity.testEntityPk, 'foo'],
+          ` WHERE ((${oneToManyEntityClause})) AND (("testRelations"."testRelationPk" IN (SELECT "testRelations"."testRelationPk" AS "testRelations_testRelationPk" FROM "test_relation" "testRelations" WHERE ${oneToManyEntityClause} AND ("testRelations"."relation_name" = ?)))) ${orderByTestRelationsTestEntityId}`,
+          [testEntity.testEntityPk, testEntity.testEntityPk, 'foo'],
         );
       });
     });
 
     describe('with paging', () => {
-      const pagingBaseFragment =
-        ' WHERE ("testRelations"."testRelationPk" IN (SELECT "testRelations"."testRelationPk" AS "testRelations_testRelationPk" FROM "test_relation" "testRelations" WHERE "testRelations"."test_entity_id" = ?';
+      const pagingBaseFragment = ` WHERE ((${oneToManyEntityClause})) AND (("testRelations"."testRelationPk" IN (SELECT "testRelations"."testRelationPk" AS "testRelations_testRelationPk" FROM "test_relation" "testRelations" WHERE ${oneToManyEntityClause}`;
 
       it('should apply empty paging args', () => {
         assertOneToManySQL(
           testEntity,
           'testRelations',
           {},
-          ` WHERE ("testRelations"."testRelationPk" IN (SELECT "testRelations"."testRelationPk" AS "testRelations_testRelationPk" FROM "test_relation" "testRelations" WHERE "testRelations"."test_entity_id" = ?)) ${orderByTestRelationsTestEntityId}`,
-          [testEntity.testEntityPk],
+          `${pagingBaseFragment}))) ${orderByTestRelationsTestEntityId}`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -327,8 +335,8 @@ describe('RelationQueryBuilder', (): void => {
               offset: 11,
             },
           },
-          `${pagingBaseFragment} LIMIT 10 OFFSET 11)) ${orderByTestRelationsTestEntityId}`,
-          [testEntity.testEntityPk],
+          `${pagingBaseFragment} LIMIT 10 OFFSET 11))) ${orderByTestRelationsTestEntityId}`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -342,13 +350,14 @@ describe('RelationQueryBuilder', (): void => {
               offset: 10,
             },
           },
-          `${pagingBaseFragment} LIMIT 10 OFFSET 10)) ${orderByTestRelationsTestEntityId}`,
-          [testEntity.testEntityPk],
+          `${pagingBaseFragment} LIMIT 10 OFFSET 10))) ${orderByTestRelationsTestEntityId}`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
     });
 
     describe('with sorting', () => {
+      const sortingBaseFragment = ` WHERE ((${oneToManyEntityClause})) AND ((${baseOneToManySubQuery})) ${orderByTestRelationsTestEntityId}`;
       it('should apply ASC sorting', () => {
         assertOneToManySQL(
           testEntity,
@@ -356,8 +365,8 @@ describe('RelationQueryBuilder', (): void => {
           {
             sorting: [{ field: 'relationName', direction: SortDirection.ASC }],
           },
-          ` WHERE (${baseOneToManySubQuery}) ${orderByTestRelationsTestEntityId}, "relation_name" ASC`,
-          [testEntity.testEntityPk],
+          `${sortingBaseFragment}, "testRelations"."relation_name" ASC`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -368,8 +377,8 @@ describe('RelationQueryBuilder', (): void => {
           {
             sorting: [{ field: 'relationName', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }],
           },
-          ` WHERE (${baseOneToManySubQuery}) ${orderByTestRelationsTestEntityId}, "relation_name" ASC NULLS FIRST`,
-          [testEntity.testEntityPk],
+          `${sortingBaseFragment}, "testRelations"."relation_name" ASC NULLS FIRST`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -380,8 +389,8 @@ describe('RelationQueryBuilder', (): void => {
           {
             sorting: [{ field: 'relationName', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
           },
-          ` WHERE (${baseOneToManySubQuery}) ${orderByTestRelationsTestEntityId}, "relation_name" ASC NULLS LAST`,
-          [testEntity.testEntityPk],
+          `${sortingBaseFragment}, "testRelations"."relation_name" ASC NULLS LAST`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -392,8 +401,8 @@ describe('RelationQueryBuilder', (): void => {
           {
             sorting: [{ field: 'relationName', direction: SortDirection.DESC }],
           },
-          ` WHERE (${baseOneToManySubQuery}) ${orderByTestRelationsTestEntityId}, "relation_name" DESC`,
-          [testEntity.testEntityPk],
+          `${sortingBaseFragment}, "testRelations"."relation_name" DESC`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -404,8 +413,8 @@ describe('RelationQueryBuilder', (): void => {
           {
             sorting: [{ field: 'relationName', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }],
           },
-          ` WHERE (${baseOneToManySubQuery}) ${orderByTestRelationsTestEntityId}, "relation_name" DESC NULLS FIRST`,
-          [testEntity.testEntityPk],
+          `${sortingBaseFragment}, "testRelations"."relation_name" DESC NULLS FIRST`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -416,8 +425,8 @@ describe('RelationQueryBuilder', (): void => {
           {
             sorting: [{ field: 'relationName', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }],
           },
-          ` WHERE (${baseOneToManySubQuery}) ${orderByTestRelationsTestEntityId}, "relation_name" DESC NULLS LAST`,
-          [testEntity.testEntityPk],
+          `${sortingBaseFragment}, "testRelations"."relation_name" DESC NULLS LAST`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
 
@@ -431,8 +440,8 @@ describe('RelationQueryBuilder', (): void => {
               { field: 'testRelationPk', direction: SortDirection.DESC },
             ],
           },
-          ` WHERE (${baseOneToManySubQuery}) ${orderByTestRelationsTestEntityId}, "relation_name" ASC, "testRelationPk" DESC`,
-          [testEntity.testEntityPk],
+          `${sortingBaseFragment}, "testRelations"."relation_name" ASC, "testRelations"."testRelationPk" DESC`,
+          [testEntity.testEntityPk, testEntity.testEntityPk],
         );
       });
     });

@@ -1,6 +1,6 @@
 import { anything, instance, mock, verify, when } from 'ts-mockito';
 import { QueryBuilder, WhereExpression } from 'typeorm';
-import { Query, SortDirection, SortNulls } from '@nestjs-query/core';
+import { Filter, Query, SortDirection, SortNulls } from '@nestjs-query/core';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { FilterQueryBuilder, WhereBuilder } from '../../src/query';
@@ -69,16 +69,18 @@ describe('FilterQueryBuilder', (): void => {
       it('should not call whereBuilder#build', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
         assertSelectSQL({}, instance(mockWhereBuilder), '', []);
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
 
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(anything(), query.filter)).thenCall((where: WhereExpression) => {
-          return where.andWhere("string_type = 'foo'");
-        });
-        assertSelectSQL(query, instance(mockWhereBuilder), " WHERE string_type = 'foo'", []);
+        when(mockWhereBuilder.build(anything(), query.filter, 'TestEntity')).thenCall(
+          (where: WhereExpression, field: Filter<TestEntity>, alias: string) => {
+            return where.andWhere(`${alias}.stringType = 'foo'`);
+          },
+        );
+        assertSelectSQL(query, instance(mockWhereBuilder), ` WHERE "TestEntity"."string_type" = 'foo'`, []);
       });
     });
 
@@ -86,7 +88,7 @@ describe('FilterQueryBuilder', (): void => {
       it('should apply empty paging args', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
         assertSelectSQL({}, instance(mockWhereBuilder), '', []);
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
 
       it('should apply paging args going forward', () => {
@@ -102,7 +104,7 @@ describe('FilterQueryBuilder', (): void => {
           ' LIMIT 10 OFFSET 11',
           [],
         );
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
 
       it('should apply paging args going backward', () => {
@@ -118,7 +120,7 @@ describe('FilterQueryBuilder', (): void => {
           ' LIMIT 10 OFFSET 10',
           [],
         );
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
     });
 
@@ -130,10 +132,10 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC }],
           },
           instance(mockWhereBuilder),
-          ' ORDER BY "number_type" ASC',
+          ' ORDER BY "TestEntity"."number_type" ASC',
           [],
         );
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
 
       it('should apply ASC NULLS_FIRST sorting', () => {
@@ -143,10 +145,10 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }],
           },
           instance(mockWhereBuilder),
-          ' ORDER BY "number_type" ASC NULLS FIRST',
+          ' ORDER BY "TestEntity"."number_type" ASC NULLS FIRST',
           [],
         );
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
 
       it('should apply ASC NULLS_LAST sorting', () => {
@@ -156,10 +158,10 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
           },
           instance(mockWhereBuilder),
-          ' ORDER BY "number_type" ASC NULLS LAST',
+          ' ORDER BY "TestEntity"."number_type" ASC NULLS LAST',
           [],
         );
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
 
       it('should apply DESC sorting', () => {
@@ -169,10 +171,10 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC }],
           },
           instance(mockWhereBuilder),
-          ' ORDER BY "number_type" DESC',
+          ' ORDER BY "TestEntity"."number_type" DESC',
           [],
         );
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
 
       it('should apply DESC NULLS_FIRST sorting', () => {
@@ -182,7 +184,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }],
           },
           instance(mockWhereBuilder),
-          ' ORDER BY "number_type" DESC NULLS FIRST',
+          ' ORDER BY "TestEntity"."number_type" DESC NULLS FIRST',
           [],
         );
       });
@@ -194,10 +196,10 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }],
           },
           instance(mockWhereBuilder),
-          ' ORDER BY "number_type" DESC NULLS LAST',
+          ' ORDER BY "TestEntity"."number_type" DESC NULLS LAST',
           [],
         );
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
 
       it('should apply multiple sorts', () => {
@@ -212,15 +214,25 @@ describe('FilterQueryBuilder', (): void => {
             ],
           },
           instance(mockWhereBuilder),
-          ' ORDER BY "number_type" ASC, "bool_type" DESC, "string_type" ASC NULLS FIRST, "date_type" DESC NULLS LAST',
+          ' ORDER BY "TestEntity"."number_type" ASC, "TestEntity"."bool_type" DESC, "TestEntity"."string_type" ASC NULLS FIRST, "TestEntity"."date_type" DESC NULLS LAST',
           [],
         );
-        verify(mockWhereBuilder.build(anything(), anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything(), 'TestEntity')).never();
       });
     });
   });
 
   describe('#update', () => {
+    describe('with filter', () => {
+      it('should call whereBuilder#build if there is a filter', () => {
+        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const query = { filter: { stringType: { eq: 'foo' } } };
+        when(mockWhereBuilder.build(anything(), query.filter, undefined)).thenCall((where: WhereExpression) => {
+          return where.andWhere(`stringType = 'foo'`);
+        });
+        assertUpdateSQL(query, instance(mockWhereBuilder), ` WHERE "string_type" = 'foo'`, []);
+      });
+    });
     describe('with paging', () => {
       it('should ignore paging args', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
@@ -339,6 +351,16 @@ describe('FilterQueryBuilder', (): void => {
   });
 
   describe('#delete', () => {
+    describe('with filter', () => {
+      it('should call whereBuilder#build if there is a filter', () => {
+        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const query = { filter: { stringType: { eq: 'foo' } } };
+        when(mockWhereBuilder.build(anything(), query.filter, undefined)).thenCall((where: WhereExpression) => {
+          return where.andWhere(`stringType = 'foo'`);
+        });
+        assertDeleteSQL(query, instance(mockWhereBuilder), ` WHERE "string_type" = 'foo'`, []);
+      });
+    });
     describe('with paging', () => {
       it('should ignore paging args', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);

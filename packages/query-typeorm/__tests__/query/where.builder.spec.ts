@@ -22,7 +22,7 @@ describe('WhereBuilder', (): void => {
   const createWhereBuilder = () => new WhereBuilder<TestEntity>(getRepo());
 
   const assertSQL = (filter: Filter<TestEntity>, expectedSql: string, expectedArgs: any[]): void => {
-    const selectQueryBuilder = createWhereBuilder().build(getQueryBuilder(), filter);
+    const selectQueryBuilder = createWhereBuilder().build(getQueryBuilder(), filter, 'TestEntity');
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
     expect(sql).toEqual(`${baseQuery}${expectedSql}`);
     expect(params).toEqual(expectedArgs);
@@ -37,7 +37,7 @@ describe('WhereBuilder', (): void => {
       {
         numberType: { gt: 10, lt: 20, gte: 21, lte: 31 },
       },
-      ` WHERE ("number_type" > ? OR "number_type" < ? OR "number_type" >= ? OR "number_type" <= ?)`,
+      ` WHERE ("TestEntity"."number_type" > ? OR "TestEntity"."number_type" < ? OR "TestEntity"."number_type" >= ? OR "TestEntity"."number_type" <= ?)`,
       [10, 20, 21, 31],
     );
   });
@@ -49,7 +49,7 @@ describe('WhereBuilder', (): void => {
         stringType: { like: 'foo%' },
         boolType: { is: true },
       },
-      ` WHERE ("number_type" = ?) AND ("string_type" LIKE ?) AND ("bool_type" IS TRUE)`,
+      ` WHERE ("TestEntity"."number_type" = ?) AND ("TestEntity"."string_type" LIKE ?) AND ("TestEntity"."bool_type" IS TRUE)`,
       [1, 'foo%'],
     );
   });
@@ -65,7 +65,7 @@ describe('WhereBuilder', (): void => {
             { numberType: { lte: 40 } },
           ],
         },
-        ` WHERE (("number_type" > ?)) AND (("number_type" < ?)) AND (("number_type" >= ?)) AND (("number_type" <= ?))`,
+        ` WHERE (("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?)) AND (("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?))`,
         [10, 20, 30, 40],
       );
     });
@@ -78,7 +78,7 @@ describe('WhereBuilder', (): void => {
             { numberType: { lt: 20 }, stringType: { like: '%bar' } },
           ],
         },
-        ` WHERE (("number_type" > ?) AND ("string_type" LIKE ?)) AND (("number_type" < ?) AND ("string_type" LIKE ?))`,
+        ` WHERE (("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) AND (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?))`,
         [10, 'foo%', 20, '%bar'],
       );
     });
@@ -91,7 +91,7 @@ describe('WhereBuilder', (): void => {
             { or: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] },
           ],
         },
-        ` WHERE ((("number_type" > ?)) OR (("number_type" < ?))) AND ((("number_type" >= ?)) OR (("number_type" <= ?)))`,
+        ` WHERE ((("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?))) AND ((("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?)))`,
         [10, 20, 30, 40],
       );
     });
@@ -108,7 +108,7 @@ describe('WhereBuilder', (): void => {
             { numberType: { lte: 40 } },
           ],
         },
-        ` WHERE (("number_type" > ?)) OR (("number_type" < ?)) OR (("number_type" >= ?)) OR (("number_type" <= ?))`,
+        ` WHERE (("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?)) OR (("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?))`,
         [10, 20, 30, 40],
       );
     });
@@ -121,7 +121,7 @@ describe('WhereBuilder', (): void => {
             { numberType: { lt: 20 }, stringType: { like: '%bar' } },
           ],
         },
-        ` WHERE (("number_type" > ?) AND ("string_type" LIKE ?)) OR (("number_type" < ?) AND ("string_type" LIKE ?))`,
+        ` WHERE (("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) OR (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?))`,
         [10, 'foo%', 20, '%bar'],
       );
     });
@@ -134,7 +134,7 @@ describe('WhereBuilder', (): void => {
             { and: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] },
           ],
         },
-        ` WHERE ((("number_type" > ?)) AND (("number_type" < ?))) OR ((("number_type" >= ?)) AND (("number_type" <= ?)))`,
+        ` WHERE ((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?))) OR ((("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?)))`,
         [10, 20, 30, 40],
       );
     });
