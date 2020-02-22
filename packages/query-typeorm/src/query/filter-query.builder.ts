@@ -48,8 +48,9 @@ export class FilterQueryBuilder<Entity> extends AbstractQueryBuilder<Entity> {
    * @param query - the query to apply.
    */
   select(query: Query<Entity>): SelectQueryBuilder<Entity> {
-    let qb = this.applyFilter(this.createQueryBuilder(), query.filter);
-    qb = this.applySorting(qb, query.sorting);
+    let qb = this.createQueryBuilder();
+    qb = this.applyFilter(qb, query.filter, qb.alias);
+    qb = this.applySorting(qb, query.sorting, qb.alias);
     qb = this.applyPaging(qb, query.paging);
     return qb;
   }
@@ -90,25 +91,28 @@ export class FilterQueryBuilder<Entity> extends AbstractQueryBuilder<Entity> {
    *
    * @param qb - the `typeorm` QueryBuilder.
    * @param filter - the filter.
+   * @param alias - optional alias to use to qualify an identifier
    */
-  applyFilter<Where extends WhereExpression>(qb: Where, filter?: Filter<Entity>): Where {
+  applyFilter<Where extends WhereExpression>(qb: Where, filter?: Filter<Entity>, alias?: string): Where {
     if (!filter) {
       return qb;
     }
-    return this.whereBuilder.build(qb, filter);
+    return this.whereBuilder.build(qb, filter, alias);
   }
 
   /**
    * Applies the ORDER BY clause to a `typeorm` QueryBuilder.
    * @param qb - the `typeorm` QueryBuilder.
    * @param sorts - an array of SortFields to create the ORDER BY clause.
+   * @param alias - optional alias to use to qualify an identifier
    */
-  applySorting<T extends Sortable<Entity>>(qb: T, sorts?: SortField<Entity>[]): T {
+  applySorting<T extends Sortable<Entity>>(qb: T, sorts?: SortField<Entity>[], alias?: string): T {
     if (!sorts) {
       return qb;
     }
     return sorts.reduce((prevQb, { field, direction, nulls }) => {
-      return prevQb.addOrderBy(this.fieldToDbCol(field), direction, nulls);
+      const col = alias ? `${alias}.${field}` : `${field}`;
+      return prevQb.addOrderBy(col, direction, nulls);
     }, qb);
   }
 

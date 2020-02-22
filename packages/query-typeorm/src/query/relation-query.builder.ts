@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Class, Query } from '@nestjs-query/core';
-import { Repository, SelectQueryBuilder, ObjectLiteral } from 'typeorm';
+import { Repository, SelectQueryBuilder, ObjectLiteral, Brackets } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 import { DriverUtils } from 'typeorm/driver/DriverUtils';
 import { FilterQueryBuilder } from './filter-query.builder';
@@ -56,34 +56,31 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
   }
 
   select(entity: Entity | Entity[], query: Query<Relation>): SelectQueryBuilder<Relation> {
-    const relationBuilder = this.createRelationQueryBuilder();
-    return this.applyRelationFilter(relationBuilder, entity, query);
+    const entityArr = Array.isArray(entity) ? entity : [entity];
+    const relationBuilder = this.createRelationQueryBuilder(entityArr);
+    return this.applyRelationFilter(relationBuilder, entityArr, query);
   }
 
   private applyRelationFilter(
     baseBuilder: SelectQueryBuilder<Relation>,
-    entity: Entity | Entity[],
+    entityArr: Entity[],
     query: Query<Relation>,
   ): SelectQueryBuilder<Relation> {
-    const entityArr = Array.isArray(entity) ? entity : [entity];
     const { entityIds, fromPrimaryKeys, entityIdSelects } = this.relationMeta;
     const parameters = {};
     const fromPrimaryKeysIn =
       fromPrimaryKeys.length === 1
         ? fromPrimaryKeys[0].selectPath
         : `(${fromPrimaryKeys.map(pk => pk.selectPath).join(',')})`;
-    const oredBuilder = entityArr
-      .reduce((builder, e, index) => {
-        return builder.orWhere(() => {
-          const { subQuery, params } = this.createRelationSubQuery(e, index);
-          // only apply filter and paging
-          let filteredSubQuery = this.filterQueryBuilder.applyFilter(subQuery, query.filter);
-          filteredSubQuery = this.filterQueryBuilder.applyPaging(filteredSubQuery, query.paging);
-          Object.assign(parameters, params, filteredSubQuery.getParameters());
-          return `(${fromPrimaryKeysIn} IN (${filteredSubQuery.getQuery()}))`;
-        });
-      }, baseBuilder)
-      .setParameters(parameters);
+    const subQueries = entityArr.reduce((sqls, e, index) => {
+      const { subQuery, params } = this.createRelationSubQuery(e, index);
+      // only apply filter and paging
+      let filteredSubQuery = this.filterQueryBuilder.applyFilter(subQuery, query.filter, subQuery.alias);
+      filteredSubQuery = this.filterQueryBuilder.applyPaging(filteredSubQuery, query.paging);
+      Object.assign(parameters, params, filteredSubQuery.getParameters());
+      return [...sqls, `(${fromPrimaryKeysIn} IN (${filteredSubQuery.getQuery()}))`];
+    }, [] as string[]);
+    const oredBuilder = baseBuilder.andWhere(`(${subQueries.join(' OR ')})`, parameters);
     // force sorting by entity pks first so sub results are sorted properly
     const sortedBuilder = entityIds
       .reduce((builder, pk) => {
@@ -91,7 +88,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
       }, oredBuilder)
       .addSelect(entityIdSelects);
 
-    return this.filterQueryBuilder.applySorting(sortedBuilder, query.sorting);
+    return this.filterQueryBuilder.applySorting(sortedBuilder, query.sorting, sortedBuilder.alias);
   }
 
   private createRelationSubQuery(
@@ -104,13 +101,28 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
     return { subQuery: baseBuilder.where(sql), params };
   }
 
-  private createRelationQueryBuilder(): SelectQueryBuilder<Relation> {
+  private createRelationQueryBuilder(entities?: Entity[]): SelectQueryBuilder<Relation> {
     const meta = this.relationMeta;
     const queryBuilder = this.relationRepo.createQueryBuilder(meta.fromAlias);
-    return meta.joins.reduce((qb, join) => {
+    const joinedBuilder = meta.joins.reduce((qb, join) => {
       const conditions = join.conditions.map(({ leftHand, rightHand }) => `${leftHand} = ${rightHand}`);
       return qb.innerJoin(join.target, join.alias, conditions.join(' AND '));
     }, queryBuilder);
+    if (!entities || !entities.length) {
+      return joinedBuilder;
+    }
+    return joinedBuilder.andWhere(
+      new Brackets(andBuilder => {
+        return entities.reduce((qb, entity, entityIndex) => {
+          return qb.orWhere(
+            new Brackets(bqb => {
+              const where = meta.whereCondition(entity, entityIndex);
+              bqb.orWhere(where.sql, where.params);
+            }),
+          );
+        }, andBuilder);
+      }),
+    );
   }
 
   private get relationMeta(): RelationQuery<Relation, Entity> {

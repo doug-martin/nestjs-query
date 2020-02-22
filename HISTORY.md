@@ -1,3 +1,9 @@
+# 0.3.1
+
+* Hardened TypeORM querying
+    * Added filter for entity ids on relations to prevent querying for too many rows.
+    * Qualify all filter and sorting columns, to prevent column name collisions. 
+
 # 0.3.0
 
 * Added dataloader support!

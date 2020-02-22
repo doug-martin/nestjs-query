@@ -13,19 +13,6 @@ export abstract class AbstractQueryBuilder<Entity> {
   }
 
   /**
-   * Convert a field to the typeorm column name.
-   *
-   * @param field - the property name on the entity.
-   */
-  fieldToDbCol<F extends keyof Entity>(field: F): string {
-    const colMetaData = this.entityMetadata.findColumnWithPropertyName(field as string);
-    if (!colMetaData) {
-      throw new Error(`Unknown column ${field} on table ${this.entityMetadata.tableName}`);
-    }
-    return this.escape(colMetaData.databasePath);
-  }
-
-  /**
    * Escapes a string to be safe to in a query.
    * @param str - the string to escape.
    */
