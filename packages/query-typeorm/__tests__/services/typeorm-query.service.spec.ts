@@ -403,7 +403,7 @@ describe('TypeOrmQueryService', (): void => {
       when(entityQueryBuilder.relation(relationName)).thenReturn(instance(relationQueryBuilder));
       when(relationQueryBuilder.of(objectContaining(entity))).thenReturn(instance(relationQueryBuilder));
       when(relationQueryBuilder.remove(relationIds)).thenResolve();
-      const queryResult = await queryService.removeRelations(entity.testEntityPk, relationName, relationIds);
+      const queryResult = await queryService.removeRelations(relationName, entity.testEntityPk, relationIds);
       expect(queryResult).toEqual(entity);
     });
   });
@@ -422,7 +422,7 @@ describe('TypeOrmQueryService', (): void => {
       when(entityQueryBuilder.relation(relationName)).thenReturn(instance(relationQueryBuilder));
       when(relationQueryBuilder.of(objectContaining(entity))).thenReturn(instance(relationQueryBuilder));
       when(relationQueryBuilder.remove(relation.testRelationPk)).thenResolve();
-      const queryResult = await queryService.removeRelation(entity.testEntityPk, relationName, relation.testRelationPk);
+      const queryResult = await queryService.removeRelation(relationName, entity.testEntityPk, relation.testRelationPk);
       expect(queryResult).toEqual(entity);
     });
   });
