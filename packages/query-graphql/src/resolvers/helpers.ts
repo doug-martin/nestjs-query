@@ -1,5 +1,6 @@
 import { plural } from 'pluralize';
-import { lowerCaseFirst, upperCaseFirst } from 'change-case';
+import { upperCaseFirst } from 'upper-case-first';
+import { lowerCaseFirst } from 'lower-case-first';
 import { Class } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
