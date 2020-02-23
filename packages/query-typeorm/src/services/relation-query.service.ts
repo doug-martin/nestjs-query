@@ -140,8 +140,8 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
    * @param relationIds - The ids of the relations to add.
    */
   async removeRelations<Relation>(
-    id: string | number,
     relationName: string,
+    id: string | number,
     relationIds: (string | number)[],
   ): Promise<DTO> {
     const entity = await this.repo.findOneOrFail(id);
@@ -156,7 +156,7 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
    * @param relationName - The name of the relation to query for.
    * @param relationId - The id of the relation to set on the entity.
    */
-  async removeRelation<Relation>(id: string | number, relationName: string, relationId: string | number): Promise<DTO> {
+  async removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
     const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).remove(relationId);
     return this.assembler.convertToDTO(entity);

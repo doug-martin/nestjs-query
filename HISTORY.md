@@ -1,10 +1,23 @@
-# 0.3.1
+# v0.3.4
+
+* [FIXED] Can't remove on Many-To-Many relations [#31](https://github.com/doug-martin/nestjs-query/issues/31)
+
+# v0.3.3
+
+* Update typescript to 3.8.
+* Update dependency versions. 
+
+# v0.3.2
+
+* Switched to github actions 
+
+# v0.3.1
 
 * Hardened TypeORM querying
     * Added filter for entity ids on relations to prevent querying for too many rows.
     * Qualify all filter and sorting columns, to prevent column name collisions. 
 
-# 0.3.0
+# v0.3.0
 
 * Added dataloader support!
 * Fixed issue with loading of many-to-many relations [#22](https://github.com/doug-martin/nestjs-query/issues/22)
