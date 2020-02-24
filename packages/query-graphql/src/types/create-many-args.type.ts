@@ -1,6 +1,6 @@
 import { Class } from '@nestjs-query/core';
 import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { ValidateNested, ArrayNotEmpty } from 'class-validator';
 import { ArgsType, Field } from 'type-graphql';
 
 export interface CreateManyArgsType<C> {
@@ -11,6 +11,7 @@ export function CreateManyArgsType<C>(ItemClass: Class<C>): Class<CreateManyArgs
   @ArgsType()
   class CreateManyArgs implements CreateManyArgsType<C> {
     @Type(() => ItemClass)
+    @ArrayNotEmpty()
     @ValidateNested({ each: true })
     @Field(() => [ItemClass], { description: 'Array of records to create' })
     input!: C[];

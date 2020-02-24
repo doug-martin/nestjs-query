@@ -55,7 +55,7 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
     @ResolverMutation(() => DeleteOneResponse, { name: `deleteOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async deleteOne(@Args() input: DO): Promise<Partial<DTO>> {
       const deleteOne = await transformAndValidate(DO, input);
-      return this.service.deleteOne(deleteOne.id);
+      return this.service.deleteOne(deleteOne.input);
     }
 
     @ResolverMutation(() => DMR, { name: `deleteMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})

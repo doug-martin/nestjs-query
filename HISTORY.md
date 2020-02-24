@@ -1,3 +1,7 @@
+# 0.3.5
+
+* [FIXED] Validate Input for Create & Update [#19](https://github.com/doug-martin/nestjs-query/issues/19)
+
 # v0.3.4
 
 * [FIXED] Can't remove on Many-To-Many relations [#31](https://github.com/doug-martin/nestjs-query/issues/31)

@@ -15,6 +15,7 @@ export function UpdateManyArgsType<T, U extends DeepPartial<T>>(
   @ArgsType()
   class UpdateManyArgs implements UpdateManyArgsType<T, U> {
     @IsNotEmptyObject()
+    @ValidateNested()
     @Field(() => FilterType, { description: 'Filter used to find fields to update' })
     filter!: Filter<T>;
 

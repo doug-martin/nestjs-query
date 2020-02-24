@@ -117,14 +117,14 @@ describe('DeleteResolver', () => {
     it('should call the service deleteOne with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
       const input: DeleteOneArgsType = {
-        id: 'id-1',
+        input: 'id-1',
       };
       const output: TestResolverDTO = {
         id: 'id-1',
         stringField: 'foo',
       };
       const resolver = new TestResolver(instance(mockService));
-      when(mockService.deleteOne(input.id)).thenResolve(output);
+      when(mockService.deleteOne(input.input)).thenResolve(output);
       const result = await resolver.deleteOne(input);
       return expect(result).toEqual(output);
     });

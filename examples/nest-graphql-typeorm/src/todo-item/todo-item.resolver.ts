@@ -8,18 +8,14 @@ import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 import { TodoItemConnection, TodoItemQuery } from './types';
-import { CreateOneTodoItemArgs } from './args/custom-args.types';
 
 const guards = [AuthGuard];
 
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  CreateDTOClass: TodoItemInputDTO,
   UpdateDTOClass: TodoItemInputDTO,
-  create: {
-    guards,
-    CreateOneArgs: CreateOneTodoItemArgs,
-    CreateDTOClass: TodoItemInputDTO,
-  },
+  create: { guards },
   update: { guards },
   delete: { guards },
   relations: {

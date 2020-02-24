@@ -3,7 +3,7 @@ import { Field, ID, ArgsType } from 'type-graphql';
 import { IsNotEmpty } from 'class-validator';
 
 export interface DeleteOneArgsType {
-  id: string | number;
+  input: string | number;
 }
 
 /** @internal */
@@ -16,7 +16,7 @@ export function DeleteOneArgsType(): Class<DeleteOneArgsType> {
   class DeleteOneArgs implements DeleteOneArgsType {
     @IsNotEmpty()
     @Field(() => ID, { description: 'The id of the record to delete.' })
-    id!: string | number;
+    input!: string | number;
   }
   deleteOneArgsType = DeleteOneArgs;
   return deleteOneArgsType;
