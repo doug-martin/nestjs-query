@@ -1,5 +1,6 @@
 import { Class } from '@nestjs-query/core';
 import { Field, ID, ArgsType } from 'type-graphql';
+import { IsNotEmpty } from 'class-validator';
 
 export interface DeleteOneArgsType {
   input: string | number;
@@ -13,6 +14,7 @@ export function DeleteOneArgsType(): Class<DeleteOneArgsType> {
   }
   @ArgsType()
   class DeleteOneArgs implements DeleteOneArgsType {
+    @IsNotEmpty()
     @Field(() => ID, { description: 'The id of the record to delete.' })
     input!: string | number;
   }

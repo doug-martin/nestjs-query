@@ -1,6 +1,7 @@
 import { DeepPartial, Filter, Class } from '@nestjs-query/core';
 import { Field, ArgsType } from 'type-graphql';
-import { IsNotEmptyObject } from 'class-validator';
+import { IsNotEmptyObject, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export interface UpdateManyArgsType<T, U extends DeepPartial<T>> {
   filter: Filter<T>;
@@ -13,10 +14,13 @@ export function UpdateManyArgsType<T, U extends DeepPartial<T>>(
 ): Class<UpdateManyArgsType<T, U>> {
   @ArgsType()
   class UpdateManyArgs implements UpdateManyArgsType<T, U> {
-    @Field(() => FilterType, { description: 'Filter used to find fields to update' })
     @IsNotEmptyObject()
+    @ValidateNested()
+    @Field(() => FilterType, { description: 'Filter used to find fields to update' })
     filter!: Filter<T>;
 
+    @Type(() => UpdateType)
+    @ValidateNested()
     @Field(() => UpdateType, { description: 'The update to apply to all records found using the filter' })
     input!: U;
   }

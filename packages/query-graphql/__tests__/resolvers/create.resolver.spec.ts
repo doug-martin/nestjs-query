@@ -2,7 +2,7 @@
 import 'reflect-metadata';
 import { ID, ObjectType } from 'type-graphql';
 import * as nestGraphql from '@nestjs/graphql';
-import { instance, mock, when, deepEqual } from 'ts-mockito';
+import { instance, mock, when, objectContaining } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { QueryService, DeepPartial } from '@nestjs-query/core';
 import { IsString } from 'class-validator';
@@ -133,7 +133,7 @@ describe('CreateResolver', () => {
         stringField: 'foo',
       };
       const resolver = new TestResolver(instance(mockService));
-      when(mockService.createOne(deepEqual(args.input))).thenResolve(output);
+      when(mockService.createOne(objectContaining(args.input))).thenResolve(output);
       const result = await resolver.createOne(args);
       return expect(result).toEqual(output);
     });
@@ -190,7 +190,7 @@ describe('CreateResolver', () => {
         },
       ];
       const resolver = new TestResolver(instance(mockService));
-      when(mockService.createMany(deepEqual(args.input))).thenResolve(output);
+      when(mockService.createMany(objectContaining(args.input))).thenResolve(output);
       const result = await resolver.createMany(args);
       return expect(result).toEqual(output);
     });
