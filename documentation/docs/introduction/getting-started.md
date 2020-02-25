@@ -18,10 +18,7 @@ While working on projects in nestjs it was very easy to get up and running with 
 
 ## Install 
 
-Check out each packages getting started section 
-
-* [@nestjs-query/query-typeorm](../typeorm/getting-started)
-* [@nestjs-query/query-graphql](../graphql/getting-started)
+Check out the [installation docs](./install.md) 
 
 ## Packages
 

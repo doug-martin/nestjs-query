@@ -1,4 +1,15 @@
-# 0.3.5
+# v0.4.0
+
+* Updated all mutations to take a single `input` argument with custom fields.
+    *   `createOne(input: DTO)` -> `createOne(input: { [dtoName]: DTO })`
+    *   `createMany(input: DTO[])` -> `createOne(input: { [pluralDTOName]: DTO[] })`
+    *   `updateOne(id: ID, input: UpdateDTO)` -> `createOne(input: { id: ID, update: UpdateDTO })`
+    *   `updateMany(filter: Filter<DTO>, input: UpdateDTO)` -> `createOne(input: { filter: Filter<DTO>, update: UpdateDTO })`
+    *   `deleteOne(input: ID)` -> `deleteOne(input: {id: ID})`
+    *   `deleteMany(input: Filter<DTO>)` -> `createOne(input: { filter: Filter<DTO> })`
+* Updated docs to reflect changes.
+
+# v0.3.5
 
 * [FIXED] Validate Input for Create & Update [#19](https://github.com/doug-martin/nestjs-query/issues/19)
 

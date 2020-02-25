@@ -11,6 +11,9 @@
 
 The `query-typeorm` package that provides an implementation of `@nestjs-query/core` `QueryService`, built on top of of [nestjs](https://nestjs.com/) and [typeorm](https://typeorm.io/). 
 
+## Installation
+
+[Install Guide](https://doug-martin.github.io/nestjs-query/docs/introduction/install)
 
 ## Getting Started
 

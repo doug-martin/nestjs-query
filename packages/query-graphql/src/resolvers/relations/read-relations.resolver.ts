@@ -2,10 +2,11 @@ import { Class } from '@nestjs-query/core';
 import { ArgsType } from 'type-graphql';
 import { Resolver, Parent, Args, Context } from '@nestjs/graphql';
 import { ExecutionContext } from '@nestjs/common';
+import { getDTONames } from '../../common';
 import { ResolverProperty } from '../../decorators';
 import { FindRelationsLoader, DataLoaderFactory, QueryRelationsLoader } from '../../loader';
 import { ConnectionType, QueryArgsType } from '../../types';
-import { getDTONames, transformAndValidate } from '../helpers';
+import { transformAndValidate } from '../helpers';
 import { ResolverRelation, RelationsOpts, ServiceResolver, BaseServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 
@@ -19,7 +20,7 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
   }
   const commonResolverOpts = removeRelationOpts(relation);
   const relationDTO = relation.DTO;
-  const { baseNameLower, baseName } = getDTONames({ dtoName: relation.dtoName }, relationDTO);
+  const { baseNameLower, baseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
   const relationName = relation.relationName ?? baseNameLower;
   const loaderName = `load${baseName}For${DTOClass.name}`;
   const findLoader = new FindRelationsLoader<DTO, Relation>(relationDTO, relationName);
@@ -44,7 +45,7 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   }
   const commonResolverOpts = removeRelationOpts(relation);
   const relationDTO = relation.DTO;
-  const { pluralBaseNameLower, pluralBaseName } = getDTONames({ dtoName: relation.dtoName }, relationDTO);
+  const { pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
   const relationName = relation.relationName ?? pluralBaseNameLower;
   const loaderName = `load${pluralBaseName}For${DTOClass.name}`;
   const queryLoader = new QueryRelationsLoader<DTO, Relation>(relationDTO, relationName);

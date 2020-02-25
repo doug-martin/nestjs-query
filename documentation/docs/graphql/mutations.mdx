@@ -63,7 +63,7 @@ In this example we create a single `TodoItem`, the input by default will be a `P
 ```graphql
 mutation {
   createOneTodoItem(
-    input: { title: "Create One Todo Item", completed: false }
+    input: { todoItem: { title: "Create One Todo Item", completed: false } }
   ) {
     id
     title
@@ -100,7 +100,7 @@ mutation {
 
 The `CRUDResolver` will by default expose a `createMany` mutation using the name of the DTO to name the mutation.
 
-In this example we create multiple `ToDoItems`, the each record is a `Partial` of the DTO.
+In this example we create multiple `TodoItems`, the each record is a `Partial` of the DTO.
 
 #### Examples
 
@@ -118,10 +118,12 @@ The following example creates two `TodoItems`.
 ```graphql
 mutation {
   createManyTodoItems(
-    input: [
-      { title: "Create Many Todo Items - 1", completed: false }
-      { title: "Create Many Todo Items - 2", completed: true }
-    ]
+    input: {
+      todoItems: [
+        { title: "Create Many Todo Items - 1", completed: false }
+        { title: "Create Many Todo Items - 2", completed: true }
+      ]
+    }
   ) {
     id
     title
@@ -165,10 +167,10 @@ mutation {
 
 ### Update One
 
-The `CRUDResolver` will by default expose an `updateOne` mutation that takes two arguments:
+The `CRUDResolver` will by default expose an `updateOne` mutation that takes two fields:
 
 * `id`: The id of the record to update.
-* `input`: The values to update on the record. This is a partial so you only have to pass in the values you want to
+* `update`: The values to update on the record. This is a partial so you only have to pass in the values you want to
 change.
 
 #### Examples
@@ -186,7 +188,7 @@ The following example updates the record with `id` equal to `1` to `completed=tr
 
 ```graphql
 mutation {
-  updateOneTodoItem(id: 1, input: { completed: true }) {
+  updateOneTodoItem(input: { id: 1, update: { completed: true } }) {
     id
     title
     completed
@@ -220,11 +222,11 @@ mutation {
 
 ### Update Many
 
-The `CRUDResolver` will by default expose an `updateMany` mutation that takes two arguments:
+The `CRUDResolver` will by default expose an `updateMany` mutation that takes two fields:
 
 * `filter`: The filter to use to find the records to update.
     * **NOTE** The filter **CANNOT** be an empty object. This prevents accidental updating of all records.
-* `input`: The values to update on the record. This is a partial so you only have to pass in the values you want to
+* `update`: The values to update on the record. This is a partial so you only have to pass in the values you want to
 change.
 
 The response contains the number of records updated.
@@ -245,8 +247,7 @@ The following example updates records with an `id` equal to 1 or 2 to `completed
 ```graphql
 mutation {
   updateManyTodoItems(
-    filter: { id: { in: ["1", "2"] } }
-    input: { completed: true }
+    input: { filter: { id: { in: [1, 2] } }, update: { completed: true } }
   ) {
     updatedCount
   }
@@ -290,7 +291,8 @@ The following example deletes the record with an id equal to 1.
 
 ```graphql
 mutation {
-  deleteOneTodoItem(id: 1) {
+  deleteOneTodoItem(input: { id: 1 }) {
+    id
     title
     completed
     created
@@ -341,7 +343,9 @@ The following example deletes all records that start with `Create Many Todo Item
 
 ```graphql
 mutation {
-  deleteManyTodoItems(filter: { title: { like: "Create Many Todo Items%" } }) {
+  deleteManyTodoItems(
+    input: { filter: { title: { like: "Create Many Todo Items%" } } }
+  ) {
     deletedCount
   }
 }

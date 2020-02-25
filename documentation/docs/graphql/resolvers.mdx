@@ -56,8 +56,8 @@ The Crud Resolver accepts a number of options to control your endpoints.
 
 * `create` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `CreateDTOClass` - The input DTO to use for create mutations.
-    * `CreateOneArgs` - The `ArgsType` to use for create one mutations.
-    * `CreateManyArgs` - The `ArgsType` to use for create many mutations.
+    * `CreateOneInput` - The `InputType` to use for create one mutations.
+    * `CreateManyInput` - The `InputType` to use for create many mutations.
 
 * `read` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `QueryArgs` - The `ArgsType` to use to filter records in `queryMany` endpoint.
@@ -69,12 +69,12 @@ The Crud Resolver accepts a number of options to control your endpoints.
 
 * `update` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `UpdateDTOClass` - The input DTO to use for update mutations.
-    * `UpdateOneArgs` - The `ArgsType` to use for update one mutations.
-    * `UpdateManyArgs` - The `ArgsType` to use for update many mutations.
+    * `UpdateOneInput` - The `InputType` to use for update one mutations.
+    * `UpdateManyInput` - The `InputType` to use for update many mutations.
 
 * `delete` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
-    * `CreateOneArgs` - The `ArgsType` to use for delete one mutations.
-    * `CreateManyArgs` - The `ArgsType` to use for delete many mutations.
+    * `DeleteOneInput` - The `InputType` to use for delete one mutations.
+    * `DeleteManyInput` - The `InputType` to use for delete many mutations.
 
 * `relations` - See the [relations docs](./relations).
 

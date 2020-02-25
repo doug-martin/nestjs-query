@@ -1,39 +1,51 @@
 import 'reflect-metadata';
-import { Filter } from '@nestjs-query/core';
 import * as typeGraphql from 'type-graphql';
 import { plainToClass } from 'class-transformer';
 import { MinLength, validateSync } from 'class-validator';
-import { UpdateManyArgsType } from '../../src';
+import { ObjectType } from 'type-graphql';
+import { FilterableField } from '../../src/decorators';
+import { UpdateManyInputType, FilterType } from '../../src/types';
 
-describe('UpdateManyArgsType', (): void => {
-  const argsTypeSpy = jest.spyOn(typeGraphql, 'ArgsType');
+describe('UpdateManyInputType', (): void => {
+  const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
   const fieldSpy = jest.spyOn(typeGraphql, 'Field');
 
+  @ObjectType()
   class FakeType {
+    @FilterableField()
     @MinLength(5)
     name!: string;
   }
-  class FakeFilter implements Filter<FakeType> {}
+  const Filter = FilterType(FakeType);
+
+  beforeEach(() => jest.clearAllMocks());
+
   it('should create an args type with an array field', () => {
-    UpdateManyArgsType(FakeFilter, FakeType);
-    expect(argsTypeSpy).toBeCalledWith();
-    expect(argsTypeSpy).toBeCalledTimes(1);
+    UpdateManyInputType(FakeType, FakeType);
+    expect(inputTypeSpy).toBeCalledTimes(1);
+    expect(inputTypeSpy).toBeCalledWith('UpdateManyFakeTypesInput');
     expect(fieldSpy).toBeCalledTimes(2);
-    expect(fieldSpy.mock.calls[0]![0]!()).toEqual(FakeFilter);
-    expect(fieldSpy.mock.calls[1]![0]!()).toEqual(FakeType);
+    expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
+      description: 'Filter used to find fields to update',
+    });
+    expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
+      description: 'The update to apply to all records found using the filter',
+    });
+    expect(fieldSpy.mock.calls[0]![0]!()).toBe(Filter);
+    expect(fieldSpy.mock.calls[1]![0]!()).toBe(FakeType);
   });
 
   it('should return the input when accessing the update field', () => {
-    const Type = UpdateManyArgsType(FakeFilter, FakeType);
-    const input = { input: {} };
+    const Type = UpdateManyInputType(FakeType, FakeType);
+    const input = {};
     const it = plainToClass(Type, input);
-    expect(it.input).toEqual(input.input);
+    expect(it).toEqual(input);
   });
 
   describe('validation', () => {
     it('should validate the filter is not empty', () => {
-      const Type = UpdateManyArgsType(FakeFilter, FakeType);
-      const input = { input: { name: 'hello world' } };
+      const Type = UpdateManyInputType(FakeType, FakeType);
+      const input = { update: { name: 'hello world' } };
       const it = plainToClass(Type, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
@@ -49,8 +61,8 @@ describe('UpdateManyArgsType', (): void => {
     });
 
     it('should validate the update input', () => {
-      const Type = UpdateManyArgsType(FakeFilter, FakeType);
-      const input = { filter: { name: { eq: 'hello world' } }, input: {} };
+      const Type = UpdateManyInputType(FakeType, FakeType);
+      const input = { filter: { name: { eq: 'hello world' } }, update: {} };
       const it = plainToClass(Type, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
@@ -65,9 +77,9 @@ describe('UpdateManyArgsType', (): void => {
               target: {},
             },
           ],
-          property: 'input',
-          target: it,
-          value: it.input,
+          property: 'update',
+          target: input,
+          value: input.update,
         },
       ]);
     });

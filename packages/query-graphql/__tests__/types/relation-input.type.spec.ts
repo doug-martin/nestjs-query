@@ -2,24 +2,24 @@ import 'reflect-metadata';
 import * as typeGraphql from 'type-graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { RelationArgsType } from '../../src';
+import { RelationInputType } from '../../src';
 
-describe('RelationArgsType', (): void => {
-  const argsTypeSpy = jest.spyOn(typeGraphql, 'ArgsType');
+describe('RelationInputType', (): void => {
+  const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
   const fieldSpy = jest.spyOn(typeGraphql, 'Field');
 
   it('should create an args type with an array field', () => {
-    RelationArgsType();
-    expect(argsTypeSpy).toBeCalledWith();
-    expect(argsTypeSpy).toBeCalledTimes(1);
+    RelationInputType();
+    expect(inputTypeSpy).toBeCalledWith();
+    expect(inputTypeSpy).toBeCalledTimes(1);
     expect(fieldSpy).toBeCalledTimes(2);
     expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.ID);
     expect(fieldSpy.mock.calls[1]![0]!()).toEqual(typeGraphql.ID);
   });
 
   it('should return the input when accessing the update field', () => {
-    const input: RelationArgsType = { id: 1, relationId: 2 };
-    const it = plainToClass(RelationArgsType(), input);
+    const input: RelationInputType = { id: 1, relationId: 2 };
+    const it = plainToClass(RelationInputType(), input);
     expect(it.id).toEqual(input.id);
     expect(it.relationId).toEqual(input.relationId);
   });
@@ -27,7 +27,7 @@ describe('RelationArgsType', (): void => {
   describe('validation', () => {
     it('should validate the id is defined', () => {
       const input = { relationId: 1 };
-      const it = plainToClass(RelationArgsType(), input);
+      const it = plainToClass(RelationInputType(), input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -43,7 +43,7 @@ describe('RelationArgsType', (): void => {
 
     it('should validate the id is not empty', () => {
       const input = { id: '', relationId: 1 };
-      const it = plainToClass(RelationArgsType(), input);
+      const it = plainToClass(RelationInputType(), input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -60,7 +60,7 @@ describe('RelationArgsType', (): void => {
 
     it('should validate that relationId is defined', () => {
       const input = { id: 1 };
-      const it = plainToClass(RelationArgsType(), input);
+      const it = plainToClass(RelationInputType(), input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -75,8 +75,8 @@ describe('RelationArgsType', (): void => {
     });
 
     it('should validate that relationId is not empty', () => {
-      const input: RelationArgsType = { id: 1, relationId: '' };
-      const it = plainToClass(RelationArgsType(), input);
+      const input: RelationInputType = { id: 1, relationId: '' };
+      const it = plainToClass(RelationInputType(), input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {

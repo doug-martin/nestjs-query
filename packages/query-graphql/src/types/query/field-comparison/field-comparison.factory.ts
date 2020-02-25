@@ -2,6 +2,7 @@ import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { IsBoolean, IsOptional } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 import { ReturnTypeFunc } from '../../../external/type-graphql.types';
+import { IsUndefined } from '../../validators';
 import { getOrCreateFloatFieldComparison } from './float-field-comparison.type';
 import { getOrCreateIntFieldComparison } from './int-field-comparison.type';
 import { getOrCreateStringFieldComparison } from './string-field-comparison.type';
@@ -52,39 +53,51 @@ export function createFilterComparisonType<T>(
     isNot?: boolean | null;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     eq?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     neq?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     gt?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     gte?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     lt?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     lte?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     like?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     notLike?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     iLike?: T;
 
     @Field(() => fieldType, { nullable: true })
+    @IsUndefined()
     notILike?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @Field(() => [fieldType], { nullable: true })
+    @IsUndefined()
     in?: T[];
 
-    @Field(() => fieldType, { nullable: true })
+    @Field(() => [fieldType], { nullable: true })
+    @IsUndefined()
     notIn?: T[];
   }
 

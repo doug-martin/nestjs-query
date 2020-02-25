@@ -7,7 +7,7 @@ import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { RemoveRelationsResolver } from '../../../src/resolvers/relations';
 import * as decorators from '../../../src/decorators';
 import { AdvancedOptions, ReturnTypeFuncValue } from '../../../src/external/type-graphql.types';
-import { RelationArgsType, RelationsArgsType } from '../../../src/types';
+import { RelationInputType, RelationsInputType } from '../../../src/types';
 
 @ObjectType('RemoveRelation')
 class RemoveRelationDTO {
@@ -107,7 +107,7 @@ describe('RemoveRelationsResolver', () => {
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const mockService = mock<QueryService<RemoveRelationDTO>>();
-      const args: RelationArgsType = {
+      const input: RelationInputType = {
         id: 'record-id',
         relationId: 'relation-id',
       };
@@ -117,15 +117,15 @@ describe('RemoveRelationsResolver', () => {
       };
       const R = RemoveRelationsResolver(RemoveRelationDTO, { one: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.removeRelation('relation', args.id, args.relationId)).thenResolve(output);
+      when(mockService.removeRelation('relation', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.removeRelationFromRemoveRelation(args);
+      const result = await resolver.removeRelationFromRemoveRelation({ input });
       return expect(result).toEqual(output);
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const mockService = mock<QueryService<RemoveRelationDTO>>();
-      const args: RelationArgsType = {
+      const input: RelationInputType = {
         id: 'record-id',
         relationId: 'relation-id',
       };
@@ -137,9 +137,9 @@ describe('RemoveRelationsResolver', () => {
         one: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.removeRelation('other', args.id, args.relationId)).thenResolve(output);
+      when(mockService.removeRelation('other', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.removeRelationFromRemoveRelation(args);
+      const result = await resolver.removeRelationFromRemoveRelation({ input });
       return expect(result).toEqual(output);
     });
   });
@@ -192,7 +192,7 @@ describe('RemoveRelationsResolver', () => {
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const mockService = mock<QueryService<RemoveRelationDTO>>();
-      const args: RelationsArgsType = {
+      const input: RelationsInputType = {
         id: 'id-1',
         relationIds: ['relation-id-1', 'relation-id-2'],
       };
@@ -202,15 +202,15 @@ describe('RemoveRelationsResolver', () => {
       };
       const R = RemoveRelationsResolver(RemoveRelationDTO, { many: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.removeRelations('relations', args.id, deepEqual(args.relationIds))).thenResolve(output);
+      when(mockService.removeRelations('relations', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.removeRelationsFromRemoveRelation(args);
+      const result = await resolver.removeRelationsFromRemoveRelation({ input });
       return expect(result).toEqual(output);
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const mockService = mock<QueryService<RemoveRelationDTO>>();
-      const args: RelationsArgsType = {
+      const input: RelationsInputType = {
         id: 'id-1',
         relationIds: ['relation-id-1', 'relation-id-2'],
       };
@@ -222,9 +222,9 @@ describe('RemoveRelationsResolver', () => {
         many: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.removeRelations('other', args.id, deepEqual(args.relationIds))).thenResolve(output);
+      when(mockService.removeRelations('other', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.removeRelationsFromRemoveRelation(args);
+      const result = await resolver.removeRelationsFromRemoveRelation({ input });
       return expect(result).toEqual(output);
     });
   });

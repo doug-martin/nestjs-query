@@ -1,7 +1,7 @@
 import { Class, QueryService } from '@nestjs-query/core';
 import { Resolver } from '@nestjs/graphql';
+import { DTONamesOpts } from '../common';
 import { ResolverMethodOpts } from '../decorators';
-import { DTONamesOpts } from './helpers';
 
 export interface ResolverRelation<Relation> extends DTONamesOpts, ResolverMethodOpts {
   /**

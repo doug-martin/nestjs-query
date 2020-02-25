@@ -1,13 +1,12 @@
 import 'reflect-metadata';
 import * as typeGraphql from 'type-graphql';
-import { getMetadataStorage } from '../../../src/metadata';
 import { EdgeType } from '../../../src/types/connection';
 
 describe('EdgeType', (): void => {
   const objectTypeSpy = jest.spyOn(typeGraphql, 'ObjectType');
   const fieldSpy = jest.spyOn(typeGraphql, 'Field');
 
-  afterEach(() => getMetadataStorage().clear());
+  afterEach(() => jest.clearAllMocks());
 
   @typeGraphql.ObjectType('Fake')
   class FakeType {}

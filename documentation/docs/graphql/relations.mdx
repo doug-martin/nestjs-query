@@ -239,10 +239,12 @@ The following mutations will also be automatically exposed.
 
 ```graphql
 type Mutation {
-  setTodoItemOnSubTask(
-    id: ID!
-    relationId: ID!
-  ): SubTask!
+  setTodoItemOnSubTask(input: RelationInput!): SubTask!
+}
+
+input RelationInput {
+  id: ID!
+  relationId: ID!
 }
 ```
 
@@ -313,10 +315,12 @@ The following mutations will also be automatically exposed.
 
 ```graphql
 type Mutation {
-  addSubTasksToTodoItem(
-    id: ID!
-    relationIds: [ID!]!
-  ): TodoItem!
+   addSubTasksToTodoItem(input: RelationsInput!): TodoItem!
+}
+
+input RelationsInput {
+  id: ID!
+  relationIds: [ID!]!
 }
 ```
 

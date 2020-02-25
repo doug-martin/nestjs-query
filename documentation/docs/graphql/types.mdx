@@ -57,141 +57,6 @@ export class TodoItemQuery extends QueryArgsType(TodoItemDTO) {}
 ```
 ---
 
-### CreateOneArgsType
-
-Args type for `createOne` mutations.
-
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
-
-**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
-specify the `created` or `updated` fields so you would create a new DTO just for input.
-
-#### Usage
-
-```ts
-import { CreateOneArgsType } from '@nestjs-query/query-graphql';
-import { ArgsType } from 'type-graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-
-@ArgsType()
-export class CreateOneTodoItemArgs extends CreateOneArgsType(TodoItemDTO) {}
-```
----
-
-### CreateManyArgsType
-
-Args type for `createMany` mutations.
-
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
-
-**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
-specify the `created` or `updated` fields so you would create a new DTO just for input.
-
-#### Usage
-
-```ts
-import { CreateManyArgsType } from '@nestjs-query/query-graphql';
-import { ArgsType } from 'type-graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-
-@ArgsType()
-export class CreateManyTodoItemsArgs extends CreateManyArgsType(TodoItemDTO) {}
-```
-
-### UpdateOneArgsType
-
-Args type for `updateOne` mutations.
-
-The `UpdateOneArgsType` will generate an `ArgsType` that will require the user to provide two arguments.
-* `id` - The id of the recrord to update
-* `input` - A record with fields to update.
-
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
-
-**NOTE** Your DTO should be one that you want to use for updates. For example you may not want to let the end user to
-update the `created` or `updated` fields so you would create a new DTO just for updates.
-
-#### Usage
-
-```ts
-import { UpdateOneArgsType } from '@nestjs-query/query-graphql';
-import { ArgsType } from 'type-graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-
-@ArgsType()
-export class UpdateOneTodoItem extends UpdateOneArgsType(TodoItemDTO) {}
-```
----
-
-### UpdateManyArgsType
-
-Args type for `updateMany` mutations.
-
-The `UpdateOneArgsType` will generate an `ArgsType` that will require the user to provide two arguments.
-* `filter` - The filter that should be used to find records to update. See [FilterType](#filtertype)
-* `input` - The update to apply to each record found.
-
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
-
-**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
-specify the `created` or `updated` fields so you would create a new DTO just for input.
-
-#### Usage
-
-In this example we use the read DTO for the FilterType, and a different update DTO.
-
-```ts
-import { CreateOneArgsType, FilterType } from '@nestjs-query/query-graphql';
-import { ArgsType } from 'type-graphql';
-import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
-
-@ArgsType()
-export class CreateOneTodoItemArgs extends UpdateManyArgsType(
-  FilterType(TodoItemDTO), // filter
-  TodoItemUpdateDTO // update DTO
-) {}
-```
----
-
-### DeleteOneArgsType
-
-Args type for `deleteOne` mutations.
-
-The `DeleteOneArgsType` will generate an `ArgsType` that will require the user to provide two arguments.
-* `input` - The id of the record to delete.
-
-#### Usage
-
-```ts
-import { DeleteOneArgsType } from '@nestjs-query/query-graphql';
-import { ArgsType } from 'type-graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-
-@ArgsType()
-export class DeleteOneArgs extends DeleteOneArgsType() {}
-```
----
-
-### DeleteManyArgsType
-
-Args type type for `deleteMany` mutations.
-
-The `DeleteManyArgsType` will generate an `ArgsType` that will require the user to provide:
-* `input` - A filter used to find records to delete. See [FilterType](#filtertype)
-
-#### Usage
-
-```ts
-import { CreateOneArgsType, FilterType } from '@nestjs-query/query-graphql';
-import { ArgsType } from 'type-graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-
-@ArgsType()
-export class CreateOneTodoItemArgs extends DeleteManyArgsType(FilterType(TodoItemDTO)) {}
-```
----
-
 ## ObjectTypes
 
 ### ConnectionType
@@ -614,3 +479,184 @@ type TodoItemPartialInput {
 </Tabs>
 
 ---
+
+### CreateOneInputType
+
+Input type for `createOne` mutations.
+
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+
+**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
+specify the `created` or `updated` fields so you would create a new DTO just for input.
+
+#### Usage
+
+```ts
+import { CreateOneInputType } from '@nestjs-query/query-graphql';
+import { InputType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@InputType('TodoItemInput')
+export class TodoItemInputDTO {
+  @IsString()
+  @Field({nullable: true})
+  title?: string;
+
+  @IsBoolean()
+  @Field({nullable: true})
+  completed?: string;
+}
+
+@InputType()
+export class CreateOneTodoItemInput extends CreateOneInputType(TodoItemDTO, TodoItemInputDTO) {}
+```
+---
+
+### CreateManyInputType
+
+Input type for `createMany` mutations.
+
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+
+**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
+specify the `created` or `updated` fields so you would create a new DTO just for input.
+
+#### Usage
+
+```ts
+import { CreateManyInputType } from '@nestjs-query/query-graphql';
+import { InputType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@InputType('TodoItemInput')
+export class TodoItemInputDTO {
+  @IsString()
+  @Field({nullable: true})
+  title?: string;
+
+  @IsBoolean()
+  @Field({nullable: true})
+  completed?: string;
+}
+
+@InputType()
+export class CreateManyTodoItemsInput extends CreateManyInputType(TodoItemDTO, TodoItemInputDTO) {}
+```
+
+### UpdateOneInputType
+
+InputType type for `updateOne` mutations.
+
+The `UpdateOneInputType` will generate an `InputType` that will require the user to provide two fields.
+* `id` - The id of the recrord to update
+* `update` - A record with fields to update.
+
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+
+**NOTE** Your DTO should be one that you want to use for updates. For example you may not want to let the end user to
+update the `created` or `updated` fields so you would create a new DTO just for updates.
+
+#### Usage
+
+```ts
+import { UpdateOneInputType } from '@nestjs-query/query-graphql';
+import { InputType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@InputType('TodoItemUpdate')
+export class TodoItemUpdateDTO {
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  title?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true })
+  completed?: boolean;
+}
+
+@InputType()
+export class UpdateOneTodoItemInput extends UpdateOneInputType(TodoItemDTO, TodoItemUpdateDTO) {}
+```
+---
+
+### UpdateManyInputType
+
+Input type for `updateMany` mutations.
+
+The `UpdateOneInputType` will generate an `InputType` that will require the user to provide two arguments.
+* `filter` - The filter that should be used to find records to update. See [FilterType](#filtertype)
+* `update` - The update to apply to each record found.
+
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+
+**NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
+specify the `created` or `updated` fields so you would create a new DTO just for input.
+
+#### Usage
+
+In this example we use the read DTO for the FilterType, and a different update DTO.
+
+```ts
+import { CreateOneInputType, FilterType } from '@nestjs-query/query-graphql';
+import { InputType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@InputType('TodoItemUpdate')
+export class TodoItemUpdateDTO {
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  title?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true })
+  completed?: boolean;
+}
+
+@InputType()
+export class UpdateManyTodoItemsInput extends UpdateManyInputType(
+  TodoItemDTO, // filter
+  TodoItemUpdateDTO // update DTO
+) {}
+```
+---
+
+### DeleteOneInputType
+
+InputType type for `deleteOne` mutations.
+
+The `DeleteOneInputType` will generate an `InputType` that will require the user to provide the id of the record to delete.
+
+#### Usage
+
+```ts
+import { DeleteOneInputType } from '@nestjs-query/query-graphql';
+import { InputType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@InputType()
+export class DeleteOneInput extends DeleteOneInputType() {}
+```
+---
+
+### DeleteManyInputType
+
+Input type type for `deleteMany` mutations.
+
+The `DeleteManyInputType` will generate an `InputType` that will require the user to provide:
+* `filter` - A filter used to find records to delete. See [FilterType](#filtertype)
+
+#### Usage
+
+```ts
+import { CreateOneInputType, FilterType } from '@nestjs-query/query-graphql';
+import { InputType } from 'type-graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@InputType()
+export class DeleteManyTodoItemsInput extends DeleteManyInputType(TodoItemDTO) {}
+```
+

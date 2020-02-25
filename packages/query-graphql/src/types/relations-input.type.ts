@@ -1,20 +1,20 @@
 import { Class } from '@nestjs-query/core';
-import { Field, ArgsType, ID } from 'type-graphql';
+import { Field, ID, InputType } from 'type-graphql';
 import { IsNotEmpty, ArrayNotEmpty, ArrayUnique } from 'class-validator';
 
-export interface RelationsArgsType {
+export interface RelationsInputType {
   id: string | number;
   relationIds: (string | number)[];
 }
 
 /** @internal */
-let relationsArgsType: Class<RelationsArgsType> | null = null;
-export function RelationsArgsType(): Class<RelationsArgsType> {
-  if (relationsArgsType) {
-    return relationsArgsType;
+let relationsInputType: Class<RelationsInputType> | null = null;
+export function RelationsInputType(): Class<RelationsInputType> {
+  if (relationsInputType) {
+    return relationsInputType;
   }
-  @ArgsType()
-  class RelationsArgs implements RelationsArgsType {
+  @InputType()
+  class RelationsInput implements RelationsInputType {
     @Field(() => ID, { description: 'The id of the record.' })
     @IsNotEmpty()
     id!: string | number;
@@ -25,6 +25,6 @@ export function RelationsArgsType(): Class<RelationsArgsType> {
     @IsNotEmpty({ each: true })
     relationIds!: (string | number)[];
   }
-  relationsArgsType = RelationsArgs;
-  return relationsArgsType;
+  relationsInputType = RelationsInput;
+  return relationsInputType;
 }

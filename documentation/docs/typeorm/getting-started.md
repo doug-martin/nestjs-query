@@ -8,11 +8,7 @@ This package is built using [typeorm](https://typeorm.io/#/) and [@nestjs/typeor
 
 ## Installation
 
-```sh
-npm i @nestjs-query/query-typeorm @nestjs/typeorm @nestjs/common class-transformer typeorm
-```
-
-**NOTE** `@nestjs-query/query-typeorm` have opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
+[Installation Docs](../introduction/install#nestjs-queryquery-typeorm)
 
 ## Docs
 
