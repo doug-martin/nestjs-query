@@ -2,20 +2,27 @@ import { Class, DeepPartial, UpdateManyResponse } from '@nestjs-query/core';
 import { ArgsType, InputType } from 'type-graphql';
 import { Resolver, Args } from '@nestjs/graphql';
 import omit from 'lodash.omit';
-import { FilterType, PartialInputType, UpdateManyArgsType, UpdateManyResponseType, UpdateOneArgsType } from '../types';
+import { getDTONames } from '../common';
+import {
+  MutationArgsType,
+  PartialInputType,
+  UpdateManyInputType,
+  UpdateManyResponseType,
+  UpdateOneInputType,
+} from '../types';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { ResolverMutation } from '../decorators';
-import { getDTONames, transformAndValidate } from './helpers';
+import { transformAndValidate } from './helpers';
 
 export interface UpdateResolverOpts<DTO, U extends DeepPartial<DTO> = DeepPartial<DTO>> extends ResolverOpts {
   UpdateDTOClass?: Class<U>;
-  UpdateOneArgs?: Class<UpdateOneArgsType<DTO, U>>;
-  UpdateManyArgs?: Class<UpdateManyArgsType<DTO, U>>;
+  UpdateOneInput?: Class<UpdateOneInputType<DTO, U>>;
+  UpdateManyInput?: Class<UpdateManyInputType<DTO, U>>;
 }
 
 export interface UpdateResolver<DTO, U extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
-  updateOne(input: UpdateOneArgsType<DTO, U>): Promise<DTO>;
-  updateMany(input: UpdateManyArgsType<DTO, U>): Promise<UpdateManyResponse>;
+  updateOne(input: MutationArgsType<UpdateOneInputType<DTO, U>>): Promise<DTO>;
+  updateMany(input: MutationArgsType<UpdateManyInputType<DTO, U>>): Promise<UpdateManyResponse>;
 }
 
 /** @internal */
@@ -37,35 +44,45 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
 >(
   BaseClass: B,
 ): Class<UpdateResolver<DTO, U>> & B => {
-  const { baseName, pluralBaseName } = getDTONames(opts, DTOClass);
+  const { baseName, pluralBaseName } = getDTONames(DTOClass, opts);
   const UMR = UpdateManyResponseType();
 
   const {
     UpdateDTOClass = defaultUpdateInput(DTOClass, baseName),
-    UpdateOneArgs = UpdateOneArgsType(UpdateDTOClass),
-    UpdateManyArgs = UpdateManyArgsType(FilterType(DTOClass), UpdateDTOClass),
+    UpdateOneInput = UpdateOneInputType(DTOClass, UpdateDTOClass),
+    UpdateManyInput = UpdateManyInputType(DTOClass, UpdateDTOClass),
   } = opts;
 
-  const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'UpdateDTOClass', 'UpdateOneArgs', 'UpdateManyArgs');
+  const commonResolverOpts = omit(
+    opts,
+    'dtoName',
+    'one',
+    'many',
+    'UpdateDTOClass',
+    'UpdateOneInput',
+    'UpdateManyInput',
+  );
 
   @ArgsType()
-  class UO extends UpdateOneArgs {}
+  class UO extends MutationArgsType(UpdateOneInput) {}
 
   @ArgsType()
-  class UM extends UpdateManyArgs {}
+  class UM extends MutationArgsType(UpdateManyInput) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ResolverBase extends BaseClass {
     @ResolverMutation(() => DTOClass, { name: `updateOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async updateOne(@Args() input: UO): Promise<DTO> {
       const updateOne = await transformAndValidate(UO, input);
-      return this.service.updateOne(updateOne.id, updateOne.input);
+      const { id, update } = updateOne.input;
+      return this.service.updateOne(id, update);
     }
 
     @ResolverMutation(() => UMR, { name: `updateMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
     async updateMany(@Args() input: UM): Promise<UpdateManyResponse> {
       const updateMany = await transformAndValidate(UM, input);
-      return this.service.updateMany(updateMany.input, updateMany.filter);
+      const { update, filter } = updateMany.input;
+      return this.service.updateMany(update, filter);
     }
   }
 

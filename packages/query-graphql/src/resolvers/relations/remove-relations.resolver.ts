@@ -1,9 +1,10 @@
 import { Class } from '@nestjs-query/core';
 import { ArgsType } from 'type-graphql';
 import { Resolver, Args } from '@nestjs/graphql';
+import { getDTONames } from '../../common';
 import { ResolverMutation } from '../../decorators';
-import { RelationsArgsType, RelationArgsType } from '../../types';
-import { getDTONames } from '../helpers';
+import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
+import { transformAndValidate } from '../helpers';
 import { ResolverRelation, RelationsOpts, ServiceResolver, BaseServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 
@@ -17,16 +18,17 @@ const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
   }
   const commonResolverOpts = removeRelationOpts(relation);
   const relationDTO = relation.DTO;
-  const dtoNames = getDTONames({}, DTOClass);
-  const { baseNameLower, baseName } = getDTONames({ dtoName: relation.dtoName }, relationDTO);
+  const dtoNames = getDTONames(DTOClass);
+  const { baseNameLower, baseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
   const relationName = relation.relationName ?? baseNameLower;
   @ArgsType()
-  class SetArgs extends RelationArgsType() {}
+  class SetArgs extends MutationArgsType(RelationInputType()) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class Mixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
-    [`remove${baseName}From${dtoNames.baseName}`](@Args() input: SetArgs): Promise<DTO> {
+    async [`remove${baseName}From${dtoNames.baseName}`](@Args() setArgs: SetArgs): Promise<DTO> {
+      const { input } = await transformAndValidate(SetArgs, setArgs);
       return this.service.removeRelation(relationName, input.id, input.relationId);
     }
   }
@@ -43,16 +45,17 @@ const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation:
   }
   const commonResolverOpts = removeRelationOpts(relation);
   const relationDTO = relation.DTO;
-  const dtoNames = getDTONames({}, DTOClass);
-  const { pluralBaseNameLower, pluralBaseName } = getDTONames({ dtoName: relation.dtoName }, relationDTO);
+  const dtoNames = getDTONames(DTOClass);
+  const { pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
   const relationName = relation.relationName ?? pluralBaseNameLower;
   @ArgsType()
-  class AddArgs extends RelationsArgsType() {}
+  class AddArgs extends MutationArgsType(RelationsInputType()) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class Mixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
-    [`remove${pluralBaseName}From${dtoNames.baseName}`](@Args() input: AddArgs): Promise<DTO> {
+    async [`remove${pluralBaseName}From${dtoNames.baseName}`](@Args() addArgs: AddArgs): Promise<DTO> {
+      const { input } = await transformAndValidate(AddArgs, addArgs);
       return this.service.removeRelations(relationName, input.id, input.relationIds);
     }
   }

@@ -6,7 +6,13 @@ import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { QueryService, UpdateManyResponse } from '@nestjs-query/core';
 import * as decorators from '../../src/decorators';
 import { AdvancedOptions, ReturnTypeFuncValue } from '../../src/external/type-graphql.types';
-import { FilterType, UpdateManyArgsType, UpdateManyResponseType, UpdateOneArgsType, UpdateResolver } from '../../src';
+import {
+  MutationArgsType,
+  UpdateManyInputType,
+  UpdateManyResponseType,
+  UpdateOneInputType,
+  UpdateResolver,
+} from '../../src';
 import * as types from '../../src/types';
 
 @ObjectType('UpdateResolverDTO')
@@ -27,8 +33,8 @@ class FakeCanActivate implements CanActivate {
 
 describe('UpdateResolver', () => {
   const resolverMutationSpy = jest.spyOn(decorators, 'ResolverMutation');
-  const updateOneArgsTypeSpy = jest.spyOn(types, 'UpdateOneArgsType');
-  const updateManyArgsTypeSpy = jest.spyOn(types, 'UpdateManyArgsType');
+  const updateOneInputTypeSpy = jest.spyOn(types, 'UpdateOneInputType');
+  const updateManyInputTypeSpy = jest.spyOn(types, 'UpdateManyInputType');
   const argsSpy = jest.spyOn(nestGraphql, 'Args');
 
   beforeEach(() => jest.clearAllMocks());
@@ -54,8 +60,8 @@ describe('UpdateResolver', () => {
   it('should create an UpdateResolver with the default DTO', () => {
     UpdateResolver(TestResolverDTO);
 
-    expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
-    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
+    expect(updateOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+    expect(updateManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
     assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
@@ -65,12 +71,12 @@ describe('UpdateResolver', () => {
   });
 
   it('should use the dtoName if provided', () => {
-    const UpdateOneArgs = UpdateOneArgsType(TestResolverDTO);
+    const UpdateOneInput = UpdateOneInputType(TestResolverDTO, TestResolverDTO);
     jest.clearAllMocks(); // reset
-    UpdateResolver(TestResolverDTO, { dtoName: 'Test', UpdateOneArgs });
+    UpdateResolver(TestResolverDTO, { dtoName: 'Test', UpdateOneInput });
 
-    expect(updateOneArgsTypeSpy).not.toBeCalled();
-    expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
+    expect(updateOneInputTypeSpy).not.toBeCalled();
+    expect(updateManyInputTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
     assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneTest' }, {}, {});
@@ -81,12 +87,12 @@ describe('UpdateResolver', () => {
 
   describe('#updateOne', () => {
     it('should not update a new type if the UpdateOneArgs is supplied', () => {
-      const UpdateOneArgs = UpdateOneArgsType(TestResolverDTO);
+      const UpdateOneInput = UpdateOneInputType(TestResolverDTO, TestResolverDTO);
       jest.clearAllMocks(); // reset
-      UpdateResolver(TestResolverDTO, { UpdateOneArgs });
+      UpdateResolver(TestResolverDTO, { UpdateOneInput });
 
-      expect(updateOneArgsTypeSpy).not.toBeCalled();
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
+      expect(updateOneInputTypeSpy).not.toBeCalled();
+      expect(updateManyInputTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
@@ -104,8 +110,8 @@ describe('UpdateResolver', () => {
         pipes: [],
       };
       UpdateResolver(TestResolverDTO, { one: updateOneOpts });
-      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
+      expect(updateOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(updateManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, updateOneOpts);
@@ -116,9 +122,9 @@ describe('UpdateResolver', () => {
 
     it('should call the service updateOne with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
-      const input: UpdateOneArgsType<TestResolverDTO, Partial<TestResolverDTO>> = {
+      const input: UpdateOneInputType<TestResolverDTO, Partial<TestResolverDTO>> = {
         id: 'id-1',
-        input: {
+        update: {
           stringField: 'foo',
         },
       };
@@ -127,20 +133,20 @@ describe('UpdateResolver', () => {
         stringField: 'foo',
       };
       const resolver = new TestResolver(instance(mockService));
-      when(mockService.updateOne(input.id, objectContaining(input.input))).thenResolve(output);
-      const result = await resolver.updateOne(input);
+      when(mockService.updateOne(input.id, objectContaining(input.update))).thenResolve(output);
+      const result = await resolver.updateOne({ input });
       return expect(result).toEqual(output);
     });
   });
 
   describe('#updateMany', () => {
     it('should not update a new type if the UpdateManyArgs is supplied', () => {
-      const UpdateManyArgs = UpdateManyArgsType(FilterType(TestResolverDTO), TestResolverDTO);
+      const UpdateManyInput = UpdateManyInputType(TestResolverDTO, TestResolverDTO);
       jest.clearAllMocks(); // reset
-      UpdateResolver(TestResolverDTO, { UpdateManyArgs });
+      UpdateResolver(TestResolverDTO, { UpdateManyInput });
 
-      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
-      expect(updateManyArgsTypeSpy).not.toBeCalled();
+      expect(updateOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(updateManyInputTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
@@ -158,8 +164,8 @@ describe('UpdateResolver', () => {
         pipes: [],
       };
       UpdateResolver(TestResolverDTO, { many: updateManyOpts });
-      expect(updateOneArgsTypeSpy).toBeCalledWith(expect.any(Function));
-      expect(updateManyArgsTypeSpy).toBeCalledWith(expect.any(Function), expect.any(Function));
+      expect(updateOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(updateManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, TestResolverDTO, { name: 'updateOneUpdateResolverDTO' }, {}, {});
@@ -176,15 +182,19 @@ describe('UpdateResolver', () => {
 
     it('should call the service updateMany with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
-      const input: UpdateManyArgsType<TestResolverDTO, Partial<TestResolverDTO>> = {
-        filter: { id: { eq: 'id-1' } },
+      const input: MutationArgsType<UpdateManyInputType<TestResolverDTO, Partial<TestResolverDTO>>> = {
         input: {
-          stringField: 'foo',
+          filter: { id: { eq: 'id-1' } },
+          update: {
+            stringField: 'foo',
+          },
         },
       };
       const output: UpdateManyResponse = { updatedCount: 1 };
       const resolver = new TestResolver(instance(mockService));
-      when(mockService.updateMany(objectContaining(input.input), objectContaining(input.filter))).thenResolve(output);
+      when(
+        mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter)),
+      ).thenResolve(output);
       const result = await resolver.updateMany(input);
       return expect(result).toEqual(output);
     });

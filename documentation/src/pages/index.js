@@ -52,10 +52,10 @@ function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
   return (
-    <Layout title={`${siteConfig.title}`} description="Description will go into a meta tag in <head />">
+    <Layout title={`${siteConfig.title}`} description={`${siteConfig.tagline}`}>
       <header className={classnames('hero', styles.heroBanner)}>
         <div className="container">
-          <img alt="Docusaurus with Keytar" className={styles.heroLogo} src={useBaseUrl('img/logo.svg')} />
+          <img alt="Nestjs-query" className={styles.heroLogo} src={useBaseUrl('img/logo.svg')} />
           <h1 className="hero__title">{siteConfig.title}</h1>
           <p className="hero__subtitle">{siteConfig.tagline}</p>
           <div className={styles.buttons}>

@@ -1,39 +1,7 @@
-import { plural } from 'pluralize';
-import { upperCaseFirst } from 'upper-case-first';
-import { lowerCaseFirst } from 'lower-case-first';
 import { Class } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { ArgumentValidationError } from 'type-graphql';
-import { getMetadataStorage } from '../metadata';
-
-export interface DTONamesOpts {
-  dtoName?: string;
-}
-
-/** @internal */
-export interface DTONames {
-  baseName: string;
-  baseNameLower: string;
-  pluralBaseName: string;
-  pluralBaseNameLower: string;
-}
-
-/** @internal */
-export const getDTONames = <DTO>(opts: DTONamesOpts, DTOClass: Class<DTO>): DTONames => {
-  const baseName = upperCaseFirst(
-    opts.dtoName ?? getMetadataStorage().getTypeGraphqlObjectMetadata(DTOClass)?.name ?? DTOClass.name,
-  );
-  const pluralBaseName = plural(baseName);
-  const baseNameLower = lowerCaseFirst(baseName);
-  const pluralBaseNameLower = plural(baseNameLower);
-  return {
-    baseName,
-    baseNameLower,
-    pluralBaseName,
-    pluralBaseNameLower,
-  };
-};
 
 /** @internal */
 export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Promise<T> => {

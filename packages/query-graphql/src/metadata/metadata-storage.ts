@@ -2,8 +2,15 @@ import { FieldMetadata } from 'type-graphql/dist/metadata/definitions';
 import { ObjectClassMetadata } from 'type-graphql/dist/metadata/definitions/object-class-metdata';
 import { getMetadataStorage } from 'type-graphql/dist/metadata/getMetadataStorage';
 import { MetadataStorage } from 'type-graphql/dist/metadata/metadata-storage';
-import { Class, Filter, SortField } from '@nestjs-query/core';
+import { Class, DeepPartial, Filter, SortField } from '@nestjs-query/core';
 import { AdvancedOptions, ReturnTypeFunc } from '../external/type-graphql.types';
+import {
+  CreateOneInputType,
+  CreateManyInputType,
+  UpdateOneInputType,
+  UpdateManyInputType,
+  DeleteManyInputType,
+} from '../types';
 import { EdgeType, StaticConnectionType } from '../types/connection';
 
 /**
@@ -35,12 +42,39 @@ export class GraphQLQueryMetadataStorage {
 
   private readonly edgeTypeStorage: Map<Class<unknown>, Class<EdgeType<unknown>>>;
 
+  private readonly updateManyInputTypeStorage: Map<
+    Class<unknown>,
+    Class<UpdateManyInputType<unknown, DeepPartial<unknown>>>
+  >;
+
+  private readonly updateOneInputTypeStorage: Map<
+    Class<unknown>,
+    Class<UpdateOneInputType<unknown, DeepPartial<unknown>>>
+  >;
+
+  private readonly deleteManyInputTypeStorage: Map<Class<unknown>, Class<DeleteManyInputType<unknown>>>;
+
+  private readonly createOneInputTypeStorage: Map<
+    Class<unknown>,
+    Class<CreateOneInputType<unknown, DeepPartial<unknown>>>
+  >;
+
+  private readonly createManyInputTypeStorage: Map<
+    Class<unknown>,
+    Class<CreateManyInputType<unknown, DeepPartial<unknown>>>
+  >;
+
   constructor() {
     this.filterableObjectStorage = new Map();
     this.filterTypeStorage = new Map();
     this.sortTypeStorage = new Map();
     this.connectionTypeStorage = new Map();
     this.edgeTypeStorage = new Map();
+    this.updateManyInputTypeStorage = new Map();
+    this.updateOneInputTypeStorage = new Map();
+    this.deleteManyInputTypeStorage = new Map();
+    this.createOneInputTypeStorage = new Map();
+    this.createManyInputTypeStorage = new Map();
   }
 
   addFilterableObjectField<T>(type: Class<T>, field: FilterableFieldDescriptor<unknown>): void {
@@ -61,7 +95,7 @@ export class GraphQLQueryMetadataStorage {
   }
 
   getFilterType<T>(type: Class<T>): Class<Filter<T>> | undefined {
-    return this.filterTypeStorage.get(type);
+    return this.getValue(this.filterTypeStorage, type);
   }
 
   addSortType<T>(type: Class<T>, sortType: Class<SortField<T>>): void {
@@ -69,7 +103,7 @@ export class GraphQLQueryMetadataStorage {
   }
 
   getSortType<T>(type: Class<T>): Class<SortField<T>> | undefined {
-    return this.sortTypeStorage.get(type);
+    return this.getValue(this.sortTypeStorage, type);
   }
 
   addConnectionType<T>(type: Class<T>, connectionType: StaticConnectionType<T>): void {
@@ -77,11 +111,7 @@ export class GraphQLQueryMetadataStorage {
   }
 
   getConnectionType<T>(type: Class<T>): StaticConnectionType<T> | undefined {
-    const connectionType = this.connectionTypeStorage.get(type);
-    if (connectionType) {
-      return (connectionType as unknown) as StaticConnectionType<T>;
-    }
-    return undefined;
+    return this.getValue(this.connectionTypeStorage, type);
   }
 
   addEdgeType<T>(type: Class<T>, edgeType: Class<EdgeType<T>>): void {
@@ -89,11 +119,67 @@ export class GraphQLQueryMetadataStorage {
   }
 
   getEdgeType<T>(type: Class<T>): Class<EdgeType<T>> | undefined {
-    const edgeType = this.edgeTypeStorage.get(type);
-    if (edgeType) {
-      return (edgeType as unknown) as Class<EdgeType<T>>;
-    }
-    return undefined;
+    return this.getValue(this.edgeTypeStorage, type);
+  }
+
+  addCreateOneInputType<DTO, C extends DeepPartial<DTO>>(
+    type: Class<DTO>,
+    createOneInputType: Class<CreateOneInputType<DTO, C>>,
+  ): void {
+    this.createOneInputTypeStorage.set(type, createOneInputType);
+  }
+
+  getCreateOneInputType<DTO, C extends DeepPartial<DTO>>(
+    type: Class<DTO>,
+  ): Class<CreateOneInputType<DTO, C>> | undefined {
+    return this.getValue(this.createOneInputTypeStorage, type);
+  }
+
+  addCreateManyInputType<DTO, C extends DeepPartial<DTO>>(
+    type: Class<DTO>,
+    createManyInputType: Class<CreateManyInputType<DTO, C>>,
+  ): void {
+    this.createManyInputTypeStorage.set(type, createManyInputType);
+  }
+
+  getCreateManyInputType<DTO, C extends DeepPartial<DTO>>(
+    type: Class<DTO>,
+  ): Class<CreateManyInputType<DTO, C>> | undefined {
+    return this.getValue(this.createManyInputTypeStorage, type);
+  }
+
+  addUpdateManyInputType<DTO, U extends DeepPartial<DTO>>(
+    type: Class<DTO>,
+    updateManyInputType: Class<UpdateManyInputType<DTO, U>>,
+  ): void {
+    this.updateManyInputTypeStorage.set(type, updateManyInputType);
+  }
+
+  getUpdateManyInputType<DTO, U extends DeepPartial<DTO>>(
+    type: Class<DTO>,
+  ): Class<UpdateManyInputType<DTO, U>> | undefined {
+    return this.getValue(this.updateManyInputTypeStorage, type);
+  }
+
+  addUpdateOneInputType<DTO, U extends DeepPartial<DTO>>(
+    type: Class<DTO>,
+    updateOneInputType: Class<UpdateOneInputType<DTO, U>>,
+  ): void {
+    this.updateOneInputTypeStorage.set(type, updateOneInputType);
+  }
+
+  getUpdateOneInputType<DTO, U extends DeepPartial<DTO>>(
+    type: Class<DTO>,
+  ): Class<UpdateOneInputType<DTO, U>> | undefined {
+    return this.getValue(this.updateOneInputTypeStorage, type);
+  }
+
+  addDeleteManyInputType<DTO>(type: Class<DTO>, deleteManyInputType: Class<DeleteManyInputType<DTO>>): void {
+    this.deleteManyInputTypeStorage.set(type, deleteManyInputType);
+  }
+
+  getDeleteManyInputType<DTO>(type: Class<DTO>): Class<DeleteManyInputType<DTO>> | undefined {
+    return this.getValue(this.deleteManyInputTypeStorage, type);
   }
 
   getTypeGraphqlObjectMetadata<T>(objType: Class<T>): ObjectClassMetadata | undefined {
@@ -116,5 +202,17 @@ export class GraphQLQueryMetadataStorage {
     this.filterTypeStorage.clear();
     this.sortTypeStorage.clear();
     this.connectionTypeStorage.clear();
+    this.edgeTypeStorage.clear();
+    this.updateManyInputTypeStorage.clear();
+    this.updateOneInputTypeStorage.clear();
+    this.deleteManyInputTypeStorage.clear();
+  }
+
+  private getValue<V>(map: Map<Class<unknown>, Class<unknown>>, key: Class<unknown>): V | undefined {
+    const val = map.get(key);
+    if (val) {
+      return (val as unknown) as V;
+    }
+    return undefined;
   }
 }

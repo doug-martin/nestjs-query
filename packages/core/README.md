@@ -13,9 +13,7 @@ Core package that contains interfaces for types used by [`@nestjs-query/query-gr
 
 ## Installation
 
-```sh
-npm i @nestjs-query/core
-```
+[Install Guide](https://doug-martin.github.io/nestjs-query/docs/introduction/install)
 
 ## Docs
 

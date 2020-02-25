@@ -6,10 +6,11 @@ import { Class, DeepPartial } from '@nestjs-query/core';
 import omit from 'lodash.omit';
 import { ArgsType, InputType } from 'type-graphql';
 import { Resolver, Args } from '@nestjs/graphql';
+import { getDTONames } from '../common';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
-import { CreateManyArgsType, CreateOneArgsType, PartialInputType } from '../types';
+import { CreateManyInputType, CreateOneInputType, MutationArgsType, PartialInputType } from '../types';
 import { ResolverMutation } from '../decorators';
-import { getDTONames, transformAndValidate } from './helpers';
+import { transformAndValidate } from './helpers';
 
 export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>> extends ResolverOpts {
   /**
@@ -19,17 +20,17 @@ export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartia
   /**
    * The class to be used for `createOne` input.
    */
-  CreateOneArgs?: Class<CreateOneArgsType<C>>;
+  CreateOneInput?: Class<CreateOneInputType<DTO, C>>;
   /**
    * The class to be used for `createMany` input.
    */
-  CreateManyArgs?: Class<CreateManyArgsType<C>>;
+  CreateManyInput?: Class<CreateManyInputType<DTO, C>>;
 }
 
 export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
-  createOne(input: CreateOneArgsType<C>): Promise<DTO>;
+  createOne(input: MutationArgsType<CreateOneInputType<DTO, C>>): Promise<DTO>;
 
-  createMany(input: CreateManyArgsType<C>): Promise<DTO[]>;
+  createMany(input: MutationArgsType<CreateManyInputType<DTO, C>>): Promise<DTO[]>;
 }
 
 /** @internal */
@@ -51,33 +52,41 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
 >(
   BaseClass: B,
 ): Class<CreateResolver<DTO, C>> & B => {
-  const { baseName, pluralBaseName } = getDTONames(opts, DTOClass);
+  const { baseName, pluralBaseName } = getDTONames(DTOClass, opts);
   const {
     CreateDTOClass = defaultCreateInput(DTOClass, baseName),
-    CreateOneArgs = CreateOneArgsType(CreateDTOClass),
-    CreateManyArgs = CreateManyArgsType(CreateDTOClass),
+    CreateOneInput = CreateOneInputType(DTOClass, CreateDTOClass),
+    CreateManyInput = CreateManyInputType(DTOClass, CreateDTOClass),
   } = opts;
 
-  const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'CreateDTOClass', 'CreateOneArgs', 'CreateManyArgs');
+  const commonResolverOpts = omit(
+    opts,
+    'dtoName',
+    'one',
+    'many',
+    'CreateDTOClass',
+    'CreateOneInput',
+    'CreateManyInput',
+  );
 
   @ArgsType()
-  class CO extends CreateOneArgs {}
+  class CO extends MutationArgsType(CreateOneInput) {}
 
   @ArgsType()
-  class CM extends CreateManyArgs {}
+  class CM extends MutationArgsType(CreateManyInput) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ResolverBase extends BaseClass {
     @ResolverMutation(() => DTOClass, { name: `createOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async createOne(@Args() input: CO): Promise<DTO> {
       const createOne = await transformAndValidate(CO, input);
-      return this.service.createOne(createOne.input);
+      return this.service.createOne(createOne.input.input);
     }
 
     @ResolverMutation(() => [DTOClass], { name: `createMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
     async createMany(@Args() input: CM): Promise<DTO[]> {
       const createMany = await transformAndValidate(CM, input);
-      return this.service.createMany(createMany.input);
+      return this.service.createMany(createMany.input.input);
     }
   }
 

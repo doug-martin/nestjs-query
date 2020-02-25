@@ -16,15 +16,8 @@ nest new nestjs-query-getting-started
 ```
 
 ## Install Dependencies
-```sh
-npm i @nestjs-query/core @nestjs/common class-transformer
-```
-```sh
-npm i @nestjs-query/query-graphql @nestjs/common @nestjs/graphql graphql graphql-relay class-transformer class-validator reflect-metadata type-graphql
-```
-```sh
-npm i @nestjs-query/query-typeorm @nestjs/common @nestjs/typeorm class-transformer typeorm
-```
+
+[Install all packages](./install)
 
 Install extra dependencies for the example.
 ```sh
@@ -324,7 +317,7 @@ Visit http://localhost:3000/graphql where you should see the playground
 ```graphql
 mutation {
   createOneTodoItem(
-    input: { title: "Create One Todo Item", completed: false }
+    input: { todoItem: { title: "Create One Todo Item", completed: false } }
   ) {
     id
     title
@@ -369,10 +362,12 @@ mutation {
 ```graphql
 mutation {
   createManyTodoItems(
-    input: [
-      { title: "Create Many Todo Items - 1", completed: false }
-      { title: "Create Many Todo Items - 2", completed: true }
-    ]
+    input: {
+      todoItems: [
+        { title: "Create Many Todo Items - 1", completed: false }
+        { title: "Create Many Todo Items - 2", completed: true }
+      ]
+    }
   ) {
     id
     title
@@ -516,15 +511,15 @@ mutation {
 
 ```graphql
 {
-  todoItems(filter: {completed: {is: true}}){
-    pageInfo{
+  todoItems(filter: { completed: { is: true } }) {
+    pageInfo {
       hasNextPage
       hasPreviousPage
       startCursor
       endCursor
     }
-    edges{
-      node{
+    edges {
+      node {
         id
         title
         completed
@@ -593,7 +588,6 @@ mutation {
     updated
   }
 }
-
 ```
 
 </TabItem>
@@ -632,7 +626,7 @@ Lets update the completed `TodoItem` we created earlier to not be completed.
 
 ```graphql
 mutation {
-  updateOneTodoItem(id: "3", input: { completed: false }) {
+  updateOneTodoItem(input: { id: "3", update: { completed: false } }) {
     id
     title
     completed
@@ -677,12 +671,12 @@ Lets update the completed `TodoItem` we created earlier to not be completed.
 ```graphql
 mutation {
   updateManyTodoItems(
-    filter: { id: { in: ["1", "2"] } }
-    input: { completed: true }
+    input: { filter: { id: { in: ["1", "2"] } }, update: { completed: true } }
   ) {
     updatedCount
   }
 }
+
 ```
 
 </TabItem>
@@ -718,7 +712,7 @@ Lets update delete the first `TodoItem`.
 
 ```graphql
 mutation {
-  deleteOneTodoItem(id: 1) {
+  deleteOneTodoItem(input: { id: 1 }) {
     id
     title
     completed
@@ -763,7 +757,9 @@ Lets update delete the create many todo items `TodoItem` using a filter.
 
 ```graphql
 mutation {
-  deleteManyTodoItems(filter: { title: { like: "Create Many Todo Items%" } }) {
+  deleteManyTodoItems(
+    input: { filter: { title: { like: "Create Many Todo Items%" } } }
+  ) {
     deletedCount
   }
 }

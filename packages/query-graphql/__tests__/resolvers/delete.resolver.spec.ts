@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import { ID, ObjectType } from 'type-graphql';
 import * as nestGraphql from '@nestjs/graphql';
-import { instance, mock, when, deepEqual } from 'ts-mockito';
+import { instance, mock, when, objectContaining } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { QueryService, DeleteManyResponse } from '@nestjs-query/core';
 import * as decorators from '../../src/decorators';
 import { AdvancedOptions, ReturnTypeFuncValue } from '../../src/external/type-graphql.types';
-import { FilterType, DeleteManyArgsType, DeleteManyResponseType, DeleteOneArgsType, DeleteResolver } from '../../src';
+import { DeleteManyResponseType, DeleteResolver, DeleteOneInputType, DeleteManyInputType } from '../../src';
 import * as types from '../../src/types';
 
 @ObjectType('DeleteResolverDTO')
@@ -27,8 +27,8 @@ class FakeCanActivate implements CanActivate {
 
 describe('DeleteResolver', () => {
   const resolverMutationSpy = jest.spyOn(decorators, 'ResolverMutation');
-  const deleteOneArgsTypeSpy = jest.spyOn(types, 'DeleteOneArgsType');
-  const deleteManyArgsTypeSpy = jest.spyOn(types, 'DeleteManyArgsType');
+  const deleteOneInputTypeSpy = jest.spyOn(types, 'DeleteOneInputType');
+  const deleteManyInputTypeSpy = jest.spyOn(types, 'DeleteManyInputType');
   const argsSpy = jest.spyOn(nestGraphql, 'Args');
 
   beforeEach(() => jest.clearAllMocks());
@@ -54,8 +54,8 @@ describe('DeleteResolver', () => {
   it('should create a DeleteResolver for the DTO', () => {
     DeleteResolver(TestResolverDTO);
 
-    expect(deleteOneArgsTypeSpy).toBeCalledWith();
-    expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
+    expect(deleteOneInputTypeSpy).toBeCalledWith();
+    expect(deleteManyInputTypeSpy).toBeCalledWith(TestResolverDTO);
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
     assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
@@ -65,12 +65,12 @@ describe('DeleteResolver', () => {
   });
 
   it('should use the dtoName if provided', () => {
-    const DeleteOneArgs = DeleteOneArgsType();
+    const DeleteOneInput = DeleteOneInputType();
     jest.clearAllMocks(); // reset
-    DeleteResolver(TestResolverDTO, { dtoName: 'Test', DeleteOneArgs });
+    DeleteResolver(TestResolverDTO, { dtoName: 'Test', DeleteOneInput });
 
-    expect(deleteOneArgsTypeSpy).not.toBeCalled();
-    expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
+    expect(deleteOneInputTypeSpy).not.toBeCalled();
+    expect(deleteManyInputTypeSpy).toBeCalledWith(TestResolverDTO);
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
     assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneTest' }, {}, {});
@@ -80,13 +80,13 @@ describe('DeleteResolver', () => {
   });
 
   describe('#deleteOne', () => {
-    it('should not delete a new type if the DeleteOneArgs is supplied', () => {
-      const DeleteOneArgs = DeleteOneArgsType();
+    it('should not delete a new type if the DeleteOneInput is supplied', () => {
+      const DeleteOneInput = DeleteOneInputType();
       jest.clearAllMocks(); // reset
-      DeleteResolver(TestResolverDTO, { DeleteOneArgs });
+      DeleteResolver(TestResolverDTO, { DeleteOneInput });
 
-      expect(deleteOneArgsTypeSpy).not.toBeCalled();
-      expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(deleteOneInputTypeSpy).not.toBeCalled();
+      expect(deleteManyInputTypeSpy).toBeCalledWith(TestResolverDTO);
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
@@ -104,8 +104,8 @@ describe('DeleteResolver', () => {
         pipes: [],
       };
       DeleteResolver(TestResolverDTO, { one: deleteOneOpts });
-      expect(deleteOneArgsTypeSpy).toBeCalledWith();
-      expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(deleteOneInputTypeSpy).toBeCalledWith();
+      expect(deleteManyInputTypeSpy).toBeCalledWith(TestResolverDTO);
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, deleteOneOpts);
@@ -116,28 +116,28 @@ describe('DeleteResolver', () => {
 
     it('should call the service deleteOne with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
-      const input: DeleteOneArgsType = {
-        input: 'id-1',
+      const input: DeleteOneInputType = {
+        id: 'id-1',
       };
       const output: TestResolverDTO = {
         id: 'id-1',
         stringField: 'foo',
       };
       const resolver = new TestResolver(instance(mockService));
-      when(mockService.deleteOne(input.input)).thenResolve(output);
-      const result = await resolver.deleteOne(input);
+      when(mockService.deleteOne(input.id)).thenResolve(output);
+      const result = await resolver.deleteOne({ input });
       return expect(result).toEqual(output);
     });
   });
 
   describe('#deleteMany', () => {
     it('should not delete a new type if the DeleteManyArgs is supplied', () => {
-      const DeleteManyArgs = DeleteManyArgsType(FilterType(TestResolverDTO));
+      const DeleteManyInput = DeleteManyInputType(TestResolverDTO);
       jest.clearAllMocks(); // reset
-      DeleteResolver(TestResolverDTO, { DeleteManyArgs });
+      DeleteResolver(TestResolverDTO, { DeleteManyInput });
 
-      expect(deleteOneArgsTypeSpy).toBeCalledWith();
-      expect(deleteManyArgsTypeSpy).not.toBeCalled();
+      expect(deleteOneInputTypeSpy).toBeCalledWith();
+      expect(deleteManyInputTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
@@ -155,8 +155,8 @@ describe('DeleteResolver', () => {
         pipes: [],
       };
       DeleteResolver(TestResolverDTO, { many: deleteManyOpts });
-      expect(deleteOneArgsTypeSpy).toBeCalledWith();
-      expect(deleteManyArgsTypeSpy).toBeCalledWith(expect.any(Function));
+      expect(deleteOneInputTypeSpy).toBeCalledWith();
+      expect(deleteManyInputTypeSpy).toBeCalledWith(TestResolverDTO);
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, expect.any(Function), { name: 'deleteOneDeleteResolverDTO' }, {}, {});
@@ -173,13 +173,13 @@ describe('DeleteResolver', () => {
 
     it('should call the service deleteMany with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
-      const input: DeleteManyArgsType<TestResolverDTO> = {
-        input: { id: { eq: 'id-1' } },
+      const input: DeleteManyInputType<TestResolverDTO> = {
+        filter: { id: { eq: 'id-1' } },
       };
       const output: DeleteManyResponse = { deletedCount: 1 };
       const resolver = new TestResolver(instance(mockService));
-      when(mockService.deleteMany(deepEqual(input.input))).thenResolve(output);
-      const result = await resolver.deleteMany(input);
+      when(mockService.deleteMany(objectContaining(input.filter))).thenResolve(output);
+      const result = await resolver.deleteMany({ input });
       return expect(result).toEqual(output);
     });
   });

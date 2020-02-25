@@ -16,27 +16,12 @@ While working on projects in nestjs it was very easy to get up and running with 
 
 ## Installation
 
-```sh
-npm i @nestjs-query/core
-```
-
-`@nestjs-query/query-graphql`
-
-```sh
-npm i @nestjs-query/query-graphql @nestjs/common @nestjs/graphql graphql graphql-relay class-transformer class-validator reflect-metadata type-graphql
-```
-
-`@nestjs-query/query-typeorm`
-
-```sh
-npm i @nestjs-query/query-typeorm @nestjs/typeorm @nestjs/common class-transformer typeorm
-```
-
-**NOTE** `@nestjs-query/query-graphql` and `@nestjs-query/query-typeorm` have opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
+[Install Guide](https://doug-martin.github.io/nestjs-query/docs/introduction/install).
 
 ## Docs
 
 * [Getting Started](https://doug-martin.github.io/nestjs-query/docs/introduction/getting-started)
+* [Install Guide](https://doug-martin.github.io/nestjs-query/docs/introduction/install).
 * [Concepts](https://doug-martin.github.io/nestjs-query/docs/introduction/concepts)
 * [Example](https://doug-martin.github.io/nestjs-query/docs/introduction/example)
 * [Typeorm](https://doug-martin.github.io/nestjs-query/docs/typeorm/services)

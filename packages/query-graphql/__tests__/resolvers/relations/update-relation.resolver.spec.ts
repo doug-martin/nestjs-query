@@ -7,7 +7,7 @@ import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { UpdateRelationsResolver } from '../../../src/resolvers/relations';
 import * as decorators from '../../../src/decorators';
 import { AdvancedOptions, ReturnTypeFuncValue } from '../../../src/external/type-graphql.types';
-import { RelationArgsType, RelationsArgsType } from '../../../src/types';
+import { RelationInputType, RelationsInputType } from '../../../src/types';
 
 @ObjectType('UpdateRelation')
 class UpdateRelationDTO {
@@ -107,7 +107,7 @@ describe('UpdateRelationsResolver', () => {
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const mockService = mock<QueryService<UpdateRelationDTO>>();
-      const args: RelationArgsType = {
+      const input: RelationInputType = {
         id: 'record-id',
         relationId: 'relation-id',
       };
@@ -117,15 +117,15 @@ describe('UpdateRelationsResolver', () => {
       };
       const R = UpdateRelationsResolver(UpdateRelationDTO, { one: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.setRelation('relation', args.id, args.relationId)).thenResolve(output);
+      when(mockService.setRelation('relation', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.setRelationOnUpdateRelation(args);
+      const result = await resolver.setRelationOnUpdateRelation({ input });
       return expect(result).toEqual(output);
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const mockService = mock<QueryService<UpdateRelationDTO>>();
-      const args: RelationArgsType = {
+      const input: RelationInputType = {
         id: 'record-id',
         relationId: 'relation-id',
       };
@@ -137,9 +137,9 @@ describe('UpdateRelationsResolver', () => {
         one: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.setRelation('other', args.id, args.relationId)).thenResolve(output);
+      when(mockService.setRelation('other', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.setRelationOnUpdateRelation(args);
+      const result = await resolver.setRelationOnUpdateRelation({ input });
       return expect(result).toEqual(output);
     });
   });
@@ -192,7 +192,7 @@ describe('UpdateRelationsResolver', () => {
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const mockService = mock<QueryService<UpdateRelationDTO>>();
-      const args: RelationsArgsType = {
+      const input: RelationsInputType = {
         id: 'id-1',
         relationIds: ['relation-id-1', 'relation-id-2'],
       };
@@ -202,15 +202,15 @@ describe('UpdateRelationsResolver', () => {
       };
       const R = UpdateRelationsResolver(UpdateRelationDTO, { many: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.addRelations('relations', args.id, deepEqual(args.relationIds))).thenResolve(output);
+      when(mockService.addRelations('relations', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.addRelationsToUpdateRelation(args);
+      const result = await resolver.addRelationsToUpdateRelation({ input });
       return expect(result).toEqual(output);
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const mockService = mock<QueryService<UpdateRelationDTO>>();
-      const args: RelationsArgsType = {
+      const input: RelationsInputType = {
         id: 'id-1',
         relationIds: ['relation-id-1', 'relation-id-2'],
       };
@@ -222,9 +222,9 @@ describe('UpdateRelationsResolver', () => {
         many: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.addRelations('other', args.id, deepEqual(args.relationIds))).thenResolve(output);
+      when(mockService.addRelations('other', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.addRelationsToUpdateRelation(args);
+      const result = await resolver.addRelationsToUpdateRelation({ input });
       return expect(result).toEqual(output);
     });
   });
