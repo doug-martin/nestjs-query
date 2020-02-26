@@ -1,3 +1,7 @@
+# v0.5.0
+
+* Added `decorators` option to resolver options to allow providing custom decorators to endpoints [#36](https://github.com/doug-martin/nestjs-query/issues/36)
+
 # v0.4.0
 
 * Updated all mutations to take a single `input` argument with custom fields.

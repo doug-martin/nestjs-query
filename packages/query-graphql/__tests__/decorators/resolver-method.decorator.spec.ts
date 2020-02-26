@@ -142,4 +142,35 @@ describe('ResolverMethod decorator', (): void => {
       expect(useFiltersSpy).toBeCalledWith(FakeFilter1, FakeFilter2);
     });
   });
+
+  describe('decorators option', () => {
+    it('should call the decorator', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      const propDecorator = jest.fn((target: Object, propertyKey: string | symbol) => {
+        return undefined;
+      });
+      const opts = [{ decorators: [propDecorator] }];
+      createTestResolver(...opts);
+      expect(useGuardsSpy).toBeCalledWith();
+      expect(useInterceptorsSpy).toBeCalledWith();
+      expect(usePipesSpy).toBeCalledWith();
+      expect(useFiltersSpy).toBeCalledWith();
+      expect(propDecorator).toBeCalledWith({}, 'method', expect.any(Object));
+    });
+
+    it('should call the decorator once', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      const propDecorator = jest.fn((target: Object, propertyKey: string | symbol) => {
+        return undefined;
+      });
+      const opts = [{ decorators: [propDecorator] }, { decorators: [propDecorator] }];
+      createTestResolver(...opts);
+      expect(useGuardsSpy).toBeCalledWith();
+      expect(useInterceptorsSpy).toBeCalledWith();
+      expect(usePipesSpy).toBeCalledWith();
+      expect(useFiltersSpy).toBeCalledWith();
+      expect(propDecorator).toBeCalledTimes(1);
+      expect(propDecorator).toBeCalledWith({}, 'method', expect.any(Object));
+    });
+  });
 });

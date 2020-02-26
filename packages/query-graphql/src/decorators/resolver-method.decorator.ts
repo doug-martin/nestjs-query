@@ -26,6 +26,8 @@ export interface ResolverMethodOpts {
   pipes?: Class<PipeTransform<any, any>>[];
   /** An array of `nestjs` error filters to apply to a graphql endpoint */
   filters?: Class<ExceptionFilter<any>>[];
+  /** An array of additional decorators to apply to the graphql endpont * */
+  decorators?: (PropertyDecorator | MethodDecorator)[];
 }
 
 /**
@@ -60,5 +62,6 @@ export function ResolverMethod(...opts: ResolverMethodOpts[]): MethodDecorator {
     UseInterceptors(...createSetArray<Class<NestInterceptor>>(...opts.map(o => o.interceptors ?? []))),
     UsePipes(...createSetArray<Class<PipeTransform>>(...opts.map(o => o.pipes ?? []))),
     UseFilters(...createSetArray<Class<ExceptionFilter>>(...opts.map(o => o.filters ?? []))),
+    ...createSetArray<PropertyDecorator | MethodDecorator>(...opts.map(o => o.decorators ?? [])),
   );
 }
