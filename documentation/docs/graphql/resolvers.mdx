@@ -88,6 +88,7 @@ The `create`, `read`, `update`, and `delete` options above all accept the follow
 * `interceptors=[]` - An array of [interceptors](https://docs.nestjs.com/interceptors) to add to all endpoints.
 * `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to all endpoints.
 * `filters=[]` - An array of [filters](https://docs.nestjs.com/exception-filters) to add to all endpoints.
+* `decorators=[]` - An array of custom `PropertyDecorator` or `MethodDecorators` to add to the endpoint.
 * `one`, `many` - Both the `one` and `many` accept the following options:
     * `disabled=false` - Set to true to disable the endpoint.
     * `guards=[]` - An array of [guards](https://docs.nestjs.com/guards) to add to the endpoint.
