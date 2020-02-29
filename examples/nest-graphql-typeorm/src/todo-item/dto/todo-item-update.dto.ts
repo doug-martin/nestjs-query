@@ -5,7 +5,7 @@ import { Field, InputType } from 'type-graphql';
 export class TodoItemUpdateDTO {
   @IsOptional()
   @IsString()
-  @MaxLength(50)
+  @MaxLength(20)
   @Field({ nullable: true })
   title?: string;
 

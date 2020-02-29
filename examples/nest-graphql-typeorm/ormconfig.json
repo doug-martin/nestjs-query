@@ -4,7 +4,7 @@
   "port": 5436,
   "username": "graphqltypeorm",
   "database": "graphql_typeorm",
-  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "entities": ["**/*.entity.js"],
   "migrations": ["dist/migrations/**.js"],
   "seeds": ["./seeds.ts"],
   "synchronize": false,
