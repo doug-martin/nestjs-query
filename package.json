@@ -9,9 +9,11 @@
     "pub": "lerna publish from-git",
     "version": "lerna version",
     "test": "npm run lint && npm run jest",
+    "test:e2e": "npm run jest:e2e",
     "lint": "eslint --ext=.ts .",
     "lint:fix": "eslint --fix --ext=.ts .",
     "jest": "jest --runInBand --coverage",
+    "jest:e2e": "jest --runInBand --config=./jest.e2e.config.js",
     "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {

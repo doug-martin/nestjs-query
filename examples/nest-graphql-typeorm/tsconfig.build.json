@@ -7,7 +7,8 @@
     },
     "include": [
         "src",
-        "migrations"
+        "migrations",
+        "ormconfig.json"
     ],
     "exclude": [
         "node_modules",

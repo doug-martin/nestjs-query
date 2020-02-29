@@ -1,0 +1,28 @@
+name: Test (e2e)
+
+on:
+  push:
+    branches:    # Array of patterns that match refs/heads
+      - master     # Push events on master branch
+      - releases/* # Push events to branches matching refs/heads/releases/*
+  pull_request:  # Specify a second event with pattern matching
+env:
+  CI: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: docker-compose -f ./examples/nest-graphql-typeorm/docker-compose.yml up -d
+      - run: npm ci
+      - run: npm run bootstrap -- --ignore-scripts
+      - run: npm run build
+      - run: npx lerna run migrate:up
+      - run: npm run test:e2e
