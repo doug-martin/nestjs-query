@@ -1,3 +1,8 @@
+# v0.5.1
+
+* [DOCS] Added clarification around individual resolvers and relations with examples [#42](https://github.com/doug-martin/nestjs-query/issues/42)
+* [ADDED] Exposed `Relatable` mixin from `@nestjs-query/graphql` [#42](https://github.com/doug-martin/nestjs-query/issues/42)
+
 # v0.5.0
 
 * Added `decorators` option to resolver options to allow providing custom decorators to endpoints [#36](https://github.com/doug-martin/nestjs-query/issues/36)
