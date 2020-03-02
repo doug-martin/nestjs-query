@@ -371,7 +371,11 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
 The `@nestjs-query/query-graphql` package exposes each part of `CRUD` into individual mixins and resolvers allowing you
 to pick and choose what functionality you want to expose.
 
+**NOTE** This is advanced usage of the resolvers API and is subject to change!
+
 **NOTE** All examples below can be achieved with the options exposed through the `CRUDResolver`.
+
+**NOTE** The following resolvers do not expose relations options, to add relations options see [Relateable](./relations#relatable)
 
 ### `CreateResolver`
 

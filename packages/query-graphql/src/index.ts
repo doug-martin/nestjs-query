@@ -1,3 +1,4 @@
 export * from './types';
-export { FilterableField } from './decorators';
+export { FilterableField, ResolverMethodOpts } from './decorators';
 export * from './resolvers';
+export { DTONamesOpts } from './common';
