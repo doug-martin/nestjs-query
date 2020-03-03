@@ -1,6 +1,6 @@
 {
   "name": "nest-graphql-typeorm",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "",
   "author": "",
   "private": true,
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@nestjs-query/core": "^0.5.0",
-    "@nestjs-query/query-graphql": "^0.5.0",
+    "@nestjs-query/query-graphql": "^0.5.1",
     "@nestjs-query/query-typeorm": "^0.5.0",
     "@nestjs/common": "^6.11.8",
     "@nestjs/core": "^6.11.8",
