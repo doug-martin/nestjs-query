@@ -16,9 +16,9 @@ While working on projects in nestjs it was very easy to get up and running with 
 * Built in [dataloader](https://github.com/graphql/dataloader) avoiding the `n+1` problem
 * Relay [connections](https://facebook.github.io/relay/graphql/connections.htm) for paging results  
 
-## Install 
+## Install
 
-Check out the [installation docs](./install.md) 
+Check out the [installation docs](./install.md)
 
 ## Packages
 
@@ -30,4 +30,4 @@ Nestjs-query is composed of multiple packages
 
 ## Migration Guides
 
-* [`v0.5.x` to `v0.6.x`](../migration-guides/v0.5.x-to-v0.6.x) 
+* [`v0.5.x` to `v0.6.x`](../migration-guides/v0.5.x-to-v0.6.x)

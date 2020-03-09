@@ -7,13 +7,13 @@ The `query-graphql` package leverages most decorators from [`@nestjs/graphql`](h
 ## `@FilterableField`
 
 The `FilterableField` is very similar to the [`Field`](https://typegraphql.ml/docs/types-and-fields.html) from
-TypeGraphQL, however it allows you to specify the fields that should be filterable when querying. 
+TypeGraphQL, however it allows you to specify the fields that should be filterable when querying.
 
 **NOTE** If you use the TypeGraphQL Field decorator it will not be exposed in the query type for the DTO.
 
 ### Example
 
-In the following example we allow `id`, `title`, and `completed` to be used in queries. 
+In the following example we allow `id`, `title`, and `completed` to be used in queries.
 
 ```ts
 import { FilterableField } from '@nestjs-query/query-graphql';
@@ -38,5 +38,3 @@ export class TodoItemDTO {
 }
 
 ```
-
-

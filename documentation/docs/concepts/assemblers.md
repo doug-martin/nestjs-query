@@ -4,12 +4,12 @@ title: Assemblers
 
 Assemblers are used to translate your DTO into the underlying database type and back.
 
-## When to use them?
+## When to use Assemblers
 
-In most cases an Assembler will not be required because your Entity and DTO will be the same shape. 
+In most cases an Assembler will not be required because your Entity and DTO will be the same shape.
 
 The only time you need to define an assembler is when the DTO and Entity are different. The most common scenarios are
- 
+
 * Additional computed fields and you do not want to include the business logic in your DTO definition.
 * Different field names because of poorly named columns in the database or to make a DB change passive to the end user.
 
@@ -18,23 +18,23 @@ The only time you need to define an assembler is when the DTO and Entity are dif
 In most cases the [class-transformer](https://github.com/typestack/class-transformer) package will properly map back and forth. Because of this there is a `ClassTransformerAssembler` that leverages the `plainToClass` method.
 
 **NOTE** The `ClassTransformerAssembler` is the default implementation if an `Assembler` is not manually defined.
- 
+
 If you find yourself in a scenario where you need to compute values and you dont want to add the business logic to your DTO you can extend the `ClassTransformerAssembler`.
 
-Lets take a simple example, where we have `TodoItemDTO` and we want to compute the `age`. 
+Lets take a simple example, where we have `TodoItemDTO` and we want to compute the `age`.
 
 ```ts
 import { Assembler, ClassTransformerAssembler } from '@nestjs-query/core';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
-// `@Assembler` decorator will register the assembler with `nestjs-query` and 
+// `@Assembler` decorator will register the assembler with `nestjs-query` and
 // the QueryService service will be able to auto discover it.
 @Assembler(TodoItemDTO, TodoItemEntity)
 export class TodoItemAssembler extends ClassTransformerAssembler<TodoItemDTO, TodoItemEntity> {
   convertToDTO(entity: TodoItemEntity): TodoItemDTO {
     const dto = super.convertToDTO(entity);
-    // compute the age 
+    // compute the age
     dto.age = Date.now() - entity.created.getMilliseconds();
     return dto;
   }
@@ -45,7 +45,7 @@ While this example is fairly trivial, the same pattern should apply for more com
 
 ## AbstractAssembler
 
-To create your own `Assembler` extend the `AbstractAssembler`. 
+To create your own `Assembler` extend the `AbstractAssembler`.
 
 Lets assume we have the following `UserDTO`.
 
@@ -65,7 +65,7 @@ class UserDTO {
   emailAddress!: string;
 }
 
-``` 
+```
 
 But you inherited a DB schema that has names that are not as user friendly.
 
@@ -92,7 +92,7 @@ import { AbstractAssembler, Assembler, Query, transformQuery } from '@nestjs-que
 import { UserDTO } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 
-// `@Assembler` decorator will register the assembler with `nestjs-query` and 
+// `@Assembler` decorator will register the assembler with `nestjs-query` and
 // the QueryService service will be able to auto discover it.
 @Assembler(UserDTO, UserEntity)
 export class UserAssembler extends AbstractAssembler<UserDTO, UserEntity> {
@@ -128,6 +128,7 @@ The first thing to look at is the `@Assembler` decorator. It will register the a
 ```
 
 ### Converting the Query
+
 Next the `convertQuery` method.
 
 ```ts
@@ -139,9 +140,10 @@ convertQuery(query: Query<UserDTO>): Query<UserEntity> {
   });
 }
 ```
+
 This method leverages the `transformQuery` function from `@nestjs-query/core`. This method will remap all fields specified in the field map to correct field name.
 
-In this example 
+In this example
 
 ```ts
 {
@@ -149,7 +151,7 @@ In this example
     firstName: { eq: 'Bob' },
     lastName: { eq: 'Yukon' },
     emailAddress: { eq: 'bob@yukon.com' }
-  } 
+  }
 }
 ```
 
@@ -161,7 +163,7 @@ Would be transformed into.
     first: { eq: 'Bob' },
     last: { eq: 'Yukon' },
     email: { eq: 'bob@yukon.com' }
-  } 
+  }
 }
 ```
 
@@ -181,7 +183,7 @@ convertToDTO(entity: UserEntity): UserDTO {
 ### Converting the Entity
 
 The next piece is the `convertToEntity`, which will convert the DTO into a the correct entity.
- 
+
 ```ts
 convertToEntity(dto: UserDTO): UserEntity {
   const entity = new UserEntity();
@@ -217,7 +219,7 @@ export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
 }
 ```
 
-Your resolver should then use the `UserService` to fetch records. 
+Your resolver should then use the `UserService` to fetch records.
 
 ```ts
 import { CRUDResolver } from '@nestjs-query/query-graphql';
@@ -233,10 +235,9 @@ export class UserResolver extends CRUDResolver(UserDTO) {
 }
 ```
 
+## Registering Your Assembler
 
-## Registering Your Assembler.
-
-Don;t forget to register your `Assembler` and `QueryService` with your module.
+Don't forget to register your `Assembler` and `QueryService` with your module.
 
 ```ts
 @Module({
