@@ -1,4 +1,4 @@
-## Contributions
+# Contributions
 
 I am always welcoming contributions of any type. Please open an issue or create a PR if you find an issue with any of the following.
 
@@ -18,7 +18,7 @@ If you have an issue with the package please include the following
 
 Without those basics it can be difficult to reproduce your issue locally. You may be asked for more information but that is a good starting point.
 
-### New Features
+## New Features
 
 New features and/or enhancements are great and I encourage you to either submit a PR or create an issue. In both cases include the following as the need/requirement may not be readily apparent.
 
