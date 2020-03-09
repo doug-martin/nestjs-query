@@ -1,4 +1,4 @@
-import { AssemblerService, Query, Class, Assembler } from '@nestjs-query/core';
+import { Query, Class, AssemblerFactory } from '@nestjs-query/core';
 import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder, ObjectLiteral } from 'typeorm';
 import lodashFilter from 'lodash.filter';
 import { FilterQueryBuilder, RelationQueryBuilder } from '../query';
@@ -7,32 +7,26 @@ import { FilterQueryBuilder, RelationQueryBuilder } from '../query';
  * Base class to house relations loading.
  * @internal
  */
-export abstract class RelationQueryService<DTO, Entity = DTO> {
-  abstract assemblerService: AssemblerService;
-
-  abstract DTOClass: Class<DTO>;
-
+export abstract class RelationQueryService<Entity> {
   abstract filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   abstract EntityClass: Class<Entity>;
 
-  abstract assembler: Assembler<DTO, Entity>;
-
   abstract repo: Repository<Entity>;
 
   /**
-   * Query for relations for an array of DTOs. This method will return a map with the DTO as the key and the relations as the value.
+   * Query for relations for an array of Entities. This method will return a map with the Entity as the key and the relations as the value.
    * @param RelationClass - The class of the relation.
    * @param relationName - The name of the relation to load.
-   * @param dtos - the dtos to find relations for.
+   * @param entities - the dtos to find relations for.
    * @param query - A query to use to filter, page, and sort relations.
    */
   async queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dtos: DTO[],
+    entities: Entity[],
     query: Query<Relation>,
-  ): Promise<Map<DTO, Relation[]>>;
+  ): Promise<Map<Entity, Relation[]>>;
 
   /**
    * Query for an array of relations.
@@ -44,28 +38,27 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
   async queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dto: DTO,
+    dto: Entity,
     query: Query<Relation>,
   ): Promise<Relation[]>;
 
   async queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dto: DTO | DTO[],
+    dto: Entity | Entity[],
     query: Query<Relation>,
-  ): Promise<Relation[] | Map<DTO, Relation[]>> {
+  ): Promise<Relation[] | Map<Entity, Relation[]>> {
     if (Array.isArray(dto)) {
       return this.batchQueryRelations(RelationClass, relationName, dto, query);
     }
-    const assembler = this.assemblerService.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
-    return assembler.convertAsyncToDTOs(
-      relationQueryBuilder.select(this.assembler.convertToEntity(dto), assembler.convertQuery(query)).getMany(),
-    );
+    return assembler.convertAsyncToDTOs(relationQueryBuilder.select(dto, assembler.convertQuery(query)).getMany());
   }
 
   /**
-   * Find a relation for an array of DTOs. This will return a Map where the key is the DTO and the value is to relation or undefined if not found.
+   * Find a relation for an array of Entities. This will return a Map where the key is the Entity and the value is to
+   * relation or undefined if not found.
    * @param RelationClass - the class of the relation
    * @param relationName - the name of the relation to load.
    * @param dtos - the dtos to find the relation for.
@@ -73,8 +66,8 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dtos: DTO[],
-  ): Promise<Map<DTO, Relation | undefined>>;
+    dtos: Entity[],
+  ): Promise<Map<Entity, Relation | undefined>>;
 
   /**
    * Finds a single relation.
@@ -85,22 +78,19 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dto: DTO,
+    dto: Entity,
   ): Promise<Relation | undefined>;
 
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dto: DTO | DTO[],
-  ): Promise<(Relation | undefined) | Map<DTO, Relation | undefined>> {
+    dto: Entity | Entity[],
+  ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
     if (Array.isArray(dto)) {
       return this.batchFindRelations(RelationClass, relationName, dto);
     }
-    const assembler = this.assemblerService.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationEntity = await this.createRelationQueryBuilder(
-      this.assembler.convertToEntity(dto),
-      relationName,
-    ).loadOne<Relation>();
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationEntity = await this.createRelationQueryBuilder(dto, relationName).loadOne<Relation>();
     return relationEntity ? assembler.convertToDTO(relationEntity) : undefined;
   }
 
@@ -114,10 +104,10 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
     relationName: string,
     id: string | number,
     relationIds: (string | number)[],
-  ): Promise<DTO> {
+  ): Promise<Entity> {
     const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).add(relationIds);
-    return this.assembler.convertToDTO(entity);
+    return entity;
   }
 
   /**
@@ -127,10 +117,10 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
    * @param relationName - The name of the relation to query for.
    * @param relationId - The id of the relation to set on the entity.
    */
-  async setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
+  async setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<Entity> {
     const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).set(relationId);
-    return this.assembler.convertToDTO(entity);
+    return entity;
   }
 
   /**
@@ -143,10 +133,10 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
     relationName: string,
     id: string | number,
     relationIds: (string | number)[],
-  ): Promise<DTO> {
+  ): Promise<Entity> {
     const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).remove(relationIds);
-    return this.assembler.convertToDTO(entity);
+    return entity;
   }
 
   /**
@@ -156,10 +146,14 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
    * @param relationName - The name of the relation to query for.
    * @param relationId - The id of the relation to set on the entity.
    */
-  async removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
+  async removeRelation<Relation>(
+    relationName: string,
+    id: string | number,
+    relationId: string | number,
+  ): Promise<Entity> {
     const entity = await this.repo.findOneOrFail(id);
     await this.createRelationQueryBuilder(entity, relationName).remove(relationId);
-    return this.assembler.convertToDTO(entity);
+    return entity;
   }
 
   getRelationQueryBuilder<Relation>(name: string): RelationQueryBuilder<Entity, Relation> {
@@ -169,33 +163,31 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
   /**
    * Query for an array of relations for multiple dtos.
    * @param RelationClass - The class to serialize the relations into.
-   * @param dto - The dto to query relations for.
+   * @param entities - The entities to query relations for.
    * @param relationName - The name of relation to query for.
    * @param query - A query to filter, page or sort relations.
    */
   private async batchQueryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dtos: DTO[],
+    entities: Entity[],
     query: Query<Relation>,
-  ): Promise<Map<DTO, Relation[]>> {
-    const assembler = this.assemblerService.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const entities = this.assembler.convertToEntities(dtos);
+  ): Promise<Map<Entity, Relation[]>> {
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const relations = await relationQueryBuilder.select(entities, assembler.convertQuery(query)).getRawAndEntities();
     return relations.raw.reduce((results, rawRelation) => {
       this.getEntityFromFromResult(rawRelation, entities).forEach(e => {
-        const dto = dtos[entities.indexOf(e)];
-        if (!results.has(dto)) {
-          results.set(dto, []);
+        if (!results.has(e)) {
+          results.set(e, []);
         }
         const relationDtos = assembler.convertToDTOs(
           this.getRelationsFromPrimaryKeys(relationQueryBuilder, rawRelation, relations.entities),
         );
-        results.get(dto).push(...relationDtos);
+        results.get(e).push(...relationDtos);
       });
       return results;
-    }, new Map<DTO, Relation[]>());
+    }, new Map<Entity, Relation[]>());
   }
 
   /**
@@ -208,10 +200,10 @@ export abstract class RelationQueryService<DTO, Entity = DTO> {
   private async batchFindRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dtos: DTO[],
-  ): Promise<Map<DTO, Relation | undefined>> {
+    dtos: Entity[],
+  ): Promise<Map<Entity, Relation | undefined>> {
     const batchResults = await this.batchQueryRelations(RelationClass, relationName, dtos, { paging: { limit: 1 } });
-    const results = new Map<DTO, Relation>();
+    const results = new Map<Entity, Relation>();
     batchResults.forEach((relation, dto) => {
       // get just the first one.
       results.set(dto, relation[0]);

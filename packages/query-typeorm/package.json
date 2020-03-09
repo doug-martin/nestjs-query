@@ -23,11 +23,13 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^6.11.8",
+    "@nestjs/typeorm": "^6.3.3",
     "class-transformer": "^0.2.3",
     "typeorm": "^0.2.22"
   },
   "devDependencies": {
     "@nestjs/common": "^6.11.8",
+    "@nestjs/typeorm": "^6.3.3",
     "@types/lodash.filter": "^4.6.6",
     "class-transformer": "^0.2.3",
     "sqlite3": "^4.1.1",

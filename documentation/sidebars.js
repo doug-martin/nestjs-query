@@ -9,7 +9,7 @@ module.exports = {
   docs: {
     Introduction: ['introduction/getting-started', 'introduction/install', 'introduction/example'],
     Concepts: ['concepts/dtos', 'concepts/queries', 'concepts/services', 'concepts/assemblers'],
-    Typeorm: ['typeorm/getting-started', 'typeorm/services'],
+    Typeorm: ['typeorm/getting-started', 'typeorm/usage'],
     GraphQL: [
       'graphql/getting-started',
       'graphql/dtos',
@@ -19,5 +19,6 @@ module.exports = {
       'graphql/relations',
       'graphql/types',
     ],
+    'Migration Guides': ['migration-guides/v0.5.x-to-v0.6.x'],
   },
 };

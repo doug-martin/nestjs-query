@@ -1,2 +1,2 @@
-export { QueryService, getQueryServiceDTO } from './query.service';
-export { AssemblerService } from './assembler.service';
+export { QueryService } from './query.service';
+export { AssemblerQueryService } from './assembler-query.service';

@@ -193,12 +193,55 @@ convertToEntity(dto: UserDTO): UserEntity {
 
 This is a pretty basic example but the same pattern should apply to more complex scenarios.
 
+## AssemblerQueryService
+
+To use your assembler you need to create an `AssemblerQueryService` that will wrap a `QueryService` to translate back and forth.
+
+This example wraps a `TypeOrmQueryService` to assemble to `UserDTO` and `UserEntity`
+
+```ts
+import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
+import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { UserDTO } from './user.dto';
+import { UserAssembler } from './user.assembler';
+import { UserEntity } from './user.entity';
+
+@QueryService(UserDTO)
+export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
+  constructor(
+    assembler: UserAssembler,
+    @InjectTypeOrmQueryService(UserEntity) queryService: QueryService<UserEntity>,
+  ) {
+    super(assembler, queryService);
+  }
+}
+```
+
+Your resolver should then use the `UserService` to fetch records. 
+
+```ts
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { UserDTO } from './user.dto';
+import { UserService } from './user.service';
+
+@Resolver(() => UserDTO)
+export class UserResolver extends CRUDResolver(UserDTO) {
+  constructor(readonly service: UserService) {
+    super(service);
+  }
+}
+```
+
+
 ## Registering Your Assembler.
 
-Dont for get to register your `Assembler` with your module.
+Don;t forget to register your `Assembler` and `QueryService` with your module.
+
 ```ts
 @Module({
-  providers: [/*Other providers*/, UserAssembler],
+  providers: [/*Other providers*/, UserAssembler, UserService],
   // ...other module options
 })
+export class UserModule {}
 ```

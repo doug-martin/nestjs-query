@@ -119,51 +119,6 @@ export class TodoItemDTO {
 Notice the use of `@FilterableField` this will let `@nestjs-query/query-graphql` know to allow filtering on the
 corresponding field. If you just use `@Field` then you will not be able to filter on the corresponding field.
 
-## Create the Service
-
-The service in this example is extending the `@nestjs-query/query-typeorm` `TypeOrmQueryService`.
-
-The `TypeOrmQueryService` will provide implementations for:
-
-* `query` - find multiple records.
-* `findById` - find a record by its id.
-* `getById` - get a record by its id or return a rejected promise with a NotFound error.
-* `createMany` - create multiple records.
-* `createOne` - create one record.
-* `updateMany` - update many records.
-* `updateOne` - update a single record.
-* `deleteMany` - delete multiple records.
-* `deleteOne` - delete a single record.
-
-Generate the service file.
-
-```sh
-npx nest g s todo-item
-```
-
-Now add the following to `src/todo-item/todo-item.service.ts`.
-
-```ts
-import { QueryService } from '@nestjs-query/core';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { TodoItemDTO } from './todo-item.dto';
-import { TodoItemEntity } from './todo-item.entity';
-
-@QueryService(TodoItemDTO)
-export class TodoItemService extends TypeOrmQueryService<TodoItemDTO, TodoItemEntity> {
-  constructor(
-    @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
-  ) {
-    super(repo);
-  }
-}
-
-```
-
-The important piece is extending `TypeOrmQueryService` from `@nestjs-query/query-typeorm` this will give you all of the crud methods that your resolver will use.
-
 ## Create the Resolver
 
 To create the resolver extend `CRUDResolver` from `@nestjs-query/query-graphql`.
@@ -194,23 +149,42 @@ npx nest g r todo-item
 Once the resolver is generated paste the following into `src/todo-item/todo-item.resolver.ts`.
 
 ```ts
+import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemService } from './todo-item.service';
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
-  constructor(readonly service: TodoItemService) {
+  constructor(
+    @InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+  ) {
     super(service);
   }
 }
-
-
 ```
 
-Notice how `TodoItemResolver` extends `CRUDResolver` and the class is annotated with `@Resolver`. Without the annotation
- the resolver **WILL NOT** be exposed in the graphql schema.
+Lets break this down a little bit.
+
+When creating the resolver notice how `TodoItemResolver` extends `CRUDResolver` and the class is annotated with `@Resolver`. Without the annotation the resolver **WILL NOT** be exposed in the graphql schema.
+
+```ts
+@Resolver()
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO)
+```
+
+In the constructor we inject a QueryService using the `InjectTypeOrmQueryService`. This will automatically create a QueryService for your entity that your resolver can use. To read more about the service take a look at [the Services docs](../concepts/services) and the [TypeOrmQueryService docs](../typeorm/services).
+
+```ts
+constructor(
+  @InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+) {
+  super(service);
+}
+```
 
 ## Wire everything up.
 
@@ -218,15 +192,14 @@ Update the `todo-item.module` to register the entities.
 
 ```ts
 import { Module } from '@nestjs/common';
-import { TodoItemService } from './todo-item.service';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { TodoItemResolver } from './todo-item.resolver';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { TodoItemEntity } from './todo-item.entity';
 
 @Module({
-  providers: [TodoItemService, TodoItemResolver],
+  providers: [TodoItemResolver],
   // add this line.
-  imports: [TypeOrmModule.forFeature([TodoItemEntity])],
+  imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
 })
 export class TodoItemModule {}
 ```
