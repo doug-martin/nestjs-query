@@ -71,7 +71,7 @@ export class TodoItemModule {}
 
 ```
 
-## Querying
+### Querying
 
 To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](../concepts/queries).
 
