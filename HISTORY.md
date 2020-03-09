@@ -1,3 +1,10 @@
+# v0.6.0
+
+* [FIXED] Get Underlying Entity Object [#41](https://github.com/doug-martin/nestjs-query/issues)
+    * Changed `TypeOrmQueryService` to operate on the `Entity`
+    * Added new `AssemblerQueryService` to translate between the `DTO` and `Entity`
+* [ADDED] New `InjectTypeOrmQueryService` decorator to auto-create a TypeOrm query service. 
+
 # v0.5.1
 
 * [DOCS] Added clarification around individual resolvers and relations with examples [#42](https://github.com/doug-martin/nestjs-query/issues/42)

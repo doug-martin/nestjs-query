@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DeepPartial, Class } from '../common';
 import { DeleteManyResponse, Filter, Query, UpdateManyResponse } from '../interfaces';
-import { getCoreMetadataStorage } from '../metadata';
 
 /**
  * Base interface for all QueryServices.
@@ -162,14 +161,9 @@ export interface QueryService<DTO> {
  * QueryService decorator to register with nestjs-query
  * @param DTOClass - the DTO class that the QueryService is used for.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function QueryService<DTO>(DTOClass: Class<DTO>) {
   return <Cls extends Class<QueryService<DTO>>>(cls: Cls): Cls | void => {
-    Injectable()(cls);
-    getCoreMetadataStorage().addQueryServiceDTO(cls, DTOClass);
-    return cls;
+    return Injectable()(cls);
   };
-}
-
-export function getQueryServiceDTO<DTO>(cls: Class<QueryService<DTO>>): Class<DTO> | undefined {
-  return getCoreMetadataStorage().getQueryServiceDTO(cls);
 }

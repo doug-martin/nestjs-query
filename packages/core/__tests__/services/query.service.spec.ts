@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as nestjsCommon from '@nestjs/common';
-import {
-  Class,
-  DeepPartial,
-  DeleteManyResponse,
-  Filter,
-  getQueryServiceDTO,
-  Query,
-  QueryService,
-  UpdateManyResponse,
-} from '../../src';
+import { Class, DeepPartial, DeleteManyResponse, Filter, Query, QueryService, UpdateManyResponse } from '../../src';
 
 describe('query service', () => {
   const injectableSpy = jest.spyOn(nestjsCommon, 'Injectable');
@@ -136,14 +127,8 @@ describe('query service', () => {
   beforeEach(() => jest.clearAllMocks());
   it('should register a query service as injectable and register with metadata', () => {
     @QueryService(TestDTO)
+    // @ts-ignore
     class TestService extends TestQueryService {}
     expect(injectableSpy).toBeCalledTimes(1);
-    expect(getQueryServiceDTO(TestService)).toBe(TestDTO);
-  });
-
-  describe('getQueryServiceDTO', () => {
-    it('should return undefined if the service is not registered', () => {
-      expect(getQueryServiceDTO(TestQueryService)).toBeUndefined();
-    });
   });
 });

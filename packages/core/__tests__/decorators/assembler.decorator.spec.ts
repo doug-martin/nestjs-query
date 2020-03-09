@@ -1,5 +1,5 @@
 import * as nestjsCommon from '@nestjs/common';
-import { Assembler, ClassTransformerAssembler, getAssembler } from '../../src';
+import { Assembler, AssemblerFactory, ClassTransformerAssembler, DefaultAssembler } from '../../src';
 import { getCoreMetadataStorage } from '../../src/metadata';
 
 class TestFrom {
@@ -24,8 +24,8 @@ describe('@Assembler', () => {
     @Assembler(TestFrom, TestTo)
     class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {}
     expect(injectableSpy).toBeCalledTimes(1);
-    expect(getAssembler(TestFrom, TestTo)).toBe(TestAssembler);
-    expect(getAssembler(TestTo, TestFrom)).toBe(undefined);
+    expect(AssemblerFactory.getAssembler(TestFrom, TestTo)).toBeInstanceOf(TestAssembler);
+    expect(AssemblerFactory.getAssembler(TestTo, TestFrom)).toBeInstanceOf(DefaultAssembler);
   });
 
   it('should throw an error when registering an assembler for the same From To combo', () => {

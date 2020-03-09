@@ -1,24 +1,8 @@
 ---
-title: TypeOrmQueryService
+title: Usage
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
-The `TypeOrmQueryService` is an implementation of the `QueryService` from the `core` package.
-
-All examples assume the following [entity](https://typeorm.io/#/entities) and DTO.
-
-**NOTE** In this example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
-
-<Tabs
-  defaultValue="todoitementity"
-  values={[
-    { label: 'TodoItemEntity', value: 'todoitementity', },
-    { label: 'TodoItemDTO', value: 'todoitemdto', },
-  ]
-}>
-<TabItem value="todoitementity">
+All examples assume the following [entity](https://typeorm.io/#/entities).
 
 ```ts
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
@@ -43,57 +27,49 @@ export class TodoItemEntity {
 
 ```
 
-</TabItem>
-<TabItem value="todoitemdto">
+## Creating a Service
+
+The `@nestjs-query/query-typeorm` package includes a `@InjectTypeOrmQueryService` decorator that creates your `TypeOrmQueryService` automatically.
+
+**NOTE** In this example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
 
 ```ts
-import { FilterableField } from '@nestjs-query/query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
-
-@ObjectType('TodoItem')
-export class TodoItemDTO {
-  @FilterableField(() => ID)
-  id!: string;
-
-  @FilterableField()
-  title!: string;
-
-  @FilterableField()
-  completed!: boolean;
-
-  @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
-
-  @FilterableField(() => GraphQLISODateTime)
-  updated!: Date;
-}
-
-```
-</TabItem>
-</Tabs>
-
-To create a typeorm service extend the `TypeOrmQueryService`
-
-```ts
-import { Injectable } from '@nestjs/common';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { TodoItemEntity } from './todo-item.entity';
+import { QueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
-@QueryService(TodoItemDTO)
-export class TodoItemService extends TypeOrmQueryService<TodoItemDTO, TodoItemEntity> {
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
   constructor(
-    @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
+    @InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
   ) {
-    super(repo);
+    super(service);
   }
 }
-
 ```
 
-Notice how the `TodoItemDTO` is passed into `@QueryService` decorator, which registers this query service for the `TodoItemDTO`. This is used internally be the QueryService to know what type to translate the entity into when returning results.
+### Module
+
+In order to use the `@InjectTypeOrmQueryService` you will need to use the `NestjsQueryTypeOrmModule`.
+
+The `NestjsQueryTypeOrmModule` wraps the `@nestjs-query/typeorm` module and adds the additional decorators.
+
+```ts
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemResolver } from './todo-item.resolver';
+
+@Module({
+  providers: [TodoItemResolver],
+  imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+})
+export class TodoItemModule {}
+
+```
 
 ## Querying
 
@@ -267,19 +243,35 @@ const { deletedCount } = await this.service.deleteMany(
 );
 ```
 
-## Custom Methods
+## Custom Service
 
-You can also define other methods on your service class that encapsulates your business logic.
+If you want to add custom methods to your service you can extend the `TypeOrmQueryService` directly.
 
 ```ts
-async markAllAsCompleted(): Promise<number> {
-   const entities = await this.query({ filter: { completed: { is: true } } });
+import { Injectable } from '@nestjs/common';
+import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { TodoItemEntity } from './todo-item.entity';
 
-   const { updatedCount } = await this.updateMany(
-     { completed: true }, // update
-     { id: { in: entities.map(e => e.id) } } // filter
-   );
-   // do some other business logic
-   return updatedCount;
+@QueryService(TodoItemEntity)
+export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
+  constructor(
+    @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
+  ) {
+    super(repo);
+  }
+
+  async markAllAsCompleted(): Promise<number> {
+     const entities = await this.query({ filter: { completed: { is: true } } });
+
+     const { updatedCount } = await this.updateMany(
+       { completed: true }, // update
+       { id: { in: entities.map(e => e.id) } } // filter
+     );
+     // do some other business logic
+     return updatedCount;
+  }
 }
+
 ```
