@@ -2,21 +2,31 @@ import 'reflect-metadata';
 import { SortDirection, SortField, SortNulls } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
+import * as nestjsGraphql from '@nestjs/graphql';
+import { GraphQLSchemaFactory, GraphQLSchemaBuilderModule } from '@nestjs/graphql';
+import { Test } from '@nestjs/testing';
 import { printSchema } from 'graphql';
-import * as typeGraphql from 'type-graphql';
 import { QueryArgsType, FilterableField } from '../../../src';
 
 describe('QueryType', (): void => {
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
+  let schemaFactory: GraphQLSchemaFactory;
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [GraphQLSchemaBuilderModule],
+    }).compile();
+    schemaFactory = moduleRef.get(GraphQLSchemaFactory);
+  });
 
   afterEach(() => jest.clearAllMocks());
 
-  @typeGraphql.ObjectType('TestQuery')
+  @nestjsGraphql.ObjectType('TestQuery')
   class TestDto {
-    @FilterableField(() => typeGraphql.ID)
+    @FilterableField(() => nestjsGraphql.ID)
     idField!: number;
 
-    @FilterableField(() => typeGraphql.ID, { nullable: true })
+    @FilterableField(() => nestjsGraphql.ID, { nullable: true })
     idFieldOption?: number;
 
     @FilterableField()
@@ -37,46 +47,46 @@ describe('QueryType', (): void => {
     @FilterableField({ nullable: true })
     numberFieldOptional?: number;
 
-    @FilterableField(() => typeGraphql.Float)
+    @FilterableField(() => nestjsGraphql.Float)
     floatField!: number;
 
-    @FilterableField(() => typeGraphql.Float, { nullable: true })
+    @FilterableField(() => nestjsGraphql.Float, { nullable: true })
     floatFieldOptional?: number;
 
-    @FilterableField(() => typeGraphql.Int)
+    @FilterableField(() => nestjsGraphql.Int)
     intField!: number;
 
-    @FilterableField(() => typeGraphql.Int, { nullable: true })
+    @FilterableField(() => nestjsGraphql.Int, { nullable: true })
     intFieldOptional?: number;
 
-    @FilterableField(() => typeGraphql.GraphQLTimestamp)
+    @FilterableField(() => nestjsGraphql.GraphQLTimestamp)
     timestampField!: Date;
 
-    @FilterableField(() => typeGraphql.GraphQLTimestamp, { nullable: true })
+    @FilterableField(() => nestjsGraphql.GraphQLTimestamp, { nullable: true })
     timestampFieldOptional?: Date;
 
-    @FilterableField(() => typeGraphql.GraphQLISODateTime)
+    @FilterableField(() => nestjsGraphql.GraphQLISODateTime)
     date!: Date;
 
-    @FilterableField(() => typeGraphql.GraphQLISODateTime, { nullable: true })
+    @FilterableField(() => nestjsGraphql.GraphQLISODateTime, { nullable: true })
     dateOptional?: Date;
   }
 
   // @ts-ignore
-  @typeGraphql.ArgsType()
+  @nestjsGraphql.ArgsType()
   class TestQuery extends QueryArgsType(TestDto) {}
 
-  @typeGraphql.Resolver()
+  @nestjsGraphql.Resolver()
   class TestResolver {
-    @typeGraphql.Query()
+    @nestjsGraphql.Query(() => String)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    findConnection(@typeGraphql.Args() query: TestQuery): string {
+    findConnection(@nestjsGraphql.Args() query: TestQuery): string {
       return 'hello';
     }
   }
 
-  it('create a query for string fields', () => {
-    const schema = typeGraphql.buildSchemaSync({ resolvers: [TestResolver] });
+  it('create a query for string fields', async () => {
+    const schema = await schemaFactory.create([TestResolver]);
     expect(printSchema(schema)).toEqual(
       `input BooleanFieldComparison {
   is: Boolean
@@ -114,7 +124,7 @@ input DateFieldComparison {
 }
 
 """
-The javascript \`Date\` as string. Type represents date and time as the ISO Date string.
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
 
@@ -216,25 +226,6 @@ input StringFieldComparison {
   notIn: [String!]
 }
 
-type TestQuery {
-  idField: ID!
-  idFieldOption: ID
-  stringField: String!
-  stringFieldOptional: String
-  booleanField: Boolean!
-  booleanFieldOptional: Boolean
-  numberField: Float!
-  numberFieldOptional: Float
-  floatField: Float!
-  floatFieldOptional: Float
-  intField: Int!
-  intFieldOptional: Int
-  timestampField: Timestamp!
-  timestampFieldOptional: Timestamp
-  date: DateTime!
-  dateOptional: DateTime
-}
-
 input TestQueryFilter {
   and: [TestQueryFilter!]
   or: [TestQueryFilter!]
@@ -282,7 +273,7 @@ enum TestQuerySortFields {
 }
 
 """
-The javascript \`Date\` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
 

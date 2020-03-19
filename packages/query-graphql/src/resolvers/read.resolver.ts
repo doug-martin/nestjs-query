@@ -1,7 +1,6 @@
 import { Class } from '@nestjs-query/core';
 import omit from 'lodash.omit';
-import { ArgsType, ID } from 'type-graphql';
-import { Resolver, Args } from '@nestjs/graphql';
+import { ArgsType, ID, Resolver, Args } from '@nestjs/graphql';
 import { getDTONames } from '../common';
 import { QueryArgsTypeOpts } from '../types/query/query-args.type';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
@@ -37,7 +36,7 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
   class QA extends QueryArgs {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
-  class ResolverBase extends BaseClass {
+  class ReadResolverBase extends BaseClass {
     @ResolverQuery(() => DTOClass, { nullable: true, name: baseNameLower }, commonResolverOpts, opts.one ?? {})
     async findById(@Args({ name: 'id', type: () => ID }) id: string | number): Promise<DTO | undefined> {
       return this.service.findById(id);
@@ -49,8 +48,7 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
       return Connection.createFromPromise(this.service.query(qa), qa.paging || {});
     }
   }
-
-  return ResolverBase;
+  return ReadResolverBase;
 };
 
 export const ReadResolver = <DTO>(

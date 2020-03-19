@@ -4,8 +4,7 @@
  */
 import { Class, DeepPartial } from '@nestjs-query/core';
 import omit from 'lodash.omit';
-import { ArgsType, InputType } from 'type-graphql';
-import { Resolver, Args } from '@nestjs/graphql';
+import { InputType, ArgsType, Args, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../common';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { CreateManyInputType, CreateOneInputType, MutationArgsType, PartialInputType } from '../types';
@@ -76,7 +75,7 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
   class CM extends MutationArgsType(CreateManyInput) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
-  class ResolverBase extends BaseClass {
+  class CreateResolverBase extends BaseClass {
     @ResolverMutation(() => DTOClass, { name: `createOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async createOne(@Args() input: CO): Promise<DTO> {
       const createOne = await transformAndValidate(CO, input);
@@ -89,8 +88,7 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
       return this.service.createMany(createMany.input.input);
     }
   }
-
-  return ResolverBase;
+  return CreateResolverBase;
 };
 
 /**

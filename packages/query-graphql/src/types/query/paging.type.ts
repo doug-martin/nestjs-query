@@ -1,6 +1,6 @@
 import { Class, Paging } from '@nestjs-query/core';
 import { Min, Validate, IsPositive } from 'class-validator';
-import { Field, InputType, Int } from 'type-graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 import { cursorToOffset } from 'graphql-relay';
 import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
 import { CannotUseWith, CannotUseWithout, IsUndefined } from '../validators';

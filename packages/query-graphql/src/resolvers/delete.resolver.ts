@@ -1,7 +1,6 @@
 import { Class, DeleteManyResponse } from '@nestjs-query/core';
 import omit from 'lodash.omit';
-import { ArgsType, ObjectType } from 'type-graphql';
-import { Resolver, Args } from '@nestjs/graphql';
+import { ObjectType, ArgsType, Resolver, Args } from '@nestjs/graphql';
 import { getDTONames } from '../common';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import {
@@ -58,7 +57,7 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   class DM extends MutationArgsType(DeleteManyInput) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
-  class ResolverBase extends BaseClass {
+  class DeleteResolverBase extends BaseClass {
     @ResolverMutation(() => DeleteOneResponse, { name: `deleteOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async deleteOne(@Args() input: DO): Promise<Partial<DTO>> {
       const deleteOne = await transformAndValidate(DO, input);
@@ -71,8 +70,7 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
       return this.service.deleteMany(deleteMany.input.filter);
     }
   }
-
-  return ResolverBase;
+  return DeleteResolverBase;
 };
 
 export const DeleteResolver = <DTO>(

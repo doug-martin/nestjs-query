@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { IsInt, Min } from 'class-validator';
-import { ArgumentValidationError } from 'type-graphql';
+import { BadRequestException } from '@nestjs/common';
 import { transformAndValidate } from '../../src/resolvers/helpers';
 
 describe('helpers', () => {
@@ -21,7 +21,7 @@ describe('helpers', () => {
       const v = await transformAndValidate(TestClass, { int: 1 });
       expect(v).toBeInstanceOf(TestClass);
       expect(v.int).toBe(1);
-      return expect(transformAndValidate(TestClass, { int: -1 })).rejects.toBeInstanceOf(ArgumentValidationError);
+      return expect(transformAndValidate(TestClass, { int: -1 })).rejects.toBeInstanceOf(BadRequestException);
     });
   });
 });

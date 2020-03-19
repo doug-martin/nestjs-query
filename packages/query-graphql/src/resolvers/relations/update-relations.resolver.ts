@@ -1,6 +1,5 @@
 import { Class } from '@nestjs-query/core';
-import { ArgsType } from 'type-graphql';
-import { Resolver, Args } from '@nestjs/graphql';
+import { Resolver, ArgsType, Args } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverMutation } from '../../decorators';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
@@ -25,14 +24,14 @@ const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
   class SetArgs extends MutationArgsType(RelationInputType()) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
-  class Mixin extends Base {
+  class UpdateOneMixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
     async [`set${baseName}On${dtoNames.baseName}`](@Args() setArgs: SetArgs): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
       return this.service.setRelation(relationName, input.id, input.relationId);
     }
   }
-  return Mixin;
+  return UpdateOneMixin;
 };
 
 const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
@@ -52,14 +51,14 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
   class AddArgs extends MutationArgsType(RelationsInputType()) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
-  class Mixin extends Base {
+  class UpdateManyMixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
     async [`add${pluralBaseName}To${dtoNames.baseName}`](@Args() addArgs: AddArgs): Promise<DTO> {
       const { input } = await transformAndValidate(AddArgs, addArgs);
       return this.service.addRelations(relationName, input.id, input.relationIds);
     }
   }
-  return Mixin;
+  return UpdateManyMixin;
 };
 
 export const UpdateRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: RelationsOpts) => <

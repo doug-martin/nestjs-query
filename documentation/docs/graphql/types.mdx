@@ -12,7 +12,7 @@ The following examples are based on the following `TodoItemDTO`
 
 ```ts
 import { FilterableField } from '@nestjs-query/query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
@@ -49,7 +49,7 @@ The `QueryArgsType` will generate an `ArgsType` that will require the user to pr
 
 ```ts
 import { QueryArgsType } from '@nestjs-query/query-graphql';
-import { ArgsType } from 'type-graphql';
+import { ArgsType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @ArgsType()
@@ -454,7 +454,7 @@ This is the type used by resolvers when a `CreateDTOClass` or `UpdateDTOClass` a
 
 ```ts
 import { CursorPagingType } from '@nestjs-query/query-graphql';
-import { InputType } from `type-graphql`;
+import { InputType } from `@nestjs/graphql`;
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType()
@@ -484,7 +484,7 @@ type TodoItemPartialInput {
 
 Input type for `createOne` mutations.
 
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
 
 **NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
 specify the `created` or `updated` fields so you would create a new DTO just for input.
@@ -493,7 +493,7 @@ specify the `created` or `updated` fields so you would create a new DTO just for
 
 ```ts
 import { CreateOneInputType } from '@nestjs-query/query-graphql';
-import { InputType } from 'type-graphql';
+import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType('TodoItemInput')
@@ -516,7 +516,7 @@ export class CreateOneTodoItemInput extends CreateOneInputType(TodoItemDTO, Todo
 
 Input type for `createMany` mutations.
 
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
 
 **NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
 specify the `created` or `updated` fields so you would create a new DTO just for input.
@@ -525,7 +525,7 @@ specify the `created` or `updated` fields so you would create a new DTO just for
 
 ```ts
 import { CreateManyInputType } from '@nestjs-query/query-graphql';
-import { InputType } from 'type-graphql';
+import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType('TodoItemInput')
@@ -551,7 +551,7 @@ The `UpdateOneInputType` will generate an `InputType` that will require the user
 * `id` - The id of the recrord to update
 * `update` - A record with fields to update.
 
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
 
 **NOTE** Your DTO should be one that you want to use for updates. For example you may not want to let the end user to
 update the `created` or `updated` fields so you would create a new DTO just for updates.
@@ -560,7 +560,7 @@ update the `created` or `updated` fields so you would create a new DTO just for 
 
 ```ts
 import { UpdateOneInputType } from '@nestjs-query/query-graphql';
-import { InputType } from 'type-graphql';
+import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType('TodoItemUpdate')
@@ -589,7 +589,7 @@ The `UpdateOneInputType` will generate an `InputType` that will require the user
 * `filter` - The filter that should be used to find records to update. See [FilterType](#filtertype)
 * `update` - The update to apply to each record found.
 
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `type-graphql`.
+**NOTE** Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
 
 **NOTE** Your DTO should be one that you want to use for input. For example you may not want to let the end user to
 specify the `created` or `updated` fields so you would create a new DTO just for input.
@@ -600,7 +600,7 @@ In this example we use the read DTO for the FilterType, and a different update D
 
 ```ts
 import { CreateOneInputType, FilterType } from '@nestjs-query/query-graphql';
-import { InputType } from 'type-graphql';
+import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType('TodoItemUpdate')
@@ -634,7 +634,7 @@ The `DeleteOneInputType` will generate an `InputType` that will require the user
 
 ```ts
 import { DeleteOneInputType } from '@nestjs-query/query-graphql';
-import { InputType } from 'type-graphql';
+import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType()
@@ -653,7 +653,7 @@ The `DeleteManyInputType` will generate an `InputType` that will require the use
 
 ```ts
 import { CreateOneInputType, FilterType } from '@nestjs-query/query-graphql';
-import { InputType } from 'type-graphql';
+import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType()

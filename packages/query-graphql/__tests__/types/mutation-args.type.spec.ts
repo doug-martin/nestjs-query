@@ -1,12 +1,12 @@
 import 'reflect-metadata';
-import * as typeGraphql from 'type-graphql';
+import * as nestjsGraphql from '@nestjs/graphql';
 import * as classValidator from 'class-validator';
-import { InputType } from 'type-graphql';
+import { InputType } from '@nestjs/graphql';
 import { MutationArgsType } from '../../src/types';
 
 describe('MutationArgsType', (): void => {
-  const argsTypeSpy = jest.spyOn(typeGraphql, 'ArgsType');
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const argsTypeSpy = jest.spyOn(nestjsGraphql, 'ArgsType');
+  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
   const validateNestedSpy = jest.spyOn(classValidator, 'ValidateNested');
 
   @InputType()

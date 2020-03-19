@@ -1,9 +1,9 @@
-import { FieldMetadata } from 'type-graphql/dist/metadata/definitions';
-import { ObjectClassMetadata } from 'type-graphql/dist/metadata/definitions/object-class-metdata';
-import { getMetadataStorage } from 'type-graphql/dist/metadata/getMetadataStorage';
-import { MetadataStorage } from 'type-graphql/dist/metadata/metadata-storage';
+import { TypeMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/type-metadata.storage';
+import { LazyMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage';
 import { Class, DeepPartial, Filter, SortField } from '@nestjs-query/core';
-import { AdvancedOptions, ReturnTypeFunc } from '../external/type-graphql.types';
+import { PropertyMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
+import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
+import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
 import {
   CreateOneInputType,
   CreateManyInputType,
@@ -20,13 +20,8 @@ interface FilterableFieldDescriptor<T> {
   propertyName: string;
   target: Class<T>;
   returnTypeFunc?: ReturnTypeFunc;
-  advancedOptions?: AdvancedOptions;
+  advancedOptions?: FieldOptions;
 }
-
-/**
- * @internal
- */
-const typeGraphqlMetadataStorage: () => MetadataStorage = () => getMetadataStorage();
 
 /**
  * @internal
@@ -182,22 +177,22 @@ export class GraphQLQueryMetadataStorage {
     return this.getValue(this.deleteManyInputTypeStorage, type);
   }
 
-  getTypeGraphqlObjectMetadata<T>(objType: Class<T>): ObjectClassMetadata | undefined {
-    return typeGraphqlMetadataStorage().objectTypes.find(o => o.target === objType);
+  getGraphqlObjectMetadata<T>(objType: Class<T>): ObjectTypeMetadata | undefined {
+    return TypeMetadataStorage.getObjectTypesMetadata().find(o => o.target === objType);
   }
 
-  getTypeGraphqlFieldsForType<T>(objType: Class<T>): FieldMetadata[] | undefined {
-    const typeGraphqlStorage = typeGraphqlMetadataStorage();
-    typeGraphqlStorage.build();
-    let graphqlObjType = typeGraphqlStorage.objectTypes.find(o => o.target === objType);
+  getGraphqlFieldsForType<T>(objType: Class<T>): PropertyMetadata[] | undefined {
+    LazyMetadataStorage.load([objType]);
+    TypeMetadataStorage.compile();
+    let graphqlObjType = this.getGraphqlObjectMetadata(objType);
     if (!graphqlObjType) {
-      graphqlObjType = typeGraphqlStorage.inputTypes.find(o => o.target === objType);
+      graphqlObjType = TypeMetadataStorage.getInputTypesMetadata().find(o => o.target === objType);
     }
-    return graphqlObjType?.fields;
+    return graphqlObjType?.properties;
   }
 
   clear(): void {
-    typeGraphqlMetadataStorage().clear();
+    TypeMetadataStorage.clear();
     this.filterableObjectStorage.clear();
     this.filterTypeStorage.clear();
     this.sortTypeStorage.clear();

@@ -1,9 +1,19 @@
 import 'reflect-metadata';
-import { buildSchemaSync, Field, ObjectType, Query, Resolver } from 'type-graphql';
+import { Field, ObjectType, Query, Resolver, GraphQLSchemaBuilderModule, GraphQLSchemaFactory } from '@nestjs/graphql';
+import { Test } from '@nestjs/testing';
 import { printSchema } from 'graphql';
 import { ConnectionType } from '../../../src';
 
 describe('ConnectionType', (): void => {
+  let schemaFactory: GraphQLSchemaFactory;
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [GraphQLSchemaBuilderModule],
+    }).compile();
+    schemaFactory = moduleRef.get(GraphQLSchemaFactory);
+  });
+
   @ObjectType('Test')
   class TestDto {
     @Field()
@@ -20,9 +30,8 @@ describe('ConnectionType', (): void => {
     }
   }
 
-  it('should store metadata', () => {
-    const schema = buildSchemaSync({ resolvers: [TestConnectionTypeResolver] });
-
+  it('should store metadata', async () => {
+    const schema = await schemaFactory.create([TestConnectionTypeResolver]);
     expect(printSchema(schema)).toEqual(
       `"""Cursor for paging through collections"""
 scalar ConnectionCursor
@@ -68,14 +77,14 @@ type TestEdge {
     );
   });
 
-  it('should throw an error if the object is not registered with type-graphql', () => {
+  it('should throw an error if the object is not registered with @nestjs/graphql', () => {
     class TestBadDto {
       @Field()
       stringField!: string;
     }
 
     expect(() => ConnectionType(TestBadDto)).toThrow(
-      'Unable to make ConnectionType. Ensure TestBadDto is annotated with type-graphql @ObjectType',
+      'Unable to make ConnectionType. Ensure TestBadDto is annotated with @nestjs/graphql @ObjectType',
     );
   });
 

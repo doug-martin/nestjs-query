@@ -1,13 +1,14 @@
 import 'reflect-metadata';
-import { ID, ObjectType } from 'type-graphql';
 import * as nestGraphql from '@nestjs/graphql';
 import { instance, mock, when, objectContaining } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { QueryService, DeleteManyResponse } from '@nestjs-query/core';
+import { ReturnTypeFuncValue, MutationOptions } from '@nestjs/graphql';
 import * as decorators from '../../src/decorators';
-import { AdvancedOptions, ReturnTypeFuncValue } from '../../src/external/type-graphql.types';
 import { DeleteManyResponseType, DeleteResolver, DeleteOneInputType, DeleteManyInputType } from '../../src';
 import * as types from '../../src/types';
+
+const { ID, ObjectType } = nestGraphql;
 
 @ObjectType('DeleteResolverDTO')
 class TestResolverDTO {
@@ -42,7 +43,7 @@ describe('DeleteResolver', () => {
   function assertResolverMutationCall(
     callNo: number,
     returnType: ReturnTypeFuncValue,
-    advancedOpts: AdvancedOptions,
+    advancedOpts: MutationOptions,
     ...opts: decorators.ResolverMethodOpts[]
   ) {
     const [rt, ao, ...rest] = resolverMutationSpy.mock.calls[callNo]!;

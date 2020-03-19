@@ -1,13 +1,14 @@
 import 'reflect-metadata';
 import { QueryService } from '@nestjs-query/core';
-import { ID, ObjectType } from 'type-graphql';
 import * as nestGraphql from '@nestjs/graphql';
 import { mock, instance, when, deepEqual } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { ReturnTypeFuncValue, MutationOptions } from '@nestjs/graphql';
 import { UpdateRelationsResolver } from '../../../src/resolvers/relations';
 import * as decorators from '../../../src/decorators';
-import { AdvancedOptions, ReturnTypeFuncValue } from '../../../src/external/type-graphql.types';
 import { RelationInputType, RelationsInputType } from '../../../src/types';
+
+const { ID, ObjectType } = nestGraphql;
 
 @ObjectType('UpdateRelation')
 class UpdateRelationDTO {
@@ -43,7 +44,7 @@ describe('UpdateRelationsResolver', () => {
   function assertResolverMutationCall(
     callNo: number,
     returnType: ReturnTypeFuncValue,
-    advancedOpts: AdvancedOptions,
+    advancedOpts: MutationOptions,
     ...opts: decorators.ResolverMethodOpts[]
   ) {
     const [rt, ao, ...rest] = resolverMutationSpy.mock.calls[callNo]!;

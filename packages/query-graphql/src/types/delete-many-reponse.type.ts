@@ -1,5 +1,5 @@
 import { Class, DeleteManyResponse } from '@nestjs-query/core';
-import { Field, Int, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 /** @internal */
 let deleteManyResponseType: Class<DeleteManyResponse> | null = null;

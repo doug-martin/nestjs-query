@@ -1,15 +1,8 @@
 import { Class, DeepPartial, UpdateManyResponse } from '@nestjs-query/core';
-import { ArgsType, InputType } from 'type-graphql';
-import { Resolver, Args } from '@nestjs/graphql';
+import { ArgsType, InputType, Resolver, Args } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { getDTONames } from '../common';
-import {
-  MutationArgsType,
-  PartialInputType,
-  UpdateManyInputType,
-  UpdateManyResponseType,
-  UpdateOneInputType,
-} from '../types';
+import { MutationArgsType, UpdateManyInputType, UpdateManyResponseType, UpdateOneInputType } from '../types';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { ResolverMutation } from '../decorators';
 import { transformAndValidate } from './helpers';
@@ -30,9 +23,9 @@ const defaultUpdateInput = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO
   @InputType(`Update${baseName}`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  class PartialInput extends PartialInputType(DTOClass) {}
+  class UpdateType extends DTOClass {}
 
-  return PartialInput as Class<U>;
+  return UpdateType as Class<U>;
 };
 
 /**
@@ -70,7 +63,7 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
   class UM extends MutationArgsType(UpdateManyInput) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
-  class ResolverBase extends BaseClass {
+  class UpdateResolverBase extends BaseClass {
     @ResolverMutation(() => DTOClass, { name: `updateOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async updateOne(@Args() input: UO): Promise<DTO> {
       const updateOne = await transformAndValidate(UO, input);
@@ -85,8 +78,7 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
       return this.service.updateMany(update, filter);
     }
   }
-
-  return ResolverBase;
+  return UpdateResolverBase;
 };
 
 export const UpdateResolver = <DTO, U extends DeepPartial<DTO>>(

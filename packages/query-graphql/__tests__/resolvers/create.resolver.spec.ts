@@ -1,15 +1,16 @@
 // eslint-disable-next-line max-classes-per-file
 import 'reflect-metadata';
-import { ID, ObjectType } from 'type-graphql';
 import * as nestGraphql from '@nestjs/graphql';
 import { instance, mock, when, objectContaining } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { QueryService, DeepPartial } from '@nestjs-query/core';
 import { IsString } from 'class-validator';
+import { ReturnTypeFuncValue, MutationOptions } from '@nestjs/graphql';
 import * as decorators from '../../src/decorators';
-import { AdvancedOptions, ReturnTypeFuncValue } from '../../src/external/type-graphql.types';
 import { CreateManyInputType, CreateOneInputType, CreateResolver } from '../../src';
 import * as types from '../../src/types';
+
+const { ID, ObjectType } = nestGraphql;
 
 @ObjectType('CreateResolverDTO')
 class TestResolverDTO {
@@ -44,7 +45,7 @@ describe('CreateResolver', () => {
   function assertResolverMutationCall(
     callNo: number,
     returnType: ReturnTypeFuncValue,
-    advancedOpts: AdvancedOptions,
+    advancedOpts: MutationOptions,
     ...opts: decorators.ResolverMethodOpts[]
   ) {
     const [rt, ao, ...rest] = resolverMutationSpy.mock.calls[callNo]!;

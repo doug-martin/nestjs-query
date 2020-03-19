@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ObjectType } from 'type-graphql';
+import { ObjectType } from '@nestjs/graphql';
 import { getMetadataStorage } from '../../../src/metadata';
 import { SortType } from '../../../src';
 
@@ -10,7 +10,7 @@ describe('SortingType', (): void => {
   it('should throw an error if the class is not annotated with @ObjectType', () => {
     class TestSort {}
     expect(() => SortType(TestSort)).toThrow(
-      'Unable to make SortType. Ensure TestSort is annotated with type-graphql @ObjectType',
+      'Unable to make SortType. Ensure TestSort is annotated with @nestjs/graphql @ObjectType',
     );
   });
   it('should throw an error if no fields are found', () => {

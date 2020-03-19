@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ObjectType, Field } from 'type-graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { getDTONames } from '../../src/common';
 
 describe('getDTONames', () => {
@@ -9,7 +9,7 @@ describe('getDTONames', () => {
     str!: string;
   }
 
-  it('should use the type-graphql name for the dto', () => {
+  it('should use the @nestjs/graphql name for the dto', () => {
     const { baseName, baseNameLower, pluralBaseNameLower, pluralBaseName } = getDTONames(DTO);
     expect(baseName).toBe('SomeDTO');
     expect(baseNameLower).toBe('someDTO');

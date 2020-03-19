@@ -1,6 +1,5 @@
 import { Class } from '@nestjs-query/core';
-import { ArgsType } from 'type-graphql';
-import { Resolver, Args } from '@nestjs/graphql';
+import { Resolver, ArgsType, Args } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverMutation } from '../../decorators';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
@@ -25,14 +24,14 @@ const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
   class SetArgs extends MutationArgsType(RelationInputType()) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
-  class Mixin extends Base {
+  class RemoveOneMixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
     async [`remove${baseName}From${dtoNames.baseName}`](@Args() setArgs: SetArgs): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
       return this.service.removeRelation(relationName, input.id, input.relationId);
     }
   }
-  return Mixin;
+  return RemoveOneMixin;
 };
 
 const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <

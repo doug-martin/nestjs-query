@@ -1,11 +1,21 @@
 import 'reflect-metadata';
-import { buildSchemaSync, Query, Resolver } from 'type-graphql';
-import { printSchema } from 'graphql';
+import { Test } from '@nestjs/testing';
+import { Resolver, Query, GraphQLSchemaFactory, GraphQLSchemaBuilderModule } from '@nestjs/graphql';
 import { DeleteManyResponse } from '@nestjs-query/core';
-import { DeleteManyResponseType } from '../../src';
+import { printSchema } from 'graphql';
+import { DeleteManyResponseType } from '../../src/types';
 
 describe('DeleteManyResponseType', (): void => {
-  it('should create a type-graphql object type', () => {
+  let schemaFactory: GraphQLSchemaFactory;
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [GraphQLSchemaBuilderModule],
+    }).compile();
+    schemaFactory = moduleRef.get(GraphQLSchemaFactory);
+  });
+
+  it('should create a @nestjs/graphql object type', async () => {
     const D = DeleteManyResponseType();
     @Resolver()
     class TestDeleteManyResponseResolver {
@@ -14,7 +24,7 @@ describe('DeleteManyResponseType', (): void => {
         return { deletedCount: 1 };
       }
     }
-    const schema = buildSchemaSync({ resolvers: [TestDeleteManyResponseResolver] });
+    const schema = await schemaFactory.create([TestDeleteManyResponseResolver]);
     expect(printSchema(schema)).toEqual(`type DeleteManyResponse {
   """The number of records deleted."""
   deletedCount: Int!

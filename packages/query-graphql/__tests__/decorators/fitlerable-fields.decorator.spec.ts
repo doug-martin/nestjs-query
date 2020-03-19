@@ -1,12 +1,12 @@
 import 'reflect-metadata';
-import * as typeGraphql from 'type-graphql';
+import * as nestjsGraphQL from '@nestjs/graphql';
 import { FilterableField } from '../../src';
 import { getMetadataStorage } from '../../src/metadata';
 
-const { Float, ObjectType } = typeGraphql;
+const { Float, ObjectType } = nestjsGraphQL;
 
 describe('FilterableField decorator', (): void => {
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const fieldSpy = jest.spyOn(nestjsGraphQL, 'Field');
   beforeEach(() => getMetadataStorage().clear());
   afterEach(() => getMetadataStorage().clear());
 

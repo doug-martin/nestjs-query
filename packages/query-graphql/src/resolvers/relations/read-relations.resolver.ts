@@ -1,9 +1,8 @@
 import { Class } from '@nestjs-query/core';
-import { ArgsType } from 'type-graphql';
-import { Resolver, Parent, Args, Context } from '@nestjs/graphql';
+import { Parent, Context, ArgsType, Resolver, Args } from '@nestjs/graphql';
 import { ExecutionContext } from '@nestjs/common';
 import { getDTONames } from '../../common';
-import { ResolverProperty } from '../../decorators';
+import { ResolverField } from '../../decorators';
 import { FindRelationsLoader, DataLoaderFactory, QueryRelationsLoader } from '../../loader';
 import { ConnectionType, QueryArgsType } from '../../types';
 import { transformAndValidate } from '../helpers';
@@ -26,13 +25,13 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
   const findLoader = new FindRelationsLoader<DTO, Relation>(relationDTO, relationName);
 
   @Resolver(() => DTOClass, { isAbstract: true })
-  class Mixin extends Base {
-    @ResolverProperty(baseNameLower, () => relationDTO, { nullable: relation.nullable }, commonResolverOpts)
+  class ReadOneMixin extends Base {
+    @ResolverField(baseNameLower, () => relationDTO, { nullable: relation.nullable }, commonResolverOpts)
     [`find${baseName}`](@Parent() dto: DTO, @Context() context: ExecutionContext): Promise<Relation | undefined> {
       return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load(dto);
     }
   }
-  return Mixin;
+  return ReadOneMixin;
 };
 
 const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
@@ -54,8 +53,8 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
 
   const CT = ConnectionType(relationDTO);
   @Resolver(() => DTOClass, { isAbstract: true })
-  class Mixin extends Base {
-    @ResolverProperty(pluralBaseNameLower, () => CT, { nullable: relation.nullable }, commonResolverOpts)
+  class ReadManyMixin extends Base {
+    @ResolverField(pluralBaseNameLower, () => CT, { nullable: relation.nullable }, commonResolverOpts)
     async [`query${pluralBaseName}`](
       @Parent() dto: DTO,
       @Args() q: RelationQA,
@@ -66,7 +65,7 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
       return CT.createFromPromise(loader.load({ dto, query: qa }), qa.paging || {});
     }
   }
-  return Mixin;
+  return ReadManyMixin;
 };
 
 export const ReadRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: RelationsOpts) => <

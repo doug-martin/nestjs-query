@@ -31,13 +31,13 @@
     "url": "https://github.com/doug-martin/nestjs-query/issues"
   },
   "peerDependencies": {
-    "@nestjs/common": "^6.11.8",
+    "@nestjs/common": "^7.0.3",
     "class-transformer": "^0.2.3"
   },
   "devDependencies": {
-    "@nestjs/common": "^6.11.8",
+    "@nestjs/common": "^7.0.2",
     "class-transformer": "^0.2.3",
     "ts-mockito": "^2.5.0",
-    "typescript": "^3.8.2"
+    "typescript": "^3.8.3"
   }
 }
