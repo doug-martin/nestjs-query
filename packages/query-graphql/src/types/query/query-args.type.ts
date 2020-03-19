@@ -1,5 +1,5 @@
 import { Class, Filter, Query, SortField } from '@nestjs-query/core';
-import { ArgsType, Field } from 'type-graphql';
+import { ArgsType, Field } from '@nestjs/graphql';
 import { ValidateNested, Validate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PropertyMax } from '../validators/property-max.validator';

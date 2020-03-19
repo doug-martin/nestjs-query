@@ -79,7 +79,7 @@ export class TodoItemEntity {
 
 ```ts
 import { FilterableField } from '@nestjs-query/query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
@@ -152,7 +152,7 @@ export class SubTaskEntity {
 
 ```ts
 import { FilterableField } from '@nestjs-query/query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from 'type-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('SubTask')
 export class SubTaskDTO {

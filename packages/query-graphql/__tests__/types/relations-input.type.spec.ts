@@ -1,20 +1,20 @@
 import 'reflect-metadata';
-import * as typeGraphql from 'type-graphql';
+import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { RelationsInputType } from '../../src';
 
 describe('RelationsInputType', (): void => {
-  const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const inputTypeSpy = jest.spyOn(nestjsGraphql, 'InputType');
+  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
 
   it('should create an args type with an array field', () => {
     RelationsInputType();
     expect(inputTypeSpy).toBeCalledWith();
     expect(inputTypeSpy).toBeCalledTimes(1);
     expect(fieldSpy).toBeCalledTimes(2);
-    expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.ID);
-    expect(fieldSpy.mock.calls[1]![0]!()).toEqual([typeGraphql.ID]);
+    expect(fieldSpy.mock.calls[0]![0]!()).toEqual(nestjsGraphql.ID);
+    expect(fieldSpy.mock.calls[1]![0]!()).toEqual([nestjsGraphql.ID]);
   });
 
   it('should return the input when accessing the update field', () => {

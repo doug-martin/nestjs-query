@@ -1,14 +1,14 @@
 import 'reflect-metadata';
-import * as typeGraphql from 'type-graphql';
+import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { MinLength, validateSync } from 'class-validator';
-import { ObjectType } from 'type-graphql';
+import { ObjectType } from '@nestjs/graphql';
 import { FilterableField } from '../../src/decorators';
 import { UpdateManyInputType, FilterType } from '../../src/types';
 
 describe('UpdateManyInputType', (): void => {
-  const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const inputTypeSpy = jest.spyOn(nestjsGraphql, 'InputType');
+  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
 
   @ObjectType()
   class FakeType {

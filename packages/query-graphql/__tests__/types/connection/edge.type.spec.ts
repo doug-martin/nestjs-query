@@ -1,14 +1,14 @@
 import 'reflect-metadata';
-import * as typeGraphql from 'type-graphql';
+import * as nestjsGraphql from '@nestjs/graphql';
 import { EdgeType } from '../../../src/types/connection';
 
 describe('EdgeType', (): void => {
-  const objectTypeSpy = jest.spyOn(typeGraphql, 'ObjectType');
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const objectTypeSpy = jest.spyOn(nestjsGraphql, 'ObjectType');
+  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
 
   afterEach(() => jest.clearAllMocks());
 
-  @typeGraphql.ObjectType('Fake')
+  @nestjsGraphql.ObjectType('Fake')
   class FakeType {}
 
   it('should create an edge type for the dto', () => {
@@ -24,7 +24,7 @@ describe('EdgeType', (): void => {
   });
 
   it('should not return the same an edge type for a different dto', () => {
-    @typeGraphql.ObjectType('Fake2')
+    @nestjsGraphql.ObjectType('Fake2')
     class FakeTypeTwo {}
     expect(EdgeType(FakeType)).not.toBe(EdgeType(FakeTypeTwo));
   });
@@ -33,7 +33,7 @@ describe('EdgeType', (): void => {
     class BadDTO {}
 
     expect(() => EdgeType(BadDTO)).toThrowError(
-      'Unable to make EdgeType for class. Ensure BadDTO is annotated with type-graphql @ObjectType',
+      'Unable to make EdgeType for class. Ensure BadDTO is annotated with @nestjs/graphql @ObjectType',
     );
   });
 });

@@ -1,14 +1,15 @@
 import 'reflect-metadata';
-import * as typeGraphql from 'type-graphql';
+import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { ObjectType } from 'type-graphql';
 import { DeleteManyInputType, FilterType } from '../../src';
 import { FilterableField } from '../../src/decorators';
 
+const { ObjectType } = nestjsGraphql;
+
 describe('DeleteManyInputType', (): void => {
-  const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const inputTypeSpy = jest.spyOn(nestjsGraphql, 'InputType');
+  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
 
   @ObjectType()
   class DeleteManyDTO {

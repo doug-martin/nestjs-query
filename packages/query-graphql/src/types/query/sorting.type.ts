@@ -1,5 +1,5 @@
 import { Class, SortDirection, SortField, SortNulls } from '@nestjs-query/core';
-import { Field, InputType, registerEnumType } from 'type-graphql';
+import { Field, InputType, registerEnumType } from '@nestjs/graphql';
 import { IsEnum, IsIn } from 'class-validator';
 import { getMetadataStorage } from '../../metadata';
 import { IsUndefined } from '../validators';
@@ -21,7 +21,7 @@ export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
   if (existing) {
     return existing;
   }
-  const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TClass);
+  const objMetadata = metadataStorage.getGraphqlObjectMetadata(TClass);
   if (!objMetadata) {
     throw new UnregisteredObjectType(TClass, 'Unable to make SortType.');
   }

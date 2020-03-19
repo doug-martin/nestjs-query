@@ -1,5 +1,5 @@
 import { DeepPartial, Class } from '@nestjs-query/core';
-import { Field, ID, InputType } from 'type-graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { getDTONames } from '../common';

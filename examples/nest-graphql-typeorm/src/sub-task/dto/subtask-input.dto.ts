@@ -1,4 +1,4 @@
-import { Field, InputType, ID } from 'type-graphql';
+import { Field, InputType, ID } from '@nestjs/graphql';
 import { IsOptional, IsString, IsBoolean, IsNotEmpty } from 'class-validator';
 
 @InputType('SubTaskInput')

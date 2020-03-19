@@ -1,6 +1,5 @@
-import { Field } from 'type-graphql';
 import { Class } from '@nestjs-query/core';
-import { AdvancedOptions, MethodAndPropDecorator, ReturnTypeFunc } from '../external/type-graphql.types';
+import { Field, FieldOptions, ReturnTypeFunc } from '@nestjs/graphql';
 import { getMetadataStorage } from '../metadata';
 
 /** @internal */
@@ -15,7 +14,7 @@ export const filterFieldMetaDataKey = 'filter:field';
  *
  * ```ts
  * import { FilterableField } from '@nestjs-query/query-graphql';
- * import { ObjectType, ID, GraphQLISODateTime, Field } from 'type-graphql';
+ * import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
  *
  * @ObjectType('TodoItem')
  * export class TodoItemDTO {
@@ -36,15 +35,18 @@ export const filterFieldMetaDataKey = 'filter:field';
  * }
  * ```
  */
-export function FilterableField(): MethodAndPropDecorator;
-export function FilterableField(options: AdvancedOptions): MethodAndPropDecorator;
-export function FilterableField(returnTypeFunction?: ReturnTypeFunc, options?: AdvancedOptions): MethodAndPropDecorator;
+export function FilterableField(): PropertyDecorator & MethodDecorator;
+export function FilterableField(options: FieldOptions): PropertyDecorator & MethodDecorator;
 export function FilterableField(
-  returnTypeFuncOrOptions?: ReturnTypeFunc | AdvancedOptions,
-  maybeOptions?: AdvancedOptions,
+  returnTypeFunction?: ReturnTypeFunc,
+  options?: FieldOptions,
+): PropertyDecorator & MethodDecorator;
+export function FilterableField(
+  returnTypeFuncOrOptions?: ReturnTypeFunc | FieldOptions,
+  maybeOptions?: FieldOptions,
 ): MethodDecorator | PropertyDecorator {
   let returnTypeFunc: ReturnTypeFunc | undefined;
-  let advancedOptions: AdvancedOptions | undefined;
+  let advancedOptions: FieldOptions | undefined;
   if (typeof returnTypeFuncOrOptions === 'function') {
     returnTypeFunc = returnTypeFuncOrOptions;
     advancedOptions = maybeOptions;

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as nestGraphql from '@nestjs/graphql';
+import { ReturnTypeFunc, MutationOptions, ReturnTypeFuncValue } from '@nestjs/graphql';
 import { ResolverMutation } from '../../src/decorators';
 import * as resolverDecorator from '../../src/decorators/resolver-method.decorator';
-import { AdvancedOptions, ReturnTypeFunc, ReturnTypeFuncValue } from '../../src/external/type-graphql.types';
 
 describe('ResolverMutation decorator', (): void => {
   const resolverMethodSpy = jest.spyOn(resolverDecorator, 'ResolverMethod');
@@ -12,7 +12,7 @@ describe('ResolverMutation decorator', (): void => {
 
   function createTestResolver(
     typeFunc: ReturnTypeFunc,
-    options?: AdvancedOptions,
+    options?: MutationOptions,
     ...opts: resolverDecorator.ResolverMethodOpts[]
   ): void {
     // @ts-ignore
@@ -24,7 +24,7 @@ describe('ResolverMutation decorator', (): void => {
     }
   }
 
-  function assertMutationCall(callNo: number, returnType: ReturnTypeFuncValue, advancedOpts: AdvancedOptions) {
+  function assertMutationCall(callNo: number, returnType: ReturnTypeFuncValue, advancedOpts: MutationOptions) {
     const [rt, ao] = mutationSpy.mock.calls[callNo]!;
     expect(rt()).toEqual(returnType);
     expect(ao).toEqual(advancedOpts);

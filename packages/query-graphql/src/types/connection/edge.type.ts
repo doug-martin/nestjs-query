@@ -1,4 +1,4 @@
-import { Field, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Class } from '@nestjs-query/core';
 import { getMetadataStorage } from '../../metadata';
 import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
@@ -15,7 +15,7 @@ export function EdgeType<DTO>(DTOClass: Class<DTO>): Class<EdgeType<DTO>> {
   if (existing) {
     return existing;
   }
-  const objMetadata = metaDataStorage.getTypeGraphqlObjectMetadata(DTOClass);
+  const objMetadata = metaDataStorage.getGraphqlObjectMetadata(DTOClass);
   if (!objMetadata) {
     throw new UnregisteredObjectType(DTOClass, 'Unable to make EdgeType for class.');
   }

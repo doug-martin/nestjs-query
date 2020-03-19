@@ -1,5 +1,5 @@
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { IsBoolean, IsString, IsOptional } from 'class-validator';
 import { IsUndefined } from '../../validators';
 

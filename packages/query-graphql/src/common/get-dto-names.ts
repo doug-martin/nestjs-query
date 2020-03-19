@@ -19,7 +19,7 @@ export interface DTONames {
 /** @internal */
 export const getDTONames = <DTO>(DTOClass: Class<DTO>, opts?: DTONamesOpts): DTONames => {
   const baseName = upperCaseFirst(
-    opts?.dtoName ?? getMetadataStorage().getTypeGraphqlObjectMetadata(DTOClass)?.name ?? DTOClass.name,
+    opts?.dtoName ?? getMetadataStorage().getGraphqlObjectMetadata(DTOClass)?.name ?? DTOClass.name,
   );
   const pluralBaseName = plural(baseName);
   const baseNameLower = lowerCaseFirst(baseName);

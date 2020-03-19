@@ -1,3 +1,8 @@
+# v0.7.0
+
+* Updated to `@nestjs/graphql` `v7.x`.
+    * This was a passive change for the library usage however you should still follow the migration guide [found here](https://docs.nestjs.com/migration-guide)
+
 # v0.6.0
 
 * [FIXED] Get Underlying Entity Object [#41](https://github.com/doug-martin/nestjs-query/issues)

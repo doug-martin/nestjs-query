@@ -1,13 +1,14 @@
 import 'reflect-metadata';
 import { Query, QueryService } from '@nestjs-query/core';
-import { ID, ObjectType } from 'type-graphql';
 import * as nestGraphql from '@nestjs/graphql';
 import { mock, instance, when, objectContaining, deepEqual } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { ReturnTypeFuncValue, ResolveFieldOptions } from '@nestjs/graphql';
 import { ReadRelationsResolver } from '../../../src/resolvers/relations';
 import * as decorators from '../../../src/decorators';
-import { AdvancedOptions, ReturnTypeFuncValue } from '../../../src/external/type-graphql.types';
 import * as types from '../../../src/types';
+
+const { ID, ObjectType } = nestGraphql;
 
 @ObjectType('ReadRelation')
 class ReadRelationDTO {
@@ -35,7 +36,7 @@ class FakeCanActivate implements CanActivate {
 }
 
 describe('ReadRelationsResolver', () => {
-  const resolverPropertySpy = jest.spyOn(decorators, 'ResolverProperty');
+  const resolverFieldSpy = jest.spyOn(decorators, 'ResolverField');
   const queryArgsTypeSpy = jest.spyOn(types, 'QueryArgsType');
   const connectionTypeSpy = jest.spyOn(types, 'ConnectionType');
   const argsSpy = jest.spyOn(nestGraphql, 'Args');
@@ -43,14 +44,14 @@ describe('ReadRelationsResolver', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  function assertResolverPropertyCall(
+  function assertResolverFieldCall(
     callNo: number,
     propName: string,
     returnType: ReturnTypeFuncValue,
-    advancedOpts: AdvancedOptions,
+    advancedOpts: ResolveFieldOptions,
     ...opts: decorators.ResolverMethodOpts[]
   ) {
-    const [n, rt, ao, ...rest] = resolverPropertySpy.mock.calls[callNo]!;
+    const [n, rt, ao, ...rest] = resolverFieldSpy.mock.calls[callNo]!;
     expect(n).toEqual(propName);
     expect(rt()).toEqual(returnType);
     expect(ao).toEqual(advancedOpts);
@@ -62,7 +63,7 @@ describe('ReadRelationsResolver', () => {
 
     expect(queryArgsTypeSpy).not.toBeCalled();
     expect(connectionTypeSpy).not.toBeCalled();
-    expect(resolverPropertySpy).not.toBeCalled();
+    expect(resolverFieldSpy).not.toBeCalled();
     expect(parentSpy).not.toBeCalled();
     expect(argsSpy).not.toBeCalled();
   });
@@ -73,8 +74,8 @@ describe('ReadRelationsResolver', () => {
 
       expect(queryArgsTypeSpy).not.toBeCalled();
       expect(connectionTypeSpy).not.toBeCalled();
-      expect(resolverPropertySpy).toBeCalledTimes(1);
-      assertResolverPropertyCall(0, 'relation', RelationDTO, {}, {});
+      expect(resolverFieldSpy).toBeCalledTimes(1);
+      assertResolverFieldCall(0, 'relation', RelationDTO, {}, {});
       expect(parentSpy).toBeCalledTimes(1);
       expect(argsSpy).not.toBeCalled();
       expect(R.prototype.findRelation).toBeInstanceOf(Function);
@@ -85,8 +86,8 @@ describe('ReadRelationsResolver', () => {
 
       expect(queryArgsTypeSpy).not.toBeCalled();
       expect(connectionTypeSpy).not.toBeCalled();
-      expect(resolverPropertySpy).toBeCalledTimes(1);
-      assertResolverPropertyCall(0, 'test', RelationDTO, {}, {});
+      expect(resolverFieldSpy).toBeCalledTimes(1);
+      assertResolverFieldCall(0, 'test', RelationDTO, {}, {});
       expect(parentSpy).toBeCalledTimes(1);
       expect(argsSpy).not.toBeCalled();
       expect(R.prototype.findTest).toBeInstanceOf(Function);
@@ -97,8 +98,8 @@ describe('ReadRelationsResolver', () => {
 
       expect(queryArgsTypeSpy).not.toBeCalled();
       expect(connectionTypeSpy).not.toBeCalled();
-      expect(resolverPropertySpy).toBeCalledTimes(1);
-      assertResolverPropertyCall(0, 'relation', RelationDTO, { nullable: true }, {});
+      expect(resolverFieldSpy).toBeCalledTimes(1);
+      assertResolverFieldCall(0, 'relation', RelationDTO, { nullable: true }, {});
       expect(parentSpy).toBeCalledTimes(1);
       expect(argsSpy).not.toBeCalled();
       expect(R.prototype.findRelation).toBeInstanceOf(Function);
@@ -116,8 +117,8 @@ describe('ReadRelationsResolver', () => {
 
       expect(queryArgsTypeSpy).not.toBeCalled();
       expect(connectionTypeSpy).not.toBeCalled();
-      expect(resolverPropertySpy).toBeCalledTimes(1);
-      assertResolverPropertyCall(0, 'relation', RelationDTO, {}, resolverOpts);
+      expect(resolverFieldSpy).toBeCalledTimes(1);
+      assertResolverFieldCall(0, 'relation', RelationDTO, {}, resolverOpts);
       expect(parentSpy).toBeCalledTimes(1);
       expect(argsSpy).not.toBeCalled();
       expect(R.prototype.findRelation).toBeInstanceOf(Function);
@@ -128,7 +129,7 @@ describe('ReadRelationsResolver', () => {
 
       expect(queryArgsTypeSpy).not.toBeCalled();
       expect(connectionTypeSpy).not.toBeCalled();
-      expect(resolverPropertySpy).not.toBeCalled();
+      expect(resolverFieldSpy).not.toBeCalled();
       expect(parentSpy).not.toBeCalled();
       expect(argsSpy).not.toBeCalled();
     });
@@ -179,8 +180,8 @@ describe('ReadRelationsResolver', () => {
       expect(queryArgsTypeSpy).toBeCalledWith(RelationDTO);
       expect(connectionTypeSpy).toBeCalledWith(RelationDTO);
       const Connection = connectionTypeSpy.mock.results[0].value;
-      expect(resolverPropertySpy).toBeCalledTimes(1);
-      assertResolverPropertyCall(0, 'relations', Connection, {}, {});
+      expect(resolverFieldSpy).toBeCalledTimes(1);
+      assertResolverFieldCall(0, 'relations', Connection, {}, {});
       expect(parentSpy).toBeCalledTimes(1);
       expect(argsSpy).toBeCalledTimes(1);
       expect(R.prototype.queryRelations).toBeInstanceOf(Function);
@@ -192,8 +193,8 @@ describe('ReadRelationsResolver', () => {
       expect(queryArgsTypeSpy).toBeCalledWith(RelationDTO);
       expect(connectionTypeSpy).toBeCalledWith(RelationDTO);
       const Connection = connectionTypeSpy.mock.results[0].value;
-      expect(resolverPropertySpy).toBeCalledTimes(1);
-      assertResolverPropertyCall(0, 'tests', Connection, {}, {});
+      expect(resolverFieldSpy).toBeCalledTimes(1);
+      assertResolverFieldCall(0, 'tests', Connection, {}, {});
       expect(parentSpy).toBeCalledTimes(1);
       expect(argsSpy).toBeCalledTimes(1);
       expect(R.prototype.queryTests).toBeInstanceOf(Function);
@@ -205,8 +206,8 @@ describe('ReadRelationsResolver', () => {
       expect(queryArgsTypeSpy).toBeCalledWith(RelationDTO);
       expect(connectionTypeSpy).toBeCalledWith(RelationDTO);
       const Connection = connectionTypeSpy.mock.results[0].value;
-      expect(resolverPropertySpy).toBeCalledTimes(1);
-      assertResolverPropertyCall(0, 'relations', Connection, { nullable: true }, {});
+      expect(resolverFieldSpy).toBeCalledTimes(1);
+      assertResolverFieldCall(0, 'relations', Connection, { nullable: true }, {});
       expect(parentSpy).toBeCalledTimes(1);
       expect(argsSpy).toBeCalledTimes(1);
       expect(R.prototype.queryRelations).toBeInstanceOf(Function);
@@ -225,8 +226,8 @@ describe('ReadRelationsResolver', () => {
       expect(queryArgsTypeSpy).toBeCalledWith(RelationDTO);
       expect(connectionTypeSpy).toBeCalledWith(RelationDTO);
       const Connection = connectionTypeSpy.mock.results[0].value;
-      expect(resolverPropertySpy).toBeCalledTimes(1);
-      assertResolverPropertyCall(0, 'relations', Connection, {}, resolverOpts);
+      expect(resolverFieldSpy).toBeCalledTimes(1);
+      assertResolverFieldCall(0, 'relations', Connection, {}, resolverOpts);
       expect(parentSpy).toBeCalledTimes(1);
       expect(argsSpy).toBeCalledTimes(1);
       expect(R.prototype.queryRelations).toBeInstanceOf(Function);
@@ -237,7 +238,7 @@ describe('ReadRelationsResolver', () => {
 
       expect(queryArgsTypeSpy).not.toBeCalled();
       expect(connectionTypeSpy).not.toBeCalled();
-      expect(resolverPropertySpy).not.toBeCalled();
+      expect(resolverFieldSpy).not.toBeCalled();
       expect(parentSpy).not.toBeCalled();
       expect(argsSpy).not.toBeCalled();
     });

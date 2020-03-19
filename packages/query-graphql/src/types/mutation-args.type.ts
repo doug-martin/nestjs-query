@@ -1,5 +1,5 @@
 import { Class } from '@nestjs-query/core';
-import { ArgsType, Field } from 'type-graphql';
+import { ArgsType, Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 

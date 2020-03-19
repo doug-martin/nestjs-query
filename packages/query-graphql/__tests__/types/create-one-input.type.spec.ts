@@ -1,12 +1,12 @@
 import 'reflect-metadata';
-import * as typeGraphql from 'type-graphql';
+import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { MinLength, validateSync } from 'class-validator';
 import { CreateOneInputType } from '../../src';
 
 describe('CreateOneInputType', (): void => {
-  const inputTypeSpy = jest.spyOn(typeGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const inputTypeSpy = jest.spyOn(nestjsGraphql, 'InputType');
+  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
 
   class FakeType {
     @MinLength(5)

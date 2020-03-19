@@ -51,7 +51,7 @@ Lets assume we have the following `UserDTO`.
 
 ```ts
 import { FilterableField } from '@nestjs-query/query-graphql';
-import { ObjectType } from 'type-graphql';
+import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType('User')
 class UserDTO {

@@ -1,13 +1,13 @@
 import 'reflect-metadata';
-import * as typeGraphql from 'type-graphql';
+import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync, MinLength } from 'class-validator';
-import { ObjectType } from 'type-graphql';
+import { ObjectType } from '@nestjs/graphql';
 import { UpdateOneInputType } from '../../src';
 
 describe('UpdateOneInputType', (): void => {
-  const inputType = jest.spyOn(typeGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(typeGraphql, 'Field');
+  const inputType = jest.spyOn(nestjsGraphql, 'InputType');
+  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
 
   @ObjectType()
   class FakeType {
@@ -19,7 +19,7 @@ describe('UpdateOneInputType', (): void => {
     expect(inputType).toBeCalledTimes(1);
     expect(inputType).toBeCalledWith(`UpdateOneFakeTypeInput`);
     expect(fieldSpy).toBeCalledTimes(2);
-    expect(fieldSpy.mock.calls[0]![0]!()).toEqual(typeGraphql.ID);
+    expect(fieldSpy.mock.calls[0]![0]!()).toEqual(nestjsGraphql.ID);
     expect(fieldSpy.mock.calls[1]![0]!()).toEqual(FakeType);
   });
 

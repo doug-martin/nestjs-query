@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as nestGraphql from '@nestjs/graphql';
-import { ResolverProperty } from '../../src/decorators';
+import { ResolveFieldOptions, ReturnTypeFunc, ReturnTypeFuncValue } from '@nestjs/graphql';
+import { ResolverField } from '../../src/decorators';
 import * as resolverDecorator from '../../src/decorators/resolver-method.decorator';
-import { AdvancedOptions, ReturnTypeFunc, ReturnTypeFuncValue } from '../../src/external/type-graphql.types';
 
-describe('ResolverProperty decorator', (): void => {
+describe('ResolverField decorator', (): void => {
   const resolverMethodSpy = jest.spyOn(resolverDecorator, 'ResolverMethod');
-  const propertySpy = jest.spyOn(nestGraphql, 'ResolveProperty');
+  const propertySpy = jest.spyOn(nestGraphql, 'ResolveField');
 
   beforeEach(() => jest.clearAllMocks());
 
   function createTestResolver(
     name: string,
     typeFunc: ReturnTypeFunc,
-    options?: AdvancedOptions,
+    options?: ResolveFieldOptions,
     ...opts: resolverDecorator.ResolverMethodOpts[]
   ): void {
     // @ts-ignore
     class TestResolver {
-      @ResolverProperty(name, typeFunc, options, ...opts)
+      @ResolverField(name, typeFunc, options, ...opts)
       method(): boolean {
         return true;
       }
@@ -29,7 +29,7 @@ describe('ResolverProperty decorator', (): void => {
     callNo: number,
     name: string,
     returnType: ReturnTypeFuncValue,
-    advancedOpts: AdvancedOptions,
+    advancedOpts: ResolveFieldOptions,
   ) {
     const [n, rt, ao] = propertySpy.mock.calls[callNo]!;
     expect(n).toEqual(name);
@@ -41,7 +41,7 @@ describe('ResolverProperty decorator', (): void => {
     expect(resolverMethodSpy).toHaveBeenNthCalledWith(callNo + 1, ...opts);
   }
 
-  it('should call ResolveProperty with the correct mutation arguments', () => {
+  it('should call ResolveField with the correct mutation arguments', () => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{}];
     createTestResolver('test', () => Boolean, { nullable: true }, ...opts);
     assertMutationCall(0, 'test', Boolean, { nullable: true });

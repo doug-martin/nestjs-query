@@ -1,5 +1,4 @@
 import { Class, QueryService } from '@nestjs-query/core';
-import { Resolver } from '@nestjs/graphql';
 import { DTONamesOpts } from '../common';
 import { ResolverMethodOpts } from '../decorators';
 
@@ -53,7 +52,7 @@ export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
    */
   many?: ResolverMethodOpts;
   /**
-   * All relations that should be exposed on this resolver through `@ResolveProperty` from `type-graphql`
+   * All relations that should be exposed on this resolver through `@ResolveField` from `@nestjs/graphql`
    */
   relations?: RelationsOpts;
 }
@@ -72,7 +71,6 @@ export interface ResolverClass<DTO, Resolver extends ServiceResolver<DTO>> {
  * @internal
  * Base Resolver that takes in a service as a constructor argument.
  */
-@Resolver(() => Object, { isAbstract: true })
 export class BaseServiceResolver<DTO> {
   constructor(readonly service: QueryService<DTO>) {}
 }

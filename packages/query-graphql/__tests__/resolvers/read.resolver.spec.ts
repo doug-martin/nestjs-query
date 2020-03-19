@@ -1,13 +1,14 @@
 import 'reflect-metadata';
-import { ID, ObjectType } from 'type-graphql';
 import * as nestGraphql from '@nestjs/graphql';
 import { instance, mock, when, objectContaining } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { QueryService, Query } from '@nestjs-query/core';
+import { ReturnTypeFuncValue, QueryOptions } from '@nestjs/graphql';
 import * as decorators from '../../src/decorators';
-import { AdvancedOptions, ReturnTypeFuncValue } from '../../src/external/type-graphql.types';
 import { ConnectionType, QueryArgsType, ReadResolver } from '../../src';
 import * as types from '../../src/types';
+
+const { ID, ObjectType } = nestGraphql;
 
 @ObjectType('ReadResolverDTO')
 class TestResolverDTO {
@@ -42,7 +43,7 @@ describe('ReadResolver', () => {
   function assertResolverQueryCall(
     callNo: number,
     returnType: ReturnTypeFuncValue,
-    advancedOpts: AdvancedOptions,
+    advancedOpts: QueryOptions,
     ...opts: decorators.ResolverMethodOpts[]
   ) {
     const [rt, ao, ...rest] = resolverQuerySpy.mock.calls[callNo]!;

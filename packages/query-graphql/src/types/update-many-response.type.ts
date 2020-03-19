@@ -1,5 +1,5 @@
 import { Class, UpdateManyResponse } from '@nestjs-query/core';
-import { Field, Int, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 /** @internal */
 let updateManyResponseType: Class<UpdateManyResponse> | null = null;

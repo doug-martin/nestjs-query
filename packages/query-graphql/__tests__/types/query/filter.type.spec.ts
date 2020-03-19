@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Class, Filter } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
-import { ObjectType } from 'type-graphql';
+import { ObjectType } from '@nestjs/graphql';
 import { FilterableField, FilterType } from '../../../src';
 
 describe('GraphQLFilterType', (): void => {
@@ -17,7 +17,7 @@ describe('GraphQLFilterType', (): void => {
     class TestInvalidFilter {}
 
     expect(() => FilterType(TestInvalidFilter)).toThrow(
-      'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with type-graphql @ObjectType',
+      'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType',
     );
   });
 

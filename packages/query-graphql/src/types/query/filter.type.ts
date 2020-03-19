@@ -1,5 +1,5 @@
 import { Class, Filter } from '@nestjs-query/core';
-import { InputType, Field } from 'type-graphql';
+import { InputType, Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { getMetadataStorage } from '../../metadata';
@@ -12,7 +12,7 @@ export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
   if (existing) {
     return existing;
   }
-  const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TClass);
+  const objMetadata = metadataStorage.getGraphqlObjectMetadata(TClass);
   if (!objMetadata) {
     throw new UnregisteredObjectType(TClass, 'No fields found to create FilterType.');
   }

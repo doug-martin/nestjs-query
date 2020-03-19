@@ -17,7 +17,7 @@ In the following example we allow `id`, `title`, and `completed` to be used in q
 
 ```ts
 import { FilterableField } from '@nestjs-query/query-graphql';
-import { ObjectType, ID, GraphQLISODateTime, Field } from 'type-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {

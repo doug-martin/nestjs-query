@@ -1,5 +1,5 @@
 import { Filter, Class } from '@nestjs-query/core';
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmptyObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { getDTONames } from '../common';

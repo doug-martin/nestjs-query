@@ -120,7 +120,7 @@ Assume we have the following class `todo-item-input.dto.ts` which omits the `id`
 the original DTO.
 
 ```ts
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 
 @InputType('TodoItemInput')
@@ -515,7 +515,7 @@ First create a file named `types.ts`. And add the following.
 
 ```ts
 import { ConnectionType, QueryArgsType } from '@nestjs-query/query-graphql';
-import { ArgsType } from 'type-graphql';
+import { ArgsType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 export const TodoItemConnection = ConnectionType(TodoItemDTO);
@@ -524,7 +524,7 @@ export const TodoItemConnection = ConnectionType(TodoItemDTO);
 export class TodoItemQuery extends QueryArgsType(TodoItemDTO) {}
 ```
 
-In the code above we export two types. `TodoItemConnection` and `TodoItemQuery`. Because of the way `type-graphql` and
+In the code above we export two types. `TodoItemConnection` and `TodoItemQuery`. Because of the way `@nestjs/graphql` and
 `nest` work we need to extend the `QueryArgsType` so that it will know the type to serialize into.
 
 **NOTE** `ConnectionType` will return the same Class each time you call it for a given type to prevent

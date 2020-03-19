@@ -1,5 +1,5 @@
 import { offsetToCursor } from 'graphql-relay';
-import { Field, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Class } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { CursorPagingType } from '../query';
@@ -26,7 +26,7 @@ export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionTyp
   if (existing) {
     return existing;
   }
-  const objMetadata = metadataStorage.getTypeGraphqlObjectMetadata(TItemClass);
+  const objMetadata = metadataStorage.getGraphqlObjectMetadata(TItemClass);
   if (!objMetadata) {
     throw new UnregisteredObjectType(TItemClass, 'Unable to make ConnectionType.');
   }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as nestGraphql from '@nestjs/graphql';
+import { QueryOptions, ReturnTypeFunc, ReturnTypeFuncValue } from '@nestjs/graphql';
 import * as resolverDecorator from '../../src/decorators/resolver-method.decorator';
-import { AdvancedOptions, ReturnTypeFunc, ReturnTypeFuncValue } from '../../src/external/type-graphql.types';
 import { ResolverQuery } from '../../src/decorators';
 
 describe('ResolverQuery decorator', (): void => {
@@ -12,7 +12,7 @@ describe('ResolverQuery decorator', (): void => {
 
   function createTestResolver(
     typeFunc: ReturnTypeFunc,
-    options?: AdvancedOptions,
+    options?: QueryOptions,
     ...opts: resolverDecorator.ResolverMethodOpts[]
   ): void {
     // @ts-ignore
@@ -24,7 +24,7 @@ describe('ResolverQuery decorator', (): void => {
     }
   }
 
-  function assertQueryCall(callNo: number, returnType: ReturnTypeFuncValue, advancedOpts: AdvancedOptions) {
+  function assertQueryCall(callNo: number, returnType: ReturnTypeFuncValue, advancedOpts: QueryOptions) {
     const [rt, ao] = querySpy.mock.calls[callNo]!;
     expect(rt()).toEqual(returnType);
     expect(ao).toEqual(advancedOpts);

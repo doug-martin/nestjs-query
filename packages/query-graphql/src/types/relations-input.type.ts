@@ -1,5 +1,5 @@
 import { Class } from '@nestjs-query/core';
-import { Field, ID, InputType } from 'type-graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, ArrayNotEmpty, ArrayUnique } from 'class-validator';
 
 export interface RelationsInputType {

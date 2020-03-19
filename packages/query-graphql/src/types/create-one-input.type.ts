@@ -1,7 +1,7 @@
 import { Class, DeepPartial } from '@nestjs-query/core';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { getDTONames } from '../common';
 import { getMetadataStorage } from '../metadata';
 
