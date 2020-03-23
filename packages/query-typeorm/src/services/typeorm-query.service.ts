@@ -112,7 +112,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    * @param records - The entities to create.
    */
-  createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
+  async createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
     return this.repo.save(records);
   }
 
