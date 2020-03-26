@@ -96,6 +96,7 @@ Now lets fill out the DTO. Add the following to `src/todo-item/todo-item.dto.ts`
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
+@InputType('TodoItemInput') // Use this dto as an input DTO also.
 @ObjectType('TodoItem') // Name that will be used in the graphql schema.
 export class TodoItemDTO {
   @FilterableField(() => ID)
@@ -176,7 +177,7 @@ When creating the resolver notice how `TodoItemResolver` extends `CRUDResolver` 
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO)
 ```
 
-In the constructor we inject a QueryService using the `InjectTypeOrmQueryService`. This will automatically create a QueryService for your entity that your resolver can use. To read more about the service take a look at [the Services docs](../concepts/services) and the [TypeOrmQueryService docs](../typeorm/services).
+In the constructor we inject a QueryService using the `InjectTypeOrmQueryService`. This will automatically create a QueryService for your entity that your resolver can use. To read more about the service take a look at [the Services docs](../concepts/services) and the [TypeOrmQueryService docs](../typeorm/usage).
 
 ```ts
 constructor(
