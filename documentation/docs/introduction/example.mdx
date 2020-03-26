@@ -96,7 +96,6 @@ Now lets fill out the DTO. Add the following to `src/todo-item/todo-item.dto.ts`
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
-@InputType('TodoItemInput') // Use this dto as an input DTO also.
 @ObjectType('TodoItem') // Name that will be used in the graphql schema.
 export class TodoItemDTO {
   @FilterableField(() => ID)
