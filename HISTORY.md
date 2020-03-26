@@ -1,3 +1,7 @@
+# v0.7.1
+
+* [FIXED] Issue where update input DTO was not automatically created
+
 # v0.7.0
 
 * Updated to `@nestjs/graphql` `v7.x`.
