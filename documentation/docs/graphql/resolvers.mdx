@@ -20,7 +20,7 @@ your class with `@Resolver`.
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
@@ -533,18 +533,34 @@ In the code above we export two types. `TodoItemConnection` and `TodoItemQuery`.
 In your resolver you can now create a new `completedTodoItems` method with the following:
 
 ```ts
-// Set the return type to the TodoItemConnection
-@Query(() => TodoItemConnection)
-completedTodoItems(@Args() query: TodoItemQuery): Promise<ConnectionType<TodoItemDTO>> {
-  // add the completed filter the user provided filter
-  const filter: Filter<TodoItemDTO> = {
-    ...query.filter,
-    ...{ completed: { is: true } },
-  };
+import { Filter, QueryService } from '@nestjs-query/core';
+import { ConnectionType, CRUDResolver } from '@nestjs-query/query-graphql';
+import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm/src';
+import { Args, Query, Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemConnection, TodoItemQuery } from './types';
 
-  // call the original queryMany method with the new query
-  return this.queryMany({ ...query, ...{ filter } });
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
+  constructor(@InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>) {
+    super(service);
+  }
+
+  // Set the return type to the TodoItemConnection
+  @Query(() => TodoItemConnection)
+  completedTodoItems(@Args() query: TodoItemQuery): Promise<ConnectionType<TodoItemDTO>> {
+    // add the completed filter the user provided filter
+    const filter: Filter<TodoItemDTO> = {
+      ...query.filter,
+      ...{ completed: { is: true } },
+    };
+
+    // call the original queryMany method with the new query
+    return this.queryMany({ ...query, ...{ filter } });
+  }
 }
+
 ```
 Lets break this down so you know what is going on.
 
