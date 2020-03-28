@@ -1,3 +1,7 @@
+# v0.7.3
+
+* [DOCS] Update docs to include a complete example of custom methods [#64](https://github.com/doug-martin/nestjs-query/issues/64)
+
 # v0.7.2
 
 * [CHORE] Updated to `@nestjs/graphql` `v7.1.3`
