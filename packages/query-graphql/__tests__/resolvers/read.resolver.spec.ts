@@ -3,7 +3,7 @@ import * as nestGraphql from '@nestjs/graphql';
 import { instance, mock, when, objectContaining } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { QueryService, Query } from '@nestjs-query/core';
-import { ReturnTypeFuncValue, QueryOptions } from '@nestjs/graphql';
+import { ReturnTypeFuncValue, QueryOptions, ArgsOptions } from '@nestjs/graphql';
 import * as decorators from '../../src/decorators';
 import { ConnectionType, QueryArgsType, ReadResolver } from '../../src';
 import * as types from '../../src/types';
@@ -175,7 +175,7 @@ describe('ReadResolver', () => {
       assertResolverQueryCall(1, Connection, { name: 'readResolverDTOS' }, {}, {});
       expect(argsSpy).toBeCalledTimes(2);
       const opts = argsSpy.mock.calls[0][0];
-      expect(opts.type!()).toEqual(ID);
+      expect((opts as ArgsOptions).type!()).toEqual(ID);
     });
 
     it('should call the service findById with the provided input', async () => {

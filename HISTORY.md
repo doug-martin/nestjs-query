@@ -1,3 +1,8 @@
+# v0.7.2
+
+* [CHORE] Updated to `@nestjs/graphql` `v7.1.3`
+* Removed `PartialType` and `PartialInputType` in favor of `@nestjs/graphql` implementation.
+
 # v0.7.1
 
 * [FIXED] Issue where update input DTO was not automatically created

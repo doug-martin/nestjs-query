@@ -1,15 +1,9 @@
 import { Class, DeleteManyResponse } from '@nestjs-query/core';
 import omit from 'lodash.omit';
-import { ObjectType, ArgsType, Resolver, Args } from '@nestjs/graphql';
+import { ObjectType, ArgsType, Resolver, Args, PartialType } from '@nestjs/graphql';
 import { getDTONames } from '../common';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
-import {
-  DeleteManyInputType,
-  DeleteManyResponseType,
-  DeleteOneInputType,
-  MutationArgsType,
-  PartialType,
-} from '../types';
+import { DeleteManyInputType, DeleteManyResponseType, DeleteOneInputType, MutationArgsType } from '../types';
 import { ResolverMutation } from '../decorators';
 import { transformAndValidate } from './helpers';
 
@@ -48,7 +42,7 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   @ObjectType(`${baseName}DeleteResponse`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  class DeleteOneResponse extends PartialType(DTOClass) {}
+  class DeleteOneResponse extends PartialType(DTOClass, ObjectType) {}
 
   @ArgsType()
   class DO extends MutationArgsType(DeleteOneInput) {}
