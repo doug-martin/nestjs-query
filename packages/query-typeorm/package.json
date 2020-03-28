@@ -22,13 +22,13 @@
     "lodash.filter": "^4.6.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.3",
+    "@nestjs/common": "^7.0.6",
     "@nestjs/typeorm": "^7.0.0",
     "class-transformer": "^0.2.3",
     "typeorm": "^0.2.24"
   },
   "devDependencies": {
-    "@nestjs/common": "^7.0.2",
+    "@nestjs/common": "^7.0.6",
     "@nestjs/typeorm": "^7.0.0",
     "@types/lodash.filter": "^4.6.6",
     "class-transformer": "^0.2.3",

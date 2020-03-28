@@ -10,6 +10,5 @@ export { DeleteManyResponseType } from './delete-many-reponse.type';
 export { DeleteOneInputType } from './delete-one-input.type';
 export { DeleteManyInputType } from './delete-many-input.type';
 export { ConnectionCursorType, ConnectionCursorScalar } from './cursor.scalar';
-export { PartialType, PartialInputType } from './partial.type';
 export { RelationsInputType } from './relations-input.type';
 export { RelationInputType } from './relation-input.type';

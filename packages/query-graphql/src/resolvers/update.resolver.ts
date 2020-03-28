@@ -1,14 +1,8 @@
 import { Class, DeepPartial, UpdateManyResponse } from '@nestjs-query/core';
-import { ArgsType, InputType, Resolver, Args } from '@nestjs/graphql';
+import { ArgsType, InputType, Resolver, Args, PartialType } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { getDTONames } from '../common';
-import {
-  MutationArgsType,
-  PartialInputType,
-  UpdateManyInputType,
-  UpdateManyResponseType,
-  UpdateOneInputType,
-} from '../types';
+import { MutationArgsType, UpdateManyInputType, UpdateManyResponseType, UpdateOneInputType } from '../types';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { ResolverMutation } from '../decorators';
 import { transformAndValidate } from './helpers';
@@ -29,7 +23,7 @@ const defaultUpdateInput = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO
   @InputType(`Update${baseName}`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  class UpdateType extends PartialInputType(DTOClass) {}
+  class UpdateType extends PartialType(DTOClass, InputType) {}
 
   return UpdateType as Class<U>;
 };

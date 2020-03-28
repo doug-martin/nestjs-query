@@ -4,10 +4,10 @@
  */
 import { Class, DeepPartial } from '@nestjs-query/core';
 import omit from 'lodash.omit';
-import { InputType, ArgsType, Args, Resolver } from '@nestjs/graphql';
+import { InputType, ArgsType, Args, Resolver, PartialType } from '@nestjs/graphql';
 import { getDTONames } from '../common';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
-import { CreateManyInputType, CreateOneInputType, MutationArgsType, PartialInputType } from '../types';
+import { CreateManyInputType, CreateOneInputType, MutationArgsType } from '../types';
 import { ResolverMutation } from '../decorators';
 import { transformAndValidate } from './helpers';
 
@@ -37,7 +37,7 @@ const defaultCreateInput = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO
   @InputType(`Create${baseName}`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  class PartialInput extends PartialInputType(DTOClass) {}
+  class PartialInput extends PartialType(DTOClass, InputType) {}
 
   return PartialInput as Class<C>;
 };

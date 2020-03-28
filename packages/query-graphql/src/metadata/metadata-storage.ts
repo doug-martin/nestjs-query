@@ -1,7 +1,5 @@
 import { TypeMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/type-metadata.storage';
-import { LazyMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage';
 import { Class, DeepPartial, Filter, SortField } from '@nestjs-query/core';
-import { PropertyMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
 import {
@@ -179,16 +177,6 @@ export class GraphQLQueryMetadataStorage {
 
   getGraphqlObjectMetadata<T>(objType: Class<T>): ObjectTypeMetadata | undefined {
     return TypeMetadataStorage.getObjectTypesMetadata().find(o => o.target === objType);
-  }
-
-  getGraphqlFieldsForType<T>(objType: Class<T>): PropertyMetadata[] | undefined {
-    LazyMetadataStorage.load([objType]);
-    TypeMetadataStorage.compile();
-    let graphqlObjType = this.getGraphqlObjectMetadata(objType);
-    if (!graphqlObjType) {
-      graphqlObjType = TypeMetadataStorage.getInputTypesMetadata().find(o => o.target === objType);
-    }
-    return graphqlObjType?.properties;
   }
 
   clear(): void {
