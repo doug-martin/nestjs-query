@@ -430,9 +430,25 @@ describe('TypeOrmQueryService', (): void => {
       const entityInstances = entities.map(e => plainToClass(TestEntity, e));
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
+      entityInstances.forEach(e => {
+        when(mockRepo.hasId(e)).thenReturn(false);
+      });
       when(mockRepo.save(deepEqual(entityInstances))).thenResolve(entityInstances);
       const queryResult = await queryService.createMany(entityInstances);
       expect(queryResult).toEqual(entityInstances);
+    });
+
+    it('should reject if the entity contains an id', async () => {
+      const entities = testEntities();
+      const entityInstances = entities.map(e => plainToClass(TestEntity, e));
+      const { queryService, mockRepo } = createQueryService();
+      when(mockRepo.target).thenReturn(TestEntity);
+      entityInstances.forEach(e => {
+        when(mockRepo.hasId(e)).thenReturn(true);
+      });
+      expect(queryService.createMany(entityInstances)).rejects.toThrowError(
+        'Id cannot be specified when creating or updating',
+      );
     });
   });
 
@@ -452,9 +468,21 @@ describe('TypeOrmQueryService', (): void => {
       const entityInstance = plainToClass(TestEntity, entity);
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
+      when(mockRepo.hasId(entityInstance)).thenReturn(false);
       when(mockRepo.save(entity)).thenResolve(entityInstance);
       const queryResult = await queryService.createOne(entity);
       expect(queryResult).toEqual(entityInstance);
+    });
+
+    it('should reject if the entity contains an id', async () => {
+      const entity = testEntities()[0];
+      const entityInstance = plainToClass(TestEntity, entity);
+      const { queryService, mockRepo } = createQueryService();
+      when(mockRepo.target).thenReturn(TestEntity);
+      when(mockRepo.hasId(entityInstance)).thenReturn(true);
+      expect(queryService.createOne(entityInstance)).rejects.toThrowError(
+        'Id cannot be specified when creating or updating',
+      );
     });
   });
 
@@ -523,6 +551,19 @@ describe('TypeOrmQueryService', (): void => {
       expect(queryResult).toEqual({ updatedCount: affected });
     });
 
+    it('should reject if the update contains a primary key', async () => {
+      const entity = testEntities()[0];
+      const update = { stringType: 'baz' };
+      const filter: Filter<TestEntity> = { testEntityPk: { eq: entity.testEntityPk } };
+      const { queryService, mockRepo } = createQueryService();
+      when(mockRepo.target).thenReturn(TestEntity);
+      when(mockRepo.hasId(update as TestEntity)).thenReturn(true);
+      when(mockRepo.remove(entity)).thenResolve(entity);
+      expect(queryService.updateMany(update, filter)).rejects.toThrowError(
+        'Id cannot be specified when creating or updating',
+      );
+    });
+
     it('should return 0 if affected is not defined', async () => {
       const entity = testEntities()[0];
       const update = { stringType: 'baz' };
@@ -553,6 +594,19 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.save(deepEqual(savedEntity))).thenResolve(savedEntity);
       const queryResult = await queryService.updateOne(updateId, update);
       expect(queryResult).toEqual(savedEntity);
+    });
+
+    it('should reject if the update contains a primary key', async () => {
+      const entity = testEntities()[0];
+      const updateId = entity.testEntityPk;
+      const update = { stringType: 'baz' };
+      const { queryService, mockRepo } = createQueryService();
+      when(mockRepo.target).thenReturn(TestEntity);
+      when(mockRepo.hasId(update as TestEntity)).thenReturn(true);
+      when(mockRepo.remove(entity)).thenResolve(entity);
+      expect(queryService.updateOne(updateId, update)).rejects.toThrowError(
+        'Id cannot be specified when creating or updating',
+      );
     });
 
     it('call fail if the entity is not found', async () => {
