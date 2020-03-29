@@ -1,6 +1,7 @@
 # v0.7.3
 
 * [DOCS] Update docs to include a complete example of custom methods [#64](https://github.com/doug-martin/nestjs-query/issues/64)
+* [FIXED] Issue where creating or updating allows specifying primary keys [#65](https://github.com/doug-martin/nestjs-query/issues/65)
 
 # v0.7.2
 
