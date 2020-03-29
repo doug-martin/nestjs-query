@@ -97,6 +97,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param record - The entity to create.
    */
   async createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
+    this.ensureIdIsNotPresent(record);
     return this.repo.save(record);
   }
 
@@ -112,7 +113,8 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    * @param records - The entities to create.
    */
-  createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
+  async createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
+    records.forEach(r => this.ensureIdIsNotPresent(r));
     return this.repo.save(records);
   }
 
@@ -127,6 +129,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param update - A `Partial` of the entity with fields to update.
    */
   async updateOne<U extends DeepPartial<Entity>>(id: number | string, update: U): Promise<Entity> {
+    this.ensureIdIsNotPresent(update);
     const entity = await this.repo.findOneOrFail(id);
     return this.repo.save(this.repo.merge(entity, update));
   }
@@ -145,6 +148,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param filter - A Filter used to find the records to update
    */
   async updateMany<U extends DeepPartial<Entity>>(update: U, filter: Filter<Entity>): Promise<UpdateManyResponse> {
+    this.ensureIdIsNotPresent(update);
     const updateResult = await this.filterQueryBuilder
       .update({ filter })
       .set({ ...(update as QueryDeepPartialEntity<Entity>) })
@@ -184,5 +188,11 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
   async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
     const deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
     return { deletedCount: deleteResult.affected || 0 };
+  }
+
+  ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
+    if (this.repo.hasId((e as unknown) as Entity)) {
+      throw new Error('Id cannot be specified when creating or updating');
+    }
   }
 }
