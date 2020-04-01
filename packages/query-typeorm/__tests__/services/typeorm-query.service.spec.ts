@@ -112,7 +112,7 @@ describe('TypeOrmQueryService', (): void => {
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
         when(relationQueryBuilder.getRawAndEntities()).thenResolve({
-          raw: allRelations.map(r => ({
+          raw: allRelations.map((r) => ({
             // eslint-disable-next-line @typescript-eslint/camelcase
             testRelation_testRelationPk: r.testRelationPk,
             // eslint-disable-next-line @typescript-eslint/camelcase
@@ -150,7 +150,7 @@ describe('TypeOrmQueryService', (): void => {
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
         when(relationQueryBuilder.getRawAndEntities()).thenResolve({
-          raw: entityOneRelations.map(r => ({
+          raw: entityOneRelations.map((r) => ({
             // eslint-disable-next-line @typescript-eslint/camelcase
             testRelation_testRelationPk: r.testRelationPk,
             // eslint-disable-next-line @typescript-eslint/camelcase
@@ -315,7 +315,7 @@ describe('TypeOrmQueryService', (): void => {
     it('call select and return the result', async () => {
       const entity = testEntities()[0];
       const relations = testRelations(entity.testEntityPk);
-      const relationIds = relations.map(r => r.testRelationPk);
+      const relationIds = relations.map((r) => r.testRelationPk);
       const { queryService, mockRepo } = createQueryService();
       const entityQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
       const relationQueryBuilder: TypeOrmRelationQueryBuilder<TestEntity> = mock(TypeOrmRelationQueryBuilder);
@@ -352,7 +352,7 @@ describe('TypeOrmQueryService', (): void => {
     it('call select and return the result', async () => {
       const entity = testEntities()[0];
       const relations = testRelations(entity.testEntityPk);
-      const relationIds = relations.map(r => r.testRelationPk);
+      const relationIds = relations.map((r) => r.testRelationPk);
       const { queryService, mockRepo } = createQueryService();
       const entityQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
       const relationQueryBuilder: TypeOrmRelationQueryBuilder<TestEntity> = mock(TypeOrmRelationQueryBuilder);
@@ -417,7 +417,7 @@ describe('TypeOrmQueryService', (): void => {
   describe('#createMany', () => {
     it('call save on the repo with instances of entities when passed plain objects', async () => {
       const entities = testEntities();
-      const entityInstances = entities.map(e => plainToClass(TestEntity, e));
+      const entityInstances = entities.map((e) => plainToClass(TestEntity, e));
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(entities)).thenResolve(entityInstances);
@@ -427,10 +427,10 @@ describe('TypeOrmQueryService', (): void => {
 
     it('call save on the repo with instances of entities when passed instances', async () => {
       const entities = testEntities();
-      const entityInstances = entities.map(e => plainToClass(TestEntity, e));
+      const entityInstances = entities.map((e) => plainToClass(TestEntity, e));
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
-      entityInstances.forEach(e => {
+      entityInstances.forEach((e) => {
         when(mockRepo.hasId(e)).thenReturn(false);
       });
       when(mockRepo.save(deepEqual(entityInstances))).thenResolve(entityInstances);
@@ -440,10 +440,10 @@ describe('TypeOrmQueryService', (): void => {
 
     it('should reject if the entity contains an id', async () => {
       const entities = testEntities();
-      const entityInstances = entities.map(e => plainToClass(TestEntity, e));
+      const entityInstances = entities.map((e) => plainToClass(TestEntity, e));
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
-      entityInstances.forEach(e => {
+      entityInstances.forEach((e) => {
         when(mockRepo.hasId(e)).thenReturn(true);
       });
       expect(queryService.createMany(entityInstances)).rejects.toThrowError(

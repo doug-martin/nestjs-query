@@ -177,7 +177,7 @@ export abstract class RelationQueryService<Entity> {
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const relations = await relationQueryBuilder.select(entities, assembler.convertQuery(query)).getRawAndEntities();
     return relations.raw.reduce((results, rawRelation) => {
-      this.getEntityFromFromResult(rawRelation, entities).forEach(e => {
+      this.getEntityFromFromResult(rawRelation, entities).forEach((e) => {
         if (!results.has(e)) {
           results.set(e, []);
         }
@@ -212,14 +212,11 @@ export abstract class RelationQueryService<Entity> {
   }
 
   private createRelationQueryBuilder(entity: Entity, relationName: string): TypeOrmRelationQueryBuilder<Entity> {
-    return this.repo
-      .createQueryBuilder()
-      .relation(relationName)
-      .of(entity);
+    return this.repo.createQueryBuilder().relation(relationName).of(entity);
   }
 
   private getRelationEntity(relationName: string): Class<unknown> {
-    const relationMeta = this.repo.metadata.relations.find(r => r.propertyName === relationName);
+    const relationMeta = this.repo.metadata.relations.find((r) => r.propertyName === relationName);
     if (!relationMeta) {
       throw new Error(`Unable to find relation ${relationName} on ${this.EntityClass.name}`);
     }
@@ -228,7 +225,7 @@ export abstract class RelationQueryService<Entity> {
 
   private getEntityFromFromResult(rawResult: ObjectLiteral, entities: Entity[]): Entity[] {
     const pks = Object.keys(rawResult)
-      .filter(key => RelationQueryBuilder.isEntityIdCol(key))
+      .filter((key) => RelationQueryBuilder.isEntityIdCol(key))
       .reduce((keys, key) => {
         const entityProp = RelationQueryBuilder.parseEntityIdFromName(key);
         return { ...keys, [entityProp]: rawResult[key] };

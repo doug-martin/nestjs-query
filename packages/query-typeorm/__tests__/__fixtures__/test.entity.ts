@@ -27,24 +27,14 @@ export class TestEntity {
   @Column({ name: 'date_type' })
   dateType!: Date;
 
-  @OneToMany(
-    () => TestRelation,
-    tr => tr.testEntity,
-  )
+  @OneToMany(() => TestRelation, (tr) => tr.testEntity)
   testRelations?: TestRelation[];
 
-  @ManyToMany(
-    () => TestRelation,
-    tr => tr.manyTestEntities,
-    { onDelete: 'CASCADE', nullable: false },
-  )
+  @ManyToMany(() => TestRelation, (tr) => tr.manyTestEntities, { onDelete: 'CASCADE', nullable: false })
   @JoinTable()
   manyTestRelations?: TestRelation[];
 
-  @OneToOne(
-    () => TestRelation,
-    relation => relation.oneTestEntity,
-  )
+  @OneToOne(() => TestRelation, (relation) => relation.oneTestEntity)
   @JoinColumn()
   oneTestRelation?: TestRelation;
 }

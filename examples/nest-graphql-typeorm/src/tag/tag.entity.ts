@@ -23,9 +23,6 @@ export class TagEntity {
   @UpdateDateColumn()
   updated!: Date;
 
-  @ManyToMany(
-    (): ObjectType<TodoItemEntity> => TodoItemEntity,
-    td => td.tags,
-  )
+  @ManyToMany((): ObjectType<TodoItemEntity> => TodoItemEntity, (td) => td.tags)
   todoItems!: TodoItemEntity[];
 }

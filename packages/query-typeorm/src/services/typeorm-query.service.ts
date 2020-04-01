@@ -114,7 +114,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param records - The entities to create.
    */
   async createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
-    records.forEach(r => this.ensureIdIsNotPresent(r));
+    records.forEach((r) => this.ensureIdIsNotPresent(r));
     return this.repo.save(records);
   }
 

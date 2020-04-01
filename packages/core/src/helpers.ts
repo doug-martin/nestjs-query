@@ -11,7 +11,7 @@ export const transformSort = <From, To>(
   if (!sorting) {
     return undefined;
   }
-  return sorting.map(sf => {
+  return sorting.map((sf) => {
     const field = fieldMap[sf.field];
     if (!field) {
       throw new Error(`No corresponding field found for '${sf.field}' when transforming SortField`);
@@ -29,7 +29,7 @@ export const transformFilter = <From, To>(
   }
   return Object.keys(filter).reduce((newFilter, filterField) => {
     if (filterField === 'and' || filterField === 'or') {
-      return { ...newFilter, [filterField]: filter[filterField]?.map(f => transformFilter(f, fieldMap)) };
+      return { ...newFilter, [filterField]: filter[filterField]?.map((f) => transformFilter(f, fieldMap)) };
     }
     const fromField = filterField as keyof From;
     const otherKey = fieldMap[fromField];

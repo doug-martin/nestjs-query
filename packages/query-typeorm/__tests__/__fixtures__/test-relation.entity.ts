@@ -12,24 +12,13 @@ export class TestRelation {
   @Column({ name: 'test_entity_id' })
   testEntityId?: string;
 
-  @ManyToOne(
-    () => TestEntity,
-    te => te.testRelations,
-    { onDelete: 'CASCADE', nullable: false },
-  )
+  @ManyToOne(() => TestEntity, (te) => te.testRelations, { onDelete: 'CASCADE', nullable: false })
   @JoinColumn({ name: 'test_entity_id' })
   testEntity?: TestEntity;
 
-  @ManyToMany(
-    () => TestEntity,
-    te => te.manyTestRelations,
-    { onDelete: 'CASCADE', nullable: false },
-  )
+  @ManyToMany(() => TestEntity, (te) => te.manyTestRelations, { onDelete: 'CASCADE', nullable: false })
   manyTestEntities?: TestEntity[];
 
-  @OneToOne(
-    () => TestEntity,
-    entity => entity.oneTestRelation,
-  )
+  @OneToOne(() => TestEntity, (entity) => entity.oneTestRelation)
   oneTestEntity?: TestEntity;
 }

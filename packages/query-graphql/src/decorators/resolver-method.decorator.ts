@@ -47,7 +47,7 @@ function createSetArray<T>(...arrs: T[][]): T[] {
  * @param opts - The array of [[ResolverMethodOpts]] to check.
  */
 export function isDisabled(opts: ResolverMethodOpts[]): boolean {
-  return !!opts.find(o => o.disabled);
+  return !!opts.find((o) => o.disabled);
 }
 
 /**
@@ -58,10 +58,10 @@ export function isDisabled(opts: ResolverMethodOpts[]): boolean {
  */
 export function ResolverMethod(...opts: ResolverMethodOpts[]): MethodDecorator {
   return applyDecorators(
-    UseGuards(...createSetArray<Class<CanActivate>>(...opts.map(o => o.guards ?? []))),
-    UseInterceptors(...createSetArray<Class<NestInterceptor>>(...opts.map(o => o.interceptors ?? []))),
-    UsePipes(...createSetArray<Class<PipeTransform>>(...opts.map(o => o.pipes ?? []))),
-    UseFilters(...createSetArray<Class<ExceptionFilter>>(...opts.map(o => o.filters ?? []))),
-    ...createSetArray<PropertyDecorator | MethodDecorator>(...opts.map(o => o.decorators ?? [])),
+    UseGuards(...createSetArray<Class<CanActivate>>(...opts.map((o) => o.guards ?? []))),
+    UseInterceptors(...createSetArray<Class<NestInterceptor>>(...opts.map((o) => o.interceptors ?? []))),
+    UsePipes(...createSetArray<Class<PipeTransform>>(...opts.map((o) => o.pipes ?? []))),
+    UseFilters(...createSetArray<Class<ExceptionFilter>>(...opts.map((o) => o.filters ?? []))),
+    ...createSetArray<PropertyDecorator | MethodDecorator>(...opts.map((o) => o.decorators ?? [])),
   );
 }

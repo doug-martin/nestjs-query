@@ -25,7 +25,7 @@ describe('CreateManyInputType', (): void => {
     const input = [{ field: 'hello' }];
     const it = plainToClass(Type, { input });
     expect(it.input).toEqual(input);
-    it.input.forEach(i => expect(i).toBeInstanceOf(FakeType));
+    it.input.forEach((i) => expect(i).toBeInstanceOf(FakeType));
   });
 
   it('should assign the typeName to the input field', () => {
@@ -33,7 +33,7 @@ describe('CreateManyInputType', (): void => {
     const input = [{ field: 'hello' }];
     const it = plainToClass(Type, { fakeTypes: input });
     expect(it.input).toEqual(input);
-    it.input.forEach(i => expect(i).toBeInstanceOf(FakeType));
+    it.input.forEach((i) => expect(i).toBeInstanceOf(FakeType));
   });
 
   describe('validation', () => {

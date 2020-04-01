@@ -40,11 +40,11 @@ export abstract class AbstractAssembler<DTO, Entity> implements Assembler<DTO, E
   abstract convertQuery(query: Query<DTO>): Query<Entity>;
 
   convertToDTOs(entities: Entity[]): DTO[] {
-    return entities.map(e => this.convertToDTO(e));
+    return entities.map((e) => this.convertToDTO(e));
   }
 
   convertToEntities(dtos: DTO[]): Entity[] {
-    return dtos.map(dto => this.convertToEntity(dto));
+    return dtos.map((dto) => this.convertToEntity(dto));
   }
 
   async convertAsyncToDTO(entity: Promise<Entity>): Promise<DTO> {

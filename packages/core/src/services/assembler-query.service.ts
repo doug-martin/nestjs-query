@@ -12,7 +12,7 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
 
   createMany<C extends DeepPartial<DTO>>(items: C[]): Promise<DTO[]> {
     const { assembler } = this;
-    const converted = items.map(c => assembler.convertToEntity((c as unknown) as DTO));
+    const converted = items.map((c) => assembler.convertToEntity((c as unknown) as DTO));
     return this.assembler.convertAsyncToDTOs(this.queryService.createMany(converted));
   }
 

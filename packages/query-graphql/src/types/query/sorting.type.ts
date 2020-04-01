@@ -32,7 +32,7 @@ export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
     );
   }
   const prefix = objMetadata.name;
-  const fieldNames = fields.map(f => f.propertyName);
+  const fieldNames = fields.map((f) => f.propertyName);
   const fieldNameMap = fieldNames.reduce((acc, f) => ({ ...acc, [f]: f }), {});
   registerEnumType(fieldNameMap, { name: `${prefix}SortFields` });
   @InputType(`${prefix}Sort`)

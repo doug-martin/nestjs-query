@@ -25,10 +25,7 @@ export class TodoItemEntity {
   @Column()
   completed!: boolean;
 
-  @OneToMany(
-    () => SubTaskEntity,
-    subTask => subTask.todoItem,
-  )
+  @OneToMany(() => SubTaskEntity, (subTask) => subTask.todoItem)
   subTasks!: SubTaskEntity[];
 
   @CreateDateColumn()
@@ -37,10 +34,7 @@ export class TodoItemEntity {
   @UpdateDateColumn()
   updated!: Date;
 
-  @ManyToMany(
-    () => TagEntity,
-    tag => tag.todoItems,
-  )
+  @ManyToMany(() => TagEntity, (tag) => tag.todoItems)
   @JoinTable()
   tags!: TagEntity[];
 }
