@@ -176,7 +176,7 @@ export class GraphQLQueryMetadataStorage {
   }
 
   getGraphqlObjectMetadata<T>(objType: Class<T>): ObjectTypeMetadata | undefined {
-    return TypeMetadataStorage.getObjectTypesMetadata().find(o => o.target === objType);
+    return TypeMetadataStorage.getObjectTypesMetadata().find((o) => o.target === objType);
   }
 
   clear(): void {

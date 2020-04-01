@@ -21,4 +21,4 @@ function createTypeOrmQueryServiceProvider<Entity>(
 export const createTypeOrmQueryServiceProviders = (
   entities: Class<unknown>[],
   connection?: Connection | ConnectionOptions | string,
-): FactoryProvider[] => entities.map(entity => createTypeOrmQueryServiceProvider(entity, connection));
+): FactoryProvider[] => entities.map((entity) => createTypeOrmQueryServiceProvider(entity, connection));

@@ -21,27 +21,31 @@ describe('RelationQueryBuilder', (): void => {
 
   const orderByTestRelationsTestEntityId = `ORDER BY "testRelations"."test_entity_id" ASC`;
 
-  const baseManyToOneSelect = `${`SELECT` +
+  const baseManyToOneSelect = `${
+    `SELECT` +
     ` "testEntity"."testEntityPk" AS "testEntity_testEntityPk",` +
     ` "testEntity"."string_type" AS "testEntity_string_type",` +
     ` "testEntity"."bool_type" AS "testEntity_bool_type",` +
     ` "testEntity"."number_type" AS "testEntity_number_type",` +
     ` "testEntity"."date_type" AS "testEntity_date_type",` +
     ` "testEntity"."oneTestRelationTestRelationPk" AS "testEntity_oneTestRelationTestRelationPk",` +
-    ` "TestRelation"."testRelationPk" AS "__nestjsQueryEntityId_testRelationPk__"`}${baseManyToOneFrom}`;
+    ` "TestRelation"."testRelationPk" AS "__nestjsQueryEntityId_testRelationPk__"`
+  }${baseManyToOneFrom}`;
 
   const baseManyToManyNonOwnerSelectQueryFrom =
     ` FROM "test_entity" "manyTestEntities"` +
     ` INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = "manyTestEntities"."testEntityPk"`;
 
-  const baseManyToManyNonOwnerSelectQuery = `${`SELECT` +
+  const baseManyToManyNonOwnerSelectQuery = `${
+    `SELECT` +
     ` "manyTestEntities"."testEntityPk" AS "manyTestEntities_testEntityPk",` +
     ` "manyTestEntities"."string_type" AS "manyTestEntities_string_type",` +
     ` "manyTestEntities"."bool_type" AS "manyTestEntities_bool_type",` +
     ` "manyTestEntities"."number_type" AS "manyTestEntities_number_type",` +
     ` "manyTestEntities"."date_type" AS "manyTestEntities_date_type",` +
     ` "manyTestEntities"."oneTestRelationTestRelationPk" AS "manyTestEntities_oneTestRelationTestRelationPk",` +
-    ` "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" AS "__nestjsQueryEntityId_testRelationPk__"`}${baseManyToManyNonOwnerSelectQueryFrom}`;
+    ` "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" AS "__nestjsQueryEntityId_testRelationPk__"`
+  }${baseManyToManyNonOwnerSelectQueryFrom}`;
 
   const manyToManyNonOwnerEntityClause =
     '"test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = ?';
@@ -66,11 +70,13 @@ describe('RelationQueryBuilder', (): void => {
     ` FROM "test_relation" "manyTestRelations"` +
     ` INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = "manyTestRelations"."testRelationPk"`;
 
-  const baseManyToManyOwnerSelect = `${'SELECT ' +
+  const baseManyToManyOwnerSelect = `${
+    'SELECT ' +
     `"manyTestRelations"."testRelationPk" AS "manyTestRelations_testRelationPk",` +
     ' "manyTestRelations"."relation_name" AS "manyTestRelations_relation_name",' +
     ' "manyTestRelations"."test_entity_id" AS "manyTestRelations_test_entity_id",' +
-    ' "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" AS "__nestjsQueryEntityId_testEntityPk__"'}${baseManyToManyOwnerFrom}`;
+    ' "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" AS "__nestjsQueryEntityId_testEntityPk__"'
+  }${baseManyToManyOwnerFrom}`;
 
   const manyToManyOwnerEntityClause = '"test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = ?';
 
@@ -99,14 +105,16 @@ describe('RelationQueryBuilder', (): void => {
 
   const manyToOneNonOwnerOrderBy = `ORDER BY "oneTestEntity"."oneTestRelationTestRelationPk" ASC`;
 
-  const baseOneToOneNonOwnerSelect = `${`SELECT` +
+  const baseOneToOneNonOwnerSelect = `${
+    `SELECT` +
     ` "oneTestEntity"."testEntityPk" AS "oneTestEntity_testEntityPk",` +
     ` "oneTestEntity"."string_type" AS "oneTestEntity_string_type",` +
     ` "oneTestEntity"."bool_type" AS "oneTestEntity_bool_type",` +
     ` "oneTestEntity"."number_type" AS "oneTestEntity_number_type",` +
     ` "oneTestEntity"."date_type" AS "oneTestEntity_date_type",` +
     ` "oneTestEntity"."oneTestRelationTestRelationPk" AS "oneTestEntity_oneTestRelationTestRelationPk",` +
-    ` "oneTestEntity"."oneTestRelationTestRelationPk" AS "__nestjsQueryEntityId_testRelationPk__"`}${baseOneToOneNonOwnerFrom}`;
+    ` "oneTestEntity"."oneTestRelationTestRelationPk" AS "__nestjsQueryEntityId_testRelationPk__"`
+  }${baseOneToOneNonOwnerFrom}`;
 
   const getRelationQueryBuilder = <Entity, Relation>(
     EntityClass: Class<Entity>,

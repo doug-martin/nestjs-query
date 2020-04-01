@@ -22,11 +22,11 @@ export class QueryRelationsLoader<DTO, Relation>
   ): Promise<Relation[][]> {
     const results: Relation[][] = [];
     await Promise.all(
-      [...queryRelationsMap.values()].map(async args => {
+      [...queryRelationsMap.values()].map(async (args) => {
         const { query } = args[0];
-        const dtos = args.map(a => a.dto);
+        const dtos = args.map((a) => a.dto);
         const relationResults = await service.queryRelations(this.RelationDTO, this.relationName, dtos, query);
-        const dtoRelations = dtos.map(dto => relationResults.get(dto) ?? []);
+        const dtoRelations = dtos.map((dto) => relationResults.get(dto) ?? []);
         dtoRelations.forEach((relations, index) => {
           results[args[index].index] = relations;
         });

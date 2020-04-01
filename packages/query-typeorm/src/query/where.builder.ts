@@ -61,7 +61,7 @@ export class WhereBuilder<Entity> {
    * @param alias - optional alias to use to qualify an identifier
    */
   private createBrackets(filter: Filter<Entity>, alias?: string): Brackets {
-    return new Brackets(qb => this.build(qb, filter, alias));
+    return new Brackets((qb) => this.build(qb, filter, alias));
   }
 
   /**
@@ -98,9 +98,9 @@ export class WhereBuilder<Entity> {
     alias?: string,
   ): Where {
     return where.andWhere(
-      new Brackets(qb => {
+      new Brackets((qb) => {
         const opts = Object.keys(cmp) as FilterComparisonOperators<Entity[T]>[];
-        const sqlComparisons = opts.map(cmpType =>
+        const sqlComparisons = opts.map((cmpType) =>
           this.sqlComparisionBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias),
         );
         sqlComparisons.map(({ sql, params }) => qb.orWhere(sql, params));

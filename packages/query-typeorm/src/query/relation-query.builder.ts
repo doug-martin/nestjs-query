@@ -71,7 +71,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
     const fromPrimaryKeysIn =
       fromPrimaryKeys.length === 1
         ? fromPrimaryKeys[0].selectPath
-        : `(${fromPrimaryKeys.map(pk => pk.selectPath).join(',')})`;
+        : `(${fromPrimaryKeys.map((pk) => pk.selectPath).join(',')})`;
     const subQueries = entityArr.reduce((sqls, e, index) => {
       const { subQuery, params } = this.createRelationSubQuery(e, index);
       // only apply filter and paging
@@ -96,7 +96,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
     entityIndex: number,
   ): { subQuery: SelectQueryBuilder<Relation>; params: ObjectLiteral } {
     const meta = this.relationMeta;
-    const baseBuilder = this.createRelationQueryBuilder().select(meta.fromPrimaryKeys.map(pk => pk.selectPath));
+    const baseBuilder = this.createRelationQueryBuilder().select(meta.fromPrimaryKeys.map((pk) => pk.selectPath));
     const { sql, params } = meta.whereCondition(e, entityIndex);
     return { subQuery: baseBuilder.where(sql), params };
   }
@@ -112,10 +112,10 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
       return joinedBuilder;
     }
     return joinedBuilder.andWhere(
-      new Brackets(andBuilder => {
+      new Brackets((andBuilder) => {
         return entities.reduce((qb, entity, entityIndex) => {
           return qb.orWhere(
-            new Brackets(bqb => {
+            new Brackets((bqb) => {
               const where = meta.whereCondition(entity, entityIndex);
               bqb.orWhere(where.sql, where.params);
             }),
@@ -129,7 +129,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
     if (this.relationMetadata) {
       return this.relationMetadata;
     }
-    const relation = this.repo.metadata.relations.find(r => r.propertyName === this.relation);
+    const relation = this.repo.metadata.relations.find((r) => r.propertyName === this.relation);
     if (!relation) {
       throw new Error(`Unable to find entity for relation '${this.relation}'`);
     } else if (relation.isManyToOne || relation.isOneToOneOwner) {
@@ -148,7 +148,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
   getManyToOneOrOneToOneOwnerMeta(relation: RelationMetadata): RelationQuery<Relation, Entity> {
     const aliasName = relation.entityMetadata.name;
     const { primaryColumns } = relation.entityMetadata;
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map(pk => ({
+    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
       selectPath: `${relation.propertyName}.${pk.propertyName}`,
       databasePath: pk.databasePath,
       propertyName: pk.propertyName,
@@ -158,15 +158,15 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
       {
         target: relation.entityMetadata.target as Class<unknown>,
         alias: aliasName,
-        conditions: joinColumns.map(joinColumn => ({
+        conditions: joinColumns.map((joinColumn) => ({
           leftHand: `${aliasName}.${joinColumn.propertyName}`,
           rightHand: `${relation.propertyName}.${joinColumn.referencedColumn!.propertyName}`,
         })),
       },
     ];
-    const entityIds = primaryColumns.map(column => `${aliasName}.${column.propertyPath}`);
+    const entityIds = primaryColumns.map((column) => `${aliasName}.${column.propertyPath}`);
     const entityIdSelects = primaryColumns.map(
-      column => `${aliasName}.${column.propertyPath} AS ${this.createEntityIdSelect(column.propertyPath)}`,
+      (column) => `${aliasName}.${column.propertyPath} AS ${this.createEntityIdSelect(column.propertyPath)}`,
     );
     return {
       from: relation.type as Class<Relation>,
@@ -192,14 +192,14 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
   getOneToManyOrOneToOneNotOwnerMeta(relation: RelationMetadata): RelationQuery<Relation, Entity> {
     const aliasName = relation.propertyName;
     const columns = relation.inverseRelation!.joinColumns;
-    const fromPrimaryKeys: PrimaryKey[] = relation.inverseRelation!.entityMetadata.primaryColumns.map(pk => ({
+    const fromPrimaryKeys: PrimaryKey[] = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
       selectPath: `${aliasName}.${pk.propertyName}`,
       databasePath: pk.databasePath,
       propertyName: pk.propertyName,
     }));
-    const entityIds = columns.map(joinColumn => `${aliasName}.${joinColumn.propertyPath}`);
+    const entityIds = columns.map((joinColumn) => `${aliasName}.${joinColumn.propertyPath}`);
     const entityIdSelects = columns.map(
-      joinColumn =>
+      (joinColumn) =>
         `${aliasName}.${joinColumn.propertyPath} AS ${this.createEntityIdSelect(
           joinColumn.referencedColumn!.propertyPath,
         )}`,
@@ -232,20 +232,20 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
       {
         target: joinAlias,
         alias: joinAlias,
-        conditions: relation.inverseJoinColumns.map(inverseJoinColumn => ({
+        conditions: relation.inverseJoinColumns.map((inverseJoinColumn) => ({
           leftHand: `${joinAlias}.${inverseJoinColumn.propertyName}`,
           rightHand: `${mainAlias}.${inverseJoinColumn.referencedColumn!.propertyName}`,
         })),
       },
     ];
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map(pk => ({
+    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
       selectPath: `${mainAlias}.${pk.propertyName}`,
       databasePath: pk.databasePath,
       propertyName: pk.propertyName,
     }));
-    const entityIds = relation.joinColumns.map(joinColumn => `${joinAlias}.${joinColumn.propertyName}`);
+    const entityIds = relation.joinColumns.map((joinColumn) => `${joinAlias}.${joinColumn.propertyName}`);
     const entityIdSelects = relation.joinColumns.map(
-      joinColumn =>
+      (joinColumn) =>
         `${joinAlias}.${joinColumn.propertyName} AS ${this.createEntityIdSelect(
           joinColumn.referencedColumn!.propertyPath,
         )}`,
@@ -260,7 +260,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
       whereCondition(entity: Entity, entityIndex: number): WhereCondition {
         const params: ObjectLiteral = {};
         const sql = relation.joinColumns
-          .map(joinColumn => {
+          .map((joinColumn) => {
             const paramName = `${joinColumn.propertyName}_${entityIndex}`;
             params[paramName] = joinColumn.referencedColumn!.getEntityValue(entity);
             return `${joinAlias}.${joinColumn.propertyName} = :${paramName}`;
@@ -278,22 +278,22 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
       {
         target: joinAlias,
         alias: joinAlias,
-        conditions: relation.inverseRelation!.joinColumns.map(joinColumn => ({
+        conditions: relation.inverseRelation!.joinColumns.map((joinColumn) => ({
           leftHand: `${joinAlias}.${joinColumn.propertyName}`,
           rightHand: `${mainAlias}.${joinColumn.referencedColumn!.propertyName}`,
         })),
       },
     ];
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map(pk => ({
+    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
       selectPath: `${mainAlias}.${pk.propertyName}`,
       databasePath: pk.databasePath,
       propertyName: pk.propertyName,
     }));
     const entityIds = relation.inverseRelation!.inverseJoinColumns.map(
-      inverseJoinColumn => `${joinAlias}.${inverseJoinColumn.propertyName}`,
+      (inverseJoinColumn) => `${joinAlias}.${inverseJoinColumn.propertyName}`,
     );
     const entityIdSelects = relation.inverseRelation!.inverseJoinColumns.map(
-      inverseJoinColumn =>
+      (inverseJoinColumn) =>
         `${joinAlias}.${inverseJoinColumn.propertyName} AS ${this.createEntityIdSelect(
           inverseJoinColumn.referencedColumn!.propertyPath,
         )}`,
@@ -308,7 +308,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
       whereCondition(entity: Entity, entityIndex: number): WhereCondition {
         const params: ObjectLiteral = {};
         const sql = relation
-          .inverseRelation!.inverseJoinColumns.map(inverseJoinColumn => {
+          .inverseRelation!.inverseJoinColumns.map((inverseJoinColumn) => {
             const paramName = `${inverseJoinColumn.propertyName}_${entityIndex}`;
             params[paramName] = inverseJoinColumn.referencedColumn!.getEntityValue(entity);
             return `${joinAlias}.${inverseJoinColumn.propertyName} = :${paramName}`;
@@ -332,7 +332,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
   }
 
   getRelationPrimaryKeysPropertyNameAndColumnsName(): { columnName: string; propertyName: string }[] {
-    return this.relationMeta.fromPrimaryKeys.map(pk => ({
+    return this.relationMeta.fromPrimaryKeys.map((pk) => ({
       propertyName: pk.propertyName,
       columnName: DriverUtils.buildColumnAlias(
         this.relationRepo.manager.connection.driver,

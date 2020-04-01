@@ -27,11 +27,10 @@ export class SubTaskEntity {
   @Column({ nullable: false })
   todoItemId!: string;
 
-  @ManyToOne(
-    (): ObjectType<TodoItemEntity> => TodoItemEntity,
-    td => td.subTasks,
-    { onDelete: 'CASCADE', nullable: false },
-  )
+  @ManyToOne((): ObjectType<TodoItemEntity> => TodoItemEntity, (td) => td.subTasks, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
   @JoinColumn()
   todoItem!: TodoItemEntity;
 

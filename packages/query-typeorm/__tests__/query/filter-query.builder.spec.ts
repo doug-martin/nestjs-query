@@ -58,9 +58,7 @@ describe('FilterQueryBuilder', (): void => {
     expectedSql: string,
     expectedArgs: any[],
   ): void => {
-    const queryBuilder = getEntityQueryBuilder(whereBuilder)
-      .update(query)
-      .set({ stringType: 'baz' });
+    const queryBuilder = getEntityQueryBuilder(whereBuilder).update(query).set({ stringType: 'baz' });
     assertSQL(queryBuilder, `${baseUpdateQuery}${expectedSql}`, ['baz', ...expectedArgs]);
   };
 
