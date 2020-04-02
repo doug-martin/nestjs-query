@@ -9,7 +9,7 @@ module.exports = {
   docs: {
     Introduction: ['introduction/getting-started', 'introduction/install', 'introduction/example'],
     Concepts: ['concepts/dtos', 'concepts/queries', 'concepts/services', 'concepts/assemblers'],
-    Typeorm: ['typeorm/getting-started', 'typeorm/usage'],
+    Typeorm: ['typeorm/getting-started', 'typeorm/usage', 'typeorm/multiple-databases'],
     GraphQL: [
       'graphql/getting-started',
       'graphql/dtos',
