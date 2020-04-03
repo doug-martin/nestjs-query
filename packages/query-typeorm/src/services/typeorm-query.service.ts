@@ -97,7 +97,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param record - The entity to create.
    */
   async createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
-    this.ensureIdIsNotPresent(record);
+    await this.ensureEntityDoesNotExist(record);
     return this.repo.save(record);
   }
 
@@ -114,7 +114,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param records - The entities to create.
    */
   async createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
-    records.forEach((r) => this.ensureIdIsNotPresent(r));
+    await Promise.all(records.map((r) => this.ensureEntityDoesNotExist(r)));
     return this.repo.save(records);
   }
 
@@ -190,9 +190,18 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
     return { deletedCount: deleteResult.affected || 0 };
   }
 
+  async ensureEntityDoesNotExist(e: DeepPartial<Entity>): Promise<void> {
+    if (this.repo.hasId((e as unknown) as Entity)) {
+      const found = await this.repo.findOne(this.repo.getId((e as unknown) as Entity));
+      if (found) {
+        throw new Error('Entity already exists');
+      }
+    }
+  }
+
   ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
     if (this.repo.hasId((e as unknown) as Entity)) {
-      throw new Error('Id cannot be specified when creating or updating');
+      throw new Error('Id cannot be specified when updating');
     }
   }
 }

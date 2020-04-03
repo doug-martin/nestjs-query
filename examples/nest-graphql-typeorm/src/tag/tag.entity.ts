@@ -9,10 +9,10 @@ import {
 } from 'typeorm';
 import { TodoItemEntity } from '../todo-item/todo-item.entity';
 
-@Entity()
+@Entity({ name: 'tag' })
 export class TagEntity {
   @PrimaryGeneratedColumn()
-  id!: string;
+  id!: number;
 
   @Column()
   name!: string;

@@ -1,5 +1,6 @@
 // this is needed to create a query builder in typeorm :(
 import { Connection, createConnection, getConnection } from 'typeorm';
+import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestRelation } from './test-relation.entity';
 import { TestEntity } from './test.entity';
 
@@ -8,7 +9,7 @@ export function createTestConnection(): Promise<Connection> {
     type: 'sqlite',
     database: ':memory:',
     dropSchema: true,
-    entities: [TestEntity, TestRelation],
+    entities: [TestEntity, TestRelation, TestEntityRelationEntity],
     synchronize: true,
     logging: false,
   });
