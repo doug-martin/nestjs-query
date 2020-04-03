@@ -4,6 +4,6 @@
     "outDir": "./dist",
     "rootDir": "."
   },
-  "include": ["src", "test", "migrations", "ormconfig.json"],
+  "include": ["src", "test", "migrations", "seeds.ts", "ormconfig.json"],
   "exclude": ["node_modules", "dist"]
 }

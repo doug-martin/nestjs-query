@@ -8,6 +8,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
+import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestRelation } from './test-relation.entity';
 
 @Entity()
@@ -37,4 +38,7 @@ export class TestEntity {
   @OneToOne(() => TestRelation, (relation) => relation.oneTestEntity)
   @JoinColumn()
   oneTestRelation?: TestRelation;
+
+  @OneToMany(() => TestEntityRelationEntity, (ter) => ter.testEntity)
+  testEntityRelation?: TestEntityRelationEntity;
 }

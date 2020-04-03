@@ -11,10 +11,10 @@ import {
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
 import { TagEntity } from '../tag/tag.entity';
 
-@Entity()
+@Entity({ name: 'todo_item' })
 export class TodoItemEntity {
   @PrimaryGeneratedColumn()
-  id!: string;
+  id!: number;
 
   @Column()
   title!: string;

@@ -5,9 +5,9 @@
   "username": "graphqltypeorm",
   "database": "graphql_typeorm",
   "autoLoadEntities": true,
-  "migrations": ["dist/migrations/**.js"],
-  "seeds": ["./seeds.ts"],
-  "synchronize": false,
+  "entities": ["**/*.entity.js"],
+  "seeds": ["./dist/seeds.js"],
+  "synchronize": true,
   "logging": true,
   "cli": {
     "migrationsDir": "./migrations"

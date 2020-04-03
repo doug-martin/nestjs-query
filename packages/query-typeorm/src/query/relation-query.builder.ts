@@ -71,7 +71,7 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
     const fromPrimaryKeysIn =
       fromPrimaryKeys.length === 1
         ? fromPrimaryKeys[0].selectPath
-        : `(${fromPrimaryKeys.map((pk) => pk.selectPath).join(',')})`;
+        : `(${fromPrimaryKeys.map((pk) => pk.selectPath).join(', ')})`;
     const subQueries = entityArr.reduce((sqls, e, index) => {
       const { subQuery, params } = this.createRelationSubQuery(e, index);
       // only apply filter and paging

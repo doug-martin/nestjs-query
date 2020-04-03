@@ -12,10 +12,9 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "APP_ROOT_PATH=. nest start --watch",
     "start:prod": "node dist/main",
-    "reset": "typeorm schema:drop && npm run migrate:up && npm run seed",
-    "migrate:up": "typeorm migration:run",
-    "migrate:generate": "npm run build && typeorm migration:generate -d ./migrations ",
-    "seed": "ts-node ../../node_modules/typeorm-seeding/dist/cli.js --config ./ormconfig.json seed"
+    "reset": "npm run build && typeorm schema:drop && npm run schema:sync && npm run seed",
+    "schema:sync": "typeorm schema:sync",
+    "seed": "../../node_modules/typeorm-seeding/dist/cli.js --config ./ormconfig.json seed"
   },
   "dependencies": {
     "@nestjs-query/core": "^0.7.4",

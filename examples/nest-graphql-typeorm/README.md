@@ -13,7 +13,7 @@ docker-compose up -d
 From the root of the repo run the following commands.
 
 ```sh
-npm install & npm run bootstrap && npm run build && npx lerna run migrate:up && npx lerna run seed
+npm install & npm run bootstrap && npm run build && npx lerna run reset
 ```
 
 In this directory `nestjs-query/examples/nest-graphql-typeorm`
