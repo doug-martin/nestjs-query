@@ -1,4 +1,14 @@
-import { ManyToOne, Column, PrimaryGeneratedColumn, Entity, JoinColumn, ManyToMany, OneToOne } from 'typeorm';
+import {
+  ManyToOne,
+  Column,
+  PrimaryGeneratedColumn,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  OneToOne,
+  OneToMany,
+} from 'typeorm';
+import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestEntity } from './test.entity';
 
 @Entity()
@@ -21,4 +31,7 @@ export class TestRelation {
 
   @OneToOne(() => TestEntity, (entity) => entity.oneTestRelation)
   oneTestEntity?: TestEntity;
+
+  @OneToMany(() => TestEntityRelationEntity, (ter) => ter.testRelation)
+  testEntityRelation?: TestEntityRelationEntity;
 }

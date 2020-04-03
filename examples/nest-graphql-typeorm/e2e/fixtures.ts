@@ -3,7 +3,7 @@ import { SubTaskEntity } from '../src/sub-task/sub-task.entity';
 import { TagEntity } from '../src/tag/tag.entity';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
 
-const tables = ['todo_item_entity', 'sub_task_entity', 'tag_entity'];
+const tables = ['todo_item', 'sub_task', 'tag'];
 export const truncate = async (connection: Connection): Promise<void> => {
   await tables.reduce(async (prev, table) => {
     await prev;

@@ -116,6 +116,21 @@ describe('RelationQueryBuilder', (): void => {
     ` "oneTestEntity"."oneTestRelationTestRelationPk" AS "__nestjsQueryEntityId_testRelationPk__"`
   }${baseOneToOneNonOwnerFrom}`;
 
+  const baseManyToManyCustomJoinFrom = ` FROM "test_entity_relation_entity" "testEntityRelation"`;
+
+  const baseManyToManyCustomJoinEntityClause = `"testEntityRelation"."test_entity_id" = ?`;
+
+  const baseManyToManyCustomJoinSubQuery = `("testEntityRelation"."test_relation_id", "testEntityRelation"."test_entity_id") IN (SELECT "testEntityRelation"."test_relation_id" AS "testEntityRelation_test_relation_id", "testEntityRelation"."test_entity_id" AS "testEntityRelation_test_entity_id"${baseManyToManyCustomJoinFrom} WHERE ${baseManyToManyCustomJoinEntityClause})`;
+
+  const manyToManyCustomJoinOrderBy = `ORDER BY "testEntityRelation"."test_entity_id" ASC`;
+
+  const baseManyToManyCustomJoinSelect = `${
+    `SELECT ` +
+    `"testEntityRelation"."test_relation_id" AS "testEntityRelation_test_relation_id",` +
+    ` "testEntityRelation"."test_entity_id" AS "testEntityRelation_test_entity_id",` +
+    ` "testEntityRelation"."test_entity_id" AS "__nestjsQueryEntityId_testEntityPk__"`
+  }${baseManyToManyCustomJoinFrom}`;
+
   const getRelationQueryBuilder = <Entity, Relation>(
     EntityClass: Class<Entity>,
     relationName: string,
@@ -150,6 +165,8 @@ describe('RelationQueryBuilder', (): void => {
   const assertOneToOneOwnerSQL = createSQLAsserter(TestEntity, baseOneToOneOwnerSelect);
 
   const assertOneToOneNonOwnerSQL = createSQLAsserter(TestRelation, baseOneToOneNonOwnerSelect);
+
+  const assertManyToManyCustomJoinSQL = createSQLAsserter(TestEntity, baseManyToManyCustomJoinSelect);
 
   describe('#select', () => {
     const testEntity: TestEntity = {
@@ -256,6 +273,18 @@ describe('RelationQueryBuilder', (): void => {
             {},
             ` WHERE ((${manyToManyNonOwnerEntityClause}) OR (${manyToManyNonOwnerEntityClause}) OR (${manyToManyNonOwnerEntityClause})) AND ((${manyToManyNonOwnerInSubQuery}) OR (${manyToManyNonOwnerInSubQuery}) OR (${manyToManyNonOwnerInSubQuery})) ${manyToManyOrderBy}`,
             [testRelation.testRelationPk, 'id-2', 'id-3', testRelation.testRelationPk, 'id-2', 'id-3'],
+          );
+        });
+      });
+
+      describe('many-to-many custom join table', () => {
+        it('should work with a many-to-many through a join table', () => {
+          assertManyToManyCustomJoinSQL(
+            testEntity,
+            'testEntityRelation',
+            {},
+            ` WHERE ((${baseManyToManyCustomJoinEntityClause})) AND ((${baseManyToManyCustomJoinSubQuery})) ${manyToManyCustomJoinOrderBy}`,
+            [testEntity.testEntityPk, testEntity.testEntityPk],
           );
         });
       });

@@ -1,3 +1,12 @@
+# v0.7.5
+
+* [FIXED] Tables with composite primary keys are not quoted properly.
+
+# v0.7.4
+
+* Fix code formatting
+* Update root package.json with common dependencies
+
 # v0.7.3
 
 * [DOCS] Update docs to include a complete example of custom methods [#64](https://github.com/doug-martin/nestjs-query/issues/64)
