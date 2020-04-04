@@ -16,7 +16,7 @@ From the root of the repo run the following commands.
 npm install & npm run bootstrap && npm run build && npx lerna run reset
 ```
 
-In this directory `nestjs-query/examples/nest-graphql-typeorm` run.
+In this directory `nestjs-query/examples/nest-graphql-typeorm-multidb` run:
 
 ```
 npm start

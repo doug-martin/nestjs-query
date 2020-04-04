@@ -10,10 +10,19 @@ Therefore, `@nestjs-query/query-typeorm` also offers this functionality. This se
 
 ## Defining multiple connections
 
-First you need to setup multiple database connections.
+First lets set up a constants file to hold our connection names.
+
+```ts
+// constants.ts
+export const MUSIC_DB_CONNECTION = 'default';
+export const SECRET_DB_CONNECTION = 'secret';
+```
+
+Then setup multiple database connections.
 
 ```ts
 // app.module.ts
+import { MUSIC_DB_CONNECTION, SECRET_DB_CONNECTION } from './constants';
 
 const musicEntities = [
   ArtistEntity,
@@ -24,9 +33,6 @@ const musicEntities = [
 ];
 
 const secretEntities = [SecretEntity];
-
-export const MUSIC_DB_CONNECTION = 'default';
-export const SECRET_DB_CONNECTION = 'secret';
 
 @Module({
   imports: [
@@ -96,13 +102,51 @@ export class SecretObject {
 }
 ```
 
-Next, you may want to create a custom `SecretDatabaseService` responsible for the database access. This is your specific [TypeOrmQueryService](./usage.md). Note that you now need to pass an additional argument to the `@InjectRepository()` decorator that indicates the `Connection` you are using. This string has to match the `name` property in the `TypeOrmModule` options!
+Now lets register the `SecretEntity` with `NestjsQueryTypeOrmModule`. 
+
+The only difference is you need to pass the name of the `Connection` when importing respective `TypeOrmModule`.
+
+```ts
+// app/modules/secret/secret.module.ts
+import { Module } from '@nestjs/common';
+import { SECRET_DB_CONNECTION } from '../constants';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { SecretEntity } from './secret.entity';
+
+@Module({
+  imports: [
+    NestjsQueryTypeOrmModule.forFeature(
+      [SecretEntity], 
+      SECRET_DB_CONNECTION, // specify the connection name
+    )
+  ],  
+})
+export class SecretModule {}
+```
+
+Once the `SecretEntity` is registered you can use the `@InjectTypeOrmQueryService` with your entities. 
+
+```ts
+@Resolver(() => SecretObject)
+export class SecretResolver extends CRUDResolver(SecretObject) {
+  constructor(
+    @InjectTypeOrmQueryService(SecretEntity) readonly service: QueryService<SecretEntity>
+  ) {
+    super(service);
+  }
+}
+```
+
+## Custom TypeOrmQueryService
+
+If you want to create a custom `SecretDatabaseService` responsible for the database access, a custom [TypeOrmQueryService](./usage.md), you need to pass an additional argument to the `@InjectRepository()` decorator that indicates the `Connection` you are using. This string has to match the `name` property in the `TypeOrmModule` options!
 
 ```ts
 import { QueryService } from '@nestjs-query/core';
 import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { SECRET_DB_CONNECTION } from '../constants';
 import { SecretEntity } from './entities/secret.entity';
 
 @QueryService(SecretEntity)
@@ -117,20 +161,4 @@ export class SecretDatabaseService extends TypeOrmQueryService<SecretEntity> {
 
 For the sake of brevity, the `AssemblerService` is not covered here, as it should not directly interact with the database itself. Therefore, no further adaptations are required. This also applies to the `Resolver`!
 
-However, the `Module` that wires everything together, needs to be adapted accordingly. Again, you need to pass the name of the `Connection` when importing respective `TypeOrmModule`.
-
-```ts
-// app/modules/secret/secret.module.ts
-import { Module } from '@nestjs/common';
-import { SecretDatabaseService } from './services/secret-database.service';
-import { SecretAssemblerService } from './services/secret-assembler.service';
-import { SecretAssembler } from './secret.assembler';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
-import { SecretEntity } from './secret.entity';
-
-@Module({
-  imports: [NestjsQueryTypeOrmModule.forFeature([SecretEntity], SECRET_DB_CONNECTION)],
-  providers: [SecretAssembler, SecretDatabaseService, SecretAssemblerService],
-})
-export class SecretModule {}
-```
+For a full example see the [examples](https://github.com/doug-martin/nestjs-query/tree/master/examples).

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5437,
+    "username": "graphqltypeorm_mdb1",
+    "database": "graphql_typeorm_mdb1",
+    "autoLoadEntities": true,
+    "entities": [
+      "dist/**/{!user}/*.entity.js"
+    ],
+    "synchronize": true,
+    "logging": true
+  },
+  {
+    "name": "user-connection",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5438,
+    "username": "graphqltypeorm_mdb2",
+    "database": "graphql_typeorm_mdb2",
+    "autoLoadEntities": true,
+    "entities": [
+      "dist/**/user/*.entity.js"
+    ],
+    "synchronize": true,
+    "logging": true
+  }
+]
