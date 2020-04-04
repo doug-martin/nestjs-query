@@ -1,6 +1,7 @@
 # v0.7.5
 
 * [FIXED] Tables with composite primary keys are not quoted properly.
+* [DOCS] Added docs for working with multiple connections [#73](https://github.com/doug-martin/nestjs-query/pull/73) - [@johannesschobel](https://github.com/johannesschobel)
 
 # v0.7.4
 
