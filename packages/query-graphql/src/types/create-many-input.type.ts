@@ -1,42 +1,34 @@
-import { Class, DeepPartial } from '@nestjs-query/core';
+import { Class } from '@nestjs-query/core';
 import { Type } from 'class-transformer';
 import { ValidateNested, ArrayNotEmpty } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
-import { getDTONames } from '../common';
-import { getMetadataStorage } from '../metadata';
 
-export interface CreateManyInputType<DTO, C extends DeepPartial<DTO>> {
+export interface CreateManyInputType<C> {
   input: C[];
 }
 
-export function CreateManyInputType<DTO, C extends DeepPartial<DTO>>(
-  DTOClass: Class<DTO>,
-  CreateClass: Class<C>,
-): Class<CreateManyInputType<DTO, C>> {
-  const metadataStorage = getMetadataStorage();
-  const existing = metadataStorage.getCreateManyInputType<DTO, C>(DTOClass);
-  if (existing) {
-    return existing;
-  }
-
-  const { pluralBaseNameLower, pluralBaseName } = getDTONames(DTOClass);
-  @InputType(`CreateMany${pluralBaseName}Input`)
-  class CreateManyInput implements CreateManyInputType<DTO, C> {
-    @Type(() => CreateClass)
+/**
+ * The abstract input type for create many input types.
+ * @param fieldName - the name of field to be exposed in the graphql schema
+ * @param InputClass - the InputType to be used.
+ */
+export function CreateManyInputType<C>(fieldName: string, InputClass: Class<C>): Class<CreateManyInputType<C>> {
+  @InputType({ isAbstract: true })
+  class CreateManyInput implements CreateManyInputType<C> {
+    @Type(() => InputClass)
     @ArrayNotEmpty()
     @ValidateNested({ each: true })
-    @Field(() => [CreateClass], { description: 'Array of records to create', name: pluralBaseNameLower })
+    @Field(() => [InputClass], { description: 'Array of records to create', name: fieldName })
     input!: C[];
 
-    @Type(() => CreateClass)
-    get [pluralBaseNameLower](): C[] {
+    @Type(() => InputClass)
+    get [fieldName](): C[] {
       return this.input;
     }
 
-    set [pluralBaseNameLower](input: C[]) {
+    set [fieldName](input: C[]) {
       this.input = input;
     }
   }
-  metadataStorage.addCreateManyInputType(DTOClass, CreateManyInput);
   return CreateManyInput;
 }

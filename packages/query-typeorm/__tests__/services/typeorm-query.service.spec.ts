@@ -79,7 +79,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockQueryBuilder.select(query)).thenReturn(instance(selectQueryBuilder));
       when(selectQueryBuilder.getMany()).thenResolve(entities);
       const queryResult = await queryService.query(query);
-      expect(queryResult).toEqual(entities);
+      return expect(queryResult).toEqual(entities);
     });
   });
 
@@ -97,7 +97,7 @@ describe('TypeOrmQueryService', (): void => {
         when(mockRelationQueryBuilder.select(objectContaining(entity), query)).thenReturn(instance(selectQueryBuilder));
         when(selectQueryBuilder.getMany()).thenResolve(relations);
         const queryResult = await queryService.queryRelations(TestRelation, relationName, entity, query);
-        expect(queryResult).toEqual(relations);
+        return expect(queryResult).toEqual(relations);
       });
     });
     describe('with multiple entities', () => {
@@ -133,7 +133,7 @@ describe('TypeOrmQueryService', (): void => {
         const queryResult = await queryService.queryRelations(TestRelation, relationName, entities, {
           paging: { limit: 2 },
         });
-        expect(queryResult).toEqual(
+        return expect(queryResult).toEqual(
           new Map([
             [entities[0], entityOneRelations],
             [entities[1], entityTwoRelations],
@@ -171,7 +171,7 @@ describe('TypeOrmQueryService', (): void => {
         const queryResult = await queryService.queryRelations(TestRelation, relationName, entities, {
           paging: { limit: 2 },
         });
-        expect(queryResult).toEqual(new Map([[entities[0], entityOneRelations]]));
+        return expect(queryResult).toEqual(new Map([[entities[0], entityOneRelations]]));
       });
     });
   });
@@ -192,7 +192,7 @@ describe('TypeOrmQueryService', (): void => {
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
         const queryResult = await queryService.findRelation(TestRelation, relationName, entity);
-        expect(queryResult).toEqual(relation);
+        return expect(queryResult).toEqual(relation);
       });
 
       it('should return undefined select if no results are found.', async () => {
@@ -209,7 +209,7 @@ describe('TypeOrmQueryService', (): void => {
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
         const queryResult = await queryService.findRelation(TestRelation, relationName, entity);
-        expect(queryResult).toBeUndefined();
+        return expect(queryResult).toBeUndefined();
       });
 
       it('throw an error if a relation with that name is not found.', async () => {
@@ -224,7 +224,7 @@ describe('TypeOrmQueryService', (): void => {
         when(relationQueryBuilder.loadOne<TestRelation>()).thenResolve(undefined);
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [] });
-        expect(queryService.findRelation(TestRelation, relationName, entity)).rejects.toThrowError(
+        return expect(queryService.findRelation(TestRelation, relationName, entity)).rejects.toThrowError(
           'Unable to find relation testRelations on TestEntity',
         );
       });
@@ -268,7 +268,7 @@ describe('TypeOrmQueryService', (): void => {
         ]);
         // @ts-ignore
         const queryResult = await queryService.findRelation(TestRelation, relationName, entities);
-        expect(queryResult).toEqual(
+        return expect(queryResult).toEqual(
           new Map([
             [entities[0], entityOneRelation],
             [entities[1], entityTwoRelation],
@@ -306,7 +306,7 @@ describe('TypeOrmQueryService', (): void => {
         ]);
         // @ts-ignore
         const queryResult = await queryService.findRelation(TestRelation, relationName, entities);
-        expect(queryResult).toEqual(new Map([[entities[0], entityOneRelation]]));
+        return expect(queryResult).toEqual(new Map([[entities[0], entityOneRelation]]));
       });
     });
   });
@@ -326,7 +326,7 @@ describe('TypeOrmQueryService', (): void => {
       when(relationQueryBuilder.of(objectContaining(entity))).thenReturn(instance(relationQueryBuilder));
       when(relationQueryBuilder.add(relationIds)).thenResolve();
       const queryResult = await queryService.addRelations(relationName, entity.testEntityPk, relationIds);
-      expect(queryResult).toEqual(entity);
+      return expect(queryResult).toEqual(entity);
     });
   });
 
@@ -344,7 +344,7 @@ describe('TypeOrmQueryService', (): void => {
       when(relationQueryBuilder.of(objectContaining(entity))).thenReturn(instance(relationQueryBuilder));
       when(relationQueryBuilder.set(relation.testRelationPk)).thenResolve();
       const queryResult = await queryService.setRelation(relationName, entity.testEntityPk, relation.testRelationPk);
-      expect(queryResult).toEqual(entity);
+      return expect(queryResult).toEqual(entity);
     });
   });
 
@@ -363,7 +363,7 @@ describe('TypeOrmQueryService', (): void => {
       when(relationQueryBuilder.of(objectContaining(entity))).thenReturn(instance(relationQueryBuilder));
       when(relationQueryBuilder.remove(relationIds)).thenResolve();
       const queryResult = await queryService.removeRelations(relationName, entity.testEntityPk, relationIds);
-      expect(queryResult).toEqual(entity);
+      return expect(queryResult).toEqual(entity);
     });
   });
 
@@ -381,7 +381,7 @@ describe('TypeOrmQueryService', (): void => {
       when(relationQueryBuilder.of(objectContaining(entity))).thenReturn(instance(relationQueryBuilder));
       when(relationQueryBuilder.remove(relation.testRelationPk)).thenResolve();
       const queryResult = await queryService.removeRelation(relationName, entity.testEntityPk, relation.testRelationPk);
-      expect(queryResult).toEqual(entity);
+      return expect(queryResult).toEqual(entity);
     });
   });
 
@@ -392,14 +392,14 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.findOne(entity.testEntityPk)).thenResolve(entity);
       const queryResult = await queryService.findById(entity.testEntityPk);
-      expect(queryResult).toEqual(entity);
+      return expect(queryResult).toEqual(entity);
     });
 
     it('return undefined if not found', async () => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.findOne(1)).thenResolve(undefined);
       const queryResult = await queryService.findById(1);
-      expect(queryResult).toBeUndefined();
+      return expect(queryResult).toBeUndefined();
     });
   });
 
@@ -410,7 +410,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.findOneOrFail(entity.testEntityPk)).thenResolve(entity);
       const queryResult = await queryService.getById(entity.testEntityPk);
-      expect(queryResult).toEqual(entity);
+      return expect(queryResult).toEqual(entity);
     });
   });
 
@@ -420,9 +420,12 @@ describe('TypeOrmQueryService', (): void => {
       const entityInstances = entities.map((e) => plainToClass(TestEntity, e));
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
+      entityInstances.forEach((e) => {
+        when(mockRepo.hasId(e)).thenReturn(false);
+      });
       when(mockRepo.save(entities)).thenResolve(entityInstances);
       const queryResult = await queryService.createMany(entities);
-      expect(queryResult).toEqual(entityInstances);
+      return expect(queryResult).toEqual(entityInstances);
     });
 
     it('call save on the repo with instances of entities when passed instances', async () => {
@@ -435,7 +438,7 @@ describe('TypeOrmQueryService', (): void => {
       });
       when(mockRepo.save(deepEqual(entityInstances))).thenResolve(entityInstances);
       const queryResult = await queryService.createMany(entityInstances);
-      expect(queryResult).toEqual(entityInstances);
+      return expect(queryResult).toEqual(entityInstances);
     });
 
     it('should reject if the entity contains an id', async () => {
@@ -445,10 +448,10 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.target).thenReturn(TestEntity);
       entityInstances.forEach((e) => {
         when(mockRepo.hasId(e)).thenReturn(true);
+        when(mockRepo.getId(e)).thenReturn(e.testEntityPk);
+        when(mockRepo.findOne(e.testEntityPk)).thenResolve(e);
       });
-      expect(queryService.createMany(entityInstances)).rejects.toThrowError(
-        'Id cannot be specified when creating or updating',
-      );
+      return expect(queryService.createMany(entityInstances)).rejects.toThrowError('Entity already exists');
     });
   });
 
@@ -460,7 +463,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.save(deepEqual(entityInstance))).thenResolve(entityInstance);
       const queryResult = await queryService.createOne(entityInstance);
-      expect(queryResult).toEqual(entityInstance);
+      return expect(queryResult).toEqual(entityInstance);
     });
 
     it('call save on the repo with an instance of the entity when passed an instance', async () => {
@@ -471,7 +474,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.hasId(entityInstance)).thenReturn(false);
       when(mockRepo.save(entity)).thenResolve(entityInstance);
       const queryResult = await queryService.createOne(entity);
-      expect(queryResult).toEqual(entityInstance);
+      return expect(queryResult).toEqual(entityInstance);
     });
 
     it('should reject if the entity contains an id', async () => {
@@ -480,9 +483,9 @@ describe('TypeOrmQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.hasId(entityInstance)).thenReturn(true);
-      expect(queryService.createOne(entityInstance)).rejects.toThrowError(
-        'Id cannot be specified when creating or updating',
-      );
+      when(mockRepo.getId(entityInstance)).thenReturn(entityInstance.testEntityPk);
+      when(mockRepo.findOne(entityInstance.testEntityPk)).thenResolve(entityInstance);
+      return expect(queryService.createOne(entityInstance)).rejects.toThrowError('Entity already exists');
     });
   });
 
@@ -496,7 +499,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockQueryBuilder.delete(objectContaining({ filter: deleteMany }))).thenReturn(instance(deleteQueryBuilder));
       when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined, affected });
       const queryResult = await queryService.deleteMany(deleteMany);
-      expect(queryResult).toEqual({ deletedCount: affected });
+      return expect(queryResult).toEqual({ deletedCount: affected });
     });
 
     it('should return 0 if affected is not returned', async () => {
@@ -507,7 +510,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockQueryBuilder.delete(objectContaining({ filter: deleteMany }))).thenReturn(instance(deleteQueryBuilder));
       when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined });
       const queryResult = await queryService.deleteMany(deleteMany);
-      expect(queryResult).toEqual({ deletedCount: 0 });
+      return expect(queryResult).toEqual({ deletedCount: 0 });
     });
   });
 
@@ -520,7 +523,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.findOneOrFail(testEntityPk)).thenResolve(entity);
       when(mockRepo.remove(entity)).thenResolve(entity);
       const queryResult = await queryService.deleteOne(testEntityPk);
-      expect(queryResult).toEqual(entity);
+      return expect(queryResult).toEqual(entity);
     });
 
     it('call fail if the entity is not found', async () => {
@@ -548,7 +551,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockUpdateQueryBuilder.execute()).thenResolve({ generatedMaps: [], raw: undefined, affected });
       when(mockRepo.remove(entity)).thenResolve(entity);
       const queryResult = await queryService.updateMany(update, filter);
-      expect(queryResult).toEqual({ updatedCount: affected });
+      return expect(queryResult).toEqual({ updatedCount: affected });
     });
 
     it('should reject if the update contains a primary key', async () => {
@@ -559,8 +562,8 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.hasId(update as TestEntity)).thenReturn(true);
       when(mockRepo.remove(entity)).thenResolve(entity);
-      expect(queryService.updateMany(update, filter)).rejects.toThrowError(
-        'Id cannot be specified when creating or updating',
+      return expect(queryService.updateMany(update, filter)).rejects.toThrowError(
+        'Id cannot be specified when updating',
       );
     });
 
@@ -577,7 +580,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockUpdateQueryBuilder.execute()).thenResolve({ generatedMaps: [], raw: undefined });
       when(mockRepo.remove(entity)).thenResolve(entity);
       const queryResult = await queryService.updateMany(update, filter);
-      expect(queryResult).toEqual({ updatedCount: 0 });
+      return expect(queryResult).toEqual({ updatedCount: 0 });
     });
   });
 
@@ -593,7 +596,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.merge(entity, update)).thenReturn(savedEntity);
       when(mockRepo.save(deepEqual(savedEntity))).thenResolve(savedEntity);
       const queryResult = await queryService.updateOne(updateId, update);
-      expect(queryResult).toEqual(savedEntity);
+      return expect(queryResult).toEqual(savedEntity);
     });
 
     it('should reject if the update contains a primary key', async () => {
@@ -604,8 +607,8 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.hasId(update as TestEntity)).thenReturn(true);
       when(mockRepo.remove(entity)).thenResolve(entity);
-      expect(queryService.updateOne(updateId, update)).rejects.toThrowError(
-        'Id cannot be specified when creating or updating',
+      return expect(queryService.updateOne(updateId, update)).rejects.toThrowError(
+        'Id cannot be specified when updating',
       );
     });
 

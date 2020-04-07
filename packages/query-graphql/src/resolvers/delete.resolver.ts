@@ -1,7 +1,7 @@
 import { Class, DeleteManyResponse } from '@nestjs-query/core';
 import omit from 'lodash.omit';
-import { ObjectType, ArgsType, Resolver, Args, PartialType } from '@nestjs/graphql';
-import { getDTONames } from '../common';
+import { ObjectType, ArgsType, Resolver, Args, PartialType, InputType } from '@nestjs/graphql';
+import { DTONames, getDTONames } from '../common';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { DeleteManyInputType, DeleteManyResponseType, DeleteOneInputType, MutationArgsType } from '../types';
 import { ResolverMutation } from '../decorators';
@@ -24,6 +24,14 @@ export interface DeleteResolver<DTO> extends ServiceResolver<DTO> {
   deleteMany(input: MutationArgsType<DeleteManyInputType<DTO>>): Promise<DeleteManyResponse>;
 }
 
+/** @internal */
+const defaultDeleteManyInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): Class<DeleteManyInputType<DTO>> => {
+  const { pluralBaseName } = dtoNames;
+  @InputType(`DeleteMany${pluralBaseName}Input`)
+  class DM extends DeleteManyInputType(DTOClass) {}
+  return DM;
+};
+
 /**
  * @internal
  * Mixin to add `delete` graphql endpoints.
@@ -33,8 +41,9 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
 >(
   BaseClass: B,
 ): Class<DeleteResolver<DTO>> & B => {
-  const { baseName, pluralBaseName } = getDTONames(DTOClass, opts);
-  const { DeleteOneInput = DeleteOneInputType(), DeleteManyInput = DeleteManyInputType(DTOClass) } = opts;
+  const dtoNames = getDTONames(DTOClass, opts);
+  const { baseName, pluralBaseName } = dtoNames;
+  const { DeleteOneInput = DeleteOneInputType(), DeleteManyInput = defaultDeleteManyInput(dtoNames, DTOClass) } = opts;
   const DMR = DeleteManyResponseType();
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput');

@@ -22,7 +22,7 @@ describe('DeleteManyInputType', (): void => {
 
   it('should create an args type with an array field', () => {
     DeleteManyInputType(DeleteManyDTO);
-    expect(inputTypeSpy).toBeCalledWith(`DeleteManyDeleteManyDTOSInput`);
+    expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
     expect(inputTypeSpy).toBeCalledTimes(1);
     expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
       description: 'Filter to find records to delete',

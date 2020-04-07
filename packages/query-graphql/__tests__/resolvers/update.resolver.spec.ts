@@ -61,7 +61,7 @@ describe('UpdateResolver', () => {
   it('should create an UpdateResolver with the default DTO', () => {
     UpdateResolver(TestResolverDTO);
 
-    expect(updateOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+    expect(updateOneInputTypeSpy).toBeCalledWith(expect.any(Function));
     expect(updateManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
@@ -72,7 +72,7 @@ describe('UpdateResolver', () => {
   });
 
   it('should use the dtoName if provided', () => {
-    const UpdateOneInput = UpdateOneInputType(TestResolverDTO, TestResolverDTO);
+    const UpdateOneInput = UpdateOneInputType(TestResolverDTO);
     jest.clearAllMocks(); // reset
     UpdateResolver(TestResolverDTO, { dtoName: 'Test', UpdateOneInput });
 
@@ -88,7 +88,7 @@ describe('UpdateResolver', () => {
 
   describe('#updateOne', () => {
     it('should not update a new type if the UpdateOneArgs is supplied', () => {
-      const UpdateOneInput = UpdateOneInputType(TestResolverDTO, TestResolverDTO);
+      const UpdateOneInput = UpdateOneInputType(TestResolverDTO);
       jest.clearAllMocks(); // reset
       UpdateResolver(TestResolverDTO, { UpdateOneInput });
 
@@ -111,7 +111,7 @@ describe('UpdateResolver', () => {
         pipes: [],
       };
       UpdateResolver(TestResolverDTO, { one: updateOneOpts });
-      expect(updateOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(updateOneInputTypeSpy).toBeCalledWith(expect.any(Function));
       expect(updateManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
@@ -123,7 +123,7 @@ describe('UpdateResolver', () => {
 
     it('should call the service updateOne with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
-      const input: UpdateOneInputType<TestResolverDTO, Partial<TestResolverDTO>> = {
+      const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
         id: 'id-1',
         update: {
           stringField: 'foo',
@@ -146,7 +146,7 @@ describe('UpdateResolver', () => {
       jest.clearAllMocks(); // reset
       UpdateResolver(TestResolverDTO, { UpdateManyInput });
 
-      expect(updateOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(updateOneInputTypeSpy).toBeCalledWith(expect.any(Function));
       expect(updateManyInputTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
@@ -165,7 +165,7 @@ describe('UpdateResolver', () => {
         pipes: [],
       };
       UpdateResolver(TestResolverDTO, { many: updateManyOpts });
-      expect(updateOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(updateOneInputTypeSpy).toBeCalledWith(expect.any(Function));
       expect(updateManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);

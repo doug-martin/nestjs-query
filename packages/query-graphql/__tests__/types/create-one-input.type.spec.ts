@@ -13,15 +13,15 @@ describe('CreateOneInputType', (): void => {
     field!: string;
   }
   it('should create an InputType with the field as the type', () => {
-    CreateOneInputType(FakeType, FakeType);
-    expect(inputTypeSpy).toBeCalledWith(`CreateOneFakeTypeInput`);
+    CreateOneInputType('fakeType', FakeType);
+    expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
     expect(inputTypeSpy).toBeCalledTimes(1);
     expect(fieldSpy).toBeCalledTimes(1);
     expect(fieldSpy.mock.calls[0]![0]!()).toEqual(FakeType);
   });
 
   it('should properly assign the input field', () => {
-    const Type = CreateOneInputType(FakeType, FakeType);
+    class Type extends CreateOneInputType('fakeType', FakeType) {}
     const input = { field: 'hello' };
     const it = plainToClass(Type, { input });
     expect(it.input).toEqual(input);
@@ -29,7 +29,7 @@ describe('CreateOneInputType', (): void => {
   });
 
   it('should assign the typeName to the input field', () => {
-    const Type = CreateOneInputType(FakeType, FakeType);
+    class Type extends CreateOneInputType('fakeType', FakeType) {}
     const input = { field: 'hello' };
     const it = plainToClass(Type, { fakeType: input });
     expect(it.input).toEqual(input);
@@ -38,7 +38,7 @@ describe('CreateOneInputType', (): void => {
 
   describe('validation', () => {
     it('should validate the input property', () => {
-      const Type = CreateOneInputType(FakeType, FakeType);
+      class Type extends CreateOneInputType('fakeType', FakeType) {}
       const input = { field: 'hola' };
       const it = plainToClass(Type, { input });
       const errors = validateSync(it);
@@ -63,7 +63,7 @@ describe('CreateOneInputType', (): void => {
     });
 
     it('should assign the typeName to the input field', () => {
-      const Type = CreateOneInputType(FakeType, FakeType);
+      class Type extends CreateOneInputType('fakeType', FakeType) {}
       const input = { field: 'hola' };
       const it = plainToClass(Type, { fakeType: input });
       const errors = validateSync(it);

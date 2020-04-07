@@ -508,7 +508,7 @@ export class TodoItemInputDTO {
 }
 
 @InputType()
-export class CreateOneTodoItemInput extends CreateOneInputType(TodoItemDTO, TodoItemInputDTO) {}
+export class CreateOneTodoItemInput extends CreateOneInputType('todoItem', TodoItemInputDTO) {}
 ```
 ---
 
@@ -540,7 +540,7 @@ export class TodoItemInputDTO {
 }
 
 @InputType()
-export class CreateManyTodoItemsInput extends CreateManyInputType(TodoItemDTO, TodoItemInputDTO) {}
+export class CreateManyTodoItemsInput extends CreateManyInputType('todoItems', TodoItemInputDTO) {}
 ```
 
 ### UpdateOneInputType
@@ -548,7 +548,7 @@ export class CreateManyTodoItemsInput extends CreateManyInputType(TodoItemDTO, T
 InputType type for `updateOne` mutations.
 
 The `UpdateOneInputType` will generate an `InputType` that will require the user to provide two fields.
-* `id` - The id of the recrord to update
+* `id` - The id of the record to update
 * `update` - A record with fields to update.
 
 **NOTE** Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
@@ -563,7 +563,7 @@ import { UpdateOneInputType } from '@nestjs-query/query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
-@InputType('TodoItemUpdate')
+@InputType('TodoItemUpdateInput')
 export class TodoItemUpdateDTO {
   @IsOptional()
   @IsString()
@@ -577,7 +577,7 @@ export class TodoItemUpdateDTO {
 }
 
 @InputType()
-export class UpdateOneTodoItemInput extends UpdateOneInputType(TodoItemDTO, TodoItemUpdateDTO) {}
+export class UpdateOneTodoItemInput extends UpdateOneInputType(TodoItemUpdateDTO) {}
 ```
 ---
 

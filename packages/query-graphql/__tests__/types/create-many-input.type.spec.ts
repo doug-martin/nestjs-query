@@ -14,14 +14,14 @@ describe('CreateManyInputType', (): void => {
   }
 
   it('should create an InputType with an array field', () => {
-    CreateManyInputType(FakeType, FakeType);
-    expect(inputTypeSpy).toBeCalledWith(`CreateManyFakeTypesInput`);
+    CreateManyInputType('fakeTypes', FakeType);
+    expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
     expect(inputTypeSpy).toBeCalledTimes(1);
     expect(fieldSpy.mock.calls[0]![0]!()).toEqual([FakeType]);
   });
 
   it('should properly assign the input field', () => {
-    const Type = CreateManyInputType(FakeType, FakeType);
+    class Type extends CreateManyInputType('fakeTypes', FakeType) {}
     const input = [{ field: 'hello' }];
     const it = plainToClass(Type, { input });
     expect(it.input).toEqual(input);
@@ -29,7 +29,7 @@ describe('CreateManyInputType', (): void => {
   });
 
   it('should assign the typeName to the input field', () => {
-    const Type = CreateManyInputType(FakeType, FakeType);
+    class Type extends CreateManyInputType('fakeTypes', FakeType) {}
     const input = [{ field: 'hello' }];
     const it = plainToClass(Type, { fakeTypes: input });
     expect(it.input).toEqual(input);
@@ -38,7 +38,7 @@ describe('CreateManyInputType', (): void => {
 
   describe('validation', () => {
     it('should validate the input property', () => {
-      const Type = CreateManyInputType(FakeType, FakeType);
+      class Type extends CreateManyInputType('fakeTypes', FakeType) {}
       const input = [{ field: 'hola' }];
       const it = plainToClass(Type, { input });
       const errors = validateSync(it);
@@ -72,7 +72,7 @@ describe('CreateManyInputType', (): void => {
     });
 
     it('should assign the typeName to the input field', () => {
-      const Type = CreateManyInputType(FakeType, FakeType);
+      class Type extends CreateManyInputType('fakeTypes', FakeType) {}
       const input = [{ field: 'hola' }];
       const it = plainToClass(Type, { fakeTypes: input });
       const errors = validateSync(it);
