@@ -23,7 +23,7 @@ describe('UpdateManyInputType', (): void => {
   it('should create an args type with an array field', () => {
     UpdateManyInputType(FakeType, FakeType);
     expect(inputTypeSpy).toBeCalledTimes(1);
-    expect(inputTypeSpy).toBeCalledWith('UpdateManyFakeTypesInput');
+    expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
     expect(fieldSpy).toBeCalledTimes(2);
     expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
       description: 'Filter used to find fields to update',

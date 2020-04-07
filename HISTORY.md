@@ -1,3 +1,7 @@
+# v0.8.0
+
+* [FIXED] Defining additional UpdateDtos breaks Schema. [#72](https://github.com/doug-martin/nestjs-query/issues/72)
+
 # v0.7.5
 
 * [FIXED] Tables with composite primary keys are not quoted properly.

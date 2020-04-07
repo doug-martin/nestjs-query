@@ -8,6 +8,10 @@ export interface DeleteOneInputType {
 
 /** @internal */
 let deleteOneInputType: Class<DeleteOneInputType> | null = null;
+
+/**
+ * The input type for delete one endpoints.
+ */
 export function DeleteOneInputType(): Class<DeleteOneInputType> {
   if (deleteOneInputType) {
     return deleteOneInputType;

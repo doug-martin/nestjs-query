@@ -2,10 +2,11 @@
  * This is the doc comment for file1.ts
  * @packageDocumentation
  */
+// eslint-disable-next-line max-classes-per-file
 import { Class, DeepPartial } from '@nestjs-query/core';
 import omit from 'lodash.omit';
 import { InputType, ArgsType, Args, Resolver, PartialType } from '@nestjs/graphql';
-import { getDTONames } from '../common';
+import { DTONames, getDTONames } from '../common';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { CreateManyInputType, CreateOneInputType, MutationArgsType } from '../types';
 import { ResolverMutation } from '../decorators';
@@ -19,27 +20,43 @@ export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartia
   /**
    * The class to be used for `createOne` input.
    */
-  CreateOneInput?: Class<CreateOneInputType<DTO, C>>;
+  CreateOneInput?: Class<CreateOneInputType<C>>;
   /**
    * The class to be used for `createMany` input.
    */
-  CreateManyInput?: Class<CreateManyInputType<DTO, C>>;
+  CreateManyInput?: Class<CreateManyInputType<C>>;
 }
 
 export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
-  createOne(input: MutationArgsType<CreateOneInputType<DTO, C>>): Promise<DTO>;
+  createOne(input: MutationArgsType<CreateOneInputType<C>>): Promise<DTO>;
 
-  createMany(input: MutationArgsType<CreateManyInputType<DTO, C>>): Promise<DTO[]>;
+  createMany(input: MutationArgsType<CreateManyInputType<C>>): Promise<DTO[]>;
 }
 
 /** @internal */
-const defaultCreateInput = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>, baseName: string): Class<C> => {
-  @InputType(`Create${baseName}`)
+const defaultCreateDTO = <DTO, C extends DeepPartial<DTO>>(dtoNames: DTONames, DTOClass: Class<DTO>): Class<C> => {
+  @InputType(`Create${dtoNames.baseName}`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   class PartialInput extends PartialType(DTOClass, InputType) {}
 
   return PartialInput as Class<C>;
+};
+
+/** @internal */
+const defaultCreateOneInput = <C>(dtoNames: DTONames, InputDTO: Class<C>): Class<CreateOneInputType<C>> => {
+  const { baseName, baseNameLower } = dtoNames;
+  @InputType(`CreateOne${baseName}Input`)
+  class CO extends CreateOneInputType(baseNameLower, InputDTO) {}
+  return CO;
+};
+
+/** @internal */
+const defaultCreateManyInput = <C>(dtoNames: DTONames, InputDTO: Class<C>): Class<CreateManyInputType<C>> => {
+  const { pluralBaseName, pluralBaseNameLower } = dtoNames;
+  @InputType(`CreateMany${pluralBaseName}Input`)
+  class CM extends CreateManyInputType(pluralBaseNameLower, InputDTO) {}
+  return CM;
 };
 
 /**
@@ -51,11 +68,12 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
 >(
   BaseClass: B,
 ): Class<CreateResolver<DTO, C>> & B => {
-  const { baseName, pluralBaseName } = getDTONames(DTOClass, opts);
+  const dtoNames = getDTONames(DTOClass, opts);
+  const { baseName, pluralBaseName } = dtoNames;
   const {
-    CreateDTOClass = defaultCreateInput(DTOClass, baseName),
-    CreateOneInput = CreateOneInputType(DTOClass, CreateDTOClass),
-    CreateManyInput = CreateManyInputType(DTOClass, CreateDTOClass),
+    CreateDTOClass = defaultCreateDTO(dtoNames, DTOClass),
+    CreateOneInput = defaultCreateOneInput(dtoNames, CreateDTOClass),
+    CreateManyInput = defaultCreateManyInput(dtoNames, CreateDTOClass),
   } = opts;
 
   const commonResolverOpts = omit(

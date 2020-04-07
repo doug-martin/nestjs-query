@@ -55,12 +55,12 @@ describe('CreateResolver', () => {
   }
 
   it('should use the dtoName if provided', () => {
-    const CreateOneInput = CreateOneInputType(TestResolverDTO, TestResolverDTO);
+    class CreateOneInput extends CreateOneInputType('createResolverDTO', TestResolverDTO) {}
     jest.clearAllMocks(); // reset
     CreateResolver(TestResolverDTO, { dtoName: 'Test', CreateOneInput });
 
     expect(createOneInputTypeSpy).not.toBeCalled();
-    expect(createManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+    expect(createManyInputTypeSpy).toBeCalledWith('tests', expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
     assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneTest' }, {}, {});
@@ -77,8 +77,8 @@ describe('CreateResolver', () => {
     }
     CreateResolver(UnnamedTestResolverDTO);
 
-    expect(createOneInputTypeSpy).toBeCalledWith(UnnamedTestResolverDTO, expect.any(Function));
-    expect(createManyInputTypeSpy).toBeCalledWith(UnnamedTestResolverDTO, expect.any(Function));
+    expect(createOneInputTypeSpy).toBeCalledWith('unnamedTestResolverDTO', expect.any(Function));
+    expect(createManyInputTypeSpy).toBeCalledWith('unnamedTestResolverDTOS', expect.any(Function));
 
     expect(resolverMutationSpy).toBeCalledTimes(2);
     assertResolverMutationCall(0, UnnamedTestResolverDTO, { name: 'createOneUnnamedTestResolverDTO' }, {}, {});
@@ -89,12 +89,12 @@ describe('CreateResolver', () => {
 
   describe('#createOne', () => {
     it('should not create a new type if the CreateOneArgs is supplied', () => {
-      const CreateOneInput = CreateOneInputType(TestResolverDTO, TestResolverDTO);
+      class CreateOneInput extends CreateOneInputType('createResolverDTO', TestResolverDTO) {}
       jest.clearAllMocks(); // reset
       CreateResolver(TestResolverDTO, { CreateOneInput });
 
       expect(createOneInputTypeSpy).not.toBeCalled();
-      expect(createManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(createManyInputTypeSpy).toBeCalledWith('createResolverDTOS', expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, {});
@@ -112,8 +112,8 @@ describe('CreateResolver', () => {
         pipes: [],
       };
       CreateResolver(TestResolverDTO, { one: createOneOpts });
-      expect(createOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
-      expect(createManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(createOneInputTypeSpy).toBeCalledWith('createResolverDTO', expect.any(Function));
+      expect(createManyInputTypeSpy).toBeCalledWith('createResolverDTOS', expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, createOneOpts);
@@ -124,7 +124,7 @@ describe('CreateResolver', () => {
 
     it('should call the service createOne with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
-      const args: CreateOneInputType<TestResolverDTO, DeepPartial<TestResolverDTO>> = {
+      const args: CreateOneInputType<DeepPartial<TestResolverDTO>> = {
         input: {
           stringField: 'foo',
         },
@@ -142,11 +142,11 @@ describe('CreateResolver', () => {
 
   describe('#createMany', () => {
     it('should not create a new type if the CreateManyArgs is supplied', () => {
-      const CreateManyInput = CreateManyInputType(TestResolverDTO, TestResolverDTO);
+      class CreateManyInput extends CreateManyInputType('testResolvers', TestResolverDTO) {}
       jest.clearAllMocks(); // reset
       CreateResolver(TestResolverDTO, { CreateManyInput });
 
-      expect(createOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(createOneInputTypeSpy).toBeCalledWith('createResolverDTO', expect.any(Function));
       expect(createManyInputTypeSpy).not.toBeCalled();
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
@@ -165,8 +165,8 @@ describe('CreateResolver', () => {
         pipes: [],
       };
       CreateResolver(TestResolverDTO, { many: createManyOpts });
-      expect(createOneInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
-      expect(createManyInputTypeSpy).toBeCalledWith(TestResolverDTO, expect.any(Function));
+      expect(createOneInputTypeSpy).toBeCalledWith('createResolverDTO', expect.any(Function));
+      expect(createManyInputTypeSpy).toBeCalledWith('createResolverDTOS', expect.any(Function));
 
       expect(resolverMutationSpy).toBeCalledTimes(2);
       assertResolverMutationCall(0, TestResolverDTO, { name: 'createOneCreateResolverDTO' }, {}, {});
@@ -177,7 +177,7 @@ describe('CreateResolver', () => {
 
     it('should call the service createMany with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
-      const args: CreateManyInputType<TestResolverDTO, Partial<TestResolverDTO>> = {
+      const args: CreateManyInputType<Partial<TestResolverDTO>> = {
         input: [
           {
             stringField: 'foo',

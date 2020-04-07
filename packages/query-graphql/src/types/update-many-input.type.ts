@@ -2,8 +2,6 @@ import { DeepPartial, Filter, Class } from '@nestjs-query/core';
 import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmptyObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { getDTONames } from '../common';
-import { getMetadataStorage } from '../metadata';
 import { FilterType } from './query';
 
 export interface UpdateManyInputType<DTO, U extends DeepPartial<DTO>> {
@@ -11,19 +9,18 @@ export interface UpdateManyInputType<DTO, U extends DeepPartial<DTO>> {
   update: U;
 }
 
+/**
+ * Input abstract type for all update many endpoints.
+ * @param DTOClass - The DTO used to create a FilterType for the update.
+ * @param UpdateType - The InputType to use for the update field.
+ */
 export function UpdateManyInputType<DTO, U extends DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
   UpdateType: Class<U>,
 ): Class<UpdateManyInputType<DTO, U>> {
-  const metadataStorage = getMetadataStorage();
-  const existing = metadataStorage.getUpdateManyInputType<DTO, U>(DTOClass);
-  if (existing) {
-    return existing;
-  }
-  const { pluralBaseName } = getDTONames(DTOClass);
   const F = FilterType(DTOClass);
 
-  @InputType(`UpdateMany${pluralBaseName}Input`)
+  @InputType({ isAbstract: true })
   class UpdateManyInput implements UpdateManyInputType<DTO, U> {
     @IsNotEmptyObject()
     @ValidateNested()
@@ -36,7 +33,5 @@ export function UpdateManyInputType<DTO, U extends DeepPartial<DTO>>(
     @Field(() => UpdateType, { description: 'The update to apply to all records found using the filter' })
     update!: U;
   }
-  metadataStorage.addUpdateManyInputType(DTOClass, UpdateManyInput);
-
   return UpdateManyInput;
 }

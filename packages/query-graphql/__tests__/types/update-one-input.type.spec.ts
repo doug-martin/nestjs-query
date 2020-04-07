@@ -15,9 +15,9 @@ describe('UpdateOneInputType', (): void => {
     name!: string;
   }
   it('should create an args type with the field as the type', () => {
-    UpdateOneInputType(FakeType, FakeType);
+    UpdateOneInputType(FakeType);
     expect(inputType).toBeCalledTimes(1);
-    expect(inputType).toBeCalledWith(`UpdateOneFakeTypeInput`);
+    expect(inputType).toBeCalledWith({ isAbstract: true });
     expect(fieldSpy).toBeCalledTimes(2);
     expect(fieldSpy.mock.calls[0]![0]!()).toEqual(nestjsGraphql.ID);
     expect(fieldSpy.mock.calls[1]![0]!()).toEqual(FakeType);
@@ -25,7 +25,7 @@ describe('UpdateOneInputType', (): void => {
 
   describe('validation', () => {
     it('should validate id is defined is not empty', () => {
-      const Type = UpdateOneInputType(FakeType, FakeType);
+      const Type = UpdateOneInputType(FakeType);
       const input = { update: { name: 'hello world' } };
       const it = plainToClass(Type, input);
       const errors = validateSync(it);
@@ -42,7 +42,7 @@ describe('UpdateOneInputType', (): void => {
     });
 
     it('should validate id is not empty is defined is not empty', () => {
-      const Type = UpdateOneInputType(FakeType, FakeType);
+      const Type = UpdateOneInputType(FakeType);
       const input = { id: '', update: { name: 'hello world' } };
       const it = plainToClass(Type, input);
       const errors = validateSync(it);
@@ -60,7 +60,7 @@ describe('UpdateOneInputType', (): void => {
     });
 
     it('should validate the update input', () => {
-      const Type = UpdateOneInputType(FakeType, FakeType);
+      const Type = UpdateOneInputType(FakeType);
       const input = { id: 'id-1', update: {} };
       const it = plainToClass(Type, input);
       const errors = validateSync(it);

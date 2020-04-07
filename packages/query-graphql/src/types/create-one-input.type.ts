@@ -1,41 +1,34 @@
-import { Class, DeepPartial } from '@nestjs-query/core';
+import { Class } from '@nestjs-query/core';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
-import { getDTONames } from '../common';
-import { getMetadataStorage } from '../metadata';
 
-export interface CreateOneInputType<DTO, C extends DeepPartial<DTO>> {
+export interface CreateOneInputType<C> {
   input: C;
 }
 
-export function CreateOneInputType<DTO, C extends DeepPartial<DTO>>(
-  DTOClass: Class<DTO>,
-  CreateClass: Class<C>,
-): Class<CreateOneInputType<DTO, C>> {
-  const metadataStorage = getMetadataStorage();
-  const existing = metadataStorage.getCreateOneInputType<DTO, C>(DTOClass);
-  if (existing) {
-    return existing;
-  }
-
-  const { baseNameLower, baseName } = getDTONames(DTOClass);
-  @InputType(`CreateOne${baseName}Input`)
-  class CreateOneInput implements CreateOneInputType<DTO, C> {
-    @Type(() => CreateClass)
+/**
+ * The abstract input type for create one operations.
+ *
+ * @param fieldName - The name of the field to be exposed in the graphql schema
+ * @param InputClass - The InputType to be used.
+ */
+export function CreateOneInputType<C>(fieldName: string, InputClass: Class<C>): Class<CreateOneInputType<C>> {
+  @InputType({ isAbstract: true })
+  class CreateOneInput implements CreateOneInputType<C> {
+    @Type(() => InputClass)
     @ValidateNested()
-    @Field(() => CreateClass, { description: 'The record to create', name: baseNameLower })
+    @Field(() => InputClass, { description: 'The record to create', name: fieldName })
     input!: C;
 
-    @Type(() => CreateClass)
-    get [baseNameLower](): C {
+    @Type(() => InputClass)
+    get [fieldName](): C {
       return this.input;
     }
 
-    set [baseNameLower](input: C) {
+    set [fieldName](input: C) {
       this.input = input;
     }
   }
-  metadataStorage.addCreateOneInputType(DTOClass, CreateOneInput);
   return CreateOneInput;
 }
