@@ -1,6 +1,6 @@
 {
   "name": "nest-graphql-typeorm-multidb",
-  "version": "0.7.5",
+  "version": "0.8.0",
   "description": "",
   "author": "",
   "private": true,
@@ -16,9 +16,9 @@
     "schema:sync": "typeorm schema:sync"
   },
   "dependencies": {
-    "@nestjs-query/core": "^0.7.4",
-    "@nestjs-query/query-graphql": "^0.7.4",
-    "@nestjs-query/query-typeorm": "^0.7.5",
+    "@nestjs-query/core": "^0.8.0",
+    "@nestjs-query/query-graphql": "^0.8.0",
+    "@nestjs-query/query-typeorm": "^0.8.0",
     "@nestjs/common": "^7.0.6",
     "@nestjs/core": "^7.0.6",
     "@nestjs/graphql": "^7.1.3",
