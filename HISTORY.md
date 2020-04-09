@@ -1,3 +1,8 @@
+# v0.8.1
+
+* [FIXED] Mysql error "LIMIT in subquery" [#77](https://github.com/doug-martin/nestjs-query/issues/77)
+    * Changed `nestjs-query/query-typeorm` to not use subqueries to fetch relations.
+
 # v0.8.0
 
 * [FIXED] Defining additional UpdateDtos breaks Schema. [#72](https://github.com/doug-martin/nestjs-query/issues/72)

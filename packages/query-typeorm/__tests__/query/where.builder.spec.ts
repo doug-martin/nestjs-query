@@ -19,7 +19,7 @@ describe('WhereBuilder', (): void => {
 
   const getRepo = () => getTestConnection().getRepository(TestEntity);
   const getQueryBuilder = () => getRepo().createQueryBuilder();
-  const createWhereBuilder = () => new WhereBuilder<TestEntity>(getRepo());
+  const createWhereBuilder = () => new WhereBuilder<TestEntity>();
 
   const assertSQL = (filter: Filter<TestEntity>, expectedSql: string, expectedArgs: any[]): void => {
     const selectQueryBuilder = createWhereBuilder().build(getQueryBuilder(), filter, 'TestEntity');

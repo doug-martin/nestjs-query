@@ -2,9 +2,7 @@
 import { Class, Query } from '@nestjs-query/core';
 import { Repository, SelectQueryBuilder, ObjectLiteral, Brackets } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
-import { DriverUtils } from 'typeorm/driver/DriverUtils';
 import { FilterQueryBuilder } from './filter-query.builder';
-import { AbstractQueryBuilder } from './query-builder.abstract';
 
 interface JoinCondition {
   leftHand: string;
@@ -21,20 +19,11 @@ type WhereCondition = {
   params: ObjectLiteral;
 };
 
-type PrimaryKey = {
-  databasePath: string;
-  selectPath: string;
-  propertyName: string;
-};
-
 interface RelationQuery<Relation, Entity> {
   from: Class<Relation>;
   fromAlias: string;
-  fromPrimaryKeys: PrimaryKey[];
-  entityIds: string[];
-  entityIdSelects: string[];
   joins: JoinColumn[];
-  whereCondition(entity: Entity, entityIndex: number): WhereCondition;
+  whereCondition(entity: Entity): WhereCondition;
 }
 
 /**
@@ -42,7 +31,7 @@ interface RelationQuery<Relation, Entity> {
  *
  * Class that will convert a Query into a `typeorm` Query Builder.
  */
-export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder<Entity> {
+export class RelationQueryBuilder<Entity, Relation> {
   private relationMetadata: RelationQuery<Relation, Entity> | undefined;
 
   readonly filterQueryBuilder: FilterQueryBuilder<Relation>;
@@ -50,77 +39,28 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
   readonly relationRepo: Repository<Relation>;
 
   constructor(readonly repo: Repository<Entity>, readonly relation: string) {
-    super(repo);
     this.relationRepo = this.repo.manager.getRepository<Relation>(this.relationMeta.from);
     this.filterQueryBuilder = new FilterQueryBuilder<Relation>(this.relationRepo);
   }
 
-  select(entity: Entity | Entity[], query: Query<Relation>): SelectQueryBuilder<Relation> {
-    const entityArr = Array.isArray(entity) ? entity : [entity];
-    const relationBuilder = this.createRelationQueryBuilder(entityArr);
-    return this.applyRelationFilter(relationBuilder, entityArr, query);
+  select(entity: Entity, query: Query<Relation>): SelectQueryBuilder<Relation> {
+    let relationBuilder = this.createRelationQueryBuilder(entity);
+    relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
+    relationBuilder = this.filterQueryBuilder.applyPaging(relationBuilder, query.paging);
+    return this.filterQueryBuilder.applySorting(relationBuilder, query.sorting, relationBuilder.alias);
   }
 
-  private applyRelationFilter(
-    baseBuilder: SelectQueryBuilder<Relation>,
-    entityArr: Entity[],
-    query: Query<Relation>,
-  ): SelectQueryBuilder<Relation> {
-    const { entityIds, fromPrimaryKeys, entityIdSelects } = this.relationMeta;
-    const parameters = {};
-    const fromPrimaryKeysIn =
-      fromPrimaryKeys.length === 1
-        ? fromPrimaryKeys[0].selectPath
-        : `(${fromPrimaryKeys.map((pk) => pk.selectPath).join(', ')})`;
-    const subQueries = entityArr.reduce((sqls, e, index) => {
-      const { subQuery, params } = this.createRelationSubQuery(e, index);
-      // only apply filter and paging
-      let filteredSubQuery = this.filterQueryBuilder.applyFilter(subQuery, query.filter, subQuery.alias);
-      filteredSubQuery = this.filterQueryBuilder.applyPaging(filteredSubQuery, query.paging);
-      Object.assign(parameters, params, filteredSubQuery.getParameters());
-      return [...sqls, `(${fromPrimaryKeysIn} IN (${filteredSubQuery.getQuery()}))`];
-    }, [] as string[]);
-    const oredBuilder = baseBuilder.andWhere(`(${subQueries.join(' OR ')})`, parameters);
-    // force sorting by entity pks first so sub results are sorted properly
-    const sortedBuilder = entityIds
-      .reduce((builder, pk) => {
-        return builder.addOrderBy(pk, 'ASC');
-      }, oredBuilder)
-      .addSelect(entityIdSelects);
-
-    return this.filterQueryBuilder.applySorting(sortedBuilder, query.sorting, sortedBuilder.alias);
-  }
-
-  private createRelationSubQuery(
-    e: Entity,
-    entityIndex: number,
-  ): { subQuery: SelectQueryBuilder<Relation>; params: ObjectLiteral } {
-    const meta = this.relationMeta;
-    const baseBuilder = this.createRelationQueryBuilder().select(meta.fromPrimaryKeys.map((pk) => pk.selectPath));
-    const { sql, params } = meta.whereCondition(e, entityIndex);
-    return { subQuery: baseBuilder.where(sql), params };
-  }
-
-  private createRelationQueryBuilder(entities?: Entity[]): SelectQueryBuilder<Relation> {
+  private createRelationQueryBuilder(entity: Entity): SelectQueryBuilder<Relation> {
     const meta = this.relationMeta;
     const queryBuilder = this.relationRepo.createQueryBuilder(meta.fromAlias);
     const joinedBuilder = meta.joins.reduce((qb, join) => {
       const conditions = join.conditions.map(({ leftHand, rightHand }) => `${leftHand} = ${rightHand}`);
       return qb.innerJoin(join.target, join.alias, conditions.join(' AND '));
     }, queryBuilder);
-    if (!entities || !entities.length) {
-      return joinedBuilder;
-    }
-    return joinedBuilder.andWhere(
-      new Brackets((andBuilder) => {
-        return entities.reduce((qb, entity, entityIndex) => {
-          return qb.orWhere(
-            new Brackets((bqb) => {
-              const where = meta.whereCondition(entity, entityIndex);
-              bqb.orWhere(where.sql, where.params);
-            }),
-          );
-        }, andBuilder);
+    return joinedBuilder.where(
+      new Brackets((bqb) => {
+        const where = meta.whereCondition(entity);
+        bqb.andWhere(where.sql, where.params);
       }),
     );
   }
@@ -148,11 +88,6 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
   getManyToOneOrOneToOneOwnerMeta(relation: RelationMetadata): RelationQuery<Relation, Entity> {
     const aliasName = relation.entityMetadata.name;
     const { primaryColumns } = relation.entityMetadata;
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
-      selectPath: `${relation.propertyName}.${pk.propertyName}`,
-      databasePath: pk.databasePath,
-      propertyName: pk.propertyName,
-    }));
     const { joinColumns } = relation;
     const joins: JoinColumn[] = [
       {
@@ -164,22 +99,15 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
         })),
       },
     ];
-    const entityIds = primaryColumns.map((column) => `${aliasName}.${column.propertyPath}`);
-    const entityIdSelects = primaryColumns.map(
-      (column) => `${aliasName}.${column.propertyPath} AS ${this.createEntityIdSelect(column.propertyPath)}`,
-    );
     return {
       from: relation.type as Class<Relation>,
       fromAlias: relation.propertyName,
-      fromPrimaryKeys,
-      entityIds,
-      entityIdSelects,
       joins,
-      whereCondition(entity: Entity, entityIndex: number): WhereCondition {
+      whereCondition(entity: Entity): WhereCondition {
         const params: ObjectLiteral = {};
         const sql = primaryColumns
           .map((column, columnIndex) => {
-            const paramName = `${aliasName}_entity_${entityIndex}_${columnIndex}`;
+            const paramName = `${aliasName}_entity_${columnIndex}`;
             params[paramName] = column.getEntityValue(entity);
             return `${aliasName}.${column.propertyPath} = :${paramName}`;
           })
@@ -192,30 +120,15 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
   getOneToManyOrOneToOneNotOwnerMeta(relation: RelationMetadata): RelationQuery<Relation, Entity> {
     const aliasName = relation.propertyName;
     const columns = relation.inverseRelation!.joinColumns;
-    const fromPrimaryKeys: PrimaryKey[] = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
-      selectPath: `${aliasName}.${pk.propertyName}`,
-      databasePath: pk.databasePath,
-      propertyName: pk.propertyName,
-    }));
-    const entityIds = columns.map((joinColumn) => `${aliasName}.${joinColumn.propertyPath}`);
-    const entityIdSelects = columns.map(
-      (joinColumn) =>
-        `${aliasName}.${joinColumn.propertyPath} AS ${this.createEntityIdSelect(
-          joinColumn.referencedColumn!.propertyPath,
-        )}`,
-    );
     return {
       from: relation.inverseRelation!.entityMetadata.target as Class<Relation>,
       fromAlias: aliasName,
-      fromPrimaryKeys,
-      entityIds,
-      entityIdSelects,
       joins: [],
-      whereCondition(entity: Entity, entityIndex: number): WhereCondition {
+      whereCondition(entity: Entity): WhereCondition {
         const params: ObjectLiteral = {};
         const sql = columns
           .map((col, colIndex: number) => {
-            const paramName = `${aliasName}_entity_${entityIndex}_${colIndex}`;
+            const paramName = `${aliasName}_entity_${colIndex}`;
             params[paramName] = col.referencedColumn!.getEntityValue(entity);
             return `${aliasName}.${col.propertyPath} = :${paramName}`;
           })
@@ -238,30 +151,15 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
         })),
       },
     ];
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
-      selectPath: `${mainAlias}.${pk.propertyName}`,
-      databasePath: pk.databasePath,
-      propertyName: pk.propertyName,
-    }));
-    const entityIds = relation.joinColumns.map((joinColumn) => `${joinAlias}.${joinColumn.propertyName}`);
-    const entityIdSelects = relation.joinColumns.map(
-      (joinColumn) =>
-        `${joinAlias}.${joinColumn.propertyName} AS ${this.createEntityIdSelect(
-          joinColumn.referencedColumn!.propertyPath,
-        )}`,
-    );
     return {
       from: relation.type as Class<Relation>,
       fromAlias: mainAlias,
-      fromPrimaryKeys,
-      entityIds,
-      entityIdSelects,
       joins,
-      whereCondition(entity: Entity, entityIndex: number): WhereCondition {
+      whereCondition(entity: Entity): WhereCondition {
         const params: ObjectLiteral = {};
         const sql = relation.joinColumns
           .map((joinColumn) => {
-            const paramName = `${joinColumn.propertyName}_${entityIndex}`;
+            const paramName = joinColumn.propertyName;
             params[paramName] = joinColumn.referencedColumn!.getEntityValue(entity);
             return `${joinAlias}.${joinColumn.propertyName} = :${paramName}`;
           })
@@ -284,32 +182,15 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
         })),
       },
     ];
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
-      selectPath: `${mainAlias}.${pk.propertyName}`,
-      databasePath: pk.databasePath,
-      propertyName: pk.propertyName,
-    }));
-    const entityIds = relation.inverseRelation!.inverseJoinColumns.map(
-      (inverseJoinColumn) => `${joinAlias}.${inverseJoinColumn.propertyName}`,
-    );
-    const entityIdSelects = relation.inverseRelation!.inverseJoinColumns.map(
-      (inverseJoinColumn) =>
-        `${joinAlias}.${inverseJoinColumn.propertyName} AS ${this.createEntityIdSelect(
-          inverseJoinColumn.referencedColumn!.propertyPath,
-        )}`,
-    );
     return {
       from: relation.type as Class<Relation>,
       fromAlias: mainAlias,
-      fromPrimaryKeys,
-      entityIds,
-      entityIdSelects,
       joins,
-      whereCondition(entity: Entity, entityIndex: number): WhereCondition {
+      whereCondition(entity: Entity): WhereCondition {
         const params: ObjectLiteral = {};
         const sql = relation
           .inverseRelation!.inverseJoinColumns.map((inverseJoinColumn) => {
-            const paramName = `${inverseJoinColumn.propertyName}_${entityIndex}`;
+            const paramName = `${inverseJoinColumn.propertyName}`;
             params[paramName] = inverseJoinColumn.referencedColumn!.getEntityValue(entity);
             return `${joinAlias}.${inverseJoinColumn.propertyName} = :${paramName}`;
           })
@@ -317,28 +198,5 @@ export class RelationQueryBuilder<Entity, Relation> extends AbstractQueryBuilder
         return { sql, params };
       },
     };
-  }
-
-  private createEntityIdSelect(propertyPath: string): string {
-    return this.escape(`__nestjsQueryEntityId_${propertyPath}__`);
-  }
-
-  static isEntityIdCol(colName: string): boolean {
-    return /^__nestjsQueryEntityId_(.*)__$/.test(colName);
-  }
-
-  static parseEntityIdFromName(colName: string): string {
-    return colName.replace(/^__nestjsQueryEntityId_/, '').replace(/__$/, '');
-  }
-
-  getRelationPrimaryKeysPropertyNameAndColumnsName(): { columnName: string; propertyName: string }[] {
-    return this.relationMeta.fromPrimaryKeys.map((pk) => ({
-      propertyName: pk.propertyName,
-      columnName: DriverUtils.buildColumnAlias(
-        this.relationRepo.manager.connection.driver,
-        this.relationMeta.fromAlias,
-        pk.databasePath,
-      ),
-    }));
   }
 }

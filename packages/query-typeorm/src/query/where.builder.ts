@@ -1,4 +1,4 @@
-import { Brackets, Repository, WhereExpression } from 'typeorm';
+import { Brackets, WhereExpression } from 'typeorm';
 import { Filter, FilterComparisonOperators, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
 import { EntityComparisonField, SQLComparisionBuilder } from './sql-comparison.builder';
 
@@ -7,10 +7,7 @@ import { EntityComparisonField, SQLComparisionBuilder } from './sql-comparison.b
  * Builds a WHERE clause from a Filter.
  */
 export class WhereBuilder<Entity> {
-  constructor(
-    readonly repository: Repository<Entity>,
-    readonly sqlComparisionBuilder: SQLComparisionBuilder<Entity> = new SQLComparisionBuilder<Entity>(repository),
-  ) {}
+  constructor(readonly sqlComparisionBuilder: SQLComparisionBuilder<Entity> = new SQLComparisionBuilder<Entity>()) {}
 
   /**
    * Builds a WHERE clause from a Filter.

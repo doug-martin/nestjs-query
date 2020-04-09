@@ -8,7 +8,6 @@ import {
   WhereExpression,
 } from 'typeorm';
 import { WhereBuilder } from './where.builder';
-import { AbstractQueryBuilder } from './query-builder.abstract';
 
 /**
  * @internal
@@ -34,13 +33,11 @@ interface Pageable<Entity> extends QueryBuilder<Entity> {
  *
  * Class that will convert a Query into a `typeorm` Query Builder.
  */
-export class FilterQueryBuilder<Entity> extends AbstractQueryBuilder<Entity> {
+export class FilterQueryBuilder<Entity> {
   constructor(
     readonly repo: Repository<Entity>,
-    readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(repo),
-  ) {
-    super(repo);
-  }
+    readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
+  ) {}
 
   /**
    * Create a `typeorm` SelectQueryBuilder with `WHERE`, `ORDER BY` and `LIMIT/OFFSET` clauses.
