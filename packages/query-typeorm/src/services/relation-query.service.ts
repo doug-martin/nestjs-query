@@ -1,6 +1,5 @@
 import { Query, Class, AssemblerFactory } from '@nestjs-query/core';
-import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder, ObjectLiteral } from 'typeorm';
-import lodashFilter from 'lodash.filter';
+import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder } from 'typeorm';
 import { FilterQueryBuilder, RelationQueryBuilder } from '../query';
 
 /**
@@ -175,17 +174,15 @@ export abstract class RelationQueryService<Entity> {
   ): Promise<Map<Entity, Relation[]>> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
-    const relations = await relationQueryBuilder.select(entities, assembler.convertQuery(query)).getRawAndEntities();
-    return relations.raw.reduce((results, rawRelation) => {
-      this.getEntityFromFromResult(rawRelation, entities).forEach((e) => {
-        if (!results.has(e)) {
-          results.set(e, []);
-        }
-        const relationDtos = assembler.convertToDTOs(
-          this.getRelationsFromPrimaryKeys(relationQueryBuilder, rawRelation, relations.entities),
-        );
-        results.get(e).push(...relationDtos);
-      });
+    const convertedQuery = assembler.convertQuery(query);
+    const entityRelations = await Promise.all(
+      entities.map((e) => {
+        return relationQueryBuilder.select(e, convertedQuery).getMany();
+      }),
+    );
+    return entityRelations.reduce((results, relations, index) => {
+      const e = entities[index];
+      results.set(e, assembler.convertToDTOs(relations));
       return results;
     }, new Map<Entity, Relation[]>());
   }
@@ -221,29 +218,5 @@ export abstract class RelationQueryService<Entity> {
       throw new Error(`Unable to find relation ${relationName} on ${this.EntityClass.name}`);
     }
     return relationMeta.type as Class<unknown>;
-  }
-
-  private getEntityFromFromResult(rawResult: ObjectLiteral, entities: Entity[]): Entity[] {
-    const pks = Object.keys(rawResult)
-      .filter((key) => RelationQueryBuilder.isEntityIdCol(key))
-      .reduce((keys, key) => {
-        const entityProp = RelationQueryBuilder.parseEntityIdFromName(key);
-        return { ...keys, [entityProp]: rawResult[key] };
-      }, {} as Partial<Entity>);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return lodashFilter(entities as any[], pks);
-  }
-
-  private getRelationsFromPrimaryKeys<Relation>(
-    relationBuilder: RelationQueryBuilder<Entity, Relation>,
-    rawResult: ObjectLiteral,
-    relations: Relation[],
-  ): Relation[] {
-    const pks = relationBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName();
-    const filter = pks.reduce((keys, key) => {
-      return { ...keys, [key.propertyName]: rawResult[key.columnName] };
-    }, {} as Partial<Entity>);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return lodashFilter(relations as any[], filter);
   }
 }

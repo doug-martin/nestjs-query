@@ -18,8 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "^0.8.0",
-    "lodash.filter": "^4.6.0"
+    "@nestjs-query/core": "^0.8.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.6",
@@ -30,7 +29,6 @@
   "devDependencies": {
     "@nestjs/common": "^7.0.6",
     "@nestjs/typeorm": "^7.0.0",
-    "@types/lodash.filter": "^4.6.6",
     "class-transformer": "^0.2.3",
     "sqlite3": "^4.1.1",
     "ts-mockito": "^2.5.0",

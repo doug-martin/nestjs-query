@@ -1,13 +1,8 @@
-import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { SQLComparisionBuilder } from '../../src/query';
 
 describe('SQLComparisionBuilder', (): void => {
-  beforeEach(createTestConnection);
-  afterEach(closeTestConnection);
-
-  const getRepo = () => getTestConnection().getRepository(TestEntity);
-  const createSQLComparisionBuilder = () => new SQLComparisionBuilder(getRepo());
+  const createSQLComparisionBuilder = () => new SQLComparisionBuilder<TestEntity>();
 
   it('should throw an error for an invalid comparison type', () => {
     // @ts-ignore

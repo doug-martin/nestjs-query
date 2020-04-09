@@ -1,6 +1,5 @@
-import { ObjectLiteral, Repository } from 'typeorm';
+import { ObjectLiteral } from 'typeorm';
 import { FilterComparisonOperators } from '@nestjs-query/core';
-import { AbstractQueryBuilder } from './query-builder.abstract';
 
 /**
  * @internal
@@ -16,7 +15,7 @@ export type EntityComparisonField<Entity, F extends keyof Entity> = Entity[F] | 
  * @internal
  * Builder to create SQL Comparisons. (=, !=, \>, etc...)
  */
-export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> {
+export class SQLComparisionBuilder<Entity> {
   paramCount = 0;
 
   static DEFAULT_COMPARISON_MAP: Record<string, string> = {
@@ -32,12 +31,7 @@ export class SQLComparisionBuilder<Entity> extends AbstractQueryBuilder<Entity> 
     notilike: 'NOT ILIKE',
   };
 
-  constructor(
-    repo: Repository<Entity>,
-    readonly comparisonMap: Record<string, string> = SQLComparisionBuilder.DEFAULT_COMPARISON_MAP,
-  ) {
-    super(repo);
-  }
+  constructor(readonly comparisonMap: Record<string, string> = SQLComparisionBuilder.DEFAULT_COMPARISON_MAP) {}
 
   private get paramName(): string {
     const param = `param${this.paramCount}`;

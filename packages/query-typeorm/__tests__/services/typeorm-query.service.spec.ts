@@ -105,30 +105,19 @@ describe('TypeOrmQueryService', (): void => {
         const entities = testEntities();
         const entityOneRelations = testRelations(entities[0].testEntityPk);
         const entityTwoRelations = testRelations(entities[1].testEntityPk);
-        const allRelations = [...entityOneRelations, ...entityTwoRelations];
         const { queryService, mockRepo, mockRelationQueryBuilder } = createQueryService();
         const relationQueryBuilder: SelectQueryBuilder<TestRelation> = mock(SelectQueryBuilder);
         when(mockRepo.target).thenReturn(TestEntity);
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
-        when(relationQueryBuilder.getRawAndEntities()).thenResolve({
-          raw: allRelations.map((r) => ({
-            // eslint-disable-next-line @typescript-eslint/camelcase
-            testRelation_testRelationPk: r.testRelationPk,
-            // eslint-disable-next-line @typescript-eslint/camelcase
-            __nestjsQueryEntityId_testEntityPk__: r.testEntityId,
-          })),
-          entities: allRelations,
-        });
-        when(
-          mockRelationQueryBuilder.select(objectContaining(entities), objectContaining({ paging: { limit: 2 } })),
-        ).thenReturn(instance(relationQueryBuilder));
-        when(mockRelationQueryBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName()).thenReturn([
-          {
-            propertyName: 'testRelationPk',
-            columnName: 'testRelation_testRelationPk',
-          },
-        ]);
+        when(mockRelationQueryBuilder.select(entities[0], objectContaining({ paging: { limit: 2 } }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(mockRelationQueryBuilder.select(entities[1], objectContaining({ paging: { limit: 2 } }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(relationQueryBuilder.getMany()).thenResolve(entityOneRelations).thenResolve(entityTwoRelations);
+
         // @ts-ignore
         const queryResult = await queryService.queryRelations(TestRelation, relationName, entities, {
           paging: { limit: 2 },
@@ -149,29 +138,23 @@ describe('TypeOrmQueryService', (): void => {
         when(mockRepo.target).thenReturn(TestEntity);
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
-        when(relationQueryBuilder.getRawAndEntities()).thenResolve({
-          raw: entityOneRelations.map((r) => ({
-            // eslint-disable-next-line @typescript-eslint/camelcase
-            testRelation_testRelationPk: r.testRelationPk,
-            // eslint-disable-next-line @typescript-eslint/camelcase
-            __nestjsQueryEntityId_testEntityPk__: r.testEntityId,
-          })),
-          entities: entityOneRelations,
-        });
-        when(
-          mockRelationQueryBuilder.select(objectContaining(entities), objectContaining({ paging: { limit: 2 } })),
-        ).thenReturn(instance(relationQueryBuilder));
-        when(mockRelationQueryBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName()).thenReturn([
-          {
-            propertyName: 'testRelationPk',
-            columnName: 'testRelation_testRelationPk',
-          },
-        ]);
+        when(mockRelationQueryBuilder.select(entities[0], objectContaining({ paging: { limit: 2 } }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(mockRelationQueryBuilder.select(entities[1], objectContaining({ paging: { limit: 2 } }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(relationQueryBuilder.getMany()).thenResolve(entityOneRelations).thenResolve([]);
         // @ts-ignore
         const queryResult = await queryService.queryRelations(TestRelation, relationName, entities, {
           paging: { limit: 2 },
         });
-        return expect(queryResult).toEqual(new Map([[entities[0], entityOneRelations]]));
+        return expect(queryResult).toEqual(
+          new Map([
+            [entities[0], entityOneRelations],
+            [entities[1], []],
+          ]),
+        );
       });
     });
   });
@@ -240,33 +223,13 @@ describe('TypeOrmQueryService', (): void => {
         when(mockRepo.target).thenReturn(TestEntity);
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
-        when(relationQueryBuilder.getRawAndEntities()).thenResolve({
-          raw: [
-            {
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              testRelation_testRelationPk: entityOneRelation.testRelationPk,
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              __nestjsQueryEntityId_testEntityPk__: entityOneRelation.testEntityId,
-            },
-            {
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              testRelation_testRelationPk: entityTwoRelation.testRelationPk,
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              __nestjsQueryEntityId_testEntityPk__: entityTwoRelation.testEntityId,
-            },
-          ],
-          entities: [entityOneRelation, entityTwoRelation],
-        });
-        when(
-          mockRelationQueryBuilder.select(objectContaining(entities), objectContaining({ paging: { limit: 1 } })),
-        ).thenReturn(instance(relationQueryBuilder));
-        when(mockRelationQueryBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName()).thenReturn([
-          {
-            propertyName: 'testRelationPk',
-            columnName: 'testRelation_testRelationPk',
-          },
-        ]);
-        // @ts-ignore
+        when(mockRelationQueryBuilder.select(entities[0], objectContaining({ paging: { limit: 1 } }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(mockRelationQueryBuilder.select(entities[1], objectContaining({ paging: { limit: 1 } }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(relationQueryBuilder.getMany()).thenResolve([entityOneRelation]).thenResolve([entityTwoRelation]);
         const queryResult = await queryService.findRelation(TestRelation, relationName, entities);
         return expect(queryResult).toEqual(
           new Map([
@@ -284,29 +247,20 @@ describe('TypeOrmQueryService', (): void => {
         when(mockRepo.target).thenReturn(TestEntity);
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
-        when(relationQueryBuilder.getRawAndEntities()).thenResolve({
-          raw: [
-            {
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              testRelation_testRelationPk: entityOneRelation.testRelationPk,
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              __nestjsQueryEntityId_testEntityPk__: entityOneRelation.testEntityId,
-            },
-          ],
-          entities: [entityOneRelation],
-        });
-        when(
-          mockRelationQueryBuilder.select(objectContaining(entities), objectContaining({ paging: { limit: 1 } })),
-        ).thenReturn(instance(relationQueryBuilder));
-        when(mockRelationQueryBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName()).thenReturn([
-          {
-            propertyName: 'testRelationPk',
-            columnName: 'testRelation_testRelationPk',
-          },
-        ]);
-        // @ts-ignore
+        when(mockRelationQueryBuilder.select(entities[0], objectContaining({ paging: { limit: 1 } }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(mockRelationQueryBuilder.select(entities[1], objectContaining({ paging: { limit: 1 } }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(relationQueryBuilder.getMany()).thenResolve([entityOneRelation]).thenResolve([]);
         const queryResult = await queryService.findRelation(TestRelation, relationName, entities);
-        return expect(queryResult).toEqual(new Map([[entities[0], entityOneRelation]]));
+        return expect(queryResult).toEqual(
+          new Map([
+            [entities[0], entityOneRelation],
+            [entities[1], undefined],
+          ]),
+        );
       });
     });
   });
