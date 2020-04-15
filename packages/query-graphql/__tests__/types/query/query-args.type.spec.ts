@@ -3,22 +3,11 @@ import { SortDirection, SortField, SortNulls } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import * as nestjsGraphql from '@nestjs/graphql';
-import { GraphQLSchemaFactory, GraphQLSchemaBuilderModule } from '@nestjs/graphql';
-import { Test } from '@nestjs/testing';
-import { printSchema } from 'graphql';
 import { QueryArgsType, FilterableField } from '../../../src';
+import { expectSDL, queryArgsTypeSDL } from '../../__fixtures__';
 
 describe('QueryType', (): void => {
   const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
-  let schemaFactory: GraphQLSchemaFactory;
-
-  beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [GraphQLSchemaBuilderModule],
-    }).compile();
-    schemaFactory = moduleRef.get(GraphQLSchemaFactory);
-  });
-
   afterEach(() => jest.clearAllMocks());
 
   @nestjsGraphql.ObjectType('TestQuery')
@@ -76,221 +65,16 @@ describe('QueryType', (): void => {
   @nestjsGraphql.ArgsType()
   class TestQuery extends QueryArgsType(TestDto) {}
 
-  @nestjsGraphql.Resolver()
-  class TestResolver {
-    @nestjsGraphql.Query(() => String)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    findConnection(@nestjsGraphql.Args() query: TestQuery): string {
-      return 'hello';
-    }
-  }
-
   it('create a query for string fields', async () => {
-    const schema = await schemaFactory.create([TestResolver]);
-    expect(printSchema(schema)).toEqual(
-      `input BooleanFieldComparison {
-  is: Boolean
-  isNot: Boolean
-}
-
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
-
-input CursorPaging {
-  """Paginate before opaque cursor"""
-  before: ConnectionCursor
-
-  """Paginate after opaque cursor"""
-  after: ConnectionCursor
-
-  """Paginate first"""
-  first: Int
-
-  """Paginate last"""
-  last: Int
-}
-
-input DateFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: DateTime
-  neq: DateTime
-  gt: DateTime
-  gte: DateTime
-  lt: DateTime
-  lte: DateTime
-  in: [DateTime!]
-  notIn: [DateTime!]
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-input FloatFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: Float
-  neq: Float
-  gt: Float
-  gte: Float
-  lt: Float
-  lte: Float
-  in: [Float!]
-  notIn: [Float!]
-}
-
-input IDFilterComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: ID
-  neq: ID
-  gt: ID
-  gte: ID
-  lt: ID
-  lte: ID
-  like: ID
-  notLike: ID
-  iLike: ID
-  notILike: ID
-  in: [ID!]
-  notIn: [ID!]
-}
-
-input IntFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: Int
-  neq: Int
-  gt: Int
-  gte: Int
-  lt: Int
-  lte: Int
-  in: [Int!]
-  notIn: [Int!]
-}
-
-input NumberFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: Float
-  neq: Float
-  gt: Float
-  gte: Float
-  lt: Float
-  lte: Float
-  in: [Float!]
-  notIn: [Float!]
-}
-
-type Query {
-  findConnection(
-    """Limit or page results."""
-    paging: CursorPaging = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: TestQueryFilter = {}
-
-    """Specify to sort results."""
-    sorting: [TestQuerySort!] = []
-  ): String!
-}
-
-"""Sort Directions"""
-enum SortDirection {
-  ASC
-  DESC
-}
-
-"""Sort Nulls Options"""
-enum SortNulls {
-  NULLS_FIRST
-  NULLS_LAST
-}
-
-input StringFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: String
-  neq: String
-  gt: String
-  gte: String
-  lt: String
-  lte: String
-  like: String
-  notLike: String
-  iLike: String
-  notILike: String
-  in: [String!]
-  notIn: [String!]
-}
-
-input TestQueryFilter {
-  and: [TestQueryFilter!]
-  or: [TestQueryFilter!]
-  idField: IDFilterComparison
-  idFieldOption: IDFilterComparison
-  stringField: StringFieldComparison
-  stringFieldOptional: StringFieldComparison
-  booleanField: BooleanFieldComparison
-  booleanFieldOptional: BooleanFieldComparison
-  numberField: NumberFieldComparison
-  numberFieldOptional: NumberFieldComparison
-  floatField: FloatFieldComparison
-  floatFieldOptional: FloatFieldComparison
-  intField: IntFieldComparison
-  intFieldOptional: IntFieldComparison
-  timestampField: TimestampFieldComparison
-  timestampFieldOptional: TimestampFieldComparison
-  date: DateFieldComparison
-  dateOptional: DateFieldComparison
-}
-
-input TestQuerySort {
-  field: TestQuerySortFields!
-  direction: SortDirection!
-  nulls: SortNulls
-}
-
-enum TestQuerySortFields {
-  idField
-  idFieldOption
-  stringField
-  stringFieldOptional
-  booleanField
-  booleanFieldOptional
-  numberField
-  numberFieldOptional
-  floatField
-  floatFieldOptional
-  intField
-  intFieldOptional
-  timestampField
-  timestampFieldOptional
-  date
-  dateOptional
-}
-
-"""
-\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
-
-input TimestampFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: Timestamp
-  neq: Timestamp
-  gt: Timestamp
-  gte: Timestamp
-  lt: Timestamp
-  lte: Timestamp
-  in: [Timestamp!]
-  notIn: [Timestamp!]
-}
-`,
-    );
+    @nestjsGraphql.Resolver()
+    class TestResolver {
+      @nestjsGraphql.Query(() => String)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      test(@nestjsGraphql.Args() query: TestQuery): string {
+        return 'hello';
+      }
+    }
+    return expectSDL([TestResolver], queryArgsTypeSDL);
   });
 
   it('should paging to the correct instance of paging', () => {

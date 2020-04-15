@@ -1,0 +1,20 @@
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+input Paging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+type Query {
+  test(input: Paging!): Int!
+}

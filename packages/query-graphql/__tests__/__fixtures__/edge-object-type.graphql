@@ -1,0 +1,18 @@
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type FakeType {
+  field: String!
+}
+
+type FakeTypeEdge {
+  """The node containing the FakeType"""
+  node: FakeType!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type Query {
+  test: FakeTypeEdge!
+}

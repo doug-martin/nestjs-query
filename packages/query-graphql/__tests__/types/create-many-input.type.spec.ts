@@ -1,46 +1,51 @@
 import 'reflect-metadata';
-import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync, MinLength } from 'class-validator';
+import { InputType, Resolver, Args, Int, Query, Field } from '@nestjs/graphql';
 import { CreateManyInputType } from '../../src';
+import { createManyInputTypeSDL, expectSDL } from '../__fixtures__';
 
 describe('CreateManyInputType', (): void => {
-  const inputTypeSpy = jest.spyOn(nestjsGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
-
+  @InputType()
   class FakeType {
+    @Field()
     @MinLength(5)
     field!: string;
   }
 
-  it('should create an InputType with an array field', () => {
-    CreateManyInputType('fakeTypes', FakeType);
-    expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
-    expect(inputTypeSpy).toBeCalledTimes(1);
-    expect(fieldSpy.mock.calls[0]![0]!()).toEqual([FakeType]);
+  @InputType()
+  class CreateMany extends CreateManyInputType('fakeInput', FakeType) {}
+
+  it('should create an args type with the field as the type', async () => {
+    @Resolver()
+    class CreateManyInputTypeSpec {
+      @Query(() => Int)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      test(@Args('input') input: CreateMany): number {
+        return 1;
+      }
+    }
+    return expectSDL([CreateManyInputTypeSpec], createManyInputTypeSDL);
   });
 
   it('should properly assign the input field', () => {
-    class Type extends CreateManyInputType('fakeTypes', FakeType) {}
     const input = [{ field: 'hello' }];
-    const it = plainToClass(Type, { input });
+    const it = plainToClass(CreateMany, { input });
     expect(it.input).toEqual(input);
     it.input.forEach((i) => expect(i).toBeInstanceOf(FakeType));
   });
 
   it('should assign the typeName to the input field', () => {
-    class Type extends CreateManyInputType('fakeTypes', FakeType) {}
     const input = [{ field: 'hello' }];
-    const it = plainToClass(Type, { fakeTypes: input });
+    const it = plainToClass(CreateMany, { fakeInput: input });
     expect(it.input).toEqual(input);
     it.input.forEach((i) => expect(i).toBeInstanceOf(FakeType));
   });
 
   describe('validation', () => {
     it('should validate the input property', () => {
-      class Type extends CreateManyInputType('fakeTypes', FakeType) {}
       const input = [{ field: 'hola' }];
-      const it = plainToClass(Type, { input });
+      const it = plainToClass(CreateMany, { input });
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -72,9 +77,8 @@ describe('CreateManyInputType', (): void => {
     });
 
     it('should assign the typeName to the input field', () => {
-      class Type extends CreateManyInputType('fakeTypes', FakeType) {}
       const input = [{ field: 'hola' }];
-      const it = plainToClass(Type, { fakeTypes: input });
+      const it = plainToClass(CreateMany, { fakeInput: input });
       const errors = validateSync(it);
       expect(errors).toEqual([
         {

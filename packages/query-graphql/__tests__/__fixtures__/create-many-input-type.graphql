@@ -1,0 +1,12 @@
+input CreateMany {
+  """Array of records to create"""
+  fakeInput: [FakeType!]!
+}
+
+input FakeType {
+  field: String!
+}
+
+type Query {
+  test(input: CreateMany!): Int!
+}

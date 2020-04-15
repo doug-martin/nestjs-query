@@ -1,0 +1,8 @@
+type DeleteManyResponse {
+  """The number of records deleted."""
+  deletedCount: Int!
+}
+
+type Query {
+  deleteTest: DeleteManyResponse!
+}

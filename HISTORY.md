@@ -1,3 +1,7 @@
+# v0.8.2
+
+* [TESTS] Updated graphql types tests to check schema rather than spies.
+
 # v0.8.1
 
 * [FIXED] Mysql error "LIMIT in subquery" [#77](https://github.com/doug-martin/nestjs-query/issues/77)

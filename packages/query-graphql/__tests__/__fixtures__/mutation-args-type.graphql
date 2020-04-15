@@ -1,0 +1,7 @@
+input FakeType {
+  foo: String!
+}
+
+type Query {
+  test(input: FakeType!): Int!
+}

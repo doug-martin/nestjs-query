@@ -1,0 +1,12 @@
+input CreateOne {
+  """The record to create"""
+  fakeInput: FakeType!
+}
+
+input FakeType {
+  field: String!
+}
+
+type Query {
+  test(input: CreateOne!): Int!
+}

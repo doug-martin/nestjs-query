@@ -1,42 +1,36 @@
 import 'reflect-metadata';
-import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { MinLength, validateSync } from 'class-validator';
-import { ObjectType } from '@nestjs/graphql';
+import { ObjectType, Resolver, Args, Query, InputType, Int } from '@nestjs/graphql';
 import { FilterableField } from '../../src/decorators';
-import { UpdateManyInputType, FilterType } from '../../src/types';
+import { UpdateManyInputType } from '../../src/types';
+import { expectSDL, updateManyInputTypeSDL } from '../__fixtures__';
 
 describe('UpdateManyInputType', (): void => {
-  const inputTypeSpy = jest.spyOn(nestjsGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
-
+  @InputType('FakeUpdateManyInput')
   @ObjectType()
-  class FakeType {
+  class FakeUpdateManyType {
     @FilterableField()
     @MinLength(5)
     name!: string;
   }
-  const Filter = FilterType(FakeType);
+  @InputType()
+  class UpdateMany extends UpdateManyInputType(FakeUpdateManyType, FakeUpdateManyType) {}
 
-  beforeEach(() => jest.clearAllMocks());
-
-  it('should create an args type with an array field', () => {
-    UpdateManyInputType(FakeType, FakeType);
-    expect(inputTypeSpy).toBeCalledTimes(1);
-    expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
-    expect(fieldSpy).toBeCalledTimes(2);
-    expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
-      description: 'Filter used to find fields to update',
-    });
-    expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
-      description: 'The update to apply to all records found using the filter',
-    });
-    expect(fieldSpy.mock.calls[0]![0]!()).toBe(Filter);
-    expect(fieldSpy.mock.calls[1]![0]!()).toBe(FakeType);
+  it('should create an args type with the field as the type', async () => {
+    @Resolver()
+    class UpdateManyInputTypeSpec {
+      @Query(() => Int)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      updateTest(@Args('input') input: UpdateMany): number {
+        return 1;
+      }
+    }
+    return expectSDL([UpdateManyInputTypeSpec], updateManyInputTypeSDL);
   });
 
   it('should return the input when accessing the update field', () => {
-    const Type = UpdateManyInputType(FakeType, FakeType);
+    const Type = UpdateManyInputType(FakeUpdateManyType, FakeUpdateManyType);
     const input = {};
     const it = plainToClass(Type, input);
     expect(it).toEqual(input);
@@ -44,9 +38,8 @@ describe('UpdateManyInputType', (): void => {
 
   describe('validation', () => {
     it('should validate the filter is not empty', () => {
-      const Type = UpdateManyInputType(FakeType, FakeType);
       const input = { update: { name: 'hello world' } };
-      const it = plainToClass(Type, input);
+      const it = plainToClass(UpdateMany, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -61,9 +54,8 @@ describe('UpdateManyInputType', (): void => {
     });
 
     it('should validate the update input', () => {
-      const Type = UpdateManyInputType(FakeType, FakeType);
       const input = { filter: { name: { eq: 'hello world' } }, update: {} };
-      const it = plainToClass(Type, input);
+      const it = plainToClass(UpdateMany, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {

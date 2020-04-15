@@ -1,7 +1,9 @@
 import 'reflect-metadata';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
+import { Resolver, Query, Int, InputType, Args } from '@nestjs/graphql';
 import { CursorPagingType } from '../../../src';
+import { expectSDL, pagingInputTypeSDL } from '../../__fixtures__';
 
 describe('PagingType', (): void => {
   const createPagingAndValidate = (obj: CursorPagingType) => {
@@ -16,6 +18,21 @@ describe('PagingType', (): void => {
     expect(paging.limit).toEqual(limit);
     expect(paging.offset).toEqual(offset);
   };
+
+  it('should create the correct filter graphql schema', () => {
+    @InputType()
+    class Paging extends CursorPagingType() {}
+
+    @Resolver()
+    class PagingTypeSpec {
+      @Query(() => Int)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      test(@Args('input') input: Paging): number {
+        return 1;
+      }
+    }
+    return expectSDL([PagingTypeSpec], pagingInputTypeSDL);
+  });
 
   it('throw a validation error if first is defined with before', () => {
     const paging = plainToClass(CursorPagingType(), {
