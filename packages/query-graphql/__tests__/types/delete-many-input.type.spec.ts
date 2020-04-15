@@ -1,40 +1,37 @@
 import 'reflect-metadata';
-import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { DeleteManyInputType, FilterType } from '../../src';
+import { InputType, Resolver, Query, Args, Int, ObjectType } from '@nestjs/graphql';
+import { DeleteManyInputType } from '../../src';
 import { FilterableField } from '../../src/decorators';
-
-const { ObjectType } = nestjsGraphql;
+import { deleteManyInputTypeSDL, expectSDL } from '../__fixtures__';
 
 describe('DeleteManyInputType', (): void => {
-  const inputTypeSpy = jest.spyOn(nestjsGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
-
   @ObjectType()
   class DeleteManyDTO {
     @FilterableField()
     field!: string;
   }
-  const Filter = FilterType(DeleteManyDTO);
 
-  beforeEach(() => jest.clearAllMocks());
+  @InputType()
+  class DeleteMany extends DeleteManyInputType(DeleteManyDTO) {}
 
-  it('should create an args type with an array field', () => {
-    DeleteManyInputType(DeleteManyDTO);
-    expect(inputTypeSpy).toBeCalledWith({ isAbstract: true });
-    expect(inputTypeSpy).toBeCalledTimes(1);
-    expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
-      description: 'Filter to find records to delete',
-    });
-    expect(fieldSpy.mock.calls[0]![0]!()).toBe(Filter);
+  it('should create an args type with the field as the type', async () => {
+    @Resolver()
+    class DeleteManyInputTypeSpec {
+      @Query(() => Int)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      test(@Args('input') input: DeleteMany): number {
+        return 1;
+      }
+    }
+    return expectSDL([DeleteManyInputTypeSpec], deleteManyInputTypeSDL);
   });
 
   describe('validation', () => {
     it('should validate the filter is defined', () => {
-      const Type = DeleteManyInputType(DeleteManyDTO);
       const input = {};
-      const it = plainToClass(Type, input);
+      const it = plainToClass(DeleteMany, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -49,9 +46,8 @@ describe('DeleteManyInputType', (): void => {
     });
 
     it('should validate the filter is not empty', () => {
-      const Type = DeleteManyInputType(DeleteManyDTO);
       const input = { filter: {} };
-      const it = plainToClass(Type, input);
+      const it = plainToClass(DeleteMany, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {

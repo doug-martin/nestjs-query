@@ -1,30 +1,34 @@
 import 'reflect-metadata';
-import * as nestjsGraphql from '@nestjs/graphql';
+import { ObjectType, Query, Resolver, Field } from '@nestjs/graphql';
 import { EdgeType } from '../../../src/types/connection';
+import { expectSDL, edgeObjectTypeSDL } from '../../__fixtures__';
 
 describe('EdgeType', (): void => {
-  const objectTypeSpy = jest.spyOn(nestjsGraphql, 'ObjectType');
-  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
+  @ObjectType()
+  class FakeType {
+    @Field()
+    field!: string;
+  }
 
-  afterEach(() => jest.clearAllMocks());
-
-  @nestjsGraphql.ObjectType('Fake')
-  class FakeType {}
+  const TestEdge = EdgeType(FakeType);
 
   it('should create an edge type for the dto', () => {
-    EdgeType(FakeType);
-    expect(objectTypeSpy).toBeCalledWith(`FakeEdge`);
-    expect(fieldSpy).toBeCalledTimes(2);
-    expect(fieldSpy.mock.calls[0]![0]!()).toEqual(FakeType);
+    @Resolver()
+    class TestEdgeTypeResolver {
+      @Query(() => TestEdge)
+      test(): EdgeType<FakeType> | undefined {
+        return undefined;
+      }
+    }
+    return expectSDL([TestEdgeTypeResolver], edgeObjectTypeSDL);
   });
 
   it('should return the same an edge type for a dto', () => {
-    EdgeType(FakeType);
-    expect(EdgeType(FakeType)).toBe(EdgeType(FakeType));
+    expect(TestEdge).toBe(EdgeType(FakeType));
   });
 
   it('should not return the same an edge type for a different dto', () => {
-    @nestjsGraphql.ObjectType('Fake2')
+    @ObjectType('Fake2')
     class FakeTypeTwo {}
     expect(EdgeType(FakeType)).not.toBe(EdgeType(FakeTypeTwo));
   });

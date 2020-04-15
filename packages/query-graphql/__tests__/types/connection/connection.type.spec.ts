@@ -1,19 +1,9 @@
 import 'reflect-metadata';
-import { Field, ObjectType, Query, Resolver, GraphQLSchemaBuilderModule, GraphQLSchemaFactory } from '@nestjs/graphql';
-import { Test } from '@nestjs/testing';
-import { printSchema } from 'graphql';
+import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { ConnectionType } from '../../../src';
+import { connectionObjectTypeSDL, expectSDL } from '../../__fixtures__';
 
 describe('ConnectionType', (): void => {
-  let schemaFactory: GraphQLSchemaFactory;
-
-  beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [GraphQLSchemaBuilderModule],
-    }).compile();
-    schemaFactory = moduleRef.get(GraphQLSchemaFactory);
-  });
-
   @ObjectType('Test')
   class TestDto {
     @Field()
@@ -22,59 +12,15 @@ describe('ConnectionType', (): void => {
 
   const TestConnection = ConnectionType(TestDto);
 
-  @Resolver()
-  class TestConnectionTypeResolver {
-    @Query(() => TestConnection)
-    findConnection(): ConnectionType<TestDto> | undefined {
-      return undefined;
-    }
-  }
-
   it('should store metadata', async () => {
-    const schema = await schemaFactory.create([TestConnectionTypeResolver]);
-    expect(printSchema(schema)).toEqual(
-      `"""Cursor for paging through collections"""
-scalar ConnectionCursor
-
-type PageInfo {
-  """true if paging forward and there are more records."""
-  hasNextPage: Boolean
-
-  """true if paging backwards and there are more records."""
-  hasPreviousPage: Boolean
-
-  """The cursor of the first returned record."""
-  startCursor: ConnectionCursor
-
-  """The cursor of the last returned record."""
-  endCursor: ConnectionCursor
-}
-
-type Query {
-  findConnection: TestConnection!
-}
-
-type Test {
-  stringField: String!
-}
-
-type TestConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [TestEdge!]!
-}
-
-type TestEdge {
-  """The node containing the Test"""
-  node: Test!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-`,
-    );
+    @Resolver()
+    class TestConnectionTypeResolver {
+      @Query(() => TestConnection)
+      test(): ConnectionType<TestDto> | undefined {
+        return undefined;
+      }
+    }
+    return expectSDL([TestConnectionTypeResolver], connectionObjectTypeSDL);
   });
 
   it('should throw an error if the object is not registered with @nestjs/graphql', () => {

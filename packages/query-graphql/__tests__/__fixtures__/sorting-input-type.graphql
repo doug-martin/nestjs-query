@@ -1,0 +1,27 @@
+type Query {
+  test(input: Sorting!): Int!
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+input Sorting {
+  field: TestSortSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+enum TestSortSortFields {
+  stringField
+  numberField
+  boolField
+}

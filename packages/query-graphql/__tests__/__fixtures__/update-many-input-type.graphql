@@ -1,0 +1,38 @@
+input FakeUpdateManyInput {
+  name: String!
+}
+
+input FakeUpdateManyTypeFilter {
+  and: [FakeUpdateManyTypeFilter!]
+  or: [FakeUpdateManyTypeFilter!]
+  name: StringFieldComparison
+}
+
+type Query {
+  updateTest(input: UpdateMany!): Int!
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input UpdateMany {
+  """Filter used to find fields to update"""
+  filter: FakeUpdateManyTypeFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: FakeUpdateManyInput!
+}

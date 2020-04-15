@@ -1,25 +1,29 @@
 import 'reflect-metadata';
-import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
+import { Args, Query, Resolver, Int, InputType } from '@nestjs/graphql';
 import { RelationsInputType } from '../../src';
+import { expectSDL, relationsInputTypeSDL } from '../__fixtures__';
 
 describe('RelationsInputType', (): void => {
-  const inputTypeSpy = jest.spyOn(nestjsGraphql, 'InputType');
-  const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
+  @InputType()
+  class RelationsInput extends RelationsInputType() {}
 
   it('should create an args type with an array field', () => {
-    RelationsInputType();
-    expect(inputTypeSpy).toBeCalledWith();
-    expect(inputTypeSpy).toBeCalledTimes(1);
-    expect(fieldSpy).toBeCalledTimes(2);
-    expect(fieldSpy.mock.calls[0]![0]!()).toEqual(nestjsGraphql.ID);
-    expect(fieldSpy.mock.calls[1]![0]!()).toEqual([nestjsGraphql.ID]);
+    @Resolver()
+    class RelationsInputTypeSpec {
+      @Query(() => Int)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      test(@Args('input') input: RelationsInput): number {
+        return 1;
+      }
+    }
+    return expectSDL([RelationsInputTypeSpec], relationsInputTypeSDL);
   });
 
   it('should return the input when accessing the update field', () => {
     const input: RelationsInputType = { id: 1, relationIds: [2, 3, 4] };
-    const it = plainToClass(RelationsInputType(), input);
+    const it = plainToClass(RelationsInput, input);
     expect(it.id).toEqual(input.id);
     expect(it.relationIds).toEqual(input.relationIds);
   });
@@ -27,7 +31,7 @@ describe('RelationsInputType', (): void => {
   describe('validation', () => {
     it('should validate the id is defined', () => {
       const input = { relationIds: [2, 3, 4] };
-      const it = plainToClass(RelationsInputType(), input);
+      const it = plainToClass(RelationsInput, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -43,7 +47,7 @@ describe('RelationsInputType', (): void => {
 
     it('should validate the id is not empty', () => {
       const input = { id: '', relationIds: [2, 3, 4] };
-      const it = plainToClass(RelationsInputType(), input);
+      const it = plainToClass(RelationsInput, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -60,7 +64,7 @@ describe('RelationsInputType', (): void => {
 
     it('should validate that relationsIds is not empty', () => {
       const input: RelationsInputType = { id: 1, relationIds: [] };
-      const it = plainToClass(RelationsInputType(), input);
+      const it = plainToClass(RelationsInput, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -77,7 +81,7 @@ describe('RelationsInputType', (): void => {
 
     it('should validate that relationsIds is unique', () => {
       const input: RelationsInputType = { id: 1, relationIds: [1, 2, 1, 2] };
-      const it = plainToClass(RelationsInputType(), input);
+      const it = plainToClass(RelationsInput, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -94,7 +98,7 @@ describe('RelationsInputType', (): void => {
 
     it('should validate that relationsIds does not contain an empty id', () => {
       const input: RelationsInputType = { id: 1, relationIds: [''] };
-      const it = plainToClass(RelationsInputType(), input);
+      const it = plainToClass(RelationsInput, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {

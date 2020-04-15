@@ -1,0 +1,11 @@
+type Query {
+  test(input: RelationsInput!): Int!
+}
+
+input RelationsInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
