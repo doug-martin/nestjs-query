@@ -1,3 +1,7 @@
+# v0.8.4
+
+* docs(): Call out foreign keys in entity and DTO [#84](https://github.com/doug-martin/nestjs-query/issues/84)
+
 # v0.8.3
 
 * [FIXED]  Add support for extending abstract object types [#82](https://github.com/doug-martin/nestjs-query/issues/82)
