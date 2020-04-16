@@ -1,3 +1,7 @@
+# v0.8.3
+
+* [FIXED]  Add support for extending abstract object types [#82](https://github.com/doug-martin/nestjs-query/issues/82)
+
 # v0.8.2
 
 * [TESTS] Updated graphql types tests to check schema rather than spies.

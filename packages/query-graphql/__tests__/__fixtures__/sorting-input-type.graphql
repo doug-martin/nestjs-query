@@ -21,6 +21,7 @@ enum SortNulls {
 }
 
 enum TestSortSortFields {
+  id
   stringField
   numberField
   boolField

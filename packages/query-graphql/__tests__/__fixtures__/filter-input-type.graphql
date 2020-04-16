@@ -84,6 +84,7 @@ input StringFieldComparison {
 input TestDtoFilter {
   and: [TestFilterDtoFilter!]
   or: [TestFilterDtoFilter!]
+  id: NumberFieldComparison
   boolField: BooleanFieldComparison
   dateField: DateFieldComparison
   floatField: FloatFieldComparison
@@ -96,6 +97,7 @@ input TestDtoFilter {
 input TestFilterDtoFilter {
   and: [TestFilterDtoFilter!]
   or: [TestFilterDtoFilter!]
+  id: NumberFieldComparison
   boolField: BooleanFieldComparison
   dateField: DateFieldComparison
   floatField: FloatFieldComparison

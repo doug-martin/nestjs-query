@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import 'reflect-metadata';
 import { Class, Filter } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
@@ -6,8 +7,14 @@ import { FilterableField, FilterType } from '../../../src';
 import { expectSDL, filterInputTypeSDL } from '../../__fixtures__';
 
 describe('GraphQLFilterType', (): void => {
+  @ObjectType({ isAbstract: true })
+  class BaseType {
+    @FilterableField()
+    id!: number;
+  }
+
   @ObjectType('TestFilterDto')
-  class TestDto {
+  class TestDto extends BaseType {
     @FilterableField()
     boolField!: boolean;
 
