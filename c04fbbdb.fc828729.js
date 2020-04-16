@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[79],{179:function(a){a.exports=JSON.parse('{"allTagsPath":"/nestjs-query/blog/tags","slug":"patch","name":"patch","count":21,"permalink":"/nestjs-query/blog/tags/patch"}')}}]);

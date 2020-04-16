@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[17],{118:function(e){e.exports=JSON.parse('{"permalink":"/nestjs-query/blog/page/2","page":2,"postsPerPage":10,"totalPages":3,"totalCount":26,"previousPage":"/nestjs-query/blog","nextPage":"/nestjs-query/blog/page/3"}')}}]);
