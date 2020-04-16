@@ -15,6 +15,7 @@ module.exports = {
       },
       links: [
         { to: 'docs/introduction/getting-started', label: 'Docs', position: 'left' },
+        { to: 'docs/faq', label: 'FAQ', position: 'left' },
         { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/doug-martin/nestjs-query',
@@ -66,6 +67,11 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/doug-martin/nestjs-query/edit/master/documentation/',
+        },
+        blog: {
+          showReadingTime: true,
+          // Please change this to your repo.
+          editUrl: 'https://github.com/doug-martin/nestjs-query/edit/master/documentation/blog',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

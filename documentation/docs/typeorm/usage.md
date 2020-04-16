@@ -27,6 +27,7 @@ export class TodoItemEntity {
 
 ```
 
+
 ## Creating a Service
 
 The `@nestjs-query/query-typeorm` package includes a `@InjectTypeOrmQueryService` decorator that creates your `TypeOrmQueryService` automatically.
@@ -241,6 +242,95 @@ Delete all `TodoItemEntities` older than `Jan 1, 2019`.
 const { deletedCount } = await this.service.deleteMany(
   { created: { lte: new Date('2019-1-1') } } // filter
 );
+```
+
+## Foreign Keys
+
+It is a common use case to include a foreign key from your entity in your DTO.
+
+To do this you should add the foreign key to your entity as well as your DTO.
+
+### Example
+
+Assume TodoItems can have SubTasks we would set up our SubTaskEntity using the following
+
+```ts
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ObjectType,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { TodoItemEntity } from '../todo-item/todo-item.entity';
+
+@Entity({ name: 'sub_task' })
+export class SubTaskEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  title!: string;
+
+  @Column({ nullable: true })
+  description?: string;
+
+  @Column()
+  completed!: boolean;
+
+  // add the todoItemId to the model 
+  @Column({ nullable: false, name: 'todo_item_id' })
+  todoItemId!: string;
+
+  @ManyToOne((): ObjectType<TodoItemEntity> => TodoItemEntity, (td) => td.subTasks, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  // specify the join column we want to use.
+  @JoinColumn({ name: 'todo_item_id' })
+  todoItem!: TodoItemEntity;
+
+  @CreateDateColumn()
+  created!: Date;
+
+  @UpdateDateColumn()
+  updated!: Date;
+}
+```
+
+Then we could add the `todoItemId` to the SubTaskDTO.
+
+```ts
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+
+@ObjectType('SubTask')
+export class SubTaskDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+
+  // expose the todoItemId as a filterable field.
+  @FilterableField()
+  todoItemId!: string;
+}
 ```
 
 ## Custom Service
