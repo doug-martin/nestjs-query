@@ -1,11 +1,18 @@
+// eslint-disable-next-line max-classes-per-file
 import 'reflect-metadata';
 import { ObjectType, InputType, Query, Resolver, Args, Int } from '@nestjs/graphql';
 import { SortType, FilterableField } from '../../../src';
 import { expectSDL, sortingInputTypeSDL } from '../../__fixtures__';
 
 describe('SortingType', (): void => {
+  @ObjectType({ isAbstract: true })
+  class BaseType {
+    @FilterableField()
+    id!: number;
+  }
+
   @ObjectType()
-  class TestSort {
+  class TestSort extends BaseType {
     @FilterableField()
     stringField!: string;
 

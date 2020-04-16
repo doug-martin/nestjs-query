@@ -17,6 +17,8 @@
     "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-angular": "8.3.4",
     "@types/jest": "^25.1.4",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",

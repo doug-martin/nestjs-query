@@ -46,7 +46,19 @@ export class GraphQLQueryMetadataStorage {
   }
 
   getFilterableObjectFields<T>(type: Class<T>): FilterableFieldDescriptor<unknown>[] | undefined {
-    return this.filterableObjectStorage.get(type);
+    const typeFields = this.filterableObjectStorage.get(type) ?? [];
+    const fieldNames = typeFields.map((t) => t.propertyName);
+    const baseClass = Object.getPrototypeOf(type);
+    if (baseClass) {
+      const inheritedFields = (this.getFilterableObjectFields(baseClass) ?? []).filter(
+        (t) => !fieldNames.includes(t.propertyName),
+      );
+      if (typeFields.length === 0 && inheritedFields.length === 0) {
+        return undefined;
+      }
+      return [...inheritedFields, ...typeFields];
+    }
+    return typeFields;
   }
 
   addFilterType<T>(type: Class<T>, filterType: Class<Filter<T>>): void {
