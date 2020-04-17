@@ -1,0 +1,19 @@
+{
+    "extends": "../../../tsconfig.build.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "rootDir": ".",
+        "skipLibCheck": true
+    },
+    "include": [
+        "src",
+        "seed.ts",
+        "e2e",
+        "ormconfig.json"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*spec.ts"
+    ]
+}

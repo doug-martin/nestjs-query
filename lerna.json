@@ -2,6 +2,7 @@
   "tagVersionPrefix": "v",
   "packages": [
     "examples/*",
+    "examples/federation/*",
     "packages/*"
   ],
   "command": {
