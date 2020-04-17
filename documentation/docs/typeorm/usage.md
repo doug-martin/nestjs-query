@@ -333,6 +333,97 @@ export class SubTaskDTO {
 }
 ```
 
+## Relations
+
+:::note
+This section only applies when you combine your DTO and entity
+:::
+
+When your DTO and entity are the same class and you have relations defined in `typeorm` you should not decorate your relations with `@Field` or `@FilterableField`. 
+
+Instead specify the relations you want to expose in your resolver.
+
+### Example
+
+Assume you have the following subtask definition.
+```ts
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { ObjectType, ID } from '@nestjs/graphql';
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { TodoItemEntity } from '../todo-item/todo-item.entity';
+
+@ObjectType('SubTask')
+@Entity({ name: 'sub_task' })
+export class SubTaskEntity {
+  @FilterableField(() => ID)
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @FilterableField()
+  @Column()
+  title!: string;
+
+  @FilterableField()
+  @Column({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  @Column()
+  completed!: boolean;
+
+  @FilterableField()
+  @Column({ nullable: false, name: 'todo_item_id' })
+  todoItemId!: string;
+
+  @ManyToOne(() => TodoItemEntity, (td) => td.subTasks, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  @JoinColumn({ name: 'todo_item_id' })
+  todoItem!: TodoItemEntity;
+
+  @FilterableField()
+  @CreateDateColumn()
+  created!: Date;
+
+  @FilterableField()
+  @UpdateDateColumn()
+  updated!: Date;
+}
+```
+Notice how the `todoItem` is not decorated with a field decorator. 
+
+Instead, add it to your resolver.
+
+```ts
+import { QueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { TodoItemEntity } from '../todo-item/todo-item.entity';
+import { SubTaskEntity } from './sub-task.entity';
+
+@Resolver(() => SubTaskEntity)
+export class SubTaskResolver extends CRUDResolver(SubTaskEntity, {
+  relations: {
+    one: { todoItem: { DTO: TodoItemEntity, disableRemove: true } },
+  },
+}) {
+  constructor(@InjectTypeOrmQueryService(SubTaskEntity) readonly service: QueryService<SubTaskEntity>) {
+    super(service);
+  }
+}
+
+``` 
+
 ## Custom Service
 
 If you want to add custom methods to your service you can extend the `TypeOrmQueryService` directly.

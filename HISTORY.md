@@ -1,6 +1,7 @@
 # v0.8.4
 
-* docs(): Call out foreign keys in entity and DTO [#84](https://github.com/doug-martin/nestjs-query/issues/84)
+* docs(typeorm): Call out foreign keys in entity and DTO [#84](https://github.com/doug-martin/nestjs-query/issues/84)
+* docs(typeorm): Relations on an entity/dto [#85](https://github.com/doug-martin/nestjs-query/issues/85)
 
 # v0.8.3
 
