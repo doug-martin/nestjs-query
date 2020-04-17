@@ -1,0 +1,9 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "include": ["src", "test", "seed.ts", "e2e", "ormconfig.json"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5438,
+  "username": "graphqlfederation_db2",
+  "database": "graphql_federation_db2",
+  "autoLoadEntities": true,
+  "entities": [
+    "dist/**/*.entity.js"
+  ],
+  "seeds": ["./dist/seeds.js"],
+  "synchronize": true,
+  "logging": true
+}
