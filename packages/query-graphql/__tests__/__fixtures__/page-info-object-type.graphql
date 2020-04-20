@@ -1,6 +1,3 @@
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
-
 type PageInfo {
   """true if paging forward and there are more records."""
   hasNextPage: Boolean
@@ -14,6 +11,9 @@ type PageInfo {
   """The cursor of the last returned record."""
   endCursor: ConnectionCursor
 }
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
 
 type Query {
   test: PageInfo!

@@ -488,8 +488,8 @@ describe('SubTaskResolver (e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field UpdateOneSubTaskInput.id of required type ID! was not provided.',
+          expect(body.errors[0].message).toBe(
+            'Field "UpdateOneSubTaskInput.id" of required type "ID!" was not provided.',
           );
         });
     });
@@ -567,8 +567,8 @@ describe('SubTaskResolver (e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field UpdateManySubTasksInput.filter of required type SubTaskFilter! was not provided.',
+          expect(body.errors[0].message).toBe(
+            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskFilter!" was not provided.',
           );
         });
     });
@@ -643,9 +643,7 @@ describe('SubTaskResolver (e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field DeleteOneInput.id of required type ID! was not provided.',
-          );
+          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
         });
     });
   });
@@ -693,8 +691,8 @@ describe('SubTaskResolver (e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field DeleteManySubTasksInput.filter of required type SubTaskFilter! was not provided.',
+          expect(body.errors[0].message).toBe(
+            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskFilter!" was not provided.',
           );
         });
     });

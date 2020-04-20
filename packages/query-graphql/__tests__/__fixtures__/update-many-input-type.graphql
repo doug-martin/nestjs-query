@@ -1,15 +1,19 @@
-input FakeUpdateManyInput {
-  name: String!
+type Query {
+  updateTest(input: UpdateMany!): Int!
+}
+
+input UpdateMany {
+  """Filter used to find fields to update"""
+  filter: FakeUpdateManyTypeFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: FakeUpdateManyInput!
 }
 
 input FakeUpdateManyTypeFilter {
   and: [FakeUpdateManyTypeFilter!]
   or: [FakeUpdateManyTypeFilter!]
   name: StringFieldComparison
-}
-
-type Query {
-  updateTest(input: UpdateMany!): Int!
 }
 
 input StringFieldComparison {
@@ -29,10 +33,6 @@ input StringFieldComparison {
   notIn: [String!]
 }
 
-input UpdateMany {
-  """Filter used to find fields to update"""
-  filter: FakeUpdateManyTypeFilter!
-
-  """The update to apply to all records found using the filter"""
-  update: FakeUpdateManyInput!
+input FakeUpdateManyInput {
+  name: String!
 }

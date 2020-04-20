@@ -1,3 +1,46 @@
+type Query {
+  test(input: TestDtoFilter!): Int!
+}
+
+input TestDtoFilter {
+  and: [TestFilterDtoFilter!]
+  or: [TestFilterDtoFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  timestampField: TimestampFieldComparison
+}
+
+input TestFilterDtoFilter {
+  and: [TestFilterDtoFilter!]
+  or: [TestFilterDtoFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  timestampField: TimestampFieldComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+}
+
 input BooleanFieldComparison {
   is: Boolean
   isNot: Boolean
@@ -47,23 +90,6 @@ input IntFieldComparison {
   notIn: [Int!]
 }
 
-input NumberFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: Float
-  neq: Float
-  gt: Float
-  gte: Float
-  lt: Float
-  lte: Float
-  in: [Float!]
-  notIn: [Float!]
-}
-
-type Query {
-  test(input: TestDtoFilter!): Int!
-}
-
 input StringFieldComparison {
   is: Boolean
   isNot: Boolean
@@ -81,37 +107,6 @@ input StringFieldComparison {
   notIn: [String!]
 }
 
-input TestDtoFilter {
-  and: [TestFilterDtoFilter!]
-  or: [TestFilterDtoFilter!]
-  id: NumberFieldComparison
-  boolField: BooleanFieldComparison
-  dateField: DateFieldComparison
-  floatField: FloatFieldComparison
-  intField: IntFieldComparison
-  numberField: NumberFieldComparison
-  stringField: StringFieldComparison
-  timestampField: TimestampFieldComparison
-}
-
-input TestFilterDtoFilter {
-  and: [TestFilterDtoFilter!]
-  or: [TestFilterDtoFilter!]
-  id: NumberFieldComparison
-  boolField: BooleanFieldComparison
-  dateField: DateFieldComparison
-  floatField: FloatFieldComparison
-  intField: IntFieldComparison
-  numberField: NumberFieldComparison
-  stringField: StringFieldComparison
-  timestampField: TimestampFieldComparison
-}
-
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
-
 input TimestampFieldComparison {
   is: Boolean
   isNot: Boolean
@@ -124,3 +119,8 @@ input TimestampFieldComparison {
   in: [Timestamp!]
   notIn: [Timestamp!]
 }
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp

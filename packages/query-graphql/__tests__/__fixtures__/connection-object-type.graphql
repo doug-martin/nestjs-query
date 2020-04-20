@@ -1,3 +1,15 @@
+type Test {
+  stringField: String!
+}
+
+type TestEdge {
+  """The node containing the Test"""
+  node: Test!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
 """Cursor for paging through collections"""
 scalar ConnectionCursor
 
@@ -15,14 +27,6 @@ type PageInfo {
   endCursor: ConnectionCursor
 }
 
-type Query {
-  test: TestConnection!
-}
-
-type Test {
-  stringField: String!
-}
-
 type TestConnection {
   """Paging information"""
   pageInfo: PageInfo!
@@ -31,10 +35,6 @@ type TestConnection {
   edges: [TestEdge!]!
 }
 
-type TestEdge {
-  """The node containing the Test"""
-  node: Test!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
+type Query {
+  test: TestConnection!
 }

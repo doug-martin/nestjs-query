@@ -1,8 +1,8 @@
-type Query {
-  updateTest: UpdateManyResponse!
-}
-
 type UpdateManyResponse {
   """The number of records updated."""
   updatedCount: Int!
+}
+
+type Query {
+  updateTest: UpdateManyResponse!
 }

@@ -1,7 +1,3 @@
-input FakeUpdateOneType {
-  name: String!
-}
-
 type Query {
   updateTest(input: UpdateOne!): Int!
 }
@@ -12,4 +8,8 @@ input UpdateOne {
 
   """The update to apply."""
   update: FakeUpdateOneType!
+}
+
+input FakeUpdateOneType {
+  name: String!
 }

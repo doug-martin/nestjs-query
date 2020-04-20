@@ -1,3 +1,7 @@
+type Query {
+  test(input: DeleteMany!): Int!
+}
+
 input DeleteMany {
   """Filter to find records to delete"""
   filter: DeleteManyDTOFilter!
@@ -7,10 +11,6 @@ input DeleteManyDTOFilter {
   and: [DeleteManyDTOFilter!]
   or: [DeleteManyDTOFilter!]
   field: StringFieldComparison
-}
-
-type Query {
-  test(input: DeleteMany!): Int!
 }
 
 input StringFieldComparison {
