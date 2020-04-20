@@ -401,9 +401,7 @@ describe('TagResolver (e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field UpdateOneTagInput.id of required type ID! was not provided.',
-          );
+          expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "ID!" was not provided.');
         });
     });
 
@@ -478,8 +476,8 @@ describe('TagResolver (e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field UpdateManyTagsInput.filter of required type TagFilter! was not provided.',
+          expect(body.errors[0].message).toBe(
+            'Field "UpdateManyTagsInput.filter" of required type "TagFilter!" was not provided.',
           );
         });
     });
@@ -551,9 +549,7 @@ describe('TagResolver (e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field DeleteOneInput.id of required type ID! was not provided.',
-          );
+          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
         });
     });
   });
@@ -601,8 +597,8 @@ describe('TagResolver (e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field DeleteManyTagsInput.filter of required type TagFilter! was not provided.',
+          expect(body.errors[0].message).toBe(
+            'Field "DeleteManyTagsInput.filter" of required type "TagFilter!" was not provided.',
           );
         });
     });

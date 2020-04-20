@@ -1,8 +1,8 @@
+type Query {
+  test(input: DeleteOne!): Int!
+}
+
 input DeleteOne {
   """The id of the record to delete."""
   id: ID!
-}
-
-type Query {
-  test(input: DeleteOne!): Int!
 }

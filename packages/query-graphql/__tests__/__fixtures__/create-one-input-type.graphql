@@ -1,3 +1,7 @@
+type Query {
+  test(input: CreateOne!): Int!
+}
+
 input CreateOne {
   """The record to create"""
   fakeInput: FakeType!
@@ -5,8 +9,4 @@ input CreateOne {
 
 input FakeType {
   field: String!
-}
-
-type Query {
-  test(input: CreateOne!): Int!
 }

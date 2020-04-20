@@ -1,5 +1,6 @@
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
+type Query {
+  test(input: Paging!): Int!
+}
 
 input Paging {
   """Paginate before opaque cursor"""
@@ -15,6 +16,5 @@ input Paging {
   last: Int
 }
 
-type Query {
-  test(input: Paging!): Int!
-}
+"""Cursor for paging through collections"""
+scalar ConnectionCursor

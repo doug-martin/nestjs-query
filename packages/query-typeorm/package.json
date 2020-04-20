@@ -21,13 +21,13 @@
     "@nestjs-query/core": "^0.8.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.6",
+    "@nestjs/common": "^7.0.8",
     "@nestjs/typeorm": "^7.0.0",
     "class-transformer": "^0.2.3",
     "typeorm": "^0.2.24"
   },
   "devDependencies": {
-    "@nestjs/common": "^7.0.6",
+    "@nestjs/common": "^7.0.8",
     "@nestjs/typeorm": "^7.0.0",
     "class-transformer": "^0.2.3",
     "sqlite3": "^4.1.1",
