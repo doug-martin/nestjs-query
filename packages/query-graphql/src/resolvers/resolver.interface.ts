@@ -1,46 +1,7 @@
-import { Class, QueryService } from '@nestjs-query/core';
+import { QueryService } from '@nestjs-query/core';
 import { DTONamesOpts } from '../common';
 import { ResolverMethodOpts } from '../decorators';
-
-export interface ResolverRelation<Relation> extends DTONamesOpts, ResolverMethodOpts {
-  /**
-   * The class type of the relation.
-   */
-  DTO: Class<Relation>;
-  /**
-   * The name of the relation to use when fetching from the QueryService
-   */
-  relationName?: string;
-  /**
-   * Set to true if the relation is nullable
-   */
-  nullable?: boolean;
-  /**
-   * Disable read relation graphql endpoints
-   */
-  disableRead?: boolean;
-  /**
-   * Disable update relation graphql endpoints
-   */
-  disableUpdate?: boolean;
-  /**
-   * Disable remove relation graphql endpoints
-   */
-  disableRemove?: boolean;
-}
-
-export type RelationMap = Record<string, ResolverRelation<unknown>>;
-
-export interface RelationsOpts {
-  /**
-   * All relations that are a single record
-   */
-  one?: RelationMap;
-  /**
-   * All relations that have multiple records
-   */
-  many?: RelationMap;
-}
+import { RelationsOpts } from './relations';
 
 export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
   /**

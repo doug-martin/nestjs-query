@@ -7,4 +7,7 @@ export class TodoItemDTO {
   @Field(() => ID)
   @Directive('@external')
   id!: number;
+
+  @Field()
+  foo!: string;
 }

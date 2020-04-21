@@ -15,7 +15,7 @@ export class TagTodoItemEntity {
   @UpdateDateColumn()
   updated!: Date;
 
-  @ManyToOne(() => TagEntity, (tag) => tag.tagTodoItemEntities)
+  @ManyToOne(() => TagEntity, (tag) => tag.tagTodoItems)
   @JoinColumn({ name: 'tagId' })
-  tag!: TagTodoItemEntity[];
+  tag!: TagEntity;
 }

@@ -6,8 +6,9 @@ import { ResolverField } from '../../decorators';
 import { FindRelationsLoader, DataLoaderFactory, QueryRelationsLoader } from '../../loader';
 import { ConnectionType, QueryArgsType } from '../../types';
 import { transformAndValidate } from '../helpers';
-import { ResolverRelation, RelationsOpts, ServiceResolver, BaseServiceResolver } from '../resolver.interface';
+import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
+import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
   B extends Class<ServiceResolver<DTO>>

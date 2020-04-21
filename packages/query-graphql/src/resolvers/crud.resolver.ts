@@ -1,8 +1,8 @@
 import { Class, DeepPartial } from '@nestjs-query/core';
-import { Relatable } from './relations';
+import { ReferencesOpts, Relatable, RelationsOpts } from './relations';
 import { Readable, ReadResolver, ReadResolverOpts } from './read.resolver';
 import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver';
-import { RelationsOpts, ResolverClass } from './resolver.interface';
+import { ResolverClass } from './resolver.interface';
 import { Updateable, UpdateResolver, UpdateResolverOpts } from './update.resolver';
 import { DeleteResolver, DeleteResolverOpts } from './delete.resolver';
 
@@ -24,6 +24,7 @@ export interface CRUDResolverOpts<
   update?: UpdateResolverOpts<DTO, U>;
   delete?: DeleteResolverOpts<DTO>;
   relations?: RelationsOpts;
+  references?: ReferencesOpts<DTO>;
 }
 
 export interface CRUDResolver<DTO, C extends DeepPartial<DTO>, U extends DeepPartial<DTO>>
@@ -60,6 +61,7 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
     CreateDTOClass,
     UpdateDTOClass,
     relations = {},
+    references = {},
     create = {},
     read = {},
     update = {},
@@ -68,6 +70,7 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
   return Relatable(
     DTOClass,
     relations,
+    references,
   )(
     Creatable(DTOClass, { CreateDTOClass, ...create })(
       Readable(

@@ -1,4 +1,5 @@
 {
+  "name": "sub-task-db",
   "type": "postgres",
   "host": "localhost",
   "port": 5438,

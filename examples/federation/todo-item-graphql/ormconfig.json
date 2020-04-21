@@ -1,4 +1,5 @@
 {
+  "name": "todo-item-db",
   "type": "postgres",
   "host": "localhost",
   "port": 5437,
@@ -6,7 +7,7 @@
   "database": "graphql_federation_db1",
   "autoLoadEntities": true,
   "entities": [
-    "dist/**/*.entity.js"
+    "./dist/**/*.entity.js"
   ],
   "synchronize": true,
   "seeds": ["./dist/seeds.js"],

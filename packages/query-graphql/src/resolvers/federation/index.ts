@@ -1,1 +1,1 @@
-export { FederatedRelation, FederatedRelationMap, FederatedRelationsOpts } from './interfaces';
+export { FederationResolver } from './federation.resolver';

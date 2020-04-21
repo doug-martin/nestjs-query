@@ -16,5 +16,5 @@ export class TagEntity {
   updated!: Date;
 
   @OneToMany(() => TagTodoItemEntity, (tagTodoItem) => tagTodoItem.tag)
-  tagTodoItemEntities!: TagTodoItemEntity[];
+  tagTodoItems!: TagTodoItemEntity[];
 }

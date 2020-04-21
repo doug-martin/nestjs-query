@@ -13,7 +13,7 @@ export class TagResolver extends CRUDResolver(TagDTO, {
   UpdateDTOClass: TagInputDTO,
   relations: {
     many: {
-      tagTodoItems: { DTO: TagTodoItemDTO },
+      tagTodoItems: { DTO: TagTodoItemDTO, disableRemove: true, disableUpdate: true },
     },
   },
 }) {

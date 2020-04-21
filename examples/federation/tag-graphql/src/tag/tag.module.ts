@@ -5,9 +5,10 @@ import { TagEntity } from './tag.entity';
 import { TagResolver } from './tag.resolver';
 import { TagTodoItemResolver } from './tag-todo-item.resolver';
 import { TodoItemResolver } from './todo-item.resolver';
+import { TodoItemService } from './todo-item.service';
 
 @Module({
-  providers: [TagResolver, TagTodoItemResolver, TodoItemResolver],
-  imports: [NestjsQueryTypeOrmModule.forFeature([TagEntity, TagTodoItemEntity])],
+  providers: [TagResolver, TagTodoItemResolver, TodoItemResolver, TodoItemService],
+  imports: [NestjsQueryTypeOrmModule.forFeature([TagEntity, TagTodoItemEntity], 'tag-db')],
 })
 export class TagModule {}

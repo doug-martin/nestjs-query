@@ -1,8 +1,7 @@
 import { QueryService } from '@nestjs-query/core';
-import { CRUDResolver, RepresentationType } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
-import { Resolver, ResolveField } from '@nestjs/graphql';
-
+import { Resolver } from '@nestjs/graphql';
 import { TagTodoItemDTO } from './dto/tag-todo-item.dto';
 import { TagTodoItemInputDTO } from './dto/tag-todo-item.input';
 import { TagDTO } from './dto/tag.dto';
@@ -18,13 +17,11 @@ export class TagTodoItemResolver extends CRUDResolver(TagTodoItemDTO, {
       tag: { DTO: TagDTO },
     },
   },
+  references: {
+    todoItem: { DTO: TodoItemDTO, keys: { id: 'todoItemId' } },
+  },
 }) {
   constructor(@InjectTypeOrmQueryService(TagTodoItemEntity) readonly service: QueryService<TagTodoItemEntity>) {
     super(service);
-  }
-
-  @ResolveField('todoItem', () => TodoItemDTO)
-  getTodoItem(reference: TagTodoItemDTO): RepresentationType {
-    return { __typename: 'TodoItem', id: reference.todoItemId };
   }
 }
