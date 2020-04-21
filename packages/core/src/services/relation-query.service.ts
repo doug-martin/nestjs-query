@@ -5,28 +5,28 @@ import { NoOpQueryService } from './noop-query.service';
 import { ProxyQueryService } from './proxy-query.service';
 import { QueryService } from './query.service';
 
-type RelationQueryServiceRelation<DTO, Relation> = {
+export type QueryServiceRelation<DTO, Relation> = {
   service: QueryService<Relation>;
   query: (dto: DTO) => Query<Relation>;
 };
 
 export class RelationQueryService<DTO> extends ProxyQueryService<DTO> {
-  readonly relations: Record<string, RelationQueryServiceRelation<DTO, unknown>>;
+  readonly relations: Record<string, QueryServiceRelation<DTO, unknown>>;
 
-  constructor(queryService: QueryService<DTO>, relations: Record<string, RelationQueryServiceRelation<DTO, unknown>>);
+  constructor(queryService: QueryService<DTO>, relations: Record<string, QueryServiceRelation<DTO, unknown>>);
 
-  constructor(relations: Record<string, RelationQueryServiceRelation<DTO, unknown>>);
+  constructor(relations: Record<string, QueryServiceRelation<DTO, unknown>>);
 
   constructor(
-    queryService: QueryService<DTO> | Record<string, RelationQueryServiceRelation<DTO, unknown>>,
-    relations?: Record<string, RelationQueryServiceRelation<DTO, unknown>>,
+    queryService: QueryService<DTO> | Record<string, QueryServiceRelation<DTO, unknown>>,
+    relations?: Record<string, QueryServiceRelation<DTO, unknown>>,
   ) {
     if (typeof queryService.query === 'function') {
       super(queryService as QueryService<DTO>);
-      this.relations = relations as Record<string, RelationQueryServiceRelation<DTO, unknown>>;
+      this.relations = relations as Record<string, QueryServiceRelation<DTO, unknown>>;
     } else {
       super(NoOpQueryService.getInstance());
-      this.relations = queryService as Record<string, RelationQueryServiceRelation<DTO, unknown>>;
+      this.relations = queryService as Record<string, QueryServiceRelation<DTO, unknown>>;
     }
   }
 
@@ -129,10 +129,10 @@ export class RelationQueryService<DTO> extends ProxyQueryService<DTO> {
     return (await service.query(mergeQuery(qf(dto), { paging: { limit: 1 } })))[0];
   }
 
-  getRelation<Relation>(name: string): RelationQueryServiceRelation<DTO, Relation> | undefined {
+  getRelation<Relation>(name: string): QueryServiceRelation<DTO, Relation> | undefined {
     const relation = this.relations[name];
     if (relation) {
-      return relation as RelationQueryServiceRelation<DTO, Relation>;
+      return relation as QueryServiceRelation<DTO, Relation>;
     }
     return undefined;
   }

@@ -5,7 +5,7 @@ import { Resolver } from '@nestjs/graphql';
 import { TagTodoItemDTO } from './dto/tag-todo-item.dto';
 import { TagTodoItemInputDTO } from './dto/tag-todo-item.input';
 import { TagDTO } from './dto/tag.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemReferenceDTO } from './dto/todo-item-reference.dto';
 import { TagTodoItemEntity } from './tag-todo-item.entity';
 
 @Resolver(() => TagTodoItemDTO)
@@ -18,7 +18,7 @@ export class TagTodoItemResolver extends CRUDResolver(TagTodoItemDTO, {
     },
   },
   references: {
-    todoItem: { DTO: TodoItemDTO, keys: { id: 'todoItemId' } },
+    todoItem: { DTO: TodoItemReferenceDTO, keys: { id: 'todoItemId' } },
   },
 }) {
   constructor(@InjectTypeOrmQueryService(TagTodoItemEntity) readonly service: QueryService<TagTodoItemEntity>) {
