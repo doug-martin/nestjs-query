@@ -4,7 +4,7 @@ import { Field, InputType } from '@nestjs/graphql';
 @InputType('TodoItemInput')
 export class TodoItemInputDTO {
   @IsString()
-  @MaxLength(50)
+  @MaxLength(20)
   @Field()
   title!: string;
 

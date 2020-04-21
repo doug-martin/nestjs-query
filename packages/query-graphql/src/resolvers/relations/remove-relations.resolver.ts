@@ -4,8 +4,9 @@ import { getDTONames } from '../../common';
 import { ResolverMutation } from '../../decorators';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
 import { transformAndValidate } from '../helpers';
-import { ResolverRelation, RelationsOpts, ServiceResolver, BaseServiceResolver } from '../resolver.interface';
+import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
+import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
   B extends Class<ServiceResolver<DTO>>

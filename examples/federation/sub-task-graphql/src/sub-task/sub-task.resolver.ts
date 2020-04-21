@@ -1,6 +1,6 @@
 import { QueryService } from '@nestjs-query/core';
-import { CRUDResolver, RepresentationType } from '@nestjs-query/query-graphql';
-import { Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
 import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { SubTaskDTO } from './dto/sub-task.dto';
 import { CreateSubTaskDTO } from './dto/subtask-input.dto';
@@ -12,13 +12,11 @@ import { SubTaskEntity } from './sub-task.entity';
 export class SubTaskResolver extends CRUDResolver(SubTaskDTO, {
   CreateDTOClass: CreateSubTaskDTO,
   UpdateDTOClass: SubTaskUpdateDTO,
+  references: {
+    todoItem: { DTO: TodoItemDTO, keys: { id: 'todoItemId', foo: 'title' } },
+  },
 }) {
   constructor(@InjectTypeOrmQueryService(SubTaskEntity) readonly service: QueryService<SubTaskEntity>) {
     super(service);
-  }
-
-  @ResolveProperty('todoItem', () => TodoItemDTO)
-  getTodoItem(@Parent() subTask: SubTaskDTO): RepresentationType {
-    return { __typename: 'TodoItem', id: subTask.todoItemId };
   }
 }

@@ -30,6 +30,9 @@
   "bugs": {
     "url": "https://github.com/doug-martin/nestjs-query/issues"
   },
+  "dependencies": {
+    "lodash.merge": "^4.6.2"
+  },
   "peerDependencies": {
     "@nestjs/common": "^7.0.8",
     "class-transformer": "^0.2.3"
@@ -37,6 +40,7 @@
   "devDependencies": {
     "@nestjs/common": "^7.0.8",
     "class-transformer": "^0.2.3",
+    "@types/lodash.merge": "^4.6.6",
     "ts-mockito": "^2.5.0",
     "typescript": "^3.8.3"
   }

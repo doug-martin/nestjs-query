@@ -5,6 +5,6 @@ import { TodoItemResolver } from './todo-item.resolver';
 
 @Module({
   providers: [TodoItemResolver],
-  imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+  imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity], 'todo-item-db')],
 })
 export class TodoItemModule {}

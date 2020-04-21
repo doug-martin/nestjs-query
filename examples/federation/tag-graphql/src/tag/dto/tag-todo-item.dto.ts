@@ -15,4 +15,3 @@ export class TagTodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-

@@ -7,8 +7,8 @@
     },
     "include": [
         "src",
-        "seed.ts",
         "e2e",
+        "seeds.ts",
         "ormconfig.json"
     ],
     "exclude": [

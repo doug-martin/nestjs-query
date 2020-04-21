@@ -1,3 +1,4 @@
+import merge from 'lodash.merge';
 import { Filter, Query, SortField } from './interfaces';
 
 export type QueryFieldMap<From, To> = {
@@ -46,4 +47,8 @@ export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFiel
     paging: query.paging,
     sorting: transformSort(query.sorting, fieldMap),
   };
+};
+
+export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
+  return merge(base, source);
 };

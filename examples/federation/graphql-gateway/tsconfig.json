@@ -4,6 +4,6 @@
     "outDir": "./dist",
     "rootDir": "."
   },
-  "include": ["src", "test", "ormconfig.json"],
+  "include": ["src", "e2e", "ormconfig.json"],
   "exclude": ["node_modules", "dist"]
 }
