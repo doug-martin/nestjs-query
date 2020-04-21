@@ -1,17 +1,17 @@
 import { QueryService, RelationQueryService } from '@nestjs-query/core';
 import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemReferenceDTO } from './dto/todo-item-reference.dto';
 import { TagTodoItemEntity } from './tag-todo-item.entity';
 
-@QueryService(TodoItemDTO)
-export class TodoItemService extends RelationQueryService<TodoItemDTO> {
+@QueryService(TodoItemReferenceDTO)
+export class TodoItemService extends RelationQueryService<TodoItemReferenceDTO> {
   constructor(
     @InjectTypeOrmQueryService(TagTodoItemEntity) readonly tagTodoItemService: QueryService<TagTodoItemEntity>,
   ) {
     super({
       tagTodoItems: {
         service: tagTodoItemService,
-        query: (todoItemDTO: TodoItemDTO) => ({ filter: { todoItemId: { eq: todoItemDTO.id } } }),
+        query: (ref: TodoItemReferenceDTO) => ({ filter: { todoItemId: { eq: ref.id } } }),
       },
     });
   }

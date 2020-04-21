@@ -1,11 +1,11 @@
 import { FederationResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
 import { SubTaskDTO } from './dto/sub-task.dto';
+import { TodoItemReferenceDTO } from './dto/todo-item-reference.dto';
 import { TodoItemService } from './todo-item.service';
 
-@Resolver(() => TodoItemDTO)
-export class TodoItemResolver extends FederationResolver(TodoItemDTO, {
+@Resolver(() => TodoItemReferenceDTO)
+export class TodoItemResolver extends FederationResolver(TodoItemReferenceDTO, {
   many: {
     subTasks: { DTO: SubTaskDTO },
   },

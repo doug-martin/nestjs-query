@@ -18,6 +18,7 @@ module.exports = {
       'graphql/mutations',
       'graphql/relations',
       'graphql/types',
+      'graphql/federation',
     ],
     'Migration Guides': ['migration-guides/v0.5.x-to-v0.6.x'],
   },

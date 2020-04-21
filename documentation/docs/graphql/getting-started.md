@@ -16,3 +16,4 @@ The `@nestjs-query/query-graphql` package provided base `Resolvers` and graphql 
 * [Mutations](./mutations) -  Documentation about the provided graphql mutation endpoints.
 * [Relations](./relations) -  Documentation about specifying relations in your resolvers.
 * [Types](./types) - Documentation for the provided graphql types.
+* [Federation](./federation) - Documentation for using `nestjs-query` with federation.
