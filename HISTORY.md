@@ -1,3 +1,18 @@
+# v0.8.6
+
+* chore(renovate): Renovate to include examples
+* chore(renovate): Renovate set ignorePaths to empty
+* fix(deps): pin dependencies
+* chore(deps): Update package-lock.json
+* chore(deps): Update postgres backing app to 11.7
+* docs(): Update Federation Docs
+* chore(lerna): add hoist to lerna.json
+* chore(deps): update dependency @nestjs/graphql to v7.3.4
+* chore(deps): update dependency @types/node to v13.13.2
+* chore(renovate): Update to automerge devDeps
+* chore(deps): update dependency coveralls to v3.0.13
+* chore(deps): update dependency eslint-config-prettier to v6.11.0
+
 # v0.8.5
 
 * feat(graphql): basic federation support. 
