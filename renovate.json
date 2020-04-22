@@ -2,9 +2,6 @@
   "extends": [
     "config:base"
   ],
-  "includePaths": [
-    "package.json",
-    "**/packages/**",
-    "**/examples/**"
+  "ignorePaths": [
   ]
 }
