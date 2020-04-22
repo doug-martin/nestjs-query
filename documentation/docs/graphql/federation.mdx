@@ -24,7 +24,65 @@ The `__typename` lets the gateway know which type is being referenced with addit
 
 ### References in Resolvers
 
-To reference a type in `nestjs-query` you must first create a type that extends the base type contained in some other graphql service.
+To reference a type in `nestjs-query` you must first create a federated service that defines the base type.
+
+#### Base Type
+The base type must include be decorated with federated directives specifying key
+
+```ts title="dto/todo-item.dto.ts"
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Directive } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@Directive('@key(fields: "id")')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: number;
+  ...
+}
+```
+
+In the service that declares this base type, the base type resolver must have a `resolveReference` function that tells the gateway how to resolve the base type.
+
+```ts title="todo-item.resolver.ts"
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  CreateDTOClass: TodoItemInputDTO,
+  UpdateDTOClass: TodoItemUpdateDTO,
+}) {
+  constructor(@InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>) {
+    super(service);
+  }
+
+  @ResolveReference()
+  resolveReference(reference: { __typename: string; id: string }): Promise<TodoItemDTO> {
+    return this.service.getById(reference.id);
+  }
+}
+```
+To read more about the `resolveReference` function see https://www.apollographql.com/docs/apollo-server/federation/entities/#resolving
+
+This service must also use the `GraphQLFederationModule` in order for the base type to be resolved by the gateway.
+
+```ts title="app.module.ts"
+import { GraphQLFederationModule } from '@nestjs/graphql';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot(ormconfig as TypeOrmModuleOptions),
+    GraphQLFederationModule.forRoot({
+      autoSchemaFile: 'schema.gql',
+      include: [TodoItemModule],
+    }),
+    TodoItemModule,
+  ],
+})
+export class AppModule {}
+```
+
+#### Extended Type
+To reference the base type with `nestjs-query` you must create
+a type that extends the base type contained in some other graphql service.
 
 :::warning
 The type name must be the same name as the type it extends in the graph.
@@ -147,7 +205,7 @@ Lets continue with the `SubTask` example used above. We have add a `todoItem` re
 
 ### RelationQueryService
 
-The first step is to create a `RelationQueryService`. The `RelationQueryService` is a special type of `QueryService` that allows looking up  relations without defining them in your entity.
+The first step is to create a `RelationQueryService`. The `RelationQueryService` is a special type of `QueryService` that allows looking up relations without defining them in your entity.
 
 ```ts title="todo-item.service.ts"
 import { QueryService, RelationQueryService } from '@nestjs-query/core';
@@ -211,6 +269,8 @@ export class TodoItemResolver extends FederationResolver(TodoItemReferenceDTO, {
 In the above example we extend `FederationResolver` this will not set up any queries or mutations in the graph. Instead, it is used set up the reading of relations for a type that originates from another service.
 
 The final step is to register your module just like normal
+
+:::note Make sure you are importing the `GraphQLFederatedModule` in the root of every service included in your federated graph.
 
 ```ts
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
