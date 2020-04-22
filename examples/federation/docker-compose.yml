@@ -2,28 +2,31 @@ version: "3"
 
 services:
   db1:
-    image: "postgres:11.5"
+    image: "postgres:11.7"
     environment:
       - "POSTGRES_USER=graphqlfederation_db1"
       - "POSTGRES_DB=graphql_federation_db1"
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
     expose:
       - "5432"
     ports:
       - "5437:5432"
   db2:
-    image: "postgres:11.5"
+    image: "postgres:11.7"
     environment:
       - "POSTGRES_USER=graphqlfederation_db2"
       - "POSTGRES_DB=graphql_federation_db2"
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
     expose:
       - "5432"
     ports:
       - "5438:5432"
   db3:
-    image: "postgres:11.5"
+    image: "postgres:11.7"
     environment:
       - "POSTGRES_USER=graphqlfederation_db3"
       - "POSTGRES_DB=graphql_federation_db3"
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
     expose:
       - "5432"
     ports:
