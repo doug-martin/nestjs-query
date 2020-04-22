@@ -27,7 +27,7 @@ The `__typename` lets the gateway know which type is being referenced with addit
 To reference a type in `nestjs-query` you must first create a federated service that defines the base type.
 
 #### Base Type
-The base type must include be decorated with federated directives specifying key
+The base type in its own service must be decorated with federated directives specifying its key.
 
 ```ts title="dto/todo-item.dto.ts"
 import { FilterableField } from '@nestjs-query/query-graphql';
@@ -81,8 +81,9 @@ export class AppModule {}
 ```
 
 #### Extended Type
-To reference the base type with `nestjs-query` you must create
-a type that extends the base type contained in some other graphql service.
+In a separate service from the one defining the base type above, we can use Apollo Federation to extend that base type. 
+
+To do this with `nestjs-query` you must create a type that extends the base type contained in some other graphql service.
 
 :::warning
 The type name must be the same name as the type it extends in the graph.
@@ -270,7 +271,9 @@ In the above example we extend `FederationResolver` this will not set up any que
 
 The final step is to register your module just like normal
 
-:::note Make sure you are importing the `GraphQLFederatedModule` in the root of every service included in your federated graph.
+:::note
+  Make sure you are importing the `GraphQLFederatedModule` in the root of every service included in your federated graph.
+:::
 
 ```ts
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
