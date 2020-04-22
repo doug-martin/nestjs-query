@@ -1,11 +1,13 @@
-# 0.8.5
+# v0.8.5
 
-* chore(): upgrade dependencies.
+* feat(graphql): basic federation support. 
+* docs(graphql): federation docs.
 
 # v0.8.4
 
 * docs(typeorm): Call out foreign keys in entity and DTO [#84](https://github.com/doug-martin/nestjs-query/issues/84)
 * docs(typeorm): Relations on an entity/dto [#85](https://github.com/doug-martin/nestjs-query/issues/85)
+* chore(): upgrade dependencies.
 
 # v0.8.3
 
