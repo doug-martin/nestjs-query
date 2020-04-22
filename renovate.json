@@ -2,6 +2,10 @@
   "extends": [
     "config:base"
   ],
+  "packageRules": [{
+    "depTypeList": ["devDependencies"],
+    "automerge": true
+  }],
   "ignorePaths": [
   ]
 }
