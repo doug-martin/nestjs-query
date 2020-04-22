@@ -11,7 +11,7 @@ services:
     ports:
       - "5437:5432"
   db2:
-    image: "postgres:11.5"
+    image: "postgres:11.7"
     environment:
       - "POSTGRES_USER=graphqltypeorm_mdb2"
       - "POSTGRES_DB=graphql_typeorm_mdb2"

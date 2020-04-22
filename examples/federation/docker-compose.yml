@@ -20,7 +20,7 @@ services:
     ports:
       - "5438:5432"
   db3:
-    image: "postgres:11.5"
+    image: "postgres:11.7"
     environment:
       - "POSTGRES_USER=graphqlfederation_db3"
       - "POSTGRES_DB=graphql_federation_db3"
