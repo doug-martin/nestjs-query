@@ -38,21 +38,21 @@
     "url": "https://github.com/doug-martin/nestjs-query/issues"
   },
   "dependencies": {
-    "@nestjs-query/core": "^0.8.6",
-    "lodash.omit": "^4.5.0",
-    "lower-case-first": "^2.0.1",
-    "pluralize": "^8.0.0",
-    "upper-case-first": "^2.0.1"
+    "@nestjs-query/core": "0.8.6",
+    "lodash.omit": "4.5.0",
+    "lower-case-first": "2.0.1",
+    "pluralize": "8.0.0",
+    "upper-case-first": "2.0.1"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.8",
-    "@nestjs/graphql": "^7.3.1",
-    "class-transformer": "^0.2.3",
-    "class-validator": "^0.12.1",
-    "dataloader": "^2.0.0",
-    "graphql": "^15.0.0",
-    "graphql-relay": "^0.6.0",
-    "reflect-metadata": "^0.1.13"
+    "@nestjs/common": "7.0.8",
+    "@nestjs/graphql": "7.3.1",
+    "class-transformer": "0.2.3",
+    "class-validator": "0.12.1",
+    "dataloader": "2.0.0",
+    "graphql": "15.0.0",
+    "graphql-relay": "0.6.0",
+    "reflect-metadata": "0.1.13"
   },
   "devDependencies": {
     "@nestjs/common": "7.0.8",

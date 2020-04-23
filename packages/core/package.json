@@ -31,11 +31,11 @@
     "url": "https://github.com/doug-martin/nestjs-query/issues"
   },
   "dependencies": {
-    "lodash.merge": "^4.6.2"
+    "lodash.merge": "4.6.2"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.8",
-    "class-transformer": "^0.2.3"
+    "@nestjs/common": "7.0.8",
+    "class-transformer": "0.2.3"
   },
   "devDependencies": {
     "@nestjs/common": "7.0.8",
