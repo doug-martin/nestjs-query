@@ -1,6 +1,6 @@
 {
   "name": "tag-graphql",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "description": "",
   "author": "",
   "private": true,
@@ -19,7 +19,7 @@
   "dependencies": {
     "@apollo/federation": "0.14.1",
     "@nestjs-query/core": "0.8.7",
-    "@nestjs-query/query-graphql": "0.8.7",
+    "@nestjs-query/query-graphql": "0.8.8",
     "@nestjs-query/query-typeorm": "0.8.7",
     "@nestjs/common": "7.0.8",
     "@nestjs/core": "7.0.8",
