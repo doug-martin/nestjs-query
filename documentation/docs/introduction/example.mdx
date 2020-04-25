@@ -152,10 +152,9 @@ Once the resolver is generated paste the following into `src/todo-item/todo-item
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
-import { TodoItemService } from './todo-item.service';
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
