@@ -22,6 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: docker-compose -f ./examples/nest-graphql-typeorm/docker-compose.yml up -d
       - run: docker-compose -f ./examples/federation/docker-compose.yml up -d
+      - run: docker-compose -f ./examples/nest-graphql-typeorm-soft-delete/docker-compose.yml up -d
       - run: npm ci
       - run: npm run bootstrap -- --ignore-scripts
       - run: npm run build
