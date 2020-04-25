@@ -2,6 +2,7 @@
 import { Connection, createConnection, getConnection } from 'typeorm';
 import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestRelation } from './test-relation.entity';
+import { TestSoftDeleteEntity } from './test-soft-delete.entity';
 import { TestEntity } from './test.entity';
 
 export function createTestConnection(): Promise<Connection> {
@@ -9,7 +10,7 @@ export function createTestConnection(): Promise<Connection> {
     type: 'sqlite',
     database: ':memory:',
     dropSchema: true,
-    entities: [TestEntity, TestRelation, TestEntityRelationEntity],
+    entities: [TestEntity, TestSoftDeleteEntity, TestRelation, TestEntityRelationEntity],
     synchronize: true,
     logging: false,
   });

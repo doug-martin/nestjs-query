@@ -7,10 +7,16 @@ import {
   QueryService,
   Filter,
 } from '@nestjs-query/core';
-import { Repository } from 'typeorm';
+import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { MethodNotAllowedException } from '@nestjs/common';
 import { FilterQueryBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
+
+export interface TypeOrmQueryServiceOpts<Entity> {
+  useSoftDelete?: boolean;
+  filterQueryBuilder?: FilterQueryBuilder<Entity>;
+}
 
 /**
  * Base class for all query services that use a `typeorm` Repository.
@@ -31,9 +37,12 @@ import { RelationQueryService } from './relation-query.service';
 export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> implements QueryService<Entity> {
   readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
-  constructor(readonly repo: Repository<Entity>, filterQueryBuilder?: FilterQueryBuilder<Entity>) {
+  readonly useSoftDelete: boolean;
+
+  constructor(readonly repo: Repository<Entity>, opts?: TypeOrmQueryServiceOpts<Entity>) {
     super();
-    this.filterQueryBuilder = filterQueryBuilder ?? new FilterQueryBuilder<Entity>(this.repo);
+    this.filterQueryBuilder = opts?.filterQueryBuilder ?? new FilterQueryBuilder<Entity>(this.repo);
+    this.useSoftDelete = opts?.useSoftDelete ?? false;
   }
 
   get EntityClass(): Class<Entity> {
@@ -169,6 +178,9 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    */
   async deleteOne(id: string | number): Promise<Entity> {
     const entity = await this.repo.findOneOrFail(id);
+    if (this.useSoftDelete) {
+      return this.repo.softRemove(entity);
+    }
     return this.repo.remove(entity);
   }
 
@@ -186,8 +198,49 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param filter - A `Filter` to find records to delete.
    */
   async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
-    const deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
+    let deleteResult: DeleteResult;
+    if (this.useSoftDelete) {
+      deleteResult = await this.filterQueryBuilder.softDelete({ filter }).execute();
+    } else {
+      deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
+    }
     return { deletedCount: deleteResult.affected || 0 };
+  }
+
+  /**
+   * Restore an entity by `id`.
+   *
+   * @example
+   *
+   * ```ts
+   * const restoredTodo = await this.service.restoreOne(1);
+   * ```
+   *
+   * @param id - The `id` of the entity to restore.
+   */
+  async restoreOne(id: string | number): Promise<Entity> {
+    await this.ensureSoftDeleteEnabled();
+    await this.repo.restore(id);
+    return this.getById(id);
+  }
+
+  /**
+   * Restores multiple records with a `@nestjs-query/core` `Filter`.
+   *
+   * @example
+   *
+   * ```ts
+   * const { updatedCount } = this.service.restoreMany({
+   *   created: { lte: new Date('2020-1-1') }
+   * });
+   * ```
+   *
+   * @param filter - A `Filter` to find records to delete.
+   */
+  async restoreMany(filter: Filter<Entity>): Promise<UpdateManyResponse> {
+    await this.ensureSoftDeleteEnabled();
+    const result = await this.filterQueryBuilder.softDelete({ filter }).restore().execute();
+    return { updatedCount: result.affected || 0 };
   }
 
   async ensureEntityDoesNotExist(e: DeepPartial<Entity>): Promise<void> {
@@ -202,6 +255,12 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
   ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
     if (this.repo.hasId((e as unknown) as Entity)) {
       throw new Error('Id cannot be specified when updating');
+    }
+  }
+
+  async ensureSoftDeleteEnabled(): Promise<void> {
+    if (!this.useSoftDelete) {
+      throw new MethodNotAllowedException(`Restore not allowed for non soft deleted entity ${this.EntityClass.name}.`);
     }
   }
 }

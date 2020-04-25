@@ -1,7 +1,8 @@
 import { anything, instance, mock, verify, when } from 'ts-mockito';
 import { QueryBuilder, WhereExpression } from 'typeorm';
-import { Filter, Query, SortDirection, SortNulls } from '@nestjs-query/core';
+import { Class, Filter, Query, SortDirection, SortNulls } from '@nestjs-query/core';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
+import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { FilterQueryBuilder, WhereBuilder } from '../../src/query';
 
@@ -23,10 +24,14 @@ describe('FilterQueryBuilder', (): void => {
 
   const baseDeleteQuery = 'DELETE FROM "test_entity"';
 
-  const getEntityQueryBuilder = (whereBuilder: WhereBuilder<TestEntity>): FilterQueryBuilder<TestEntity> =>
-    new FilterQueryBuilder(getTestConnection().getRepository(TestEntity), whereBuilder);
+  const baseSoftDeleteQuery = 'UPDATE "test_soft_delete_entity" SET "deleted_at" = CURRENT_TIMESTAMP';
 
-  const assertSQL = (query: QueryBuilder<TestEntity>, expectedSql: string, expectedArgs: any[]): void => {
+  const getEntityQueryBuilder = <Entity>(
+    entity: Class<Entity>,
+    whereBuilder: WhereBuilder<Entity>,
+  ): FilterQueryBuilder<Entity> => new FilterQueryBuilder(getTestConnection().getRepository(entity), whereBuilder);
+
+  const assertSQL = <Entity>(query: QueryBuilder<Entity>, expectedSql: string, expectedArgs: any[]): void => {
     const [sql, params] = query.getQueryAndParameters();
     expect(sql).toEqual(expectedSql);
     expect(params).toEqual(expectedArgs);
@@ -38,7 +43,7 @@ describe('FilterQueryBuilder', (): void => {
     expectedSql: string,
     expectedArgs: any[],
   ): void => {
-    const selectQueryBuilder = getEntityQueryBuilder(whereBuilder).select(query);
+    const selectQueryBuilder = getEntityQueryBuilder(TestEntity, whereBuilder).select(query);
     assertSQL(selectQueryBuilder, `${baseSelectQuery}${expectedSql}`, expectedArgs);
   };
 
@@ -48,8 +53,18 @@ describe('FilterQueryBuilder', (): void => {
     expectedSql: string,
     expectedArgs: any[],
   ): void => {
-    const selectQueryBuilder = getEntityQueryBuilder(whereBuilder).delete(query);
+    const selectQueryBuilder = getEntityQueryBuilder(TestEntity, whereBuilder).delete(query);
     assertSQL(selectQueryBuilder, `${baseDeleteQuery}${expectedSql}`, expectedArgs);
+  };
+
+  const assertSoftDeleteSQL = (
+    query: Query<TestSoftDeleteEntity>,
+    whereBuilder: WhereBuilder<TestSoftDeleteEntity>,
+    expectedSql: string,
+    expectedArgs: any[],
+  ): void => {
+    const selectQueryBuilder = getEntityQueryBuilder(TestSoftDeleteEntity, whereBuilder).softDelete(query);
+    assertSQL(selectQueryBuilder, `${baseSoftDeleteQuery}${expectedSql}`, expectedArgs);
   };
 
   const assertUpdateSQL = (
@@ -58,7 +73,7 @@ describe('FilterQueryBuilder', (): void => {
     expectedSql: string,
     expectedArgs: any[],
   ): void => {
-    const queryBuilder = getEntityQueryBuilder(whereBuilder).update(query).set({ stringType: 'baz' });
+    const queryBuilder = getEntityQueryBuilder(TestEntity, whereBuilder).update(query).set({ stringType: 'baz' });
     assertSQL(queryBuilder, `${baseUpdateQuery}${expectedSql}`, ['baz', ...expectedArgs]);
   };
 
@@ -387,6 +402,54 @@ describe('FilterQueryBuilder', (): void => {
               { field: 'boolType', direction: SortDirection.DESC },
               { field: 'stringType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST },
               { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST },
+            ],
+          },
+          instance(mockWhereBuilder),
+          '',
+          [],
+        );
+        verify(mockWhereBuilder.build(anything(), anything())).never();
+      });
+    });
+  });
+
+  describe('#softDelete', () => {
+    describe('with filter', () => {
+      it('should call whereBuilder#build if there is a filter', () => {
+        const mockWhereBuilder: WhereBuilder<TestSoftDeleteEntity> = mock(WhereBuilder);
+        const query = { filter: { stringType: { eq: 'foo' } } };
+        when(mockWhereBuilder.build(anything(), query.filter, undefined)).thenCall((where: WhereExpression) => {
+          return where.andWhere(`stringType = 'foo'`);
+        });
+        assertSoftDeleteSQL(query, instance(mockWhereBuilder), ` WHERE "string_type" = 'foo'`, []);
+      });
+    });
+    describe('with paging', () => {
+      it('should ignore paging args', () => {
+        const mockWhereBuilder: WhereBuilder<TestSoftDeleteEntity> = mock(WhereBuilder);
+        assertSoftDeleteSQL(
+          {
+            paging: {
+              limit: 10,
+              offset: 11,
+            },
+          },
+          instance(mockWhereBuilder),
+          '',
+          [],
+        );
+        verify(mockWhereBuilder.build(anything(), anything())).never();
+      });
+    });
+
+    describe('with sorting', () => {
+      it('should ignore sorting', () => {
+        const mockWhereBuilder: WhereBuilder<TestSoftDeleteEntity> = mock(WhereBuilder);
+        assertSoftDeleteSQL(
+          {
+            sorting: [
+              { field: 'stringType', direction: SortDirection.ASC },
+              { field: 'testEntityPk', direction: SortDirection.DESC },
             ],
           },
           instance(mockWhereBuilder),
