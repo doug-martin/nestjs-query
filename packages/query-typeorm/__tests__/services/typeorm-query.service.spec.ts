@@ -1,4 +1,4 @@
-import { Filter, Query, QueryService } from '@nestjs-query/core';
+import { Filter, Query } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { deepEqual, instance, mock, objectContaining, when } from 'ts-mockito';
 import {
@@ -8,9 +8,11 @@ import {
   SelectQueryBuilder,
   UpdateQueryBuilder,
 } from 'typeorm';
-import { TypeOrmQueryService } from '../../src';
+import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
+import { TypeOrmQueryService, TypeOrmQueryServiceOpts } from '../../src';
 import { FilterQueryBuilder, RelationQueryBuilder } from '../../src/query';
 import { TestRelation } from '../__fixtures__/test-relation.entity';
+import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
 
 describe('TypeOrmQueryService', (): void => {
@@ -26,38 +28,38 @@ describe('TypeOrmQueryService', (): void => {
 
   const relationName = 'testRelations';
 
-  @QueryService(TestEntity)
-  class TestTypeOrmQueryService extends TypeOrmQueryService<TestEntity> {
+  class TestTypeOrmQueryService<Entity> extends TypeOrmQueryService<Entity> {
     constructor(
-      readonly repo: Repository<TestEntity>,
-      filterQueryBuilder?: FilterQueryBuilder<TestEntity>,
-      readonly relationQueryBuilder?: RelationQueryBuilder<TestEntity, unknown>,
+      readonly repo: Repository<Entity>,
+      readonly relationQueryBuilder?: RelationQueryBuilder<Entity, unknown>,
+      opts?: TypeOrmQueryServiceOpts<Entity>,
     ) {
-      super(repo, filterQueryBuilder);
+      super(repo, opts);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getRelationQueryBuilder<Relation>(name: string): RelationQueryBuilder<TestEntity, Relation> {
-      return this.relationQueryBuilder as RelationQueryBuilder<TestEntity, Relation>;
+    getRelationQueryBuilder<Relation>(name: string): RelationQueryBuilder<Entity, Relation> {
+      return this.relationQueryBuilder as RelationQueryBuilder<Entity, Relation>;
     }
   }
 
-  type MockQueryService<Relation = unknown> = {
-    mockRepo: Repository<TestEntity>;
-    queryService: QueryService<TestEntity>;
-    mockQueryBuilder: FilterQueryBuilder<TestEntity>;
-    mockRelationQueryBuilder: RelationQueryBuilder<TestEntity, Relation>;
+  type MockQueryService<Entity, Relation = unknown> = {
+    mockRepo: Repository<Entity>;
+    queryService: TypeOrmQueryService<Entity>;
+    mockQueryBuilder: FilterQueryBuilder<Entity>;
+    mockRelationQueryBuilder: RelationQueryBuilder<Entity, Relation>;
   };
 
-  function createQueryService<Relation = unknown>(): MockQueryService<Relation> {
-    const mockQueryBuilder = mock<FilterQueryBuilder<TestEntity>>(FilterQueryBuilder);
-    const mockRepo = mock<Repository<TestEntity>>(Repository);
-    const mockRelationQueryBuilder = mock<RelationQueryBuilder<TestEntity, Relation>>(RelationQueryBuilder);
-    const queryService = new TestTypeOrmQueryService(
-      instance(mockRepo),
-      instance(mockQueryBuilder),
-      instance(mockRelationQueryBuilder),
-    );
+  function createQueryService<Entity = TestEntity, Relation = unknown>(
+    opts?: TypeOrmQueryServiceOpts<Entity>,
+  ): MockQueryService<Entity, Relation> {
+    const mockQueryBuilder = mock<FilterQueryBuilder<Entity>>(FilterQueryBuilder);
+    const mockRepo = mock<Repository<Entity>>(Repository);
+    const mockRelationQueryBuilder = mock<RelationQueryBuilder<Entity, Relation>>(RelationQueryBuilder);
+    const queryService = new TestTypeOrmQueryService(instance(mockRepo), instance(mockRelationQueryBuilder), {
+      filterQueryBuilder: instance(mockQueryBuilder),
+      ...opts,
+    });
     return { mockQueryBuilder, mockRepo, queryService, mockRelationQueryBuilder };
   }
 
@@ -89,7 +91,7 @@ describe('TypeOrmQueryService', (): void => {
         const entity = testEntities()[0];
         const relations = testRelations(entity.testEntityPk);
         const query: Query<TestRelation> = { filter: { relationName: { eq: 'name' } } };
-        const { queryService, mockRepo, mockRelationQueryBuilder } = createQueryService<TestRelation>();
+        const { queryService, mockRepo, mockRelationQueryBuilder } = createQueryService<TestEntity, TestRelation>();
         const selectQueryBuilder: SelectQueryBuilder<TestRelation> = mock(SelectQueryBuilder);
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
@@ -574,6 +576,139 @@ describe('TypeOrmQueryService', (): void => {
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.findOneOrFail(updateId)).thenReject(err);
       return expect(queryService.updateOne(updateId, update)).rejects.toThrowError(err);
+    });
+  });
+
+  describe('#isSoftDelete', () => {
+    describe('#deleteMany', () => {
+      it('create a delete query builder and call execute', async () => {
+        const affected = 10;
+        const deleteMany: Filter<TestSoftDeleteEntity> = { stringType: { eq: 'foo' } };
+        const { queryService, mockQueryBuilder, mockRepo } = createQueryService<TestSoftDeleteEntity>({
+          useSoftDelete: true,
+        });
+        const deleteQueryBuilder: SoftDeleteQueryBuilder<TestSoftDeleteEntity> = mock(SoftDeleteQueryBuilder);
+        when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
+        when(mockQueryBuilder.softDelete(objectContaining({ filter: deleteMany }))).thenReturn(
+          instance(deleteQueryBuilder),
+        );
+        when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined, affected, generatedMaps: [] });
+        const queryResult = await queryService.deleteMany(deleteMany);
+        return expect(queryResult).toEqual({ deletedCount: affected });
+      });
+
+      it('should return 0 if affected is not returned', async () => {
+        const deleteMany: Filter<TestSoftDeleteEntity> = { stringType: { eq: 'foo' } };
+        const { queryService, mockQueryBuilder, mockRepo } = createQueryService<TestSoftDeleteEntity>({
+          useSoftDelete: true,
+        });
+        const deleteQueryBuilder: SoftDeleteQueryBuilder<TestSoftDeleteEntity> = mock(SoftDeleteQueryBuilder);
+        when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
+        when(mockQueryBuilder.softDelete(objectContaining({ filter: deleteMany }))).thenReturn(
+          instance(deleteQueryBuilder),
+        );
+        when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined, generatedMaps: [] });
+        const queryResult = await queryService.deleteMany(deleteMany);
+        return expect(queryResult).toEqual({ deletedCount: 0 });
+      });
+    });
+
+    describe('#deleteOne', () => {
+      it('call getOne and then remove the entity', async () => {
+        const entity = testEntities()[0];
+        const { testEntityPk } = entity;
+        const { queryService, mockRepo } = createQueryService<TestSoftDeleteEntity>({ useSoftDelete: true });
+        when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
+        when(mockRepo.findOneOrFail(testEntityPk)).thenResolve(entity);
+        when(mockRepo.softRemove(entity)).thenResolve(entity);
+        const queryResult = await queryService.deleteOne(testEntityPk);
+        return expect(queryResult).toEqual(entity);
+      });
+
+      it('call fail if the entity is not found', async () => {
+        const entity = testEntities()[0];
+        const { testEntityPk } = entity;
+        const err = new Error('not found');
+        const { queryService, mockRepo } = createQueryService({ useSoftDelete: true });
+        when(mockRepo.findOneOrFail(testEntityPk)).thenReject(err);
+        return expect(queryService.deleteOne(testEntityPk)).rejects.toThrowError(err);
+      });
+    });
+
+    describe('#restoreOne', () => {
+      it('restore the entity', async () => {
+        const entity = testEntities()[0];
+        const { testEntityPk } = entity;
+        const { queryService, mockRepo } = createQueryService<TestSoftDeleteEntity>({ useSoftDelete: true });
+        when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
+        when(mockRepo.restore(entity.testEntityPk)).thenResolve({ generatedMaps: [], raw: undefined, affected: 1 });
+        when(mockRepo.findOneOrFail(testEntityPk)).thenResolve(entity);
+        const queryResult = await queryService.restoreOne(testEntityPk);
+        return expect(queryResult).toEqual(entity);
+      });
+
+      it('should fail if the entity is not found', async () => {
+        const entity = testEntities()[0];
+        const { testEntityPk } = entity;
+        const err = new Error('not found');
+        const { queryService, mockRepo } = createQueryService({ useSoftDelete: true });
+        when(mockRepo.restore(entity.testEntityPk)).thenResolve({ generatedMaps: [], raw: undefined, affected: 1 });
+        when(mockRepo.findOneOrFail(testEntityPk)).thenReject(err);
+        return expect(queryService.restoreOne(testEntityPk)).rejects.toThrowError(err);
+      });
+
+      it('should fail if the useSoftDelete is not enabled', async () => {
+        const entity = testEntities()[0];
+        const { testEntityPk } = entity;
+        const { queryService, mockRepo } = createQueryService();
+        when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
+        return expect(queryService.restoreOne(testEntityPk)).rejects.toThrowError(
+          'Restore not allowed for non soft deleted entity TestSoftDeleteEntity.',
+        );
+      });
+    });
+
+    describe('#restoreMany', () => {
+      it('should restore multiple entities', async () => {
+        const affected = 10;
+        const deleteMany: Filter<TestSoftDeleteEntity> = { stringType: { eq: 'foo' } };
+        const { queryService, mockQueryBuilder, mockRepo } = createQueryService<TestSoftDeleteEntity>({
+          useSoftDelete: true,
+        });
+        const deleteQueryBuilder: SoftDeleteQueryBuilder<TestSoftDeleteEntity> = mock(SoftDeleteQueryBuilder);
+        when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
+        when(mockQueryBuilder.softDelete(objectContaining({ filter: deleteMany }))).thenReturn(
+          instance(deleteQueryBuilder),
+        );
+        when(deleteQueryBuilder.restore()).thenReturn(instance(deleteQueryBuilder));
+        when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined, affected, generatedMaps: [] });
+        const queryResult = await queryService.restoreMany(deleteMany);
+        return expect(queryResult).toEqual({ updatedCount: affected });
+      });
+
+      it('should return 0 if affected is not returned', async () => {
+        const deleteMany: Filter<TestSoftDeleteEntity> = { stringType: { eq: 'foo' } };
+        const { queryService, mockQueryBuilder, mockRepo } = createQueryService<TestSoftDeleteEntity>({
+          useSoftDelete: true,
+        });
+        const deleteQueryBuilder: SoftDeleteQueryBuilder<TestSoftDeleteEntity> = mock(SoftDeleteQueryBuilder);
+        when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
+        when(mockQueryBuilder.softDelete(objectContaining({ filter: deleteMany }))).thenReturn(
+          instance(deleteQueryBuilder),
+        );
+        when(deleteQueryBuilder.restore()).thenReturn(instance(deleteQueryBuilder));
+        when(deleteQueryBuilder.execute()).thenResolve({ raw: undefined, generatedMaps: [] });
+        const queryResult = await queryService.restoreMany(deleteMany);
+        return expect(queryResult).toEqual({ updatedCount: 0 });
+      });
+
+      it('should fail if the useSoftDelete is not enabled', async () => {
+        const { queryService, mockRepo } = createQueryService();
+        when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
+        return expect(queryService.restoreMany({ stringType: { eq: 'foo' } })).rejects.toThrowError(
+          'Restore not allowed for non soft deleted entity TestSoftDeleteEntity.',
+        );
+      });
     });
   });
 });

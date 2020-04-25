@@ -7,6 +7,7 @@ import {
   UpdateQueryBuilder,
   WhereExpression,
 } from 'typeorm';
+import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 import { WhereBuilder } from './where.builder';
 
 /**
@@ -59,6 +60,15 @@ export class FilterQueryBuilder<Entity> {
    */
   delete(query: Query<Entity>): DeleteQueryBuilder<Entity> {
     return this.applyFilter(this.repo.createQueryBuilder().delete(), query.filter);
+  }
+
+  /**
+   * Create a `typeorm` DeleteQueryBuilder with a WHERE clause.
+   *
+   * @param query - the query to apply.
+   */
+  softDelete(query: Query<Entity>): SoftDeleteQueryBuilder<Entity> {
+    return this.applyFilter(this.repo.createQueryBuilder().softDelete(), query.filter);
   }
 
   /**
