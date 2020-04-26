@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/doug-martin/nestjs-query/compare/v0.8.9...v0.9.0) (2020-04-26)
+
+
+### Bug Fixes
+
+* **docs:** remove unused imports in example page ([a67ac24](https://github.com/doug-martin/nestjs-query/commit/a67ac24a141953dda0eac4912485e6f79022078a))
+
+
+### Features
+
+* **typeorm:** Add support for soft deletes ([2ab42fa](https://github.com/doug-martin/nestjs-query/commit/2ab42faee2802abae4d8496e2529b8eb23860ed4))
+
+
+
+
+
 ## [0.8.9](https://github.com/doug-martin/nestjs-query/compare/v0.8.8...v0.8.9) (2020-04-24)
 
 **Note:** Version bump only for package nestjs-query
