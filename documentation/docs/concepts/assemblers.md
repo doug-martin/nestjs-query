@@ -13,6 +13,37 @@ The only time you need to define an assembler is when the DTO and Entity are dif
 * Additional computed fields and you do not want to include the business logic in your DTO definition.
 * Different field names because of poorly named columns in the database or to make a DB change passive to the end user.
 
+## Why?
+
+Separation of concerns.
+
+### Resolvers 
+Your resolvers only concern is dealing with graphql and translating the request (a DTO) into something the service cares about. 
+
+The resolver should not care about how it is persisted. The underlying Entity **could** have additional fields that you do not want to expose in your API, or it may be persisted into multiple stores. 
+
+By separating the resolver from the persistence layer you can evolve your API separate from your database model. 
+
+### Services 
+
+The services concern are operating on a DTO, preventing the leaking of persistence details to the API. 
+ 
+ In `nestjs-query` services can be composed. In the case of assemblers information is translated using the assembler and delegated to an underlying service.  
+ 
+ This alleviates any awkwardness around passing in a DTO and receiving a different object type back. Instead, your service can use an assembler to alleviate these concerns.
+
+### Assemblers
+
+The assembler provides a single, testable, place to provide a translation between the DTO and entity, and vice versa.
+
+### Why not use the assembler in the resolver?
+
+The resolvers concern is translating graphql requests into the specified DTO. 
+
+The services concern is accepting and returning a DTO based contract. when using an assembler to translate between the DTO and underlying entities. 
+
+If you follow this pattern you **could** use the same service with other transports (rest, microservices, etc) as long as the request can be translated into a DTO. 
+
 ## ClassTransformerAssembler
 
 In most cases the [class-transformer](https://github.com/typestack/class-transformer) package will properly map back and forth. Because of this there is a `ClassTransformerAssembler` that leverages the `plainToClass` method.

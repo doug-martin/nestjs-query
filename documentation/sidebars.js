@@ -8,7 +8,16 @@
 module.exports = {
   docs: {
     Introduction: ['introduction/getting-started', 'introduction/install', 'introduction/example'],
-    Concepts: ['concepts/dtos', 'concepts/queries', 'concepts/services', 'concepts/assemblers'],
+    Concepts: [
+      'concepts/dtos',
+      'concepts/queries',
+      'concepts/services',
+      {
+        type: 'category',
+        label: 'Advanced',
+        items: ['concepts/assemblers'],
+      },
+    ],
     Typeorm: [
       'typeorm/getting-started',
       'typeorm/usage',
