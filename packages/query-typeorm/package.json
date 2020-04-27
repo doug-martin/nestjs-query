@@ -30,7 +30,7 @@
     "@nestjs/common": "7.0.9",
     "@nestjs/typeorm": "7.0.0",
     "class-transformer": "0.2.3",
-    "sqlite3": "4.1.1",
+    "sqlite3": "4.2.0",
     "ts-mockito": "2.5.0",
     "typeorm": "0.2.24",
     "typescript": "3.8.3"
