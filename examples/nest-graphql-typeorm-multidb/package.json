@@ -35,7 +35,7 @@
     "typeorm-seeding": "1.6.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "7.1.2",
+    "@nestjs/cli": "7.1.4",
     "@nestjs/schematics": "7.0.0",
     "@nestjs/testing": "7.0.9",
     "@types/express": "4.17.6",
