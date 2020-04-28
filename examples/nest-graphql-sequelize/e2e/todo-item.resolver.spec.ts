@@ -1,14 +1,14 @@
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
+import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
 import { AppModule } from '../src/app.module';
 import { config } from '../src/config';
 import { AUTH_HEADER_NAME } from '../src/constants';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
 
-describe('TodoItemResolver (typeorm - e2e)', () => {
+describe('TodoItemResolver (sequelize - e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -21,6 +21,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
       new ValidationPipe({
         transform: true,
         whitelist: true,
+        exceptionFactory: (errors) => new BadRequestException(errors),
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
         forbidUnknownValues: true,
@@ -28,10 +29,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
     );
 
     await app.init();
-    await refresh(app.get(Connection));
+    await refresh(app.get(Sequelize));
   });
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Sequelize)));
 
   describe('find one', () => {
     it(`should find a todo item by id`, () => {
@@ -107,7 +108,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           // @ts-ignore
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
+          edges.forEach((e) => expect(e.node.todoItemId).toBe(1));
         });
     });
 
@@ -570,8 +571,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.',
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field UpdateOneTodoItemInput.id of required type ID! was not provided.',
           );
         });
     });
@@ -674,8 +675,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemFilter!" was not provided.',
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field UpdateManyTodoItemsInput.filter of required type TodoItemFilter! was not provided.',
           );
         });
     });
@@ -748,7 +749,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .expect(200, {
           data: {
             deleteOneTodoItem: {
-              id: null,
+              id: '6',
               title: 'Update Test Todo',
               completed: true,
             },
@@ -776,7 +777,9 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field DeleteOneInput.id of required type ID! was not provided.',
+          );
         });
     });
   });
@@ -803,7 +806,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
         });
     });
-    it('should allow updating a todoItem', () => {
+    it('should allow deleting many todoItems', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
@@ -847,8 +850,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemFilter!" was not provided.',
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field DeleteManyTodoItemsInput.filter of required type TodoItemFilter! was not provided.',
           );
         });
     });
@@ -914,7 +917,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           // @ts-ignore
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
+          edges.forEach((e) => expect(e.node.todoItemId).toBe(1));
         });
     });
   });
