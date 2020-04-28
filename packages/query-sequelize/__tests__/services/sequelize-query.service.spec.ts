@@ -93,9 +93,11 @@ describe('SequelizeQueryService', (): void => {
         const query: Query<TestRelation> = { filter: { relationName: { eq: 'name' } } };
         const findOptions: FindOptions = {};
         const mockModel = mock(TestEntity);
+        const mockModelInstance = instance(mockModel);
         const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService<TestRelation>();
         // @ts-ignore
         when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        when(mockModelCtor.build(mockModelInstance)).thenReturn(mockModelInstance);
         when(mockRelationQueryBuilder.findOptions(query)).thenReturn(findOptions);
         when(mockModel.$get(relationName, findOptions)).thenResolve(relations);
         const queryResult = await queryService.queryRelations(TestRelation, relationName, instance(mockModel), query);
@@ -116,6 +118,7 @@ describe('SequelizeQueryService', (): void => {
         const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService();
         // @ts-ignore
         when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
         when(mockRelationQueryBuilder.findOptions(query)).thenReturn(findOptions);
         when(mockModel.$get(relationName, findOptions)).thenResolve(entityOneRelations);
         when(mockModel.$get(relationName, findOptions)).thenResolve(entityTwoRelations);
@@ -140,9 +143,9 @@ describe('SequelizeQueryService', (): void => {
         const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService();
         // @ts-ignore
         when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
         when(mockRelationQueryBuilder.findOptions(query)).thenReturn(findOptions);
-        when(mockModel.$get(relationName, findOptions)).thenResolve(entityOneRelations);
-        when(mockModel.$get(relationName, findOptions)).thenResolve([]);
+        when(mockModel.$get(relationName, findOptions)).thenResolve(entityOneRelations).thenResolve([]);
         const queryResult = await queryService.queryRelations(TestRelation, relationName, mockModelInstances, query);
         return expect(queryResult).toEqual(
           new Map([
@@ -161,21 +164,25 @@ describe('SequelizeQueryService', (): void => {
         const entity = testEntities()[0];
         const relation = testRelations(entity.testEntityPk)[0];
         const mockModel = mock(TestEntity);
+        const modelInstance = instance(mockModel);
         const { queryService, mockModelCtor } = createQueryService<TestRelation>();
         // @ts-ignore
         when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        when(mockModelCtor.build(modelInstance)).thenReturn(modelInstance);
         when(mockModel.$get(relationName)).thenResolve(relation);
-        const queryResult = await queryService.findRelation(TestRelation, relationName, instance(mockModel));
+        const queryResult = await queryService.findRelation(TestRelation, relationName, modelInstance);
         return expect(queryResult).toEqual(relation);
       });
 
       it('should return undefined select if no results are found.', async () => {
         const mockModel = mock(TestEntity);
+        const modelInstance = instance(mockModel);
         const { queryService, mockModelCtor } = createQueryService<TestRelation>();
         // @ts-ignore
         when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        when(mockModelCtor.build(modelInstance)).thenReturn(modelInstance);
         when(mockModel.$get(relationName)).thenResolve(null);
-        const queryResult = await queryService.findRelation(TestRelation, relationName, instance(mockModel));
+        const queryResult = await queryService.findRelation(TestRelation, relationName, modelInstance);
         return expect(queryResult).toBeUndefined();
       });
 
@@ -200,6 +207,7 @@ describe('SequelizeQueryService', (): void => {
         const { queryService, mockModelCtor } = createQueryService();
         // @ts-ignore
         when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
         when(mockModel.$get(relationName)).thenResolve(entityOneRelation).thenResolve(entityTwoRelation);
         const queryResult = await queryService.findRelation(TestRelation, relationName, mockModelInstances);
         return expect(queryResult).toEqual(
@@ -218,6 +226,7 @@ describe('SequelizeQueryService', (): void => {
         const { queryService, mockModelCtor } = createQueryService();
         // @ts-ignore
         when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
         when(mockModel.$get(relationName)).thenResolve(null).thenResolve(entityOneRelation);
         const queryResult = await queryService.findRelation(TestRelation, relationName, mockModelInstances);
         return expect(queryResult).toEqual(new Map([[mockModelInstances[0], entityOneRelation]]));
