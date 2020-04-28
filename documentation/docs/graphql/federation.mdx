@@ -10,6 +10,10 @@ These docs assume you have read
 * https://docs.nestjs.com/graphql/federation
 * https://www.apollographql.com/docs/apollo-server/federation/introduction/
 
+:::note
+These examples use `@nestjs-query/query-typeorm` the same concepts apply for `@nestjs-query/query-sequelize`
+:::
+
 ## References
 
 The simplest way to integrate with a federated graph is through references.
@@ -81,7 +85,7 @@ export class AppModule {}
 ```
 
 #### Extended Type
-In a separate service from the one defining the base type above, we can use Apollo Federation to extend that base type. 
+In a separate service from the one defining the base type above, we can use Apollo Federation to extend that base type.
 
 To do this with `nestjs-query` you must create a type that extends the base type contained in some other graphql service.
 

@@ -27,7 +27,9 @@ The `relations` option has two properties.
 * `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to `update` and `remove` endpoints.
 * `filters=[]` - An array of [filters](https://docs.nestjs.com/exception-filters) to add to `update` and `remove` endpoints.
 
-**NOTE** `guards`, `pipes`, `interceptors` and `filters` will not work by default with relation endpoints. See https://github.com/nestjs/graphql/issues/295#issuecomment-511191060
+:::note
+`guards`, `pipes`, `interceptors` and `filters` will not work by default with relation endpoints. See https://docs.nestjs.com/graphql/tooling#execute-enhancers-at-the-field-resolver-level
+:::
 
 ## Examples
 
