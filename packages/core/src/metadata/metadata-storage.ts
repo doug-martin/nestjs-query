@@ -1,6 +1,5 @@
-import { AssemblerDeserializer } from '../assemblers/assembler';
+import { Assembler, AssemblerSerializer, AssemblerDeserializer } from '../assemblers';
 import { Class } from '../common';
-import { Assembler, AssemblerSerializer } from '../assemblers';
 
 export interface AssemblerClasses<DTO, Entity> {
   DTOClass: Class<DTO>;
