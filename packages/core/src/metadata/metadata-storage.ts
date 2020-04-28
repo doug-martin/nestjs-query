@@ -1,10 +1,12 @@
+import { AssemblerDeserializer } from '../assemblers/assembler';
 import { Class } from '../common';
-import { Assembler } from '../assemblers';
+import { Assembler, AssemblerSerializer } from '../assemblers';
 
 export interface AssemblerClasses<DTO, Entity> {
   DTOClass: Class<DTO>;
   EntityClass: Class<Entity>;
 }
+
 /**
  * @internal
  */
@@ -13,9 +15,15 @@ export class CoreQueryMetadataStorage {
 
   private readonly assemblersToClasses: Map<Class<Assembler<unknown, unknown>>, AssemblerClasses<unknown, unknown>>;
 
+  private readonly assemblerSerializers: Map<Class<unknown>, AssemblerSerializer<unknown>>;
+
+  private readonly assemblerDeserializers: Map<Class<unknown>, AssemblerDeserializer<unknown>>;
+
   constructor() {
     this.assemblers = new Map();
     this.assemblersToClasses = new Map();
+    this.assemblerSerializers = new Map();
+    this.assemblerDeserializers = new Map();
   }
 
   getAssembler<DTO, Entity>(
@@ -53,6 +61,34 @@ export class CoreQueryMetadataStorage {
       assembler as Class<Assembler<unknown, unknown>>,
     );
     this.assemblersToClasses.set(assembler as Class<Assembler<unknown, unknown>>, { DTOClass, EntityClass });
+  }
+
+  getAssemblerSerializer<T>(TypeClass: Class<T>): AssemblerSerializer<T> | undefined {
+    return this.assemblerSerializers.get(TypeClass);
+  }
+
+  hasAssemblerSerializer<T>(TypeClass: Class<T>): boolean {
+    return this.assemblerSerializers.has(TypeClass);
+  }
+
+  addAssemblerSerializer<T>(TypeClass: Class<T>, serializer: AssemblerSerializer<T>): void {
+    this.assemblerSerializers.set(TypeClass, serializer as AssemblerSerializer<unknown>);
+  }
+
+  getAssemblerDeserializer<T>(TypeClass: Class<T>): AssemblerDeserializer<T> | undefined {
+    const deserializer = this.assemblerDeserializers.get(TypeClass);
+    if (deserializer) {
+      return deserializer as AssemblerDeserializer<T>;
+    }
+    return deserializer;
+  }
+
+  hasAssemblerDeserializer<T>(TypeClass: Class<T>): boolean {
+    return this.assemblerDeserializers.has(TypeClass);
+  }
+
+  addAssemblerDeserializer<T>(TypeClass: Class<T>, serializer: AssemblerDeserializer<T>): void {
+    this.assemblerDeserializers.set(TypeClass, serializer as AssemblerDeserializer<unknown>);
   }
 
   clear(): void {

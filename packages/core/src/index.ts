@@ -8,5 +8,7 @@ export {
   DefaultAssembler,
   AbstractAssembler,
   Assembler,
+  AssemblerSerializer,
+  AssemblerDeserializer,
   AssemblerFactory,
 } from './assemblers';

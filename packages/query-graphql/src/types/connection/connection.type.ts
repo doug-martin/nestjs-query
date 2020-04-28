@@ -1,7 +1,6 @@
 import { offsetToCursor } from 'graphql-relay';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Class } from '@nestjs-query/core';
-import { plainToClass } from 'class-transformer';
 import { CursorPagingType } from '../query';
 import { PageInfoType } from './page-info.type';
 import { EdgeType } from './edge.type';
@@ -45,14 +44,11 @@ export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionTyp
       const baseOffset = pagingInfo.offset || 0;
       const pageInfo: PageInfoType = this.createPageInfo(dtos, pagingInfo);
       const edges: EdgeType<DTO>[] = dtos.map((dto, i) => this.createEdge(dto, i, baseOffset));
-      return plainToClass(AbstractConnection, { pageInfo, edges });
+      return new AbstractConnection(pageInfo, edges);
     }
 
     static empty(): AbstractConnection {
-      return plainToClass(AbstractConnection, {
-        pageInfo: { hasNextPage: false, hasPreviousPage: false },
-        edges: [],
-      });
+      return new AbstractConnection();
     }
 
     private static createPageInfo(dtos: DTO[], pagingInfo: CursorPagingType): PageInfoType {
@@ -64,11 +60,16 @@ export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionTyp
       const endCursor = offsetToCursor(baseOffset + length - 1);
       const hasNextPage = isForwardPaging ? length >= (pagingInfo.limit || 0) : false;
       const hasPreviousPage = isForwardPaging ? false : baseOffset > 0;
-      return plainToClass(PIT, { hasNextPage, hasPreviousPage, startCursor, endCursor });
+      return new PIT(hasNextPage, hasPreviousPage, startCursor, endCursor);
     }
 
     private static createEdge(dto: DTO, index: number, initialOffset: number): EdgeType<DTO> {
-      return plainToClass(E, { node: dto, cursor: offsetToCursor(initialOffset + index) });
+      return new E(dto, offsetToCursor(initialOffset + index));
+    }
+
+    constructor(pageInfo?: PageInfoType, edges?: EdgeType<DTO>[]) {
+      this.pageInfo = pageInfo ?? { hasNextPage: false, hasPreviousPage: false };
+      this.edges = edges ?? [];
     }
 
     @Field(() => PIT, { description: 'Paging information' })

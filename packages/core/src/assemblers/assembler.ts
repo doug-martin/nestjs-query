@@ -72,3 +72,26 @@ export function Assembler<DTO, Entity>(DTOClass: Class<DTO>, EntityClass: Class<
     return cls;
   };
 }
+
+export type AssemblerSerializer<T> = (instance: T) => object;
+export type AssemblerDeserializer<T> = (obj: object) => T;
+
+export function AssemblerSerializer<T>(serializer: AssemblerSerializer<T>) {
+  return <Cls extends Class<T>>(cls: Cls): Cls | void => {
+    if (getCoreMetadataStorage().hasAssemblerSerializer(cls)) {
+      throw new Error(`Assembler Serializer already registered for ${cls.name}`);
+    }
+    getCoreMetadataStorage().addAssemblerSerializer(cls, serializer);
+    return cls;
+  };
+}
+
+export function AssemblerDeserializer<T>(deserializer: AssemblerDeserializer<T>) {
+  return <Cls extends Class<T>>(cls: Cls): Cls | void => {
+    if (getCoreMetadataStorage().hasAssemblerDeserializer(cls)) {
+      throw new Error(`Assembler Deserializer already registered for ${cls.name}`);
+    }
+    getCoreMetadataStorage().addAssemblerDeserializer(cls, deserializer);
+    return cls;
+  };
+}
