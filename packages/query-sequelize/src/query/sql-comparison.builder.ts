@@ -20,12 +20,12 @@ export class SQLComparisionBuilder<Entity> {
     lte: Op.lte,
     like: Op.like,
     in: Op.in,
-    notIn: Op.notIn,
+    notin: Op.notIn,
     notlike: Op.notLike,
     ilike: Op.iLike,
     notilike: Op.notILike,
     is: Op.is,
-    isNot: Op.not,
+    isnot: Op.not,
   };
 
   constructor(readonly comparisonMap: Record<string, symbol> = SQLComparisionBuilder.DEFAULT_COMPARISON_MAP) {}
@@ -41,9 +41,8 @@ export class SQLComparisionBuilder<Entity> {
     field: F,
     cmp: FilterComparisonOperators<Entity[F]>,
     val: EntityComparisonField<Entity, F>,
-    alias?: string,
   ): WhereOptions {
-    const col = alias ? `${alias}.${field}` : `${field}`;
+    const col = `${field}`;
     const normalizedCmp = (cmp as string).toLowerCase();
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)

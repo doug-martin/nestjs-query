@@ -51,9 +51,12 @@ export abstract class RelationQueryService<Entity extends Model> {
       return this.batchQueryRelations(RelationClass, relationName, dto, query);
     }
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationQueryBuilder = this.getRelationQueryBuilder<Relation>();
-    const relations = await dto.$get(relationName as keyof Entity, relationQueryBuilder.findOptions(query));
-    return assembler.convertToDTOs((relations as unknown) as Model<unknown, unknown>[]);
+    const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
+    const relations = await dto.$get(
+      relationName as keyof Entity,
+      relationQueryBuilder.findOptions(assembler.convertQuery(query)),
+    );
+    return assembler.convertToDTOs((relations as unknown) as Model[]);
   }
 
   /**
@@ -91,7 +94,10 @@ export abstract class RelationQueryService<Entity extends Model> {
     }
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relation = await dto.$get(relationName as keyof Entity);
-    return assembler.convertToDTO((relation as unknown) as Model<unknown, unknown>);
+    if (!relation) {
+      return undefined;
+    }
+    return assembler.convertToDTO((relation as unknown) as Model);
   }
 
   /**
@@ -173,10 +179,13 @@ export abstract class RelationQueryService<Entity extends Model> {
     entities: Entity[],
     query: Query<Relation>,
   ): Promise<Map<Entity, Relation[]>> {
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
+    const findOptions = relationQueryBuilder.findOptions(assembler.convertQuery(query));
     return entities.reduce(async (mapPromise, e) => {
       const map = await mapPromise;
-      const relations = await this.queryRelations(RelationClass, relationName, e, query);
-      map.set(e, relations);
+      const relations = await e.$get(relationName as keyof Entity, findOptions);
+      map.set(e, assembler.convertToDTOs((relations as unknown) as Model[]));
       return map;
     }, Promise.resolve(new Map<Entity, Relation[]>()));
   }
@@ -193,17 +202,15 @@ export abstract class RelationQueryService<Entity extends Model> {
     relationName: string,
     dtos: Entity[],
   ): Promise<Map<Entity, Relation | undefined>> {
-    const batchResults = await Promise.all(
-      dtos.map(async (dto) => {
-        const relation = await this.findRelation(RelationClass, relationName, dto);
-        return { dto, relation };
-      }),
-    );
-    const results = new Map<Entity, Relation | undefined>();
-    batchResults.forEach(({ dto, relation }) => {
-      results.set(dto, relation);
-    });
-    return results;
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    return dtos.reduce(async (mapPromise, e) => {
+      const map = await mapPromise;
+      const relation = await e.$get(relationName as keyof Entity);
+      if (relation) {
+        map.set(e, assembler.convertToDTO((relation as unknown) as Model));
+      }
+      return map;
+    }, Promise.resolve(new Map<Entity, Relation | undefined>()));
   }
 
   private getRelationEntity(relationName: string): ModelCtor {

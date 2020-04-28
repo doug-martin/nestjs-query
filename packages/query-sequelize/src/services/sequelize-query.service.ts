@@ -56,7 +56,11 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
    * @param id - The id of the record to find.
    */
   async findById(id: string | number): Promise<Entity | undefined> {
-    return this.model.findByPk<Entity>(id) as Promise<Entity | undefined>;
+    const model = await this.model.findByPk<Entity>(id);
+    if (!model) {
+      return undefined;
+    }
+    return model;
   }
 
   /**
@@ -138,7 +142,7 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
       this.getChangedValues(update),
       this.filterQueryBuilder.updateOptions({ filter }),
     );
-    return { updatedCount: count || 0 };
+    return { updatedCount: count };
   }
 
   /**

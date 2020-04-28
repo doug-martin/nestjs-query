@@ -91,14 +91,13 @@ export class FilterQueryBuilder<Entity> {
    *
    * @param qb - the `sequelize` QueryBuilder.
    * @param filter - the filter.
-   * @param alias - optional alias to use to qualify an identifier
    */
-  applyFilter<Where extends Filterable>(filterable: Where, filter?: Filter<Entity>, alias?: string): Where {
+  applyFilter<Where extends Filterable>(filterable: Where, filter?: Filter<Entity>): Where {
     if (!filter) {
       return filterable;
     }
     // eslint-disable-next-line no-param-reassign
-    filterable.where = this.whereBuilder.build(filter, alias);
+    filterable.where = this.whereBuilder.build(filter);
     return filterable;
   }
 
@@ -106,16 +105,15 @@ export class FilterQueryBuilder<Entity> {
    * Applies the ORDER BY clause to a `sequelize` QueryBuilder.
    * @param qb - the `sequelize` QueryBuilder.
    * @param sorts - an array of SortFields to create the ORDER BY clause.
-   * @param alias - optional alias to use to qualify an identifier
    */
-  applySorting<T extends Sortable<Entity>>(qb: T, sorts?: SortField<Entity>[], alias?: string): T {
+  applySorting<T extends Sortable<Entity>>(qb: T, sorts?: SortField<Entity>[]): T {
     if (!sorts) {
       return qb;
     }
     // eslint-disable-next-line no-param-reassign
     qb.order = sorts.map(
       ({ field, direction, nulls }): OrderItem => {
-        const col = alias ? `${alias}.${field}` : `${field}`;
+        const col = `${field}`;
         const dir: string[] = [direction];
         if (nulls) {
           dir.push(nulls);
