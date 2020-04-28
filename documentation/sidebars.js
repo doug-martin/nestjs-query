@@ -27,6 +27,7 @@ module.exports = {
         items: ['typeorm/advanced/multiple-databases', 'typeorm/advanced/soft-delete'],
       },
     ],
+    Sequelize: ['sequelize/getting-started', 'sequelize/usage'],
     GraphQL: [
       'graphql/getting-started',
       'graphql/dtos',

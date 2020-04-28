@@ -230,7 +230,11 @@ This is a pretty basic example but the same pattern should apply to more complex
 
 To use your assembler you need to create an `AssemblerQueryService` that will wrap a `QueryService` to translate back and forth.
 
-This example wraps a `TypeOrmQueryService` to assemble to `UserDTO` and `UserEntity`
+This example wraps a `TypeOrmQueryService` to assemble to `UserDTO` and `UserEntity`.
+
+:::note
+This example uses typeorm the same pattern applies when using sequelize.
+:::
 
 ```ts
 import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
