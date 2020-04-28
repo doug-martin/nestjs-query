@@ -1,24 +1,26 @@
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
 import { Connection } from 'typeorm';
+import { Sequelize } from 'sequelize-typescript';
 import { AppModule } from '../src/app.module';
 import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
+import { edgeNodes, pageInfoField, subTaskFields, todoItemFields } from './graphql-fragments';
 
-describe('TagResolver (typeorm - e2e)', () => {
+describe('SubTaskResolver (sequelize - e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
+    const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleRef.createNestApplication();
+    app = module.createNestApplication();
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
         whitelist: true,
+        exceptionFactory: (errors) => new BadRequestException(errors),
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
         forbidUnknownValues: true,
@@ -26,81 +28,160 @@ describe('TagResolver (typeorm - e2e)', () => {
     );
 
     await app.init();
-    await refresh(app.get(Connection));
+    await refresh(app.get(Sequelize));
   });
 
   afterAll(() => refresh(app.get(Connection)));
 
-  const tags = [
-    { id: '1', name: 'Urgent' },
-    { id: '2', name: 'Home' },
-    { id: '3', name: 'Work' },
-    { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
+  const subTasks = [
+    { id: '1', title: 'Create Nest App - Sub Task 1', completed: true, description: null, todoItemId: 1 },
+    { id: '2', title: 'Create Nest App - Sub Task 2', completed: false, description: null, todoItemId: 1 },
+    { id: '3', title: 'Create Nest App - Sub Task 3', completed: false, description: null, todoItemId: 1 },
+    { id: '4', title: 'Create Entity - Sub Task 1', completed: true, description: null, todoItemId: 2 },
+    { id: '5', title: 'Create Entity - Sub Task 2', completed: false, description: null, todoItemId: 2 },
+    { id: '6', title: 'Create Entity - Sub Task 3', completed: false, description: null, todoItemId: 2 },
+    {
+      id: '7',
+      title: 'Create Entity Service - Sub Task 1',
+      completed: true,
+      description: null,
+      todoItemId: 3,
+    },
+    {
+      id: '8',
+      title: 'Create Entity Service - Sub Task 2',
+      completed: false,
+      description: null,
+      todoItemId: 3,
+    },
+    {
+      id: '9',
+      title: 'Create Entity Service - Sub Task 3',
+      completed: false,
+      description: null,
+      todoItemId: 3,
+    },
+    {
+      id: '10',
+      title: 'Add Todo Item Resolver - Sub Task 1',
+      completed: true,
+      description: null,
+      todoItemId: 4,
+    },
+    {
+      completed: false,
+      description: null,
+      id: '11',
+      title: 'Add Todo Item Resolver - Sub Task 2',
+      todoItemId: 4,
+    },
+    {
+      completed: false,
+      description: null,
+      id: '12',
+      title: 'Add Todo Item Resolver - Sub Task 3',
+      todoItemId: 4,
+    },
+    {
+      completed: true,
+      description: null,
+      id: '13',
+      title: 'How to create item With Sub Tasks - Sub Task 1',
+      todoItemId: 5,
+    },
+    {
+      completed: false,
+      description: null,
+      id: '14',
+      title: 'How to create item With Sub Tasks - Sub Task 2',
+      todoItemId: 5,
+    },
+    {
+      completed: false,
+      description: null,
+      id: '15',
+      title: 'How to create item With Sub Tasks - Sub Task 3',
+      todoItemId: 5,
+    },
   ];
 
   describe('find one', () => {
-    it(`should find a tag by id`, () => {
+    it(`should a sub task by id`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `{
-          tag(id: 1) {
-            ${tagFields}
+          subTask(id: 1) {
+            ${subTaskFields}
           }
         }`,
         })
-        .expect(200, { data: { tag: tags[0] } });
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              subTask: {
+                id: '1',
+                title: 'Create Nest App - Sub Task 1',
+                completed: true,
+                description: null,
+                todoItemId: 1,
+              },
+            },
+          });
+        });
     });
 
-    it(`should return null if the tag is not found`, () => {
+    it(`should return null if the sub task is not found`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `{
-          tag(id: 100) {
-            ${tagFields}
+          subTask(id: 100) {
+            ${subTaskFields}
           }
         }`,
         })
         .expect(200, {
           data: {
-            tag: null,
+            subTask: null,
           },
         });
     });
 
-    it(`should return todoItems as a connection`, () => {
+    it(`should return a todo item`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `{
-          tag(id: 1) {
-            todoItems(sorting: [{ field: id, direction: ASC }]) {
-              ${pageInfoField}
-              ${edgeNodes('id')}
+          subTask(id: 1) {
+            todoItem {
+              ${todoItemFields}
             }
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tag.todoItems;
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          expect(body).toEqual({
+            data: {
+              subTask: {
+                todoItem: {
+                  id: '1',
+                  title: 'Create Nest App',
+                  completed: true,
+                  description: null,
+                  age: expect.any(Number),
+                },
+              },
+            },
           });
-          expect(edges).toHaveLength(2);
-          // @ts-ignore
-          expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
         });
     });
   });
@@ -113,24 +194,24 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          tags {
+          subTasks {
             ${pageInfoField}
-            ${edgeNodes(tagFields)}
+            ${edgeNodes(subTaskFields)}
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo } = body.data.subTasks;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
-            hasNextPage: false,
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
+            hasNextPage: true,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          expect(edges).toHaveLength(5);
+          expect(edges).toHaveLength(10);
           // @ts-ignore
-          expect(edges.map((e) => e.node)).toEqual(tags);
+          expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 10));
         });
     });
 
@@ -141,15 +222,15 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          tags(filter: { id: { in: [1, 2, 3] } }) {
+          subTasks(filter: { id: { in: [1, 2, 3] } }) {
             ${pageInfoField}
-            ${edgeNodes(tagFields)}
+            ${edgeNodes(subTaskFields)}
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo } = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
@@ -158,7 +239,7 @@ describe('TagResolver (typeorm - e2e)', () => {
           });
           expect(edges).toHaveLength(3);
           // @ts-ignore
-          expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
+          expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 3));
         });
     });
 
@@ -169,24 +250,24 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          tags(sorting: [{field: id, direction: DESC}]) {
+          subTasks(sorting: [{field: id, direction: DESC}]) {
             ${pageInfoField}
-            ${edgeNodes(tagFields)}
+            ${edgeNodes(subTaskFields)}
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo } = body.data.subTasks;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
-            hasNextPage: false,
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
+            hasNextPage: true,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          expect(edges).toHaveLength(5);
+          expect(edges).toHaveLength(10);
           // @ts-ignore
-          expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
+          expect(edges.map((e) => e.node)).toEqual(subTasks.slice().reverse().slice(0, 10));
         });
     });
 
@@ -198,15 +279,15 @@ describe('TagResolver (typeorm - e2e)', () => {
             operationName: null,
             variables: {},
             query: `{
-          tags(paging: {first: 2}) {
+          subTasks(paging: {first: 2}) {
             ${pageInfoField}
-            ${edgeNodes(tagFields)}
+            ${edgeNodes(subTaskFields)}
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.tags;
+            const { edges, pageInfo } = body.data.subTasks;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -215,7 +296,7 @@ describe('TagResolver (typeorm - e2e)', () => {
             });
             expect(edges).toHaveLength(2);
             // @ts-ignore
-            expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
+            expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 2));
           });
       });
 
@@ -226,15 +307,15 @@ describe('TagResolver (typeorm - e2e)', () => {
             operationName: null,
             variables: {},
             query: `{
-          tags(paging: {first: 2, after: "YXJyYXljb25uZWN0aW9uOjE="}) {
+          subTasks(paging: {first: 2, after: "YXJyYXljb25uZWN0aW9uOjE="}) {
             ${pageInfoField}
-            ${edgeNodes(tagFields)}
+            ${edgeNodes(subTaskFields)}
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.tags;
+            const { edges, pageInfo } = body.data.subTasks;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
@@ -243,140 +324,146 @@ describe('TagResolver (typeorm - e2e)', () => {
             });
             expect(edges).toHaveLength(2);
             // @ts-ignore
-            expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
+            expect(edges.map((e) => e.node)).toEqual(subTasks.slice(2, 4));
           });
       });
     });
   });
 
   describe('create one', () => {
-    it('should allow creating a tag', () => {
+    it('should allow creating a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            createOneTag(
+            createOneSubTask(
               input: {
-                tag: { name: "Test Tag" }
+                subTask: { title: "Test SubTask", completed: false, todoItemId: "1" }
               }
             ) {
-              ${tagFields}
+              ${subTaskFields}
             }
         }`,
         })
         .expect(200, {
           data: {
-            createOneTag: {
-              id: '6',
-              name: 'Test Tag',
+            createOneSubTask: {
+              id: '16',
+              title: 'Test SubTask',
+              description: null,
+              completed: false,
+              todoItemId: 1,
             },
           },
         });
     });
 
-    it('should validate a tag', () => {
+    it('should validate a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            createOneTag(
+            createOneSubTask(
               input: {
-                tag: { name: "" }
+                subTask: { title: "", completed: false, todoItemId: "1" }
               }
             ) {
-              ${tagFields}
+              ${subTaskFields}
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
+          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
         });
     });
   });
 
   describe('create many', () => {
-    it('should allow creating a tag', () => {
+    it('should allow creating a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            createManyTags(
+            createManySubTasks(
               input: {
-                tags: [
-                  { name: "Create Many Tag - 1" },
-                  { name: "Create Many Tag - 2" }
+                subTasks: [
+                  { title: "Test Create Many SubTask - 1", completed: false, todoItemId: "2" },
+                  { title: "Test Create Many SubTask - 2", completed: true, todoItemId: "2" },
                 ]
               }
             ) {
-              ${tagFields}
+              ${subTaskFields}
             }
         }`,
         })
         .expect(200, {
           data: {
-            createManyTags: [
-              { id: '7', name: 'Create Many Tag - 1' },
-              { id: '8', name: 'Create Many Tag - 2' },
+            createManySubTasks: [
+              { id: '17', title: 'Test Create Many SubTask - 1', description: null, completed: false, todoItemId: 2 },
+              { id: '18', title: 'Test Create Many SubTask - 2', description: null, completed: true, todoItemId: 2 },
             ],
           },
         });
     });
 
-    it('should validate a tag', () => {
+    it('should validate a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            createManyTags(
+            createManySubTasks(
               input: {
-                tags: [{ name: "" }]
+                subTasks: [{ title: "", completed: false, todoItemId: "2" }]
               }
             ) {
-              ${tagFields}
+              ${subTaskFields}
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
+          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
         });
     });
   });
 
   describe('update one', () => {
-    it('should allow updating a tag', () => {
+    it('should allow updating a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            updateOneTag(
+            updateOneSubTask(
               input: {
-                id: "6",
-                update: { name: "Update Test Tag" }
+                id: "16",
+                update: { title: "Update Test Sub Task", completed: true }
               }
             ) {
-              ${tagFields}
+              ${subTaskFields}
             }
         }`,
         })
         .expect(200, {
           data: {
-            updateOneTag: {
-              id: '6',
-              name: 'Update Test Tag',
+            updateOneSubTask: {
+              id: '16',
+              title: 'Update Test Sub Task',
+              description: null,
+              completed: true,
+              todoItemId: 1,
             },
           },
         });
@@ -389,19 +476,23 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            updateOneTag(
+            updateOneSubTask(
               input: {
-                update: { name: "Update Test Tag" }
+                update: { title: "Update Test Sub Task" }
               }
             ) {
-              ${tagFields}
+              id
+              title
+              completed
             }
         }`,
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "ID!" was not provided.');
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field UpdateOneSubTaskInput.id of required type ID! was not provided.',
+          );
         });
     });
 
@@ -412,36 +503,38 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            updateOneTag(
+            updateOneSubTask(
               input: {
-                id: "6",
-                update: { name: "" }
+                id: "16",
+                update: { title: "" }
               }
             ) {
-              ${tagFields}
+              id
+              title
+              completed
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
+          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
         });
     });
   });
 
   describe('update many', () => {
-    it('should allow updating a tag', () => {
+    it('should allow updating a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            updateManyTags(
+            updateManySubTasks(
               input: {
-                filter: {id: { in: ["7", "8"]} },
-                update: { name: "Update Many Tag" }
+                filter: {id: { in: ["17", "18"]} },
+                update: { title: "Update Many Test", completed: true }
               }
             ) {
               updatedCount
@@ -450,7 +543,7 @@ describe('TagResolver (typeorm - e2e)', () => {
         })
         .expect(200, {
           data: {
-            updateManyTags: {
+            updateManySubTasks: {
               updatedCount: 2,
             },
           },
@@ -464,9 +557,9 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            updateManyTags(
+            updateManySubTasks(
               input: {
-                update: { name: "Update Many Tag" }
+                update: { title: "Update Many Test", completed: true }
               }
             ) {
               updatedCount
@@ -476,8 +569,8 @@ describe('TagResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagFilter!" was not provided.',
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field UpdateManySubTasksInput.filter of required type SubTaskFilter! was not provided.',
           );
         });
     });
@@ -489,10 +582,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            updateManyTags(
+            updateManySubTasks(
               input: {
                 filter: { },
-                update: { name: "Update Many Tag" }
+                update: { title: "Update Many Test", completed: true }
               }
             ) {
               updatedCount
@@ -508,25 +601,28 @@ describe('TagResolver (typeorm - e2e)', () => {
   });
 
   describe('delete one', () => {
-    it('should allow deleting a tag', () => {
+    it('should allow deleting a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteOneTag(
-              input: { id: "6" }
+            deleteOneSubTask(
+              input: { id: "16" }
             ) {
-              ${tagFields}
+              ${subTaskFields}
             }
         }`,
         })
         .expect(200, {
           data: {
-            deleteOneTag: {
-              id: null,
-              name: 'Update Test Tag',
+            deleteOneSubTask: {
+              id: '16',
+              title: 'Update Test Sub Task',
+              completed: true,
+              description: null,
+              todoItemId: 1,
             },
           },
         });
@@ -539,32 +635,34 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteOneTag(
+            deleteOneSubTask(
               input: { }
             ) {
-              ${tagFields}
+              ${subTaskFields}
             }
         }`,
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field DeleteOneInput.id of required type ID! was not provided.',
+          );
         });
     });
   });
 
   describe('delete many', () => {
-    it('should allow updating a tag', () => {
+    it('should allow updating a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteManyTags(
+            deleteManySubTasks(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: ["17", "18"]} },
               }
             ) {
               deletedCount
@@ -573,7 +671,7 @@ describe('TagResolver (typeorm - e2e)', () => {
         })
         .expect(200, {
           data: {
-            deleteManyTags: {
+            deleteManySubTasks: {
               deletedCount: 2,
             },
           },
@@ -587,7 +685,7 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteManyTags(
+            deleteManySubTasks(
               input: { }
             ) {
               deletedCount
@@ -597,8 +695,8 @@ describe('TagResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagFilter!" was not provided.',
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field DeleteManySubTasksInput.filter of required type SubTaskFilter! was not provided.',
           );
         });
     });
@@ -610,7 +708,7 @@ describe('TagResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteManyTags(
+            deleteManySubTasks(
               input: {
                 filter: { },
               }
@@ -627,86 +725,40 @@ describe('TagResolver (typeorm - e2e)', () => {
     });
   });
 
-  describe('addTodoItemsToTag', () => {
-    it('allow adding subTasks to a tag', () => {
+  describe('setTodoItemOnSubTask', () => {
+    it('should set a the todoItem on a subtask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            addTodoItemsToTag(
-              input: {
-                id: 1,
-                relationIds: ["3", "4", "5"]
-              }
-            ) {
-              ${tagFields}
-              todoItems {
-                ${pageInfoField}
-                ${edgeNodes(todoItemFields)}
-              }
+          setTodoItemOnSubTask(input: { id: "1", relationId: "2" }) {
+            id
+            title
+            todoItem {
+              ${todoItemFields}
             }
+          }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.addTodoItemsToTag.todoItems;
-          expect(body.data.addTodoItemsToTag.id).toBe('1');
-          expect(edges).toHaveLength(5);
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          expect(body).toEqual({
+            data: {
+              setTodoItemOnSubTask: {
+                id: '1',
+                title: 'Create Nest App - Sub Task 1',
+                todoItem: {
+                  id: '2',
+                  title: 'Create Entity',
+                  completed: false,
+                  description: null,
+                  age: expect.any(Number),
+                },
+              },
+            },
           });
-          // @ts-ignore
-          expect(edges.map((e) => e.node.title)).toEqual([
-            'Create Nest App',
-            'Create Entity',
-            'Create Entity Service',
-            'Add Todo Item Resolver',
-            'How to create item With Sub Tasks',
-          ]);
-        });
-    });
-  });
-
-  describe('removeTodoItemsFromTag', () => {
-    it('allow removing todoItems from a tag', () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `mutation {
-            removeTodoItemsFromTag(
-              input: {
-                id: 1,
-                relationIds: ["3", "4", "5"]
-              }
-            ) {
-              ${tagFields}
-              todoItems {
-                ${pageInfoField}
-                ${edgeNodes(todoItemFields)}
-              }
-            }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const { edges, pageInfo } = body.data.removeTodoItemsFromTag.todoItems;
-          expect(body.data.removeTodoItemsFromTag.id).toBe('1');
-          expect(edges).toHaveLength(2);
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          // @ts-ignore
-          expect(edges.map((e) => e.node.title)).toEqual(['Create Nest App', 'Create Entity']);
         });
     });
   });

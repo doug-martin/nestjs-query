@@ -1,24 +1,25 @@
 import { Test } from '@nestjs/testing';
+import { Sequelize } from 'sequelize';
 import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
+import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
 
-describe('TagResolver (typeorm - e2e)', () => {
+describe('TagResolver (sequelize - e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
+    const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleRef.createNestApplication();
+    app = module.createNestApplication();
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
         whitelist: true,
+        exceptionFactory: (errors) => new BadRequestException(errors),
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
         forbidUnknownValues: true,
@@ -26,10 +27,10 @@ describe('TagResolver (typeorm - e2e)', () => {
     );
 
     await app.init();
-    await refresh(app.get(Connection));
+    await refresh(app.get(Sequelize));
   });
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Sequelize)));
 
   const tags = [
     { id: '1', name: 'Urgent' },
@@ -401,7 +402,9 @@ describe('TagResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "ID!" was not provided.');
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field UpdateOneTagInput.id of required type ID! was not provided.',
+          );
         });
     });
 
@@ -476,8 +479,8 @@ describe('TagResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagFilter!" was not provided.',
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field UpdateManyTagsInput.filter of required type TagFilter! was not provided.',
           );
         });
     });
@@ -525,7 +528,7 @@ describe('TagResolver (typeorm - e2e)', () => {
         .expect(200, {
           data: {
             deleteOneTag: {
-              id: null,
+              id: '6',
               name: 'Update Test Tag',
             },
           },
@@ -549,7 +552,9 @@ describe('TagResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field DeleteOneInput.id of required type ID! was not provided.',
+          );
         });
     });
   });
@@ -597,8 +602,8 @@ describe('TagResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagFilter!" was not provided.',
+          expect(JSON.stringify(body.errors[0])).toContain(
+            'Field DeleteManyTagsInput.filter of required type TagFilter! was not provided.',
           );
         });
     });

@@ -6,7 +6,7 @@ import { AppModule } from '../src/app.module';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, subTaskFields, todoItemFields } from './graphql-fragments';
 
-describe('SubTaskResolver (e2e)', () => {
+describe('SubTaskResolver (typeorm - e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
