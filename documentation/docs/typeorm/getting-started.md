@@ -12,4 +12,4 @@ This package is built using [typeorm](https://typeorm.io/#/) and [@nestjs/typeor
 
 ## Docs
 
-* [TypeOrmQueryService](./services) - Documentation about the `TypeOrmQueryService` and its usage.
+* [TypeOrmQueryService](./usage) - Documentation about the `TypeOrmQueryService` and its usage.
