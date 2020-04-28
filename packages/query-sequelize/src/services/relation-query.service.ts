@@ -52,7 +52,7 @@ export abstract class RelationQueryService<Entity extends Model> {
     }
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
-    const relations = await dto.$get(
+    const relations = await this.ensureIsEntity(dto).$get(
       relationName as keyof Entity,
       relationQueryBuilder.findOptions(assembler.convertQuery(query)),
     );
@@ -93,7 +93,7 @@ export abstract class RelationQueryService<Entity extends Model> {
       return this.batchFindRelations(RelationClass, relationName, dto);
     }
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relation = await dto.$get(relationName as keyof Entity);
+    const relation = await this.ensureIsEntity(dto).$get(relationName as keyof Entity);
     if (!relation) {
       return undefined;
     }
@@ -184,7 +184,7 @@ export abstract class RelationQueryService<Entity extends Model> {
     const findOptions = relationQueryBuilder.findOptions(assembler.convertQuery(query));
     return entities.reduce(async (mapPromise, e) => {
       const map = await mapPromise;
-      const relations = await e.$get(relationName as keyof Entity, findOptions);
+      const relations = await this.ensureIsEntity(e).$get(relationName as keyof Entity, findOptions);
       map.set(e, assembler.convertToDTOs((relations as unknown) as Model[]));
       return map;
     }, Promise.resolve(new Map<Entity, Relation[]>()));
@@ -205,12 +205,19 @@ export abstract class RelationQueryService<Entity extends Model> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     return dtos.reduce(async (mapPromise, e) => {
       const map = await mapPromise;
-      const relation = await e.$get(relationName as keyof Entity);
+      const relation = await this.ensureIsEntity(e).$get(relationName as keyof Entity);
       if (relation) {
         map.set(e, assembler.convertToDTO((relation as unknown) as Model));
       }
       return map;
     }, Promise.resolve(new Map<Entity, Relation | undefined>()));
+  }
+
+  private ensureIsEntity(e: Entity): Entity {
+    if (!(e instanceof this.model)) {
+      return this.model.build(e) as Entity;
+    }
+    return e;
   }
 
   private getRelationEntity(relationName: string): ModelCtor {
