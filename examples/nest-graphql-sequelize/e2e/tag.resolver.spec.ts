@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { Sequelize } from 'sequelize';
 import request from 'supertest';
-import { INestApplication, ValidationPipe, BadRequestException } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
@@ -19,7 +19,6 @@ describe('TagResolver (sequelize - e2e)', () => {
       new ValidationPipe({
         transform: true,
         whitelist: true,
-        exceptionFactory: (errors) => new BadRequestException(errors),
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
         forbidUnknownValues: true,
@@ -402,9 +401,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field UpdateOneTagInput.id of required type ID! was not provided.',
-          );
+          expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "ID!" was not provided.');
         });
     });
 
@@ -479,8 +476,8 @@ describe('TagResolver (sequelize - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field UpdateManyTagsInput.filter of required type TagFilter! was not provided.',
+          expect(body.errors[0].message).toBe(
+            'Field "UpdateManyTagsInput.filter" of required type "TagFilter!" was not provided.',
           );
         });
     });
@@ -552,9 +549,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field DeleteOneInput.id of required type ID! was not provided.',
-          );
+          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
         });
     });
   });
@@ -602,8 +597,8 @@ describe('TagResolver (sequelize - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain(
-            'Field DeleteManyTagsInput.filter of required type TagFilter! was not provided.',
+          expect(body.errors[0].message).toBe(
+            'Field "DeleteManyTagsInput.filter" of required type "TagFilter!" was not provided.',
           );
         });
     });
