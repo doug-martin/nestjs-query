@@ -12,4 +12,4 @@ This package is built using [sequelize](https://sequelize.org/) and [@nestjs/seq
 
 ## Docs
 
-* [SequelizeQueryService](./services) - Documentation about the `SequelizeQueryService` and its usage.
+* [SequelizeQueryService](./usage) - Documentation about the `SequelizeQueryService` and its usage.
