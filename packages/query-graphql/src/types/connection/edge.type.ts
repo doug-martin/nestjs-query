@@ -4,12 +4,16 @@ import { getMetadataStorage } from '../../metadata';
 import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
 import { UnregisteredObjectType } from '../type.errors';
 
-export interface EdgeType<TItem> {
-  node: TItem;
+export interface EdgeTypeConstructor<DTO> {
+  new (node: DTO, cursor: ConnectionCursorType): EdgeType<DTO>;
+}
+
+export interface EdgeType<DTO> {
+  node: DTO;
   cursor: ConnectionCursorType;
 }
 
-export function EdgeType<DTO>(DTOClass: Class<DTO>): Class<EdgeType<DTO>> {
+export function EdgeType<DTO>(DTOClass: Class<DTO>): EdgeTypeConstructor<DTO> {
   const metaDataStorage = getMetadataStorage();
   const existing = metaDataStorage.getEdgeType(DTOClass);
   if (existing) {
@@ -22,6 +26,11 @@ export function EdgeType<DTO>(DTOClass: Class<DTO>): Class<EdgeType<DTO>> {
 
   @ObjectType(`${objMetadata.name}Edge`)
   class AbstractEdge implements EdgeType<DTO> {
+    constructor(node: DTO, cursor: ConnectionCursorType) {
+      this.node = node;
+      this.cursor = cursor;
+    }
+
     @Field(() => DTOClass, { description: `The node containing the ${objMetadata.name}` })
     node!: DTO;
 

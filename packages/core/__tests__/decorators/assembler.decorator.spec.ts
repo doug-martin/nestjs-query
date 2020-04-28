@@ -22,7 +22,11 @@ describe('@Assembler', () => {
 
   it('should register an assembler as injectable and with metadata', () => {
     @Assembler(TestFrom, TestTo)
-    class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {}
+    class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {
+      toPlain(dtoOrEntity: TestFrom | TestTo): object {
+        return dtoOrEntity;
+      }
+    }
     expect(injectableSpy).toBeCalledTimes(1);
     expect(AssemblerFactory.getAssembler(TestFrom, TestTo)).toBeInstanceOf(TestAssembler);
     expect(AssemblerFactory.getAssembler(TestTo, TestFrom)).toBeInstanceOf(DefaultAssembler);
@@ -30,7 +34,11 @@ describe('@Assembler', () => {
 
   it('should throw an error when registering an assembler for the same From To combo', () => {
     @Assembler(TestFrom, TestTo)
-    class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {}
+    class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {
+      toPlain(dtoOrEntity: TestFrom | TestTo): object {
+        return dtoOrEntity;
+      }
+    }
     expect(() => Assembler(TestFrom, TestTo)(TestAssembler)).toThrowError(
       'Assembler already registered for TestFrom TestTo',
     );

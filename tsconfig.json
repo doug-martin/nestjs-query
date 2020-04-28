@@ -6,12 +6,14 @@
         "paths": {
             "@nestjs-query/core": ["core"],
             "@nestjs-query/query-graphql": ["query-graphql"],
-            "@nestjs-query/query-typeorm": ["query-typeorm"]
+            "@nestjs-query/query-typeorm": ["query-typeorm"],
+            "@nestjs-query/query-sequelize": ["query-sequelize"]
         }
     },
     "references": [
         {"path": "./packages/core"},
         {"path": "./packages/query-graphql"},
-        {"path": "./packages/query-typeorm"}
+        {"path": "./packages/query-typeorm"},
+        {"path": "./packages/query-sequelize"}
     ]
 }

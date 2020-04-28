@@ -46,20 +46,6 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     return this.assembler.convertAsyncToDTOs(this.queryService.query(this.assembler.convertQuery(query)));
   }
 
-  queryRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    entity: DTO,
-    query: Query<Relation>,
-  ): Promise<Relation[]>;
-
-  queryRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dtos: DTO[],
-    query: Query<Relation>,
-  ): Promise<Map<DTO, Relation[]>>;
-
   /**
    * Query for relations for an array of DTOs. This method will return a map with the DTO as the key and the relations as the value.
    * @param RelationClass - The class of the relation.
@@ -67,7 +53,7 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
    * @param dtos - the dtos to find relations for.
    * @param query - A query to use to filter, page, and sort relations.
    */
-  async queryRelations<Relation>(
+  queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
@@ -81,7 +67,7 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
    * @param relationName - The name of relation to query for.
    * @param query - A query to filter, page and sort relations.
    */
-  async queryRelations<Relation>(
+  queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
