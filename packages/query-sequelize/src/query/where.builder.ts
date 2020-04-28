@@ -11,7 +11,6 @@ export class WhereBuilder<Entity> {
 
   /**
    * Builds a WHERE clause from a Filter.
-   * @param where - the `typeorm` WhereExpression
    * @param filter - the filter to build the WHERE clause from.
    */
   build(filter: Filter<Entity>): WhereOptions {
@@ -40,7 +39,6 @@ export class WhereBuilder<Entity> {
 
   /**
    * Creates field comparisons from a filter. This method will ignore and/or properties.
-   * @param where - the `typeorm` WhereExpression
    * @param filter - the filter with fields to create comparisons for.
    */
   private filterFields(filter: Filter<Entity>): WhereOptions | undefined {

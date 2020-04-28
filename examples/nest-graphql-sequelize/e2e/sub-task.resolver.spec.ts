@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { Sequelize } from 'sequelize-typescript';
 import { AppModule } from '../src/app.module';
 import { refresh } from './fixtures';
@@ -30,7 +29,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
     await refresh(app.get(Sequelize));
   });
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Sequelize)));
 
   const subTasks = [
     { id: '1', title: 'Create Nest App - Sub Task 1', completed: true, description: null, todoItemId: 1 },

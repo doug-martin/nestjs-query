@@ -5,7 +5,7 @@ import { FilterQueryBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
 
 /**
- * Base class for all query services that use a `typeorm` Repository.
+ * Base class for all query services that use a `sequelize` Model.
  *
  * @example
  *

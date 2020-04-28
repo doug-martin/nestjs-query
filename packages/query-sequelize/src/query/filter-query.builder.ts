@@ -5,7 +5,7 @@ import { WhereBuilder } from './where.builder';
 /**
  * @internal
  *
- * Interface that for Typeorm query builders that are sortable.
+ * Interface that for `sequelize` query builders that are sortable.
  */
 interface Sortable<Entity> {
   order?: Order;
