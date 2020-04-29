@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/doug-martin/nestjs-query/compare/v0.9.0...v0.10.0) (2020-04-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.54 ([d6b7e6c](https://github.com/doug-martin/nestjs-query/commit/d6b7e6c0b812f637fdc22e5a26e34d1c4b0dc8b3))
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.54 ([fae7683](https://github.com/doug-martin/nestjs-query/commit/fae7683fd8dc845dccf4422cbb518aa1ed954bdf))
+
+
+### Features
+
+* **sequelize:** Initial Sequelize support ([bfcf436](https://github.com/doug-martin/nestjs-query/commit/bfcf4368b96617113c0334cd78a8881e4952eb99))
+* **sequelize:** More clean up of code ([a72bce5](https://github.com/doug-martin/nestjs-query/commit/a72bce583862ed1902ee81974d7b530e7caac4d1))
+
+
+
+
+
 # [0.9.0](https://github.com/doug-martin/nestjs-query/compare/v0.8.9...v0.9.0) (2020-04-26)
 
 

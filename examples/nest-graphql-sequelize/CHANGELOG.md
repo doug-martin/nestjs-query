@@ -5,12 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [0.10.0](https://github.com/doug-martin/nestjs-query/compare/v0.9.0...v0.10.0) (2020-04-29)
 
-**Note:** Version bump only for package nest-graphql-typeorm-soft-delete
 
+### Features
 
-
-
-
-# [0.9.0](https://github.com/doug-martin/nestjs-query/compare/v0.8.9...v0.9.0) (2020-04-26)
-
-**Note:** Version bump only for package nest-graphql-typeorm-soft-delete
+* **sequelize:** More clean up of code ([a72bce5](https://github.com/doug-martin/nestjs-query/commit/a72bce583862ed1902ee81974d7b530e7caac4d1))
