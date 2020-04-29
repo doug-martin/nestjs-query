@@ -53,13 +53,13 @@ export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionTyp
 
     private static createPageInfo(dtos: DTO[], pagingInfo: CursorPagingType): PageInfoType {
       const { length } = dtos;
-      const { first, after } = pagingInfo;
-      const isForwardPaging = !!first || !!after;
+      const { first, last, after, before } = pagingInfo;
+      const isForwardPaging = !!first || !!after || !!last || !!before;
       const baseOffset = pagingInfo.offset || 0;
       const startCursor = offsetToCursor(baseOffset);
       const endCursor = offsetToCursor(baseOffset + length - 1);
       const hasNextPage = isForwardPaging ? length >= (pagingInfo.limit || 0) : false;
-      const hasPreviousPage = isForwardPaging ? false : baseOffset > 0;
+      const hasPreviousPage = isForwardPaging ? baseOffset > 0 : false;
       return new PIT(hasNextPage, hasPreviousPage, startCursor, endCursor);
     }
 
