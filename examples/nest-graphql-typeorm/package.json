@@ -14,7 +14,9 @@
     "start:prod": "node dist/main",
     "reset": "npm run build && typeorm schema:drop && npm run schema:sync && npm run seed",
     "schema:sync": "typeorm schema:sync",
-    "seed": "ts-node ../../node_modules/typeorm-seeding/dist/cli.js -n /ormconfig.json seed"
+    "seed": "ts-node ../../node_modules/typeorm-seeding/dist/cli.js -n /ormconfig.json seed",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "@nestjs-query/core": "0.10.0",
@@ -33,7 +35,8 @@
     "rimraf": "3.0.2",
     "rxjs": "6.5.5",
     "typeorm": "0.2.24",
-    "typeorm-seeding": "1.6.1"
+    "typeorm-seeding": "1.6.1",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "@nestjs/cli": "7.1.4",
@@ -65,5 +68,6 @@
     },
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"
-  }
+  },
+  "snyk": true
 }
