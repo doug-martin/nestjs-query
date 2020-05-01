@@ -1,0 +1,10 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - '@nestjs/graphql > lodash':
+        patched: '2020-05-01T04:31:32.801Z'
+    - '@nestjs/graphql > merge-graphql-schemas > @graphql-toolkit/schema-merging > @graphql-toolkit/common > lodash':
+        patched: '2020-05-01T04:31:32.801Z'
