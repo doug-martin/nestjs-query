@@ -1,6 +1,6 @@
 {
 	"name": "nest-graphql-sequelize",
-	"version": "0.10.0",
+	"version": "0.10.1",
 	"description": "",
 	"author": "",
 	"private": true,
@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"@nestjs-query/core": "0.10.0",
-		"@nestjs-query/query-graphql": "0.10.0",
+		"@nestjs-query/query-graphql": "0.10.1",
 		"@nestjs-query/query-sequelize": "0.10.0",
 		"@nestjs/common": "7.0.9",
 		"@nestjs/core": "7.0.9",
