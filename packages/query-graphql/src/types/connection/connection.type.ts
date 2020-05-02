@@ -1,17 +1,18 @@
-import { offsetToCursor } from 'graphql-relay';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Class } from '@nestjs-query/core';
-import { CursorPagingType } from '../query';
+import { Class, Query } from '@nestjs-query/core';
+import { QueryArgsType } from '../query';
 import { PageInfoType } from './page-info.type';
 import { EdgeType } from './edge.type';
 import { getMetadataStorage } from '../../metadata';
 import { UnregisteredObjectType } from '../type.errors';
+import { createPager, QueryMany } from './pager';
 
-export interface StaticConnectionType<TItem> {
-  createFromPromise(findMany: Promise<TItem[]>, pagingInfo: CursorPagingType): Promise<ConnectionType<TItem>>;
-  createFromArray(findMany: TItem[], pagingInfo: CursorPagingType): ConnectionType<TItem>;
-  empty(): ConnectionType<TItem>;
-  new (): ConnectionType<TItem>;
+export interface StaticConnectionType<DTO> {
+  createFromPromise(
+    queryMany: (query: Query<DTO>) => Promise<DTO[]>,
+    query: QueryArgsType<DTO>,
+  ): Promise<ConnectionType<DTO>>;
+  new (): ConnectionType<DTO>;
 }
 
 export interface ConnectionType<TItem> {
@@ -29,42 +30,18 @@ export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionTyp
   if (!objMetadata) {
     throw new UnregisteredObjectType(TItemClass, 'Unable to make ConnectionType.');
   }
+  const pager = createPager<DTO>();
   const E = EdgeType(TItemClass);
   const PIT = PageInfoType();
   @ObjectType(`${objMetadata.name}Connection`)
   class AbstractConnection implements ConnectionType<DTO> {
-    static async createFromPromise(items: Promise<DTO[]>, pagingInfo: CursorPagingType): Promise<AbstractConnection> {
-      return this.createFromArray(await items, pagingInfo);
-    }
-
-    static createFromArray(dtos: DTO[], pagingInfo: CursorPagingType): AbstractConnection {
-      if (!dtos.length) {
-        return this.empty();
-      }
-      const baseOffset = pagingInfo.offset || 0;
-      const pageInfo: PageInfoType = this.createPageInfo(dtos, pagingInfo);
-      const edges: EdgeType<DTO>[] = dtos.map((dto, i) => this.createEdge(dto, i, baseOffset));
-      return new AbstractConnection(pageInfo, edges);
-    }
-
-    static empty(): AbstractConnection {
-      return new AbstractConnection();
-    }
-
-    private static createPageInfo(dtos: DTO[], pagingInfo: CursorPagingType): PageInfoType {
-      const { length } = dtos;
-      const { first, after } = pagingInfo;
-      const isForwardPaging = !!first || !!after;
-      const baseOffset = pagingInfo.offset || 0;
-      const startCursor = offsetToCursor(baseOffset);
-      const endCursor = offsetToCursor(baseOffset + length - 1);
-      const hasNextPage = isForwardPaging ? length >= (pagingInfo.limit || 0) : false;
-      const hasPreviousPage = isForwardPaging ? false : baseOffset > 0;
-      return new PIT(hasNextPage, hasPreviousPage, startCursor, endCursor);
-    }
-
-    private static createEdge(dto: DTO, index: number, initialOffset: number): EdgeType<DTO> {
-      return new E(dto, offsetToCursor(initialOffset + index));
+    static async createFromPromise(queryMany: QueryMany<DTO>, query: QueryArgsType<DTO>): Promise<AbstractConnection> {
+      const { pageInfo, edges } = await pager.page(queryMany, query);
+      return new AbstractConnection(
+        // create the appropriate graphql instance
+        new PIT(pageInfo.hasNextPage, pageInfo.hasPreviousPage, pageInfo.startCursor, pageInfo.endCursor),
+        edges.map(({ node, cursor }) => new E(node, cursor)),
+      );
     }
 
     constructor(pageInfo?: PageInfoType, edges?: EdgeType<DTO>[]) {

@@ -45,7 +45,7 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
     @ResolverQuery(() => Connection, { name: pluralBaseNameLower }, commonResolverOpts, opts.many ?? {})
     async queryMany(@Args() query: QA): Promise<ConnectionType<DTO>> {
       const qa = await transformAndValidate(QA, query);
-      return Connection.createFromPromise(this.service.query(qa), qa.paging || {});
+      return Connection.createFromPromise((q) => this.service.query(q), qa);
     }
   }
   return ReadResolverBase;

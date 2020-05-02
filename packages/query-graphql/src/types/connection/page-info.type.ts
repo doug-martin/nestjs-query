@@ -4,18 +4,18 @@ import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
 
 export interface PageInfoTypeConstructor {
   new (
-    hasNextPage: boolean | null,
-    hasPreviousPage: boolean | null,
-    startCursor: ConnectionCursorType | null,
-    endCursor: ConnectionCursorType | null,
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    startCursor: ConnectionCursorType | undefined,
+    endCursor: ConnectionCursorType | undefined,
   ): PageInfoType;
 }
 
 export interface PageInfoType {
-  hasNextPage?: boolean | null;
-  hasPreviousPage?: boolean | null;
-  startCursor?: ConnectionCursorType | null;
-  endCursor?: ConnectionCursorType | null;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor?: ConnectionCursorType | undefined;
+  endCursor?: ConnectionCursorType | undefined;
 }
 
 /** @internal */
@@ -28,10 +28,10 @@ export const PageInfoType = (): PageInfoTypeConstructor => {
   @ObjectType('PageInfo')
   class PageInfoTypeImpl {
     constructor(
-      hasNextPage: boolean | null,
-      hasPreviousPage: boolean | null,
-      startCursor: ConnectionCursorType | null,
-      endCursor: ConnectionCursorType | null,
+      hasNextPage: boolean,
+      hasPreviousPage: boolean,
+      startCursor: ConnectionCursorType | undefined,
+      endCursor: ConnectionCursorType | undefined,
     ) {
       this.hasNextPage = hasNextPage;
       this.hasPreviousPage = hasPreviousPage;
@@ -40,19 +40,19 @@ export const PageInfoType = (): PageInfoTypeConstructor => {
     }
 
     @Field(() => Boolean, { nullable: true, description: 'true if paging forward and there are more records.' })
-    hasNextPage?: boolean | null;
+    hasNextPage: boolean;
 
     @Field(() => Boolean, { nullable: true, description: 'true if paging backwards and there are more records.' })
-    hasPreviousPage?: boolean | null;
+    hasPreviousPage: boolean;
 
     @Field(() => ConnectionCursorScalar, { nullable: true, description: 'The cursor of the first returned record.' })
-    startCursor?: ConnectionCursorType | null;
+    startCursor?: ConnectionCursorType | undefined;
 
     @Field(() => ConnectionCursorScalar, {
       nullable: true,
       description: 'The cursor of the last returned record.',
     })
-    endCursor?: ConnectionCursorType | null;
+    endCursor?: ConnectionCursorType | undefined;
   }
 
   pageInfoType = PageInfoTypeImpl;

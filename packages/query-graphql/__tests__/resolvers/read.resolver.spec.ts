@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as nestGraphql from '@nestjs/graphql';
 import { instance, mock, when, objectContaining } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { QueryService, Query } from '@nestjs-query/core';
+import { QueryService } from '@nestjs-query/core';
 import { ReturnTypeFuncValue, QueryOptions, ArgsOptions } from '@nestjs/graphql';
 import * as decorators from '../../src/decorators';
 import { ConnectionType, QueryArgsType, ReadResolver } from '../../src';
@@ -122,10 +122,11 @@ describe('ReadResolver', () => {
 
     it('should call the service query with the provided input', async () => {
       const mockService = mock<QueryService<TestResolverDTO>>();
-      const input: Query<TestResolverDTO> = {
+      const input: QueryArgsType<TestResolverDTO> = {
         filter: {
           stringField: { eq: 'foo' },
         },
+        paging: { first: 1 },
       };
       const output: TestResolverDTO[] = [
         {
@@ -134,7 +135,7 @@ describe('ReadResolver', () => {
         },
       ];
       const resolver = new TestResolver(instance(mockService));
-      when(mockService.query(objectContaining(input))).thenResolve(output);
+      when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 0 } }))).thenResolve(output);
       const result = await resolver.queryMany(input);
       return expect(result).toEqual({
         edges: [
