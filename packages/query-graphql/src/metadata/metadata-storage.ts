@@ -78,7 +78,7 @@ export class GraphQLQueryMetadataStorage {
   }
 
   addConnectionType<T>(type: Class<T>, connectionType: StaticConnectionType<T>): void {
-    this.connectionTypeStorage.set(type, connectionType);
+    this.connectionTypeStorage.set(type, connectionType as StaticConnectionType<unknown>);
   }
 
   getConnectionType<T>(type: Class<T>): StaticConnectionType<T> | undefined {

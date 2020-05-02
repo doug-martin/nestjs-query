@@ -1,11 +1,12 @@
 import 'reflect-metadata';
-import { Query, QueryService } from '@nestjs-query/core';
+import { QueryService } from '@nestjs-query/core';
 import * as nestGraphql from '@nestjs/graphql';
 import { mock, instance, when, objectContaining, deepEqual } from 'ts-mockito';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { ReturnTypeFuncValue, ResolveFieldOptions } from '@nestjs/graphql';
 import { ReadRelationsResolver } from '../../../src/resolvers/relations';
 import * as decorators from '../../../src/decorators';
+import { QueryArgsType } from '../../../src/types';
 import * as types from '../../../src/types';
 
 const { ID, ObjectType } = nestGraphql;
@@ -249,8 +250,9 @@ describe('ReadRelationsResolver', () => {
         id: 'id-1',
         stringField: 'foo',
       };
-      const query: Query<RelationDTO> = {
+      const query: QueryArgsType<RelationDTO> = {
         filter: { id: { eq: 'id-2' } },
+        paging: { first: 1 },
       };
       const output: RelationDTO[] = [
         {
@@ -260,9 +262,14 @@ describe('ReadRelationsResolver', () => {
       ];
       const R = ReadRelationsResolver(ReadRelationDTO, { many: { relation: { DTO: RelationDTO } } });
       const resolver = new R(instance(mockService));
-      when(mockService.queryRelations(RelationDTO, 'relations', deepEqual([dto]), objectContaining(query))).thenResolve(
-        new Map([[dto, output]]),
-      );
+      when(
+        mockService.queryRelations(
+          RelationDTO,
+          'relations',
+          deepEqual([dto]),
+          objectContaining({ ...query, paging: { limit: 2, offset: 0 } }),
+        ),
+      ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       const result = await resolver.queryRelations(dto, query, {});
       return expect(result).toEqual({
@@ -290,8 +297,9 @@ describe('ReadRelationsResolver', () => {
         id: 'id-1',
         stringField: 'foo',
       };
-      const query: Query<RelationDTO> = {
+      const query: QueryArgsType<RelationDTO> = {
         filter: { id: { eq: 'id-2' } },
+        paging: { first: 1 },
       };
       const output: RelationDTO[] = [
         {
@@ -303,9 +311,14 @@ describe('ReadRelationsResolver', () => {
         many: { relation: { DTO: RelationDTO, relationName: 'other' } },
       });
       const resolver = new R(instance(mockService));
-      when(mockService.queryRelations(RelationDTO, 'other', deepEqual([dto]), objectContaining(query))).thenResolve(
-        new Map([[dto, output]]),
-      );
+      when(
+        mockService.queryRelations(
+          RelationDTO,
+          'other',
+          deepEqual([dto]),
+          objectContaining({ ...query, paging: { limit: 2, offset: 0 } }),
+        ),
+      ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       const result = await resolver.queryRelations(dto, query, {});
       return expect(result).toEqual({

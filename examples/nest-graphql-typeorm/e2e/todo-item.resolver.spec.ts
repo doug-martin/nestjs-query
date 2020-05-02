@@ -306,7 +306,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
-              hasPreviousPage: false,
+              hasPreviousPage: true,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
             expect(edges).toHaveLength(2);

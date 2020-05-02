@@ -63,7 +63,7 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
     ): Promise<ConnectionType<Relation>> {
       const qa = await transformAndValidate(RelationQA, q);
       const loader = DataLoaderFactory.getOrCreateLoader(context, loaderName, queryLoader.createLoader(this.service));
-      return CT.createFromPromise(loader.load({ dto, query: qa }), qa.paging || {});
+      return CT.createFromPromise((query) => loader.load({ dto, query }), qa);
     }
   }
   return ReadManyMixin;
