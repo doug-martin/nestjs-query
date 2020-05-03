@@ -17,6 +17,6 @@ The `query-typeorm` package that provides an implementation of `@nestjs-query/co
 
 ## Getting Started
 
-The get started with the `@nestjs-query/query-typeorm` package checkout the [Getting Started](https://doug-martin.github.io/nestjs-query/docs/typeorm/getting-started) docs.
+The get started with the `@nestjs-query/query-typeorm` package checkout the [Getting Started](https://doug-martin.github.io/nestjs-query/docs/persistence/typeorm/getting-started) docs.
 
 

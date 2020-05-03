@@ -100,6 +100,16 @@ class UserDTO {
 
 But you inherited a DB schema that has names that are not as user friendly.
 
+<Tabs
+  defaultValue="typeorm"
+  groupId="orm"
+  values={[
+    { label: 'TypeOrm', value: 'typeorm', },
+    { label: 'Sequelize', value: 'sequelize', },
+  ]
+}>
+<TabItem value="typeorm">
+
 ```ts
 import {Entity, Column} from 'typeorm'
 
@@ -115,6 +125,29 @@ class UserEntity {
   email!: string;
 }
 ```
+
+</TabItem>
+<TabItem value="sequelize">
+
+```ts
+import { Table, Column, Model } from 'sequelize-typescript';
+
+@Table
+export class UserEntity extends Model<UserEntity> {
+   @Column
+   first!: string;
+ 
+   @Column
+   last!: string;
+ 
+   @Column
+   email!: string;
+}
+
+```
+
+</TabItem>
+</Tabs>
 
 To properly translate the `UserDTO` into the `UserEntity` and back you can extend an `Assembler` that the `QueryService` will use.
 
@@ -232,9 +265,15 @@ To use your assembler you need to create an `AssemblerQueryService` that will wr
 
 This example wraps a `TypeOrmQueryService` to assemble to `UserDTO` and `UserEntity`.
 
-:::note
-This example uses typeorm the same pattern applies when using sequelize.
-:::
+<Tabs
+  defaultValue="typeorm"
+  groupId="orm"
+  values={[
+    { label: 'TypeOrm', value: 'typeorm', },
+    { label: 'Sequelize', value: 'sequelize', },
+  ]
+}>
+<TabItem value="typeorm">
 
 ```ts
 import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
@@ -253,6 +292,31 @@ export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
   }
 }
 ```
+
+</TabItem>
+<TabItem value="sequelize">
+
+```ts
+import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
+import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
+import { UserDTO } from './user.dto';
+import { UserAssembler } from './user.assembler';
+import { UserEntity } from './user.entity';
+
+@QueryService(UserDTO)
+export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
+  constructor(
+    assembler: UserAssembler,
+    @InjectSequelizeQueryService(UserEntity) queryService: QueryService<UserEntity>,
+  ) {
+    super(assembler, queryService);
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
 
 Your resolver should then use the `UserService` to fetch records.
 

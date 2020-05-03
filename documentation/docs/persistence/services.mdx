@@ -1,0 +1,729 @@
+---
+title: Services
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+`@nestjs-query` provides a common interface to use difference ORMs inorder to query and mutate your data.
+
+The following ORMs are supported out of the box.
+
+* [TypeOrm](./typeorm/getting-started)
+* [Sequelize](./sequelize/getting-started)
+
+
+All examples assume the following entity.
+
+<Tabs
+  defaultValue="typeorm"
+  groupId="orm"
+  values={[
+    { label: 'TypeOrm', value: 'typeorm', },
+    { label: 'Sequelize', value: 'sequelize', },
+  ]
+}>
+<TabItem value="typeorm">
+
+```ts title="todo-item.entity.ts"
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+
+@Entity()
+export class TodoItemEntity {
+  @PrimaryGeneratedColumn()
+  id!: string;
+
+  @Column()
+  title!: string;
+
+  @Column()
+  completed!: boolean;
+
+  @CreateDateColumn()
+  created!: Date;
+
+  @UpdateDateColumn()
+  updated!: Date;
+}
+```
+
+</TabItem>
+<TabItem value="sequelize">
+
+```ts title="todo-item.entity.ts"
+import {
+  Table,
+  Column,
+  Model,
+  AllowNull,
+  CreatedAt,
+  UpdatedAt,
+  PrimaryKey,
+  AutoIncrement,
+} from 'sequelize-typescript';
+
+@Table
+export class TodoItemEntity extends Model<TodoItemEntity> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @Column
+  title!: string;
+
+  @AllowNull
+  @Column
+  description?: string;
+
+  @Column
+  completed!: boolean;
+
+  @CreatedAt
+  created!: Date;
+
+  @UpdatedAt
+  updated!: Date;
+}
+```
+
+</TabItem>
+</Tabs>
+
+
+## Creating a Service
+
+### Decorator
+
+Each persistence package includes a decorator that will automatically create a `QueryService` for you to use in your application.
+
+<Tabs
+  defaultValue="typeorm"
+  groupId="orm"
+  values={[
+    { label: 'TypeOrm', value: 'typeorm', },
+    { label: 'Sequelize', value: 'sequelize', },
+  ]
+}>
+<TabItem value="typeorm">
+
+```ts title="todo-item.resolver.ts" {11}
+import { QueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
+  constructor(
+    @InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+  ) {
+    super(service);
+  }
+}
+```
+
+</TabItem>
+<TabItem value="sequelize">
+
+```ts title="todo-item.resolver.ts" {11}
+import { QueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
+  constructor(
+    @InjectSequelizeQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+  ) {
+    super(service);
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+:::note
+In the above example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
+:::
+
+### Module
+
+In order to use the decorator you will need to use the module that comes with the `nestjs-query` orm module.
+
+<Tabs
+  defaultValue="typeorm"
+  groupId="orm"
+  values={[
+    { label: 'TypeOrm', value: 'typeorm', },
+    { label: 'Sequelize', value: 'sequelize', },
+  ]
+}>
+<TabItem value="typeorm">
+
+```ts title="todo-item.module.ts" {8}
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemResolver } from './todo-item.resolver';
+
+@Module({
+  providers: [TodoItemResolver],
+  imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+})
+export class TodoItemModule {}
+
+```
+
+</TabItem>
+<TabItem value="sequelize">
+
+```ts title="todo-item.module.ts" {8}
+import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
+import { Module } from '@nestjs/common';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemResolver } from './todo-item.resolver';
+
+@Module({
+  providers: [TodoItemResolver],
+  imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
+</Tabs>
+
+## Querying
+
+The `nestjs-query` QueryService uses a common `Query` interface that allows you use a common type regardless of the persistence libary in use.
+
+ To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](../concepts/queries).
+
+#### Example
+
+Get all records
+
+```ts
+const records = await this.service.query({});
+```
+
+### Filtering
+
+The `filter` option is translated to a `WHERE` clause.
+
+#### Example
+
+To find all completed `TodoItems` by use can use the `is` operator.
+
+```ts
+const records = await this.service.query({
+   filter : {
+     completed: { is: true },
+   },
+});
+```
+
+### Sorting
+
+The `sorting` option is translated to a `ORDER BY`.
+
+#### Example
+
+Sorting records by `completed` and `title`.
+
+```ts
+const records = await this.service.query({
+  sorting: [
+    {field: 'completed', direction: SortDirection.ASC},
+    {field: 'title', direction: SortDirection.DESC},
+  ],
+});
+```
+
+### Paging
+
+The `paging` option is translated to `LIMIT` and `OFFSET`.
+
+#### Example
+
+Skip the first 20 records and return the next 10.
+
+```ts
+const records = await this.service.query({
+  paging: {limit: 10, offset: 20},
+});
+```
+
+### Find By Id
+
+To find a single record you can use the `findById` method.
+
+#### Example
+
+```ts
+const records = await this.service.findById(1);
+```
+
+### Get By Id
+
+The `getById` method is the same as the `findById` with one key difference, it will throw an exception if the record is not found.
+
+#### Example
+
+```ts
+try {
+  const records = await this.service.getById(1);
+} catch (e) {
+  console.error('Unable to get record with id = 1');
+}
+```
+
+## Creating
+
+### Create One
+
+To create a single record use the `createOne` method.
+
+#### Example
+
+```ts
+const createdRecord = await this.service.createOne({
+  title: 'Foo',
+  completed: false,
+});
+```
+
+### Create Many
+
+To create multiple records use the `createMany` method.
+
+#### Example
+
+```ts
+const createdRecords = await this.service.createMany([
+  { title: 'Foo', completed: false },
+  { title: 'Bar', completed: true },
+]);
+```
+
+## Updating
+
+### Update One
+
+To update a single record use the `updateOne` method.
+
+#### Example
+
+Updates the record with an id equal to 1 to completed.
+
+```ts
+const updatedRecord = await this.service.updateOne(1, { completed: true });
+```
+
+### Update Many
+
+To update multiple records use the `updateMany` method.
+
+**NOTE** This method returns a `UpdateManyResponse` which contains the updated record count.
+
+#### Example
+
+Updates all `TodoItemEntities` to completed if their title ends in `Bar`
+
+```ts
+const { updatedCount } = await this.service.updateMany(
+  {completed: true}, // update
+  {completed: {is: false}, title: {like: '%Bar'}} // filter
+);
+```
+
+## Deleting
+
+### Delete One
+
+To delete a single record use the `deleteOne` method.
+
+#### Example
+
+Delete the record with an id equal to 1.
+
+```ts
+const deletedRecord = await this.service.deleteOne(1);
+```
+
+### Delete Many
+
+To delete multiple records use the `deleteMany` method.
+
+**NOTE** This method returns a `DeleteManyResponse` which contains the deleted record count.
+
+#### Example
+
+Delete all `TodoItemEntities` older than `Jan 1, 2019`.
+
+```ts
+const { deletedCount } = await this.service.deleteMany(
+  { created: { lte: new Date('2019-1-1') } } // filter
+);
+```
+
+## Foreign Keys
+
+It is a common use case to include a foreign key from your entity in your DTO.
+
+To do this you should add the foreign key to your entity as well as your DTO.
+
+### Example
+
+Assume TodoItems can have SubTasks we would set up our SubTaskEntity using the following
+
+<Tabs
+  defaultValue="typeorm"
+  groupId="orm"
+  values={[
+    { label: 'TypeOrm', value: 'typeorm', },
+    { label: 'Sequelize', value: 'sequelize', },
+  ]
+}>
+<TabItem value="typeorm">
+
+```ts title="sub-task.entity.ts"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ObjectType,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { TodoItemEntity } from '../todo-item/todo-item.entity';
+
+@Entity({ name: 'sub_task' })
+export class SubTaskEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column()
+  title!: string;
+
+  @Column({ nullable: true })
+  description?: string;
+
+  @Column()
+  completed!: boolean;
+
+  // add the todoItemId to the model
+  @Column({ nullable: false, name: 'todo_item_id' })
+  todoItemId!: string;
+
+  @ManyToOne((): ObjectType<TodoItemEntity> => TodoItemEntity, (td) => td.subTasks, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  // specify the join column we want to use.
+  @JoinColumn({ name: 'todo_item_id' })
+  todoItem!: TodoItemEntity;
+
+  @CreateDateColumn()
+  created!: Date;
+
+  @UpdateDateColumn()
+  updated!: Date;
+}
+```
+
+</TabItem>
+<TabItem value="sequelize">
+
+```ts title="sub-task.entity.ts"
+import {
+  Table,
+  AllowNull,
+  Column,
+  ForeignKey,
+  BelongsTo,
+  CreatedAt,
+  UpdatedAt,
+  Model,
+  AutoIncrement,
+  PrimaryKey,
+} from 'sequelize-typescript';
+import { TodoItemEntity } from '../todo-item/entity/todo-item.entity';
+
+@Table({})
+export class SubTaskEntity extends Model<SubTaskEntity> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @Column
+  title!: string;
+
+  @AllowNull
+  @Column
+  description?: string;
+
+  @Column
+  completed!: boolean;
+
+  @Column
+  @ForeignKey(() => TodoItemEntity)
+  todoItemId!: number;
+
+  @BelongsTo(() => TodoItemEntity)
+  todoItem!: TodoItemEntity;
+
+  @CreatedAt
+  created!: Date;
+
+  @UpdatedAt
+  updated!: Date;
+}
+```
+
+</TabItem>
+</Tabs>
+
+
+Then we could add the `todoItemId` to the SubTaskDTO.
+
+```ts title="sub-task.dto.ts" {24-26}
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+
+@ObjectType('SubTask')
+export class SubTaskDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+
+  // expose the todoItemId as a filterable field.
+  @FilterableField()
+  todoItemId!: string;
+}
+```
+
+## Relations
+
+:::note
+This section only applies when you combine your DTO and entity
+:::
+
+When your DTO and entity are the same class and you have relations defined, you should not decorate your the relations in the DTO with `@Field` or `@FilterableField`.
+
+Instead specify the relations you want to expose in your resolver.
+
+### Example
+
+Assume you have the following subtask definition.
+<Tabs
+  defaultValue="typeorm"
+  groupId="orm"
+  values={[
+    { label: 'TypeOrm', value: 'typeorm', },
+    { label: 'Sequelize', value: 'sequelize', },
+  ]
+}>
+<TabItem value="typeorm">
+
+```ts title="sub-task.ts"  {37-43}
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { ObjectType, ID } from '@nestjs/graphql';
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { TodoItem } from '../todo-item/todo-item';
+
+@ObjectType()
+@Entity({ name: 'sub_task' })
+export class SubTask {
+  @FilterableField(() => ID)
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @FilterableField()
+  @Column()
+  title!: string;
+
+  @FilterableField()
+  @Column({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  @Column()
+  completed!: boolean;
+
+  @FilterableField()
+  @Column({ nullable: false, name: 'todo_item_id' })
+  todoItemId!: string;
+
+  // do not decorate with @Field
+  @ManyToOne(() => TodoItemEntity, (td) => td.subTasks, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  @JoinColumn({ name: 'todo_item_id' })
+  todoItem!: TodoItem;
+
+  @FilterableField()
+  @CreateDateColumn()
+  created!: Date;
+
+  @FilterableField()
+  @UpdateDateColumn()
+  updated!: Date;
+}
+```
+
+</TabItem>
+<TabItem value="sequelize">
+
+```ts title="sub-task.ts" {44-46}
+import {
+  Table,
+  AllowNull,
+  Column,
+  ForeignKey,
+  BelongsTo,
+  CreatedAt,
+  UpdatedAt,
+  Model,
+  AutoIncrement,
+  PrimaryKey,
+} from 'sequelize-typescript';
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { TodoItem } from '../todo-item/entity/todo-item';
+
+@ObjectType()
+@Table
+export class SubTask extends Model<SubTaskEntity> {
+  @FilterableField(() => ID)
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id!: number;
+
+  @FilterableField()
+  @Column
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  @AllowNull
+  @Column
+  description?: string;
+
+  @FilterableField()
+  @Column
+  completed!: boolean;
+
+  @FilterableField()
+  @Column
+  @ForeignKey(() => TodoItemEntity)
+  todoItemId!: number;
+
+  // do not decorate with @Field
+  @BelongsTo(() => TodoItem)
+  todoItem!: TodoItem;
+
+  @FilterableField(() => GraphQLISODateTime)
+  @CreatedAt
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  @UpdatedAt
+  updated!: Date;
+}
+```
+
+</TabItem>
+</Tabs>
+
+Notice how the `todoItem` is not decorated with a field decorator.
+
+Instead, add it to your resolver.
+
+<Tabs
+  defaultValue="typeorm"
+  groupId="orm"
+  values={[
+    { label: 'TypeOrm', value: 'typeorm', },
+    { label: 'Sequelize', value: 'sequelize', },
+  ]
+}>
+<TabItem value="typeorm">
+
+```ts {11}
+import { QueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { TodoItem } from '../todo-item/todo-item';
+import { SubTask } from './sub-task';
+
+@Resolver(() => SubTask)
+export class SubTaskResolver extends CRUDResolver(SubTask, {
+  relations: {
+    one: { todoItem: { DTO: TodoItem, disableRemove: true } },
+  },
+}) {
+  constructor(@InjectTypeOrmQueryService(SubTask) readonly service: QueryService<SubTask>) {
+    super(service);
+  }
+}
+```
+
+</TabItem>
+<TabItem value="sequelize">
+
+```ts {11}
+import { QueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
+import { TodoItem } from '../todo-item/todo-item';
+import { SubTask } from './sub-task';
+
+@Resolver(() => SubTask)
+export class SubTaskResolver extends CRUDResolver(SubTask, {
+  relations: {
+    one: { todoItem: { DTO: TodoItem, disableRemove: true } },
+  },
+}) {
+  constructor(@InjectSequelizeQueryService(SubTask) readonly service: QueryService<SubTask>) {
+    super(service);
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+

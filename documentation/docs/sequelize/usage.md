@@ -66,9 +66,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 }
 ```
 
-:::note
-In this example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
-:::
+
 
 ### Module
 
@@ -429,7 +427,7 @@ Instead, add it to your resolver.
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
 import { TodoItemEntity } from '../todo-item/todo-item.entity';
 import { SubTaskEntity } from './sub-task.entity';
 
@@ -439,7 +437,7 @@ export class SubTaskResolver extends CRUDResolver(SubTaskEntity, {
     one: { todoItem: { DTO: TodoItemEntity, disableRemove: true } },
   },
 }) {
-  constructor(@InjectTypeOrmQueryService(SubTaskEntity) readonly service: QueryService<SubTaskEntity>) {
+  constructor(@InjectSequelizeQueryService(SubTaskEntity) readonly service: QueryService<SubTaskEntity>) {
     super(service);
   }
 }
