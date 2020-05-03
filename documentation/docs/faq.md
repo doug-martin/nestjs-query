@@ -29,7 +29,5 @@ In a larger, longer lived project the initial overhead of creating a DTO in the 
 DTOs also provide a clean separation between the fields and relationships that the persistence layer should not know or care about.
 
 :::note
-When combining your entity and DTO you should **NOT** decorate your relationships with `@Field` or `@FilterableField`. Instead, add them to your CRUDResolver. 
-* [Typeorm Relations](./typeorm/usage#relations)
-* [Sequelize Relations](./sequelize/usage#relations)
+When combining your entity and DTO you should **NOT** decorate your relationships with `@Field` or `@FilterableField`. Instead, add them to your CRUDResolver. [Read More](./persistence/services#relations) 
 :::

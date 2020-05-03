@@ -24,8 +24,8 @@ While working on projects in nestjs it was very easy to get up and running with 
 * [Install Guide](https://doug-martin.github.io/nestjs-query/docs/introduction/install).
 * [Concepts](https://doug-martin.github.io/nestjs-query/docs/introduction/concepts)
 * [Example](https://doug-martin.github.io/nestjs-query/docs/introduction/example)
-* [Typeorm](https://doug-martin.github.io/nestjs-query/docs/typeorm/usage)
-* [Sequelize](https://doug-martin.github.io/nestjs-query/docs/sequelize/usage)
+* [Typeorm](https://doug-martin.github.io/nestjs-query/docs/persistence/typeorm/getting-started)
+* [Sequelize](https://doug-martin.github.io/nestjs-query/docs/persistence/sequelize/getting-started)
 * [GraphQL](https://doug-martin.github.io/nestjs-query/docs/graphql/resolvers)
 
 ## Packages
