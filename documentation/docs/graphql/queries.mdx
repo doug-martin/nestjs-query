@@ -10,7 +10,7 @@ name provided to `@ObjectType` or the class name.
 
 The following examples are based on the following `TodoItemDTO`
 
-```ts
+```ts title="todo-item.dto.ts"
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
@@ -188,6 +188,8 @@ By default if you do not provided an arguments you can query for all records.
 ### Filtering
 
 Filtering in `query-graphql` has has an object based syntax
+
+For a full reference of filter operations [see filter reference](../concepts/queries#filter-reference)
 
 The following example filters for all todoItems that are marked completed.
 

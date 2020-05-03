@@ -18,16 +18,28 @@ module.exports = {
         items: ['concepts/assemblers'],
       },
     ],
-    Typeorm: [
-      'typeorm/getting-started',
-      'typeorm/usage',
+    Persistence: [
+      'persistence/services',
       {
         type: 'category',
-        label: 'Advanced',
-        items: ['typeorm/advanced/multiple-databases', 'typeorm/advanced/soft-delete'],
+        label: 'Sequelize',
+        items: [
+          'persistence/sequelize/getting-started',
+          'persistence/sequelize/custom-service',
+          'persistence/sequelize/serialization',
+        ],
+      },
+      {
+        type: 'category',
+        label: 'TypeOrm',
+        items: [
+          'persistence/typeorm/getting-started',
+          'persistence/typeorm/custom-service',
+          'persistence/typeorm/multiple-databases',
+          'persistence/typeorm/soft-delete',
+        ],
       },
     ],
-    Sequelize: ['sequelize/getting-started', 'sequelize/usage'],
     GraphQL: [
       'graphql/getting-started',
       'graphql/dtos',

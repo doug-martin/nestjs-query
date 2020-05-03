@@ -14,9 +14,11 @@ graphql schema.
 Resolvers work the same as they do in [`@nestjs/graphql`](https://docs.nestjs.com/graphql/resolvers-map) by annotating
 your class with `@Resolver`.
 
-**NOTE** In this example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
+:::note
+ In this example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
+:::
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
@@ -116,10 +118,10 @@ To allow for this you can specify a `CreateDTOClass` and `UpdateDTOClass` when e
 
 In this example we'll create a new `TodoItemInputDTO` that adds validation and limits the fields you can modify.
 
-Assume we have the following class `todo-item-input.dto.ts` which omits the `id`, `created`, and `updated` fields from
+Assume we have the following class `todo-item.input.ts` which omits the `id`, `created`, and `updated` fields from
 the original DTO.
 
-```ts
+```ts title="todo-item.input.ts"
 import { Field, InputType } from '@nestjs/graphql';
 import { IsString, Length } from 'class-validator';
 
@@ -139,11 +141,11 @@ export class TodoItemInputDTO {
 
 We can then update our resolver to
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemInputDTO } from './dto/create-todo-item.dto';
+import { TodoItemInputDTO } from './dto/todo-item.input';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './dto/todo-item.entity';
 
@@ -170,12 +172,12 @@ Using the [options](#options) describe above we can disable different actions.
 
 In this example we disable all `create` endpoints
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
@@ -196,12 +198,12 @@ In this example we disable all `many` mutations. This will prevent `createManyTo
 
 **NOTE** The same pattern applies for disabling the `one` endpoints.
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
@@ -228,7 +230,7 @@ To set up a [guard](https://docs.nestjs.com/guards) for endpoint you can use the
 
 Assume we have the following auth guard that checks for a certain header and value.
 
-```ts
+```ts  title="auth.guard.ts"
 import {
   CanActivate,
   ExecutionContext,
@@ -257,13 +259,13 @@ export class AuthGuard implements CanActivate {
 
 We can then add it to each of our mutation endpoints
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth.guard';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 const guards = [AuthGuard];
 
@@ -286,13 +288,13 @@ Now any requests that go to a `create`, `update` or `delete` method will require
 You can also apply to individual methods using the `one` and `many` fields. For example lets put a guard on all many
 mutations.
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth.guard';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 const guards = [AuthGuard];
 
@@ -317,12 +319,12 @@ When querying the default filter is empty. You can specify a default filter by u
 
 In this example we specify the default filter to be `completed IS TRUE`.
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
@@ -348,12 +350,12 @@ To override the default you can override the following options:
 
 In this example we specify the `defaultResultSize` to 5 and `maxResultsSize` to 20.
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
@@ -374,12 +376,12 @@ When querying the default sort is based on the persistence layer. You can overri
 
 In this example we specify the default sort to be by `title`.
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
@@ -411,12 +413,12 @@ The `CreateResolver` will only expose the `createOne` and `createMany` endpoints
 
 For example the following resolver will expose the `createOneTodoItem` and `createManyTodoItems` mutations.
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { CreateResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends CreateResolver(TodoItemDTO) {
@@ -437,12 +439,12 @@ can be passed to the `ReadResolver`
 
 For example the following resolver will expose the `todoItems` and `todoItem` queries.
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { ReadResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends ReadResolver(TodoItemDTO) {
@@ -462,12 +464,12 @@ The `UpdateResolver` will only expose the `updateOne` and `updateMany` endpoints
 
 For example the following resolver will expose the `updateOneTodoItem` and `updateManyTodoItems` mutations.
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { UpdateResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends UpdateResolver(TodoItemDTO) {
@@ -487,12 +489,12 @@ The `DeleteResolver` will only expose the `deleteOne` and `deleteMany` endpoints
 
 For example the following resolver will expose the `updateOneTodoItem` and `updateManyTodoItems` mutations.
 
-```
+``` title="todo-item.resolver.ts"
 import { QueryService } from '@nestjs-query/core';
 import { DeleteResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntity } from './dto/todo-item.entity';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends DeleteResolver(TodoItemDTO) {
@@ -513,7 +515,7 @@ Lets create a new query endpoint that only returns completed `TodoItems`.
 
 First create a file named `types.ts`. And add the following.
 
-```ts
+```ts title="types.ts"
 import { ConnectionType, QueryArgsType } from '@nestjs-query/query-graphql';
 import { ArgsType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -532,12 +534,12 @@ In the code above we export two types. `TodoItemConnection` and `TodoItemQuery`.
 
 In your resolver you can now create a new `completedTodoItems` method with the following:
 
-```ts
+```ts title="todo-item.resolver.ts"
 import { Filter, QueryService } from '@nestjs-query/core';
 import { ConnectionType, CRUDResolver } from '@nestjs-query/query-graphql';
 import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm/src';
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemConnection, TodoItemQuery } from './types';
 

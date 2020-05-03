@@ -50,6 +50,7 @@ Add the following to `src/todo-item/todo-item.entity.ts`.
 
 <Tabs
   defaultValue="typeorm"
+  groupId="orm"
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
@@ -202,6 +203,7 @@ npx nest g r todo-item
 Once the resolver is generated paste the following into `src/todo-item/todo-item.resolver.ts`.
 <Tabs
   defaultValue="typeorm"
+  groupId="orm"
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
@@ -263,10 +265,11 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO)
 
 In the constructor we inject a QueryService using the `InjectTypeOrmQueryService` or `InjectSequelizeQueryService`. This decorator will automatically create a QueryService for your entity that your resolver can use.
 
-To read more about the service take a look at [the Services docs](../concepts/services) and [TypeOrmQueryService docs](../typeorm/usage) or [SequelizeQueryService docs](../sequelize/usage).
+To read more about the service take a look at [the Services docs](../concepts/services) and [Persistence docs](../persistence/services)
 
 <Tabs
   defaultValue="typeorm"
+  groupId="orm"
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
@@ -302,6 +305,7 @@ Update the `todo-item.module` to register the entities with `typeorm` or `sequel
 
 <Tabs
   defaultValue="typeorm"
+  groupId="orm"
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
@@ -349,6 +353,7 @@ Update `app.module` to set up your db connection and the `graphql` nest modules.
 
 <Tabs
   defaultValue="typeorm"
+  groupId="orm"
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
