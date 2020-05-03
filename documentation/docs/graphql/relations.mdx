@@ -46,7 +46,7 @@ In the following examples we are going to use the following `typeorm` entities a
 }>
 <TabItem value="todoitementity">
 
-```ts
+```ts title="todo-item/todo-item.entity.ts"
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
 
@@ -79,7 +79,7 @@ export class TodoItemEntity {
 </TabItem>
 <TabItem value="todoitemdto">
 
-```ts
+```ts title="todo-item/todo-item.dto.ts"
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
@@ -106,7 +106,7 @@ export class TodoItemDTO {
 </TabItem>
 <TabItem value="subtaskentity">
 
-```ts
+```ts title="sub-task/sub-task.entity.ts"
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -152,7 +152,7 @@ export class SubTaskEntity {
 </TabItem>
 <TabItem value="subtaskdto">
 
-```ts
+```ts title="sub-task/sub-task.dto.ts"
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
@@ -195,11 +195,11 @@ When specifying a `one` relation a couple of endpoints will automatically be gen
 
 In this example we `disableRemove` because `todoItem` is not nullable.
 
-```ts
+```ts title="sub-task/sub-task.resolver.ts" {9-11}
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from '../todo-item/dto/todo-item.dto';
-import { SubTaskDTO } from './dto/sub-task.dto';
+import { SubTaskDTO } from './sub-task.dto';
 import { SubTaskService } from './sub-task.service';
 
 @Resolver(() => SubTaskDTO)
@@ -267,11 +267,11 @@ When specifying a `many` relation a couple of endpoints will automatically be ge
 
 In this example we `disableRemove` because `SubTasks` cannot exist without a `TodoItem`.
 
-```ts
+```ts title="todo-item/todo-item.resolver.ts" {9-11}
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
 @Resolver(() => TodoItemDTO)
@@ -332,11 +332,11 @@ If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodo
 
 Sometimes you may want to expose a relation that has a different name when persisted from the graphql property. To do this use the `relationName` property.
 
-```ts
+```ts title="todo-item/todo-item.resolver.ts" {10}
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
 @Resolver(() => TodoItemDTO)
@@ -375,11 +375,11 @@ type TodoItem {
 
 To disable the `read` `queries` you can set the `disableRead` option to `true`.
 
-```ts
+```ts title="todo-item/todo-item.resolver.ts" {10}
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
 @Resolver(() => TodoItemDTO)
@@ -401,11 +401,11 @@ In this example only `addSubTasksToTodoItem` and `removeSubTasksFromTodoItem` wi
 
 To disable the `update` `mutations` you can set the `disableUpdate` option to `true`.
 
-```ts
+```ts title="todo-item/todo-item.resolver.ts" {10}
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
 @Resolver(() => TodoItemDTO)
@@ -427,11 +427,11 @@ In this example only `todoItem.subTasks` and `removeSubTasksFromTodoItem` will b
 
 To disable the `remove` `mutations` you can set the `disableRemove` option to `true`.
 
-```ts
+```ts title="todo-item/todo-item.resolver.ts" {10}
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
 @Resolver(() => TodoItemDTO)
@@ -460,7 +460,7 @@ To set up a [guard](https://docs.nestjs.com/guards) for endpoint you can use the
 
 Assume we have the following auth guard that checks for a certain header and value.
 
-```ts
+```ts title="auth.guard.ts"
 import {
   CanActivate,
   ExecutionContext,
@@ -489,11 +489,11 @@ export class AuthGuard implements CanActivate {
 
 We can then add it to our relations
 
-```ts
+```ts title="todo-item/todo-item.resolver.ts" {11}
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth.guard';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
 const guards = [AuthGuard];
@@ -520,12 +520,12 @@ When using The `Relatable` mixin adds all relations functionality to a resolver.
 
 In this example we expose on read endpoints for todo items with a readable subtasks realtion.
 
-```ts
+```ts title="todo-item/todo-item.resolver.ts" {12-14}
 import { ReadResolver, Relatable } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth.guard';
 import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemService } from './todo-item.service';
 
 const guards = [AuthGuard];

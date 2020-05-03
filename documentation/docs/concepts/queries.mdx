@@ -27,8 +27,11 @@ interface MyClass {
 
 The `filter` field allows the filtering of fields based on the shape of the object the filter is used for.
 
-**NOTE** The `Filter` interface is typesafe and will complain if you include extra fields that are not present on the
-type you are creating the query for.
+See the [filter reference](#filter-reference) for a complete list of comparisons available.
+
+:::note
+The `Filter` interface is typesafe and the typescript compiler will complain if you include extra fields that are not present on the type you are creating the query for.
+:::
 
 Lets create a simple filter that would allow us to filter for titles equal to `'Foo Bar'`
 
@@ -53,10 +56,25 @@ import { Query } from '@nestjs-query/core';
 
 const q: Query<MyClass> = {
   filter: {
-    // the fields will be ANDed together by default
+    // title = 'Foo Bar' AND completed IS TRUE and age > 10
     title: {eq: 'Foo Bar'},
     completed: { is: true },
     age: {gt: 10},
+  },
+};
+```
+
+### Multiple Comparisons on a single field.
+
+If you include multiple comparisons for a single field they will be ORed together.
+
+```ts
+import { Query } from '@nestjs-query/core';
+
+const q: Query<MyClass> = {
+  filter: {
+    // title = 'Foo Bar' OR field LIKE '%foo%'
+    title: {eq: 'Foo Bar', like: '%foo%'},
   },
 };
 ```
@@ -205,3 +223,98 @@ const q: Query<MyClass> = {
 
 </TabItem>
 </Tabs>
+
+## Filter Reference
+
+The `filter` option supports the following field comparisons.
+
+:::note
+The following examples show an approximation of the SQL that will be generated. The ORM will take care of handling the dialect specifics
+:::
+
+### Common Comparisons
+
+All types support the following comparisons.
+
+* `is` - Check is a field is `null`, `true` or `false`.
+    ```ts
+    // title IS NULL
+    { title: { is: null } }
+    // completed IS TRUE
+    { completed: { is: true } }
+    // completed IS false
+    { completed: { is: false } }
+    ```
+* `isNot` - Check is a field is not `null`, `true` or `false`.
+    ```ts
+    // title IS NOT NULL
+    { title: { isNot: null } }
+    // completed IS NOT TRUE
+    { completed: { isNot: true } }
+    // completed IS NOT false
+    { completed: { isNot: false } }
+    ```
+* `neq` - field is not equal to a value.
+    ```ts
+    // title != 'foo'
+    { title: { neq: 'foo' } }
+    ```
+* `gt` - field is greater than a value.
+    ```ts
+    // title > 'foo'
+    { title: { gt: 'foo' } }
+    ```
+* `gte` - field is greater than or equal to a value.
+    ```ts
+    // title >= 'foo'
+    { title: { gte: 'foo' } }
+    ```
+* `lt` - field is less than a value.
+    ```ts
+    // title < 'foo'
+    { title: { lt: 'foo' } }
+    ```
+* `lte` - field is less than or equal to a value.
+    ```ts
+    // title <= 'foo'
+    { title: { lte: 'foo' } }
+    ```
+* `in` - field is in a list of values.
+    ```ts
+    // title IN ('foo', 'bar', 'baz')
+    { title: { in: ['foo', 'bar', 'baz'] } }
+    ```
+* `notIn` - field is not in a list of values.
+    ```ts
+    // title NOT IN ('foo', 'bar', 'baz')
+    { title: { notIn: ['foo', 'bar', 'baz'] } }
+    ```
+
+### String Comparisons
+
+* `like` - field is like a value (case sensitive).
+    ```ts
+    // title LIKE 'Foo%'
+    { title: { like: 'Foo%' } }
+    ```
+* `notLike` - field is not like a value  (case sensitive).
+    ```ts
+    // title NOT LIKE 'Foo%'
+    { title: { notLike: 'Foo%' } }
+    ```
+* `iLike` - field is like a value (case insensitive).
+    ```ts
+    // title ILIKE 'Foo%'
+    { title: { iLike: 'Foo%' } }
+    ```
+* `notILike` - field is not like a value  (case insensitive).
+    ```ts
+    // title NOT ILIKE 'Foo%'
+    { title: { notILike: 'Foo%' } }
+    ```
+
+
+
+
+
+

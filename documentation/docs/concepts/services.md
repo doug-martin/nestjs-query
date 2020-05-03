@@ -29,6 +29,4 @@ All `QueryServices` should be decorated with the `@QueryService` decorator.
 
 You can create your own service for use with the `CRUDResolver` as long as it implements the `QueryService` interface.
 
-The `@nestjs-query/query-typeorm` and `@nestjs-query/query-sequelize` packages define an implementation to use.
-* [Read about the TypeOrmQueryService](../typeorm/usage)
-* [Read about the SequelizeQueryService](../sequelize/usage)
+The `@nestjs-query/query-typeorm` and `@nestjs-query/query-sequelize` packages define an implementation to use. [Read More](../persistence/services.mdx)

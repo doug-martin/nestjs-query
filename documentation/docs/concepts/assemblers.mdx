@@ -1,6 +1,8 @@
 ---
 title: Assemblers
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 Assemblers are used to translate your DTO into the underlying database type and back.
 
@@ -17,19 +19,19 @@ The only time you need to define an assembler is when the DTO and Entity are dif
 
 Separation of concerns.
 
-### Resolvers 
-Your resolvers only concern is dealing with graphql and translating the request (a DTO) into something the service cares about. 
+### Resolvers
+Your resolvers only concern is dealing with graphql and translating the request (a DTO) into something the service cares about.
 
-The resolver should not care about how it is persisted. The underlying Entity **could** have additional fields that you do not want to expose in your API, or it may be persisted into multiple stores. 
+The resolver should not care about how it is persisted. The underlying Entity **could** have additional fields that you do not want to expose in your API, or it may be persisted into multiple stores.
 
-By separating the resolver from the persistence layer you can evolve your API separate from your database model. 
+By separating the resolver from the persistence layer you can evolve your API separate from your database model.
 
-### Services 
+### Services
 
-The services concern are operating on a DTO, preventing the leaking of persistence details to the API. 
- 
- In `nestjs-query` services can be composed. In the case of assemblers information is translated using the assembler and delegated to an underlying service.  
- 
+The services concern are operating on a DTO, preventing the leaking of persistence details to the API.
+
+ In `nestjs-query` services can be composed. In the case of assemblers information is translated using the assembler and delegated to an underlying service.
+
  This alleviates any awkwardness around passing in a DTO and receiving a different object type back. Instead, your service can use an assembler to alleviate these concerns.
 
 ### Assemblers
@@ -38,11 +40,11 @@ The assembler provides a single, testable, place to provide a translation betwee
 
 ### Why not use the assembler in the resolver?
 
-The resolvers concern is translating graphql requests into the specified DTO. 
+The resolvers concern is translating graphql requests into the specified DTO.
 
-The services concern is accepting and returning a DTO based contract. when using an assembler to translate between the DTO and underlying entities. 
+The services concern is accepting and returning a DTO based contract. when using an assembler to translate between the DTO and underlying entities.
 
-If you follow this pattern you **could** use the same service with other transports (rest, microservices, etc) as long as the request can be translated into a DTO. 
+If you follow this pattern you **could** use the same service with other transports (rest, microservices, etc) as long as the request can be translated into a DTO.
 
 ## ClassTransformerAssembler
 
@@ -54,7 +56,7 @@ If you find yourself in a scenario where you need to compute values and you dont
 
 Lets take a simple example, where we have `TodoItemDTO` and we want to compute the `age`.
 
-```ts
+```ts title="todo-item.assembler.ts"
 import { Assembler, ClassTransformerAssembler } from '@nestjs-query/core';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -80,7 +82,7 @@ To create your own `Assembler` extend the `AbstractAssembler`.
 
 Lets assume we have the following `UserDTO`.
 
-```ts
+```ts title="user.dto.ts"
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType } from '@nestjs/graphql';
 
@@ -110,7 +112,7 @@ But you inherited a DB schema that has names that are not as user friendly.
 }>
 <TabItem value="typeorm">
 
-```ts
+```ts title="user.entity.ts"
 import {Entity, Column} from 'typeorm'
 
 @Entity()
@@ -129,17 +131,17 @@ class UserEntity {
 </TabItem>
 <TabItem value="sequelize">
 
-```ts
+```ts title="user.entity.ts"
 import { Table, Column, Model } from 'sequelize-typescript';
 
 @Table
 export class UserEntity extends Model<UserEntity> {
    @Column
    first!: string;
- 
+
    @Column
    last!: string;
- 
+
    @Column
    email!: string;
 }
@@ -151,7 +153,7 @@ export class UserEntity extends Model<UserEntity> {
 
 To properly translate the `UserDTO` into the `UserEntity` and back you can extend an `Assembler` that the `QueryService` will use.
 
-```ts
+```ts title="user.assembler.ts"
 import { AbstractAssembler, Assembler, Query, transformQuery } from '@nestjs-query/core';
 import { UserDTO } from './dto/user.dto';
 import { UserEntity } from './user.entity';
@@ -185,7 +187,7 @@ export class UserAssembler extends AbstractAssembler<UserDTO, UserEntity> {
 
 ```
 
-The first thing to look at is the `@Assembler` decorator. It will register the assembler with `nestjs-query` so `QueryServices` can look it up later.  
+The first thing to look at is the `@Assembler` decorator. It will register the assembler with `nestjs-query` so `QueryServices` can look it up later.
 
 ```ts
 @Assembler(UserDTO, UserEntity)
@@ -275,7 +277,7 @@ This example wraps a `TypeOrmQueryService` to assemble to `UserDTO` and `UserEnt
 }>
 <TabItem value="typeorm">
 
-```ts
+```ts title="user.service.ts"
 import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
 import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { UserDTO } from './user.dto';
@@ -296,7 +298,7 @@ export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
 </TabItem>
 <TabItem value="sequelize">
 
-```ts
+```ts title="user.service.ts"
 import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
 import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
 import { UserDTO } from './user.dto';
@@ -320,7 +322,7 @@ export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
 
 Your resolver should then use the `UserService` to fetch records.
 
-```ts
+```ts title="user.resolver.ts"
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { UserDTO } from './user.dto';
@@ -338,7 +340,7 @@ export class UserResolver extends CRUDResolver(UserDTO) {
 
 Don't forget to register your `Assembler` and `QueryService` with your module.
 
-```ts
+```ts title="user.module.ts"
 @Module({
   providers: [/*Other providers*/, UserAssembler, UserService],
   // ...other module options

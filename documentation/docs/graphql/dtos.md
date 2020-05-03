@@ -15,7 +15,7 @@ TypeGraphQL, however it allows you to specify the fields that should be filterab
 
 In the following example we allow `id`, `title`, and `completed` to be used in queries.
 
-```ts
+```ts title="todo-item.dto.ts"
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
