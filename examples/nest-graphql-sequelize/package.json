@@ -22,7 +22,7 @@
 		"@nestjs/graphql": "7.3.7",
 		"@nestjs/platform-express": "7.0.9",
 		"@nestjs/sequelize": "0.1.0",
-		"apollo-server-express": "2.12.0",
+		"apollo-server-express": "2.13.0",
 		"graphql": "15.0.0",
 		"graphql-tools": "5.0.0",
 		"pg": "8.0.3",
