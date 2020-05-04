@@ -14,7 +14,7 @@
     "start:prod": "node dist/main"
   },
   "dependencies": {
-    "@apollo/federation": "0.14.1",
+    "@apollo/federation": "0.15.0",
     "@nestjs/common": "7.0.9",
     "@nestjs/core": "7.0.9",
     "@nestjs/graphql": "7.3.7",
