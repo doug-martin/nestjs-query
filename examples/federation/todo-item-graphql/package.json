@@ -17,7 +17,7 @@
     "seed": "node ../../../node_modules/typeorm-seeding/dist/cli.js -n ./ormconfig.json -c todo-item-db seed"
   },
   "dependencies": {
-    "@apollo/federation": "0.14.1",
+    "@apollo/federation": "0.15.0",
     "@nestjs-query/core": "0.10.0",
     "@nestjs-query/query-graphql": "0.10.1",
     "@nestjs-query/query-typeorm": "0.10.2",
