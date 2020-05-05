@@ -167,7 +167,3 @@ export function QueryService<DTO>(DTOClass: Class<DTO>) {
     return Injectable()(cls);
   };
 }
-
-export function getQueryServiceToken<DTO>(DTOClass: Class<DTO>): string {
-  return `${DTOClass.name}QueryService`;
-}
