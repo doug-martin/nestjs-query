@@ -1,3 +1,3 @@
 export { TypeOrmQueryService, TypeOrmQueryServiceOpts } from './services';
-export { InjectTypeOrmQueryService, getTypeOrmQueryServiceKey } from './decorators';
+export { InjectTypeOrmQueryService } from './decorators';
 export { NestjsQueryTypeOrmModule } from './module';

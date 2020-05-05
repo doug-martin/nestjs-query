@@ -1,6 +1,7 @@
 import { QueryService } from '@nestjs-query/core';
+import { getQueryServiceToken } from '@nestjs-query/core/src';
 import * as nestjsCommon from '@nestjs/common';
-import { getTypeOrmQueryServiceKey, InjectTypeOrmQueryService } from '../../src/decorators';
+import { InjectTypeOrmQueryService } from '../../src/decorators';
 
 describe('@InjectTypeOrmQueryService', () => {
   const injectSpy = jest.spyOn(nestjsCommon, 'Inject');
@@ -14,6 +15,6 @@ describe('@InjectTypeOrmQueryService', () => {
       constructor(@InjectTypeOrmQueryService(TestEntity) readonly service: QueryService<TestEntity>) {}
     }
     expect(injectSpy).toBeCalledTimes(1);
-    expect(injectSpy).toBeCalledWith(getTypeOrmQueryServiceKey(TestEntity));
+    expect(injectSpy).toBeCalledWith(getQueryServiceToken(TestEntity));
   });
 });
