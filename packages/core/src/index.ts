@@ -1,13 +1,8 @@
 /* eslint-disable import/export */
 export * from './interfaces';
 export * from './common';
-export {
-  QueryService,
-  AssemblerQueryService,
-  RelationQueryService,
-  QueryServiceRelation,
-  getQueryServiceToken,
-} from './services';
+export { InjectQueryService, getQueryServiceToken } from './decorators';
+export { QueryService, AssemblerQueryService, RelationQueryService, QueryServiceRelation } from './services';
 export { transformFilter, transformQuery, transformSort, QueryFieldMap } from './helpers';
 export {
   ClassTransformerAssembler,
