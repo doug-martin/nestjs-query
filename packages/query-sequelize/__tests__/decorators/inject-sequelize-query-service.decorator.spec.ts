@@ -1,7 +1,7 @@
-import { QueryService } from '@nestjs-query/core';
+import { getQueryServiceToken, QueryService } from '@nestjs-query/core';
 import * as nestjsCommon from '@nestjs/common';
 import { Model } from 'sequelize-typescript';
-import { getSequelizeQueryServiceKey, InjectSequelizeQueryService } from '../../src/decorators';
+import { InjectSequelizeQueryService } from '../../src';
 
 describe('@InjectSequelizeQueryService', () => {
   const injectSpy = jest.spyOn(nestjsCommon, 'Inject');
@@ -15,6 +15,6 @@ describe('@InjectSequelizeQueryService', () => {
       constructor(@InjectSequelizeQueryService(TestEntity) readonly service: QueryService<TestEntity>) {}
     }
     expect(injectSpy).toBeCalledTimes(1);
-    expect(injectSpy).toBeCalledWith(getSequelizeQueryServiceKey(TestEntity));
+    expect(injectSpy).toBeCalledWith(getQueryServiceToken(TestEntity));
   });
 });

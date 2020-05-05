@@ -1,7 +1,7 @@
+import { getQueryServiceToken } from '@nestjs-query/core';
 import { getModelToken } from '@nestjs/sequelize';
 import { Model, Sequelize, Table, Column } from 'sequelize-typescript';
 import * as core from '@nestjs-query/core';
-import { getSequelizeQueryServiceKey } from '../src/decorators';
 import { createSequelizeQueryServiceProviders } from '../src/providers';
 import { SequelizeQueryService } from '../src/services';
 
@@ -22,7 +22,7 @@ describe('createSequelizeQueryServiceProviders', () => {
     });
     const providers = createSequelizeQueryServiceProviders([TestEntity]);
     expect(providers).toHaveLength(1);
-    expect(providers[0].provide).toBe(getSequelizeQueryServiceKey(TestEntity));
+    expect(providers[0].provide).toBe(getQueryServiceToken(TestEntity));
     expect(providers[0].inject).toEqual([getModelToken(TestEntity)]);
     expect(providers[0].useFactory(TestEntity)).toBeInstanceOf(SequelizeQueryService);
     expect(assemblerDeserializerSpy).toBeCalledTimes(1);

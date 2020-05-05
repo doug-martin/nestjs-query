@@ -1,8 +1,7 @@
-import { Class } from '@nestjs-query/core';
+import { Class, getQueryServiceToken } from '@nestjs-query/core';
 import { FactoryProvider } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, Connection, ConnectionOptions } from 'typeorm';
-import { getTypeOrmQueryServiceKey } from './decorators';
 import { TypeOrmQueryService } from './services';
 
 function createTypeOrmQueryServiceProvider<Entity>(
@@ -10,7 +9,7 @@ function createTypeOrmQueryServiceProvider<Entity>(
   connection?: Connection | ConnectionOptions | string,
 ): FactoryProvider {
   return {
-    provide: getTypeOrmQueryServiceKey(EntityClass),
+    provide: getQueryServiceToken(EntityClass),
     useFactory(repo: Repository<Entity>) {
       return new TypeOrmQueryService(repo);
     },
