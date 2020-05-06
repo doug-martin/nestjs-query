@@ -1,6 +1,5 @@
-import { QueryService } from '@nestjs-query/core';
+import { InjectQueryService, QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { Resolver, ResolveReference } from '@nestjs/graphql';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
@@ -12,7 +11,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   CreateDTOClass: TodoItemInputDTO,
   UpdateDTOClass: TodoItemUpdateDTO,
 }) {
-  constructor(@InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>) {
+  constructor(@InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>) {
     super(service);
   }
 

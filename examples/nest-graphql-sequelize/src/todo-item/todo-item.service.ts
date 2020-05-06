@@ -1,5 +1,4 @@
-import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
-import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
+import { AssemblerQueryService, InjectQueryService, QueryService } from '@nestjs-query/core';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemAssembler } from './todo-item.assembler';
 import { TodoItemEntity } from './entity/todo-item.entity';
@@ -8,7 +7,7 @@ import { TodoItemEntity } from './entity/todo-item.entity';
 export class TodoItemService extends AssemblerQueryService<TodoItemDTO, TodoItemEntity> {
   constructor(
     assembler: TodoItemAssembler,
-    @InjectSequelizeQueryService(TodoItemEntity) queryService: QueryService<TodoItemEntity>,
+    @InjectQueryService(TodoItemEntity) queryService: QueryService<TodoItemEntity>,
   ) {
     super(assembler, queryService);
   }

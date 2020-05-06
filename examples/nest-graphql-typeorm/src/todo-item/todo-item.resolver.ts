@@ -2,8 +2,6 @@ import { Filter } from '@nestjs-query/core';
 import { ConnectionType, CRUDResolver } from '@nestjs-query/query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth.guard';
-import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
-import { TagDTO } from '../tag/dto/tag.dto';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -19,12 +17,6 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   create: { guards },
   update: { guards },
   delete: { guards },
-  relations: {
-    many: {
-      subTasks: { DTO: SubTaskDTO, disableRemove: true, guards },
-      tags: { DTO: TagDTO, guards },
-    },
-  },
 }) {
   constructor(readonly service: TodoItemService) {
     super(service);

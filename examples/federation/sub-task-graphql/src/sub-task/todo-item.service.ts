@@ -1,11 +1,10 @@
-import { QueryService, RelationQueryService } from '@nestjs-query/core';
-import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { InjectQueryService, QueryService, RelationQueryService } from '@nestjs-query/core';
 import { TodoItemReferenceDTO } from './dto/todo-item-reference.dto';
 import { SubTaskEntity } from './sub-task.entity';
 
 @QueryService(TodoItemReferenceDTO)
 export class TodoItemService extends RelationQueryService<TodoItemReferenceDTO> {
-  constructor(@InjectTypeOrmQueryService(SubTaskEntity) readonly subTaskService: QueryService<SubTaskEntity>) {
+  constructor(@InjectQueryService(SubTaskEntity) readonly subTaskService: QueryService<SubTaskEntity>) {
     super({
       // the name of the relation
       subTasks: {
