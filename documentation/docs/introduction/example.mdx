@@ -201,20 +201,10 @@ npx nest g r todo-item
 ```
 
 Once the resolver is generated paste the following into `src/todo-item/todo-item.resolver.ts`.
-<Tabs
-  defaultValue="typeorm"
-  groupId="orm"
-  values={[
-    { label: 'TypeOrm', value: 'typeorm', },
-    { label: 'Sequelize', value: 'sequelize', },
-  ]
-}>
-<TabItem value="typeorm">
 
 ```ts
-import { QueryService } from '@nestjs-query/core';
+import { InjectQueryService, QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -222,37 +212,12 @@ import { TodoItemEntity } from './todo-item.entity';
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
   constructor(
-    @InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+    @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
   ) {
     super(service);
   }
 }
 ```
-
-</TabItem>
-<TabItem value="sequelize">
-
-```ts
-import { QueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
-import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './todo-item.dto';
-import { TodoItemEntity } from './todo-item.entity';
-
-@Resolver()
-export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
-  constructor(
-    @InjectSequelizeQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
-  ) {
-    super(service);
-  }
-}
-
-```
-
-</TabItem>
-</Tabs>
 
 Lets break this down a little bit.
 
@@ -263,41 +228,15 @@ When creating the resolver notice how `TodoItemResolver` extends `CRUDResolver` 
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO)
 ```
 
-In the constructor we inject a QueryService using the `InjectTypeOrmQueryService` or `InjectSequelizeQueryService`. This decorator will automatically create a QueryService for your entity that your resolver can use.
-
 To read more about the service take a look at [the Services docs](../concepts/services) and [Persistence docs](../persistence/services)
 
-<Tabs
-  defaultValue="typeorm"
-  groupId="orm"
-  values={[
-    { label: 'TypeOrm', value: 'typeorm', },
-    { label: 'Sequelize', value: 'sequelize', },
-  ]
-}>
-<TabItem value="typeorm">
-
 ```ts
 constructor(
-  @InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+  @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
 ) {
   super(service);
 }
 ```
-
-</TabItem>
-<TabItem value="sequelize">
-
-```ts
-constructor(
-  @InjectSequelizeQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
-) {
-  super(service);
-}
-```
-
-</TabItem>
-</Tabs>
 
 ## Wire everything up.
 

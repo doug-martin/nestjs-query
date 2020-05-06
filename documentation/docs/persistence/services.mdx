@@ -96,56 +96,22 @@ export class TodoItemEntity extends Model<TodoItemEntity> {
 
 Each persistence package includes a decorator that will automatically create a `QueryService` for you to use in your application.
 
-<Tabs
-  defaultValue="typeorm"
-  groupId="orm"
-  values={[
-    { label: 'TypeOrm', value: 'typeorm', },
-    { label: 'Sequelize', value: 'sequelize', },
-  ]
-}>
-<TabItem value="typeorm">
-
-```ts title="todo-item.resolver.ts" {11}
-import { QueryService } from '@nestjs-query/core';
+```ts title="todo-item.resolver.ts" {10}
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
   constructor(
-    @InjectTypeOrmQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+    @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
   ) {
     super(service);
   }
 }
 ```
-
-</TabItem>
-<TabItem value="sequelize">
-
-```ts title="todo-item.resolver.ts" {11}
-import { QueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { Resolver } from '@nestjs/graphql';
-import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
-import { TodoItemDTO } from './todo-item.dto';
-import { TodoItemEntity } from './todo-item.entity';
-
-@Resolver(() => TodoItemDTO)
-export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
-  constructor(
-    @InjectSequelizeQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
-  ) {
-    super(service);
-  }
-}
-```
-</TabItem>
-</Tabs>
 
 :::note
 In the above example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
@@ -671,21 +637,10 @@ Notice how the `todoItem` is not decorated with a field decorator.
 
 Instead, add it to your resolver.
 
-<Tabs
-  defaultValue="typeorm"
-  groupId="orm"
-  values={[
-    { label: 'TypeOrm', value: 'typeorm', },
-    { label: 'Sequelize', value: 'sequelize', },
-  ]
-}>
-<TabItem value="typeorm">
-
-```ts {11}
+```ts {10}
 import { QueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
-import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
 import { TodoItem } from '../todo-item/todo-item';
 import { SubTask } from './sub-task';
 
@@ -695,35 +650,9 @@ export class SubTaskResolver extends CRUDResolver(SubTask, {
     one: { todoItem: { DTO: TodoItem, disableRemove: true } },
   },
 }) {
-  constructor(@InjectTypeOrmQueryService(SubTask) readonly service: QueryService<SubTask>) {
+  constructor(@InjectQueryService(SubTask) readonly service: QueryService<SubTask>) {
     super(service);
   }
 }
 ```
-
-</TabItem>
-<TabItem value="sequelize">
-
-```ts {11}
-import { QueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { Resolver } from '@nestjs/graphql';
-import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
-import { TodoItem } from '../todo-item/todo-item';
-import { SubTask } from './sub-task';
-
-@Resolver(() => SubTask)
-export class SubTaskResolver extends CRUDResolver(SubTask, {
-  relations: {
-    one: { todoItem: { DTO: TodoItem, disableRemove: true } },
-  },
-}) {
-  constructor(@InjectSequelizeQueryService(SubTask) readonly service: QueryService<SubTask>) {
-    super(service);
-  }
-}
-```
-
-</TabItem>
-</Tabs>
 
