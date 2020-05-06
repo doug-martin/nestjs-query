@@ -120,13 +120,13 @@ import { SecretEntity } from './secret.entity';
 export class SecretModule {}
 ```
 
-Once the `SecretEntity` is registered you can use the `@InjectTypeOrmQueryService` with your entities. 
+Once the `SecretEntity` is registered you can use the `@InjectQueryService` with your entities. 
 
 ```ts title="secret/secret.resolver.ts"
 @Resolver(() => SecretDTO)
 export class SecretResolver extends CRUDResolver(SecretDTO) {
   constructor(
-    @InjectTypeOrmQueryService(SecretEntity) readonly service: QueryService<SecretEntity>
+    @InjectQueryService(SecretEntity) readonly service: QueryService<SecretEntity>
   ) {
     super(service);
   }

@@ -265,21 +265,10 @@ This is a pretty basic example but the same pattern should apply to more complex
 
 To use your assembler you need to create an `AssemblerQueryService` that will wrap a `QueryService` to translate back and forth.
 
-This example wraps a `TypeOrmQueryService` to assemble to `UserDTO` and `UserEntity`.
-
-<Tabs
-  defaultValue="typeorm"
-  groupId="orm"
-  values={[
-    { label: 'TypeOrm', value: 'typeorm', },
-    { label: 'Sequelize', value: 'sequelize', },
-  ]
-}>
-<TabItem value="typeorm">
+This example wraps a `QueryService` to assemble to `UserDTO` and `UserEntity`.
 
 ```ts title="user.service.ts"
-import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
-import { InjectTypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { AssemblerQueryService, InjectQueryService, QueryService } from '@nestjs-query/core';
 import { UserDTO } from './user.dto';
 import { UserAssembler } from './user.assembler';
 import { UserEntity } from './user.entity';
@@ -288,36 +277,12 @@ import { UserEntity } from './user.entity';
 export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
   constructor(
     assembler: UserAssembler,
-    @InjectTypeOrmQueryService(UserEntity) queryService: QueryService<UserEntity>,
+    @InjectQueryService(UserEntity) queryService: QueryService<UserEntity>,
   ) {
     super(assembler, queryService);
   }
 }
 ```
-
-</TabItem>
-<TabItem value="sequelize">
-
-```ts title="user.service.ts"
-import { AssemblerQueryService, QueryService } from '@nestjs-query/core';
-import { InjectSequelizeQueryService } from '@nestjs-query/query-sequelize';
-import { UserDTO } from './user.dto';
-import { UserAssembler } from './user.assembler';
-import { UserEntity } from './user.entity';
-
-@QueryService(UserDTO)
-export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
-  constructor(
-    assembler: UserAssembler,
-    @InjectSequelizeQueryService(UserEntity) queryService: QueryService<UserEntity>,
-  ) {
-    super(assembler, queryService);
-  }
-}
-```
-
-</TabItem>
-</Tabs>
 
 
 Your resolver should then use the `UserService` to fetch records.
