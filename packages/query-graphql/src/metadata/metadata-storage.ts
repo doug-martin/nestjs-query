@@ -2,6 +2,7 @@ import { TypeMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storage
 import { Class, Filter, SortField } from '@nestjs-query/core';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
+import { ResolverRelation } from '../resolvers/relations';
 import { EdgeType, StaticConnectionType } from '../types/connection';
 
 /**
@@ -14,6 +15,12 @@ interface FilterableFieldDescriptor<T> {
   advancedOptions?: FieldOptions;
 }
 
+interface RelationDescriptor<Relation> {
+  name: string;
+  relationTypeFunc: () => Class<Relation>;
+  isConnection: boolean;
+  relationOpts?: Omit<ResolverRelation<Relation>, 'DTO'>;
+}
 /**
  * @internal
  */
@@ -28,12 +35,15 @@ export class GraphQLQueryMetadataStorage {
 
   private readonly edgeTypeStorage: Map<Class<unknown>, Class<EdgeType<unknown>>>;
 
+  private readonly relationStorage: Map<Class<unknown>, RelationDescriptor<unknown>[]>;
+
   constructor() {
     this.filterableObjectStorage = new Map();
     this.filterTypeStorage = new Map();
     this.sortTypeStorage = new Map();
     this.connectionTypeStorage = new Map();
     this.edgeTypeStorage = new Map();
+    this.relationStorage = new Map();
   }
 
   addFilterableObjectField<T>(type: Class<T>, field: FilterableFieldDescriptor<unknown>): void {
@@ -93,6 +103,19 @@ export class GraphQLQueryMetadataStorage {
     return this.getValue(this.edgeTypeStorage, type);
   }
 
+  addRelation<T>(type: Class<T>, name: string, relation: RelationDescriptor<unknown>): void {
+    let relations: RelationDescriptor<unknown>[] | undefined = this.relationStorage.get(type);
+    if (!relations) {
+      relations = [];
+      this.relationStorage.set(type, relations);
+    }
+    relations.push(relation);
+  }
+
+  getRelations<T>(type: Class<T>): RelationDescriptor<unknown>[] | undefined {
+    return this.relationStorage.get(type);
+  }
+
   getGraphqlObjectMetadata<T>(objType: Class<T>): ObjectTypeMetadata | undefined {
     return TypeMetadataStorage.getObjectTypesMetadata().find((o) => o.target === objType);
   }
@@ -104,6 +127,7 @@ export class GraphQLQueryMetadataStorage {
     this.sortTypeStorage.clear();
     this.connectionTypeStorage.clear();
     this.edgeTypeStorage.clear();
+    this.relationStorage.clear();
   }
 
   private getValue<V>(map: Map<Class<unknown>, Class<unknown>>, key: Class<unknown>): V | undefined {
