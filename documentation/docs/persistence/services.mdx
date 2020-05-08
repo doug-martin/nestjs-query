@@ -92,34 +92,11 @@ export class TodoItemEntity extends Model<TodoItemEntity> {
 
 ## Creating a Service
 
-### Decorator
-
-Each persistence package includes a decorator that will automatically create a `QueryService` for you to use in your application.
-
-```ts title="todo-item.resolver.ts" {10}
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './todo-item.dto';
-import { TodoItemEntity } from './todo-item.entity';
-
-@Resolver(() => TodoItemDTO)
-export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
-  constructor(
-    @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
-  ) {
-    super(service);
-  }
-}
-```
-
-:::note
-In the above example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
-:::
-
 ### Module
 
-In order to use the decorator you will need to use the module that comes with the `nestjs-query` orm module.
+The `nestjs-query` `typeorm` and `sequelize` packages provide a module that will add providers to inject auto-created `QueryServices` using the `@InjectQueryService` decorator.
+
+In order to use the decorator you will need to use the module that comes with the `nestjs-query` orm module providing it your entities that you want the services created for.
 
 <Tabs
   defaultValue="typeorm"
@@ -164,9 +141,38 @@ export class TodoItemModule {}
 </TabItem>
 </Tabs>
 
+### Decorator
+
+Once you have imported the correct module, use `@InjectQueryService` decorator to inject a `QueryService` into your class or resolver.
+
+```ts title="todo-item.resolver.ts" {10}
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
+  constructor(
+    @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+  ) {
+    super(service);
+  }
+}
+```
+
+:::note
+The above resolver is an example of manually defining the resolver, if you use the `NestjsQueryGraphQLModule` you do not need to define a resolver.
+:::
+
+:::note
+In the above example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
+:::
+
 ## Querying
 
-The `nestjs-query` QueryService uses a common `Query` interface that allows you use a common type regardless of the persistence libary in use.
+The `nestjs-query` QueryService uses a common `Query` interface that allows you use a common type regardless of the persistence library in use.
 
  To query for records from your service you can use the `query` method which will return a `Promise` of an array of entities. To read more about querying take a look at the [Queries Doc](../concepts/queries).
 
@@ -499,7 +505,7 @@ This section only applies when you combine your DTO and entity
 
 When your DTO and entity are the same class and you have relations defined, you should not decorate your the relations in the DTO with `@Field` or `@FilterableField`.
 
-Instead specify the relations you want to expose in your resolver.
+Instead decorate the class with `@Connection` or `@Relation`.
 
 ### Example
 
@@ -514,7 +520,7 @@ Assume you have the following subtask definition.
 }>
 <TabItem value="typeorm">
 
-```ts title="sub-task.ts"  {37-43}
+```ts title="sub-task.ts"  {15,38-44}
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -525,10 +531,11 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { ObjectType, ID } from '@nestjs/graphql';
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField, Relation } from '@nestjs-query/query-graphql';
 import { TodoItem } from '../todo-item/todo-item';
 
 @ObjectType()
+@Relation('todoItem', () => TodoItem, { disableRemove: true })
 @Entity({ name: 'sub_task' })
 export class SubTask {
   @FilterableField(() => ID)
@@ -552,7 +559,7 @@ export class SubTask {
   todoItemId!: string;
 
   // do not decorate with @Field
-  @ManyToOne(() => TodoItemEntity, (td) => td.subTasks, {
+  @ManyToOne(() => TodoItem, (td) => td.subTasks, {
     onDelete: 'CASCADE',
     nullable: false,
   })
@@ -572,7 +579,7 @@ export class SubTask {
 </TabItem>
 <TabItem value="sequelize">
 
-```ts title="sub-task.ts" {44-46}
+```ts title="sub-task.ts" {18,45-47}
 import {
   Table,
   AllowNull,
@@ -590,6 +597,7 @@ import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItem } from '../todo-item/entity/todo-item';
 
 @ObjectType()
+@Relation('todoItem', () => TodoItem, { disableRemove: true })
 @Table
 export class SubTask extends Model<SubTaskEntity> {
   @FilterableField(() => ID)
@@ -633,9 +641,9 @@ export class SubTask extends Model<SubTaskEntity> {
 </TabItem>
 </Tabs>
 
-Notice how the `todoItem` is not decorated with a field decorator.
+Notice how the `todoItem` is not decorated with a field decorator, instead it is exposed through the `@Relation` decorator.
 
-Instead, add it to your resolver.
+If you do not decorate the class with `@Connection` or `@Relation` you can alternatively specify them in the resolver.
 
 ```ts {10}
 import { QueryService } from '@nestjs-query/core';

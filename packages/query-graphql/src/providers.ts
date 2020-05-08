@@ -3,14 +3,14 @@ import { Provider, Inject } from '@nestjs/common';
 import { Resolver } from '@nestjs/graphql';
 import { CRUDResolver, CRUDResolverOpts } from './resolvers';
 
-export interface AutoResolverOpts<DTO, Entity> extends CRUDResolverOpts<DTO> {
+export interface AutoResolverOpts<DTO, Entity, C, U> extends CRUDResolverOpts<DTO, C, U> {
   DTOClass: Class<DTO>;
   EntityClass: Class<Entity>;
 }
 
 const getResolverToken = <DTO>(DTOClass: Class<DTO>): string => `${DTOClass.name}AutoResolver`;
 
-function createResolver<DTO, Entity>(resolverOpts: AutoResolverOpts<DTO, Entity>): Provider {
+function createResolver<DTO, Entity, C, U>(resolverOpts: AutoResolverOpts<DTO, Entity, C, U>): Provider {
   const { DTOClass, EntityClass } = resolverOpts;
 
   class Service extends AssemblerQueryService<DTO, Entity> {
@@ -32,6 +32,6 @@ function createResolver<DTO, Entity>(resolverOpts: AutoResolverOpts<DTO, Entity>
   return AutoResolver;
 }
 
-export const createResolvers = (opts: AutoResolverOpts<unknown, unknown>[]): Provider[] => {
+export const createResolvers = (opts: AutoResolverOpts<unknown, unknown, unknown, unknown>[]): Provider[] => {
   return opts.map((opt) => createResolver(opt));
 };

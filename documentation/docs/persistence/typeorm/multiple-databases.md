@@ -105,33 +105,33 @@ The only difference is you need to pass the name of the `Connection` when import
 
 ```ts title="secret/secret.module.ts"
 import { Module } from '@nestjs/common';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm'; 
 import { SECRET_DB_CONNECTION } from '../constants';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { SecretEntity } from './secret.entity';
+import { SecretDTO } from './secret.dto'
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature(
-      [SecretEntity], 
-      SECRET_DB_CONNECTION, // specify the connection name
-    )
+    NestjsQueryGraphQLModule.forFeature({
+      // import the NestjsQueryTypeOrmModule to register the entity with typeorm
+      // and provide a QueryService
+      imports: [
+        NestjsQueryTypeOrmModule.forFeature(
+          [SecretEntity], 
+          SECRET_DB_CONNECTION, // specify the connection name
+        )
+      ],
+      // describe the resolvers you want to expose
+      resolvers: [{ DTOClass: SecretDTO, EntityClass: SecretEntity }],
+    }),
+    
   ],  
 })
 export class SecretModule {}
 ```
 
-Once the `SecretEntity` is registered you can use the `@InjectQueryService` with your entities. 
-
-```ts title="secret/secret.resolver.ts"
-@Resolver(() => SecretDTO)
-export class SecretResolver extends CRUDResolver(SecretDTO) {
-  constructor(
-    @InjectQueryService(SecretEntity) readonly service: QueryService<SecretEntity>
-  ) {
-    super(service);
-  }
-}
-```
+Now the `NestjsQueryGraphQLModule` will create a `Resolver` for the `SecretDTO` and `SecretEntity` that will use the custom connection.
 
 ## Custom TypeOrmQueryService
 

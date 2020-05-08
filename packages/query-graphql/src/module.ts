@@ -3,7 +3,8 @@ import { AutoResolverOpts, createResolvers } from './providers';
 
 export interface NestjsQueryGraphqlModuleOpts {
   imports: DynamicModule[];
-  resolvers: AutoResolverOpts<unknown, unknown>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  resolvers: AutoResolverOpts<any, any, unknown, unknown>[];
 }
 
 export class NestjsQueryGraphQLModule {

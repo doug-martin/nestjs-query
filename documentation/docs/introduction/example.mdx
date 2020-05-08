@@ -58,7 +58,7 @@ Add the following to `src/todo-item/todo-item.entity.ts`.
 }>
 <TabItem value="typeorm">
 
-```ts
+```ts title="todo-item/todo-item.entity.ts"
 import {
   Column,
   CreateDateColumn,
@@ -89,7 +89,7 @@ export class TodoItemEntity {
 </TabItem>
 <TabItem value="sequelize">
 
-```ts
+```ts title="todo-item/todo-item.entity.ts"
 import {
   Table,
   Column,
@@ -145,7 +145,7 @@ npx nest g cl todo-item.dto todo-item
 
 Now lets fill out the DTO. Add the following to `src/todo-item/todo-item.dto.ts`.
 
-```ts
+```ts title="todo-item/todo-item.dto.ts"
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, GraphQLISODateTime, Field, Int } from '@nestjs/graphql';
 
@@ -173,11 +173,11 @@ export class TodoItemDTO {
 Notice the use of `@FilterableField` this will let `@nestjs-query/query-graphql` know to allow filtering on the
 corresponding field. If you just use `@Field` then you will not be able to filter on the corresponding field.
 
-## Create the Resolver
+## Wire everything up.
 
-To create the resolver extend `CRUDResolver` from `@nestjs-query/query-graphql`.
+Update the `todo-item.module` to set up the `NestjsQueryGraphQLModule` and the entities to provide a `QueryService`.
 
-The `CRUDResolver` will by default expose expose the following graphql queries and mutations.
+The `NestjsQueryGraphQLModule` will automatically create a Resolver that will expose the following `queries` and `mutations`:
 
 **Queries**
 
@@ -193,55 +193,6 @@ The `CRUDResolver` will by default expose expose the following graphql queries a
 * `deleteManyTodoItems` - delete multiple `TodoItems`s.
 * `deleteOneTodoItems` - delete one `TodoItem`.
 
-**NOTE** By default `CRUDResolver` will use the name used by `@nestjs/graphql` when the DTO is annotated with `@ObjectType`.
-
-Generate the resolver file.
-```sh
-npx nest g r todo-item
-```
-
-Once the resolver is generated paste the following into `src/todo-item/todo-item.resolver.ts`.
-
-```ts
-import { InjectQueryService, QueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { Resolver } from '@nestjs/graphql';
-import { TodoItemDTO } from './todo-item.dto';
-import { TodoItemEntity } from './todo-item.entity';
-
-@Resolver()
-export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
-  constructor(
-    @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
-  ) {
-    super(service);
-  }
-}
-```
-
-Lets break this down a little bit.
-
-When creating the resolver notice how `TodoItemResolver` extends `CRUDResolver` and the class is annotated with `@Resolver`. Without the annotation the resolver **WILL NOT** be exposed in the graphql schema.
-
-```ts
-@Resolver()
-export class TodoItemResolver extends CRUDResolver(TodoItemDTO)
-```
-
-To read more about the service take a look at [the Services docs](../concepts/services) and [Persistence docs](../persistence/services)
-
-```ts
-constructor(
-  @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
-) {
-  super(service);
-}
-```
-
-## Wire everything up.
-
-Update the `todo-item.module` to register the entities with `typeorm` or `sequelize`.
-
 <Tabs
   defaultValue="typeorm"
   groupId="orm"
@@ -252,16 +203,23 @@ Update the `todo-item.module` to register the entities with `typeorm` or `sequel
 }>
 <TabItem value="typeorm">
 
-```ts
-import { Module } from '@nestjs/common';
+```ts {9-15}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
-import { TodoItemResolver } from './todo-item.resolver';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
 @Module({
-  providers: [TodoItemResolver],
-  // add this line.
-  imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      // import the NestjsQueryTypeOrmModule to register the entity with typeorm
+      // and provide a QueryService
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      // describe the resolvers you want to expose
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
+    }),
+  ],
 })
 export class TodoItemModule {}
 ```
@@ -269,25 +227,31 @@ export class TodoItemModule {}
 </TabItem>
 <TabItem value="sequelize">
 
-```ts
-import { Module } from '@nestjs/common';
+```ts {9-15}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
-import { TodoItemResolver } from './todo-item.resolver';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
 @Module({
-  providers: [TodoItemResolver],
-  // add this line.
-  imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      // import the NestjsQueryTypeOrmModule to register the entity with typeorm
+      // and provide a QueryService
+      imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
+      // describe the resolvers you want to expose
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
+    }),
+  ],
 })
 export class TodoItemModule {}
-
 ```
 
 </TabItem>
 </Tabs>
 
-Update `app.module` to set up your db connection and the `graphql` nest modules.
+Next update `app.module` to set up your db connection and the `graphql` nest modules.
 
 
 <Tabs
