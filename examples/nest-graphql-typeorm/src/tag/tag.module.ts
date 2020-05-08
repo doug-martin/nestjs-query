@@ -1,4 +1,4 @@
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql/src';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { Module } from '@nestjs/common';
 import { TagInputDTO } from './dto/tag-input.dto';
