@@ -1,0 +1,37 @@
+---
+title: v0.10.x to v0.11.x
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+### `@InjectQueryService`
+
+In `v0.11.x` an new decorator was added `@InjectQueryService`, this decorator replaces the ORM specific decorators:
+* `@InjectTypeOrmQueryService`
+* `@InjectSequelizeQueryService`
+
+To migrate replace all `@InjectTypeOrmQueryService` and `@InjectSequelizeQueryService` with `@InjectQueryService`.
+
+:::note
+You still need to import the `NestjsQueryTypeOrmModule` or `NestjsQuerySequelizeModule` to use `@InjectQueryService`.
+:::
+
+```ts
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
+  constructor(@InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>) {
+    super(service);
+  }
+}
+```
+
+## New Features
+
+To see other non-breaking features checkout to [v0.11.0 blog post](../../blog/v0.11.0)

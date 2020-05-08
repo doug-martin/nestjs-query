@@ -4,6 +4,10 @@ title: Custom Service
 
 To create a custom query service to add your own methods to you can extend the `SequelizeQueryService`.
 
+:::note
+When using a custom service you need to also create your `Resolver` instead of using the auto-generated one from `NestjsQueryGraphQLModule`
+:::
+
 ```ts title="todo-item.service.ts"
 import { QueryService } from '@nestjs-query/core';
 import { InjectModel } from '@nestjs/sequelize';
