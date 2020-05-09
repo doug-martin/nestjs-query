@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/doug-martin/nestjs-query/compare/v0.10.2...v0.11.0) (2020-05-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @apollo/federation to v0.15.0 ([b534056](https://github.com/doug-martin/nestjs-query/commit/b5340567221624dc5bd096e2c1e7097ac3bcc522))
+* **deps:** update dependency apollo-server-express to v2.13.0 ([7525af5](https://github.com/doug-martin/nestjs-query/commit/7525af5ad2cde82ebb684c75226b4818e7b068fc))
+
+
+
+
+
 ## [0.10.2](https://github.com/doug-martin/nestjs-query/compare/v0.10.1...v0.10.2) (2020-05-04)
 
 **Note:** Version bump only for package nest-graphql-gateway

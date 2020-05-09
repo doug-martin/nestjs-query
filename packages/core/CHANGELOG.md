@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/doug-martin/nestjs-query/compare/v0.10.2...v0.11.0) (2020-05-09)
+
+
+### Features
+
+* **graphql:** Add graphql module ([282c421](https://github.com/doug-martin/nestjs-query/commit/282c421d0e6f67fe750fa6005f6cb7d960c8fbd0))
+
+
+
+
+
 # [0.10.0](https://github.com/doug-martin/nestjs-query/compare/v0.9.0...v0.10.0) (2020-04-29)
 
 
