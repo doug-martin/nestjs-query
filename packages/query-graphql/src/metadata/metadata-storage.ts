@@ -2,7 +2,8 @@ import { TypeMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storage
 import { Class, Filter, SortField } from '@nestjs-query/core';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
-import { ResolverRelation } from '../resolvers/relations';
+import { ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
+import { ReferencesKeys } from '../resolvers/relations/relations.interface';
 import { EdgeType, StaticConnectionType } from '../types/connection';
 
 /**
@@ -21,6 +22,13 @@ interface RelationDescriptor<Relation> {
   isConnection: boolean;
   relationOpts?: Omit<ResolverRelation<Relation>, 'DTO'>;
 }
+
+interface ReferenceDescriptor<DTO, Reference> {
+  name: string;
+  keys: ReferencesKeys<DTO, Reference>;
+  relationTypeFunc: () => Class<Reference>;
+  relationOpts?: Omit<ResolverRelationReference<DTO, Reference>, 'DTO'>;
+}
 /**
  * @internal
  */
@@ -37,6 +45,8 @@ export class GraphQLQueryMetadataStorage {
 
   private readonly relationStorage: Map<Class<unknown>, RelationDescriptor<unknown>[]>;
 
+  private readonly referenceStorage: Map<Class<unknown>, ReferenceDescriptor<unknown, unknown>[]>;
+
   constructor() {
     this.filterableObjectStorage = new Map();
     this.filterTypeStorage = new Map();
@@ -44,6 +54,7 @@ export class GraphQLQueryMetadataStorage {
     this.connectionTypeStorage = new Map();
     this.edgeTypeStorage = new Map();
     this.relationStorage = new Map();
+    this.referenceStorage = new Map();
   }
 
   addFilterableObjectField<T>(type: Class<T>, field: FilterableFieldDescriptor<unknown>): void {
@@ -116,6 +127,19 @@ export class GraphQLQueryMetadataStorage {
     return this.relationStorage.get(type);
   }
 
+  addReference<T>(type: Class<T>, name: string, reference: ReferenceDescriptor<T, unknown>): void {
+    let references: ReferenceDescriptor<unknown, unknown>[] | undefined = this.referenceStorage.get(type);
+    if (!references) {
+      references = [];
+      this.referenceStorage.set(type, references);
+    }
+    references.push(reference as ReferenceDescriptor<unknown, unknown>);
+  }
+
+  getReferences<T>(type: Class<T>): ReferenceDescriptor<T, unknown>[] | undefined {
+    return this.referenceStorage.get(type);
+  }
+
   getGraphqlObjectMetadata<T>(objType: Class<T>): ObjectTypeMetadata | undefined {
     return TypeMetadataStorage.getObjectTypesMetadata().find((o) => o.target === objType);
   }
@@ -128,6 +152,7 @@ export class GraphQLQueryMetadataStorage {
     this.connectionTypeStorage.clear();
     this.edgeTypeStorage.clear();
     this.relationStorage.clear();
+    this.referenceStorage.clear();
   }
 
   private getValue<V>(map: Map<Class<unknown>, Class<unknown>>, key: Class<unknown>): V | undefined {

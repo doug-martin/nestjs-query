@@ -6,6 +6,9 @@ export {
   Connection,
   RelationTypeFunc,
   RelationDecoratorOpts,
+  Reference,
+  ReferenceTypeFunc,
+  ReferenceDecoratorOpts,
 } from './decorators';
 export * from './resolvers';
 export * from './federation';

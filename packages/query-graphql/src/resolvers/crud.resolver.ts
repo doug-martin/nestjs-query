@@ -2,6 +2,7 @@ import { Class, DeepPartial } from '@nestjs-query/core';
 import { ReferencesOpts, Relatable, RelationsOpts } from './relations';
 import { Readable, ReadResolver, ReadResolverOpts } from './read.resolver';
 import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver';
+import { Refereceable, ReferenceResolverOpts } from './reference.resolver';
 import { ResolverClass } from './resolver.interface';
 import { Updateable, UpdateResolver, UpdateResolverOpts } from './update.resolver';
 import { DeleteResolver, DeleteResolverOpts } from './delete.resolver';
@@ -25,6 +26,8 @@ export interface CRUDResolverOpts<
   delete?: DeleteResolverOpts<DTO>;
   relations?: RelationsOpts;
   references?: ReferencesOpts<DTO>;
+  reference?: ReferenceResolverOpts<DTO>;
+  referenceBy?: ReferenceResolverOpts<DTO>;
 }
 
 export interface CRUDResolver<DTO, C extends DeepPartial<DTO>, U extends DeepPartial<DTO>>
@@ -66,17 +69,15 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
     read = {},
     update = {},
     delete: deleteArgs = {},
+    referenceBy = {},
   } = opts;
-  return Relatable(
-    DTOClass,
-    relations,
-    references,
-  )(
-    Creatable(DTOClass, { CreateDTOClass, ...create })(
-      Readable(
-        DTOClass,
-        read,
-      )(Updateable(DTOClass, { UpdateDTOClass, ...update })(DeleteResolver(DTOClass, deleteArgs))),
-    ),
-  );
+
+  const referencable = Refereceable(DTOClass, referenceBy);
+  const relatable = Relatable(DTOClass, relations, references);
+  const creatable = Creatable(DTOClass, { CreateDTOClass, ...create });
+  const readable = Readable(DTOClass, read);
+  const updateable = Updateable(DTOClass, { UpdateDTOClass, ...update });
+  const deleteResolver = DeleteResolver(DTOClass, deleteArgs);
+
+  return referencable(relatable(creatable(readable(updateable(deleteResolver)))));
 };
