@@ -12,7 +12,7 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
+  constructor() {}
 
   addRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO> {
     return Promise.reject(new NotImplementedException('addRelations is not implemented'));

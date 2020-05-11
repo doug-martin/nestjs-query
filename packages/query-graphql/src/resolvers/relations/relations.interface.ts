@@ -2,20 +2,20 @@ import { Class } from '@nestjs-query/core';
 import { DTONamesOpts } from '../../common';
 import { ResolverMethodOpts } from '../../decorators';
 
-export type ReferencesKeys<DTO, Relation> = {
-  [F in keyof Relation]?: keyof DTO;
+export type ReferencesKeys<DTO, Reference> = {
+  [F in keyof Reference]?: keyof DTO;
 };
 
-export interface ResolverRelationReference<DTO, Relation> extends DTONamesOpts, ResolverMethodOpts {
+export interface ResolverRelationReference<DTO, Reference> extends DTONamesOpts, ResolverMethodOpts {
   /**
    * The class type of the relation.
    */
-  DTO: Class<Relation>;
+  DTO: Class<Reference>;
 
   /**
    * Keys
    */
-  keys: ReferencesKeys<DTO, Relation>;
+  keys: ReferencesKeys<DTO, Reference>;
 
   /**
    * Set to true if the relation is nullable
