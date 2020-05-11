@@ -1,7 +1,9 @@
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField, Reference } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { TodoItemReferenceDTO } from './todo-item-reference.dto';
 
 @ObjectType('SubTask')
+@Reference('todoItem', () => TodoItemReferenceDTO, { id: 'todoItemId' })
 export class SubTaskDTO {
   @FilterableField(() => ID)
   id!: number;
