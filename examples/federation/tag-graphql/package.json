@@ -17,7 +17,7 @@
     "seed": "node ../../../node_modules/typeorm-seeding/dist/cli.js -n ./ormconfig.json -c tag-db seed"
   },
   "dependencies": {
-    "@apollo/federation": "0.15.0",
+    "@apollo/federation": "0.16.0",
     "@nestjs-query/core": "0.11.1",
     "@nestjs-query/query-graphql": "0.11.1",
     "@nestjs-query/query-typeorm": "0.11.1",
