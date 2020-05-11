@@ -9,7 +9,6 @@ import * as ormconfig from '../ormconfig.json';
     TypeOrmModule.forRoot(ormconfig as TypeOrmModuleOptions),
     GraphQLFederationModule.forRoot({
       autoSchemaFile: 'schema.gql',
-      include: [TodoItemModule],
     }),
     TodoItemModule,
   ],
