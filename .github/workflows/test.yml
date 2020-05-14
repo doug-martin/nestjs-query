@@ -9,7 +9,7 @@ on:
 env:
   CI: true
 jobs:
-  build:
+  unit:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,9 +27,41 @@ jobs:
         uses: coverallsapp/github-action@v1.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-unit-${{ matrix.node-version }}
           parallel: true
-      - name: Coveralls Finished
+  e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: docker-compose -f ./examples/nest-graphql-typeorm/docker-compose.yml up -d
+      - run: docker-compose -f ./examples/federation/docker-compose.yml up -d
+      - run: docker-compose -f ./examples/nest-graphql-typeorm-soft-delete/docker-compose.yml up -d
+      - run: docker-compose -f ./examples/nest-graphql-sequelize/docker-compose.yml up -d
+      - run: docker-compose -f ./examples/nest-graphql-basic/docker-compose.yml up -d
+      - run: npm ci
+      - run: npm run bootstrap -- --ignore-scripts
+      - run: npm run build
+      - run: npx lerna run migrate:up
+      - run: npm run test:e2e
+      - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v1.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-e2e-${{ matrix.node-version }}
+          parallel: true
+  finish:
+    needs: [unit, e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
           parallel-finished: true

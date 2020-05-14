@@ -13,7 +13,7 @@
     "lint": "eslint --ext=.ts .",
     "lint:fix": "eslint --fix --ext=.ts .",
     "jest": "jest --runInBand --coverage",
-    "jest:e2e": "jest --runInBand --config=./jest.e2e.config.js",
+    "jest:e2e": "jest --runInBand --config=./jest.e2e.config.js --coverage",
     "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
