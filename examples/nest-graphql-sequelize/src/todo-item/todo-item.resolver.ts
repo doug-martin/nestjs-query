@@ -1,26 +1,13 @@
-import { Filter } from '@nestjs-query/core';
-import { ConnectionType, CRUDResolver } from '@nestjs-query/query-graphql';
+import { Filter, InjectAssemblerQueryService, QueryService } from '@nestjs-query/core';
+import { ConnectionType } from '@nestjs-query/query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { AuthGuard } from '../auth.guard';
-import { TodoItemInputDTO } from './dto/todo-item-input.dto';
-import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemService } from './todo-item.service';
+import { TodoItemAssembler } from './todo-item.assembler';
 import { TodoItemConnection, TodoItemQuery } from './types';
 
-const guards = [AuthGuard];
-
 @Resolver(() => TodoItemDTO)
-export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
-  CreateDTOClass: TodoItemInputDTO,
-  UpdateDTOClass: TodoItemUpdateDTO,
-  create: { guards },
-  update: { guards },
-  delete: { guards },
-}) {
-  constructor(readonly service: TodoItemService) {
-    super(service);
-  }
+export class TodoItemResolver {
+  constructor(@InjectAssemblerQueryService(TodoItemAssembler) readonly service: QueryService<TodoItemDTO>) {}
 
   // Set the return type to the TodoItemConnection
   @Query(() => TodoItemConnection)
@@ -32,7 +19,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
     };
 
     // call the original queryMany method with the new query
-    return this.queryMany({ ...query, ...{ filter } });
+    return TodoItemConnection.createFromPromise((q) => this.service.query(q), { ...query, ...{ filter } });
   }
 
   // Set the return type to the TodoItemConnection
@@ -45,6 +32,6 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
     };
 
     // call the original queryMany method with the new query
-    return this.queryMany({ ...query, ...{ filter } });
+    return TodoItemConnection.createFromPromise((q) => this.service.query(q), { ...query, ...{ filter } });
   }
 }
