@@ -10,7 +10,7 @@ describe('NestjsQueryTypeOrmModule', () => {
   }
 
   it('should create a module', () => {
-    const typeOrmModule = NestjsQueryGraphQLModule.forFeature({
+    const graphqlModule = NestjsQueryGraphQLModule.forFeature({
       imports: [],
       resolvers: [
         {
@@ -19,9 +19,9 @@ describe('NestjsQueryTypeOrmModule', () => {
         },
       ],
     });
-    expect(typeOrmModule.imports).toHaveLength(0);
-    expect(typeOrmModule.module).toBe(NestjsQueryGraphQLModule);
-    expect(typeOrmModule.providers).toHaveLength(1);
-    expect(typeOrmModule.exports).toHaveLength(1);
+    expect(graphqlModule.imports).toHaveLength(1);
+    expect(graphqlModule.module).toBe(NestjsQueryGraphQLModule);
+    expect(graphqlModule.providers).toHaveLength(1);
+    expect(graphqlModule.exports).toHaveLength(2);
   });
 });

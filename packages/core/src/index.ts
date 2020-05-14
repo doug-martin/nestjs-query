@@ -1,8 +1,14 @@
 /* eslint-disable import/export */
 export * from './interfaces';
 export * from './common';
-export { InjectQueryService, getQueryServiceToken } from './decorators';
-export { QueryService, AssemblerQueryService, RelationQueryService, QueryServiceRelation } from './services';
+export { InjectAssemblerQueryService, InjectQueryService, getQueryServiceToken } from './decorators';
+export {
+  QueryService,
+  AssemblerQueryService,
+  RelationQueryService,
+  NoOpQueryService,
+  QueryServiceRelation,
+} from './services';
 export { transformFilter, transformQuery, transformSort, QueryFieldMap } from './helpers';
 export {
   ClassTransformerAssembler,
@@ -13,3 +19,4 @@ export {
   AssemblerDeserializer,
   AssemblerFactory,
 } from './assemblers';
+export { NestjsQueryCoreModule, NestjsQueryCoreModuleOpts } from './module';
