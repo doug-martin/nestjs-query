@@ -1,0 +1,124 @@
+---
+id: v0.11.2
+title: v0.11.2
+author: Doug Martin
+author_title: Creator
+author_url: https://github.com/doug-martin
+author_image_url: https://avatars1.githubusercontent.com/u/361261?v=4
+tags: [releases, patch]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## `@InjectAssemblerQueryService`
+
+In `v0.11.1` a new `@InjectAssemblerQueryService` decorator has been introduced to reduce boiler plate code related to creating an `AssemblerQueryService`.
+
+### Example
+
+Define your assembler
+
+```ts title="todo-item.assembler.ts"
+import { Assembler, ClassTransformerAssembler } from '@nestjs-query/core';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Assembler(TodoItemDTO, TodoItemEntity)
+export class TodoItemAssembler extends ClassTransformerAssembler<TodoItemDTO, TodoItemEntity> {
+  convertToDTO(entity: TodoItemEntity): TodoItemDTO {
+    const dto = super.convertToDTO(entity);
+    dto.age = Date.now() - entity.created.getMilliseconds();
+    return dto;
+  }
+}
+
+```
+
+Now, instead of defining an `AssemblerQueryService` you can use the decorator.
+
+```ts title="todo-item.resolver.ts" {8}
+import { QueryService, InjectAssemblerQueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
+  constructor(@InjectAssemblerQueryService(TodoItemAssembler) readonly service: QueryService<TodoItemDTO>) {
+    super(service);
+  }
+}
+```
+
+## Using Assemblers in auto-generated Resolver
+
+There is a new `AssemblerClass` option when using the `NestjsQueryGraphQLModule` to generate your resolver to using a custom `Assembler`.
+
+:::note
+When using the AssemblerClass option you don't need to specify the entity.
+:::
+
+```ts title="todo-item.module.ts" {12-13,17-18}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemAssembler } from './todo-item.assembler';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      // Register the assembler
+      assemblers: [TodoItemAssembler],
+      resolvers: [
+        {
+          DTOClass: TodoItemDTO,
+          // specify the assembler type to use.
+          AssemblerClass: TodoItemAssembler,
+        },
+      ],
+    }),
+  ],
+})
+export class TodoItemModule {}
+
+```
+
+## Using Services in auto-generated Resolver
+
+There is a new `ServiceClass` option when using the `NestjsQueryGraphQLModule` to generate your resolver to a custom `QueryService`.
+
+:::note
+When using the ServiceClass option you don't need to specify the entity.
+:::
+
+```ts title="todo-item.module.ts" {12-13,17-18}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemService } from './todo-item.service';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      // Register the the custom QueryService
+      services: [TodoItemService],
+      resolvers: [
+        {
+          DTOClass: TodoItemDTO,
+          // specify the QueryService type to use.
+          ServiceClass: TodoItemService,
+        },
+      ],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+

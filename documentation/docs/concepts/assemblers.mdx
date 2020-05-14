@@ -263,56 +263,78 @@ This is a pretty basic example but the same pattern should apply to more complex
 
 ## AssemblerQueryService
 
-:::info
-This section only applies if you are manually defining your Resolver.
-If you are using the `NestjsQueryGraphQLModule` an `AssemblerQueryService` will automatically be created.
-:::
+An `AssemblerQueryService` is a special type of `QueryService` that uses the Assembler to translate between the DTO and Entity.
 
-To use your assembler you need to create an `AssemblerQueryService` that will wrap a `QueryService` to translate back and forth.
+The easiest way to create an `AssemblerQueryService` is to use the `@InjectAssemblerQueryService` decorator.
 
-This example wraps a `QueryService` to assemble to `UserDTO` and `UserEntity`.
+Before using the decorator you need to register your Assembler with `nestjs-query`
 
-```ts title="user.service.ts"
-import { AssemblerQueryService, InjectQueryService, QueryService } from '@nestjs-query/core';
+### Module
+
+```ts title="user.module.ts" {10}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { Module } from '@nestjs/common';
 import { UserDTO } from './user.dto';
-import { UserAssembler } from './user.assembler';
-import { UserEntity } from './user.entity';
 
-@QueryService(UserDTO)
-export class UserService extends AssemblerQueryService<UserDTO, UserEntity> {
-  constructor(
-    assembler: UserAssembler,
-    @InjectQueryService(UserEntity) queryService: QueryService<UserEntity>,
-  ) {
-    super(assembler, queryService);
-  }
-}
+@Module({
+  providers: [TodoItemResolver],
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [ /* set up your entity with a nestjs-query persitence package */],
+      assemblers: [UserAssembler],
+      resolvers: [ ],
+    }),
+  ],
+})
+export class UserModule {}
+
 ```
 
-Your resolver should then use the `UserService` to fetch records.
+### Auto Generated Resolver
 
-```ts title="user.resolver.ts"
+If you want your assembler to be used by the auto-generated resolver you can specify the `AssemblerClass` option.
+
+```ts title="user.module.ts" {10,14}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { Module } from '@nestjs/common';
+import { UserDTO } from './user.dto';
+
+@Module({
+  providers: [TodoItemResolver],
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [ /* set up your entity with a nestjs-query persitence package */],
+      assemblers: [UserAssembler],
+      resolvers: [
+        {
+          DTOClass: UserDTO,
+          AssemblerClass: UserAssembler
+        }
+      ],
+    }),
+  ],
+})
+export class UserModule {}
+
+```
+
+
+### Manual Resolver
+
+If you are manually defining you resolver or want to use the `AssemblerQueryService` in another service use the `@InjectAssemblerQueryService` decorator.
+
+```ts title="user.resolver.ts" {8}
 import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { UserDTO } from './user.dto';
-import { UserService } from './user.service';
+import { UserAssembler } from './user.assembler'
 
 @Resolver(() => UserDTO)
 export class UserResolver extends CRUDResolver(UserDTO) {
-  constructor(readonly service: UserService) {
+  constructor(@InjectAssemblerQueryService(UserAssembler) readonly service: QueryService<UserDTO>) {
     super(service);
   }
 }
 ```
 
-## Registering Your Assembler
-
-Don't forget to register your `Assembler` and `QueryService` with your module.
-
-```ts title="user.module.ts"
-@Module({
-  providers: [/*Other providers*/, UserAssembler, UserService],
-  // ...other module options
-})
-export class UserModule {}
-```
+Notice `QueryService<UserDTO>`.
