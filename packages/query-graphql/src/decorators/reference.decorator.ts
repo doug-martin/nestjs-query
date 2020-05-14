@@ -9,6 +9,7 @@ export type ReferenceTypeFunc<Relation> = () => Class<Relation>;
 export function Reference<DTO, Reference>(
   name: string,
   relationTypeFunction: ReferenceTypeFunc<Reference>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   keys: ReferencesKeys<any, Reference>,
   options?: ReferenceDecoratorOpts<DTO, Reference>,
 ) {
