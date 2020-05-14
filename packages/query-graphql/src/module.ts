@@ -3,8 +3,10 @@ import { DynamicModule, ForwardReference, Provider } from '@nestjs/common';
 import { AutoResolverOpts, createResolvers } from './providers';
 
 export interface NestjsQueryGraphqlModuleOpts {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   imports: Array<Class<any> | DynamicModule | Promise<DynamicModule> | ForwardReference>;
   services?: Provider[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assemblers?: Class<Assembler<any, any>>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resolvers: AutoResolverOpts<any, any, unknown, unknown>[];

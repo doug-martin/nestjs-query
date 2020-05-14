@@ -4,7 +4,9 @@ import { Class } from './common';
 import { createServices } from './providers';
 
 export interface NestjsQueryCoreModuleOpts {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   imports?: Array<Class<any> | DynamicModule | Promise<DynamicModule> | ForwardReference>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assemblers?: Class<Assembler<any, any>>[];
 }
 
