@@ -70,6 +70,6 @@
     "graphql-relay": "0.6.0",
     "reflect-metadata": "0.1.13",
     "ts-mockito": "2.5.0",
-    "typescript": "3.8.3"
+    "typescript": "3.9.2"
   }
 }
