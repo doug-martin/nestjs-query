@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db1:
-    image: "postgres:11.7"
+    image: "postgres:11.8"
     environment:
       - "POSTGRES_USER=graphqltypeorm_mdb1"
       - "POSTGRES_DB=graphql_typeorm_mdb1"
@@ -12,7 +12,7 @@ services:
     ports:
       - "5437:5432"
   db2:
-    image: "postgres:11.7"
+    image: "postgres:11.8"
     environment:
       - "POSTGRES_USER=graphqltypeorm_mdb2"
       - "POSTGRES_DB=graphql_typeorm_mdb2"
