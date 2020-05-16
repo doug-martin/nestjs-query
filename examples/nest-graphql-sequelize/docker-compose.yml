@@ -2,7 +2,7 @@ version: "3"
 
 services:
   postgres:
-    image: "postgres:11.7"
+    image: "postgres:11"
     environment:
       - "POSTGRES_USER=graphqlsequelize"
       - "POSTGRES_DB=graphql_sequelize"
