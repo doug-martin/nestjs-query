@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.3](https://github.com/doug-martin/nestjs-query/compare/v0.11.2...v0.11.3) (2020-05-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency pg to v8.2.1 ([4603b85](https://github.com/doug-martin/nestjs-query/commit/4603b85280f98b34fd4e3e58ef6b32a43701110b))
+
+
+
+
+
 ## [0.11.2](https://github.com/doug-martin/nestjs-query/compare/v0.11.1...v0.11.2) (2020-05-14)
 
 
