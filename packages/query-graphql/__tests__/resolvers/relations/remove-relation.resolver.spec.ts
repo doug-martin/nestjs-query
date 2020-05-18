@@ -1,231 +1,143 @@
 import 'reflect-metadata';
-import { QueryService } from '@nestjs-query/core';
-import * as nestGraphql from '@nestjs/graphql';
-import { mock, instance, when, deepEqual } from 'ts-mockito';
-import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { ReturnTypeFuncValue, MutationOptions } from '@nestjs/graphql';
-import { RemoveRelationsResolver } from '../../../src/resolvers/relations';
-import * as decorators from '../../../src/decorators';
+import { when, deepEqual } from 'ts-mockito';
+import { Resolver, Query } from '@nestjs/graphql';
+import { RelationsOpts, RemoveRelationsResolver } from '../../../src/resolvers/relations';
 import { RelationInputType, RelationsInputType } from '../../../src/types';
+import { expectSDL } from '../../__fixtures__';
+import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
+import {
+  removeRelationEmptySDL,
+  removeRelationManyCustomNameSDL,
+  removeRelationManyDisabledSDL,
+  removeRelationManySDL,
+  removeRelationOneCustomNameSDL,
+  removeRelationOneDisabledSDL,
+  removeRelationOneSDL,
+  TestRelationDTO,
+} from './__fixtures__';
 
-const { ID, ObjectType } = nestGraphql;
-
-@ObjectType('RemoveRelation')
-class RemoveRelationDTO {
-  @decorators.FilterableField(() => ID)
-  id!: string;
-
-  @decorators.FilterableField()
-  stringField!: string;
-}
-
-@ObjectType('Relation')
-class RelationDTO {
-  @decorators.FilterableField(() => ID)
-  id!: string;
-
-  @decorators.FilterableField()
-  readRelationId!: string;
-}
-
-class FakeCanActivate implements CanActivate {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  canActivate(context: ExecutionContext): boolean {
-    return false;
+@Resolver(() => TestResolverDTO)
+class TestResolver extends RemoveRelationsResolver(TestResolverDTO, {
+  one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
+  many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
+}) {
+  constructor(service: TestService) {
+    super(service);
   }
 }
 
 describe('RemoveRelationsResolver', () => {
-  const resolverMutationSpy = jest.spyOn(decorators, 'ResolverMutation');
-  const argsSpy = jest.spyOn(nestGraphql, 'Args');
-
-  beforeEach(() => jest.clearAllMocks());
-
-  function assertResolverMutationCall(
-    callNo: number,
-    returnType: ReturnTypeFuncValue,
-    advancedOpts: MutationOptions,
-    ...opts: decorators.ResolverMethodOpts[]
-  ) {
-    const [rt, ao, ...rest] = resolverMutationSpy.mock.calls[callNo]!;
-    expect(rt()).toEqual(returnType);
-    expect(ao).toEqual(advancedOpts);
-    expect(rest).toEqual(opts);
-  }
-
-  it('should not add read methods if one and many are empty', () => {
-    RemoveRelationsResolver(RemoveRelationDTO, {});
-
-    expect(resolverMutationSpy).not.toBeCalled();
-    expect(argsSpy).not.toBeCalled();
+  const expectResolverSDL = (sdl: string, opts?: RelationsOpts) => {
+    @Resolver(() => TestResolverDTO)
+    class TestSDLResolver extends RemoveRelationsResolver(TestResolverDTO, opts ?? {}) {
+      @Query(() => TestResolverDTO)
+      test(): TestResolverDTO {
+        return { id: '1', stringField: 'foo' };
+      }
+    }
+    return expectSDL([TestSDLResolver], sdl);
+  };
+  it('should not add remove methods if one and many are empty', () => {
+    return expectResolverSDL(removeRelationEmptySDL);
   });
 
   describe('one', () => {
     it('should use the object type name', () => {
-      const R = RemoveRelationsResolver(RemoveRelationDTO, { one: { relation: { DTO: RelationDTO } } });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, RemoveRelationDTO, {}, {});
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.removeRelationFromRemoveRelation).toBeInstanceOf(Function);
+      return expectResolverSDL(removeRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } });
     });
 
     it('should use the dtoName if provided', () => {
-      const R = RemoveRelationsResolver(RemoveRelationDTO, {
-        one: { relation: { DTO: RelationDTO, dtoName: 'Test' } },
+      return expectResolverSDL(removeRelationOneCustomNameSDL, {
+        one: { relation: { DTO: TestRelationDTO, dtoName: 'Test' } },
       });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, RemoveRelationDTO, {}, {});
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.removeTestFromRemoveRelation).toBeInstanceOf(Function);
     });
 
-    it('should provide the resolver opts to the ResolverProperty decorator', () => {
-      const resolverOpts: decorators.ResolverMethodOpts = {
-        disabled: false,
-        filters: [],
-        guards: [FakeCanActivate],
-        interceptors: [],
-        pipes: [],
-      };
-      const R = RemoveRelationsResolver(RemoveRelationDTO, {
-        one: { relation: { DTO: RelationDTO, ...resolverOpts } },
+    it('should not add remove methods if disableRemove is true', () => {
+      return expectResolverSDL(removeRelationOneDisabledSDL, {
+        one: { relation: { DTO: TestRelationDTO, disableRemove: true } },
       });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, RemoveRelationDTO, {}, resolverOpts);
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.removeRelationFromRemoveRelation).toBeInstanceOf(Function);
-    });
-
-    it('should not add read methods if disableRemove is true', () => {
-      RemoveRelationsResolver(RemoveRelationDTO, { one: { relation: { DTO: RelationDTO, disableRemove: true } } });
-
-      expect(resolverMutationSpy).not.toBeCalled();
-      expect(argsSpy).not.toBeCalled();
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const mockService = mock<QueryService<RemoveRelationDTO>>();
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationInputType = {
         id: 'record-id',
         relationId: 'relation-id',
       };
-      const output: RemoveRelationDTO = {
+      const output: TestResolverDTO = {
         id: 'record-id',
         stringField: 'foo',
       };
-      const R = RemoveRelationsResolver(RemoveRelationDTO, { one: { relation: { DTO: RelationDTO } } });
-      const resolver = new R(instance(mockService));
       when(mockService.removeRelation('relation', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.removeRelationFromRemoveRelation({ input });
+      const result = await resolver.removeRelationFromTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
 
-    it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const mockService = mock<QueryService<RemoveRelationDTO>>();
+    it('should call the service findRelation with the provided dto and custom relation name', async () => {
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationInputType = {
         id: 'record-id',
         relationId: 'relation-id',
       };
-      const output: RemoveRelationDTO = {
+      const output: TestResolverDTO = {
         id: 'record-id',
         stringField: 'foo',
       };
-      const R = RemoveRelationsResolver(RemoveRelationDTO, {
-        one: { relation: { DTO: RelationDTO, relationName: 'other' } },
-      });
-      const resolver = new R(instance(mockService));
+      // @ts-ignore
       when(mockService.removeRelation('other', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.removeRelationFromRemoveRelation({ input });
+      const result = await resolver.removeCustomFromTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
   });
 
   describe('many', () => {
     it('should use the object type name', () => {
-      const R = RemoveRelationsResolver(RemoveRelationDTO, { many: { relations: { DTO: RelationDTO } } });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, RemoveRelationDTO, {}, {});
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.removeRelationsFromRemoveRelation).toBeInstanceOf(Function);
+      return expectResolverSDL(removeRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } });
     });
 
     it('should use the dtoName if provided', () => {
-      const R = RemoveRelationsResolver(RemoveRelationDTO, {
-        many: { relation: { DTO: RelationDTO, dtoName: 'Test' } },
+      return expectResolverSDL(removeRelationManyCustomNameSDL, {
+        many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } },
       });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, RemoveRelationDTO, {}, {});
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.removeTestsFromRemoveRelation).toBeInstanceOf(Function);
     });
 
-    it('should provide the resolver opts to the ResolverProperty decorator', () => {
-      const resolverOpts: decorators.ResolverMethodOpts = {
-        disabled: false,
-        filters: [],
-        guards: [FakeCanActivate],
-        interceptors: [],
-        pipes: [],
-      };
-      const R = RemoveRelationsResolver(RemoveRelationDTO, {
-        many: { relation: { DTO: RelationDTO, ...resolverOpts } },
+    it('should not add remove many methods if disableRemove is true', () => {
+      return expectResolverSDL(removeRelationManyDisabledSDL, {
+        many: { relations: { DTO: TestRelationDTO, disableRemove: true } },
       });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, RemoveRelationDTO, {}, resolverOpts);
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.removeRelationsFromRemoveRelation).toBeInstanceOf(Function);
-    });
-
-    it('should not add read methods if disableRemove is true', () => {
-      RemoveRelationsResolver(RemoveRelationDTO, { many: { relation: { DTO: RelationDTO, disableRemove: true } } });
-
-      expect(resolverMutationSpy).not.toBeCalled();
-      expect(argsSpy).not.toBeCalled();
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const mockService = mock<QueryService<RemoveRelationDTO>>();
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationsInputType = {
         id: 'id-1',
         relationIds: ['relation-id-1', 'relation-id-2'],
       };
-      const output: RemoveRelationDTO = {
+      const output: TestResolverDTO = {
         id: 'record-id',
         stringField: 'foo',
       };
-      const R = RemoveRelationsResolver(RemoveRelationDTO, { many: { relation: { DTO: RelationDTO } } });
-      const resolver = new R(instance(mockService));
       when(mockService.removeRelations('relations', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.removeRelationsFromRemoveRelation({ input });
+      const result = await resolver.removeRelationsFromTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const mockService = mock<QueryService<RemoveRelationDTO>>();
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationsInputType = {
         id: 'id-1',
         relationIds: ['relation-id-1', 'relation-id-2'],
       };
-      const output: RemoveRelationDTO = {
+      const output: TestResolverDTO = {
         id: 'record-id',
         stringField: 'foo',
       };
-      const R = RemoveRelationsResolver(RemoveRelationDTO, {
-        many: { relation: { DTO: RelationDTO, relationName: 'other' } },
-      });
-      const resolver = new R(instance(mockService));
-      when(mockService.removeRelations('other', input.id, deepEqual(input.relationIds))).thenResolve(output);
+      when(mockService.removeRelations('others', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.removeRelationsFromRemoveRelation({ input });
+      const result = await resolver.removeCustomsFromTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
   });

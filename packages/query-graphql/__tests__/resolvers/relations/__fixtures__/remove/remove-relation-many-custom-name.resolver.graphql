@@ -1,0 +1,20 @@
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  removeTestsFromTestResolverDTO(input: RelationsInput!): TestResolverDTO!
+}
+
+input RelationsInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}

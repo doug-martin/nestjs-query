@@ -36,7 +36,7 @@
     "sequelize-typescript": "1.1.0",
     "sqlite3": "4.2.0",
     "ts-mockito": "2.5.0",
-    "typescript": "3.8.3"
+    "typescript": "3.9.2"
   },
   "repository": {
     "type": "git",

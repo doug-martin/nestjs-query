@@ -4,19 +4,14 @@ import { resolve } from 'path';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchemaBuilderModule, GraphQLSchemaFactory } from '@nestjs/graphql';
 
-let schemaFactory: GraphQLSchemaFactory;
 const getOrCreateSchemaFactory = async (): Promise<GraphQLSchemaFactory> => {
-  if (schemaFactory) {
-    return schemaFactory;
-  }
   const moduleRef = await Test.createTestingModule({
     imports: [GraphQLSchemaBuilderModule],
   }).compile();
-  schemaFactory = moduleRef.get(GraphQLSchemaFactory);
-  return schemaFactory;
+  return moduleRef.get(GraphQLSchemaFactory);
 };
 
-const readGraphql = (filePath: string): string => {
+export const readGraphql = (filePath: string): string => {
   return readFileSync(filePath).toString();
 };
 
