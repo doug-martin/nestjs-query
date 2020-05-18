@@ -1,0 +1,25 @@
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}

@@ -1,0 +1,22 @@
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTODeleteResponse {
+  id: ID
+  stringField: String
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  deleteOneTestResolverDTO(input: DeleteOneInput!): TestResolverDTODeleteResponse!
+}
+
+input DeleteOneInput {
+  """The id of the record to delete."""
+  id: ID!
+}

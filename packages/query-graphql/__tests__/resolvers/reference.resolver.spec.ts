@@ -1,60 +1,45 @@
-import 'reflect-metadata';
-import * as nestGraphql from '@nestjs/graphql';
-import { instance, mock, when } from 'ts-mockito';
-import { QueryService } from '@nestjs-query/core';
-import * as decorators from '../../src/decorators';
-import { ReferenceResolver } from '../../src';
+import { when } from 'ts-mockito';
+import { Resolver, Query } from '@nestjs/graphql';
+import { CreateResolver, CreateResolverOpts, ReferenceResolver } from '../../src';
+import { expectSDL } from '../__fixtures__';
+import { createResolverFromNest, referenceBasicResolverSDL, TestResolverDTO, TestService } from './__fixtures__';
 
-const { ID, ObjectType } = nestGraphql;
-
-@ObjectType('TestReference')
-class TestReferenceDTO {
-  @decorators.FilterableField(() => ID)
-  id!: string;
-
-  @decorators.FilterableField()
-  stringField!: string;
+@Resolver(() => TestResolverDTO)
+class TestResolver extends ReferenceResolver(TestResolverDTO, { key: 'id' }) {
+  constructor(service: TestService) {
+    super(service);
+  }
 }
 
 describe('ReferenceResolver', () => {
-  const resolveReferenceSpy = jest.spyOn(nestGraphql, 'ResolveReference');
-
-  beforeEach(() => jest.clearAllMocks());
-
-  class TestResolver extends ReferenceResolver(TestReferenceDTO, { key: 'id' }) {
-    constructor(service: QueryService<TestReferenceDTO>) {
-      super(service);
+  const expectResolverSDL = (sdl: string, opts?: CreateResolverOpts<TestResolverDTO>) => {
+    @Resolver(() => TestResolverDTO)
+    class TestSDLResolver extends CreateResolver(TestResolverDTO, opts) {
+      @Query(() => TestResolverDTO)
+      test(): TestResolverDTO {
+        return { id: '1', stringField: 'foo' };
+      }
     }
-  }
-
-  function asserResolveReferenceCall() {
-    expect(resolveReferenceSpy).toBeCalledTimes(1);
-    expect(resolveReferenceSpy).toBeCalledWith();
-  }
+    return expectSDL([TestSDLResolver], sdl);
+  };
 
   it('should create a new resolver with a resolveReference method', () => {
-    jest.clearAllMocks(); // reset
-    const Resolver = ReferenceResolver(TestReferenceDTO, { key: 'id' });
-    asserResolveReferenceCall();
-    expect(Resolver.prototype.resolveReference).toBeInstanceOf(Function);
+    expectResolverSDL(referenceBasicResolverSDL);
   });
 
   it('should return the original resolver if key is not provided', () => {
-    jest.clearAllMocks(); // reset
-    const Resolver = ReferenceResolver(TestReferenceDTO);
-    expect(resolveReferenceSpy).not.toBeCalled();
-    expect(Resolver.prototype.resolveReference).toBeUndefined();
+    const TestReferenceResolver = ReferenceResolver(TestResolverDTO);
+    expect(TestReferenceResolver.prototype.resolveReference).toBeUndefined();
   });
 
   describe('#resolveReference', () => {
     it('should call the service getById with the provided input', async () => {
-      const mockService = mock<QueryService<TestReferenceDTO>>();
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const id = 'id-1';
-      const output: TestReferenceDTO = {
+      const output: TestResolverDTO = {
         id,
         stringField: 'foo',
       };
-      const resolver = new TestResolver(instance(mockService));
       when(mockService.getById(id)).thenResolve(output);
       // @ts-ignore
       const result = await resolver.resolveReference({ __type: 'TestReference', id });
@@ -62,17 +47,16 @@ describe('ReferenceResolver', () => {
     });
 
     it('should reject if the id is not found', async () => {
-      const mockService = mock<QueryService<TestReferenceDTO>>();
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const id = 'id-1';
-      const output: TestReferenceDTO = {
+      const output: TestResolverDTO = {
         id,
         stringField: 'foo',
       };
-      const resolver = new TestResolver(instance(mockService));
       when(mockService.getById(id)).thenResolve(output);
       // @ts-ignore
       return expect(resolver.resolveReference({ __type: 'TestReference' })).rejects.toThrow(
-        'Unable to resolve reference, missing required key id for TestReference',
+        'Unable to resolve reference, missing required key id for TestResolverDTO',
       );
     });
   });

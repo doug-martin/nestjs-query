@@ -1,231 +1,143 @@
 import 'reflect-metadata';
-import { QueryService } from '@nestjs-query/core';
-import * as nestGraphql from '@nestjs/graphql';
-import { mock, instance, when, deepEqual } from 'ts-mockito';
-import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { ReturnTypeFuncValue, MutationOptions } from '@nestjs/graphql';
-import { UpdateRelationsResolver } from '../../../src/resolvers/relations';
-import * as decorators from '../../../src/decorators';
+import { when, deepEqual } from 'ts-mockito';
+import { Resolver, Query } from '@nestjs/graphql';
+import { RelationsOpts, UpdateRelationsResolver } from '../../../src/resolvers/relations';
 import { RelationInputType, RelationsInputType } from '../../../src/types';
+import { expectSDL } from '../../__fixtures__';
+import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
+import {
+  TestRelationDTO,
+  updateRelationEmptySDL,
+  updateRelationManyCustomNameSDL,
+  updateRelationManyDisabledSDL,
+  updateRelationManySDL,
+  updateRelationOneCustomNameSDL,
+  updateRelationOneDisabledSDL,
+  updateRelationOneSDL,
+} from './__fixtures__';
 
-const { ID, ObjectType } = nestGraphql;
-
-@ObjectType('UpdateRelation')
-class UpdateRelationDTO {
-  @decorators.FilterableField(() => ID)
-  id!: string;
-
-  @decorators.FilterableField()
-  stringField!: string;
-}
-
-@ObjectType('Relation')
-class RelationDTO {
-  @decorators.FilterableField(() => ID)
-  id!: string;
-
-  @decorators.FilterableField()
-  readRelationId!: string;
-}
-
-class FakeCanActivate implements CanActivate {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  canActivate(context: ExecutionContext): boolean {
-    return false;
+@Resolver(() => TestResolverDTO)
+class TestResolver extends UpdateRelationsResolver(TestResolverDTO, {
+  one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
+  many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
+}) {
+  constructor(service: TestService) {
+    super(service);
   }
 }
 
 describe('UpdateRelationsResolver', () => {
-  const resolverMutationSpy = jest.spyOn(decorators, 'ResolverMutation');
-  const argsSpy = jest.spyOn(nestGraphql, 'Args');
+  const expectResolverSDL = (sdl: string, opts?: RelationsOpts) => {
+    @Resolver(() => TestResolverDTO)
+    class TestSDLResolver extends UpdateRelationsResolver(TestResolverDTO, opts ?? {}) {
+      @Query(() => TestResolverDTO)
+      test(): TestResolverDTO {
+        return { id: '1', stringField: 'foo' };
+      }
+    }
+    return expectSDL([TestSDLResolver], sdl);
+  };
 
-  beforeEach(() => jest.clearAllMocks());
-
-  function assertResolverMutationCall(
-    callNo: number,
-    returnType: ReturnTypeFuncValue,
-    advancedOpts: MutationOptions,
-    ...opts: decorators.ResolverMethodOpts[]
-  ) {
-    const [rt, ao, ...rest] = resolverMutationSpy.mock.calls[callNo]!;
-    expect(rt()).toEqual(returnType);
-    expect(ao).toEqual(advancedOpts);
-    expect(rest).toEqual(opts);
-  }
-
-  it('should not add read methods if one and many are empty', () => {
-    UpdateRelationsResolver(UpdateRelationDTO, {});
-
-    expect(resolverMutationSpy).not.toBeCalled();
-    expect(argsSpy).not.toBeCalled();
+  it('should not add update methods if one and many are empty', () => {
+    return expectResolverSDL(updateRelationEmptySDL);
   });
 
   describe('one', () => {
     it('should use the object type name', () => {
-      const R = UpdateRelationsResolver(UpdateRelationDTO, { one: { relation: { DTO: RelationDTO } } });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, UpdateRelationDTO, {}, {});
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.setRelationOnUpdateRelation).toBeInstanceOf(Function);
+      return expectResolverSDL(updateRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } });
     });
 
     it('should use the dtoName if provided', () => {
-      const R = UpdateRelationsResolver(UpdateRelationDTO, {
-        one: { relation: { DTO: RelationDTO, dtoName: 'Test' } },
+      return expectResolverSDL(updateRelationOneCustomNameSDL, {
+        one: { relation: { DTO: TestRelationDTO, dtoName: 'Test' } },
       });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, UpdateRelationDTO, {}, {});
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.setTestOnUpdateRelation).toBeInstanceOf(Function);
     });
 
-    it('should provide the resolver opts to the ResolverProperty decorator', () => {
-      const resolverOpts: decorators.ResolverMethodOpts = {
-        disabled: false,
-        filters: [],
-        guards: [FakeCanActivate],
-        interceptors: [],
-        pipes: [],
-      };
-      const R = UpdateRelationsResolver(UpdateRelationDTO, {
-        one: { relation: { DTO: RelationDTO, ...resolverOpts } },
+    it('should not add update one methods if disableRead is true', () => {
+      return expectResolverSDL(updateRelationOneDisabledSDL, {
+        one: { relation: { DTO: TestRelationDTO, disableUpdate: true } },
       });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, UpdateRelationDTO, {}, resolverOpts);
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.setRelationOnUpdateRelation).toBeInstanceOf(Function);
-    });
-
-    it('should not add read methods if disableUpdate is true', () => {
-      UpdateRelationsResolver(UpdateRelationDTO, { one: { relation: { DTO: RelationDTO, disableUpdate: true } } });
-
-      expect(resolverMutationSpy).not.toBeCalled();
-      expect(argsSpy).not.toBeCalled();
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const mockService = mock<QueryService<UpdateRelationDTO>>();
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationInputType = {
         id: 'record-id',
         relationId: 'relation-id',
       };
-      const output: UpdateRelationDTO = {
+      const output: TestResolverDTO = {
         id: 'record-id',
         stringField: 'foo',
       };
-      const R = UpdateRelationsResolver(UpdateRelationDTO, { one: { relation: { DTO: RelationDTO } } });
-      const resolver = new R(instance(mockService));
       when(mockService.setRelation('relation', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.setRelationOnUpdateRelation({ input });
+      const result = await resolver.setRelationOnTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
 
-    it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const mockService = mock<QueryService<UpdateRelationDTO>>();
+    it('should call the service findRelation with the provided dto and custom relation name', async () => {
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationInputType = {
         id: 'record-id',
         relationId: 'relation-id',
       };
-      const output: UpdateRelationDTO = {
+      const output: TestResolverDTO = {
         id: 'record-id',
         stringField: 'foo',
       };
-      const R = UpdateRelationsResolver(UpdateRelationDTO, {
-        one: { relation: { DTO: RelationDTO, relationName: 'other' } },
-      });
-      const resolver = new R(instance(mockService));
       when(mockService.setRelation('other', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.setRelationOnUpdateRelation({ input });
+      const result = await resolver.setCustomOnTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
   });
 
   describe('many', () => {
     it('should use the object type name', () => {
-      const R = UpdateRelationsResolver(UpdateRelationDTO, { many: { relations: { DTO: RelationDTO } } });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, UpdateRelationDTO, {}, {});
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.addRelationsToUpdateRelation).toBeInstanceOf(Function);
+      return expectResolverSDL(updateRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } });
     });
 
     it('should use the dtoName if provided', () => {
-      const R = UpdateRelationsResolver(UpdateRelationDTO, {
-        many: { relation: { DTO: RelationDTO, dtoName: 'Test' } },
+      return expectResolverSDL(updateRelationManyCustomNameSDL, {
+        many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } },
       });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, UpdateRelationDTO, {}, {});
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.addTestsToUpdateRelation).toBeInstanceOf(Function);
     });
 
-    it('should provide the resolver opts to the ResolverProperty decorator', () => {
-      const resolverOpts: decorators.ResolverMethodOpts = {
-        disabled: false,
-        filters: [],
-        guards: [FakeCanActivate],
-        interceptors: [],
-        pipes: [],
-      };
-      const R = UpdateRelationsResolver(UpdateRelationDTO, {
-        many: { relation: { DTO: RelationDTO, ...resolverOpts } },
+    it('should not add update many methods if disableUpdate is true', () => {
+      return expectResolverSDL(updateRelationManyDisabledSDL, {
+        many: { relations: { DTO: TestRelationDTO, disableUpdate: true } },
       });
-
-      expect(resolverMutationSpy).toBeCalledTimes(1);
-      assertResolverMutationCall(0, UpdateRelationDTO, {}, resolverOpts);
-      expect(argsSpy).toBeCalledTimes(1);
-      expect(R.prototype.addRelationsToUpdateRelation).toBeInstanceOf(Function);
-    });
-
-    it('should not add read methods if disableUpdate is true', () => {
-      UpdateRelationsResolver(UpdateRelationDTO, { many: { relation: { DTO: RelationDTO, disableUpdate: true } } });
-
-      expect(resolverMutationSpy).not.toBeCalled();
-      expect(argsSpy).not.toBeCalled();
     });
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const mockService = mock<QueryService<UpdateRelationDTO>>();
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationsInputType = {
         id: 'id-1',
         relationIds: ['relation-id-1', 'relation-id-2'],
       };
-      const output: UpdateRelationDTO = {
+      const output: TestResolverDTO = {
         id: 'record-id',
         stringField: 'foo',
       };
-      const R = UpdateRelationsResolver(UpdateRelationDTO, { many: { relation: { DTO: RelationDTO } } });
-      const resolver = new R(instance(mockService));
       when(mockService.addRelations('relations', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.addRelationsToUpdateRelation({ input });
+      const result = await resolver.addRelationsToTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
 
-    it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const mockService = mock<QueryService<UpdateRelationDTO>>();
+    it('should call the service findRelation with the provided dto and custom relation name', async () => {
+      const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationsInputType = {
         id: 'id-1',
         relationIds: ['relation-id-1', 'relation-id-2'],
       };
-      const output: UpdateRelationDTO = {
+      const output: TestResolverDTO = {
         id: 'record-id',
         stringField: 'foo',
       };
-      const R = UpdateRelationsResolver(UpdateRelationDTO, {
-        many: { relation: { DTO: RelationDTO, relationName: 'other' } },
-      });
-      const resolver = new R(instance(mockService));
-      when(mockService.addRelations('other', input.id, deepEqual(input.relationIds))).thenResolve(output);
+      when(mockService.addRelations('others', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
-      const result = await resolver.addRelationsToUpdateRelation({ input });
+      const result = await resolver.addCustomsToTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
   });

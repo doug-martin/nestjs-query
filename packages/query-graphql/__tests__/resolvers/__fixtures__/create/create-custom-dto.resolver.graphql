@@ -1,0 +1,28 @@
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+  createManyTestResolverDTOS(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: TestResolverInputDTO!
+}
+
+input TestResolverInputDTO {
+  id: ID!
+  stringField: String!
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [TestResolverInputDTO!]!
+}
