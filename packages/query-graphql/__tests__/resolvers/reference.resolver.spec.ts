@@ -24,12 +24,12 @@ describe('ReferenceResolver', () => {
   };
 
   it('should create a new resolver with a resolveReference method', () => {
-    expectResolverSDL(referenceBasicResolverSDL);
+    return expectResolverSDL(referenceBasicResolverSDL);
   });
 
   it('should return the original resolver if key is not provided', () => {
     const TestReferenceResolver = ReferenceResolver(TestResolverDTO);
-    expect(TestReferenceResolver.prototype.resolveReference).toBeUndefined();
+    return expect(TestReferenceResolver.prototype.resolveReference).toBeUndefined();
   });
 
   describe('#resolveReference', () => {
