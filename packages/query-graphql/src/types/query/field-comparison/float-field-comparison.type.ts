@@ -15,11 +15,11 @@ export function getOrCreateFloatFieldComparison(): Class<FilterFieldComparison<n
 
   @InputType()
   class FloatFieldComparisonBetween {
-    @Field({ nullable: false })
+    @Field(() => Float, { nullable: false })
     @IsNumber()
     lower!: number;
 
-    @Field({ nullable: false })
+    @Field(() => Float, { nullable: false })
     @IsNumber()
     upper!: number;
   }

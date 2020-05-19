@@ -15,13 +15,13 @@ export function getOrCreateTimestampFieldComparison(): Class<FilterFieldComparis
 
   @InputType()
   class TimestampFieldComparisonBetween {
-    @Field({ nullable: false })
+    @Field(() => GraphQLTimestamp, { nullable: false })
     @IsDate()
-    lower!: number;
+    lower!: Date;
 
-    @Field({ nullable: false })
+    @Field(() => GraphQLTimestamp, { nullable: false })
     @IsDate()
-    upper!: number;
+    upper!: Date;
   }
 
   @InputType()

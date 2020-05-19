@@ -15,11 +15,11 @@ export function getOrCreateIntFieldComparison(): Class<FilterFieldComparison<num
 
   @InputType()
   class IntFieldComparisonBetween {
-    @Field({ nullable: false })
+    @Field(() => Int, { nullable: false })
     @IsInt()
     lower!: number;
 
-    @Field({ nullable: false })
+    @Field(() => Int, { nullable: false })
     @IsInt()
     upper!: number;
   }

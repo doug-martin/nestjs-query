@@ -15,13 +15,13 @@ export function getOrCreateDateFieldComparison(): Class<FilterFieldComparison<Da
 
   @InputType()
   class DateFieldComparisonBetween {
-    @Field({ nullable: false })
+    @Field(() => GraphQLISODateTime, { nullable: false })
     @IsDate()
-    lower!: number;
+    lower!: Date;
 
-    @Field({ nullable: false })
+    @Field(() => GraphQLISODateTime, { nullable: false })
     @IsDate()
-    upper!: number;
+    upper!: Date;
   }
 
   @InputType('DateFieldComparison')

@@ -34,6 +34,11 @@ export interface BooleanFieldComparisons {
   isNot?: boolean | null;
 }
 
+export interface CommonFieldComparisonBetweenType<FieldType> {
+  lower: FieldType;
+  upper: FieldType;
+}
+
 /**
  * Field comparisons for all types that are NOT `null` or `boolean`.
  *
@@ -112,6 +117,15 @@ export interface CommonFieldComparisonType<FieldType> extends BooleanFieldCompar
    * ```
    */
   notIn?: FieldType[];
+  /**
+   * Checks that a field is between a lower and upper bound. The bounds are included!
+   *
+   * ```ts
+   * // field BETWEEN lower AND upper
+   * { field: { between: { lower: 1, upper: 10 } } }
+   * ```
+   */
+  between?: CommonFieldComparisonBetweenType<FieldType>;
 }
 
 /**
