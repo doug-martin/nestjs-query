@@ -15,7 +15,7 @@ export type EntityComparisonField<Entity, F extends keyof Entity> = Entity[F] | 
  * @internal
  * Builder to create SQL Comparisons. (=, !=, \>, etc...)
  */
-export class SQLComparisionBuilder<Entity> {
+export class SQLComparisonBuilder<Entity> {
   paramCount = 0;
 
   static DEFAULT_COMPARISON_MAP: Record<string, string> = {
@@ -31,7 +31,7 @@ export class SQLComparisionBuilder<Entity> {
     notilike: 'NOT ILIKE',
   };
 
-  constructor(readonly comparisonMap: Record<string, string> = SQLComparisionBuilder.DEFAULT_COMPARISON_MAP) {}
+  constructor(readonly comparisonMap: Record<string, string> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
 
   private get paramName(): string {
     const param = `param${this.paramCount}`;
@@ -59,20 +59,20 @@ export class SQLComparisionBuilder<Entity> {
       return this.createComparisonSQL(normalizedCmp, col, val);
     }
     if (normalizedCmp === 'is') {
-      // is comparision (IS TRUE, IS FALSE, IS NULL)
+      // is comparison (IS TRUE, IS FALSE, IS NULL)
       return this.isComparisonSQL(col, val);
     }
     if (normalizedCmp === 'isnot') {
-      // is comparision (IS NOT TRUE, IS NOT FALSE, IS NOT NULL, etc...)
+      // is comparison (IS NOT TRUE, IS NOT FALSE, IS NOT NULL, etc...)
       return this.isNotComparisonSQL(col, val);
     }
     if (normalizedCmp === 'in') {
-      // in comparision (field IN (1,2,3))
+      // in comparison (field IN (1,2,3))
       return this.inComparisonSQL(col, val);
     }
     if (normalizedCmp === 'notin') {
-      // in comparision (field IN (1,2,3))
-      return this.notInComparisionSQL(col, val);
+      // in comparison (field IN (1,2,3))
+      return this.notInComparisonSQL(col, val);
     }
     throw new Error(`unknown operator "${cmp}"`);
   }
@@ -122,7 +122,7 @@ export class SQLComparisionBuilder<Entity> {
     };
   }
 
-  private notInComparisionSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
+  private notInComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
     this.checkNonEmptyArray(val);
     const { paramName } = this;
     return {

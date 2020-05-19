@@ -119,7 +119,7 @@ export interface CommonFieldComparisonType<FieldType> extends BooleanFieldCompar
  */
 export interface StringFieldComparisons extends CommonFieldComparisonType<string> {
   /**
-   * Like comparision.
+   * Like comparison.
    *
    * ```ts
    * // field LIKE "Foo%"
@@ -172,7 +172,7 @@ export type FilterFieldComparison<FieldType> = FieldType extends string
   : CommonFieldComparisonType<FieldType>;
 
 /**
- * Type for all comparision operators for a field type.
+ * Type for all comparison operators for a field type.
  *
  * @typeparam FieldType - The TS type of the field.
  */

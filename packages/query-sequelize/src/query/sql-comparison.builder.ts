@@ -10,7 +10,7 @@ export type EntityComparisonField<Entity, F extends keyof Entity> = Entity[F] | 
  * @internal
  * Builder to create SQL Comparisons. (=, !=, \>, etc...)
  */
-export class SQLComparisionBuilder<Entity> {
+export class SQLComparisonBuilder<Entity> {
   static DEFAULT_COMPARISON_MAP: Record<string, symbol> = {
     eq: Op.eq,
     neq: Op.ne,
@@ -28,7 +28,7 @@ export class SQLComparisionBuilder<Entity> {
     isnot: Op.not,
   };
 
-  constructor(readonly comparisonMap: Record<string, symbol> = SQLComparisionBuilder.DEFAULT_COMPARISON_MAP) {}
+  constructor(readonly comparisonMap: Record<string, symbol> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
 
   /**
    * Creates a valid SQL fragment with parameters.

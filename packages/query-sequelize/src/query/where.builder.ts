@@ -1,13 +1,13 @@
 import { WhereOptions, Op } from 'sequelize';
 import { Filter, FilterComparisonOperators, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
-import { EntityComparisonField, SQLComparisionBuilder } from './sql-comparison.builder';
+import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
 
 /**
  * @internal
  * Builds a WHERE clause from a Filter.
  */
 export class WhereBuilder<Entity> {
-  constructor(readonly sqlComparisionBuilder: SQLComparisionBuilder<Entity> = new SQLComparisionBuilder<Entity>()) {}
+  constructor(readonly sqlComparisonBuilder: SQLComparisonBuilder<Entity> = new SQLComparisonBuilder<Entity>()) {}
 
   /**
    * Builds a WHERE clause from a Filter.
@@ -65,11 +65,11 @@ export class WhereBuilder<Entity> {
     const opts = Object.keys(cmp) as FilterComparisonOperators<Entity[T]>[];
     if (opts.length === 1) {
       const cmpType = opts[0];
-      return this.sqlComparisionBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>);
+      return this.sqlComparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>);
     }
     return {
       [Op.or]: opts.map((cmpType) =>
-        this.sqlComparisionBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>),
+        this.sqlComparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>),
       ),
     };
   }
