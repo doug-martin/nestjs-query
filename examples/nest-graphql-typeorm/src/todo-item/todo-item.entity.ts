@@ -37,4 +37,7 @@ export class TodoItemEntity {
   @ManyToMany(() => TagEntity, (tag) => tag.todoItems)
   @JoinTable()
   tags!: TagEntity[];
+
+  @Column({ nullable: false, default: 0 })
+  priority!: number;
 }
