@@ -1,6 +1,7 @@
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { Field, GraphQLISODateTime, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsDate, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsDate, IsOptional, ValidateNested } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
 /** @internal */
@@ -11,6 +12,18 @@ export function getOrCreateDateFieldComparison(): Class<FilterFieldComparison<Da
   if (dateFieldComparison) {
     return dateFieldComparison;
   }
+
+  @InputType()
+  class DateFieldComparisonBetween {
+    @Field({ nullable: false })
+    @IsDate()
+    lower!: number;
+
+    @Field({ nullable: false })
+    @IsDate()
+    upper!: number;
+  }
+
   @InputType('DateFieldComparison')
   class DateFieldComparison implements FilterFieldComparison<Date> {
     @Field(() => Boolean, { nullable: true })
@@ -62,6 +75,11 @@ export function getOrCreateDateFieldComparison(): Class<FilterFieldComparison<Da
     @IsUndefined()
     @IsDate({ each: true })
     notIn?: Date[];
+
+    @Field(() => DateFieldComparisonBetween, { nullable: true })
+    @ValidateNested()
+    @Type(() => DateFieldComparisonBetween)
+    between?: DateFieldComparisonBetween;
   }
   dateFieldComparison = DateFieldComparison;
   return dateFieldComparison;

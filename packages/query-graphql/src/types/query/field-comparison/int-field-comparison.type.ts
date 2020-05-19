@@ -1,6 +1,7 @@
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsBoolean, IsInt, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsInt, IsOptional, ValidateNested } from 'class-validator';
 import { IsUndefined } from '../../validators';
 
 /** @internal */
@@ -11,6 +12,18 @@ export function getOrCreateIntFieldComparison(): Class<FilterFieldComparison<num
   if (intFieldComparison) {
     return intFieldComparison;
   }
+
+  @InputType()
+  class IntFieldComparisonBetween {
+    @Field({ nullable: false })
+    @IsInt()
+    lower!: number;
+
+    @Field({ nullable: false })
+    @IsInt()
+    upper!: number;
+  }
+
   @InputType()
   class IntFieldComparison implements FilterFieldComparison<number> {
     @Field(() => Boolean, { nullable: true })
@@ -62,6 +75,11 @@ export function getOrCreateIntFieldComparison(): Class<FilterFieldComparison<num
     @IsInt({ each: true })
     @IsUndefined()
     notIn?: number[];
+
+    @Field(() => IntFieldComparisonBetween, { nullable: true })
+    @ValidateNested()
+    @Type(() => IntFieldComparisonBetween)
+    between?: IntFieldComparisonBetween;
   }
   intFieldComparison = IntFieldComparison;
   return intFieldComparison;
