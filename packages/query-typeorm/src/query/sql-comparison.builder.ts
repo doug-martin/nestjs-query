@@ -74,6 +74,10 @@ export class SQLComparisonBuilder<Entity> {
       // in comparison (field IN (1,2,3))
       return this.notInComparisonSQL(col, val);
     }
+    if (normalizedCmp === 'between') {
+      // between comparison (field BETWEEN x AND y)
+      return this.betweenComparisonSQL(col, val);
+    }
     throw new Error(`unknown operator "${cmp}"`);
   }
 
@@ -138,5 +142,20 @@ export class SQLComparisonBuilder<Entity> {
     if (!val.length) {
       throw new Error(`Invalid in value expected a non-empty array got ${JSON.stringify(val)}`);
     }
+  }
+
+  private betweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
+    const { paramName } = this;
+    // TODO: this is not very good - can we better type this?!
+    // eslint-disable-next-line
+    const value = val as any;
+
+    return {
+      sql: `${col} BETWEEN :${paramName}_lower AND :${paramName}_upper`,
+      params: {
+        [`${paramName}_lower`]: value.lower,
+        [`${paramName}_upper`]: value.upper,
+      },
+    };
   }
 }
