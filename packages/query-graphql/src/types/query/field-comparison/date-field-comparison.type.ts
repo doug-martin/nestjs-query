@@ -80,6 +80,11 @@ export function getOrCreateDateFieldComparison(): Class<FilterFieldComparison<Da
     @ValidateNested()
     @Type(() => DateFieldComparisonBetween)
     between?: DateFieldComparisonBetween;
+
+    @Field(() => DateFieldComparisonBetween, { nullable: true })
+    @ValidateNested()
+    @Type(() => DateFieldComparisonBetween)
+    notBetween?: DateFieldComparisonBetween;
   }
   dateFieldComparison = DateFieldComparison;
   return dateFieldComparison;

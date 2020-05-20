@@ -80,6 +80,11 @@ export function getOrCreateNumberFieldComparison(): Class<FilterFieldComparison<
     @ValidateNested()
     @Type(() => NumberFieldComparisonBetween)
     between?: NumberFieldComparisonBetween;
+
+    @Field(() => NumberFieldComparisonBetween, { nullable: true })
+    @ValidateNested()
+    @Type(() => NumberFieldComparisonBetween)
+    notBetween?: NumberFieldComparisonBetween;
   }
   numberFieldComparison = NumberFieldComparison;
   return numberFieldComparison;

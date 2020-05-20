@@ -80,6 +80,11 @@ export function getOrCreateTimestampFieldComparison(): Class<FilterFieldComparis
     @ValidateNested()
     @Type(() => TimestampFieldComparisonBetween)
     between?: TimestampFieldComparisonBetween;
+
+    @Field(() => TimestampFieldComparisonBetween, { nullable: true })
+    @ValidateNested()
+    @Type(() => TimestampFieldComparisonBetween)
+    notBetween?: TimestampFieldComparisonBetween;
   }
 
   timestampFieldComparison = TimestampFieldComparison;

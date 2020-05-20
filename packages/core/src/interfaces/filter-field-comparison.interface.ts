@@ -126,6 +126,15 @@ export interface CommonFieldComparisonType<FieldType> extends BooleanFieldCompar
    * ```
    */
   between?: CommonFieldComparisonBetweenType<FieldType>;
+  /**
+   * Checks that a field is not between a lower and upper bound. The bounds are excluded!
+   *
+   * ```ts
+   * // field NOT BETWEEN lower AND upper
+   * { field: { notBetween: { lower: 1, upper: 10 } } }
+   * ```
+   */
+  notBetween?: CommonFieldComparisonBetweenType<FieldType>;
 }
 
 /**

@@ -80,6 +80,11 @@ export function getOrCreateFloatFieldComparison(): Class<FilterFieldComparison<n
     @ValidateNested()
     @Type(() => FloatFieldComparisonBetween)
     between?: FloatFieldComparisonBetween;
+
+    @Field(() => FloatFieldComparisonBetween, { nullable: true })
+    @ValidateNested()
+    @Type(() => FloatFieldComparisonBetween)
+    notBetween?: FloatFieldComparisonBetween;
   }
 
   floatFieldComparison = FloatFieldComparison;
