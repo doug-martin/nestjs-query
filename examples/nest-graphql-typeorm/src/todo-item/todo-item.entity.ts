@@ -38,6 +38,6 @@ export class TodoItemEntity {
   @JoinTable()
   tags!: TagEntity[];
 
-  @Column({ nullable: false, default: 0 })
+  @Column({ type: 'integer', nullable: false, default: 0 })
   priority!: number;
 }

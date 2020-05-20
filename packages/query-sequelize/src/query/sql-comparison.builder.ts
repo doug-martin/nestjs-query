@@ -48,6 +48,40 @@ export class SQLComparisonBuilder<Entity> {
       // comparison operator (e.b. =, !=, >, <)
       return { [col]: { [this.comparisonMap[normalizedCmp]]: val } };
     }
+    if (normalizedCmp === 'between') {
+      // between comparison (field BETWEEN x AND y)
+      return this.betweenComparisonSQL(col, val);
+    }
+    if (normalizedCmp === 'notbetween') {
+      // notBetween comparison (field NOT BETWEEN x AND y)
+      return this.notBetweenComparisonSQL(col, val);
+    }
     throw new Error(`unknown operator "${cmp}"`);
+  }
+
+  private betweenComparisonSQL<F extends keyof Entity>(
+    col: string,
+    val: EntityComparisonField<Entity, F>,
+  ): WhereOptions {
+    // TODO: this is not very good - can we better type this?!
+    // eslint-disable-next-line
+    const value = val as any;
+
+    return {
+      [col]: { [Op.between]: [value.lower, value.upper] },
+    };
+  }
+
+  private notBetweenComparisonSQL<F extends keyof Entity>(
+    col: string,
+    val: EntityComparisonField<Entity, F>,
+  ): WhereOptions {
+    // TODO: this is not very good - can we better type this?!
+    // eslint-disable-next-line
+    const value = val as any;
+
+    return {
+      [col]: { [Op.notBetween]: [value.lower, value.upper] },
+    };
   }
 }
