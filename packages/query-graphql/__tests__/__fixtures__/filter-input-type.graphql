@@ -40,6 +40,7 @@ input NumberFieldComparison {
   in: [Float!]
   notIn: [Float!]
   between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
 }
 
 input NumberFieldComparisonBetween {
@@ -64,6 +65,7 @@ input DateFieldComparison {
   in: [DateTime!]
   notIn: [DateTime!]
   between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
 }
 
 """
@@ -88,6 +90,7 @@ input FloatFieldComparison {
   in: [Float!]
   notIn: [Float!]
   between: FloatFieldComparisonBetween
+  notBetween: FloatFieldComparisonBetween
 }
 
 input FloatFieldComparisonBetween {
@@ -107,6 +110,7 @@ input IntFieldComparison {
   in: [Int!]
   notIn: [Int!]
   between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
 }
 
 input IntFieldComparisonBetween {
@@ -143,6 +147,7 @@ input TimestampFieldComparison {
   in: [Timestamp!]
   notIn: [Timestamp!]
   between: TimestampFieldComparisonBetween
+  notBetween: TimestampFieldComparisonBetween
 }
 
 """
