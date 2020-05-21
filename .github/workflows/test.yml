@@ -9,35 +9,7 @@ on:
 env:
   CI: true
 jobs:
-  unit:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x, 14.x]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Restore Dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{matrix.node-version}}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{matrix.node-version}}-
-      - run: npm ci
-      - run: npm run bootstrap
-      - run: npm test
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-unit-${{ matrix.node-version }}
-          parallel: true
-
-  e2e:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -61,19 +33,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-${{matrix.node-version}}-
       - run: npm ci
-      - run: npm run bootstrap -- --ignore-scripts
-      - run: npm run build
-      - run: npx lerna run migrate:up
-      - run: npm run test:e2e
+      - run: npm run bootstrap
+      - run: npm test
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-e2e-${{ matrix.node-version }}
+          flag-name: run-${{ matrix.node-version }}
           parallel: true
 
   finish:
-    needs: [unit, e2e]
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Coveralls Finished
