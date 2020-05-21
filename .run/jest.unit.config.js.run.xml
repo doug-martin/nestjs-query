@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="jest.config.js" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
-    <config-file value="$PROJECT_DIR$/jest.config.js" />
+  <configuration default="false" name="jest.unit.config.js" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
+    <config-file value="$PROJECT_DIR$/jest.unit.config.js" />
     <node-interpreter value="project" />
     <node-options value="" />
     <jest-package value="$PROJECT_DIR$/node_modules/jest" />
     <working-dir value="$PROJECT_DIR$" />
-    <jest-options value="--runInBand --coverage" />
+    <jest-options value="--coverage" />
     <envs />
     <scope-kind value="ALL" />
     <method v="2" />

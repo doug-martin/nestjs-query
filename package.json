@@ -12,8 +12,9 @@
     "test:e2e": "npm run jest:e2e",
     "lint": "eslint --ext=.ts .",
     "lint:fix": "eslint --fix --ext=.ts .",
-    "jest": "jest --coverage",
-    "jest:e2e": "jest --runInBand --config=./jest.e2e.config.js --coverage",
+    "jest": "jest --runInBand --coverage",
+    "jest:e2e": "jest --runInBand --coverage --config=./jest.e2e.config.js",
+    "jest:unit": "jest --coverage --config=./jest.unit.config.js",
     "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
