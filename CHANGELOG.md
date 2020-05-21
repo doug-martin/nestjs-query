@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.5](https://github.com/doug-martin/nestjs-query/compare/v0.11.4...v0.11.5) (2020-05-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.55 ([8926e12](https://github.com/doug-martin/nestjs-query/commit/8926e1253cbc01f3c7cf9cc074d76fe47f5bb9d2))
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.55 ([1ed906f](https://github.com/doug-martin/nestjs-query/commit/1ed906f9ff80302b27754f114f2578a3948bf305))
+
+
+
+
+
 ## [0.11.4](https://github.com/doug-martin/nestjs-query/compare/v0.11.3...v0.11.4) (2020-05-19)
 
 **Note:** Version bump only for package nestjs-query
