@@ -1,5 +1,5 @@
+import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
 import { ObjectLiteral } from 'typeorm';
-import { FilterComparisonOperators } from '@nestjs-query/core';
 
 /**
  * @internal
@@ -150,9 +150,7 @@ export class SQLComparisonBuilder<Entity> {
 
   private betweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
     const { paramName } = this;
-    // TODO: this is not very good - can we better type this?!
-    // eslint-disable-next-line
-    const value = val as any;
+    const value = (val as unknown) as CommonFieldComparisonBetweenType<Entity[F]>;
 
     return {
       sql: `${col} BETWEEN :${paramName}_lower AND :${paramName}_upper`,
@@ -168,9 +166,7 @@ export class SQLComparisonBuilder<Entity> {
     val: EntityComparisonField<Entity, F>,
   ): CmpSQLType {
     const { paramName } = this;
-    // TODO: this is not very good - can we better type this?!
-    // eslint-disable-next-line
-    const value = val as any;
+    const value = (val as unknown) as CommonFieldComparisonBetweenType<Entity[F]>;
 
     return {
       sql: `${col} NOT BETWEEN :${paramName}_lower AND :${paramName}_upper`,
