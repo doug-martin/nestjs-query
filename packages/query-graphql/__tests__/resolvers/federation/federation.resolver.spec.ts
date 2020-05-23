@@ -80,6 +80,7 @@ describe('FederationResolver', () => {
         new Map([[dto, output]]),
       );
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.findRelation(dto, {});
       return expect(result).toEqual(output);
     });
@@ -96,6 +97,7 @@ describe('FederationResolver', () => {
       };
       when(mockService.findRelation(TestRelationDTO, 'other', deepEqual([dto]))).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.findCustom(dto, {});
       return expect(result).toEqual(output);
     });
@@ -149,6 +151,7 @@ describe('FederationResolver', () => {
         ),
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.queryRelations(dto, query, {});
       return expect(result).toEqual({
         edges: [
@@ -194,6 +197,7 @@ describe('FederationResolver', () => {
         ),
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.queryCustoms(dto, query, {});
       return expect(result).toEqual({
         edges: [

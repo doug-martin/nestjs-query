@@ -70,6 +70,7 @@ describe('RemoveRelationsResolver', () => {
       };
       when(mockService.removeRelation('relation', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeRelationFromTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
@@ -84,9 +85,9 @@ describe('RemoveRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      // @ts-ignore
       when(mockService.removeRelation('other', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeCustomFromTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
@@ -121,11 +122,12 @@ describe('RemoveRelationsResolver', () => {
       };
       when(mockService.removeRelations('relations', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeRelationsFromTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
 
-    it('should call the service findRelation with the provided dto and correct relation name', async () => {
+    it('should call the service findRelation with the provided dto and correct custom relation name', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationsInputType = {
         id: 'id-1',
@@ -137,6 +139,7 @@ describe('RemoveRelationsResolver', () => {
       };
       when(mockService.removeRelations('others', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeCustomsFromTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });

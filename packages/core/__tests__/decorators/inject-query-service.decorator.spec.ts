@@ -12,7 +12,7 @@ describe('@InjectQueryService', () => {
     class Test {
       constructor(@InjectQueryService(TestEntity) readonly service: QueryService<TestEntity>) {}
     }
-    expect(injectSpy).toBeCalledTimes(1);
-    expect(injectSpy).toBeCalledWith(getQueryServiceToken(TestEntity));
+    expect(injectSpy).toHaveBeenCalledTimes(1);
+    expect(injectSpy).toHaveBeenCalledWith(getQueryServiceToken(TestEntity));
   });
 });

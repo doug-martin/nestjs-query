@@ -28,11 +28,11 @@ export const refresh = async (connection: Sequelize): Promise<void> => {
       tags: [questionTag, blockedTag],
     },
   ]);
-  todoItems[0].$set('tags', [urgentTag, homeTag]);
-  todoItems[1].$set('tags', [urgentTag, workTag]);
-  todoItems[2].$set('tags', [blockedTag, workTag]);
-  todoItems[3].$set('tags', [blockedTag, homeTag]);
-  todoItems[4].$set('tags', [questionTag, blockedTag]);
+  await todoItems[0].$set('tags', [urgentTag, homeTag]);
+  await todoItems[1].$set('tags', [urgentTag, workTag]);
+  await todoItems[2].$set('tags', [blockedTag, workTag]);
+  await todoItems[3].$set('tags', [blockedTag, homeTag]);
+  await todoItems[4].$set('tags', [questionTag, blockedTag]);
 
   await todoItems.reduce(async (prev, todo) => {
     await prev;

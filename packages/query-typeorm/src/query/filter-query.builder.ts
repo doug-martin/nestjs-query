@@ -68,7 +68,10 @@ export class FilterQueryBuilder<Entity> {
    * @param query - the query to apply.
    */
   softDelete(query: Query<Entity>): SoftDeleteQueryBuilder<Entity> {
-    return this.applyFilter(this.repo.createQueryBuilder().softDelete(), query.filter);
+    return this.applyFilter(
+      this.repo.createQueryBuilder().softDelete() as SoftDeleteQueryBuilder<Entity>,
+      query.filter,
+    );
   }
 
   /**
@@ -118,7 +121,7 @@ export class FilterQueryBuilder<Entity> {
       return qb;
     }
     return sorts.reduce((prevQb, { field, direction, nulls }) => {
-      const col = alias ? `${alias}.${field}` : `${field}`;
+      const col = alias ? `${alias}.${field as string}` : `${field as string}`;
       return prevQb.addOrderBy(col, direction, nulls);
     }, qb);
   }

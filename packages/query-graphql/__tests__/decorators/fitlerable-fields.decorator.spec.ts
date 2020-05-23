@@ -43,7 +43,7 @@ describe('FilterableField decorator', (): void => {
       },
       { propertyName: 'numberField', target: Number, advancedOptions: { nullable: true }, returnTypeFunc: undefined },
     ]);
-    expect(fieldSpy).toBeCalledTimes(4);
+    expect(fieldSpy).toHaveBeenCalledTimes(4);
     expect(fieldSpy).toHaveBeenNthCalledWith(1);
     expect(fieldSpy).toHaveBeenNthCalledWith(2, { nullable: true });
     expect(fieldSpy).toHaveBeenNthCalledWith(3, floatReturnFunc, { nullable: true });

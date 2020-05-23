@@ -36,7 +36,7 @@ describe('EdgeType', (): void => {
   it('should throw an error for a type that is not registered with types-graphql', () => {
     class BadDTO {}
 
-    expect(() => EdgeType(BadDTO)).toThrowError(
+    expect(() => EdgeType(BadDTO)).toThrow(
       'Unable to make EdgeType for class. Ensure BadDTO is annotated with @nestjs/graphql @ObjectType',
     );
   });

@@ -56,7 +56,7 @@ describe('ResolverField decorator', (): void => {
   it('should not call ResolverMethod if disabled is true', () => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{ disabled: true }];
     createTestResolver('test', () => Boolean, { nullable: true }, ...opts);
-    expect(propertySpy).toBeCalledTimes(0);
-    expect(resolverMethodSpy).toBeCalledTimes(0);
+    expect(propertySpy).toHaveBeenCalledTimes(0);
+    expect(resolverMethodSpy).toHaveBeenCalledTimes(0);
   });
 });

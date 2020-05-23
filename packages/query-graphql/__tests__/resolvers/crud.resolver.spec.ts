@@ -45,78 +45,78 @@ describe('CrudResolver', () => {
 
   it('should create an crud resolver for the DTO class', () => {
     CRUDResolver(TestResolverDTO);
-    expect(creatableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(creatableSpy).toBeCalledTimes(1);
+    expect(creatableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(creatableSpy).toHaveBeenCalledTimes(1);
 
-    expect(readableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(readableSpy).toBeCalledTimes(1);
+    expect(readableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(readableSpy).toHaveBeenCalledTimes(1);
 
-    expect(updateableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(updateableSpy).toBeCalledTimes(1);
+    expect(updateableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(updateableSpy).toHaveBeenCalledTimes(1);
 
-    expect(deleteResolverSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(deleteResolverSpy).toBeCalledTimes(1);
+    expect(deleteResolverSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(deleteResolverSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should pass the provided CreateDTOClass to the CreateResolver', () => {
     CRUDResolver(TestResolverDTO, { CreateDTOClass: CreateTestResolverDTO });
 
-    expect(creatableSpy).toBeCalledWith(TestResolverDTO, { CreateDTOClass: CreateTestResolverDTO });
-    expect(creatableSpy).toBeCalledTimes(1);
+    expect(creatableSpy).toHaveBeenCalledWith(TestResolverDTO, { CreateDTOClass: CreateTestResolverDTO });
+    expect(creatableSpy).toHaveBeenCalledTimes(1);
 
-    expect(readableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(readableSpy).toBeCalledTimes(1);
+    expect(readableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(readableSpy).toHaveBeenCalledTimes(1);
 
-    expect(updateableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(updateableSpy).toBeCalledTimes(1);
+    expect(updateableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(updateableSpy).toHaveBeenCalledTimes(1);
 
-    expect(deleteResolverSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(deleteResolverSpy).toBeCalledTimes(1);
+    expect(deleteResolverSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(deleteResolverSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should mixin the CreateDTOClass to the CreateResolver options', () => {
     CRUDResolver(TestResolverDTO, { CreateDTOClass: CreateTestResolverDTO, create: { guards: [] } });
 
-    expect(creatableSpy).toBeCalledWith(TestResolverDTO, { CreateDTOClass: CreateTestResolverDTO, guards: [] });
-    expect(creatableSpy).toBeCalledTimes(1);
+    expect(creatableSpy).toHaveBeenCalledWith(TestResolverDTO, { CreateDTOClass: CreateTestResolverDTO, guards: [] });
+    expect(creatableSpy).toHaveBeenCalledTimes(1);
 
-    expect(readableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(readableSpy).toBeCalledTimes(1);
+    expect(readableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(readableSpy).toHaveBeenCalledTimes(1);
 
-    expect(updateableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(updateableSpy).toBeCalledTimes(1);
+    expect(updateableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(updateableSpy).toHaveBeenCalledTimes(1);
 
-    expect(deleteResolverSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(deleteResolverSpy).toBeCalledTimes(1);
+    expect(deleteResolverSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(deleteResolverSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should pass the provided UpdateDTOClass to the UpdateResolver', () => {
     CRUDResolver(TestResolverDTO, { UpdateDTOClass: UpdateTestResolverDTO });
-    expect(creatableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(creatableSpy).toBeCalledTimes(1);
+    expect(creatableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(creatableSpy).toHaveBeenCalledTimes(1);
 
-    expect(readableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(readableSpy).toBeCalledTimes(1);
+    expect(readableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(readableSpy).toHaveBeenCalledTimes(1);
 
-    expect(updateableSpy).toBeCalledWith(TestResolverDTO, { UpdateDTOClass: UpdateTestResolverDTO });
-    expect(updateableSpy).toBeCalledTimes(1);
+    expect(updateableSpy).toHaveBeenCalledWith(TestResolverDTO, { UpdateDTOClass: UpdateTestResolverDTO });
+    expect(updateableSpy).toHaveBeenCalledTimes(1);
 
-    expect(deleteResolverSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(deleteResolverSpy).toBeCalledTimes(1);
+    expect(deleteResolverSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(deleteResolverSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should mixin the provided UpdateDTOClass to the UpdateResolver options', () => {
     CRUDResolver(TestResolverDTO, { UpdateDTOClass: UpdateTestResolverDTO, update: { guards: [] } });
-    expect(creatableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(creatableSpy).toBeCalledTimes(1);
+    expect(creatableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(creatableSpy).toHaveBeenCalledTimes(1);
 
-    expect(readableSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(readableSpy).toBeCalledTimes(1);
+    expect(readableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(readableSpy).toHaveBeenCalledTimes(1);
 
-    expect(updateableSpy).toBeCalledWith(TestResolverDTO, { UpdateDTOClass: UpdateTestResolverDTO, guards: [] });
-    expect(updateableSpy).toBeCalledTimes(1);
+    expect(updateableSpy).toHaveBeenCalledWith(TestResolverDTO, { UpdateDTOClass: UpdateTestResolverDTO, guards: [] });
+    expect(updateableSpy).toHaveBeenCalledTimes(1);
 
-    expect(deleteResolverSpy).toBeCalledWith(TestResolverDTO, {});
-    expect(deleteResolverSpy).toBeCalledTimes(1);
+    expect(deleteResolverSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(deleteResolverSpy).toHaveBeenCalledTimes(1);
   });
 });

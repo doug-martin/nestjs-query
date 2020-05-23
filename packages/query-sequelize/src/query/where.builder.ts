@@ -49,7 +49,7 @@ export class WhereBuilder<Entity> {
       return ands[0];
     }
     if (ands.length) {
-      return { [Op.and]: ands as WhereOptions[] };
+      return { [Op.and]: ands };
     }
     return undefined;
   }

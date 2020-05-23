@@ -5,7 +5,7 @@ const tables = ['sub_task'];
 export const truncate = async (connection: Connection): Promise<void> => {
   await tables.reduce(async (prev, table) => {
     await prev;
-    return connection.query(`TRUNCATE ${table} RESTART IDENTITY CASCADE`);
+    await connection.query(`TRUNCATE ${table} RESTART IDENTITY CASCADE`);
   }, Promise.resolve());
 };
 

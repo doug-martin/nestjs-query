@@ -42,13 +42,13 @@ describe('ClassTransformerAssembler', () => {
 
   it('should throw an error if DTOClass or EntityClass cannot be determined', () => {
     class TestBadAssembler extends TestAssembler {}
-    expect(() => new TestBadAssembler()).toThrowError(
+    expect(() => new TestBadAssembler()).toThrow(
       'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler',
     );
-    expect(() => new TestBadAssembler(TestDTO)).toThrowError(
+    expect(() => new TestBadAssembler(TestDTO)).toThrow(
       'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler',
     );
-    expect(() => new TestBadAssembler(undefined, TestEntity)).toThrowError(
+    expect(() => new TestBadAssembler(undefined, TestEntity)).toThrow(
       'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler',
     );
   });

@@ -1,9 +1,11 @@
+import { ConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { AppModule } from '../src/app.module';
+import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { refresh, edgeNodes, pageInfoField, subTaskFields, todoItemFields } from './__fixtures__';
 
 describe('Federated - SubTaskResolver (e2e)', () => {
@@ -196,7 +198,7 @@ describe('Federated - SubTaskResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.subTasks;
+          const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
@@ -224,7 +226,7 @@ describe('Federated - SubTaskResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.subTasks;
+          const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
@@ -252,7 +254,7 @@ describe('Federated - SubTaskResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.subTasks;
+          const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
@@ -281,7 +283,7 @@ describe('Federated - SubTaskResolver (e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.subTasks;
+            const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -309,7 +311,7 @@ describe('Federated - SubTaskResolver (e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.subTasks;
+            const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,

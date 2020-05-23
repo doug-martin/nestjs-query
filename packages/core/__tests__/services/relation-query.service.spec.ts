@@ -23,7 +23,7 @@ describe('RelationQueryService', () => {
   const queryService: QueryService<TestType> = new RelationQueryService(instance(mockQueryService), relations);
 
   it('should set the underlying service to a NoOpQueryService if called without a query service', () => {
-    return expect(new RelationQueryService(relations).query({})).rejects.toThrowError('query is not implemented');
+    return expect(new RelationQueryService(relations).query({})).rejects.toThrow('query is not implemented');
   });
 
   it('should proxy to the underlying service when calling addRelations', () => {
@@ -43,7 +43,7 @@ describe('RelationQueryService', () => {
     testRelationFn.mockReturnValue(query);
     when(mockRelationService.query(deepEqual({ ...query, paging: { limit: 1 } }))).thenResolve([result]);
     await expect(queryService.findRelation(TestType, relationName, dto)).resolves.toBe(result);
-    return expect(testRelationFn).toBeCalledWith(dto);
+    return expect(testRelationFn).toHaveBeenCalledWith(dto);
   });
 
   it('should call the relationService findRelation with multiple dtos', async () => {
@@ -55,7 +55,7 @@ describe('RelationQueryService', () => {
     const result = new Map([[dtos[0], resultRelations[0]]]);
     when(mockRelationService.query(deepEqual({ ...query, paging: { limit: 1 } }))).thenResolve(resultRelations);
     await expect(queryService.findRelation(TestType, relationName, dtos)).resolves.toEqual(result);
-    return expect(testRelationFn).toBeCalledWith(dtos[0]);
+    return expect(testRelationFn).toHaveBeenCalledWith(dtos[0]);
   });
 
   it('should call the original service if the relation is not in this relation query service', async () => {
@@ -64,7 +64,7 @@ describe('RelationQueryService', () => {
     const result = { foo: 'baz' };
     when(mockQueryService.findRelation(TestType, relationName, dto)).thenResolve(result);
     await expect(queryService.findRelation(TestType, relationName, dto)).resolves.toEqual(result);
-    return expect(testRelationFn).not.toBeCalled();
+    return expect(testRelationFn).not.toHaveBeenCalled();
   });
 
   it('should call the original service if the relation is not in this relation query service with multiple DTOs', async () => {
@@ -73,7 +73,7 @@ describe('RelationQueryService', () => {
     const result = new Map([[dtos[0], { foo: 'baz' }]]);
     when(mockQueryService.findRelation(TestType, relationName, dtos)).thenResolve(result);
     await expect(queryService.findRelation(TestType, relationName, dtos)).resolves.toEqual(result);
-    return expect(testRelationFn).not.toBeCalled();
+    return expect(testRelationFn).not.toHaveBeenCalled();
   });
 
   it('should proxy to the underlying service when calling queryRelations with one dto', async () => {
@@ -85,7 +85,7 @@ describe('RelationQueryService', () => {
     testRelationFn.mockReturnValue(relationQuery);
     when(mockRelationService.query(deepEqual({ ...relationQuery }))).thenResolve(result);
     await expect(queryService.queryRelations(TestType, relationName, dto, query)).resolves.toBe(result);
-    return expect(testRelationFn).toBeCalledWith(dto);
+    return expect(testRelationFn).toHaveBeenCalledWith(dto);
   });
 
   it('should proxy to the underlying service when calling queryRelations with many dtos', () => {

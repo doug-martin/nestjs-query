@@ -27,7 +27,7 @@ describe('@Assembler', () => {
         return dtoOrEntity;
       }
     }
-    expect(injectableSpy).toBeCalledTimes(1);
+    expect(injectableSpy).toHaveBeenCalledTimes(1);
     expect(AssemblerFactory.getAssembler(TestFrom, TestTo)).toBeInstanceOf(TestAssembler);
     expect(AssemblerFactory.getAssembler(TestTo, TestFrom)).toBeInstanceOf(DefaultAssembler);
   });
@@ -39,7 +39,7 @@ describe('@Assembler', () => {
         return dtoOrEntity;
       }
     }
-    expect(() => Assembler(TestFrom, TestTo)(TestAssembler)).toThrowError(
+    expect(() => Assembler(TestFrom, TestTo)(TestAssembler)).toThrow(
       'Assembler already registered for TestFrom TestTo',
     );
   });

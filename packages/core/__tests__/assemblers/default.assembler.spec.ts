@@ -24,8 +24,8 @@ describe('DefaultAssembler', () => {
       const assembler = new DefaultAssembler(TestDTO, TestEntity);
       const converted = assembler.convertToDTO(input);
       expect(converted).toBeInstanceOf(TestDTO);
-      expect(plainToClassSpy).toBeCalledTimes(1);
-      expect(plainToClassSpy).toBeCalledWith(TestDTO, input);
+      expect(plainToClassSpy).toHaveBeenCalledTimes(1);
+      expect(plainToClassSpy).toHaveBeenCalledWith(TestDTO, input);
     });
   });
 
@@ -35,8 +35,8 @@ describe('DefaultAssembler', () => {
       const assembler = new DefaultAssembler(TestDTO, TestEntity);
       const converted = assembler.convertToEntity(input);
       expect(converted).toBeInstanceOf(TestEntity);
-      expect(plainToClassSpy).toBeCalledTimes(1);
-      expect(plainToClassSpy).toBeCalledWith(TestEntity, input);
+      expect(plainToClassSpy).toHaveBeenCalledTimes(1);
+      expect(plainToClassSpy).toHaveBeenCalledWith(TestEntity, input);
     });
   });
 
@@ -46,7 +46,7 @@ describe('DefaultAssembler', () => {
       const assembler = new DefaultAssembler(TestDTO, TestEntity);
       const converted = assembler.convertQuery(input);
       expect(converted).toBe(input);
-      expect(plainToClassSpy).not.toBeCalled();
+      expect(plainToClassSpy).not.toHaveBeenCalled();
     });
   });
 });

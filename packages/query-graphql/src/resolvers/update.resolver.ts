@@ -22,7 +22,6 @@ export interface UpdateResolver<DTO, U extends DeepPartial<DTO>> extends Service
 /** @internal */
 const defaultUpdateInput = <DTO, U extends DeepPartial<DTO>>(dtoNames: DTONames, DTOClass: Class<DTO>): Class<U> => {
   @InputType(`Update${dtoNames.baseName}`)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   class UpdateType extends PartialType(DTOClass, InputType) {}
 

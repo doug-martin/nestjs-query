@@ -49,7 +49,6 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput');
 
   @ObjectType(`${baseName}DeleteResponse`)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   class DeleteOneResponse extends PartialType(DTOClass, ObjectType) {}
 

@@ -22,7 +22,7 @@ describe('@InjectAssemblerQueryService', () => {
     class Test {
       constructor(@InjectAssemblerQueryService(TestAssembler) readonly service: QueryService<Foo>) {}
     }
-    expect(injectSpy).toBeCalledTimes(1);
-    expect(injectSpy).toBeCalledWith(getAssemblerQueryServiceToken(TestAssembler));
+    expect(injectSpy).toHaveBeenCalledTimes(1);
+    expect(injectSpy).toHaveBeenCalledWith(getAssemblerQueryServiceToken(TestAssembler));
   });
 });

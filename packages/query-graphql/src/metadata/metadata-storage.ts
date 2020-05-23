@@ -48,13 +48,13 @@ export class GraphQLQueryMetadataStorage {
   private readonly referenceStorage: Map<Class<unknown>, ReferenceDescriptor<unknown, unknown>[]>;
 
   constructor() {
-    this.filterableObjectStorage = new Map();
-    this.filterTypeStorage = new Map();
-    this.sortTypeStorage = new Map();
-    this.connectionTypeStorage = new Map();
-    this.edgeTypeStorage = new Map();
-    this.relationStorage = new Map();
-    this.referenceStorage = new Map();
+    this.filterableObjectStorage = new Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>();
+    this.filterTypeStorage = new Map<Class<unknown>, Class<Filter<unknown>>>();
+    this.sortTypeStorage = new Map<Class<unknown>, Class<SortField<unknown>>>();
+    this.connectionTypeStorage = new Map<Class<unknown>, StaticConnectionType<unknown>>();
+    this.edgeTypeStorage = new Map<Class<unknown>, Class<EdgeType<unknown>>>();
+    this.relationStorage = new Map<Class<unknown>, RelationDescriptor<unknown>[]>();
+    this.referenceStorage = new Map<Class<unknown>, ReferenceDescriptor<unknown, unknown>[]>();
   }
 
   addFilterableObjectField<T>(type: Class<T>, field: FilterableFieldDescriptor<unknown>): void {
@@ -69,7 +69,7 @@ export class GraphQLQueryMetadataStorage {
   getFilterableObjectFields<T>(type: Class<T>): FilterableFieldDescriptor<unknown>[] | undefined {
     const typeFields = this.filterableObjectStorage.get(type) ?? [];
     const fieldNames = typeFields.map((t) => t.propertyName);
-    const baseClass = Object.getPrototypeOf(type);
+    const baseClass = Object.getPrototypeOf(type) as Class<unknown>;
     if (baseClass) {
       const inheritedFields = (this.getFilterableObjectFields(baseClass) ?? []).filter(
         (t) => !fieldNames.includes(t.propertyName),

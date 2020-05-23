@@ -11,7 +11,6 @@ import * as ormconfig from '../ormconfig.json';
     TypeOrmModule.forRoot(ormconfig as TypeOrmModuleOptions),
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
-      context: ({ req }) => ({ request: req }),
     }),
     TodoItemModule,
   ],

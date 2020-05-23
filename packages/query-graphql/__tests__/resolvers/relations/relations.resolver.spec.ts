@@ -34,10 +34,10 @@ describe('Relatable', () => {
       one: { testRelation: { DTO: TestRelation } },
       many: { testConnection: { DTO: TestRelation } },
     };
-    expect(readMixinSpy).toBeCalledWith(Test, relations);
-    expect(updateMixinSpy).toBeCalledWith(Test, relations);
-    expect(removeMixinSpy).toBeCalledWith(Test, relations);
-    expect(referenceMixinSpy).toBeCalledWith(Test, {});
+    expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, {});
   });
 
   it('should call the mixins with the relations that are passed in', () => {
@@ -51,10 +51,10 @@ describe('Relatable', () => {
 
     Relatable(Test, relations, {})(BaseServiceResolver);
 
-    expect(readMixinSpy).toBeCalledWith(Test, relations);
-    expect(updateMixinSpy).toBeCalledWith(Test, relations);
-    expect(removeMixinSpy).toBeCalledWith(Test, relations);
-    expect(referenceMixinSpy).toBeCalledWith(Test, {});
+    expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, {});
   });
 
   it('should call the mixins with the references derived from decorators', () => {
@@ -73,10 +73,10 @@ describe('Relatable', () => {
       testRelation2: { DTO: TestRelation, keys: { id: 'relationId' } },
     };
     const relations = { many: {}, one: {} };
-    expect(readMixinSpy).toBeCalledWith(Test, relations);
-    expect(updateMixinSpy).toBeCalledWith(Test, relations);
-    expect(removeMixinSpy).toBeCalledWith(Test, relations);
-    expect(referenceMixinSpy).toBeCalledWith(Test, references);
+    expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, references);
   });
 
   it('should call the mixins with the references passed in', () => {
@@ -92,9 +92,9 @@ describe('Relatable', () => {
     const relations = { many: {}, one: {} };
     Relatable(Test, {}, references)(BaseServiceResolver);
 
-    expect(readMixinSpy).toBeCalledWith(Test, relations);
-    expect(updateMixinSpy).toBeCalledWith(Test, relations);
-    expect(removeMixinSpy).toBeCalledWith(Test, relations);
-    expect(referenceMixinSpy).toBeCalledWith(Test, references);
+    expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
+    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, references);
   });
 });

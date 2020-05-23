@@ -52,6 +52,7 @@ describe('ReferencesRelationMixin', () => {
       stringField: 'reference-id-1',
     };
     // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const result = await resolver.referenceReference(dto);
     return expect(result).toEqual({ __typename: 'Reference', id: dto.stringField });
   });

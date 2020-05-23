@@ -18,4 +18,4 @@ async function bootstrap(): Promise<void> {
   await app.listen(3002);
 }
 
-bootstrap();
+void bootstrap();

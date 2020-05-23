@@ -42,12 +42,12 @@ export class SQLComparisionBuilder<Entity> {
     cmp: FilterComparisonOperators<Entity[F]>,
     val: EntityComparisonField<Entity, F>,
   ): WhereOptions {
-    const col = `${field}`;
+    const col = `${field as string}`;
     const normalizedCmp = (cmp as string).toLowerCase();
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)
       return { [col]: { [this.comparisonMap[normalizedCmp]]: val } };
     }
-    throw new Error(`unknown operator "${cmp}"`);
+    throw new Error(`unknown operator ${JSON.stringify(cmp)}`);
   }
 }

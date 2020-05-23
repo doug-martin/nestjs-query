@@ -108,6 +108,7 @@ export class RelationQueryBuilder<Entity, Relation> {
         const sql = primaryColumns
           .map((column, columnIndex) => {
             const paramName = `${aliasName}_entity_${columnIndex}`;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             params[paramName] = column.getEntityValue(entity);
             return `${aliasName}.${column.propertyPath} = :${paramName}`;
           })
@@ -129,6 +130,7 @@ export class RelationQueryBuilder<Entity, Relation> {
         const sql = columns
           .map((col, colIndex: number) => {
             const paramName = `${aliasName}_entity_${colIndex}`;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             params[paramName] = col.referencedColumn!.getEntityValue(entity);
             return `${aliasName}.${col.propertyPath} = :${paramName}`;
           })
@@ -160,6 +162,7 @@ export class RelationQueryBuilder<Entity, Relation> {
         const sql = relation.joinColumns
           .map((joinColumn) => {
             const paramName = joinColumn.propertyName;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             params[paramName] = joinColumn.referencedColumn!.getEntityValue(entity);
             return `${joinAlias}.${joinColumn.propertyName} = :${paramName}`;
           })
@@ -191,6 +194,7 @@ export class RelationQueryBuilder<Entity, Relation> {
         const sql = relation
           .inverseRelation!.inverseJoinColumns.map((inverseJoinColumn) => {
             const paramName = `${inverseJoinColumn.propertyName}`;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             params[paramName] = inverseJoinColumn.referencedColumn!.getEntityValue(entity);
             return `${joinAlias}.${inverseJoinColumn.propertyName} = :${paramName}`;
           })

@@ -11,7 +11,7 @@ const pluckFields = <DTO, Relation>(dto: DTO, fieldMap: ReferencesKeys<DTO, Rela
   const partial: Record<string, unknown> = {};
   Object.keys(fieldMap).forEach((relationField) => {
     const dtoField = fieldMap[relationField as keyof Relation];
-    partial[relationField as string] = dto[dtoField as keyof DTO];
+    partial[relationField] = dto[dtoField as keyof DTO];
   });
   return partial as Partial<Relation>;
 };

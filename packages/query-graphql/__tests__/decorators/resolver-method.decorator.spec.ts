@@ -25,17 +25,17 @@ describe('ResolverMethod decorator', (): void => {
     };
   }
 
-  function createPipe(): Class<nest.PipeTransform<any, any>> {
-    return class implements nest.PipeTransform<any, any> {
-      transform(t: any) {
+  function createPipe(): Class<nest.PipeTransform<object, object>> {
+    return class implements nest.PipeTransform<object, object> {
+      transform(t: object) {
         return t;
       }
     };
   }
 
-  function createFilter(): Class<nest.ExceptionFilter<any>> {
-    return class implements nest.ExceptionFilter<any> {
-      catch(t: any) {
+  function createFilter(): Class<nest.ExceptionFilter<Error>> {
+    return class implements nest.ExceptionFilter<Error> {
+      catch(t: Error) {
         return t;
       }
     };
@@ -56,10 +56,10 @@ describe('ResolverMethod decorator', (): void => {
       const FakeCanActivate = createCanActivate();
       const opts = [{ guards: [FakeCanActivate] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith(FakeCanActivate);
-      expect(useInterceptorsSpy).toBeCalledWith();
-      expect(usePipesSpy).toBeCalledWith();
-      expect(useFiltersSpy).toBeCalledWith();
+      expect(useGuardsSpy).toHaveBeenCalledWith(FakeCanActivate);
+      expect(useInterceptorsSpy).toHaveBeenCalledWith();
+      expect(usePipesSpy).toHaveBeenCalledWith();
+      expect(useFiltersSpy).toHaveBeenCalledWith();
     });
 
     it('should call UseGuards with a unique set of guards', () => {
@@ -67,10 +67,10 @@ describe('ResolverMethod decorator', (): void => {
       const FakeCanActivate2 = createCanActivate();
       const opts = [{ guards: [FakeCanActivate1] }, { guards: [FakeCanActivate1, FakeCanActivate2] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith(FakeCanActivate1, FakeCanActivate2);
-      expect(useInterceptorsSpy).toBeCalledWith();
-      expect(usePipesSpy).toBeCalledWith();
-      expect(useFiltersSpy).toBeCalledWith();
+      expect(useGuardsSpy).toHaveBeenCalledWith(FakeCanActivate1, FakeCanActivate2);
+      expect(useInterceptorsSpy).toHaveBeenCalledWith();
+      expect(usePipesSpy).toHaveBeenCalledWith();
+      expect(useFiltersSpy).toHaveBeenCalledWith();
     });
   });
 
@@ -79,10 +79,10 @@ describe('ResolverMethod decorator', (): void => {
       const FakeInterceptor = createInterceptor();
       const opts = [{ interceptors: [FakeInterceptor] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith();
-      expect(useInterceptorsSpy).toBeCalledWith(FakeInterceptor);
-      expect(usePipesSpy).toBeCalledWith();
-      expect(useFiltersSpy).toBeCalledWith();
+      expect(useGuardsSpy).toHaveBeenCalledWith();
+      expect(useInterceptorsSpy).toHaveBeenCalledWith(FakeInterceptor);
+      expect(usePipesSpy).toHaveBeenCalledWith();
+      expect(useFiltersSpy).toHaveBeenCalledWith();
     });
 
     it('should call UseGuards with a unique set of guards', () => {
@@ -90,10 +90,10 @@ describe('ResolverMethod decorator', (): void => {
       const FakeInterceptor2 = createInterceptor();
       const opts = [{ interceptors: [FakeInterceptor1] }, { interceptors: [FakeInterceptor1, FakeInterceptor2] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith();
-      expect(useInterceptorsSpy).toBeCalledWith(FakeInterceptor1, FakeInterceptor2);
-      expect(usePipesSpy).toBeCalledWith();
-      expect(useFiltersSpy).toBeCalledWith();
+      expect(useGuardsSpy).toHaveBeenCalledWith();
+      expect(useInterceptorsSpy).toHaveBeenCalledWith(FakeInterceptor1, FakeInterceptor2);
+      expect(usePipesSpy).toHaveBeenCalledWith();
+      expect(useFiltersSpy).toHaveBeenCalledWith();
     });
   });
 
@@ -102,10 +102,10 @@ describe('ResolverMethod decorator', (): void => {
       const FakePipe = createPipe();
       const opts = [{ pipes: [FakePipe] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith();
-      expect(useInterceptorsSpy).toBeCalledWith();
-      expect(usePipesSpy).toBeCalledWith(FakePipe);
-      expect(useFiltersSpy).toBeCalledWith();
+      expect(useGuardsSpy).toHaveBeenCalledWith();
+      expect(useInterceptorsSpy).toHaveBeenCalledWith();
+      expect(usePipesSpy).toHaveBeenCalledWith(FakePipe);
+      expect(useFiltersSpy).toHaveBeenCalledWith();
     });
 
     it('should call UseGuards with a unique set of guards', () => {
@@ -113,10 +113,10 @@ describe('ResolverMethod decorator', (): void => {
       const FakePipe2 = createPipe();
       const opts = [{ pipes: [FakePipe1] }, { pipes: [FakePipe1, FakePipe2] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith();
-      expect(useInterceptorsSpy).toBeCalledWith();
-      expect(usePipesSpy).toBeCalledWith(FakePipe1, FakePipe2);
-      expect(useFiltersSpy).toBeCalledWith();
+      expect(useGuardsSpy).toHaveBeenCalledWith();
+      expect(useInterceptorsSpy).toHaveBeenCalledWith();
+      expect(usePipesSpy).toHaveBeenCalledWith(FakePipe1, FakePipe2);
+      expect(useFiltersSpy).toHaveBeenCalledWith();
     });
   });
 
@@ -125,10 +125,10 @@ describe('ResolverMethod decorator', (): void => {
       const FakePipe = createFilter();
       const opts = [{ filters: [FakePipe] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith();
-      expect(useInterceptorsSpy).toBeCalledWith();
-      expect(usePipesSpy).toBeCalledWith();
-      expect(useFiltersSpy).toBeCalledWith(FakePipe);
+      expect(useGuardsSpy).toHaveBeenCalledWith();
+      expect(useInterceptorsSpy).toHaveBeenCalledWith();
+      expect(usePipesSpy).toHaveBeenCalledWith();
+      expect(useFiltersSpy).toHaveBeenCalledWith(FakePipe);
     });
 
     it('should call UseGuards with a unique set of guards', () => {
@@ -136,10 +136,10 @@ describe('ResolverMethod decorator', (): void => {
       const FakeFilter2 = createFilter();
       const opts = [{ filters: [FakeFilter1] }, { filters: [FakeFilter1, FakeFilter2] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith();
-      expect(useInterceptorsSpy).toBeCalledWith();
-      expect(usePipesSpy).toBeCalledWith();
-      expect(useFiltersSpy).toBeCalledWith(FakeFilter1, FakeFilter2);
+      expect(useGuardsSpy).toHaveBeenCalledWith();
+      expect(useInterceptorsSpy).toHaveBeenCalledWith();
+      expect(usePipesSpy).toHaveBeenCalledWith();
+      expect(useFiltersSpy).toHaveBeenCalledWith(FakeFilter1, FakeFilter2);
     });
   });
 
@@ -151,11 +151,11 @@ describe('ResolverMethod decorator', (): void => {
       });
       const opts = [{ decorators: [propDecorator] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith();
-      expect(useInterceptorsSpy).toBeCalledWith();
-      expect(usePipesSpy).toBeCalledWith();
-      expect(useFiltersSpy).toBeCalledWith();
-      expect(propDecorator).toBeCalledWith({}, 'method', expect.any(Object));
+      expect(useGuardsSpy).toHaveBeenCalledWith();
+      expect(useInterceptorsSpy).toHaveBeenCalledWith();
+      expect(usePipesSpy).toHaveBeenCalledWith();
+      expect(useFiltersSpy).toHaveBeenCalledWith();
+      expect(propDecorator).toHaveBeenCalledWith({}, 'method', expect.any(Object));
     });
 
     it('should call the decorator once', () => {
@@ -165,12 +165,12 @@ describe('ResolverMethod decorator', (): void => {
       });
       const opts = [{ decorators: [propDecorator] }, { decorators: [propDecorator] }];
       createTestResolver(...opts);
-      expect(useGuardsSpy).toBeCalledWith();
-      expect(useInterceptorsSpy).toBeCalledWith();
-      expect(usePipesSpy).toBeCalledWith();
-      expect(useFiltersSpy).toBeCalledWith();
-      expect(propDecorator).toBeCalledTimes(1);
-      expect(propDecorator).toBeCalledWith({}, 'method', expect.any(Object));
+      expect(useGuardsSpy).toHaveBeenCalledWith();
+      expect(useInterceptorsSpy).toHaveBeenCalledWith();
+      expect(usePipesSpy).toHaveBeenCalledWith();
+      expect(useFiltersSpy).toHaveBeenCalledWith();
+      expect(propDecorator).toHaveBeenCalledTimes(1);
+      expect(propDecorator).toHaveBeenCalledWith({}, 'method', expect.any(Object));
     });
   });
 });

@@ -113,7 +113,7 @@ export class FilterQueryBuilder<Entity> {
     // eslint-disable-next-line no-param-reassign
     qb.order = sorts.map(
       ({ field, direction, nulls }): OrderItem => {
-        const col = `${field}`;
+        const col = `${field as string}`;
         const dir: string[] = [direction];
         if (nulls) {
           dir.push(nulls);

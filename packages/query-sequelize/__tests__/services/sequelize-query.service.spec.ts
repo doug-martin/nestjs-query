@@ -191,7 +191,7 @@ describe('SequelizeQueryService', (): void => {
         const { queryService, mockModelCtor } = createQueryService<TestRelation>();
         // @ts-ignore
         when(mockModelCtor.associations).thenReturn({});
-        return expect(queryService.findRelation(TestRelation, relationName, instance(mockModel))).rejects.toThrowError(
+        return expect(queryService.findRelation(TestRelation, relationName, instance(mockModel))).rejects.toThrow(
           `Unable to find relation ${relationName} on `,
         );
       });
@@ -407,7 +407,7 @@ describe('SequelizeQueryService', (): void => {
       // @ts-ignore
       modelInstance.then = undefined;
       when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenReject(err);
-      return expect(queryService.deleteOne(testEntityPk)).rejects.toThrowError(err);
+      return expect(queryService.deleteOne(testEntityPk)).rejects.toThrow(err);
     });
   });
 
@@ -457,7 +457,7 @@ describe('SequelizeQueryService', (): void => {
       // @ts-ignore
       modelInstance.then = undefined;
       when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenReject(err);
-      return expect(queryService.updateOne(testEntityPk, update)).rejects.toThrowError(err);
+      return expect(queryService.updateOne(testEntityPk, update)).rejects.toThrow(err);
     });
   });
 });

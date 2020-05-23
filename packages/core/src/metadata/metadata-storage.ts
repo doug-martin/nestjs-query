@@ -19,10 +19,10 @@ export class CoreQueryMetadataStorage {
   private readonly assemblerDeserializers: Map<Class<unknown>, AssemblerDeserializer<unknown>>;
 
   constructor() {
-    this.assemblers = new Map();
-    this.assemblersToClasses = new Map();
-    this.assemblerSerializers = new Map();
-    this.assemblerDeserializers = new Map();
+    this.assemblers = new Map<string, Class<Assembler<unknown, unknown>>>();
+    this.assemblersToClasses = new Map<Class<Assembler<unknown, unknown>>, AssemblerClasses<unknown, unknown>>();
+    this.assemblerSerializers = new Map<Class<unknown>, AssemblerSerializer<unknown>>();
+    this.assemblerDeserializers = new Map<Class<unknown>, AssemblerDeserializer<unknown>>();
   }
 
   getAssembler<DTO, Entity>(
