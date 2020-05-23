@@ -28,8 +28,8 @@ describe('ClassTransformerAssembler', () => {
       const assembler = new TestClassAssembler();
       const converted = assembler.convertToDTO(input);
       expect(converted).toBeInstanceOf(TestDTO);
-      expect(plainToClassSpy).toBeCalledTimes(1);
-      expect(plainToClassSpy).toBeCalledWith(TestDTO, input);
+      expect(plainToClassSpy).toHaveBeenCalledTimes(1);
+      expect(plainToClassSpy).toHaveBeenCalledWith(TestDTO, input);
     });
   });
 
@@ -39,8 +39,8 @@ describe('ClassTransformerAssembler', () => {
       const assembler = new TestClassAssembler();
       const converted = assembler.convertToEntity(input);
       expect(converted).toBeInstanceOf(TestEntity);
-      expect(plainToClassSpy).toBeCalledTimes(1);
-      expect(plainToClassSpy).toBeCalledWith(TestEntity, input);
+      expect(plainToClassSpy).toHaveBeenCalledTimes(1);
+      expect(plainToClassSpy).toHaveBeenCalledWith(TestEntity, input);
     });
   });
 
@@ -50,7 +50,7 @@ describe('ClassTransformerAssembler', () => {
       const assembler = new TestClassAssembler();
       const converted = assembler.convertQuery(input);
       expect(converted).toBe(input);
-      expect(plainToClassSpy).not.toBeCalled();
+      expect(plainToClassSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -84,10 +84,10 @@ describe('ClassTransformerAssembler', () => {
       input.lastName = 'bar';
       const assembler = new TestSerializeClassAssembler();
       const converted = assembler.convertToDTO(input);
-      expect(testEntitySerialize).toBeCalledWith(input);
+      expect(testEntitySerialize).toHaveBeenCalledWith(input);
       expect(converted).toBeInstanceOf(TestSerializeDTO);
-      expect(plainToClassSpy).toBeCalledTimes(1);
-      expect(plainToClassSpy).toBeCalledWith(TestSerializeDTO, input);
+      expect(plainToClassSpy).toHaveBeenCalledTimes(1);
+      expect(plainToClassSpy).toHaveBeenCalledWith(TestSerializeDTO, input);
     });
 
     it('should use a serializer to convert to the entity plain object', () => {
@@ -96,10 +96,10 @@ describe('ClassTransformerAssembler', () => {
       input.lastName = 'bar';
       const assembler = new TestSerializeClassAssembler();
       const converted = assembler.convertToEntity(input);
-      expect(testDtoSerialize).toBeCalledWith(input);
+      expect(testDtoSerialize).toHaveBeenCalledWith(input);
       expect(converted).toBeInstanceOf(TestSerializeEntity);
-      expect(plainToClassSpy).toBeCalledTimes(1);
-      expect(plainToClassSpy).toBeCalledWith(TestSerializeEntity, input);
+      expect(plainToClassSpy).toHaveBeenCalledTimes(1);
+      expect(plainToClassSpy).toHaveBeenCalledWith(TestSerializeEntity, input);
     });
   });
 
@@ -147,9 +147,9 @@ describe('ClassTransformerAssembler', () => {
       input.lastName = 'bar';
       const assembler = new TestDesrializeClassAssembler();
       const converted = assembler.convertToDTO(input);
-      expect(testDtoDeserialize).toBeCalledWith(input);
+      expect(testDtoDeserialize).toHaveBeenCalledWith(input);
       expect(converted).toBeInstanceOf(TestDeserializeDTO);
-      expect(plainToClassSpy).toBeCalledTimes(0);
+      expect(plainToClassSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should use a serializer to convert to the entity plain object', () => {
@@ -159,8 +159,8 @@ describe('ClassTransformerAssembler', () => {
       const assembler = new TestDesrializeClassAssembler();
       const converted = assembler.convertToEntity(input);
       expect(converted).toBeInstanceOf(TestDeserializeEntity);
-      expect(testEntityDserialize).toBeCalledWith(input);
-      expect(plainToClassSpy).toBeCalledTimes(0);
+      expect(testEntityDserialize).toHaveBeenCalledWith(input);
+      expect(plainToClassSpy).toHaveBeenCalledTimes(0);
     });
   });
 });

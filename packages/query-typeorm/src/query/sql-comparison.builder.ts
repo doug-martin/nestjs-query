@@ -52,7 +52,7 @@ export class SQLComparisionBuilder<Entity> {
     val: EntityComparisonField<Entity, F>,
     alias?: string,
   ): CmpSQLType {
-    const col = alias ? `${alias}.${field}` : `${field}`;
+    const col = alias ? `${alias}.${field as string}` : `${field as string}`;
     const normalizedCmp = (cmp as string).toLowerCase();
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)
@@ -74,7 +74,7 @@ export class SQLComparisionBuilder<Entity> {
       // in comparision (field IN (1,2,3))
       return this.notInComparisionSQL(col, val);
     }
-    throw new Error(`unknown operator "${cmp}"`);
+    throw new Error(`unknown operator ${JSON.stringify(cmp)}`);
   }
 
   private createComparisonSQL<F extends keyof Entity>(
@@ -97,7 +97,7 @@ export class SQLComparisionBuilder<Entity> {
     if (val === false) {
       return { sql: `${col} IS FALSE`, params: {} };
     }
-    throw new Error(`unexpected is operator param ${val}`);
+    throw new Error(`unexpected is operator param ${JSON.stringify(val)}`);
   }
 
   private isNotComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
@@ -110,7 +110,7 @@ export class SQLComparisionBuilder<Entity> {
     if (val === false) {
       return { sql: `${col} IS NOT FALSE`, params: {} };
     }
-    throw new Error(`unexpected isNot operator param ${val}`);
+    throw new Error(`unexpected isNot operator param ${JSON.stringify(val)}`);
   }
 
   private inComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {

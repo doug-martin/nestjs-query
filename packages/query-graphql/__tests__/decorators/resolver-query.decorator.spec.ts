@@ -49,7 +49,7 @@ describe('ResolverQuery decorator', (): void => {
   it('should not call ResolverMethod if disabled is true', () => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{ disabled: true }];
     createTestResolver(() => Boolean, { name: 'test' }, ...opts);
-    expect(querySpy).toBeCalledTimes(0);
-    expect(resolverMethodSpy).toBeCalledTimes(0);
+    expect(querySpy).toHaveBeenCalledTimes(0);
+    expect(resolverMethodSpy).toHaveBeenCalledTimes(0);
   });
 });

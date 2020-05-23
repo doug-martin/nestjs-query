@@ -209,7 +209,7 @@ describe('TypeOrmQueryService', (): void => {
         when(relationQueryBuilder.loadOne<TestRelation>()).thenResolve(undefined);
         // @ts-ignore
         when(mockRepo.metadata).thenReturn({ relations: [] });
-        return expect(queryService.findRelation(TestRelation, relationName, entity)).rejects.toThrowError(
+        return expect(queryService.findRelation(TestRelation, relationName, entity)).rejects.toThrow(
           'Unable to find relation testRelations on TestEntity',
         );
       });
@@ -407,7 +407,7 @@ describe('TypeOrmQueryService', (): void => {
         when(mockRepo.getId(e)).thenReturn(e.testEntityPk);
         when(mockRepo.findOne(e.testEntityPk)).thenResolve(e);
       });
-      return expect(queryService.createMany(entityInstances)).rejects.toThrowError('Entity already exists');
+      return expect(queryService.createMany(entityInstances)).rejects.toThrow('Entity already exists');
     });
   });
 
@@ -441,7 +441,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.hasId(entityInstance)).thenReturn(true);
       when(mockRepo.getId(entityInstance)).thenReturn(entityInstance.testEntityPk);
       when(mockRepo.findOne(entityInstance.testEntityPk)).thenResolve(entityInstance);
-      return expect(queryService.createOne(entityInstance)).rejects.toThrowError('Entity already exists');
+      return expect(queryService.createOne(entityInstance)).rejects.toThrow('Entity already exists');
     });
   });
 
@@ -488,7 +488,7 @@ describe('TypeOrmQueryService', (): void => {
       const err = new Error('not found');
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.findOneOrFail(testEntityPk)).thenReject(err);
-      return expect(queryService.deleteOne(testEntityPk)).rejects.toThrowError(err);
+      return expect(queryService.deleteOne(testEntityPk)).rejects.toThrow(err);
     });
   });
 
@@ -518,9 +518,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.hasId(update as TestEntity)).thenReturn(true);
       when(mockRepo.remove(entity)).thenResolve(entity);
-      return expect(queryService.updateMany(update, filter)).rejects.toThrowError(
-        'Id cannot be specified when updating',
-      );
+      return expect(queryService.updateMany(update, filter)).rejects.toThrow('Id cannot be specified when updating');
     });
 
     it('should return 0 if affected is not defined', async () => {
@@ -563,9 +561,7 @@ describe('TypeOrmQueryService', (): void => {
       when(mockRepo.target).thenReturn(TestEntity);
       when(mockRepo.hasId(update as TestEntity)).thenReturn(true);
       when(mockRepo.remove(entity)).thenResolve(entity);
-      return expect(queryService.updateOne(updateId, update)).rejects.toThrowError(
-        'Id cannot be specified when updating',
-      );
+      return expect(queryService.updateOne(updateId, update)).rejects.toThrow('Id cannot be specified when updating');
     });
 
     it('call fail if the entity is not found', async () => {
@@ -575,7 +571,7 @@ describe('TypeOrmQueryService', (): void => {
       const err = new Error('not found');
       const { queryService, mockRepo } = createQueryService();
       when(mockRepo.findOneOrFail(updateId)).thenReject(err);
-      return expect(queryService.updateOne(updateId, update)).rejects.toThrowError(err);
+      return expect(queryService.updateOne(updateId, update)).rejects.toThrow(err);
     });
   });
 
@@ -631,7 +627,7 @@ describe('TypeOrmQueryService', (): void => {
         const err = new Error('not found');
         const { queryService, mockRepo } = createQueryService({ useSoftDelete: true });
         when(mockRepo.findOneOrFail(testEntityPk)).thenReject(err);
-        return expect(queryService.deleteOne(testEntityPk)).rejects.toThrowError(err);
+        return expect(queryService.deleteOne(testEntityPk)).rejects.toThrow(err);
       });
     });
 
@@ -654,7 +650,7 @@ describe('TypeOrmQueryService', (): void => {
         const { queryService, mockRepo } = createQueryService({ useSoftDelete: true });
         when(mockRepo.restore(entity.testEntityPk)).thenResolve({ generatedMaps: [], raw: undefined, affected: 1 });
         when(mockRepo.findOneOrFail(testEntityPk)).thenReject(err);
-        return expect(queryService.restoreOne(testEntityPk)).rejects.toThrowError(err);
+        return expect(queryService.restoreOne(testEntityPk)).rejects.toThrow(err);
       });
 
       it('should fail if the useSoftDelete is not enabled', async () => {
@@ -662,7 +658,7 @@ describe('TypeOrmQueryService', (): void => {
         const { testEntityPk } = entity;
         const { queryService, mockRepo } = createQueryService();
         when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
-        return expect(queryService.restoreOne(testEntityPk)).rejects.toThrowError(
+        return expect(queryService.restoreOne(testEntityPk)).rejects.toThrow(
           'Restore not allowed for non soft deleted entity TestSoftDeleteEntity.',
         );
       });
@@ -705,7 +701,7 @@ describe('TypeOrmQueryService', (): void => {
       it('should fail if the useSoftDelete is not enabled', async () => {
         const { queryService, mockRepo } = createQueryService();
         when(mockRepo.target).thenReturn(TestSoftDeleteEntity);
-        return expect(queryService.restoreMany({ stringType: { eq: 'foo' } })).rejects.toThrowError(
+        return expect(queryService.restoreMany({ stringType: { eq: 'foo' } })).rejects.toThrow(
           'Restore not allowed for non soft deleted entity TestSoftDeleteEntity.',
         );
       });

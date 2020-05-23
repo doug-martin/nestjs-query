@@ -15,7 +15,7 @@ export const transformSort = <From, To>(
   return sorting.map((sf) => {
     const field = fieldMap[sf.field];
     if (!field) {
-      throw new Error(`No corresponding field found for '${sf.field}' when transforming SortField`);
+      throw new Error(`No corresponding field found for '${sf.field as string}' when transforming SortField`);
     }
     return { ...sf, field } as SortField<To>;
   });

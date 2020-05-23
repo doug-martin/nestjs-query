@@ -11,7 +11,6 @@ import { UserModule } from './user/user.module';
     TypeOrmModule.forRoot(((ormconfig as unknown) as TypeOrmModuleOptions[])[1]),
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
-      context: ({ req }) => ({ request: req }),
     }),
     TodoItemModule,
     UserModule,

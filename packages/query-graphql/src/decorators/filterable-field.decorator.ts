@@ -61,7 +61,7 @@ export function FilterableField(
     propertyName: string | symbol,
     descriptor: TypedPropertyDescriptor<D>,
   ): TypedPropertyDescriptor<D> | void => {
-    const Ctx = Reflect.getMetadata('design:type', target.constructor.prototype, propertyName);
+    const Ctx = Reflect.getMetadata('design:type', target.constructor.prototype, propertyName) as Class<unknown>;
     getMetadataStorage().addFilterableObjectField(target.constructor as Class<unknown>, {
       propertyName: propertyName.toString(),
       target: Ctx,

@@ -1,8 +1,12 @@
+import { ConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { AppModule } from '../src/app.module';
+import { TagTodoItemDTO } from '../src/tag/dto/tag-todo-item.dto';
+import { TagDTO } from '../src/tag/dto/tag.dto';
+import { TodoItemReferenceDTO } from '../src/tag/dto/todo-item-reference.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
 
@@ -91,7 +95,10 @@ describe('Federated - TagResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tag.tagTodoItems;
+          const {
+            edges,
+            pageInfo,
+          }: ConnectionType<TagTodoItemDTO & { todoItem: TodoItemReferenceDTO }> = body.data.tag.tagTodoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
@@ -121,7 +128,7 @@ describe('Federated - TagResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -149,7 +156,7 @@ describe('Federated - TagResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
@@ -177,7 +184,7 @@ describe('Federated - TagResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -206,7 +213,7 @@ describe('Federated - TagResolver (e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.tags;
+            const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -234,7 +241,7 @@ describe('Federated - TagResolver (e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.tags;
+            const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,

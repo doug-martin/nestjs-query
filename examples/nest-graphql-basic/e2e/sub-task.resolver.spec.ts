@@ -1,8 +1,10 @@
+import { ConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
+import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, subTaskFields, todoItemFields } from './graphql-fragments';
 
@@ -194,7 +196,7 @@ describe('SubTaskResolver (basic - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.subTasks;
+          const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
@@ -222,7 +224,7 @@ describe('SubTaskResolver (basic - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.subTasks;
+          const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
@@ -250,7 +252,7 @@ describe('SubTaskResolver (basic - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.subTasks;
+          const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
@@ -279,7 +281,7 @@ describe('SubTaskResolver (basic - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.subTasks;
+            const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -307,7 +309,7 @@ describe('SubTaskResolver (basic - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.subTasks;
+            const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.subTasks;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,

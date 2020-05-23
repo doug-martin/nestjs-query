@@ -112,15 +112,15 @@ describe('QueryType', (): void => {
   describe('options', () => {
     it('by default first should be set to 10 in the paging object', () => {
       QueryArgsType(TestDto);
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: { first: 10 },
         description: 'Limit or page results.',
       });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: {},
         description: 'Specify to filter the records returned.',
       });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: [],
         description: 'Specify to sort results.',
       });
@@ -128,15 +128,15 @@ describe('QueryType', (): void => {
 
     it('allow specifying a defaultResultSize', () => {
       QueryArgsType(TestDto, { defaultResultSize: 2 });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: { first: 2 },
         description: 'Limit or page results.',
       });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: {},
         description: 'Specify to filter the records returned.',
       });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: [],
         description: 'Specify to sort results.',
       });
@@ -187,11 +187,11 @@ describe('QueryType', (): void => {
         defaultValue: { first: 10 },
         description: 'Limit or page results.',
       });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: filter,
         description: 'Specify to filter the records returned.',
       });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: [],
         description: 'Specify to sort results.',
       });
@@ -204,11 +204,11 @@ describe('QueryType', (): void => {
         defaultValue: { first: 10 },
         description: 'Limit or page results.',
       });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: {},
         description: 'Specify to filter the records returned.',
       });
-      expect(fieldSpy).toBeCalledWith(expect.any(Function), {
+      expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
         defaultValue: sort,
         description: 'Specify to sort results.',
       });

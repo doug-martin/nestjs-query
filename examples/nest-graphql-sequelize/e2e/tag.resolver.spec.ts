@@ -1,8 +1,11 @@
+import { ConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import { Sequelize } from 'sequelize';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
+import { TagDTO } from '../src/tag/dto/tag.dto';
+import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
 
@@ -91,7 +94,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tag.todoItems;
+          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.tag.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
@@ -121,7 +124,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -149,7 +152,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
@@ -177,7 +180,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.tags;
+          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -206,7 +209,7 @@ describe('TagResolver (sequelize - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.tags;
+            const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -234,7 +237,7 @@ describe('TagResolver (sequelize - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.tags;
+            const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.tags;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
@@ -651,7 +654,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.addTodoItemsToTag.todoItems;
+          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems;
           expect(body.data.addTodoItemsToTag.id).toBe('1');
           expect(edges).toHaveLength(5);
           expect(pageInfo).toEqual({
@@ -696,7 +699,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.removeTodoItemsFromTag.todoItems;
+          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems;
           expect(body.data.removeTodoItemsFromTag.id).toBe('1');
           expect(edges).toHaveLength(2);
           expect(pageInfo).toEqual({

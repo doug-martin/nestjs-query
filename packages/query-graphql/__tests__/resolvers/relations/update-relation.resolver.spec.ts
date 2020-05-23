@@ -71,6 +71,7 @@ describe('UpdateRelationsResolver', () => {
       };
       when(mockService.setRelation('relation', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.setRelationOnTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
@@ -87,6 +88,7 @@ describe('UpdateRelationsResolver', () => {
       };
       when(mockService.setRelation('other', input.id, input.relationId)).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.setCustomOnTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
@@ -121,6 +123,7 @@ describe('UpdateRelationsResolver', () => {
       };
       when(mockService.addRelations('relations', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.addRelationsToTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });
@@ -137,6 +140,7 @@ describe('UpdateRelationsResolver', () => {
       };
       when(mockService.addRelations('others', input.id, deepEqual(input.relationIds))).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.addCustomsToTestResolverDTO({ input });
       return expect(result).toEqual(output);
     });

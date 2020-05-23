@@ -3,11 +3,9 @@ import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments 
 /** @internal */
 @ValidatorConstraint({ async: false })
 export class CannotUseWith implements ValidatorConstraintInterface {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   validate(value: any, args: ValidationArguments): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const object = args.object as any;
-    return args.constraints.every((propertyName) => object[propertyName] === undefined);
+    const object = args.object as Record<string, unknown>;
+    return args.constraints.every((propertyName: string) => object[propertyName] === undefined);
   }
 
   defaultMessage(args: ValidationArguments): string {

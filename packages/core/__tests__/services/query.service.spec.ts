@@ -94,7 +94,7 @@ describe('query service', () => {
       query: Query<Relation>,
     ): Promise<Relation[] | Map<TestDTO, Relation[]>> {
       if (Array.isArray(entity)) {
-        return Promise.resolve(new Map());
+        return Promise.resolve(new Map<TestDTO, Relation[]>());
       }
       return Promise.resolve([]);
     }
@@ -129,6 +129,6 @@ describe('query service', () => {
     @QueryService(TestDTO)
     // @ts-ignore
     class TestService extends TestQueryService {}
-    expect(injectableSpy).toBeCalledTimes(1);
+    expect(injectableSpy).toHaveBeenCalledTimes(1);
   });
 });

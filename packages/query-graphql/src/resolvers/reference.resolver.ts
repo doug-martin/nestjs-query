@@ -32,7 +32,7 @@ export const Refereceable = <DTO>(DTOClass: Class<DTO>, opts: ReferenceResolverO
           `Unable to resolve reference, missing required key ${key} for ${getDTONames(DTOClass).baseName}`,
         );
       }
-      return this.service.getById((representation[key] as unknown) as string | number);
+      return this.service.getById(representation[key] as string | number);
     }
   }
   return ResolveReferenceResolverBase;

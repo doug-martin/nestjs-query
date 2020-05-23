@@ -219,7 +219,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param id - The `id` of the entity to restore.
    */
   async restoreOne(id: string | number): Promise<Entity> {
-    await this.ensureSoftDeleteEnabled();
+    this.ensureSoftDeleteEnabled();
     await this.repo.restore(id);
     return this.getById(id);
   }
@@ -238,7 +238,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param filter - A `Filter` to find records to delete.
    */
   async restoreMany(filter: Filter<Entity>): Promise<UpdateManyResponse> {
-    await this.ensureSoftDeleteEnabled();
+    this.ensureSoftDeleteEnabled();
     const result = await this.filterQueryBuilder.softDelete({ filter }).restore().execute();
     return { updatedCount: result.affected || 0 };
   }
@@ -258,7 +258,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
     }
   }
 
-  async ensureSoftDeleteEnabled(): Promise<void> {
+  ensureSoftDeleteEnabled(): void {
     if (!this.useSoftDelete) {
       throw new MethodNotAllowedException(`Restore not allowed for non soft deleted entity ${this.EntityClass.name}.`);
     }

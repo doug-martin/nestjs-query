@@ -45,7 +45,7 @@ describe('SQLComparisionBuilder', (): void => {
     });
   });
 
-  describe('gt comparisons', () => {
+  describe('gte comparisons', () => {
     it('should build gte sql fragment', (): void => {
       expect(createSQLComparisionBuilder().build('numberType', 'gte', 1, 'TestEntity')).toEqual({
         sql: 'TestEntity.numberType >= :param0',
@@ -132,8 +132,8 @@ describe('SQLComparisionBuilder', (): void => {
 
     it('should throw an error for values other than null true or false', () => {
       // @ts-ignore
-      expect(() => createSQLComparisionBuilder().build('boolType', 'is', 'foo', 'TestEntity')).toThrowError(
-        'unexpected is operator param foo',
+      expect(() => createSQLComparisionBuilder().build('boolType', 'is', 'foo', 'TestEntity')).toThrow(
+        'unexpected is operator param "foo"',
       );
     });
   });
@@ -162,8 +162,8 @@ describe('SQLComparisionBuilder', (): void => {
 
     it('should throw an error for values other than null true or false', () => {
       // @ts-ignore
-      expect(() => createSQLComparisionBuilder().build('boolType', 'isNot', 'foo', 'TestEntity')).toThrowError(
-        'unexpected isNot operator param foo',
+      expect(() => createSQLComparisionBuilder().build('boolType', 'isNot', 'foo', 'TestEntity')).toThrow(
+        'unexpected isNot operator param "foo"',
       );
     });
   });

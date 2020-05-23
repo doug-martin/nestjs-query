@@ -1,8 +1,10 @@
+import { ConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { AppModule } from '../src/app.module';
+import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, todoItemFields } from './graphql-fragments';
 
@@ -95,7 +97,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.todoItems;
+          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -129,7 +131,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.todoItems;
+          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
@@ -161,7 +163,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo } = body.data.todoItems;
+          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -196,7 +198,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.todoItems;
+            const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -227,7 +229,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo } = body.data.todoItems;
+            const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,

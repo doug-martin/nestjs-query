@@ -78,4 +78,4 @@ tsconfig.tsbuildinfo
 schema.gql
 
 documentation/.docusaurus
-/**/package-lock.json
+./**/package-lock.json

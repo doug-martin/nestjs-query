@@ -42,6 +42,7 @@ describe('ReferenceResolver', () => {
       };
       when(mockService.getById(id)).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.resolveReference({ __type: 'TestReference', id });
       return expect(result).toEqual(output);
     });
@@ -55,6 +56,7 @@ describe('ReferenceResolver', () => {
       };
       when(mockService.getById(id)).thenResolve(output);
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       return expect(resolver.resolveReference({ __type: 'TestReference' })).rejects.toThrow(
         'Unable to resolve reference, missing required key id for TestResolverDTO',
       );
