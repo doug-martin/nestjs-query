@@ -105,7 +105,6 @@ describe('Federated - TodoItemResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(5);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null },
             { id: '2', title: 'Create Entity', completed: false, description: null },
@@ -139,7 +138,6 @@ describe('Federated - TodoItemResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(3);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null },
             { id: '2', title: 'Create Entity', completed: false, description: null },
@@ -171,7 +169,6 @@ describe('Federated - TodoItemResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(5);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual([
             { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null },
             { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
@@ -206,7 +203,6 @@ describe('Federated - TodoItemResolver (e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual([
               { id: '1', title: 'Create Nest App', completed: true, description: null },
               { id: '2', title: 'Create Entity', completed: false, description: null },
@@ -237,7 +233,6 @@ describe('Federated - TodoItemResolver (e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual([
               { id: '3', title: 'Create Entity Service', completed: false, description: null },
               { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },

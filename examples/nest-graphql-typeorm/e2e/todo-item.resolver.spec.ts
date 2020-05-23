@@ -110,7 +110,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          // @ts-ignore
           edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
         });
     });
@@ -140,7 +139,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(2);
-          // @ts-ignore
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
         });
     });
@@ -170,7 +168,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(5);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
@@ -210,7 +207,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(3);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
@@ -242,7 +238,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(5);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual([
             {
               id: '5',
@@ -283,7 +278,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual([
               { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
               { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
@@ -314,7 +308,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual([
               { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
               {
@@ -917,7 +910,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          // @ts-ignore
           edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
         });
     });
@@ -958,7 +950,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          // @ts-ignore
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
         });
     });
@@ -999,7 +990,6 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          // @ts-ignore
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
         });
     });

@@ -106,7 +106,6 @@ describe('Federated - TagResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(2);
-          // @ts-ignore
           expect(edges.map((e) => e.node.todoItem.id)).toEqual(['1', '2']);
         });
     });
@@ -136,7 +135,6 @@ describe('Federated - TagResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(5);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual(tags);
         });
     });
@@ -164,7 +162,6 @@ describe('Federated - TagResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(3);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
         });
     });
@@ -192,7 +189,6 @@ describe('Federated - TagResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(5);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
         });
     });
@@ -221,7 +217,6 @@ describe('Federated - TagResolver (e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
           });
       });
@@ -249,7 +244,6 @@ describe('Federated - TagResolver (e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
           });
       });

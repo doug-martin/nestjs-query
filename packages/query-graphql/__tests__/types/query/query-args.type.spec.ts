@@ -61,7 +61,6 @@ describe('QueryType', (): void => {
     dateOptional?: Date;
   }
 
-  // @ts-ignore
   @nestjsGraphql.ArgsType()
   class TestQuery extends QueryArgsType(TestDto) {}
 
