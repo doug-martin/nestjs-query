@@ -206,7 +206,6 @@ describe('Federated - SubTaskResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(10);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 10));
         });
     });
@@ -234,7 +233,6 @@ describe('Federated - SubTaskResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(3);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 3));
         });
     });
@@ -262,7 +260,6 @@ describe('Federated - SubTaskResolver (e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(10);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice().reverse().slice(0, 10));
         });
     });
@@ -291,7 +288,6 @@ describe('Federated - SubTaskResolver (e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 2));
           });
       });
@@ -319,7 +315,6 @@ describe('Federated - SubTaskResolver (e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual(subTasks.slice(2, 4));
           });
       });

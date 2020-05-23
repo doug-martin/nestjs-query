@@ -102,7 +102,6 @@ describe('TagResolver (basic - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(2);
-          // @ts-ignore
           expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
         });
     });
@@ -159,7 +158,6 @@ describe('TagResolver (basic - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(3);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
         });
     });
@@ -187,7 +185,6 @@ describe('TagResolver (basic - e2e)', () => {
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
           expect(edges).toHaveLength(5);
-          // @ts-ignore
           expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
         });
     });
@@ -216,7 +213,6 @@ describe('TagResolver (basic - e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
           });
       });
@@ -244,7 +240,6 @@ describe('TagResolver (basic - e2e)', () => {
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
             expect(edges).toHaveLength(2);
-            // @ts-ignore
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
           });
       });
@@ -662,7 +657,6 @@ describe('TagResolver (basic - e2e)', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          // @ts-ignore
           expect(edges.map((e) => e.node.title)).toEqual([
             'Create Nest App',
             'Create Entity',
@@ -707,7 +701,6 @@ describe('TagResolver (basic - e2e)', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          // @ts-ignore
           expect(edges.map((e) => e.node.title)).toEqual(['Create Nest App', 'Create Entity']);
         });
     });
