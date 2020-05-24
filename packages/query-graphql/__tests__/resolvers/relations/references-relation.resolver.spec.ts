@@ -54,6 +54,7 @@ describe('ReferencesRelationMixin', () => {
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const result = await resolver.referenceReference(dto);
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     return expect(result).toEqual({ __typename: 'Reference', id: dto.stringField });
   });
 });

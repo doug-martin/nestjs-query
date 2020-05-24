@@ -44,7 +44,8 @@ export class SQLComparisionBuilder<Entity> {
    *
    * @param field - the property in Entity to create the comparison for.
    * @param cmp - the FilterComparisonOperator (eq, neq, gt, etc...)
-   * @param val - the value to compare to.
+   * @param val - the value to compare to
+   * @param alias - alias for the field.
    */
   build<F extends keyof Entity>(
     field: F,
