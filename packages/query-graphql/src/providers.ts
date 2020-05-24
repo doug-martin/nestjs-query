@@ -65,7 +65,7 @@ function createFederatedResolver<DTO, Service>(resolverOpts: FederatedAutoResolv
 
   @Resolver(() => DTOClass)
   class AutoResolver extends FederationResolver(DTOClass, resolverOpts) {
-    constructor(@Inject(resolverOpts.Service) service: QueryService<DTO>) {
+    constructor(@Inject(resolverOpts.Service) readonly service: QueryService<DTO>) {
       super(service);
     }
   }

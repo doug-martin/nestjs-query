@@ -45,6 +45,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
     this.useSoftDelete = opts?.useSoftDelete ?? false;
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   get EntityClass(): Class<Entity> {
     return this.repo.target as Class<Entity>;
   }

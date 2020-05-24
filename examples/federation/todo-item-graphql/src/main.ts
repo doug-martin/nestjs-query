@@ -18,4 +18,11 @@ async function bootstrap(): Promise<void> {
   await app.listen(3001);
 }
 
-void bootstrap();
+bootstrap().then(
+  () => process.exit(),
+  (err: Error) => {
+    // eslint-disable-next-line no-console
+    console.error(err.stack);
+    process.exit(1);
+  },
+);
