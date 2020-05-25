@@ -19,7 +19,7 @@
 		"@nestjs-query/query-sequelize": "0.11.5",
 		"@nestjs/common": "7.0.13",
 		"@nestjs/core": "7.0.13",
-		"@nestjs/graphql": "7.3.9",
+		"@nestjs/graphql": "7.3.11",
 		"@nestjs/platform-express": "7.0.13",
 		"@nestjs/sequelize": "0.1.0",
 		"class-validator": "0.12.2",
