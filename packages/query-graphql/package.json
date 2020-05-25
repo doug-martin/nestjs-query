@@ -46,7 +46,7 @@
   },
   "peerDependencies": {
     "@nestjs/common": "7.0.13",
-    "@nestjs/graphql": "7.3.9",
+    "@nestjs/graphql": "7.3.11",
     "class-transformer": "0.2.3",
     "class-validator": "0.12.2",
     "dataloader": "2.0.0",
@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@nestjs/common": "7.0.13",
-    "@nestjs/graphql": "7.3.9",
+    "@nestjs/graphql": "7.3.11",
     "@nestjs/testing": "7.0.13",
     "@types/graphql": "14.5.0",
     "@types/graphql-relay": "0.6.0",
