@@ -1,18 +1,18 @@
 import { Op } from 'sequelize';
 import { TestEntity } from '../__fixtures__/test.entity';
-import { SQLComparisionBuilder } from '../../src/query';
+import { SQLComparisonBuilder } from '../../src/query';
 
-describe('SQLComparisionBuilder', (): void => {
-  const createSQLComparisionBuilder = () => new SQLComparisionBuilder<TestEntity>();
+describe('SQLComparisonBuilder', (): void => {
+  const createSQLComparisonBuilder = () => new SQLComparisonBuilder<TestEntity>();
 
   it('should throw an error for an invalid comparison type', () => {
     // @ts-ignore
-    expect(() => createSQLComparisionBuilder().build('stringType', 'bad', 'foo')).toThrow('unknown operator "bad"');
+    expect(() => createSQLComparisonBuilder().build('stringType', 'bad', 'foo')).toThrow('unknown operator "bad"');
   });
 
   describe('eq comparisons', () => {
     it('should build an unqualified eq sql fragment', (): void => {
-      expect(createSQLComparisionBuilder().build('stringType', 'eq', 'foo')).toEqual({
+      expect(createSQLComparisonBuilder().build('stringType', 'eq', 'foo')).toEqual({
         stringType: {
           [Op.eq]: 'foo',
         },
@@ -21,7 +21,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build neq sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('numberType', 'neq', 1)).toEqual({
+    expect(createSQLComparisonBuilder().build('numberType', 'neq', 1)).toEqual({
       numberType: {
         [Op.ne]: 1,
       },
@@ -29,7 +29,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build gt sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('numberType', 'gt', 1)).toEqual({
+    expect(createSQLComparisonBuilder().build('numberType', 'gt', 1)).toEqual({
       numberType: {
         [Op.gt]: 1,
       },
@@ -37,7 +37,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build gte sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('numberType', 'gte', 1)).toEqual({
+    expect(createSQLComparisonBuilder().build('numberType', 'gte', 1)).toEqual({
       numberType: {
         [Op.gte]: 1,
       },
@@ -45,7 +45,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build lt sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('numberType', 'lt', 1)).toEqual({
+    expect(createSQLComparisonBuilder().build('numberType', 'lt', 1)).toEqual({
       numberType: {
         [Op.lt]: 1,
       },
@@ -53,7 +53,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build lte sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('numberType', 'lte', 1)).toEqual({
+    expect(createSQLComparisonBuilder().build('numberType', 'lte', 1)).toEqual({
       numberType: {
         [Op.lte]: 1,
       },
@@ -61,7 +61,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build like sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('stringType', 'like', '%hello%')).toEqual({
+    expect(createSQLComparisonBuilder().build('stringType', 'like', '%hello%')).toEqual({
       stringType: {
         [Op.like]: '%hello%',
       },
@@ -69,7 +69,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build notLike sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('stringType', 'notLike', '%hello%')).toEqual({
+    expect(createSQLComparisonBuilder().build('stringType', 'notLike', '%hello%')).toEqual({
       stringType: {
         [Op.notLike]: '%hello%',
       },
@@ -77,7 +77,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build iLike sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('stringType', 'iLike', '%hello%')).toEqual({
+    expect(createSQLComparisonBuilder().build('stringType', 'iLike', '%hello%')).toEqual({
       stringType: {
         [Op.iLike]: '%hello%',
       },
@@ -85,7 +85,7 @@ describe('SQLComparisionBuilder', (): void => {
   });
 
   it('should build notILike sql fragment', (): void => {
-    expect(createSQLComparisionBuilder().build('stringType', 'notILike', '%hello%')).toEqual({
+    expect(createSQLComparisonBuilder().build('stringType', 'notILike', '%hello%')).toEqual({
       stringType: {
         [Op.notILike]: '%hello%',
       },
@@ -94,7 +94,7 @@ describe('SQLComparisionBuilder', (): void => {
 
   describe('is comparisons', () => {
     it('should build is true', (): void => {
-      expect(createSQLComparisionBuilder().build('boolType', 'is', true)).toEqual({
+      expect(createSQLComparisonBuilder().build('boolType', 'is', true)).toEqual({
         boolType: {
           [Op.is]: true,
         },
@@ -102,7 +102,7 @@ describe('SQLComparisionBuilder', (): void => {
     });
 
     it('should build is false', (): void => {
-      expect(createSQLComparisionBuilder().build('boolType', 'is', false)).toEqual({
+      expect(createSQLComparisonBuilder().build('boolType', 'is', false)).toEqual({
         boolType: {
           [Op.is]: false,
         },
@@ -110,7 +110,7 @@ describe('SQLComparisionBuilder', (): void => {
     });
 
     it('should build is null', (): void => {
-      expect(createSQLComparisionBuilder().build('boolType', 'is', null)).toEqual({
+      expect(createSQLComparisonBuilder().build('boolType', 'is', null)).toEqual({
         boolType: {
           [Op.is]: null,
         },
@@ -120,7 +120,7 @@ describe('SQLComparisionBuilder', (): void => {
 
   describe('isNot comparisons', () => {
     it('should build is true', (): void => {
-      expect(createSQLComparisionBuilder().build('boolType', 'isNot', true)).toEqual({
+      expect(createSQLComparisonBuilder().build('boolType', 'isNot', true)).toEqual({
         boolType: {
           [Op.not]: true,
         },
@@ -128,7 +128,7 @@ describe('SQLComparisionBuilder', (): void => {
     });
 
     it('should build is false', (): void => {
-      expect(createSQLComparisionBuilder().build('boolType', 'isNot', false)).toEqual({
+      expect(createSQLComparisonBuilder().build('boolType', 'isNot', false)).toEqual({
         boolType: {
           [Op.not]: false,
         },
@@ -136,7 +136,7 @@ describe('SQLComparisionBuilder', (): void => {
     });
 
     it('should build is null', (): void => {
-      expect(createSQLComparisionBuilder().build('boolType', 'isNot', null)).toEqual({
+      expect(createSQLComparisonBuilder().build('boolType', 'isNot', null)).toEqual({
         boolType: {
           [Op.not]: null,
         },
@@ -147,7 +147,7 @@ describe('SQLComparisionBuilder', (): void => {
   describe('in comparisons', () => {
     it('should build in comparisons', (): void => {
       const arr = [1, 2, 3];
-      expect(createSQLComparisionBuilder().build('numberType', 'in', arr)).toEqual({
+      expect(createSQLComparisonBuilder().build('numberType', 'in', arr)).toEqual({
         numberType: {
           [Op.in]: arr,
         },
@@ -158,7 +158,7 @@ describe('SQLComparisionBuilder', (): void => {
   describe('notIn comparisons', () => {
     it('should build notIn comparisons', (): void => {
       const arr = ['a', 'b', 'c'];
-      expect(createSQLComparisionBuilder().build('stringType', 'notIn', arr)).toEqual({
+      expect(createSQLComparisonBuilder().build('stringType', 'notIn', arr)).toEqual({
         stringType: {
           [Op.notIn]: arr,
         },

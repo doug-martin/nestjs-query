@@ -28,4 +28,7 @@ export class TodoItemDTO {
 
   @Field()
   age!: number;
+
+  @FilterableField()
+  priority!: number;
 }

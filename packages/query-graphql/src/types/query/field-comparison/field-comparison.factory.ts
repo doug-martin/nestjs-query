@@ -7,7 +7,7 @@ import { getOrCreateIntFieldComparison } from './int-field-comparison.type';
 import { getOrCreateStringFieldComparison } from './string-field-comparison.type';
 import { getOrCreateBooleanFieldComparison } from './boolean-field-comparison.type';
 import { getOrCreateNumberFieldComparison } from './number-field-comparison.type';
-import { getOrCreateDateFieldComparison } from './date-field-comparision.type';
+import { getOrCreateDateFieldComparison } from './date-field-comparison.type';
 import { getOrCreateTimestampFieldComparison } from './timestamp-field-comparison.type';
 
 /** @internal */

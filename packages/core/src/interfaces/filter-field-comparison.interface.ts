@@ -34,6 +34,11 @@ export interface BooleanFieldComparisons {
   isNot?: boolean | null;
 }
 
+export interface CommonFieldComparisonBetweenType<FieldType> {
+  lower: FieldType;
+  upper: FieldType;
+}
+
 /**
  * Field comparisons for all types that are NOT `null` or `boolean`.
  *
@@ -112,6 +117,24 @@ export interface CommonFieldComparisonType<FieldType> extends BooleanFieldCompar
    * ```
    */
   notIn?: FieldType[];
+  /**
+   * Checks that a field is between a lower and upper bound. The bounds are included!
+   *
+   * ```ts
+   * // field BETWEEN lower AND upper
+   * { field: { between: { lower: 1, upper: 10 } } }
+   * ```
+   */
+  between?: CommonFieldComparisonBetweenType<FieldType>;
+  /**
+   * Checks that a field is not between a lower and upper bound. The bounds are excluded!
+   *
+   * ```ts
+   * // field NOT BETWEEN lower AND upper
+   * { field: { notBetween: { lower: 1, upper: 10 } } }
+   * ```
+   */
+  notBetween?: CommonFieldComparisonBetweenType<FieldType>;
 }
 
 /**
@@ -119,7 +142,7 @@ export interface CommonFieldComparisonType<FieldType> extends BooleanFieldCompar
  */
 export interface StringFieldComparisons extends CommonFieldComparisonType<string> {
   /**
-   * Like comparision.
+   * Like comparison.
    *
    * ```ts
    * // field LIKE "Foo%"
@@ -172,7 +195,7 @@ export type FilterFieldComparison<FieldType> = FieldType extends string
   : CommonFieldComparisonType<FieldType>;
 
 /**
- * Type for all comparision operators for a field type.
+ * Type for all comparison operators for a field type.
  *
  * @typeparam FieldType - The TS type of the field.
  */

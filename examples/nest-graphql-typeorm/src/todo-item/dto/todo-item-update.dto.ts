@@ -1,5 +1,5 @@
-import { IsString, MaxLength, IsBoolean, IsOptional } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
+import { IsBoolean, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 
 @InputType('TodoItemUpdate')
 export class TodoItemUpdateDTO {
@@ -13,4 +13,9 @@ export class TodoItemUpdateDTO {
   @IsBoolean()
   @Field({ nullable: true })
   completed?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @Field({ nullable: true })
+  priority?: number;
 }
