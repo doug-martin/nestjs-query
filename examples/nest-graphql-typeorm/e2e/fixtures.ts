@@ -25,13 +25,14 @@ export const refresh = async (connection: Connection): Promise<void> => {
   const blockedTag = await tagsRepo.save({ name: 'Blocked' });
 
   const todoItems = await todoRepo.save([
-    { title: 'Create Nest App', completed: true, tags: [urgentTag, homeTag] },
-    { title: 'Create Entity', completed: false, tags: [urgentTag, workTag] },
-    { title: 'Create Entity Service', completed: false, tags: [blockedTag, workTag] },
-    { title: 'Add Todo Item Resolver', completed: false, tags: [blockedTag, homeTag] },
+    { title: 'Create Nest App', completed: true, priority: 0, tags: [urgentTag, homeTag] },
+    { title: 'Create Entity', completed: false, priority: 1, tags: [urgentTag, workTag] },
+    { title: 'Create Entity Service', completed: false, priority: 2, tags: [blockedTag, workTag] },
+    { title: 'Add Todo Item Resolver', completed: false, priority: 3, tags: [blockedTag, homeTag] },
     {
       title: 'How to create item With Sub Tasks',
       completed: false,
+      priority: 4,
       tags: [questionTag, blockedTag],
     },
   ]);
