@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.6](https://github.com/doug-martin/nestjs-query/compare/v0.11.5...v0.11.6) (2020-05-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency graphql-tools to v6 ([b1aeba1](https://github.com/doug-martin/nestjs-query/commit/b1aeba1411e097f4484f7beca2b05eab99e9d586))
+
+
+
+
+
 ## [0.11.5](https://github.com/doug-martin/nestjs-query/compare/v0.11.4...v0.11.5) (2020-05-21)
 
 **Note:** Version bump only for package nest-graphql-typeorm

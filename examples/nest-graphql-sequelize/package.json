@@ -1,6 +1,6 @@
 {
 	"name": "nest-graphql-sequelize",
-	"version": "0.11.5",
+	"version": "0.11.6",
 	"description": "",
 	"author": "",
 	"private": true,
@@ -14,16 +14,16 @@
 		"start:prod": "node dist/main"
 	},
 	"dependencies": {
-		"@nestjs-query/core": "0.11.5",
-		"@nestjs-query/query-graphql": "0.11.5",
-		"@nestjs-query/query-sequelize": "0.11.5",
+		"@nestjs-query/core": "0.11.6",
+		"@nestjs-query/query-graphql": "0.11.6",
+		"@nestjs-query/query-sequelize": "0.11.6",
 		"@nestjs/common": "7.0.13",
 		"@nestjs/core": "7.0.13",
 		"@nestjs/graphql": "7.3.9",
 		"@nestjs/platform-express": "7.0.13",
 		"@nestjs/sequelize": "0.1.0",
-		"class-validator": "0.12.2",
 		"apollo-server-express": "2.13.1",
+		"class-validator": "0.12.2",
 		"graphql": "15.0.0",
 		"graphql-tools": "6.0.0",
 		"pg": "8.2.1",
