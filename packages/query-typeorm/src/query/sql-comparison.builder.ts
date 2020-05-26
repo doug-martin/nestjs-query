@@ -157,14 +157,13 @@ export class SQLComparisonBuilder<Entity> {
 
   private betweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
     if (this.isBetweenVal(val)) {
-      const { paramName } = this;
-      const value = val;
-
+      const { paramName: lowerParamName } = this;
+      const { paramName: upperParamName } = this;
       return {
-        sql: `${col} BETWEEN :${paramName}_lower AND :${paramName}_upper`,
+        sql: `${col} BETWEEN :${lowerParamName} AND :${upperParamName}`,
         params: {
-          [`${paramName}_lower`]: value.lower,
-          [`${paramName}_upper`]: value.upper,
+          [lowerParamName]: val.lower,
+          [upperParamName]: val.upper,
         },
       };
     }
@@ -176,12 +175,13 @@ export class SQLComparisonBuilder<Entity> {
     val: EntityComparisonField<Entity, F>,
   ): CmpSQLType {
     if (this.isBetweenVal(val)) {
-      const { paramName } = this;
+      const { paramName: lowerParamName } = this;
+      const { paramName: upperParamName } = this;
       return {
-        sql: `${col} NOT BETWEEN :${paramName}_lower AND :${paramName}_upper`,
+        sql: `${col} NOT BETWEEN :${lowerParamName} AND :${upperParamName}`,
         params: {
-          [`${paramName}_lower`]: val.lower,
-          [`${paramName}_upper`]: val.upper,
+          [lowerParamName]: val.lower,
+          [upperParamName]: val.upper,
         },
       };
     }

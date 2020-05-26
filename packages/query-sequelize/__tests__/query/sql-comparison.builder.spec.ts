@@ -1,3 +1,4 @@
+import { CommonFieldComparisonBetweenType } from '@nestjs-query/core';
 import { Op } from 'sequelize';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { SQLComparisonBuilder } from '../../src/query';
@@ -163,6 +164,42 @@ describe('SQLComparisonBuilder', (): void => {
           [Op.notIn]: arr,
         },
       });
+    });
+  });
+
+  describe('between comparisons', () => {
+    it('should build between comparisons', (): void => {
+      const between: CommonFieldComparisonBetweenType<number> = { lower: 1, upper: 10 };
+      expect(createSQLComparisonBuilder().build('numberType', 'between', between)).toEqual({
+        numberType: {
+          [Op.between]: [between.lower, between.upper],
+        },
+      });
+    });
+
+    it('should throw an error if the comparison is not a between comparison', (): void => {
+      const between = [1, 10];
+      expect(() => createSQLComparisonBuilder().build('numberType', 'between', between)).toThrow(
+        'Invalid value for between expected {lower: val, upper: val} got [1,10]',
+      );
+    });
+  });
+
+  describe('notBetween comparisons', () => {
+    it('should build not between comparisons', (): void => {
+      const between: CommonFieldComparisonBetweenType<number> = { lower: 1, upper: 10 };
+      expect(createSQLComparisonBuilder().build('numberType', 'notBetween', between)).toEqual({
+        numberType: {
+          [Op.notBetween]: [between.lower, between.upper],
+        },
+      });
+    });
+
+    it('should throw an error if the comparison is not a between comparison', (): void => {
+      const between = [1, 10];
+      expect(() => createSQLComparisonBuilder().build('numberType', 'notBetween', between)).toThrow(
+        'Invalid value for not between expected {lower: val, upper: val} got [1,10]',
+      );
     });
   });
 });
