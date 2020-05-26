@@ -1,3 +1,4 @@
+import { CommonFieldComparisonBetweenType } from '@nestjs-query/core';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { SQLComparisonBuilder } from '../../src/query';
 
@@ -210,6 +211,40 @@ describe('SQLComparisonBuilder', (): void => {
     it('should throw an error for non-array', (): void => {
       expect(() => createSQLComparisonBuilder().build('numberType', 'notIn', 1, 'TestEntity')).toThrow(
         'Invalid in value expected an array got 1',
+      );
+    });
+  });
+
+  describe('between comparisons', () => {
+    it('should build between comparisons', (): void => {
+      const between: CommonFieldComparisonBetweenType<number> = { lower: 1, upper: 10 };
+      expect(createSQLComparisonBuilder().build('numberType', 'between', between, 'TestEntity')).toEqual({
+        sql: 'TestEntity.numberType BETWEEN :param0 AND :param1',
+        params: { param0: between.lower, param1: between.upper },
+      });
+    });
+
+    it('should throw an error if the comparison is not a between comparison', (): void => {
+      const between = [1, 10];
+      expect(() => createSQLComparisonBuilder().build('numberType', 'between', between)).toThrow(
+        'Invalid value for between expected {lower: val, upper: val} got [1,10]',
+      );
+    });
+  });
+
+  describe('notBetween comparisons', () => {
+    it('should build not between comparisons', (): void => {
+      const between: CommonFieldComparisonBetweenType<number> = { lower: 1, upper: 10 };
+      expect(createSQLComparisonBuilder().build('numberType', 'notBetween', between, 'TestEntity')).toEqual({
+        sql: 'TestEntity.numberType NOT BETWEEN :param0 AND :param1',
+        params: { param0: between.lower, param1: between.upper },
+      });
+    });
+
+    it('should throw an error if the comparison is not a between comparison', (): void => {
+      const between = [1, 10];
+      expect(() => createSQLComparisonBuilder().build('numberType', 'notBetween', between)).toThrow(
+        'Invalid value for not between expected {lower: val, upper: val} got [1,10]',
       );
     });
   });
