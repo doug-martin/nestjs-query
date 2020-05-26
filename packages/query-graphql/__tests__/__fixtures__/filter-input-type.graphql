@@ -39,6 +39,13 @@ input NumberFieldComparison {
   lte: Float
   in: [Float!]
   notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
 }
 
 input BooleanFieldComparison {
@@ -57,12 +64,19 @@ input DateFieldComparison {
   lte: DateTime
   in: [DateTime!]
   notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
 
 input FloatFieldComparison {
   is: Boolean
@@ -75,6 +89,13 @@ input FloatFieldComparison {
   lte: Float
   in: [Float!]
   notIn: [Float!]
+  between: FloatFieldComparisonBetween
+  notBetween: FloatFieldComparisonBetween
+}
+
+input FloatFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
 }
 
 input IntFieldComparison {
@@ -88,6 +109,13 @@ input IntFieldComparison {
   lte: Int
   in: [Int!]
   notIn: [Int!]
+  between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
+}
+
+input IntFieldComparisonBetween {
+  lower: Int!
+  upper: Int!
 }
 
 input StringFieldComparison {
@@ -118,9 +146,16 @@ input TimestampFieldComparison {
   lte: Timestamp
   in: [Timestamp!]
   notIn: [Timestamp!]
+  between: TimestampFieldComparisonBetween
+  notBetween: TimestampFieldComparisonBetween
 }
 
 """
 `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
+
+input TimestampFieldComparisonBetween {
+  lower: Timestamp!
+  upper: Timestamp!
+}

@@ -1,5 +1,5 @@
+import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
 import { ObjectLiteral } from 'typeorm';
-import { FilterComparisonOperators } from '@nestjs-query/core';
 
 /**
  * @internal
@@ -9,13 +9,19 @@ type CmpSQLType = { sql: string; params: ObjectLiteral };
 /**
  * @internal
  */
-export type EntityComparisonField<Entity, F extends keyof Entity> = Entity[F] | Entity[F][] | true | false | null;
+export type EntityComparisonField<Entity, F extends keyof Entity> =
+  | Entity[F]
+  | Entity[F][]
+  | CommonFieldComparisonBetweenType<Entity[F]>
+  | true
+  | false
+  | null;
 
 /**
  * @internal
  * Builder to create SQL Comparisons. (=, !=, \>, etc...)
  */
-export class SQLComparisionBuilder<Entity> {
+export class SQLComparisonBuilder<Entity> {
   paramCount = 0;
 
   static DEFAULT_COMPARISON_MAP: Record<string, string> = {
@@ -31,7 +37,7 @@ export class SQLComparisionBuilder<Entity> {
     notilike: 'NOT ILIKE',
   };
 
-  constructor(readonly comparisonMap: Record<string, string> = SQLComparisionBuilder.DEFAULT_COMPARISON_MAP) {}
+  constructor(readonly comparisonMap: Record<string, string> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
 
   private get paramName(): string {
     const param = `param${this.paramCount}`;
@@ -60,20 +66,28 @@ export class SQLComparisionBuilder<Entity> {
       return this.createComparisonSQL(normalizedCmp, col, val);
     }
     if (normalizedCmp === 'is') {
-      // is comparision (IS TRUE, IS FALSE, IS NULL)
+      // is comparison (IS TRUE, IS FALSE, IS NULL)
       return this.isComparisonSQL(col, val);
     }
     if (normalizedCmp === 'isnot') {
-      // is comparision (IS NOT TRUE, IS NOT FALSE, IS NOT NULL, etc...)
+      // is comparison (IS NOT TRUE, IS NOT FALSE, IS NOT NULL, etc...)
       return this.isNotComparisonSQL(col, val);
     }
     if (normalizedCmp === 'in') {
-      // in comparision (field IN (1,2,3))
+      // in comparison (field IN (1,2,3))
       return this.inComparisonSQL(col, val);
     }
     if (normalizedCmp === 'notin') {
-      // in comparision (field IN (1,2,3))
-      return this.notInComparisionSQL(col, val);
+      // in comparison (field IN (1,2,3))
+      return this.notInComparisonSQL(col, val);
+    }
+    if (normalizedCmp === 'between') {
+      // between comparison (field BETWEEN x AND y)
+      return this.betweenComparisonSQL(col, val);
+    }
+    if (normalizedCmp === 'notbetween') {
+      // notBetween comparison (field NOT BETWEEN x AND y)
+      return this.notBetweenComparisonSQL(col, val);
     }
     throw new Error(`unknown operator ${JSON.stringify(cmp)}`);
   }
@@ -123,7 +137,7 @@ export class SQLComparisionBuilder<Entity> {
     };
   }
 
-  private notInComparisionSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
+  private notInComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
     this.checkNonEmptyArray(val);
     const { paramName } = this;
     return {
@@ -139,5 +153,44 @@ export class SQLComparisionBuilder<Entity> {
     if (!val.length) {
       throw new Error(`Invalid in value expected a non-empty array got ${JSON.stringify(val)}`);
     }
+  }
+
+  private betweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
+    if (this.isBetweenVal(val)) {
+      const { paramName } = this;
+      const value = val;
+
+      return {
+        sql: `${col} BETWEEN :${paramName}_lower AND :${paramName}_upper`,
+        params: {
+          [`${paramName}_lower`]: value.lower,
+          [`${paramName}_upper`]: value.upper,
+        },
+      };
+    }
+    throw new Error(`Invalid value for between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
+  }
+
+  private notBetweenComparisonSQL<F extends keyof Entity>(
+    col: string,
+    val: EntityComparisonField<Entity, F>,
+  ): CmpSQLType {
+    if (this.isBetweenVal(val)) {
+      const { paramName } = this;
+      return {
+        sql: `${col} NOT BETWEEN :${paramName}_lower AND :${paramName}_upper`,
+        params: {
+          [`${paramName}_lower`]: val.lower,
+          [`${paramName}_upper`]: val.upper,
+        },
+      };
+    }
+    throw new Error(`Invalid value for not between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
+  }
+
+  private isBetweenVal<F extends keyof Entity>(
+    val: EntityComparisonField<Entity, F>,
+  ): val is CommonFieldComparisonBetweenType<Entity[F]> {
+    return val !== null && typeof val === 'object' && 'lower' in val && 'upper' in val;
   }
 }

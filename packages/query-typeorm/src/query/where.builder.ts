@@ -1,13 +1,13 @@
 import { Brackets, WhereExpression } from 'typeorm';
 import { Filter, FilterComparisonOperators, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
-import { EntityComparisonField, SQLComparisionBuilder } from './sql-comparison.builder';
+import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
 
 /**
  * @internal
  * Builds a WHERE clause from a Filter.
  */
 export class WhereBuilder<Entity> {
-  constructor(readonly sqlComparisionBuilder: SQLComparisionBuilder<Entity> = new SQLComparisionBuilder<Entity>()) {}
+  constructor(readonly sqlComparisonBuilder: SQLComparisonBuilder<Entity> = new SQLComparisonBuilder<Entity>()) {}
 
   /**
    * Builds a WHERE clause from a Filter.
@@ -98,7 +98,7 @@ export class WhereBuilder<Entity> {
       new Brackets((qb) => {
         const opts = Object.keys(cmp) as FilterComparisonOperators<Entity[T]>[];
         const sqlComparisons = opts.map((cmpType) =>
-          this.sqlComparisionBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias),
+          this.sqlComparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias),
         );
         sqlComparisons.map(({ sql, params }) => qb.orWhere(sql, params));
       }),

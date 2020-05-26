@@ -9,6 +9,8 @@ import {
   BelongsToMany,
   PrimaryKey,
   AutoIncrement,
+  DataType,
+  Default,
 } from 'sequelize-typescript';
 import { SubTaskEntity } from '../../sub-task/sub-task.entity';
 import { TagEntity } from '../../tag/tag.entity';
@@ -46,4 +48,9 @@ export class TodoItemEntity extends Model<TodoItemEntity> {
     () => TodoItemEntityTags,
   )
   tags!: TagEntity[];
+
+  @AllowNull
+  @Default(0)
+  @Column(DataType.INTEGER)
+  priority!: number;
 }

@@ -1,6 +1,7 @@
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { Field, GraphQLTimestamp, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsDate, IsOptional } from 'class-validator';
+import { IsBoolean, IsDate, IsOptional, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { IsUndefined } from '../../validators';
 
 /** @internal */
@@ -11,6 +12,18 @@ export function getOrCreateTimestampFieldComparison(): Class<FilterFieldComparis
   if (timestampFieldComparison) {
     return timestampFieldComparison;
   }
+
+  @InputType()
+  class TimestampFieldComparisonBetween {
+    @Field(() => GraphQLTimestamp, { nullable: false })
+    @IsDate()
+    lower!: Date;
+
+    @Field(() => GraphQLTimestamp, { nullable: false })
+    @IsDate()
+    upper!: Date;
+  }
+
   @InputType()
   class TimestampFieldComparison implements FilterFieldComparison<Date> {
     @Field(() => Boolean, { nullable: true })
@@ -62,6 +75,16 @@ export function getOrCreateTimestampFieldComparison(): Class<FilterFieldComparis
     @IsUndefined()
     @IsDate({ each: true })
     notIn?: Date[];
+
+    @Field(() => TimestampFieldComparisonBetween, { nullable: true })
+    @ValidateNested()
+    @Type(() => TimestampFieldComparisonBetween)
+    between?: TimestampFieldComparisonBetween;
+
+    @Field(() => TimestampFieldComparisonBetween, { nullable: true })
+    @ValidateNested()
+    @Type(() => TimestampFieldComparisonBetween)
+    notBetween?: TimestampFieldComparisonBetween;
   }
 
   timestampFieldComparison = TimestampFieldComparison;
