@@ -36,6 +36,7 @@ export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends Service
 /** @internal */
 const defaultCreateDTO = <DTO, C extends DeepPartial<DTO>>(dtoNames: DTONames, DTOClass: Class<DTO>): Class<C> => {
   @InputType(`Create${dtoNames.baseName}`)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   class PartialInput extends PartialType(DTOClass, InputType) {}
 

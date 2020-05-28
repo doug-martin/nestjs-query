@@ -20,6 +20,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
     return query as Query<Entity>;
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   convert<T>(cls: Class<T>, obj: object): T {
     const deserializer = getCoreMetadataStorage().getAssemblerDeserializer(cls);
     if (deserializer) {
@@ -28,6 +29,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
     return plainToClass(cls, obj);
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   toPlain(entityOrDto: Entity | DTO): object {
     if (entityOrDto instanceof this.EntityClass) {
       const serializer = getCoreMetadataStorage().getAssemblerSerializer(this.EntityClass);
@@ -40,6 +42,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
         return serializer(entityOrDto);
       }
     }
+    // eslint-disable-next-line @typescript-eslint/ban-types
     return (entityOrDto as unknown) as object;
   }
 }

@@ -23,7 +23,7 @@ describe('@Assembler', () => {
   it('should register an assembler as injectable and with metadata', () => {
     @Assembler(TestFrom, TestTo)
     class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {
-      toPlain(dtoOrEntity: TestFrom | TestTo): object {
+      toPlain(dtoOrEntity: TestFrom | TestTo) {
         return dtoOrEntity;
       }
     }
@@ -35,7 +35,7 @@ describe('@Assembler', () => {
   it('should throw an error when registering an assembler for the same From To combo', () => {
     @Assembler(TestFrom, TestTo)
     class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {
-      toPlain(dtoOrEntity: TestFrom | TestTo): object {
+      toPlain(dtoOrEntity: TestFrom | TestTo) {
         return dtoOrEntity;
       }
     }

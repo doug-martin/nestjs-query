@@ -3,6 +3,7 @@ import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments 
 /** @internal */
 @ValidatorConstraint({ async: false })
 export class PropertyMax<T> implements ValidatorConstraintInterface {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
   validate(value: any, args: ValidationArguments): boolean {
     const object = args.object as Record<string, Record<string, number>>;
     const field = args.constraints[0] as string;

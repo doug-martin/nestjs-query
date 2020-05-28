@@ -11,7 +11,8 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier', 'import', 'jest', 'eslint-plugin-tsdoc'],
   extends: [
     'airbnb-typescript/base',
-    'plugin:@typescript-eslint/eslint-recommended',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:jest/recommended',
     'plugin:jest/style',
@@ -78,6 +79,9 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
       },
     },
   ],

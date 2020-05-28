@@ -4,7 +4,7 @@ import { TestEntityTestRelationEntity } from './test-entity-test-relation.entity
 import { TestEntity } from './test.entity';
 
 @AssemblerSerializer((instance: TestRelation) => instance.get({ plain: true }))
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
+// eslint-disable-next-line @typescript-eslint/no-use-before-define,@typescript-eslint/ban-types
 @AssemblerDeserializer((obj: object) => TestRelation.build(obj))
 @Table({})
 export class TestRelation extends Model<TestRelation> {
