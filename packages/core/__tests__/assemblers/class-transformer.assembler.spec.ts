@@ -104,7 +104,7 @@ describe('ClassTransformerAssembler', () => {
   });
 
   describe('with deserializer', () => {
-    const testDtoDeserialize = jest.fn((td: object) => {
+    const testDtoDeserialize = jest.fn((td) => {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       const input = new TestDeserializeDTO();
       // @ts-ignore
@@ -114,7 +114,7 @@ describe('ClassTransformerAssembler', () => {
       return input;
     });
 
-    const testEntityDserialize = jest.fn((te: object) => {
+    const testEntityDserialize = jest.fn((te) => {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       const input = new TestDeserializeEntity();
       // @ts-ignore

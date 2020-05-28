@@ -15,7 +15,7 @@ export function ResolverQuery(
   ...opts: ResolverMethodOpts[]
 ): MethodDecorator {
   if (isDisabled(opts)) {
-    return () => undefined;
+    return (): void => {};
   }
   return applyDecorators(Query(typeFunc, options), ResolverMethod(...opts));
 }

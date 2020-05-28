@@ -25,9 +25,9 @@ describe('ResolverMethod decorator', (): void => {
     };
   }
 
-  function createPipe(): Class<nest.PipeTransform<object, object>> {
-    return class implements nest.PipeTransform<object, object> {
-      transform(t: object) {
+  function createPipe(): Class<nest.PipeTransform<Record<string, unknown>, Record<string, unknown>>> {
+    return class implements nest.PipeTransform<Record<string, unknown>, Record<string, unknown>> {
+      transform(t: Record<string, unknown>) {
         return t;
       }
     };

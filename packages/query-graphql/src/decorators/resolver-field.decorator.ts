@@ -17,7 +17,7 @@ export function ResolverField(
   ...opts: ResolverMethodOpts[]
 ): MethodDecorator {
   if (isDisabled(opts)) {
-    return () => undefined;
+    return (): void => {};
   }
   return applyDecorators(ResolveField(name, typeFunc, options), ResolverMethod(...opts));
 }

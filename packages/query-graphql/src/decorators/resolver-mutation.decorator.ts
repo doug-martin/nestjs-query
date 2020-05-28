@@ -15,7 +15,7 @@ export function ResolverMutation(
   ...opts: ResolverMethodOpts[]
 ): MethodDecorator {
   if (isDisabled(opts)) {
-    return () => undefined;
+    return (): void => {};
   }
   return applyDecorators(Mutation(typeFunc, options), ResolverMethod(...opts));
 }

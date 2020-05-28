@@ -180,6 +180,7 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
     return { deletedCount: deletedCount || 0 };
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   private getChangedValues(record: object): object {
     if (record instanceof this.model) {
       const recordEntity = (record as unknown) as Entity;

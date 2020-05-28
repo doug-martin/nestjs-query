@@ -4,6 +4,7 @@ import { getCoreMetadataStorage } from '../../src/metadata';
 describe('AssemblerDeserializer decorator', () => {
   it('should register a serializer', () => {
     // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-types
     @AssemblerDeserializer((obj: object): TestSerializer => ({ foo: obj.bar }))
     class TestSerializer {
       foo!: string;
@@ -14,6 +15,7 @@ describe('AssemblerDeserializer decorator', () => {
 
   it('should throw an error if the serializer is registered twice', () => {
     // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const deserializer = (obj: object): TestSerializer => ({ foo: obj.bar });
     @AssemblerDeserializer(deserializer)
     class TestSerializer {

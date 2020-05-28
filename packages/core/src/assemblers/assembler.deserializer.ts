@@ -1,6 +1,7 @@
 import { Class } from '../common';
 import { getCoreMetadataStorage } from '../metadata';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type AssemblerDeserializer<T> = (obj: object) => T;
 
 export function AssemblerDeserializer<T>(deserializer: AssemblerDeserializer<T>) {
