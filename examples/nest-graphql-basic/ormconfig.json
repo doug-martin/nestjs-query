@@ -1,9 +1,9 @@
 {
   "type": "postgres",
   "host": "localhost",
-  "port": 5442,
-  "username": "graphqltypeorm",
-  "database": "graphql_typeorm",
+  "port": 5436,
+  "username": "basic",
+  "database": "basic",
   "autoLoadEntities": true,
   "entities": ["**/*.entity.js"],
   "seeds": ["./dist/seeds.js"],

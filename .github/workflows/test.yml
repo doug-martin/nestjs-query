@@ -20,11 +20,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: docker-compose -f ./examples/nest-graphql-typeorm/docker-compose.yml up -d
-      - run: docker-compose -f ./examples/federation/docker-compose.yml up -d
-      - run: docker-compose -f ./examples/nest-graphql-typeorm-soft-delete/docker-compose.yml up -d
-      - run: docker-compose -f ./examples/nest-graphql-sequelize/docker-compose.yml up -d
-      - run: docker-compose -f ./examples/nest-graphql-basic/docker-compose.yml up -d
+      - run: docker-compose -f ./examples/docker-compose.yml up -d
       - name: Restore Dependencies
         uses: actions/cache@v1
         with:

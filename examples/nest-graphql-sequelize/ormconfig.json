@@ -1,9 +1,9 @@
 {
   "dialect": "postgres",
   "host": "localhost",
-  "port": 5441,
-  "username": "graphqlsequelize",
-  "database": "graphql_sequelize",
+  "port": 5436,
+  "username": "sequelize",
+  "database": "sequelize",
   "logging": true,
   "autoLoadModels": true,
   "synchronize": true
