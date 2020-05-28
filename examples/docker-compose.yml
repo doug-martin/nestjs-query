@@ -3,11 +3,12 @@ version: "3"
 services:
   postgres:
     image: "postgres:11"
+    volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d/
     environment:
-      - "POSTGRES_USER=graphqlsequelize"
-      - "POSTGRES_DB=graphql_sequelize"
+      - "POSTGRES_USER=nestjs_query"
       - "POSTGRES_HOST_AUTH_METHOD=trust"
     expose:
       - "5432"
     ports:
-      - "5441:5432"
+      - "5436:5432"

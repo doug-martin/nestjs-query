@@ -2,9 +2,9 @@
   {
     "type": "postgres",
     "host": "localhost",
-    "port": 5437,
-    "username": "graphqltypeorm_mdb1",
-    "database": "graphql_typeorm_mdb1",
+    "port": 5436,
+    "username": "typeorm_multidb_1",
+    "database": "typeorm_multidb_1",
     "autoLoadEntities": true,
     "entities": [
       "dist/**/{!user}/*.entity.js"
@@ -16,9 +16,9 @@
     "name": "user-connection",
     "type": "postgres",
     "host": "localhost",
-    "port": 5438,
-    "username": "graphqltypeorm_mdb2",
-    "database": "graphql_typeorm_mdb2",
+    "port": 5436,
+    "username": "typeorm_multidb_2",
+    "database": "typeorm_multidb_2",
     "autoLoadEntities": true,
     "entities": [
       "dist/**/user/*.entity.js"
