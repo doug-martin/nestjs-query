@@ -1,18 +1,27 @@
-import * as nestjsCommon from '@nestjs/common';
-import { QueryService, InjectQueryService, getQueryServiceToken } from '../../src';
+import { Test } from '@nestjs/testing';
+import { Injectable } from '@nestjs/common';
+import { QueryService, InjectQueryService, getQueryServiceToken, NoOpQueryService } from '../../src';
 
 describe('@InjectQueryService', () => {
-  const injectSpy = jest.spyOn(nestjsCommon, 'Inject');
-
   class TestEntity {}
 
-  it('call inject with the correct key', () => {
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    class Test {
+  it('call inject with the correct key', async () => {
+    @Injectable()
+    class TestService {
       constructor(@InjectQueryService(TestEntity) readonly service: QueryService<TestEntity>) {}
     }
-    expect(injectSpy).toHaveBeenCalledTimes(1);
-    expect(injectSpy).toHaveBeenCalledWith(getQueryServiceToken(TestEntity));
+    const noopQueryService = new NoOpQueryService<TestEntity>();
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        TestService,
+        {
+          provide: getQueryServiceToken(TestEntity),
+          useValue: noopQueryService,
+        },
+      ],
+    }).compile();
+    const testService = moduleRef.get(TestService);
+    expect(testService).toBeInstanceOf(TestService);
+    expect(testService.service).toBe(noopQueryService);
   });
 });
