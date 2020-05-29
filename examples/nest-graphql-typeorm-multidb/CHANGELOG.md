@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.7](https://github.com/doug-martin/nestjs-query/compare/v0.11.6...v0.11.7) (2020-05-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency apollo-server-express to v2.14.0 ([8ca9ee5](https://github.com/doug-martin/nestjs-query/commit/8ca9ee5a5f4a62502a064ce1e3e27dceea0b58b0))
+* **deps:** update dependency apollo-server-express to v2.14.1 ([4776e70](https://github.com/doug-martin/nestjs-query/commit/4776e7052e7c7a777f332b601c9922bf1487d5e6))
+* **deps:** update dependency graphql-tools to v6.0.3 ([15429a5](https://github.com/doug-martin/nestjs-query/commit/15429a5230fe983b8e91d6559deab099070eec62))
+
+
+
+
+
 ## [0.11.6](https://github.com/doug-martin/nestjs-query/compare/v0.11.5...v0.11.6) (2020-05-26)
 
 

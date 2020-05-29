@@ -1,6 +1,6 @@
 {
   "name": "sub-task-graphql",
-  "version": "0.11.6",
+  "version": "0.11.7",
   "description": "",
   "author": "",
   "private": true,
@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@apollo/federation": "0.16.2",
-    "@nestjs-query/core": "0.11.6",
-    "@nestjs-query/query-graphql": "0.11.6",
-    "@nestjs-query/query-typeorm": "0.11.6",
+    "@nestjs-query/core": "0.11.7",
+    "@nestjs-query/query-graphql": "0.11.7",
+    "@nestjs-query/query-typeorm": "0.11.7",
     "@nestjs/common": "7.1.1",
     "@nestjs/core": "7.1.1",
     "@nestjs/graphql": "7.3.11",
