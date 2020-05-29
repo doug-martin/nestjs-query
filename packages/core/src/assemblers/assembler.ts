@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { Class } from '../common';
 import { Query } from '../interfaces';
 import { getCoreMetadataStorage } from '../metadata';
@@ -67,7 +66,6 @@ export function Assembler<DTO, Entity>(DTOClass: Class<DTO>, EntityClass: Class<
     if (getCoreMetadataStorage().hasAssembler(DTOClass, EntityClass)) {
       throw new Error(`Assembler already registered for ${DTOClass.name} ${EntityClass.name}`);
     }
-    Injectable()(cls);
     getCoreMetadataStorage().addAssembler(DTOClass, EntityClass, cls);
     return cls;
   };

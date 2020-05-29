@@ -1,4 +1,3 @@
-import * as nestjsCommon from '@nestjs/common';
 import { Assembler, AssemblerFactory, ClassTransformerAssembler, DefaultAssembler } from '../../src';
 import { getCoreMetadataStorage } from '../../src/metadata';
 
@@ -15,19 +14,16 @@ class TestTo {
 }
 
 describe('@Assembler', () => {
-  const injectableSpy = jest.spyOn(nestjsCommon, 'Injectable');
-
   beforeEach(() => getCoreMetadataStorage().clear());
   afterAll(() => getCoreMetadataStorage().clear());
 
-  it('should register an assembler as injectable and with metadata', () => {
+  it('should register an assembler with metadata', () => {
     @Assembler(TestFrom, TestTo)
     class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {
       toPlain(dtoOrEntity: TestFrom | TestTo) {
         return dtoOrEntity;
       }
     }
-    expect(injectableSpy).toHaveBeenCalledTimes(1);
     expect(AssemblerFactory.getAssembler(TestFrom, TestTo)).toBeInstanceOf(TestAssembler);
     expect(AssemblerFactory.getAssembler(TestTo, TestFrom)).toBeInstanceOf(DefaultAssembler);
   });
