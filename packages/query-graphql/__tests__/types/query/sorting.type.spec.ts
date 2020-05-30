@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import 'reflect-metadata';
 import { ObjectType, InputType, Query, Resolver, Args, Int } from '@nestjs/graphql';
 import { SortType, FilterableField } from '../../../src';
 import { expectSDL, sortingInputTypeSDL } from '../../__fixtures__';

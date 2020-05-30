@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { ObjectType, Query, Resolver, Field } from '@nestjs/graphql';
 import { EdgeType } from '../../../src/types/connection';
 import { expectSDL, edgeObjectTypeSDL } from '../../__fixtures__';

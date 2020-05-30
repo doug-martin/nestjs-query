@@ -1,6 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import 'reflect-metadata';
-
 import { ID, ObjectType } from '@nestjs/graphql';
 import { CRUDResolver, FilterableField } from '../../src';
 import * as createResolver from '../../src/resolvers/create.resolver';

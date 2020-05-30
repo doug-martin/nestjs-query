@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Query, Resolver } from '@nestjs/graphql';
 import { UpdateManyResponse } from '@nestjs-query/core';
 import { UpdateManyResponseType } from '../../src';

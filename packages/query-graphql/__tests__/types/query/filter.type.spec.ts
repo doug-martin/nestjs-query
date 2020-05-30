@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import 'reflect-metadata';
 import { Class, Filter } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { ObjectType, Int, Resolver, Query, Args, Float, GraphQLTimestamp, Field, InputType } from '@nestjs/graphql';

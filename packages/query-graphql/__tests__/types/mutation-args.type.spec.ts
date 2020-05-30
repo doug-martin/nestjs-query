@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { InputType, ArgsType, Resolver, Query, Int, Args, Field } from '@nestjs/graphql';
 import { MutationArgsType } from '../../src/types';
 import { expectSDL, mutationArgsTypeSDL } from '../__fixtures__';

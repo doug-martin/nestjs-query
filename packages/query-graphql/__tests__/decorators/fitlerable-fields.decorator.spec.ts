@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import * as nestjsGraphQL from '@nestjs/graphql';
 import { FilterableField } from '../../src';
 import { getMetadataStorage } from '../../src/metadata';

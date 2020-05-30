@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { when, objectContaining } from 'ts-mockito';
 import { UpdateManyResponse } from '@nestjs-query/core';
 import { Resolver, Query, Field, InputType } from '@nestjs/graphql';

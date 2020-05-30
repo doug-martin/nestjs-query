@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Kind } from 'graphql';
 import { ConnectionCursorScalar } from '../../src';
 

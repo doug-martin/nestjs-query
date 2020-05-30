@@ -31,7 +31,6 @@
     "graphql": "15.0.0",
     "graphql-tools": "6.0.3",
     "pg": "8.2.1",
-    "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
     "rxjs": "6.5.5",
     "typeorm": "0.2.25",

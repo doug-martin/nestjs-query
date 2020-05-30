@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { IsInt, Min } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
 import { transformAndValidate } from '../../src/resolvers/helpers';
