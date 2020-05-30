@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { ObjectType, Field } from '@nestjs/graphql';
 import { getDTONames } from '../../src/common';
 

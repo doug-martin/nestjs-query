@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { SortDirection, SortField, SortNulls } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';

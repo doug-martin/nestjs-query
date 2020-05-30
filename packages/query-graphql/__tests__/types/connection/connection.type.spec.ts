@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { ConnectionType, CursorPagingType } from '../../../src';

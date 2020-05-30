@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Resolver, Query } from '@nestjs/graphql';
 import { PageInfoType } from '../../../src/types/connection';
 import { expectSDL, pageInfoObjectTypeSDL } from '../../__fixtures__';

@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { when, objectContaining, deepEqual } from 'ts-mockito';
 import { Resolver, Query } from '@nestjs/graphql';
 import { RelationsOpts } from '../../../src/resolvers';

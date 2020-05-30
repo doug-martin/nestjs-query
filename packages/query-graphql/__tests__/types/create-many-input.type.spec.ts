@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { plainToClass } from 'class-transformer';
 import { validateSync, MinLength } from 'class-validator';
 import { InputType, Resolver, Args, Int, Query, Field } from '@nestjs/graphql';

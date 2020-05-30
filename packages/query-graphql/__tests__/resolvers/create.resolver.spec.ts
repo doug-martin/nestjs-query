@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import 'reflect-metadata';
 import { DeepPartial } from '@nestjs-query/core';
 import { Resolver, Query, InputType } from '@nestjs/graphql';
 import { when, objectContaining } from 'ts-mockito';

@@ -12,7 +12,7 @@ npm i @nestjs-query/core @nestjs/common class-transformer
 ## @nestjs-query/query-graphql
 
 ```sh
-npm i @nestjs-query/query-graphql @nestjs/common @nestjs/graphql graphql graphql-relay class-transformer class-validator reflect-metadata dataloader
+npm i @nestjs-query/query-graphql @nestjs/common @nestjs/graphql graphql graphql-relay class-transformer class-validator dataloader
 ```
 
 **NOTE** `@nestjs-query/query-graphql` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
