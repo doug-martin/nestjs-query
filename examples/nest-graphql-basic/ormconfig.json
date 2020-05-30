@@ -5,10 +5,13 @@
   "username": "basic",
   "database": "basic",
   "autoLoadEntities": true,
-  "entities": ["**/*.entity.js"],
-  "seeds": ["./dist/seeds.js"],
+  "entities": [
+    "**/*.entity.js"
+  ],
+  "seeds": [
+    "./dist/seeds.js"
+  ],
   "synchronize": true,
-  "logging": true,
   "cli": {
     "migrationsDir": "./migrations"
   }

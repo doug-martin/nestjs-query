@@ -7,6 +7,7 @@ import { TestEntity } from './test.entity';
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   database: ':memory:',
+  logging: false,
   models: [TestEntity, TestEntityTestRelationEntity, TestRelation],
 });
 

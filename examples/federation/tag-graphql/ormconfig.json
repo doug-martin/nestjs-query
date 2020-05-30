@@ -10,6 +10,7 @@
     "dist/**/*.entity.js"
   ],
   "synchronize": true,
-  "seeds": ["./dist/seeds.js"],
-  "logging": true
+  "seeds": [
+    "./dist/seeds.js"
+  ]
 }

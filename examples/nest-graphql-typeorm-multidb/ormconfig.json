@@ -9,8 +9,7 @@
     "entities": [
       "dist/**/{!user}/*.entity.js"
     ],
-    "synchronize": true,
-    "logging": true
+    "synchronize": true
   },
   {
     "name": "user-connection",
@@ -23,7 +22,6 @@
     "entities": [
       "dist/**/user/*.entity.js"
     ],
-    "synchronize": true,
-    "logging": true
+    "synchronize": true
   }
 ]
