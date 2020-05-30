@@ -19,7 +19,7 @@
 		"@nestjs-query/query-sequelize": "0.11.7",
 		"@nestjs/common": "7.1.1",
 		"@nestjs/core": "7.1.1",
-		"@nestjs/graphql": "7.3.11",
+		"@nestjs/graphql": "7.4.0",
 		"@nestjs/platform-express": "7.1.1",
 		"@nestjs/sequelize": "0.1.0",
 		"apollo-server-express": "2.14.1",
