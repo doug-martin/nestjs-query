@@ -4,7 +4,7 @@
   "port": 5436,
   "username": "sequelize",
   "database": "sequelize",
-  "logging": true,
   "autoLoadModels": true,
-  "synchronize": true
+  "synchronize": true,
+  "logging": false
 }
