@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@nestjs/common": "7.1.1",
-    "@nestjs/graphql": "7.4.0",
+    "@nestjs/graphql": "7.4.1",
     "@nestjs/testing": "7.1.1",
     "@types/graphql": "14.5.0",
     "@types/graphql-relay": "0.6.0",
