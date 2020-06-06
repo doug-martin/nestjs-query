@@ -1,8 +1,12 @@
 // eslint-disable-next-line max-classes-per-file
 import { DeepPartial } from '@nestjs-query/core';
 import { Resolver, Query, InputType } from '@nestjs/graphql';
-import { when, objectContaining } from 'ts-mockito';
+import { when, objectContaining, verify, deepEqual, anything, mock, instance } from 'ts-mockito';
+import { PubSub } from 'graphql-subscriptions';
 import { CreateManyInputType, CreateOneInputType, CreateResolver, CreateResolverOpts } from '../../src';
+import { InjectPubSub } from '../../src/decorators/inject-pub-sub.decorator';
+import { CreatedEvent } from '../../src/resolvers/create.resolver';
+import { EventType, getDTOEventName } from '../../src/subscription';
 import { expectSDL } from '../__fixtures__';
 import {
   createBasicResolverSDL,
@@ -14,17 +18,11 @@ import {
   createManyDisabledResolverSDL,
   createOneDisabledResolverSDL,
   createResolverFromNest,
+  createSubscriptionResolverSDL,
   TestResolverDTO,
   TestResolverInputDTO,
   TestService,
 } from './__fixtures__';
-
-@Resolver(() => TestResolverDTO)
-class TestResolver extends CreateResolver(TestResolverDTO) {
-  constructor(service: TestService) {
-    super(service);
-  }
-}
 
 describe('CreateResolver', () => {
   const expectResolverSDL = (sdl: string, opts?: CreateResolverOpts<TestResolverDTO>) => {
@@ -35,7 +33,19 @@ describe('CreateResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
+
     return expectSDL([TestSDLResolver], sdl);
+  };
+
+  const createTestResolver = (opts?: CreateResolverOpts<TestResolverDTO>) => {
+    @Resolver(() => TestResolverDTO)
+    class TestResolver extends CreateResolver(TestResolverDTO, opts) {
+      constructor(service: TestService, @InjectPubSub() readonly pubSub: PubSub) {
+        super(service);
+      }
+    }
+
+    return createResolverFromNest(TestResolver);
   };
 
   it('should create a CreateResolver for the DTO', () => {
@@ -58,6 +68,7 @@ describe('CreateResolver', () => {
     it('should use the provided CreateOneInput type', () => {
       @InputType()
       class CreateOneInput extends CreateOneInputType('createResolverDTO', TestResolverInputDTO) {}
+
       return expectResolverSDL(createCustomOneInputResolverSDL, {
         CreateOneInput,
       });
@@ -68,7 +79,7 @@ describe('CreateResolver', () => {
     });
 
     it('should call the service createOne with the provided input', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
+      const { resolver, mockService } = await createTestResolver();
       const args: CreateOneInputType<DeepPartial<TestResolverDTO>> = {
         input: {
           stringField: 'foo',
@@ -88,6 +99,7 @@ describe('CreateResolver', () => {
     it('should not create a new type if the CreateManyArgs is supplied', () => {
       @InputType()
       class CreateManyInput extends CreateManyInputType('testResolvers', TestResolverInputDTO) {}
+
       return expectResolverSDL(createCustomManyInputResolverSDL, {
         CreateManyInput,
       });
@@ -98,7 +110,7 @@ describe('CreateResolver', () => {
     });
 
     it('should call the service createMany with the provided input', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
+      const { resolver, mockService } = await createTestResolver();
       const args: CreateManyInputType<Partial<TestResolverDTO>> = {
         input: [
           {
@@ -115,6 +127,225 @@ describe('CreateResolver', () => {
       when(mockService.createMany(objectContaining(args.input))).thenResolve(output);
       const result = await resolver.createMany({ input: args });
       return expect(result).toEqual(output);
+    });
+  });
+
+  describe('created subscription', () => {
+    it('should add subscription types if enableSubscriptions is true', () => {
+      return expectResolverSDL(createSubscriptionResolverSDL, {
+        enableSubscriptions: true,
+      });
+    });
+
+    it('should not expose subscriptions if enableSubscriptions is false', () => {
+      return expectResolverSDL(createBasicResolverSDL, { enableSubscriptions: false });
+    });
+
+    describe('create one events', () => {
+      it('should publish events for create one when enableSubscriptions is set to true for all', async () => {
+        const { resolver, mockService, mockPubSub } = await createTestResolver({ enableSubscriptions: true });
+        const args: CreateOneInputType<DeepPartial<TestResolverDTO>> = {
+          input: {
+            stringField: 'foo',
+          },
+        };
+        const output: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo',
+        };
+        const eventName = getDTOEventName(EventType.CREATED, TestResolverDTO);
+        const event = { [eventName]: output };
+        when(mockService.createOne(objectContaining(args.input))).thenResolve(output);
+        when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
+        const result = await resolver.createOne({ input: args });
+        verify(mockPubSub.publish(eventName, deepEqual(event))).once();
+        return expect(result).toEqual(output);
+      });
+
+      it('should publish events for create one when enableSubscriptions is set to true for createOne', async () => {
+        const { resolver, mockService, mockPubSub } = await createTestResolver({ one: { enableSubscriptions: true } });
+        const args: CreateOneInputType<DeepPartial<TestResolverDTO>> = {
+          input: {
+            stringField: 'foo',
+          },
+        };
+        const output: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo',
+        };
+        const eventName = getDTOEventName(EventType.CREATED, TestResolverDTO);
+        const event = { [eventName]: output };
+        when(mockService.createOne(objectContaining(args.input))).thenResolve(output);
+        when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
+        const result = await resolver.createOne({ input: args });
+        verify(mockPubSub.publish(eventName, deepEqual(event))).once();
+        return expect(result).toEqual(output);
+      });
+
+      it('should not publish an event if enableSubscriptions is false', async () => {
+        const { resolver, mockService, mockPubSub } = await createTestResolver({ enableSubscriptions: false });
+        const args: CreateOneInputType<DeepPartial<TestResolverDTO>> = {
+          input: {
+            stringField: 'foo',
+          },
+        };
+        const output: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo',
+        };
+        when(mockService.createOne(objectContaining(args.input))).thenResolve(output);
+        const result = await resolver.createOne({ input: args });
+        verify(mockPubSub.publish(anything(), anything())).never();
+        return expect(result).toEqual(output);
+      });
+
+      it('should not publish an event if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
+        const { resolver, mockService, mockPubSub } = await createTestResolver({
+          enableSubscriptions: true,
+          one: { enableSubscriptions: false },
+        });
+        const args: CreateOneInputType<DeepPartial<TestResolverDTO>> = {
+          input: {
+            stringField: 'foo',
+          },
+        };
+        const output: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo',
+        };
+        when(mockService.createOne(objectContaining(args.input))).thenResolve(output);
+        const result = await resolver.createOne({ input: args });
+        verify(mockPubSub.publish(anything(), anything())).never();
+        return expect(result).toEqual(output);
+      });
+    });
+
+    describe('create many events', () => {
+      it('should publish events for create many when enableSubscriptions is set to true for all', async () => {
+        const { resolver, mockService, mockPubSub } = await createTestResolver({ enableSubscriptions: true });
+        const args: CreateManyInputType<Partial<TestResolverDTO>> = {
+          input: [
+            {
+              stringField: 'foo',
+            },
+          ],
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        const eventName = getDTOEventName(EventType.CREATED, TestResolverDTO);
+        const events = output.map((o) => ({ [eventName]: o }));
+        when(mockService.createMany(objectContaining(args.input))).thenResolve(output);
+        events.forEach((e) => when(mockPubSub.publish(eventName, deepEqual(e))).thenResolve());
+        const result = await resolver.createMany({ input: args });
+        events.forEach((e) => verify(mockPubSub.publish(eventName, deepEqual(e))).once());
+        return expect(result).toEqual(output);
+      });
+
+      it('should publish events for create one when enableSubscriptions is set to true for createOne', async () => {
+        const { resolver, mockService, mockPubSub } = await createTestResolver({ many: { enableSubscriptions: true } });
+        const args: CreateManyInputType<Partial<TestResolverDTO>> = {
+          input: [
+            {
+              stringField: 'foo',
+            },
+          ],
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        const eventName = getDTOEventName(EventType.CREATED, TestResolverDTO);
+        const events = output.map((o) => ({ [eventName]: o }));
+        when(mockService.createMany(objectContaining(args.input))).thenResolve(output);
+        events.forEach((e) => when(mockPubSub.publish(eventName, deepEqual(e))).thenResolve());
+        const result = await resolver.createMany({ input: args });
+        events.forEach((e) => verify(mockPubSub.publish(eventName, deepEqual(e))).once());
+        return expect(result).toEqual(output);
+      });
+
+      it('should not publish an event if enableSubscriptions is false', async () => {
+        const { resolver, mockService, mockPubSub } = await createTestResolver({ enableSubscriptions: false });
+        const args: CreateManyInputType<Partial<TestResolverDTO>> = {
+          input: [
+            {
+              stringField: 'foo',
+            },
+          ],
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        when(mockService.createMany(objectContaining(args.input))).thenResolve(output);
+        const result = await resolver.createMany({ input: args });
+        verify(mockPubSub.publish(anything(), anything())).never();
+        return expect(result).toEqual(output);
+      });
+
+      it('should not publish an event if enableSubscriptions is true and many.enableSubscriptions is false', async () => {
+        const { resolver, mockService, mockPubSub } = await createTestResolver({
+          enableSubscriptions: true,
+          many: { enableSubscriptions: false },
+        });
+        const args: CreateManyInputType<Partial<TestResolverDTO>> = {
+          input: [
+            {
+              stringField: 'foo',
+            },
+          ],
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        when(mockService.createMany(objectContaining(args.input))).thenResolve(output);
+        const result = await resolver.createMany({ input: args });
+        verify(mockPubSub.publish(anything(), anything())).never();
+        return expect(result).toEqual(output);
+      });
+    });
+
+    describe('createSubscription', () => {
+      it('should propagate events if enableSubscriptions is true', async () => {
+        const { resolver, mockPubSub } = await createTestResolver({
+          enableSubscriptions: true,
+        });
+        const eventName = getDTOEventName(EventType.CREATED, TestResolverDTO);
+
+        const event: CreatedEvent<TestResolverDTO> = {
+          [eventName]: {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        };
+        const mockIterator = mock<AsyncIterator<CreatedEvent<TestResolverDTO>>>();
+        when(mockPubSub.asyncIterator(eventName)).thenReturn(instance(mockIterator));
+        when(mockIterator.next()).thenResolve({ done: false, value: event });
+        const result = await resolver.createdSubscription().next();
+        verify(mockPubSub.asyncIterator(eventName)).once();
+        return expect(result).toEqual({
+          done: false,
+          value: event,
+        });
+      });
+
+      it('should not propagate events if enableSubscriptions is false', async () => {
+        const { resolver } = await createTestResolver({
+          enableSubscriptions: false,
+        });
+        const eventName = getDTOEventName(EventType.CREATED, TestResolverDTO);
+        return expect(() => resolver.createdSubscription()).toThrow(`Unable to subscribe to ${eventName}`);
+      });
     });
   });
 });

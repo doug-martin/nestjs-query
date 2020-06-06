@@ -1,5 +1,6 @@
 import merge from 'lodash.merge';
-import { Filter, Query, SortField } from './interfaces';
+import { Filter, Query, SortField } from '../interfaces';
+import { FilterBuilder } from './filter.builder';
 
 export type QueryFieldMap<From, To> = {
   [F in keyof From]?: keyof To;
@@ -52,3 +53,5 @@ export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFiel
 export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
   return merge(base, source);
 };
+
+export const applyFilter = <DTO>(dto: DTO, filter: Filter<DTO>): boolean => FilterBuilder.build(filter)(dto);
