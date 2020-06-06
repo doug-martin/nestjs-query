@@ -12,3 +12,7 @@ services:
       - "5432"
     ports:
       - "5436:5432"
+  redis:
+    image: "redis:6"
+    ports:
+      - "6379:6379"
