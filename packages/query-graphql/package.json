@@ -65,7 +65,7 @@
     "@types/pluralize": "0.0.29",
     "class-transformer": "0.2.3",
     "class-validator": "0.12.2",
-    "graphql-subscriptions": "^1.1.0",
+    "graphql-subscriptions": "1.1.0",
     "dataloader": "2.0.0",
     "graphql": "15.0.0",
     "graphql-relay": "0.6.0",
