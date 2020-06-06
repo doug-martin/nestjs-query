@@ -2,7 +2,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { NestjsQueryGraphQLModule } from '../src';
 import { FilterableField } from '../src/decorators/filterable-field.decorator';
 
-describe('NestjsQueryTypeOrmModule', () => {
+describe('NestjsQueryGraphQLModule', () => {
   @ObjectType()
   class TestDTO {
     @FilterableField()
@@ -21,7 +21,7 @@ describe('NestjsQueryTypeOrmModule', () => {
     });
     expect(graphqlModule.imports).toHaveLength(1);
     expect(graphqlModule.module).toBe(NestjsQueryGraphQLModule);
-    expect(graphqlModule.providers).toHaveLength(1);
-    expect(graphqlModule.exports).toHaveLength(2);
+    expect(graphqlModule.providers).toHaveLength(2);
+    expect(graphqlModule.exports).toHaveLength(3);
   });
 });

@@ -20,6 +20,7 @@ export interface CRUDResolverOpts<
    * The DTO that should be used as input for update endpoints.
    */
   UpdateDTOClass?: Class<U>;
+  enableSubscriptions?: boolean;
   create?: CreateResolverOpts<DTO, C>;
   read?: ReadResolverOpts<DTO>;
   update?: UpdateResolverOpts<DTO, U>;
@@ -63,6 +64,7 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
   const {
     CreateDTOClass,
     UpdateDTOClass,
+    enableSubscriptions,
     relations = {},
     references = {},
     create = {},
@@ -74,10 +76,10 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
 
   const referencable = Refereceable(DTOClass, referenceBy);
   const relatable = Relatable(DTOClass, relations, references);
-  const creatable = Creatable(DTOClass, { CreateDTOClass, ...create });
+  const creatable = Creatable(DTOClass, { CreateDTOClass, enableSubscriptions, ...create });
   const readable = Readable(DTOClass, read);
-  const updateable = Updateable(DTOClass, { UpdateDTOClass, ...update });
-  const deleteResolver = DeleteResolver(DTOClass, deleteArgs);
+  const updateable = Updateable(DTOClass, { UpdateDTOClass, enableSubscriptions, ...update });
+  const deleteResolver = DeleteResolver(DTOClass, { enableSubscriptions, ...deleteArgs });
 
   return referencable(relatable(creatable(readable(updateable(deleteResolver)))));
 };

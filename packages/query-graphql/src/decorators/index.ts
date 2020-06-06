@@ -5,3 +5,4 @@ export * from './resolver-mutation.decorator';
 export * from './resolver-query.decorator';
 export * from './resolver-field.decorator';
 export { Reference, ReferenceDecoratorOpts, ReferenceTypeFunc } from './reference.decorator';
+export { ResolverSubscription, SubscriptionResolverMethodOpts } from './resolver-subscription.decorator';

@@ -9,6 +9,8 @@ import {
 import { Assembler } from '@nestjs-query/core/src';
 import { Provider, Inject } from '@nestjs/common';
 import { Resolver } from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
+import { InjectPubSub } from './decorators/inject-pub-sub.decorator';
 import { CRUDResolver, CRUDResolverOpts, FederationResolver, RelationsOpts } from './resolvers';
 
 type CRUDAutoResolverOpts<DTO, C, U> = CRUDResolverOpts<DTO, C, U> & {
@@ -65,7 +67,10 @@ function createFederatedResolver<DTO, Service>(resolverOpts: FederatedAutoResolv
 
   @Resolver(() => DTOClass)
   class AutoResolver extends FederationResolver(DTOClass, resolverOpts) {
-    constructor(@Inject(resolverOpts.Service) readonly service: QueryService<DTO>) {
+    constructor(
+      @Inject(resolverOpts.Service) readonly service: QueryService<DTO>,
+      @InjectPubSub() readonly pubSub: PubSub,
+    ) {
       super(service);
     }
   }
@@ -87,7 +92,10 @@ function createEntityAutoResolver<DTO, Entity, C, U>(
   }
   @Resolver(() => DTOClass)
   class AutoResolver extends CRUDResolver(DTOClass, resolverOpts) {
-    constructor(@InjectQueryService(EntityClass) service: QueryService<Entity>) {
+    constructor(
+      @InjectQueryService(EntityClass) service: QueryService<Entity>,
+      @InjectPubSub() readonly pubSub: PubSub,
+    ) {
       super(new Service(service));
     }
   }
@@ -105,6 +113,7 @@ function createAssemblerAutoResolver<DTO, Asmblr, C, U>(
     constructor(
       @InjectAssemblerQueryService((AssemblerClass as unknown) as Class<Assembler<DTO, unknown>>)
       service: QueryService<DTO>,
+      @InjectPubSub() readonly pubSub: PubSub,
     ) {
       super(service);
     }
@@ -120,7 +129,7 @@ function createServiceAutoResolver<DTO, Service, C, U>(
   const { DTOClass, ServiceClass } = resolverOpts;
   @Resolver(() => DTOClass)
   class AutoResolver extends CRUDResolver(DTOClass, resolverOpts) {
-    constructor(@Inject(ServiceClass) service: QueryService<DTO>) {
+    constructor(@Inject(ServiceClass) service: QueryService<DTO>, @InjectPubSub() readonly pubSub: PubSub) {
       super(service);
     }
   }

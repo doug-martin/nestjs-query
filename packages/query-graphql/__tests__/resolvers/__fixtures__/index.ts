@@ -2,6 +2,8 @@ import { Class } from '@nestjs-query/core';
 import { resolve } from 'path';
 import { instance, mock } from 'ts-mockito';
 import { Test } from '@nestjs/testing';
+import { PubSub } from 'graphql-subscriptions';
+import { pubSubToken } from '../../../src/subscription';
 import { readGraphql } from '../../__fixtures__';
 import { TestService } from './test-resolver.service';
 
@@ -12,17 +14,19 @@ export { TestService } from './test-resolver.service';
 interface ResolverMock<T> {
   resolver: T;
   mockService: TestService;
+  mockPubSub: PubSub;
 }
 
 export const createResolverFromNest = async <T>(ResolverClass: Class<T>): Promise<ResolverMock<T>> => {
   const mockService = mock(TestService);
+  const mockPubSub = mock(PubSub);
   const moduleRef = await Test.createTestingModule({
-    providers: [ResolverClass, TestService],
+    providers: [ResolverClass, TestService, { provide: pubSubToken(), useValue: instance(mockPubSub) }],
   })
     .overrideProvider(TestService)
     .useValue(instance(mockService))
     .compile();
-  return { resolver: moduleRef.get(ResolverClass), mockService };
+  return { resolver: moduleRef.get(ResolverClass), mockService, mockPubSub };
 };
 
 export const deleteBasicResolverSDL = readGraphql(resolve(__dirname, 'delete', 'delete-basic.resolver.graphql'));
@@ -41,6 +45,15 @@ export const deleteCustomOneInputResolverSDL = readGraphql(
 );
 export const deleteCustomManyInputResolverSDL = readGraphql(
   resolve(__dirname, 'delete', 'delete-custom-many-input.resolver.graphql'),
+);
+export const deleteSubscriptionResolverSDL = readGraphql(
+  resolve(__dirname, 'delete', 'delete-subscription.resolver.graphql'),
+);
+export const deleteOneSubscriptionResolverSDL = readGraphql(
+  resolve(__dirname, 'delete', 'delete-one-subscription.resolver.graphql'),
+);
+export const deleteManySubscriptionResolverSDL = readGraphql(
+  resolve(__dirname, 'delete', 'delete-many-subscription.resolver.graphql'),
 );
 
 export const createBasicResolverSDL = readGraphql(resolve(__dirname, 'create', 'create-basic.resolver.graphql'));
@@ -62,6 +75,9 @@ export const createCustomOneInputResolverSDL = readGraphql(
 );
 export const createCustomManyInputResolverSDL = readGraphql(
   resolve(__dirname, 'create', 'create-custom-many-input.resolver.graphql'),
+);
+export const createSubscriptionResolverSDL = readGraphql(
+  resolve(__dirname, 'create', 'create-subscription.resolver.graphql'),
 );
 
 export const readBasicResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-basic.resolver.graphql'));
@@ -95,6 +111,15 @@ export const updateCustomOneInputResolverSDL = readGraphql(
 );
 export const updateCustomManyInputResolverSDL = readGraphql(
   resolve(__dirname, 'update', 'update-custom-many-input.resolver.graphql'),
+);
+export const updateSubscriptionResolverSDL = readGraphql(
+  resolve(__dirname, 'update', 'update-subscription.resolver.graphql'),
+);
+export const updateOneSubscriptionResolverSDL = readGraphql(
+  resolve(__dirname, 'update', 'update-one-subscription.resolver.graphql'),
+);
+export const updateManySubscriptionResolverSDL = readGraphql(
+  resolve(__dirname, 'update', 'update-many-subscription.resolver.graphql'),
 );
 
 export const referenceBasicResolverSDL = readGraphql(

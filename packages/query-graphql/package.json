@@ -39,10 +39,10 @@
   },
   "dependencies": {
     "@nestjs-query/core": "0.11.8",
-    "lodash.omit": "4.5.0",
-    "lower-case-first": "2.0.1",
-    "pluralize": "8.0.0",
-    "upper-case-first": "2.0.1"
+    "lodash.omit": "^4.5.0",
+    "lower-case-first": "^2.0.1",
+    "pluralize": "^8.0.0",
+    "upper-case-first": "^2.0.1"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
@@ -51,7 +51,8 @@
     "class-validator": "^0.12.2",
     "dataloader": "^2.0.0",
     "graphql": "^15.0.0",
-    "graphql-relay": "^0.6.0"
+    "graphql-relay": "^0.6.0",
+    "graphql-subscriptions": "^1.1.0"
   },
   "devDependencies": {
     "@nestjs/common": "7.1.2",
@@ -64,6 +65,7 @@
     "@types/pluralize": "0.0.29",
     "class-transformer": "0.2.3",
     "class-validator": "0.12.2",
+    "graphql-subscriptions": "^1.1.0",
     "dataloader": "2.0.0",
     "graphql": "15.0.0",
     "graphql-relay": "0.6.0",

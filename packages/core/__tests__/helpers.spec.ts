@@ -1,4 +1,5 @@
 import {
+  applyFilter,
   Filter,
   Query,
   QueryFieldMap,
@@ -156,5 +157,170 @@ describe('transformQuery', () => {
       ],
     };
     expect(transformQuery(dtoQuery, fieldMap)).toEqual(entityQuery);
+  });
+});
+
+describe('applyFilter', () => {
+  it('should handle eq comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { eq: 'foo' },
+    };
+    expect(applyFilter({ first: 'foo', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'bar', last: 'foo' }, filter)).toBe(false);
+  });
+
+  it('should handle neq comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { neq: 'foo' },
+    };
+    expect(applyFilter({ first: 'bar', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'foo', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle gt comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { gt: 'b' },
+    };
+    expect(applyFilter({ first: 'c', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'b', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'a', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle gte comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { gte: 'b' },
+    };
+    expect(applyFilter({ first: 'c', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'b', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'a', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle lt comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { lt: 'b' },
+    };
+    expect(applyFilter({ first: 'a', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'b', last: 'bar' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'c', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle lte comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { lte: 'b' },
+    };
+    expect(applyFilter({ first: 'a', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'b', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'c', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle like comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { like: '%oo' },
+    };
+    expect(applyFilter({ first: 'Foo', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'FOO', last: 'bar' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'Foo Bar', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'o bar', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle notLike comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { notLike: '%oo' },
+    };
+    expect(applyFilter({ first: 'Foo', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'FOO', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'Foo Bar', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'o bar', last: 'bar' }, filter)).toBe(true);
+  });
+
+  it('should handle iLike comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { iLike: '%oo' },
+    };
+    expect(applyFilter({ first: 'Foo', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'FOO', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'Foo Bar', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'o bar', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle notILike comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { notILike: '%oo' },
+    };
+    expect(applyFilter({ first: 'Foo', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'FOO', last: 'bar' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'Foo Bar', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'o bar', last: 'bar' }, filter)).toBe(true);
+  });
+
+  it('should handle in comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { in: ['Foo', 'Bar', 'Baz'] },
+    };
+    expect(applyFilter({ first: 'Foo', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'Bar', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'Baz', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'Boo', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle notIn comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { notIn: ['Foo', 'Bar', 'Baz'] },
+    };
+    expect(applyFilter({ first: 'Foo', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'Bar', last: 'bar' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'Baz', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'Boo', last: 'bar' }, filter)).toBe(true);
+  });
+
+  it('should handle between comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { between: { lower: 'b', upper: 'd' } },
+    };
+    expect(applyFilter({ first: 'a', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'b', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'c', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'd', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'e', last: 'bar' }, filter)).toBe(false);
+  });
+
+  it('should handle notBetween comparisons', () => {
+    const filter: Filter<TestDTO> = {
+      first: { notBetween: { lower: 'b', upper: 'd' } },
+    };
+    expect(applyFilter({ first: 'a', last: 'foo' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'b', last: 'bar' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'c', last: 'foo' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'd', last: 'bar' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'e', last: 'bar' }, filter)).toBe(true);
+  });
+
+  it('should throw an error for an unknown operator', () => {
+    const filter: Filter<TestDTO> = {
+      // @ts-ignore
+      first: { foo: 'bar' },
+    };
+    expect(() => applyFilter({ first: 'baz', last: 'kaz' }, filter)).toThrow('unknown operator "foo"');
+  });
+
+  it('should handle and grouping', () => {
+    const filter: Filter<TestDTO> = {
+      and: [{ first: { eq: 'foo' } }, { last: { like: '%bar' } }],
+    };
+    expect(applyFilter({ first: 'foo', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'foo', last: 'foobar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'oo', last: 'bar' }, filter)).toBe(false);
+    expect(applyFilter({ first: 'foo', last: 'baz' }, filter)).toBe(false);
+  });
+
+  it('should handle or grouping', () => {
+    const filter: Filter<TestDTO> = {
+      or: [{ first: { eq: 'foo' } }, { last: { like: '%bar' } }],
+    };
+    expect(applyFilter({ first: 'foo', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'foo', last: 'foobar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'oo', last: 'bar' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'foo', last: 'baz' }, filter)).toBe(true);
+    expect(applyFilter({ first: 'fo', last: 'ba' }, filter)).toBe(false);
   });
 });

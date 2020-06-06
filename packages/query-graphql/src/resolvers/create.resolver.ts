@@ -3,16 +3,26 @@
  * @packageDocumentation
  */
 // eslint-disable-next-line max-classes-per-file
-import { Class, DeepPartial } from '@nestjs-query/core';
+import { Class, DeepPartial, applyFilter } from '@nestjs-query/core';
+import { Args, ArgsType, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
-import { InputType, ArgsType, Args, Resolver, PartialType } from '@nestjs/graphql';
 import { DTONames, getDTONames } from '../common';
-import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
-import { CreateManyInputType, CreateOneInputType, MutationArgsType } from '../types';
-import { ResolverMutation } from '../decorators';
+import { ResolverMutation, ResolverSubscription } from '../decorators';
+import { EventType, getDTOEventName } from '../subscription';
+import {
+  CreateManyInputType,
+  CreateOneInputType,
+  MutationArgsType,
+  SubscriptionArgsType,
+  SubscriptionFilterInputType,
+} from '../types';
 import { transformAndValidate } from './helpers';
+import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
 
-export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>> extends ResolverOpts {
+export type CreatedEvent<DTO> = { [eventName: string]: DTO };
+
+export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>>
+  extends SubscriptionResolverOpts {
   /**
    * The Input DTO that should be used to create records.
    */
@@ -31,6 +41,8 @@ export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends Service
   createOne(input: MutationArgsType<CreateOneInputType<C>>): Promise<DTO>;
 
   createMany(input: MutationArgsType<CreateManyInputType<C>>): Promise<DTO[]>;
+
+  createdSubscription(input?: SubscriptionArgsType<DTO>): AsyncIterator<CreatedEvent<DTO>>;
 }
 
 /** @internal */
@@ -70,6 +82,10 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
 ): Class<CreateResolver<DTO, C>> & B => {
   const dtoNames = getDTONames(DTOClass, opts);
   const { baseName, pluralBaseName } = dtoNames;
+  const enableSubscriptions = opts.enableSubscriptions === true;
+  const enableOneSubscriptions = opts.one?.enableSubscriptions ?? enableSubscriptions;
+  const enableManySubscriptions = opts.many?.enableSubscriptions ?? enableSubscriptions;
+  const createdEvent = getDTOEventName(EventType.CREATED, DTOClass);
   const {
     CreateDTOClass = defaultCreateDTO(dtoNames, DTOClass),
     CreateOneInput = defaultCreateOneInput(dtoNames, CreateDTOClass),
@@ -92,18 +108,58 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
   @ArgsType()
   class CM extends MutationArgsType(CreateManyInput) {}
 
+  @InputType(`Create${baseName}SubscriptionFilterInput`)
+  class SI extends SubscriptionFilterInputType(DTOClass) {}
+
+  @ArgsType()
+  class SA extends SubscriptionArgsType(SI) {}
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subscriptionFilter = (payload: any, variables: SA): boolean => {
+    if (variables.input?.filter) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const dto = payload[createdEvent] as DTO;
+      return applyFilter(dto, variables.input.filter);
+    }
+    return true;
+  };
+
   @Resolver(() => DTOClass, { isAbstract: true })
   class CreateResolverBase extends BaseClass {
     @ResolverMutation(() => DTOClass, { name: `createOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async createOne(@Args() input: CO): Promise<DTO> {
       const createOne = await transformAndValidate(CO, input);
-      return this.service.createOne(createOne.input.input);
+      const created = await this.service.createOne(createOne.input.input);
+      if (enableOneSubscriptions) {
+        await this.publishCreatedEvent(created);
+      }
+      return created;
     }
 
     @ResolverMutation(() => [DTOClass], { name: `createMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
     async createMany(@Args() input: CM): Promise<DTO[]> {
       const createMany = await transformAndValidate(CM, input);
-      return this.service.createMany(createMany.input.input);
+      const created = await this.service.createMany(createMany.input.input);
+      if (enableManySubscriptions) {
+        await Promise.all(created.map((c) => this.publishCreatedEvent(c)));
+      }
+      return created;
+    }
+
+    async publishCreatedEvent(dto: DTO): Promise<void> {
+      if (this.pubSub) {
+        await this.pubSub.publish(createdEvent, { [createdEvent]: dto });
+      }
+    }
+
+    @ResolverSubscription(() => DTOClass, { name: createdEvent, filter: subscriptionFilter }, commonResolverOpts, {
+      enableSubscriptions: enableOneSubscriptions || enableManySubscriptions,
+    })
+    createdSubscription(@Args() input?: SA): AsyncIterator<CreatedEvent<DTO>> {
+      if (!this.pubSub || !(enableManySubscriptions || enableOneSubscriptions)) {
+        throw new Error(`Unable to subscribe to ${createdEvent}`);
+      }
+      return this.pubSub.asyncIterator<CreatedEvent<DTO>>(createdEvent);
     }
   }
   return CreateResolverBase;

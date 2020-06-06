@@ -12,3 +12,5 @@ export { DeleteManyInputType } from './delete-many-input.type';
 export { ConnectionCursorType, ConnectionCursorScalar } from './cursor.scalar';
 export { RelationsInputType } from './relations-input.type';
 export { RelationInputType } from './relation-input.type';
+export { SubscriptionArgsType } from './subscription-args.type';
+export { SubscriptionFilterInputType } from './subscription-filter-input.type';
