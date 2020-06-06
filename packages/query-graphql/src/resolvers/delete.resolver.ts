@@ -136,6 +136,8 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
         enableSubscriptions: enableOneSubscriptions,
       },
     )
+    // input required so graphql subscription filtering will work.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     deletedOneSubscription(@Args() input?: DOSA): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
       if (!enableOneSubscriptions || !this.pubSub) {
         throw new Error(`Unable to subscribe to ${deletedOneEvent}`);

@@ -7,22 +7,27 @@ type BetweenComparisonOperators = 'between' | 'notBetween';
 type RangeComparisonOperators = 'gt' | 'gte' | 'lt' | 'lte';
 type BooleanComparisonOperators = 'eq' | 'neq' | 'is' | 'isNot';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isLikeComparisonOperator = (op: any): op is LikeComparisonOperators => {
   return op === 'like' || op === 'notLike' || op === 'iLike' || op === 'notILike';
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isInComparisonOperators = (op: any): op is InComparisonOperators => {
   return op === 'in' || op === 'notIn';
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isBetweenComparisonOperators = (op: any): op is BetweenComparisonOperators => {
   return op === 'between' || op === 'notBetween';
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isRangeComparisonOperators = (op: any): op is RangeComparisonOperators => {
   return op === 'gt' || op === 'gte' || op === 'lt' || op === 'lte';
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isBooleanComparisonOperators = (op: any): op is BooleanComparisonOperators => {
   return op === 'eq' || op === 'neq' || op === 'is' || op === 'isNot';
 };

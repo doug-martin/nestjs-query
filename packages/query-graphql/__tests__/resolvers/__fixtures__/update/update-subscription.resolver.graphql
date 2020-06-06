@@ -81,7 +81,7 @@ input StringFieldComparison {
 
 type Subscription {
   updatedOneTestResolverDTO(input: UpdateOneTestResolverDTOSubscriptionFilterInput): TestResolverDTO!
-  updatedManyTestResolverDTO: UpdateManyResponse!
+  updatedManyTestResolverDTOS: UpdateManyResponse!
 }
 
 input UpdateOneTestResolverDTOSubscriptionFilterInput {

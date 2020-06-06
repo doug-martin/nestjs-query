@@ -155,6 +155,8 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
     @ResolverSubscription(() => DTOClass, { name: createdEvent, filter: subscriptionFilter }, commonResolverOpts, {
       enableSubscriptions: enableOneSubscriptions || enableManySubscriptions,
     })
+    // input required so graphql subscription filtering will work.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     createdSubscription(@Args() input?: SA): AsyncIterator<CreatedEvent<DTO>> {
       if (!this.pubSub || !(enableManySubscriptions || enableOneSubscriptions)) {
         throw new Error(`Unable to subscribe to ${createdEvent}`);

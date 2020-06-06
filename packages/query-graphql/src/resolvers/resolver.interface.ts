@@ -1,7 +1,7 @@
 import { QueryService } from '@nestjs-query/core';
-import { PubSub } from 'graphql-subscriptions';
 import { DTONamesOpts } from '../common';
 import { ResolverMethodOpts, SubscriptionResolverMethodOpts } from '../decorators';
+import { GraphQLPubSub } from '../subscription';
 import { RelationsOpts } from './relations';
 
 export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
@@ -27,7 +27,7 @@ export interface SubscriptionResolverOpts extends SubscriptionResolverMethodOpts
 /** @internal */
 export interface ServiceResolver<DTO> {
   service: QueryService<DTO>;
-  readonly pubSub?: PubSub;
+  readonly pubSub?: GraphQLPubSub;
 }
 
 /** @internal */

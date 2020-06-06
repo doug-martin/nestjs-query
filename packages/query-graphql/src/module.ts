@@ -1,7 +1,7 @@
 import { Assembler, NestjsQueryCoreModule, Class } from '@nestjs-query/core';
 import { DynamicModule, ForwardReference, Provider } from '@nestjs/common';
 import { AutoResolverOpts, createResolvers } from './providers';
-import { defaultPubSub, pubSubToken } from './subscription';
+import { defaultPubSub, pubSubToken, GraphQLPubSub } from './subscription';
 
 export interface NestjsQueryGraphqlModuleOpts {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,7 +11,7 @@ export interface NestjsQueryGraphqlModuleOpts {
   assemblers?: Class<Assembler<any, any>>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resolvers: AutoResolverOpts<any, any, unknown, unknown>[];
-  pubSub?: Provider;
+  pubSub?: Provider<GraphQLPubSub>;
 }
 
 export class NestjsQueryGraphQLModule {
@@ -31,7 +31,7 @@ export class NestjsQueryGraphQLModule {
     };
   }
 
-  static defaultPubSubProvider(): Provider {
+  static defaultPubSubProvider(): Provider<GraphQLPubSub> {
     return { provide: pubSubToken(), useValue: defaultPubSub() };
   }
 }
