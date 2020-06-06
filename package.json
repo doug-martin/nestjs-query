@@ -8,6 +8,7 @@
     "compile": "lerna run compile",
     "lerna:pub": "lerna publish from-git",
     "lerna:version": "lerna version",
+    "lerna:release": "npm run build && npm run lerna:version && npm run lerna:pub",
     "test": "npm run lint && npm run jest",
     "test:e2e": "npm run jest:e2e",
     "lint": "eslint --ext=.ts .",
