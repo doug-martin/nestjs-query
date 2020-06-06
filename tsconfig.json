@@ -4,16 +4,16 @@
         "baseUrl": "./packages",
         "composite": true,
         "paths": {
-            "@nestjs-query/core": ["core"],
-            "@nestjs-query/query-graphql": ["query-graphql"],
-            "@nestjs-query/query-typeorm": ["query-typeorm"],
-            "@nestjs-query/query-sequelize": ["query-sequelize"]
+            "@nestjs-query/core": ["core/src"],
+            "@nestjs-query/query-graphql": ["query-graphql/src"],
+            "@nestjs-query/query-typeorm": ["query-typeorm/src"],
+            "@nestjs-query/query-sequelize": ["query-sequelize/src"]
         }
     },
     "references": [
-        {"path": "./packages/core"},
-        {"path": "./packages/query-graphql"},
-        {"path": "./packages/query-typeorm"},
-        {"path": "./packages/query-sequelize"}
+        {"path": "./packages/core/tsconfig.build.json"},
+        {"path": "./packages/query-graphql/tsconfig.build.json"},
+        {"path": "./packages/query-typeorm/tsconfig.build.json"},
+        {"path": "./packages/query-sequelize/tsconfig.build.json"}
     ]
 }
