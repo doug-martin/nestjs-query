@@ -119,6 +119,8 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
 
 * `UpdateDTOClass` - The input DTO to use for update mutations. See [Create and Update DTOs](#create-and-update-dtos)
 
+* `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions).
+
 * `create` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `CreateDTOClass` - The input DTO to use for create mutations.
     * `CreateOneInput` - The `InputType` to use for create one mutations.
@@ -154,8 +156,10 @@ The `create`, `read`, `update`, and `delete` options above all accept the follow
 * `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to all endpoints.
 * `filters=[]` - An array of [filters](https://docs.nestjs.com/exception-filters) to add to all endpoints.
 * `decorators=[]` - An array of custom `PropertyDecorator` or `MethodDecorators` to add to the endpoint.
+* `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions).
 * `one`, `many` - Both the `one` and `many` accept the following options:
     * `disabled=false` - Set to true to disable the endpoint.
+    * `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions).
     * `guards=[]` - An array of [guards](https://docs.nestjs.com/guards) to add to the endpoint.
     * `interceptors=[]` - An array of [interceptors](https://docs.nestjs.com/interceptors) to add to the endpoint.
     * `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to the endpoint.
