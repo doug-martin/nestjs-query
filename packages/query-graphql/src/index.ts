@@ -15,4 +15,4 @@ export * from './federation';
 export { DTONamesOpts } from './common';
 export { NestjsQueryGraphQLModule } from './module';
 export { AutoResolverOpts } from './providers';
-export { pubSubToken } from './subscription';
+export { pubSubToken, GraphQLPubSub } from './subscription';

@@ -1,6 +1,7 @@
 import { Class } from '@nestjs-query/core';
 import { PubSub } from 'graphql-subscriptions';
 import { DTONamesOpts, getDTONames } from '../common';
+import { GraphQLPubSub } from './pub-sub.interface';
 
 export { GraphQLPubSub } from './pub-sub.interface';
 
@@ -21,8 +22,8 @@ export const getDTOEventName = <DTO>(type: EventType, DTOClass: Class<DTO>, opts
 
 export const pubSubToken = (): string => 'pub_sub';
 
-let pubSub: PubSub;
-export const defaultPubSub = (): PubSub => {
+let pubSub: GraphQLPubSub;
+export const defaultPubSub = (): GraphQLPubSub => {
   if (!pubSub) {
     pubSub = new PubSub();
   }

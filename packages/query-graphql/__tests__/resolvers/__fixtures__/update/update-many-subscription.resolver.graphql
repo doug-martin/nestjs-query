@@ -80,5 +80,5 @@ input StringFieldComparison {
 }
 
 type Subscription {
-  updatedManyTestResolverDTO: UpdateManyResponse!
+  updatedManyTestResolverDTOS: UpdateManyResponse!
 }

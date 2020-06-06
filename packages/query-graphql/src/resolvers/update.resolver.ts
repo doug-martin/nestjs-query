@@ -167,6 +167,8 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
         enableSubscriptions: enableOneSubscriptions,
       },
     )
+    // input required so graphql subscription filtering will work.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updatedOneSubscription(@Args() input?: UOSA): AsyncIterator<UpdatedEvent<DTO>> {
       if (!enableOneSubscriptions || !this.pubSub) {
         throw new Error(`Unable to subscribe to ${updateOneEvent}`);
