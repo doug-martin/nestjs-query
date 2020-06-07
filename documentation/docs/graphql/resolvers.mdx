@@ -73,7 +73,7 @@ Resolvers work the same as they do in [`@nestjs/graphql`](https://docs.nestjs.co
 your class with `@Resolver`.
 
 :::note
- In this example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers) to understand how to convert to and from the DTO/Entity.
+ In this example the DTO and entity are the same shape, if you have a case where they are different or have computed fields check out [Assemblers](../concepts/assemblers.mdx) to understand how to convert to and from the DTO/Entity.
 :::
 
 ```ts title="todo-item.resolver.ts"
@@ -107,7 +107,7 @@ When using the auto-generated resolver or extending `CRUDResolver` the methods t
 * `deleteOneTodoItem` - Delete a single `TodoItem` by id.
 * `deleteManyTodoItems` - Delete multiple `TodoItems` using a filter.
 
-You can read more about the methods in the [Queries](./queries) and [Mutations](./mutations) docs.
+You can read more about the methods in the [Queries](./queries.mdx) and [Mutations](./mutations.mdx) docs.
 
 ---
 
@@ -119,7 +119,7 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
 
 * `UpdateDTOClass` - The input DTO to use for update mutations. See [Create and Update DTOs](#create-and-update-dtos)
 
-* `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions).
+* `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions.mdx).
 
 * `create` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `CreateDTOClass` - The input DTO to use for create mutations.
@@ -156,10 +156,10 @@ The `create`, `read`, `update`, and `delete` options above all accept the follow
 * `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to all endpoints.
 * `filters=[]` - An array of [filters](https://docs.nestjs.com/exception-filters) to add to all endpoints.
 * `decorators=[]` - An array of custom `PropertyDecorator` or `MethodDecorators` to add to the endpoint.
-* `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions).
+* `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions.mdx).
 * `one`, `many` - Both the `one` and `many` accept the following options:
     * `disabled=false` - Set to true to disable the endpoint.
-    * `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions).
+    * `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions.mdx).
     * `guards=[]` - An array of [guards](https://docs.nestjs.com/guards) to add to the endpoint.
     * `interceptors=[]` - An array of [interceptors](https://docs.nestjs.com/interceptors) to add to the endpoint.
     * `pipes=[]` - An array of [pipes](https://docs.nestjs.com/pipes) to add to the endpoint.
@@ -792,7 +792,7 @@ to pick and choose what functionality you want to expose.
 :::note
 This is advanced usage of the resolvers API and is subject to change!
 * All examples below can be achieved with resolver options.
-* The following resolvers do not expose relations options, to add relations options see [Relateable](./relations#relatable)
+* The following resolvers do not expose relations options, to add relations options see [Relateable](./relations.mdx#relatable)
 :::
 
 ### `CreateResolver`

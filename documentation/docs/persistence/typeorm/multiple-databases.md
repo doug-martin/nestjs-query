@@ -135,7 +135,7 @@ Now the `NestjsQueryGraphQLModule` will create a `Resolver` for the `SecretDTO` 
 
 ## Custom TypeOrmQueryService
 
-If you want to create a custom `SecretService` responsible for the database access, a custom [QueryService](../services), you need to pass an additional argument to the `@InjectRepository()` decorator that indicates the `Connection` you are using. This string has to match the `name` property in the `TypeOrmModule` options!
+If you want to create a custom `SecretService` responsible for the database access, a custom [QueryService](../services.mdx), you need to pass an additional argument to the `@InjectRepository()` decorator that indicates the `Connection` you are using. This string has to match the `name` property in the `TypeOrmModule` options!
 
 ```ts title="secret/secret.service.ts"
 import { QueryService } from '@nestjs-query/core';

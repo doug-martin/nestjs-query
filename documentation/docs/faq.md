@@ -16,7 +16,7 @@ Typically this indicates that your DTO contains additional fields that your enti
 
 To fix:
 * Ensure that your entity has the same fields and field types as your DTO.
-* If you have fields that should be computed or derived from your entity try using an [Assembler](./concepts/assemblers) 
+* If you have fields that should be computed or derived from your entity try using an [Assembler](./concepts/assemblers.mdx) 
 
 ## Do I need a DTO and Entity?
 
