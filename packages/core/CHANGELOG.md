@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/doug-martin/nestjs-query/compare/v0.11.8...v0.12.0) (2020-06-07)
+
+
+### Features
+
+* **graphql:** Add graphql subscriptions ([5dc987f](https://github.com/doug-martin/nestjs-query/commit/5dc987f435e0680192313e208359839f9c21d70b))
+
+
+
+
+
 ## [0.11.8](https://github.com/doug-martin/nestjs-query/compare/v0.11.7...v0.11.8) (2020-05-30)
 
 **Note:** Version bump only for package @nestjs-query/core

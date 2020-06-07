@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/doug-martin/nestjs-query/compare/v0.11.8...v0.12.0) (2020-06-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency apollo-server-express to v2.14.2 [security] ([36c9649](https://github.com/doug-martin/nestjs-query/commit/36c964914ef8d75968d3649de5e9fe9d2af22f4e))
+* **deps:** update dependency graphql-tools to v6.0.4 ([aaa6233](https://github.com/doug-martin/nestjs-query/commit/aaa62331b0894bd9d0d3f7b35dbc9c0b3d5425c0))
+* **deps:** update dependency graphql-tools to v6.0.5 ([fe181ae](https://github.com/doug-martin/nestjs-query/commit/fe181ae67a10599974a58246cbababbb07ff32e5))
+* **deps:** update dependency graphql-tools to v6.0.8 ([27cb278](https://github.com/doug-martin/nestjs-query/commit/27cb2789834c37dc4974d335aa7a435ca6850de0))
+
+
+
+
+
 ## [0.11.8](https://github.com/doug-martin/nestjs-query/compare/v0.11.7...v0.11.8) (2020-05-30)
 
 **Note:** Version bump only for package nest-graphql-typeorm-soft-delete

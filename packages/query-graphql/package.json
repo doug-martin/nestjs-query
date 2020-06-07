@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-graphql",
-  "version": "0.11.8",
+  "version": "0.12.0",
   "description": "Nestjs graphql query adapter",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
@@ -38,7 +38,7 @@
     "url": "https://github.com/doug-martin/nestjs-query/issues"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.11.8",
+    "@nestjs-query/core": "0.12.0",
     "lodash.omit": "^4.5.0",
     "lower-case-first": "^2.0.1",
     "pluralize": "^8.0.0",
@@ -65,10 +65,10 @@
     "@types/pluralize": "0.0.29",
     "class-transformer": "0.2.3",
     "class-validator": "0.12.2",
-    "graphql-subscriptions": "1.1.0",
     "dataloader": "2.0.0",
     "graphql": "15.0.0",
     "graphql-relay": "0.6.0",
+    "graphql-subscriptions": "1.1.0",
     "ts-mockito": "2.5.0",
     "typescript": "3.9.5"
   }
