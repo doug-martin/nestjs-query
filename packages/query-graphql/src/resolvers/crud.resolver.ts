@@ -1,4 +1,5 @@
 import { Class, DeepPartial } from '@nestjs-query/core';
+import { PagingStrategies } from '../types';
 import { ReferencesOpts, Relatable, RelationsOpts } from './relations';
 import { Readable, ReadResolver, ReadResolverOpts } from './read.resolver';
 import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver';
@@ -21,6 +22,7 @@ export interface CRUDResolverOpts<
    */
   UpdateDTOClass?: Class<U>;
   enableSubscriptions?: boolean;
+  pagingStrategy?: PagingStrategies;
   create?: CreateResolverOpts<DTO, C>;
   read?: ReadResolverOpts<DTO>;
   update?: UpdateResolverOpts<DTO, U>;
@@ -65,6 +67,7 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
     CreateDTOClass,
     UpdateDTOClass,
     enableSubscriptions,
+    pagingStrategy,
     relations = {},
     references = {},
     create = {},
@@ -75,9 +78,9 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
   } = opts;
 
   const referencable = Refereceable(DTOClass, referenceBy);
-  const relatable = Relatable(DTOClass, relations, references);
+  const relatable = Relatable(DTOClass, { relations, references, pagingStrategy });
   const creatable = Creatable(DTOClass, { CreateDTOClass, enableSubscriptions, ...create });
-  const readable = Readable(DTOClass, read);
+  const readable = Readable(DTOClass, { pagingStrategy, ...read });
   const updateable = Updateable(DTOClass, { UpdateDTOClass, enableSubscriptions, ...update });
   const deleteResolver = DeleteResolver(DTOClass, { enableSubscriptions, ...deleteArgs });
 

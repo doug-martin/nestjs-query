@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Class, Query } from '@nestjs-query/core';
-import { QueryArgsType } from '../query';
+import { CursorQueryArgsType } from '../query';
 import { PageInfoType } from './page-info.type';
 import { EdgeType } from './edge.type';
 import { getMetadataStorage } from '../../metadata';
@@ -10,7 +10,7 @@ import { createPager, QueryMany } from './pager';
 export interface StaticConnectionType<DTO> {
   createFromPromise(
     queryMany: (query: Query<DTO>) => Promise<DTO[]>,
-    query: QueryArgsType<DTO>,
+    query: CursorQueryArgsType<DTO>,
   ): Promise<ConnectionType<DTO>>;
   new (): ConnectionType<DTO>;
 }
@@ -35,7 +35,10 @@ export function ConnectionType<DTO>(TItemClass: Class<DTO>): StaticConnectionTyp
   const PIT = PageInfoType();
   @ObjectType(`${objMetadata.name}Connection`)
   class AbstractConnection implements ConnectionType<DTO> {
-    static async createFromPromise(queryMany: QueryMany<DTO>, query: QueryArgsType<DTO>): Promise<AbstractConnection> {
+    static async createFromPromise(
+      queryMany: QueryMany<DTO>,
+      query: CursorQueryArgsType<DTO>,
+    ): Promise<AbstractConnection> {
       const { pageInfo, edges } = await pager.page(queryMany, query);
       return new AbstractConnection(
         // create the appropriate graphql instance

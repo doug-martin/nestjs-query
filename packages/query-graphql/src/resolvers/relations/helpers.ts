@@ -16,11 +16,8 @@ export const flattenRelations = <RT extends ResolverRelation<unknown> | Resolver
   return Object.keys(relationOptions).map((name) => ({ dtoName: name, ...relationOptions[name] }));
 };
 
-export const removeRelationOpts = <
-  Relation,
-  RT extends ResolverRelation<Relation> | ResolverRelationReference<unknown, Relation>
->(
-  opts: RT,
+export const removeRelationOpts = <Relation>(
+  opts: ResolverRelation<Relation> | ResolverRelationReference<unknown, Relation>,
 ): ResolverMethodOpts => {
   return omit(
     opts,
@@ -39,8 +36,10 @@ export const getRelationsFromMetadata = <DTO>(DTOClass: Class<DTO>): RelationsOp
   const relations: RelationsOpts = {};
   const metaRelations = getMetadataStorage().getRelations(DTOClass) ?? [];
   metaRelations.forEach((r) => {
-    const opts = { ...r.relationOpts, DTO: r.relationTypeFunc() };
-    if (r.isConnection) {
+    const relationType = r.relationTypeFunc();
+    const DTO = Array.isArray(relationType) ? relationType[0] : relationType;
+    const opts = { ...r.relationOpts, DTO };
+    if (r.isMany) {
       relations.many = { ...relations.many, [r.name]: opts };
     } else {
       relations.one = { ...relations.one, [r.name]: opts };

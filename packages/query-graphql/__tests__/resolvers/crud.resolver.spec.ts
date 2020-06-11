@@ -1,10 +1,10 @@
 // eslint-disable-next-line max-classes-per-file
 import { ID, ObjectType } from '@nestjs/graphql';
-import { CRUDResolver, FilterableField } from '../../src';
+import { CRUDResolver, FilterableField, PagingStrategies } from '../../src';
 import * as createResolver from '../../src/resolvers/create.resolver';
+import * as deleteResolver from '../../src/resolvers/delete.resolver';
 import * as readResolver from '../../src/resolvers/read.resolver';
 import * as updateResolver from '../../src/resolvers/update.resolver';
-import * as deleteResolver from '../../src/resolvers/delete.resolver';
 
 describe('CrudResolver', () => {
   const creatableSpy = jest.spyOn(createResolver, 'Creatable');
@@ -112,6 +112,22 @@ describe('CrudResolver', () => {
     expect(readableSpy).toHaveBeenCalledTimes(1);
 
     expect(updateableSpy).toHaveBeenCalledWith(TestResolverDTO, { UpdateDTOClass: UpdateTestResolverDTO, guards: [] });
+    expect(updateableSpy).toHaveBeenCalledTimes(1);
+
+    expect(deleteResolverSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(deleteResolverSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should pass the provided pagingStrategy to the ReadResolver', () => {
+    CRUDResolver(TestResolverDTO, { pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+
+    expect(creatableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
+    expect(creatableSpy).toHaveBeenCalledTimes(1);
+
+    expect(readableSpy).toHaveBeenCalledWith(TestResolverDTO, { pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+    expect(readableSpy).toHaveBeenCalledTimes(1);
+
+    expect(updateableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
     expect(updateableSpy).toHaveBeenCalledTimes(1);
 
     expect(deleteResolverSpy).toHaveBeenCalledWith(TestResolverDTO, {});

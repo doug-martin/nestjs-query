@@ -1,4 +1,5 @@
 import { Class } from '@nestjs-query/core';
+import { PagingStrategies } from '../../types/query/paging';
 import { ServiceResolver } from '../resolver.interface';
 import { getReferencesFromMetadata, getRelationsFromMetadata, mergeReferences, mergeRelations } from './helpers';
 import { ReadRelationsMixin } from './read-relations.resolver';
@@ -7,20 +8,29 @@ import { ReferencesOpts, RelationsOpts } from './relations.interface';
 import { RemoveRelationsMixin } from './remove-relations.resolver';
 import { UpdateRelationsMixin } from './update-relations.resolver';
 
-export const Relatable = <DTO>(DTOClass: Class<DTO>, relations: RelationsOpts, referencesOpts: ReferencesOpts<DTO>) => <
+export interface RelatableOpts<DTO> {
+  pagingStrategy?: PagingStrategies;
+  relations: RelationsOpts;
+  references: ReferencesOpts<DTO>;
+}
+
+export const Relatable = <DTO>(DTOClass: Class<DTO>, opts: RelatableOpts<DTO>) => <
   B extends Class<ServiceResolver<DTO>>
 >(
   Base: B,
 ): B => {
+  const { pagingStrategy, references, relations } = opts;
   const metaRelations = getRelationsFromMetadata(DTOClass);
   const mergedRelations = mergeRelations(relations, metaRelations);
 
   const metaReferences = getReferencesFromMetadata(DTOClass);
-  const mergedReferences = mergeReferences(referencesOpts, metaReferences);
+  const mergedReferences = mergeReferences(references, metaReferences);
 
-  const references = ReferencesRelationMixin(DTOClass, mergedReferences);
-  const readRelations = ReadRelationsMixin(DTOClass, mergedRelations);
-  const updateRelations = UpdateRelationsMixin(DTOClass, mergedRelations);
+  const referencesMixin = ReferencesRelationMixin(DTOClass, mergedReferences);
+  const readRelationsMixin = ReadRelationsMixin(DTOClass, { ...mergedRelations, pagingStrategy });
+  const updateRelationsMixin = UpdateRelationsMixin(DTOClass, mergedRelations);
 
-  return references(readRelations(updateRelations(RemoveRelationsMixin(DTOClass, mergedRelations)(Base))));
+  return referencesMixin(
+    readRelationsMixin(updateRelationsMixin(RemoveRelationsMixin(DTOClass, mergedRelations)(Base))),
+  );
 };

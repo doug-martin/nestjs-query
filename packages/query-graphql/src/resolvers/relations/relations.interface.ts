@@ -1,6 +1,7 @@
 import { Class } from '@nestjs-query/core';
 import { DTONamesOpts } from '../../common';
 import { ResolverMethodOpts } from '../../decorators';
+import { QueryArgsTypeOpts } from '../../types';
 
 export type ReferencesKeys<DTO, Reference> = {
   [F in keyof Reference]?: keyof DTO;
@@ -23,11 +24,12 @@ export interface ResolverRelationReference<DTO, Reference> extends DTONamesOpts,
   nullable?: boolean;
 }
 
-export interface ResolverRelation<Relation> extends DTONamesOpts, ResolverMethodOpts {
+export interface ResolverRelation<Relation> extends DTONamesOpts, ResolverMethodOpts, QueryArgsTypeOpts<Relation> {
   /**
    * The class type of the relation.
    */
   DTO: Class<Relation>;
+
   /**
    * The name of the relation to use when fetching from the QueryService
    */

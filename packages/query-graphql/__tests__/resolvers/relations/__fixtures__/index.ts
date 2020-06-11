@@ -24,6 +24,9 @@ export const readRelationManyNullableSDL = readGraphql(
 export const readRelationManyDisabledSDL = readGraphql(
   resolve(__dirname, 'read', 'read-relation-many-disabled.resolver.graphql'),
 );
+export const readRelationManyLimitOffset = readGraphql(
+  resolve(__dirname, 'read', 'read-relation-many-limit-offset.resolver.graphql'),
+);
 
 export const updateRelationEmptySDL = readGraphql(
   resolve(__dirname, 'update', 'update-relation-empty.resolver.graphql'),

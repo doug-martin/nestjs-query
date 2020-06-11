@@ -1,6 +1,6 @@
 import { Query } from '@nestjs-query/core';
 import { offsetToCursor } from 'graphql-relay';
-import { QueryArgsType } from '../../query';
+import { CursorQueryArgsType } from '../../query';
 import { EdgeType } from '../edge.type';
 import { PagingMeta, PagingResults, QueryMany, QueryResults } from './interfaces';
 
@@ -18,7 +18,7 @@ const DEFAULT_PAGING_META = (): PagingMeta => ({
 });
 
 export class LimitOffsetPager<DTO> {
-  async page(queryMany: QueryMany<DTO>, query: QueryArgsType<DTO>): Promise<PagingResults<DTO>> {
+  async page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>): Promise<PagingResults<DTO>> {
     const pagingMeta = this.getPageMeta(query);
     if (!LimitOffsetPager.pagingMetaHasLimitOrOffset(pagingMeta)) {
       return EMPTY_PAGING_RESULTS();
@@ -55,7 +55,7 @@ export class LimitOffsetPager<DTO> {
     return { nodes, hasExtraNode };
   }
 
-  getPageMeta(query: QueryArgsType<DTO>): PagingMeta {
+  getPageMeta(query: CursorQueryArgsType<DTO>): PagingMeta {
     const { paging } = query;
     if (!paging) {
       return DEFAULT_PAGING_META();

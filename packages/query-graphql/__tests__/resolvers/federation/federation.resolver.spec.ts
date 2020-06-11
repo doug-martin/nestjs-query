@@ -1,7 +1,7 @@
 import { when, objectContaining, deepEqual } from 'ts-mockito';
 import { Resolver, Query } from '@nestjs/graphql';
 import { FederationResolver, RelationsOpts } from '../../../src/resolvers';
-import { QueryArgsType } from '../../../src/types';
+import { CursorQueryArgsType } from '../../../src/types';
 import { expectSDL } from '../../__fixtures__';
 import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 import {
@@ -131,7 +131,7 @@ describe('FederationResolver', () => {
         id: 'id-1',
         stringField: 'foo',
       };
-      const query: QueryArgsType<TestRelationDTO> = {
+      const query: CursorQueryArgsType<TestRelationDTO> = {
         filter: { id: { eq: 'id-2' } },
         paging: { first: 1 },
       };
@@ -151,7 +151,7 @@ describe('FederationResolver', () => {
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const result = await resolver.queryRelations(dto, query, {});
+      const result = await resolver.queryRelationsConnection(dto, query, {});
       return expect(result).toEqual({
         edges: [
           {
@@ -177,7 +177,7 @@ describe('FederationResolver', () => {
         id: 'id-1',
         stringField: 'foo',
       };
-      const query: QueryArgsType<TestRelationDTO> = {
+      const query: CursorQueryArgsType<TestRelationDTO> = {
         filter: { id: { eq: 'id-2' } },
         paging: { first: 1 },
       };
@@ -197,7 +197,7 @@ describe('FederationResolver', () => {
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const result = await resolver.queryCustoms(dto, query, {});
+      const result = await resolver.queryCustomsConnection(dto, query, {});
       return expect(result).toEqual({
         edges: [
           {
