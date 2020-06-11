@@ -1,9 +1,15 @@
-import { Class, Paging } from '@nestjs-query/core';
+import { Paging } from '@nestjs-query/core';
 import { Min, Validate, IsPositive } from 'class-validator';
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { cursorToOffset } from 'graphql-relay';
-import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
-import { CannotUseWith, CannotUseWithout, IsUndefined } from '../validators';
+import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
+import { CannotUseWith, CannotUseWithout, IsUndefined } from '../../validators';
+import { PagingStrategies } from './constants';
+
+export interface StaticCursorPagingType {
+  strategy: PagingStrategies.CURSOR;
+  new (): CursorPagingType;
+}
 
 export interface CursorPagingType extends Paging {
   before?: ConnectionCursorType;
@@ -13,15 +19,17 @@ export interface CursorPagingType extends Paging {
 }
 
 /** @internal */
-let graphQLCursorPaging: Class<CursorPagingType> | null = null;
+let graphQLCursorPaging: StaticCursorPagingType | null = null;
 
-export const CursorPagingType = (): Class<CursorPagingType> => {
+export const CursorPagingType = (): StaticCursorPagingType => {
   if (graphQLCursorPaging) {
     return graphQLCursorPaging;
   }
   // based on https://github.com/MichalLytek/type-graphql/issues/142#issuecomment-433120114
   @InputType('CursorPaging')
   class GraphQLCursorPagingImpl implements CursorPagingType {
+    static strategy: PagingStrategies.CURSOR = PagingStrategies.CURSOR;
+
     @Field(() => ConnectionCursorScalar, {
       nullable: true,
       description: 'Paginate before opaque cursor',

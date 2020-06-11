@@ -1,16 +1,26 @@
-import { when, objectContaining } from 'ts-mockito';
-import { Resolver, ArgsType, Field, ObjectType, Query } from '@nestjs/graphql';
-import { ConnectionType, QueryArgsType, ReadResolver, ReadResolverOpts } from '../../src';
+// eslint-disable-next-line max-classes-per-file
+import { ArgsType, Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
+import { objectContaining, when } from 'ts-mockito';
+import {
+  ConnectionType,
+  CursorQueryArgsType,
+  LimitOffsetQueryArgsType,
+  PagingStrategies,
+  QueryArgsType,
+  ReadResolver,
+  ReadResolverOpts,
+} from '../../src';
 import { expectSDL } from '../__fixtures__';
 import {
+  createResolverFromNest,
   readBasicResolverSDL,
   readCustomConnectionResolverSDL,
   readCustomNameResolverSDL,
   readCustomQueryResolverSDL,
   readDisabledResolverSDL,
+  readLimitOffsetQueryResolverSDL,
   readManyDisabledResolverSDL,
   readOneDisabledResolverSDL,
-  createResolverFromNest,
   TestResolverDTO,
   TestService,
 } from './__fixtures__';
@@ -21,6 +31,7 @@ class TestResolver extends ReadResolver(TestResolverDTO) {
     super(service);
   }
 }
+
 describe('ReadResolver', () => {
   const expectResolverSDL = (sdl: string, opts?: ReadResolverOpts<TestResolverDTO>) => {
     @Resolver(() => TestResolverDTO)
@@ -30,6 +41,7 @@ describe('ReadResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
+
     return expectSDL([TestSDLResolver], sdl);
   };
 
@@ -45,14 +57,33 @@ describe('ReadResolver', () => {
     return expectResolverSDL(readDisabledResolverSDL, { disabled: true });
   });
 
-  describe('#query', () => {
+  describe('query many ', () => {
     it('should not create a new type if the QueryArgs is supplied', () => {
       @ArgsType()
       class CustomQueryArgs extends QueryArgsType(TestResolverDTO) {
         @Field()
         other!: string;
       }
+
       return expectResolverSDL(readCustomQueryResolverSDL, { QueryArgs: CustomQueryArgs });
+    });
+
+    it('should use a connection if custom QueryArgs is a cursor', () => {
+      @ArgsType()
+      class CustomQueryArgs extends QueryArgsType(TestResolverDTO, { pagingStrategy: PagingStrategies.CURSOR }) {}
+
+      return expectResolverSDL(readBasicResolverSDL, { QueryArgs: CustomQueryArgs });
+    });
+
+    it('should not use a connection if pagingStrategy is LIMIT_OFFSET', () => {
+      return expectResolverSDL(readLimitOffsetQueryResolverSDL, { pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+    });
+
+    it('should not use a connection if custom QueryArgs is a limit offset', () => {
+      @ArgsType()
+      class CustomQueryArgs extends QueryArgsType(TestResolverDTO, { pagingStrategy: PagingStrategies.LIMIT_OFFSET }) {}
+
+      return expectResolverSDL(readLimitOffsetQueryResolverSDL, { QueryArgs: CustomQueryArgs });
     });
 
     it('should not expose query method if disabled', () => {
@@ -65,41 +96,65 @@ describe('ReadResolver', () => {
         @Field()
         other!: string;
       }
+
       return expectResolverSDL(readCustomConnectionResolverSDL, { Connection: CustomConnection });
     });
 
-    it('should call the service query with the provided input', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
-      const input: QueryArgsType<TestResolverDTO> = {
-        filter: {
-          stringField: { eq: 'foo' },
-        },
-        paging: { first: 1 },
-      };
-      const output: TestResolverDTO[] = [
-        {
-          id: 'id-1',
-          stringField: 'foo',
-        },
-      ];
-      when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 0 } }))).thenResolve(output);
-      const result = await resolver.queryMany(input);
-      return expect(result).toEqual({
-        edges: [
-          {
-            cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-            node: {
-              id: 'id-1',
-              stringField: 'foo',
-            },
+    describe('#queryManyConnection', () => {
+      it('should call the service query with the provided input', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const input: CursorQueryArgsType<TestResolverDTO> = {
+          filter: {
+            stringField: { eq: 'foo' },
           },
-        ],
-        pageInfo: {
-          endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          hasNextPage: false,
-          hasPreviousPage: false,
-          startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-        },
+          paging: { first: 1 },
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 0 } }))).thenResolve(output);
+        const result = await resolver.queryManyConnection(input);
+        return expect(result).toEqual({
+          edges: [
+            {
+              cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              node: {
+                id: 'id-1',
+                stringField: 'foo',
+              },
+            },
+          ],
+          pageInfo: {
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          },
+        });
+      });
+    });
+
+    describe('#queryMany', () => {
+      it('should call the service query with the provided input', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const input: LimitOffsetQueryArgsType<TestResolverDTO> = {
+          filter: {
+            stringField: { eq: 'foo' },
+          },
+          paging: { limit: 1 },
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        when(mockService.query(objectContaining(input))).thenResolve(output);
+        const result = await resolver.queryMany(input);
+        return expect(result).toEqual(output);
       });
     });
   });

@@ -1,5 +1,5 @@
 import { Query } from '@nestjs-query/core';
-import { QueryArgsType } from '../../query';
+import { CursorQueryArgsType } from '../../query';
 import { EdgeType } from '../edge.type';
 import { PageInfoType } from '../page-info.type';
 
@@ -23,5 +23,5 @@ export interface PagingResults<DTO> {
 export type QueryMany<DTO> = (query: Query<DTO>) => Promise<DTO[]>;
 
 export interface Pager<DTO> {
-  page(queryMany: QueryMany<DTO>, query: QueryArgsType<DTO>): Promise<PagingResults<DTO>>;
+  page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>): Promise<PagingResults<DTO>>;
 }

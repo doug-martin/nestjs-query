@@ -1,5 +1,5 @@
 import { ObjectType } from '@nestjs/graphql';
-import { Relation, Connection } from '../../src';
+import { Relation, Connection, PagingStrategies } from '../../src';
 import { getMetadataStorage } from '../../src/metadata';
 
 @ObjectType()
@@ -18,8 +18,24 @@ describe('@Relation', () => {
     const relation = relations![0];
     expect(relation.name).toBe('test');
     expect(relation.relationTypeFunc).toBe(relationFn);
-    expect(relation.isConnection).toBe(false);
+    expect(relation.isMany).toBe(false);
     expect(relation.relationOpts).toBe(relationOpts);
+  });
+
+  it('should set the isMany flag if the relationFn returns an array', () => {
+    const relationFn = () => [TestRelation];
+    const relationOpts = { disableRead: true };
+    @ObjectType()
+    @Relation('tests', relationFn, relationOpts)
+    class TestDTO {}
+
+    const relations = getMetadataStorage().getRelations(TestDTO);
+    expect(relations).toHaveLength(1);
+    const relation = relations![0];
+    expect(relation.name).toBe('tests');
+    expect(relation.relationTypeFunc).toBe(relationFn);
+    expect(relation.isMany).toBe(true);
+    expect(relation.relationOpts).toEqual({ ...relationOpts, pagingStrategy: PagingStrategies.LIMIT_OFFSET });
   });
 });
 
@@ -36,7 +52,7 @@ describe('@Connection', () => {
     const relation = relations![0];
     expect(relation.name).toBe('test');
     expect(relation.relationTypeFunc).toBe(relationFn);
-    expect(relation.isConnection).toBe(true);
-    expect(relation.relationOpts).toBe(relationOpts);
+    expect(relation.isMany).toBe(true);
+    expect(relation.relationOpts).toEqual({ pagingStrategy: PagingStrategies.CURSOR, ...relationOpts });
   });
 });

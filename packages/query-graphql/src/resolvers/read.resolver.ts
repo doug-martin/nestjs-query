@@ -1,20 +1,30 @@
 import { Class } from '@nestjs-query/core';
+import { Args, ArgsType, ID, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
-import { ArgsType, ID, Resolver, Args } from '@nestjs/graphql';
 import { getDTONames } from '../common';
-import { QueryArgsTypeOpts } from '../types/query/query-args.type';
-import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
-import { ConnectionType, QueryArgsType, StaticConnectionType, StaticQueryType } from '../types';
 import { ResolverQuery } from '../decorators';
-import { transformAndValidate } from './helpers';
+import {
+  ConnectionType,
+  CursorQueryArgsType,
+  LimitOffsetQueryArgsType,
+  PagingStrategies,
+  QueryArgsType,
+  QueryArgsTypeOpts,
+  StaticConnectionType,
+  StaticPagingTypes,
+  StaticQueryArgsType,
+} from '../types';
+import { createAllQueryArgsType, transformAndValidate } from './helpers';
+import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 
 export interface ReadResolverOpts<DTO> extends ResolverOpts, QueryArgsTypeOpts<DTO> {
-  QueryArgs?: StaticQueryType<DTO>;
+  QueryArgs?: StaticQueryArgsType<DTO, StaticPagingTypes>;
   Connection?: StaticConnectionType<DTO>;
 }
 
 export interface ReadResolver<DTO> extends ServiceResolver<DTO> {
-  queryMany(query: QueryArgsType<DTO>): Promise<ConnectionType<DTO>>;
+  queryMany(query: LimitOffsetQueryArgsType<DTO>): Promise<DTO[]>;
+  queryManyConnection(query: CursorQueryArgsType<DTO>): Promise<ConnectionType<DTO>>;
   findById(id: string | number): Promise<DTO | undefined>;
 }
 
@@ -31,9 +41,12 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
   const { baseNameLower, pluralBaseNameLower } = getDTONames(DTOClass, opts);
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
+  const { CursorQueryType, LimitOffsetQueryType } = createAllQueryArgsType(DTOClass, opts, QueryArgs);
+  @ArgsType()
+  class CursorQueryArgs extends CursorQueryType {}
 
   @ArgsType()
-  class QA extends QueryArgs {}
+  class LimitOffsetQueryArgs extends LimitOffsetQueryType {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadResolverBase extends BaseClass {
@@ -42,10 +55,28 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
       return this.service.findById(id);
     }
 
-    @ResolverQuery(() => Connection, { name: pluralBaseNameLower }, commonResolverOpts, opts.many ?? {})
-    async queryMany(@Args() query: QA): Promise<ConnectionType<DTO>> {
-      const qa = await transformAndValidate(QA, query);
+    @ResolverQuery(
+      () => Connection,
+      { name: pluralBaseNameLower },
+      { disabled: QueryArgs.PageType.strategy !== PagingStrategies.CURSOR },
+      commonResolverOpts,
+      opts.many ?? {},
+    )
+    async queryManyConnection(@Args() query: CursorQueryArgs): Promise<ConnectionType<DTO>> {
+      const qa = await transformAndValidate(CursorQueryArgs, query);
       return Connection.createFromPromise((q) => this.service.query(q), qa);
+    }
+
+    @ResolverQuery(
+      () => [DTOClass],
+      { name: pluralBaseNameLower },
+      { disabled: QueryArgs.PageType.strategy !== PagingStrategies.LIMIT_OFFSET },
+      commonResolverOpts,
+      opts.many ?? {},
+    )
+    async queryMany(@Args() query: LimitOffsetQueryArgs): Promise<DTO[]> {
+      const qa = await transformAndValidate(LimitOffsetQueryArgs, query);
+      return this.service.query(qa);
     }
   }
   return ReadResolverBase;

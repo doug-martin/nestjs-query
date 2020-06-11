@@ -18,8 +18,8 @@ interface FilterableFieldDescriptor<T> {
 
 interface RelationDescriptor<Relation> {
   name: string;
-  relationTypeFunc: () => Class<Relation>;
-  isConnection: boolean;
+  relationTypeFunc: () => Class<Relation> | Class<Relation>[];
+  isMany: boolean;
   relationOpts?: Omit<ResolverRelation<Relation>, 'DTO'>;
 }
 
@@ -114,7 +114,8 @@ export class GraphQLQueryMetadataStorage {
     return this.getValue(this.edgeTypeStorage, type);
   }
 
-  addRelation<T>(type: Class<T>, name: string, relation: RelationDescriptor<unknown>): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addRelation<T>(type: Class<T>, name: string, relation: RelationDescriptor<any>): void {
     let relations: RelationDescriptor<unknown>[] | undefined = this.relationStorage.get(type);
     if (!relations) {
       relations = [];
@@ -127,7 +128,8 @@ export class GraphQLQueryMetadataStorage {
     return this.relationStorage.get(type);
   }
 
-  addReference<T>(type: Class<T>, name: string, reference: ReferenceDescriptor<T, unknown>): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addReference<T>(type: Class<T>, name: string, reference: ReferenceDescriptor<T, any>): void {
     let references: ReferenceDescriptor<unknown, unknown>[] | undefined = this.referenceStorage.get(type);
     if (!references) {
       references = [];
