@@ -89,10 +89,10 @@ The following example finds a `TodoItem` by id.
 
 ---
 
-## Querying
+## Cursor Based Querying
 
 As described above the `CRUDResolver` will expose a query method called `todoItems`. The result will be a
-[`connection`](https://facebook.github.io/relay/graphql/connections.htm) that you can use to page through results.
+[`connection`](https://relay.dev/graphql/connections.htm) that you can use to page through results.
 
 By default if you do not provided an arguments you can query for all records.
 
@@ -738,6 +738,411 @@ In this example we sort by completed and title.
         }
       ]
     }
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+## Offset Based Querying
+
+An alternative to cursor based querying is to use the `OFFSET` `pagingStrategy` described is the [resolvers documentation](./resolvers.mdx#options)
+
+When using the strategy queries that return multiple records will return an array instead of a connection.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems {
+    id
+    title
+    completed
+    created
+    updated
+  }
+}
+```
+
+
+</TabItem>
+<TabItem value="response">
+
+
+```json
+{
+  "data": {
+    "todoItems": [
+      {
+        "id": "1",
+        "title": "Create Nest App",
+        "completed": true,
+        "created": "2020-06-12T08:15:18.876Z",
+        "updated": "2020-06-12T08:15:18.876Z"
+      },
+      {
+        "id": "2",
+        "title": "Create Entity",
+        "completed": false,
+        "created": "2020-06-12T08:15:18.876Z",
+        "updated": "2020-06-12T08:15:18.876Z"
+      },
+      {
+        "id": "3",
+        "title": "Create Entity Service",
+        "completed": false,
+        "created": "2020-06-12T08:15:18.876Z",
+        "updated": "2020-06-12T08:15:18.876Z"
+      },
+      {
+        "id": "4",
+        "title": "Add Todo Item Resolver",
+        "completed": false,
+        "created": "2020-06-12T08:15:18.876Z",
+        "updated": "2020-06-12T08:15:18.876Z"
+      },
+      {
+        "id": "5",
+        "title": "How to create item With Sub Tasks",
+        "completed": false,
+        "created": "2020-06-12T08:15:18.876Z",
+        "updated": "2020-06-12T08:15:18.876Z"
+      }
+    ]
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### Filtering
+
+Filtering in `query-graphql` has has an object based syntax
+
+For a full reference of filter operations [see filter reference](../concepts/queries#filter-reference)
+
+The following example filters for all todoItems that are marked completed.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems(filter: {completed: {is: true}}) {
+    id
+    title
+    completed
+    created
+    updated
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": [
+      {
+        "id": "1",
+        "title": "Create Nest App",
+        "completed": true,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      }
+    ]
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### Paging
+
+In this example we'll fetch the first 2 records.
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems(paging: {limit: 2}) {
+    id
+    title
+    completed
+    created
+    updated
+  }
+}
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": [
+      {
+        "id": "1",
+        "title": "Create Nest App",
+        "completed": true,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "2",
+        "title": "Create Entity",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      }
+    ]
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+In this example we'll also pass in an offset to fetch the next 2 records.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems(paging: {limit: 2, offset: 2}) {
+    id
+    title
+    completed
+    created
+    updated
+  }
+}
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": [
+      {
+        "id": "3",
+        "title": "Create Entity Service",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "4",
+        "title": "Add Todo Item Resolver",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      }
+    ]
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### Sorting
+
+You can sort by one or more fields by using the `sorting` parameter.
+
+The `sorting` parameter is an array where each item has the following options.
+
+* `field!` - The name of the field to sort by.
+* `direction!` - The direction to sort either `ASC` or `DESC`.
+* `nulls?` - Optional field to set nulls sort order `NULLS_FIRST` or `NULLS_last`
+
+In this example we sort by title descending.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems(sorting: [{ field: title, direction: DESC }]) {
+    id
+    title
+    completed
+    created
+    updated
+  }
+}
+
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": [
+      {
+        "id": "5",
+        "title": "How to create item With Sub Tasks",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "1",
+        "title": "Create Nest App",
+        "completed": true,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "3",
+        "title": "Create Entity Service",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "2",
+        "title": "Create Entity",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "4",
+        "title": "Add Todo Item Resolver",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      }
+    ]
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+In this example we sort by completed and title.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems(
+    sorting: [
+      { field: completed, direction: DESC }
+      { field: title, direction: DESC }
+    ]
+  ) {
+    id
+    title
+    completed
+    created
+    updated
+  }
+}
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": [
+      {
+        "id": "1",
+        "title": "Create Nest App",
+        "completed": true,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "5",
+        "title": "How to create item With Sub Tasks",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "3",
+        "title": "Create Entity Service",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "2",
+        "title": "Create Entity",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      },
+      {
+        "id": "4",
+        "title": "Add Todo Item Resolver",
+        "completed": false,
+        "created": "2020-06-12T08:44:43.555Z",
+        "updated": "2020-06-12T08:44:43.555Z"
+      }
+    ]
   }
 }
 ```
