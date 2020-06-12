@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.com/doug-martin/nestjs-query/compare/v0.12.0...v0.13.0) (2020-06-12)
+
+
+### Features
+
+* **graphql:** Add limit offset paging without connections ([5fc3e90](https://github.com/doug-martin/nestjs-query/commit/5fc3e90c0c738cc653eab57eb0be3c98dae51c3e))
+
+
+
+
+
 # [0.12.0](https://github.com/doug-martin/nestjs-query/compare/v0.11.8...v0.12.0) (2020-06-07)
 
 
