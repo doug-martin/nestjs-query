@@ -169,7 +169,7 @@ describe('ConnectionType', (): void => {
           paging: createPage({ last: 2, before: 'YXJyYXljb25uZWN0aW9uOjM=' }),
         });
         expect(queryMany).toHaveBeenCalledTimes(1);
-        expect(queryMany).toHaveBeenCalledWith({ paging: { limit: 2, offset: 0 } });
+        expect(queryMany).toHaveBeenCalledWith({ paging: { limit: 3, offset: 0 } });
         expect(response).toEqual({
           edges: [
             {

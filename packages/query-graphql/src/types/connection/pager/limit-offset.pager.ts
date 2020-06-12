@@ -35,10 +35,15 @@ export class CursorPager<DTO> {
   }
 
   async runQuery(queryMany: QueryMany<DTO>, query: Query<DTO>, pagingMeta: PagingMeta): Promise<QueryResults<DTO>> {
-    // if paging forward add 1 to limit for check for an additional page.
-    const limit = pagingMeta.isForward ? pagingMeta.limit + 1 : pagingMeta.limit;
+    // Add 1 to the limit so we will fetch an additional node
+    let limit = pagingMeta.limit + 1;
     // if paging backwards remove one from the offset to check for a previous page.
-    const offset = Math.max(0, pagingMeta.isBackward ? pagingMeta.offset - 1 : pagingMeta.offset);
+    let offset = pagingMeta.isBackward ? pagingMeta.offset - 1 : pagingMeta.offset;
+    if (offset < 0) {
+      // if the offset is < 0 it means we underflowed and that we cant have an extra page.
+      offset = 0;
+      limit = pagingMeta.limit;
+    }
     const nodes = await queryMany({ ...query, paging: { limit, offset } });
     // check if we have an additional node
     // if paging forward that indicates we have a next page
