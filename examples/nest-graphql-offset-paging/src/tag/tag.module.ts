@@ -15,7 +15,7 @@ import { TagEntity } from './tag.entity';
           EntityClass: TagEntity,
           CreateDTOClass: TagInputDTO,
           UpdateDTOClass: TagInputDTO,
-          pagingStrategy: PagingStrategies.LIMIT_OFFSET,
+          pagingStrategy: PagingStrategies.OFFSET,
         },
       ],
     }),

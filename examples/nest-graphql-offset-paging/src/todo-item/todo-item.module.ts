@@ -16,7 +16,7 @@ import { TodoItemEntity } from './todo-item.entity';
           EntityClass: TodoItemEntity,
           CreateDTOClass: TodoItemInputDTO,
           UpdateDTOClass: TodoItemUpdateDTO,
-          pagingStrategy: PagingStrategies.LIMIT_OFFSET,
+          pagingStrategy: PagingStrategies.OFFSET,
         },
       ],
     }),

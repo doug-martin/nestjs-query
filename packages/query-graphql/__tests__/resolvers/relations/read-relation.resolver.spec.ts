@@ -1,15 +1,19 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when } from 'ts-mockito';
-import { RelationsOpts } from '../../../src/resolvers';
-import { ReadRelationsResolver } from '../../../src/resolvers/relations';
-import { CursorQueryArgsType, LimitOffsetQueryArgsType, PagingStrategies } from '../../../src/types';
+import {
+  ReadRelationsResolver,
+  RelationsOpts,
+  CursorQueryArgsType,
+  OffsetQueryArgsType,
+  PagingStrategies,
+} from '../../../src';
 import { expectSDL } from '../../__fixtures__';
 import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 import {
   readRelationEmptySDL,
   readRelationManyCustomNameSDL,
   readRelationManyDisabledSDL,
-  readRelationManyLimitOffset,
+  readRelationManyOffset,
   readRelationManyNullableSDL,
   readRelationManySDL,
   readRelationOneCustomNameSDL,
@@ -121,9 +125,9 @@ describe('ReadRelationsResolver', () => {
       });
     });
 
-    it('should not use connections if pagingStrategy is limit offset', () => {
-      return expectResolverSDL(readRelationManyLimitOffset, {
-        many: { relations: { DTO: TestRelationDTO, nullable: true, pagingStrategy: PagingStrategies.LIMIT_OFFSET } },
+    it('should not use connections if pagingStrategy is offset', () => {
+      return expectResolverSDL(readRelationManyOffset, {
+        many: { relations: { DTO: TestRelationDTO, nullable: true, pagingStrategy: PagingStrategies.OFFSET } },
       });
     });
 
@@ -234,7 +238,7 @@ describe('ReadRelationsResolver', () => {
           id: 'id-1',
           stringField: 'foo',
         };
-        const query: LimitOffsetQueryArgsType<TestRelationDTO> = {
+        const query: OffsetQueryArgsType<TestRelationDTO> = {
           filter: { id: { eq: 'id-2' } },
           paging: { limit: 1 },
         };

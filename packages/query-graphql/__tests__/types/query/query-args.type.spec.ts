@@ -3,7 +3,7 @@ import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType } from '../../../src';
-import { expectSDL, cursorQueryArgsTypeSDL, limitOffsetQueryArgsTypeSDL } from '../../__fixtures__';
+import { expectSDL, cursorQueryArgsTypeSDL, offsetQueryArgsTypeSDL } from '../../__fixtures__';
 
 describe('QueryType', (): void => {
   const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
@@ -215,41 +215,41 @@ describe('QueryType', (): void => {
     });
   });
 
-  describe('limit offset query args', () => {
+  describe('offset query args', () => {
     @nestjsGraphql.ArgsType()
-    class TestLimitOffsetQuery extends QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.LIMIT_OFFSET }) {}
+    class TestOffsetQuery extends QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET }) {}
 
     it('create a query for string fields', async () => {
       @nestjsGraphql.Resolver()
       class TestResolver {
         @nestjsGraphql.Query(() => String)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        test(@nestjsGraphql.Args() query: TestLimitOffsetQuery): string {
+        test(@nestjsGraphql.Args() query: TestOffsetQuery): string {
           return 'hello';
         }
       }
-      return expectSDL([TestResolver], limitOffsetQueryArgsTypeSDL);
+      return expectSDL([TestResolver], offsetQueryArgsTypeSDL);
     });
 
     it('should paging to the correct instance of paging', () => {
-      const queryObj: TestLimitOffsetQuery = {
+      const queryObj: TestOffsetQuery = {
         paging: {
           limit: 10,
           offset: 2,
         },
       };
-      const queryInstance = plainToClass(TestLimitOffsetQuery, queryObj);
+      const queryInstance = plainToClass(TestOffsetQuery, queryObj);
       expect(validateSync(queryInstance)).toEqual([]);
-      expect(queryInstance.paging).toBeInstanceOf(TestLimitOffsetQuery.PageType);
+      expect(queryInstance.paging).toBeInstanceOf(TestOffsetQuery.PageType);
     });
 
     it('should sorting to the correct instance of sorting', () => {
-      const queryObj: TestLimitOffsetQuery = {
+      const queryObj: TestOffsetQuery = {
         sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
       };
-      const queryInstance = plainToClass(TestLimitOffsetQuery, queryObj);
+      const queryInstance = plainToClass(TestOffsetQuery, queryObj);
       expect(validateSync(queryInstance)).toEqual([]);
-      expect(queryInstance.sorting![0]).toBeInstanceOf(TestLimitOffsetQuery.SortType);
+      expect(queryInstance.sorting![0]).toBeInstanceOf(TestOffsetQuery.SortType);
     });
 
     it('should make filter to the correct instance of sorting', () => {
@@ -258,14 +258,14 @@ describe('QueryType', (): void => {
           stringField: { eq: 'foo' },
         },
       };
-      const queryInstance = plainToClass(TestLimitOffsetQuery, queryObj);
+      const queryInstance = plainToClass(TestOffsetQuery, queryObj);
       expect(validateSync(queryInstance)).toEqual([]);
-      expect(queryInstance.filter).toBeInstanceOf(TestLimitOffsetQuery.FilterType);
+      expect(queryInstance.filter).toBeInstanceOf(TestOffsetQuery.FilterType);
     });
 
     describe('options', () => {
-      it('by default first should be set to 10 in the paging object', () => {
-        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+      it('by default limit should be set to 10 in the paging object', () => {
+        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: { limit: 10 },
           description: 'Limit or page results.',
@@ -281,7 +281,7 @@ describe('QueryType', (): void => {
       });
 
       it('allow specifying a defaultResultSize', () => {
-        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.LIMIT_OFFSET, defaultResultSize: 2 });
+        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET, defaultResultSize: 2 });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: { limit: 2 },
           description: 'Limit or page results.',
@@ -300,7 +300,7 @@ describe('QueryType', (): void => {
         const queryObj: CursorQueryArgsType<TestDto> = {
           paging: { limit: 10 },
         };
-        const QT = QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.LIMIT_OFFSET, maxResultsSize: 5 });
+        const QT = QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET, maxResultsSize: 5 });
         const queryInstance = plainToClass(QT, queryObj);
         expect(validateSync(queryInstance)).toEqual([
           {
@@ -317,7 +317,7 @@ describe('QueryType', (): void => {
 
       it('allow specifying a default filter', () => {
         const filter = { booleanField: { is: true } };
-        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.LIMIT_OFFSET, defaultFilter: filter });
+        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET, defaultFilter: filter });
         expect(fieldSpy).toHaveBeenNthCalledWith(1, expect.any(Function), {
           defaultValue: { limit: 10 },
           description: 'Limit or page results.',
@@ -334,7 +334,7 @@ describe('QueryType', (): void => {
 
       it('allow specifying a default sort', () => {
         const sort: SortField<TestDto>[] = [{ field: 'booleanField', direction: SortDirection.DESC }];
-        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.LIMIT_OFFSET, defaultSort: sort });
+        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET, defaultSort: sort });
         expect(fieldSpy).toHaveBeenNthCalledWith(1, expect.any(Function), {
           defaultValue: { limit: 10 },
           description: 'Limit or page results.',

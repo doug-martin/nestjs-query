@@ -16,7 +16,7 @@ import { SubTaskEntity } from './sub-task.entity';
           EntityClass: SubTaskEntity,
           CreateDTOClass: CreateSubTaskDTO,
           UpdateDTOClass: SubTaskUpdateDTO,
-          pagingStrategy: PagingStrategies.LIMIT_OFFSET,
+          pagingStrategy: PagingStrategies.OFFSET,
         },
       ],
     }),

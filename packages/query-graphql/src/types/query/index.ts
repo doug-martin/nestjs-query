@@ -1,16 +1,16 @@
 export {
   QueryArgsType,
   CursorQueryArgsType,
-  LimitOffsetQueryArgsType,
+  OffsetQueryArgsType,
   StaticQueryArgsType,
   QueryArgsTypeOpts,
 } from './query-args.type';
 export { FilterType } from './filter.type';
 export {
   CursorPagingType,
-  LimitOffsetPagingType,
+  OffsetPagingType,
   StaticCursorPagingType,
-  StaticLimitOffsetPagingType,
+  StaticOffsetPagingType,
   PagingTypes,
   StaticPagingTypes,
   PagingStrategies,

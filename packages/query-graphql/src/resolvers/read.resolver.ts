@@ -6,13 +6,13 @@ import { ResolverQuery } from '../decorators';
 import {
   ConnectionType,
   CursorQueryArgsType,
-  LimitOffsetQueryArgsType,
   PagingStrategies,
   QueryArgsType,
   QueryArgsTypeOpts,
   StaticConnectionType,
   StaticPagingTypes,
   StaticQueryArgsType,
+  OffsetQueryArgsType,
 } from '../types';
 import { createAllQueryArgsType, transformAndValidate } from './helpers';
 import { BaseServiceResolver, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
@@ -23,7 +23,7 @@ export interface ReadResolverOpts<DTO> extends ResolverOpts, QueryArgsTypeOpts<D
 }
 
 export interface ReadResolver<DTO> extends ServiceResolver<DTO> {
-  queryMany(query: LimitOffsetQueryArgsType<DTO>): Promise<DTO[]>;
+  queryMany(query: OffsetQueryArgsType<DTO>): Promise<DTO[]>;
   queryManyConnection(query: CursorQueryArgsType<DTO>): Promise<ConnectionType<DTO>>;
   findById(id: string | number): Promise<DTO | undefined>;
 }
@@ -41,12 +41,12 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
   const { baseNameLower, pluralBaseNameLower } = getDTONames(DTOClass, opts);
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
-  const { CursorQueryType, LimitOffsetQueryType } = createAllQueryArgsType(DTOClass, opts, QueryArgs);
+  const { CursorQueryType, OffsetQueryType } = createAllQueryArgsType(DTOClass, opts, QueryArgs);
   @ArgsType()
   class CursorQueryArgs extends CursorQueryType {}
 
   @ArgsType()
-  class LimitOffsetQueryArgs extends LimitOffsetQueryType {}
+  class OffsetQueryArgs extends OffsetQueryType {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadResolverBase extends BaseClass {
@@ -70,12 +70,12 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
     @ResolverQuery(
       () => [DTOClass],
       { name: pluralBaseNameLower },
-      { disabled: QueryArgs.PageType.strategy !== PagingStrategies.LIMIT_OFFSET },
+      { disabled: QueryArgs.PageType.strategy !== PagingStrategies.OFFSET },
       commonResolverOpts,
       opts.many ?? {},
     )
-    async queryMany(@Args() query: LimitOffsetQueryArgs): Promise<DTO[]> {
-      const qa = await transformAndValidate(LimitOffsetQueryArgs, query);
+    async queryMany(@Args() query: OffsetQueryArgs): Promise<DTO[]> {
+      const qa = await transformAndValidate(OffsetQueryArgs, query);
       return this.service.query(qa);
     }
   }

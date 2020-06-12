@@ -6,7 +6,7 @@ import {
   QueryArgsType,
   QueryArgsTypeOpts,
   StaticCursorQueryArgsType,
-  StaticLimitOffsetQueryArgsType,
+  StaticOffsetQueryArgsType,
   StaticQueryArgsType,
 } from '../types/query/query-args.type';
 import { PagingStrategies, StaticPagingTypes } from '../types';
@@ -26,7 +26,7 @@ export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Pro
 
 type QueryArgsTypes<DTO> = {
   CursorQueryType: StaticCursorQueryArgsType<DTO>;
-  LimitOffsetQueryType: StaticLimitOffsetQueryArgsType<DTO>;
+  OffsetQueryType: StaticOffsetQueryArgsType<DTO>;
 };
 export const createAllQueryArgsType = <DTO>(
   DTOClass: Class<DTO>,
@@ -37,9 +37,9 @@ export const createAllQueryArgsType = <DTO>(
     QA && QA.PageType.strategy === PagingStrategies.CURSOR
       ? (QA as StaticCursorQueryArgsType<DTO>)
       : QueryArgsType(DTOClass, { ...opts, pagingStrategy: PagingStrategies.CURSOR });
-  const LimitOffsetQueryType =
-    QA && QA.PageType.strategy === PagingStrategies.LIMIT_OFFSET
-      ? (QA as StaticLimitOffsetQueryArgsType<DTO>)
-      : QueryArgsType(DTOClass, { ...opts, pagingStrategy: PagingStrategies.LIMIT_OFFSET });
-  return { CursorQueryType, LimitOffsetQueryType };
+  const OffsetQueryType =
+    QA && QA.PageType.strategy === PagingStrategies.OFFSET
+      ? (QA as StaticOffsetQueryArgsType<DTO>)
+      : QueryArgsType(DTOClass, { ...opts, pagingStrategy: PagingStrategies.OFFSET });
+  return { CursorQueryType, OffsetQueryType };
 };

@@ -17,7 +17,7 @@ export function Relation<DTO, Relation>(
     getMetadataStorage().addRelation(DTOClass, name, {
       name,
       isMany,
-      relationOpts: isMany ? { pagingStrategy: PagingStrategies.LIMIT_OFFSET, ...options } : options,
+      relationOpts: isMany ? { pagingStrategy: PagingStrategies.OFFSET, ...options } : options,
       relationTypeFunc: relationTypeFunction,
     });
     return DTOClass;

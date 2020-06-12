@@ -67,9 +67,9 @@ describe('Relatable', () => {
     @ObjectType()
     class Test {}
 
-    Relatable(Test, { pagingStrategy: PagingStrategies.LIMIT_OFFSET, relations, references: {} })(BaseServiceResolver);
+    Relatable(Test, { pagingStrategy: PagingStrategies.OFFSET, relations, references: {} })(BaseServiceResolver);
 
-    expect(readMixinSpy).toHaveBeenCalledWith(Test, { ...relations, pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+    expect(readMixinSpy).toHaveBeenCalledWith(Test, { ...relations, pagingStrategy: PagingStrategies.OFFSET });
     expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
     expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
     expect(referenceMixinSpy).toHaveBeenCalledWith(Test, {});

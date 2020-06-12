@@ -38,6 +38,6 @@ export const pagingInputTypeSDL = readGraphql(resolve(__dirname, './paging-input
 export const pageInfoObjectTypeSDL = readGraphql(resolve(__dirname, './page-info-object-type.graphql'));
 export const sortingInputTypeSDL = readGraphql(resolve(__dirname, './sorting-input-type.graphql'));
 export const cursorQueryArgsTypeSDL = readGraphql(resolve(__dirname, './cursor-query-args-type.graphql'));
-export const limitOffsetQueryArgsTypeSDL = readGraphql(resolve(__dirname, './limit-offset-query-args-type.graphql'));
+export const offsetQueryArgsTypeSDL = readGraphql(resolve(__dirname, './offset-query-args-type.graphql'));
 export const connectionObjectTypeSDL = readGraphql(resolve(__dirname, './connection-object-type.graphql'));
 export const edgeObjectTypeSDL = readGraphql(resolve(__dirname, './edge-object-type.graphql'));

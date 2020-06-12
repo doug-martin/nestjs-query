@@ -54,13 +54,13 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   const loaderName = `load${pluralBaseName}For${DTOClass.name}`;
   const queryLoader = new QueryRelationsLoader<DTO, Relation>(relationDTO, relationName);
   const isCursorPaging = !relation.pagingStrategy || relation.pagingStrategy === PagingStrategies.CURSOR;
-  const { LimitOffsetQueryType, CursorQueryType } = createAllQueryArgsType(relationDTO, relation);
+  const { OffsetQueryType, CursorQueryType } = createAllQueryArgsType(relationDTO, relation);
 
   @ArgsType()
   class RelationCursorQA extends CursorQueryType {}
 
   @ArgsType()
-  class RelationLimitOffsetQA extends LimitOffsetQueryType {}
+  class RelationOffsetQA extends OffsetQueryType {}
 
   const CT = ConnectionType(relationDTO);
   @Resolver(() => DTOClass, { isAbstract: true })
@@ -91,10 +91,10 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
     )
     async [`query${pluralBaseName}`](
       @Parent() dto: DTO,
-      @Args() q: RelationLimitOffsetQA,
+      @Args() q: RelationOffsetQA,
       @Context() context: ExecutionContext,
     ): Promise<Relation[]> {
-      const qa = await transformAndValidate(RelationLimitOffsetQA, q);
+      const qa = await transformAndValidate(RelationOffsetQA, q);
       const loader = DataLoaderFactory.getOrCreateLoader(context, loaderName, queryLoader.createLoader(this.service));
       return loader.load({ dto, query: qa });
     }
