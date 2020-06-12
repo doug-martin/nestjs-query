@@ -1015,8 +1015,8 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
       ...{ completed: { is: true } },
     };
 
-    // call the original queryMany method with the new query
-    return this.queryMany({ ...query, ...{ filter } });
+    // call the original queryManyConnection method with the new query
+    return this.queryManyConnection({ ...query, ...{ filter } });
   }
 }
 
@@ -1059,10 +1059,10 @@ const filter: Filter<TodoItemDTO> = {
 Here we do a shallow copy of the `filter` and add `completed: { is: true }`. This will override any completed arguments
 that an end user may have provided to ensure we always query for completed todos.
 
-Finally we call the `queryMany` method from the `CRUDResolver` with the new filter set on the query.
+Finally we call the `queryManyConnection` method from the `CRUDResolver` with the new filter set on the query.
 
 ```ts
-// call the original queryMany method with the new query
-return this.queryMany({ ...query, ...{ filter } });
+// call the original queryManyConnection method with the new query
+return this.queryManyConnection({ ...query, ...{ filter } });
 ```
 
