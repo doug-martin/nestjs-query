@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.1](https://github.com/doug-martin/nestjs-query/compare/v0.13.0...v0.13.1) (2020-06-12)
+
+
+### Bug Fixes
+
+* **graphql,paging:** Fix for [#281](https://github.com/doug-martin/nestjs-query/issues/281) paging backwards windowing ([c319344](https://github.com/doug-martin/nestjs-query/commit/c3193440504f55ef8b8b08b486ae01c1b54595bc))
+
+
+
+
+
 # [0.13.0](https://github.com/doug-martin/nestjs-query/compare/v0.12.0...v0.13.0) (2020-06-12)
 
 
