@@ -31,3 +31,11 @@ DTOs also provide a clean separation between the fields and relationships that t
 :::note
 When combining your entity and DTO you should **NOT** decorate your relationships with `@Field` or `@FilterableField`. Instead, add them to your CRUDResolver. [Read More](./persistence/services#relations) 
 :::
+
+## Can I use OFFSET paging instead of a cursor with connections?
+
+Yes! You can specify a `pagingStrategy` option to customize how paging is handled at the resolver or relation level. 
+
+For more information and examples check out the following docs
+* [Resolver Paging Strategy](./graphql/resolvers.mdx#paging-strategy)
+* [Relations](./graphql/relations.mdx#many-relation)

@@ -121,6 +121,8 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
 
 * `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions.mdx).
 
+* `pagingStrategy?` - Specify to use an alternate paging strategy (`CURSOR`, `OFFSET`). See [Paging Strategy](#paging-strategy).
+
 * `create` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `CreateDTOClass` - The input DTO to use for create mutations.
     * `CreateOneInput` - The `InputType` to use for create one mutations.
@@ -129,6 +131,7 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
 * `read` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `QueryArgs` - The `ArgsType` to use to filter records in `queryMany` endpoint.
     * `Connection` - The `ObjectType` to return from the `queryMany` endpoint.
+    * `pagingStrategy?` - Specify to use an alternate paging strategy (`CURSOR`, `OFFSET`). See [Paging Strategy](#paging-strategy).
     * `defaultResultSize=10` - The default number of results to return
     * `maxResultsSize=50` - The maximum number of results an end user can specify to return from a query.
     * `defaultSort=[]` - The default sort to use when querying for records.
@@ -702,6 +705,72 @@ import { TodoItemEntity } from './todo-item.entity';
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   read: { defaultResultSize: 5, maxResultsSize: 20 },
+}) {
+  constructor(
+      @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+  ) {
+    super(service);
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### Paging Strategy
+
+By default `nestjs-query` uses a `cursor` based paging strategy and returns a [connection](https://relay.dev/graphql/connections.htm) for all query many endpoints.
+
+You can override the default `pagingStrategy` to an alternate strategy such as `OFFSET`.
+
+When using the `OFFSET` strategy your the paging arguments for a many query will accept a `limit` and/or `offset`. This will also change the return type from a `Connection` to a list of items.
+
+<Tabs
+  defaultValue="module"
+  values={[
+    { label: 'NestjsQueryGraphQLModule', value: 'module', },
+    { label: 'CRUDResolver', value: 'resolver', },
+  ]
+}>
+<TabItem value="module">
+
+```ts title="todo-item.module.ts" {14}
+import { NestjsQueryGraphQLModule, PagingStrategies } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [{
+        DTOClass: TodoItemDTO,
+        EntityClass: TodoItemEntity,
+        pagingStrategy: PagingStrategies.OFFSET,
+      }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
+<TabItem value="resolver">
+
+```ts title="todo-item.resolver.ts" {9}
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Resolver()
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  pagingStrategy: PagingStrategies.OFFSET,
 }) {
   constructor(
       @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>

@@ -7,13 +7,14 @@ import TabItem from '@theme/TabItem';
 
 When using the `nestjs-query` you can specify relations that should be exposed for the DTO using the following decorators.
 
-* `@Relation` - A single relation use this when the relation should be a single item (e.g. one-to-one, many-to-one)
-* `@Connection` - A connection the represents a collection (e.g, many-to-many, one-to-many)
+* `@Relation` - A relation that is:
+    * a single value (one-to-one, many-to-one)
+    * an array of values that should use `OFFSET` based paging.
+* `@Connection` - A connection that represents a collection that should use `cursor` based pagination. (e.g, many-to-many, one-to-many)
 
 :::note
 When loading relations a [dataloader](https://github.com/graphql/dataloader) that is scoped to the request will be used. This prevents the n+1 problem.
 :::
-
 
 In the following examples we are going to use the following entities.
 
@@ -107,7 +108,9 @@ export class SubTaskEntity {
 
 ## @Relation Decorator
 
-### DTO Definition
+### Single Relation
+
+#### DTO Definition
 
 Based on the entities defined above we can add a `todoItem` relation to the `SubTask` by creating the following `SubTaskDTO` with a `@Relation` decorator.
 
@@ -140,7 +143,7 @@ export class SubTaskDTO {
 }
 ```
 
-When using `@Relation` decorator lets `nestjs-query` know to expose the following endpoints:
+The `@Relation` decorator lets `nestjs-query` know to expose the following endpoints:
 
 * `subTask.todoItem` - A `query` to retrieve the `SubTasks` `TodoItem`
 * `setTodoItemOnSubTask` - A `mutation` to set the `TodoItem` on a `SubTask`.
@@ -151,7 +154,7 @@ When using `@Relation` decorator lets `nestjs-query` know to expose the followin
 In this example we `disableRemove`, because `todoItem` is not nullable, by specifying the `disableRemove` option.
 :::
 
-### Resolver
+#### Resolver
 
 To set up the resolver you can use the `NestjsQueryGraphQLModule`.
 
@@ -202,6 +205,111 @@ input RelationInput {
 
 :::note
 If `disableRemove` was set to `false` or not specified a `removeTodoItemFromSubTask` mutation would also be exposed with the same arguments as `setTodoItemOnSubTask`.
+:::
+
+### Many Relation
+
+You can also use the `@Relation` decorator to define a relation that returns an array of values.
+
+:::note
+The preferred method for adding a relation that represents multiple records is to use the [@Connection decorator](#connection-decorator)
+:::
+
+Based on the entity definition above we can define a `TodoItemDTO` with a `subTasks` relation.
+
+```ts title="todo-item/todo-item.dto.ts" {6}
+import { FilterableField, Connection } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/sub-task.dto'
+
+@ObjectType('TodoItem')
+@Relation('subTasks', () => [SubTaskDTO], { disableRemove: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+Notce how the relation is defined as `[SubTaskDTO]` this lets `nestjs-query` know that it should return an array of `subTasks`
+
+When specifying a many relation a couple of endpoints will automatically be generated. In this example the following are generated.
+
+* `todoItem.subTasks` - A `query` to retrieve a `TodoItems` `SubTasks`.
+    * The `subTasks` property will accept a [query](../concepts/queries.mdx) to allow you to filter, page and sort results.
+    * The `subTasks` will be returned as an array of results.
+* `addSubTasksToTodoItem` - A `mutation` to add `SubTasks` to a `TodoItem`.
+
+:::note
+In this example we `disableRemove` because `SubTasks` cannot exist without a `TodoItem`.
+:::
+
+#### Resolver
+
+To set up the resolver you can use the `NestjsQueryGraphQLModule`.
+
+```ts title="todo-item/todo-item.module.ts"
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+The generated schema will contain a `TodoItem` type like the following.
+
+```graphql
+type TodoItem {
+  id: ID!
+  title: String!
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  subTasks(
+    paging: LimitOffsetPaging = { limit: 10 }
+    filter: SubTaskFilter = {}
+    sorting: [SubTaskSort!] = []
+  ): [SubTask!]!
+}
+```
+
+The following mutations will also be automatically exposed.
+
+```graphql
+type Mutation {
+   addSubTasksToTodoItem(input: RelationsInput!): TodoItem!
+}
+
+input RelationsInput {
+  id: ID!
+  relationIds: [ID!]!
+}
+```
+
+:::note
+If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodoItem` mutation would also be exposed with the same arguments as `addSubTasksToTodoItem`.
 :::
 
 ## @Connection Decorator
@@ -567,6 +675,29 @@ export class SubTaskResolver extends CRUDResolver(SubTaskDTO, {
 
 </TabItem>
 </Tabs>
+
+You can also specify the `pagingStrategy` option to change the default paging behavior for a single relation.
+
+In this example we'll disable connections and cursor based paging in favor of an `OFFSET` based strategy that returns an array of values.
+
+```ts title="todo-item/todo-item.resolver.ts" {9-11}
+import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/dto/sub-task.dto';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemService } from './todo-item.service';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  relations: {
+    many: { subTasks: { DTO: SubTaskDTO, pagingStrategy: PagingStrategies.OFFSET, disableRemove: true } },
+  },
+}) {
+  constructor(readonly service: TodoItemService) {
+    super(service);
+  }
+}
+```
 
 ### Relation Mixin
 
