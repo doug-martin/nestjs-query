@@ -6,10 +6,10 @@ import { PropertyMax } from '../validators/property-max.validator';
 import { FilterType } from './filter.type';
 import {
   CursorPagingType,
-  LimitOffsetPagingType,
+  OffsetPagingType,
   PagingTypes,
   StaticCursorPagingType,
-  StaticLimitOffsetPagingType,
+  StaticOffsetPagingType,
   StaticPagingTypes,
 } from './paging';
 import { PagingStrategies } from './paging/constants';
@@ -105,18 +105,18 @@ export function CursorQueryArgsType<DTO>(
   return QueryArgs;
 }
 
-export type StaticLimitOffsetQueryArgsType<DTO> = StaticQueryArgsType<DTO, StaticLimitOffsetPagingType>;
-export type LimitOffsetQueryArgsType<DTO> = QueryArgsType<DTO, LimitOffsetPagingType>;
-export function LimitOffsetQueryArgsType<DTO>(
+export type StaticOffsetQueryArgsType<DTO> = StaticQueryArgsType<DTO, StaticOffsetPagingType>;
+export type OffsetQueryArgsType<DTO> = QueryArgsType<DTO, OffsetPagingType>;
+export function OffsetQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: QueryArgsTypeOpts<DTO> = defaultQueryOpts,
-): StaticLimitOffsetQueryArgsType<DTO> {
+): StaticOffsetQueryArgsType<DTO> {
   const F = FilterType(DTOClass);
   const S = SortType(DTOClass);
-  const P = LimitOffsetPagingType();
+  const P = OffsetPagingType();
 
   @ArgsType()
-  class QueryArgs implements LimitOffsetQueryArgsType<DTO> {
+  class QueryArgs implements OffsetQueryArgsType<DTO> {
     static SortType = S;
 
     static FilterType = F;
@@ -153,15 +153,15 @@ export function LimitOffsetQueryArgsType<DTO>(
 
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: QueryArgsTypeOpts<DTO> & { pagingStrategy: PagingStrategies.LIMIT_OFFSET },
-): StaticLimitOffsetQueryArgsType<DTO>;
+  opts: QueryArgsTypeOpts<DTO> & { pagingStrategy: PagingStrategies.OFFSET },
+): StaticOffsetQueryArgsType<DTO>;
 export function QueryArgsType<DTO>(DTOClass: Class<DTO>, opts?: QueryArgsTypeOpts<DTO>): StaticCursorQueryArgsType<DTO>;
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: QueryArgsTypeOpts<DTO> = { ...defaultQueryOpts, pagingStrategy: PagingStrategies.CURSOR },
 ): StaticQueryArgsType<DTO, StaticPagingTypes> {
-  if (opts.pagingStrategy === PagingStrategies.LIMIT_OFFSET) {
-    return LimitOffsetQueryArgsType(DTOClass, opts);
+  if (opts.pagingStrategy === PagingStrategies.OFFSET) {
+    return OffsetQueryArgsType(DTOClass, opts);
   }
   return CursorQueryArgsType(DTOClass, opts);
 }

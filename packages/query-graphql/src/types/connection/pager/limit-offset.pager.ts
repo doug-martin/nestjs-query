@@ -17,10 +17,10 @@ const DEFAULT_PAGING_META = (): PagingMeta => ({
   hasBefore: false,
 });
 
-export class LimitOffsetPager<DTO> {
+export class CursorPager<DTO> {
   async page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>): Promise<PagingResults<DTO>> {
     const pagingMeta = this.getPageMeta(query);
-    if (!LimitOffsetPager.pagingMetaHasLimitOrOffset(pagingMeta)) {
+    if (!CursorPager.pagingMetaHasLimitOrOffset(pagingMeta)) {
       return EMPTY_PAGING_RESULTS();
     }
     const results = await this.runQuery(queryMany, query, pagingMeta);

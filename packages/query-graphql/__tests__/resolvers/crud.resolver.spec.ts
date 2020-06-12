@@ -119,12 +119,12 @@ describe('CrudResolver', () => {
   });
 
   it('should pass the provided pagingStrategy to the ReadResolver', () => {
-    CRUDResolver(TestResolverDTO, { pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+    CRUDResolver(TestResolverDTO, { pagingStrategy: PagingStrategies.OFFSET });
 
     expect(creatableSpy).toHaveBeenCalledWith(TestResolverDTO, {});
     expect(creatableSpy).toHaveBeenCalledTimes(1);
 
-    expect(readableSpy).toHaveBeenCalledWith(TestResolverDTO, { pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+    expect(readableSpy).toHaveBeenCalledWith(TestResolverDTO, { pagingStrategy: PagingStrategies.OFFSET });
     expect(readableSpy).toHaveBeenCalledTimes(1);
 
     expect(updateableSpy).toHaveBeenCalledWith(TestResolverDTO, {});

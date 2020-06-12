@@ -4,21 +4,21 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsUndefined } from '../../validators';
 import { PagingStrategies } from './constants';
 
-let graphQLPaging: StaticLimitOffsetPagingType | null = null;
+let graphQLPaging: StaticOffsetPagingType | null = null;
 
-export interface StaticLimitOffsetPagingType {
-  strategy: PagingStrategies.LIMIT_OFFSET;
-  new (): LimitOffsetPagingType;
+export interface StaticOffsetPagingType {
+  strategy: PagingStrategies.OFFSET;
+  new (): OffsetPagingType;
 }
 
-export type LimitOffsetPagingType = Paging;
-export const LimitOffsetPagingType = (): StaticLimitOffsetPagingType => {
+export type OffsetPagingType = Paging;
+export const OffsetPagingType = (): StaticOffsetPagingType => {
   if (graphQLPaging) {
     return graphQLPaging;
   }
-  @InputType('LimitOffsetPaging')
+  @InputType('OffsetPaging')
   class GraphQLPagingImpl implements Paging {
-    static strategy: PagingStrategies.LIMIT_OFFSET = PagingStrategies.LIMIT_OFFSET;
+    static strategy: PagingStrategies.OFFSET = PagingStrategies.OFFSET;
 
     @Field(() => Int, {
       nullable: true,

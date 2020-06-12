@@ -35,7 +35,7 @@ describe('@Relation', () => {
     expect(relation.name).toBe('tests');
     expect(relation.relationTypeFunc).toBe(relationFn);
     expect(relation.isMany).toBe(true);
-    expect(relation.relationOpts).toEqual({ ...relationOpts, pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+    expect(relation.relationOpts).toEqual({ ...relationOpts, pagingStrategy: PagingStrategies.OFFSET });
   });
 });
 

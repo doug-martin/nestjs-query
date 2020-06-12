@@ -4,7 +4,7 @@ import { objectContaining, when } from 'ts-mockito';
 import {
   ConnectionType,
   CursorQueryArgsType,
-  LimitOffsetQueryArgsType,
+  OffsetQueryArgsType,
   PagingStrategies,
   QueryArgsType,
   ReadResolver,
@@ -18,7 +18,7 @@ import {
   readCustomNameResolverSDL,
   readCustomQueryResolverSDL,
   readDisabledResolverSDL,
-  readLimitOffsetQueryResolverSDL,
+  readOffsetQueryResolverSDL,
   readManyDisabledResolverSDL,
   readOneDisabledResolverSDL,
   TestResolverDTO,
@@ -75,15 +75,15 @@ describe('ReadResolver', () => {
       return expectResolverSDL(readBasicResolverSDL, { QueryArgs: CustomQueryArgs });
     });
 
-    it('should not use a connection if pagingStrategy is LIMIT_OFFSET', () => {
-      return expectResolverSDL(readLimitOffsetQueryResolverSDL, { pagingStrategy: PagingStrategies.LIMIT_OFFSET });
+    it('should not use a connection if pagingStrategy is OFFSET', () => {
+      return expectResolverSDL(readOffsetQueryResolverSDL, { pagingStrategy: PagingStrategies.OFFSET });
     });
 
     it('should not use a connection if custom QueryArgs is a limit offset', () => {
       @ArgsType()
-      class CustomQueryArgs extends QueryArgsType(TestResolverDTO, { pagingStrategy: PagingStrategies.LIMIT_OFFSET }) {}
+      class CustomQueryArgs extends QueryArgsType(TestResolverDTO, { pagingStrategy: PagingStrategies.OFFSET }) {}
 
-      return expectResolverSDL(readLimitOffsetQueryResolverSDL, { QueryArgs: CustomQueryArgs });
+      return expectResolverSDL(readOffsetQueryResolverSDL, { QueryArgs: CustomQueryArgs });
     });
 
     it('should not expose query method if disabled', () => {
@@ -140,7 +140,7 @@ describe('ReadResolver', () => {
     describe('#queryMany', () => {
       it('should call the service query with the provided input', async () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
-        const input: LimitOffsetQueryArgsType<TestResolverDTO> = {
+        const input: OffsetQueryArgsType<TestResolverDTO> = {
           filter: {
             stringField: { eq: 'foo' },
           },
