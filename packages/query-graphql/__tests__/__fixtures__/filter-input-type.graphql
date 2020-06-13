@@ -12,6 +12,8 @@ input TestDtoFilter {
   intField: IntFieldComparison
   numberField: NumberFieldComparison
   stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
 }
 
@@ -25,6 +27,8 @@ input TestFilterDtoFilter {
   intField: IntFieldComparison
   numberField: NumberFieldComparison
   stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
 }
 
@@ -133,6 +137,54 @@ input StringFieldComparison {
   notILike: String
   in: [String!]
   notIn: [String!]
+}
+
+input StringEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: StringEnum
+  neq: StringEnum
+  gt: StringEnum
+  gte: StringEnum
+  lt: StringEnum
+  lte: StringEnum
+  like: StringEnum
+  notLike: StringEnum
+  iLike: StringEnum
+  notILike: StringEnum
+  in: [StringEnum!]
+  notIn: [StringEnum!]
+}
+
+enum StringEnum {
+  ONE_STR
+  TWO_STR
+  THREE_STR
+  FOUR_STR
+}
+
+input NumberEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: NumberEnum
+  neq: NumberEnum
+  gt: NumberEnum
+  gte: NumberEnum
+  lt: NumberEnum
+  lte: NumberEnum
+  like: NumberEnum
+  notLike: NumberEnum
+  iLike: NumberEnum
+  notILike: NumberEnum
+  in: [NumberEnum!]
+  notIn: [NumberEnum!]
+}
+
+enum NumberEnum {
+  ONE
+  TWO
+  THREE
+  FOUR
 }
 
 input TimestampFieldComparison {

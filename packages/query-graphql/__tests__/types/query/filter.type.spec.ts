@@ -1,11 +1,44 @@
 // eslint-disable-next-line max-classes-per-file
 import { Class, Filter } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
-import { ObjectType, Int, Resolver, Query, Args, Float, GraphQLTimestamp, Field, InputType } from '@nestjs/graphql';
+import {
+  ObjectType,
+  Int,
+  Resolver,
+  Query,
+  Args,
+  Float,
+  GraphQLTimestamp,
+  Field,
+  InputType,
+  registerEnumType,
+} from '@nestjs/graphql';
 import { FilterableField, FilterType } from '../../../src';
 import { expectSDL, filterInputTypeSDL } from '../../__fixtures__';
 
 describe('GraphQLFilterType', (): void => {
+  enum NumberEnum {
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+  }
+
+  enum StringEnum {
+    ONE_STR = 'one',
+    TWO_STR = 'two',
+    THREE_STR = 'three',
+    FOUR_STR = 'four',
+  }
+
+  registerEnumType(StringEnum, {
+    name: 'StringEnum',
+  });
+
+  registerEnumType(NumberEnum, {
+    name: 'NumberEnum',
+  });
+
   @ObjectType({ isAbstract: true })
   class BaseType {
     @FilterableField()
@@ -31,6 +64,12 @@ describe('GraphQLFilterType', (): void => {
 
     @FilterableField()
     stringField!: string;
+
+    @FilterableField(() => StringEnum)
+    stringEnumField!: StringEnum;
+
+    @FilterableField(() => NumberEnum)
+    numberEnumField!: NumberEnum;
 
     @FilterableField(() => GraphQLTimestamp)
     timestampField!: Date;
@@ -63,12 +102,25 @@ describe('GraphQLFilterType', (): void => {
   });
 
   it('should throw an error if no fields are found', () => {
-    @ObjectType()
+    @ObjectType('TestNoFields')
     class TestInvalidFilter {}
 
     expect(() => FilterType(TestInvalidFilter)).toThrow(
       'No fields found to create GraphQLFilter for TestInvalidFilter',
     );
+  });
+
+  it('should throw an error when the field type is unknown', () => {
+    enum EnumField {
+      ONE = 'one',
+    }
+    @ObjectType('TestBadField')
+    class TestInvalidFilter {
+      @FilterableField(() => EnumField)
+      fakeType!: EnumField;
+    }
+
+    expect(() => FilterType(TestInvalidFilter)).toThrow('Unable to create filter comparison for {"ONE":"one"}.');
   });
 
   it('should convert and filters to filter class', () => {
