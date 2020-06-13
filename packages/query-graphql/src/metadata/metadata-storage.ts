@@ -1,7 +1,9 @@
 import { TypeMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/type-metadata.storage';
+import { LazyMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage';
 import { Class, Filter, SortField } from '@nestjs-query/core';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
+import { EnumMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
 import { ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
 import { ReferencesKeys } from '../resolvers/relations/relations.interface';
 import { EdgeType, StaticConnectionType } from '../types/connection';
@@ -144,6 +146,13 @@ export class GraphQLQueryMetadataStorage {
 
   getGraphqlObjectMetadata<T>(objType: Class<T>): ObjectTypeMetadata | undefined {
     return TypeMetadataStorage.getObjectTypesMetadata().find((o) => o.target === objType);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  getGraphqlEnumMetadata<T>(objType: object): EnumMetadata | undefined {
+    // hack to get enums loaded it may break in the future :(
+    LazyMetadataStorage.load();
+    return TypeMetadataStorage.getEnumsMetadata().find((o) => o.ref === objType);
   }
 
   clear(): void {

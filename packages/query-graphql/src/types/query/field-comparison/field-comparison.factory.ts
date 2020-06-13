@@ -1,6 +1,18 @@
 import { Class, FilterFieldComparison } from '@nestjs-query/core';
 import { IsBoolean, IsOptional } from 'class-validator';
-import { Field, InputType, ReturnTypeFunc } from '@nestjs/graphql';
+import { upperCaseFirst } from 'upper-case-first';
+import {
+  Field,
+  InputType,
+  ReturnTypeFunc,
+  ReturnTypeFuncValue,
+  Int,
+  Float,
+  ID,
+  GraphQLTimestamp,
+  GraphQLISODateTime,
+} from '@nestjs/graphql';
+import { getMetadataStorage } from '../../../metadata';
 import { IsUndefined } from '../../validators';
 import { getOrCreateFloatFieldComparison } from './float-field-comparison.type';
 import { getOrCreateIntFieldComparison } from './int-field-comparison.type';
@@ -21,10 +33,31 @@ filterComparisonMap.set('DateFilterComparison', getOrCreateDateFieldComparison);
 filterComparisonMap.set('DateTimeFilterComparison', getOrCreateDateFieldComparison);
 filterComparisonMap.set('TimestampFilterComparison', getOrCreateTimestampFieldComparison);
 
+const knownTypes: Set<ReturnTypeFuncValue> = new Set([
+  String,
+  Number,
+  Boolean,
+  Int,
+  Float,
+  ID,
+  Date,
+  GraphQLISODateTime,
+  GraphQLTimestamp,
+]);
+
 /** @internal */
-const createPrefixFromClass = <T>(TClass: Class<T>): string => {
-  const clsName = TClass.name;
-  return `${clsName.charAt(0).toUpperCase()}${clsName.slice(1)}`;
+const getTypeName = <T>(Type: ReturnTypeFuncValue): string => {
+  if (knownTypes.has(Type) || typeof Type === 'function') {
+    const typeName = (Type as { name: string }).name;
+    return upperCaseFirst(typeName);
+  }
+  if (typeof Type === 'object') {
+    const enumType = getMetadataStorage().getGraphqlEnumMetadata(Type);
+    if (enumType) {
+      return upperCaseFirst(enumType.name);
+    }
+  }
+  throw new Error(`Unable to create filter comparison for ${JSON.stringify(Type)}.`);
 };
 
 /** @internal */
@@ -32,8 +65,8 @@ export function createFilterComparisonType<T>(
   TClass: Class<T>,
   returnTypeFunc?: ReturnTypeFunc,
 ): Class<FilterFieldComparison<T>> {
-  const fieldType = returnTypeFunc ? (returnTypeFunc() as Class<unknown>) : TClass;
-  const inputName = `${createPrefixFromClass(fieldType)}FilterComparison`;
+  const fieldType = returnTypeFunc ? returnTypeFunc() : TClass;
+  const inputName = `${getTypeName(fieldType)}FilterComparison`;
   const generator = filterComparisonMap.get(inputName);
   if (generator) {
     return generator() as Class<FilterFieldComparison<T>>;
