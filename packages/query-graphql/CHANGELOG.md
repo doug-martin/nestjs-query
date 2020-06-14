@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.2](https://github.com/doug-martin/nestjs-query/compare/v0.13.1...v0.13.2) (2020-06-14)
+
+
+### Bug Fixes
+
+* **graphl,filters:** Allow for enums when filtering ([60dcc30](https://github.com/doug-martin/nestjs-query/commit/60dcc3074b36a2aeffbf4e30b04d0af3631ae02a))
+
+
+
+
+
 ## [0.13.1](https://github.com/doug-martin/nestjs-query/compare/v0.13.0...v0.13.1) (2020-06-12)
 
 
