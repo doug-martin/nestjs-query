@@ -17,7 +17,7 @@
     "seed": "node ../../../node_modules/typeorm-seeding/dist/cli.js -n ./ormconfig.json -c sub-task-db seed"
   },
   "dependencies": {
-    "@apollo/federation": "0.16.6",
+    "@apollo/federation": "0.16.8",
     "@nestjs-query/core": "0.13.0",
     "@nestjs-query/query-graphql": "0.13.2",
     "@nestjs-query/query-typeorm": "0.13.0",
