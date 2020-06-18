@@ -1,10 +1,13 @@
+export { QueryArgsType, StaticQueryArgsType } from './query-args.type';
 export {
-  QueryArgsType,
   CursorQueryArgsType,
   OffsetQueryArgsType,
-  StaticQueryArgsType,
+  NoPagingQueryArgsType,
   QueryArgsTypeOpts,
-} from './query-args.type';
+  StaticNoPagingQueryArgsType,
+  StaticOffsetQueryArgsType,
+  StaticCursorQueryArgsType,
+} from './query-args';
 export { FilterType } from './filter.type';
 export {
   CursorPagingType,

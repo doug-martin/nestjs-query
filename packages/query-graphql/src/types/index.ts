@@ -1,4 +1,11 @@
-export { PageInfoType, EdgeType, ConnectionType, StaticConnectionType } from './connection';
+export {
+  PageInfoType,
+  EdgeType,
+  ConnectionType,
+  CursorConnectionType,
+  ArrayConnectionType,
+  StaticConnectionType,
+} from './connection';
 export { MutationArgsType } from './mutation-args.type';
 export {
   CursorPagingType,
@@ -10,10 +17,14 @@ export {
   PagingTypes,
   StaticOffsetPagingType,
   StaticCursorPagingType,
+  StaticCursorQueryArgsType,
+  StaticOffsetQueryArgsType,
+  StaticNoPagingQueryArgsType,
   StaticQueryArgsType,
   OffsetPagingType,
   OffsetQueryArgsType,
   CursorQueryArgsType,
+  NoPagingQueryArgsType,
   PagingStrategies,
 } from './query';
 export { CreateManyInputType } from './create-many-input.type';

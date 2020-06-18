@@ -1,3 +1,3 @@
 export * from './connection.type';
-export * from './edge.type';
-export * from './page-info.type';
+export { EdgeType, PageInfoType, CursorConnectionType } from './cursor';
+export { ArrayConnectionType } from './array-connection.type';

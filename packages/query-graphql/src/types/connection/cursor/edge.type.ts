@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Class } from '@nestjs-query/core';
-import { getMetadataStorage } from '../../metadata';
-import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
-import { UnregisteredObjectType } from '../type.errors';
+import { getMetadataStorage } from '../../../metadata';
+import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
+import { UnregisteredObjectType } from '../../type.errors';
 
 export interface EdgeTypeConstructor<DTO> {
   new (node: DTO, cursor: ConnectionCursorType): EdgeType<DTO>;

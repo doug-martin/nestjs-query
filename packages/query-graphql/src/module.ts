@@ -1,7 +1,9 @@
 import { Assembler, NestjsQueryCoreModule, Class } from '@nestjs-query/core';
 import { DynamicModule, ForwardReference, Provider } from '@nestjs/common';
 import { AutoResolverOpts, createResolvers } from './providers';
+import { ReadResolverOpts } from './resolvers';
 import { defaultPubSub, pubSubToken, GraphQLPubSub } from './subscription';
+import { PagingStrategies } from './types/query/paging';
 
 export interface NestjsQueryGraphqlModuleOpts {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,7 +12,7 @@ export interface NestjsQueryGraphqlModuleOpts {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assemblers?: Class<Assembler<any, any>>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  resolvers: AutoResolverOpts<any, any, unknown, unknown>[];
+  resolvers: AutoResolverOpts<any, any, unknown, unknown, ReadResolverOpts<unknown>, PagingStrategies>[];
   pubSub?: Provider<GraphQLPubSub>;
 }
 

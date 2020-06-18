@@ -1,4 +1,4 @@
-import { ConnectionType } from '@nestjs-query/query-graphql';
+import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -102,7 +102,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
           expect(edges).toHaveLength(3);
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
@@ -131,7 +131,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.todoItem.tags;
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.todoItem.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
@@ -160,7 +160,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -199,7 +199,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
@@ -230,7 +230,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -270,7 +270,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -300,7 +300,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
@@ -901,7 +901,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
           expect(body.data.addSubTasksToTodoItem.id).toBe('1');
           expect(edges).toHaveLength(6);
           expect(pageInfo).toEqual({
@@ -941,7 +941,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
           expect(body.data.addTagsToTodoItem.id).toBe('1');
           expect(edges).toHaveLength(5);
           expect(pageInfo).toEqual({
@@ -981,7 +981,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
           expect(body.data.removeTagsFromTodoItem.id).toBe('1');
           expect(edges).toHaveLength(2);
           expect(pageInfo).toEqual({

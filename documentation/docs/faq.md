@@ -39,3 +39,11 @@ Yes! You can specify a `pagingStrategy` option to customize how paging is handle
 For more information and examples check out the following docs
 * [Resolver Paging Strategy](./graphql/resolvers.mdx#paging-strategy)
 * [Relations](./graphql/relations.mdx#many-relation)
+
+## Can I use turn off paging?
+
+Yes! You can specify a `pagingStrategy` option to customize how paging is handled at the resolver or relation level. 
+
+For more information and examples check out the following docs
+* [Resolver Paging Strategy](./graphql/resolvers.mdx#paging-strategy)
+* [Relations](./graphql/relations.mdx#many-relation)

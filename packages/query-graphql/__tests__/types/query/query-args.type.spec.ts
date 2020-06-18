@@ -1,9 +1,15 @@
+// eslint-disable-next-line max-classes-per-file
 import { SortDirection, SortField, SortNulls } from '@nestjs-query/core';
 import * as nestjsGraphql from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType } from '../../../src';
-import { expectSDL, cursorQueryArgsTypeSDL, offsetQueryArgsTypeSDL } from '../../__fixtures__';
+import {
+  expectSDL,
+  cursorQueryArgsTypeSDL,
+  offsetQueryArgsTypeSDL,
+  noPagingQueryArgsTypeSDL,
+} from '../../__fixtures__';
 
 describe('QueryType', (): void => {
   const fieldSpy = jest.spyOn(nestjsGraphql, 'Field');
@@ -339,6 +345,71 @@ describe('QueryType', (): void => {
           defaultValue: { limit: 10 },
           description: 'Limit or page results.',
         });
+        expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
+          defaultValue: {},
+          description: 'Specify to filter the records returned.',
+        });
+        expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
+          defaultValue: sort,
+          description: 'Specify to sort results.',
+        });
+      });
+    });
+  });
+
+  describe('no paging query args', () => {
+    @nestjsGraphql.ArgsType()
+    class TestNoPagingQuery extends QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.NONE }) {}
+
+    it('create a query for string fields', async () => {
+      @nestjsGraphql.Resolver()
+      class TestResolver {
+        @nestjsGraphql.Query(() => String)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        test(@nestjsGraphql.Args() query: TestNoPagingQuery): string {
+          return 'hello';
+        }
+      }
+      return expectSDL([TestResolver], noPagingQueryArgsTypeSDL);
+    });
+
+    it('should sorting to the correct instance of sorting', () => {
+      const queryObj: TestNoPagingQuery = {
+        sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
+      };
+      const queryInstance = plainToClass(TestNoPagingQuery, queryObj);
+      expect(validateSync(queryInstance)).toEqual([]);
+      expect(queryInstance.sorting![0]).toBeInstanceOf(TestNoPagingQuery.SortType);
+    });
+
+    it('should make filter to the correct instance of sorting', () => {
+      const queryObj: CursorQueryArgsType<TestDto> = {
+        filter: {
+          stringField: { eq: 'foo' },
+        },
+      };
+      const queryInstance = plainToClass(TestNoPagingQuery, queryObj);
+      expect(validateSync(queryInstance)).toEqual([]);
+      expect(queryInstance.filter).toBeInstanceOf(TestNoPagingQuery.FilterType);
+    });
+
+    describe('options', () => {
+      it('allow specifying a default filter', () => {
+        const filter = { booleanField: { is: true } };
+        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.NONE, defaultFilter: filter });
+        expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
+          defaultValue: filter,
+          description: 'Specify to filter the records returned.',
+        });
+        expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
+          defaultValue: [],
+          description: 'Specify to sort results.',
+        });
+      });
+
+      it('allow specifying a default sort', () => {
+        const sort: SortField<TestDto>[] = [{ field: 'booleanField', direction: SortDirection.DESC }];
+        QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.NONE, defaultSort: sort });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: {},
           description: 'Specify to filter the records returned.',

@@ -1,4 +1,4 @@
-import { ConnectionType } from '@nestjs-query/query-graphql';
+import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -92,7 +92,7 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -125,7 +125,7 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
@@ -156,7 +156,7 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -190,7 +190,7 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -220,7 +220,7 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: ConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,

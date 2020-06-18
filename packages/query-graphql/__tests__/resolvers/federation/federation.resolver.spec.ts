@@ -1,7 +1,7 @@
-import { when, objectContaining, deepEqual } from 'ts-mockito';
-import { Resolver, Query } from '@nestjs/graphql';
+import { Query, Resolver } from '@nestjs/graphql';
+import { deepEqual, objectContaining, when } from 'ts-mockito';
 import { FederationResolver, RelationsOpts } from '../../../src/resolvers';
-import { CursorQueryArgsType } from '../../../src/types';
+import { CursorQueryArgsType, OffsetQueryArgsType, PagingStrategies } from '../../../src/types';
 import { expectSDL } from '../../__fixtures__';
 import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 import {
@@ -16,16 +16,6 @@ import {
   federationRelationOneSDL,
   TestRelationDTO,
 } from './__fixtures__';
-
-@Resolver(() => TestResolverDTO)
-class TestResolver extends FederationResolver(TestResolverDTO, {
-  one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
-  many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
-}) {
-  constructor(service: TestService) {
-    super(service);
-  }
-}
 
 describe('FederationResolver', () => {
   const expectResolverSDL = (sdl: string, opts?: RelationsOpts) => {
@@ -43,6 +33,14 @@ describe('FederationResolver', () => {
     return expectResolverSDL(federationRelationEmptySDL);
   });
   describe('one', () => {
+    @Resolver(() => TestResolverDTO)
+    class TestResolver extends FederationResolver(TestResolverDTO, {
+      one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
+    }) {
+      constructor(service: TestService) {
+        super(service);
+      }
+    }
     it('should use the object type name', () => {
       return expectResolverSDL(federationRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } });
     });
@@ -125,95 +123,171 @@ describe('FederationResolver', () => {
       });
     });
 
-    it('should call the service findRelation with the provided dto', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
-      const dto: TestResolverDTO = {
-        id: 'id-1',
-        stringField: 'foo',
-      };
-      const query: CursorQueryArgsType<TestRelationDTO> = {
-        filter: { id: { eq: 'id-2' } },
-        paging: { first: 1 },
-      };
-      const output: TestRelationDTO[] = [
-        {
-          id: 'id-2',
-          testResolverId: dto.id,
-        },
-      ];
-      when(
-        mockService.queryRelations(
-          TestRelationDTO,
-          'relations',
-          deepEqual([dto]),
-          objectContaining({ ...query, paging: { limit: 2, offset: 0 } }),
-        ),
-      ).thenResolve(new Map([[dto, output]]));
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const result = await resolver.queryRelationsConnection(dto, query, {});
-      return expect(result).toEqual({
-        edges: [
+    describe('with cursor paging strategy', () => {
+      @Resolver(() => TestResolverDTO)
+      class TestResolver extends FederationResolver(TestResolverDTO, {
+        one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
+        many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
+      }) {
+        constructor(service: TestService) {
+          super(service);
+        }
+      }
+
+      it('should call the service findRelation with the provided dto', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const dto: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo',
+        };
+        const query: CursorQueryArgsType<TestRelationDTO> = {
+          filter: { id: { eq: 'id-2' } },
+          paging: { first: 1 },
+        };
+        const output: TestRelationDTO[] = [
           {
-            cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-            node: {
-              id: output[0].id,
-              testResolverId: dto.id,
-            },
+            id: 'id-2',
+            testResolverId: dto.id,
           },
-        ],
-        pageInfo: {
-          endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          hasNextPage: false,
-          hasPreviousPage: false,
-          startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-        },
+        ];
+        when(
+          mockService.queryRelations(
+            TestRelationDTO,
+            'relations',
+            deepEqual([dto]),
+            objectContaining({ ...query, paging: { limit: 2, offset: 0 } }),
+          ),
+        ).thenResolve(new Map([[dto, output]]));
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const result = await resolver.queryRelations(dto, query, {});
+        return expect(result).toEqual({
+          edges: [
+            {
+              cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              node: {
+                id: output[0].id,
+                testResolverId: dto.id,
+              },
+            },
+          ],
+          pageInfo: {
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          },
+        });
+      });
+
+      it('should call the service findRelation with the provided dto and correct relation name', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const dto: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo',
+        };
+        const query: CursorQueryArgsType<TestRelationDTO> = {
+          filter: { id: { eq: 'id-2' } },
+          paging: { first: 1 },
+        };
+        const output: TestRelationDTO[] = [
+          {
+            id: 'id-2',
+            testResolverId: dto.id,
+          },
+        ];
+        when(
+          mockService.queryRelations(
+            TestRelationDTO,
+            'others',
+            deepEqual([dto]),
+            objectContaining({ ...query, paging: { limit: 2, offset: 0 } }),
+          ),
+        ).thenResolve(new Map([[dto, output]]));
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const result = await resolver.queryCustoms(dto, query, {});
+        return expect(result).toEqual({
+          edges: [
+            {
+              cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              node: {
+                id: output[0].id,
+                testResolverId: dto.id,
+              },
+            },
+          ],
+          pageInfo: {
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          },
+        });
       });
     });
 
-    it('should call the service findRelation with the provided dto and correct relation name', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
-      const dto: TestResolverDTO = {
-        id: 'id-1',
-        stringField: 'foo',
-      };
-      const query: CursorQueryArgsType<TestRelationDTO> = {
-        filter: { id: { eq: 'id-2' } },
-        paging: { first: 1 },
-      };
-      const output: TestRelationDTO[] = [
-        {
-          id: 'id-2',
-          testResolverId: dto.id,
+    describe('with offset paging strategy', () => {
+      @Resolver(() => TestResolverDTO)
+      class TestResolver extends FederationResolver(TestResolverDTO, {
+        many: {
+          relations: { DTO: TestRelationDTO, pagingStrategy: PagingStrategies.OFFSET },
+          customs: { DTO: TestRelationDTO, pagingStrategy: PagingStrategies.OFFSET, relationName: 'others' },
         },
-      ];
-      when(
-        mockService.queryRelations(
-          TestRelationDTO,
-          'others',
-          deepEqual([dto]),
-          objectContaining({ ...query, paging: { limit: 2, offset: 0 } }),
-        ),
-      ).thenResolve(new Map([[dto, output]]));
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const result = await resolver.queryCustomsConnection(dto, query, {});
-      return expect(result).toEqual({
-        edges: [
+      }) {
+        constructor(service: TestService) {
+          super(service);
+        }
+      }
+
+      it('should call the service findRelation with the provided dto', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const dto: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo',
+        };
+        const query: OffsetQueryArgsType<TestRelationDTO> = {
+          filter: { id: { eq: 'id-2' } },
+          paging: { limit: 1 },
+        };
+        const output: TestRelationDTO[] = [
           {
-            cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-            node: {
-              id: output[0].id,
-              testResolverId: dto.id,
-            },
+            id: 'id-2',
+            testResolverId: dto.id,
           },
-        ],
-        pageInfo: {
-          endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          hasNextPage: false,
-          hasPreviousPage: false,
-          startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-        },
+        ];
+        when(
+          mockService.queryRelations(TestRelationDTO, 'relations', deepEqual([dto]), objectContaining(query)),
+        ).thenResolve(new Map([[dto, output]]));
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const result = await resolver.queryRelations(dto, query, {});
+        return expect(result).toEqual(output);
+      });
+
+      it('should call the service findRelation with the provided dto and correct relation name', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const dto: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo',
+        };
+        const query: OffsetQueryArgsType<TestRelationDTO> = {
+          filter: { id: { eq: 'id-2' } },
+          paging: { limit: 1 },
+        };
+        const output: TestRelationDTO[] = [
+          {
+            id: 'id-2',
+            testResolverId: dto.id,
+          },
+        ];
+        when(
+          mockService.queryRelations(TestRelationDTO, 'others', deepEqual([dto]), objectContaining(query)),
+        ).thenResolve(new Map([[dto, output]]));
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const result = await resolver.queryCustoms(dto, query, {});
+        return expect(result).toEqual(output);
       });
     });
   });

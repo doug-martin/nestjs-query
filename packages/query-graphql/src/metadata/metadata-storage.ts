@@ -31,6 +31,9 @@ interface ReferenceDescriptor<DTO, Reference> {
   relationTypeFunc: () => Class<Reference>;
   relationOpts?: Omit<ResolverRelationReference<DTO, Reference>, 'DTO'>;
 }
+
+type ConnectionTypes = 'cursor' | 'array';
+
 /**
  * @internal
  */
@@ -41,7 +44,7 @@ export class GraphQLQueryMetadataStorage {
 
   private readonly sortTypeStorage: Map<Class<unknown>, Class<SortField<unknown>>>;
 
-  private readonly connectionTypeStorage: Map<Class<unknown>, StaticConnectionType<unknown>>;
+  private readonly connectionTypeStorage: Map<string, StaticConnectionType<unknown>>;
 
   private readonly edgeTypeStorage: Map<Class<unknown>, Class<EdgeType<unknown>>>;
 
@@ -53,7 +56,7 @@ export class GraphQLQueryMetadataStorage {
     this.filterableObjectStorage = new Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>();
     this.filterTypeStorage = new Map<Class<unknown>, Class<Filter<unknown>>>();
     this.sortTypeStorage = new Map<Class<unknown>, Class<SortField<unknown>>>();
-    this.connectionTypeStorage = new Map<Class<unknown>, StaticConnectionType<unknown>>();
+    this.connectionTypeStorage = new Map<string, StaticConnectionType<unknown>>();
     this.edgeTypeStorage = new Map<Class<unknown>, Class<EdgeType<unknown>>>();
     this.relationStorage = new Map<Class<unknown>, RelationDescriptor<unknown>[]>();
     this.referenceStorage = new Map<Class<unknown>, ReferenceDescriptor<unknown, unknown>[]>();
@@ -100,12 +103,22 @@ export class GraphQLQueryMetadataStorage {
     return this.getValue(this.sortTypeStorage, type);
   }
 
-  addConnectionType<T>(type: Class<T>, connectionType: StaticConnectionType<T>): void {
-    this.connectionTypeStorage.set(type, connectionType as StaticConnectionType<unknown>);
+  addConnectionType<DTO, SCT extends StaticConnectionType<DTO>>(
+    connectionType: ConnectionTypes,
+    type: Class<DTO>,
+    staticConnectionType: SCT,
+  ): void {
+    this.connectionTypeStorage.set(
+      `${connectionType}-${type.name}`,
+      staticConnectionType as StaticConnectionType<unknown>,
+    );
   }
 
-  getConnectionType<T>(type: Class<T>): StaticConnectionType<T> | undefined {
-    return this.getValue(this.connectionTypeStorage, type);
+  getConnectionType<DTO, SCT extends StaticConnectionType<DTO>>(
+    connectionType: ConnectionTypes,
+    type: Class<DTO>,
+  ): SCT | undefined {
+    return this.getValue(this.connectionTypeStorage, `${connectionType}-${type.name}`);
   }
 
   addEdgeType<T>(type: Class<T>, edgeType: Class<EdgeType<T>>): void {
@@ -166,7 +179,7 @@ export class GraphQLQueryMetadataStorage {
     this.referenceStorage.clear();
   }
 
-  private getValue<V>(map: Map<Class<unknown>, Class<unknown>>, key: Class<unknown>): V | undefined {
+  private getValue<V>(map: Map<unknown, Class<unknown>>, key: unknown): V | undefined {
     const val = map.get(key);
     if (val) {
       return (val as unknown) as V;

@@ -9,7 +9,7 @@ When using the `nestjs-query` you can specify relations that should be exposed f
 
 * `@Relation` - A relation that is:
     * a single value (one-to-one, many-to-one)
-    * an array of values that should use `OFFSET` based paging.
+    * an array of values that should use `OFFSET` or `NONE` paging.
 * `@Connection` - A connection that represents a collection that should use `cursor` based pagination. (e.g, many-to-many, one-to-many)
 
 :::note
@@ -251,6 +251,14 @@ When specifying a many relation a couple of endpoints will automatically be gene
     * The `subTasks` property will accept a [query](../concepts/queries.mdx) to allow you to filter, page and sort results.
     * The `subTasks` will be returned as an array of results.
 * `addSubTasksToTodoItem` - A `mutation` to add `SubTasks` to a `TodoItem`.
+
+:::note
+You can disable paging by setting the `pagingStrategy` option to `PagingStrategies.NONE`.
+```ts
+@Relation('subTasks', () => [SubTaskDTO], { pagingStrategy: PagingStrategies.NONE, disableRemove: true })
+```
+:::
+
 
 :::note
 In this example we `disableRemove` because `SubTasks` cannot exist without a `TodoItem`.
@@ -677,6 +685,8 @@ export class SubTaskResolver extends CRUDResolver(SubTaskDTO, {
 </Tabs>
 
 You can also specify the `pagingStrategy` option to change the default paging behavior for a single relation.
+
+The `pagingStrategy` can be set to `OFFSET` or `NONE`.
 
 In this example we'll disable connections and cursor based paging in favor of an `OFFSET` based strategy that returns an array of values.
 

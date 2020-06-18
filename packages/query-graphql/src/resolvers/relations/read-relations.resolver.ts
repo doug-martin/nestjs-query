@@ -4,8 +4,8 @@ import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverField } from '../../decorators';
 import { DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
-import { ConnectionType, PagingStrategies } from '../../types';
-import { createAllQueryArgsType, transformAndValidate } from '../helpers';
+import { ConnectionType, PagingStrategies, QueryArgsType } from '../../types';
+import { transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
@@ -53,50 +53,21 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   const relationName = relation.relationName ?? pluralBaseNameLower;
   const loaderName = `load${pluralBaseName}For${DTOClass.name}`;
   const queryLoader = new QueryRelationsLoader<DTO, Relation>(relationDTO, relationName);
-  const isCursorPaging = !relation.pagingStrategy || relation.pagingStrategy === PagingStrategies.CURSOR;
-  const { OffsetQueryType, CursorQueryType } = createAllQueryArgsType(relationDTO, relation);
-
   @ArgsType()
-  class RelationCursorQA extends CursorQueryType {}
+  class RelationQA extends QueryArgsType(relationDTO, relation) {}
 
-  @ArgsType()
-  class RelationOffsetQA extends OffsetQueryType {}
-
-  const CT = ConnectionType(relationDTO);
+  const CT = ConnectionType(relationDTO, RelationQA);
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadManyMixin extends Base {
-    @ResolverField(
-      pluralBaseNameLower,
-      () => CT,
-      { nullable: relation.nullable },
-      { disabled: !isCursorPaging },
-      commonResolverOpts,
-    )
-    async [`query${pluralBaseName}Connection`](
-      @Parent() dto: DTO,
-      @Args() q: RelationCursorQA,
-      @Context() context: ExecutionContext,
-    ): Promise<ConnectionType<Relation>> {
-      const qa = await transformAndValidate(RelationCursorQA, q);
-      const loader = DataLoaderFactory.getOrCreateLoader(context, loaderName, queryLoader.createLoader(this.service));
-      return CT.createFromPromise((query) => loader.load({ dto, query }), qa);
-    }
-
-    @ResolverField(
-      pluralBaseNameLower,
-      () => [relationDTO],
-      { nullable: relation.nullable },
-      { disabled: isCursorPaging },
-      commonResolverOpts,
-    )
+    @ResolverField(pluralBaseNameLower, () => CT.resolveType, { nullable: relation.nullable }, commonResolverOpts)
     async [`query${pluralBaseName}`](
       @Parent() dto: DTO,
-      @Args() q: RelationOffsetQA,
+      @Args() q: RelationQA,
       @Context() context: ExecutionContext,
-    ): Promise<Relation[]> {
-      const qa = await transformAndValidate(RelationOffsetQA, q);
+    ): Promise<ConnectionType<Relation>> {
+      const qa = await transformAndValidate(RelationQA, q);
       const loader = DataLoaderFactory.getOrCreateLoader(context, loaderName, queryLoader.createLoader(this.service));
-      return loader.load({ dto, query: qa });
+      return CT.createFromPromise((query) => loader.load({ dto, query }), qa);
     }
   }
   return ReadManyMixin;
