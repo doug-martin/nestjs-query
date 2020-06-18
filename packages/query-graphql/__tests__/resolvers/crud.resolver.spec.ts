@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 import { ID, ObjectType } from '@nestjs/graphql';
 import { CRUDResolver, FilterableField, PagingStrategies } from '../../src';
 import * as createResolver from '../../src/resolvers/create.resolver';

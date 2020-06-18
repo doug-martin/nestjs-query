@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Class } from '@nestjs-query/core';
-import { ConnectionCursorType, ConnectionCursorScalar } from '../cursor.scalar';
+import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
 
 export interface PageInfoTypeConstructor {
   new (
@@ -26,7 +26,7 @@ export const PageInfoType = (): PageInfoTypeConstructor => {
   }
 
   @ObjectType('PageInfo')
-  class PageInfoTypeImpl {
+  class PageInfoTypeImpl implements PageInfoType {
     constructor(
       hasNextPage: boolean,
       hasPreviousPage: boolean,

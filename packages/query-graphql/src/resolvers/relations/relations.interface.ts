@@ -24,7 +24,7 @@ export interface ResolverRelationReference<DTO, Reference> extends DTONamesOpts,
   nullable?: boolean;
 }
 
-export interface ResolverRelation<Relation> extends DTONamesOpts, ResolverMethodOpts, QueryArgsTypeOpts<Relation> {
+export type ResolverRelation<Relation> = {
   /**
    * The class type of the relation.
    */
@@ -50,7 +50,9 @@ export interface ResolverRelation<Relation> extends DTONamesOpts, ResolverMethod
    * Disable remove relation graphql endpoints
    */
   disableRemove?: boolean;
-}
+} & DTONamesOpts &
+  ResolverMethodOpts &
+  QueryArgsTypeOpts<Relation>;
 
 export type RelationTypeMap<RT> = Record<string, RT>;
 

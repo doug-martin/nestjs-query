@@ -39,5 +39,6 @@ export const pageInfoObjectTypeSDL = readGraphql(resolve(__dirname, './page-info
 export const sortingInputTypeSDL = readGraphql(resolve(__dirname, './sorting-input-type.graphql'));
 export const cursorQueryArgsTypeSDL = readGraphql(resolve(__dirname, './cursor-query-args-type.graphql'));
 export const offsetQueryArgsTypeSDL = readGraphql(resolve(__dirname, './offset-query-args-type.graphql'));
+export const noPagingQueryArgsTypeSDL = readGraphql(resolve(__dirname, './no-paging-query-args-type.graphql'));
 export const connectionObjectTypeSDL = readGraphql(resolve(__dirname, './connection-object-type.graphql'));
 export const edgeObjectTypeSDL = readGraphql(resolve(__dirname, './edge-object-type.graphql'));

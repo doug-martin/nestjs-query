@@ -4,6 +4,7 @@ import { objectContaining, when } from 'ts-mockito';
 import {
   ConnectionType,
   CursorQueryArgsType,
+  NoPagingQueryArgsType,
   OffsetQueryArgsType,
   PagingStrategies,
   QueryArgsType,
@@ -18,19 +19,12 @@ import {
   readCustomNameResolverSDL,
   readCustomQueryResolverSDL,
   readDisabledResolverSDL,
-  readOffsetQueryResolverSDL,
   readManyDisabledResolverSDL,
+  readOffsetQueryResolverSDL,
   readOneDisabledResolverSDL,
   TestResolverDTO,
   TestService,
 } from './__fixtures__';
-
-@Resolver(() => TestResolverDTO)
-class TestResolver extends ReadResolver(TestResolverDTO) {
-  constructor(service: TestService) {
-    super(service);
-  }
-}
 
 describe('ReadResolver', () => {
   const expectResolverSDL = (sdl: string, opts?: ReadResolverOpts<TestResolverDTO>) => {
@@ -100,7 +94,14 @@ describe('ReadResolver', () => {
       return expectResolverSDL(readCustomConnectionResolverSDL, { Connection: CustomConnection });
     });
 
-    describe('#queryManyConnection', () => {
+    describe('#queryMany cursor connection', () => {
+      @Resolver(() => TestResolverDTO)
+      class TestResolver extends ReadResolver(TestResolverDTO) {
+        constructor(service: TestService) {
+          super(service);
+        }
+      }
+
       it('should call the service query with the provided input', async () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
         const input: CursorQueryArgsType<TestResolverDTO> = {
@@ -116,7 +117,7 @@ describe('ReadResolver', () => {
           },
         ];
         when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 0 } }))).thenResolve(output);
-        const result = await resolver.queryManyConnection(input);
+        const result = await resolver.queryMany(input);
         return expect(result).toEqual({
           edges: [
             {
@@ -137,7 +138,14 @@ describe('ReadResolver', () => {
       });
     });
 
-    describe('#queryMany', () => {
+    describe('queryMany array connection', () => {
+      @Resolver(() => TestResolverDTO)
+      class TestResolver extends ReadResolver(TestResolverDTO, { pagingStrategy: PagingStrategies.OFFSET }) {
+        constructor(service: TestService) {
+          super(service);
+        }
+      }
+
       it('should call the service query with the provided input', async () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
         const input: OffsetQueryArgsType<TestResolverDTO> = {
@@ -157,9 +165,42 @@ describe('ReadResolver', () => {
         return expect(result).toEqual(output);
       });
     });
+
+    describe('queryMany no paging connection', () => {
+      @Resolver(() => TestResolverDTO)
+      class TestResolver extends ReadResolver(TestResolverDTO, { pagingStrategy: PagingStrategies.NONE }) {
+        constructor(service: TestService) {
+          super(service);
+        }
+      }
+
+      it('should call the service query with the provided input', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const input: NoPagingQueryArgsType<TestResolverDTO> = {
+          filter: {
+            stringField: { eq: 'foo' },
+          },
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        when(mockService.query(objectContaining(input))).thenResolve(output);
+        const result = await resolver.queryMany(input);
+        return expect(result).toEqual(output);
+      });
+    });
   });
 
   describe('#findById', () => {
+    @Resolver(() => TestResolverDTO)
+    class TestResolver extends ReadResolver(TestResolverDTO) {
+      constructor(service: TestService) {
+        super(service);
+      }
+    }
     it('should not expose findById method if disabled', () => {
       return expectResolverSDL(readOneDisabledResolverSDL, { one: { disabled: true } });
     });

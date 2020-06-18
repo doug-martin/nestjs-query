@@ -12,20 +12,39 @@ import { Resolver } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { InjectPubSub } from './decorators/inject-pub-sub.decorator';
 import { CRUDResolver, CRUDResolverOpts, FederationResolver, RelationsOpts } from './resolvers';
+import { PagingStrategies } from './types/query/paging';
 
-type CRUDAutoResolverOpts<DTO, C, U> = CRUDResolverOpts<DTO, C, U> & {
+type CRUDAutoResolverOpts<DTO, C, U, R, PS extends PagingStrategies> = CRUDResolverOpts<DTO, C, U, R, PS> & {
   DTOClass: Class<DTO>;
 };
 
-export type EntityCRUDAutoResolverOpts<DTO, Entity, C, U> = CRUDAutoResolverOpts<DTO, C, U> & {
+export type EntityCRUDAutoResolverOpts<DTO, Entity, C, U, R, PS extends PagingStrategies> = CRUDAutoResolverOpts<
+  DTO,
+  C,
+  U,
+  R,
+  PS
+> & {
   EntityClass: Class<Entity>;
 };
 
-export type AssemblerCRUDAutoResolverOpts<DTO, Assembler, C, U> = CRUDAutoResolverOpts<DTO, C, U> & {
+export type AssemblerCRUDAutoResolverOpts<DTO, Assembler, C, U, R, PS extends PagingStrategies> = CRUDAutoResolverOpts<
+  DTO,
+  C,
+  U,
+  R,
+  PS
+> & {
   AssemblerClass: Class<Assembler>;
 };
 
-export type ServiceCRUDAutoResolverOpts<DTO, QueryService, C, U> = CRUDAutoResolverOpts<DTO, C, U> & {
+export type ServiceCRUDAutoResolverOpts<DTO, QueryService, C, U, R, PS extends PagingStrategies> = CRUDAutoResolverOpts<
+  DTO,
+  C,
+  U,
+  R,
+  PS
+> & {
   ServiceClass: Class<QueryService>;
 };
 
@@ -35,27 +54,27 @@ export type FederatedAutoResolverOpts<DTO, Service> = RelationsOpts & {
   Service: Class<Service>;
 };
 
-export type AutoResolverOpts<DTO, EntityServiceOrAssemler, C, U> =
-  | EntityCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U>
-  | AssemblerCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U>
-  | ServiceCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U>
+export type AutoResolverOpts<DTO, EntityServiceOrAssemler, C, U, R, PS extends PagingStrategies> =
+  | EntityCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U, R, PS>
+  | AssemblerCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U, R, PS>
+  | ServiceCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U, R, PS>
   | FederatedAutoResolverOpts<DTO, EntityServiceOrAssemler>;
 
-export const isFederatedResolverOpts = <DTO, MaybeService, C, U>(
-  opts: AutoResolverOpts<DTO, MaybeService, C, U>,
+export const isFederatedResolverOpts = <DTO, MaybeService, C, U, R, PS extends PagingStrategies>(
+  opts: AutoResolverOpts<DTO, MaybeService, C, U, R, PS>,
 ): opts is FederatedAutoResolverOpts<DTO, MaybeService> => {
   return 'type' in opts && opts.type === 'federated';
 };
 
-export const isAssemblerCRUDAutoResolverOpts = <DTO, MaybeAssembler, C, U, Assembler>(
-  opts: AutoResolverOpts<DTO, MaybeAssembler, C, U>,
-): opts is AssemblerCRUDAutoResolverOpts<DTO, MaybeAssembler, C, U> => {
+export const isAssemblerCRUDAutoResolverOpts = <DTO, MaybeAssembler, C, U, R, PS extends PagingStrategies>(
+  opts: AutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS>,
+): opts is AssemblerCRUDAutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS> => {
   return 'DTOClass' in opts && 'AssemblerClass' in opts;
 };
 
-export const isServiceCRUDAutoResolverOpts = <DTO, MaybeService, C, U>(
-  opts: AutoResolverOpts<DTO, MaybeService, C, U>,
-): opts is ServiceCRUDAutoResolverOpts<DTO, MaybeService, C, U> => {
+export const isServiceCRUDAutoResolverOpts = <DTO, MaybeService, C, U, R, PS extends PagingStrategies>(
+  opts: AutoResolverOpts<DTO, MaybeService, C, U, R, PS>,
+): opts is ServiceCRUDAutoResolverOpts<DTO, MaybeService, C, U, R, PS> => {
   return 'DTOClass' in opts && 'ServiceClass' in opts;
 };
 
@@ -80,8 +99,8 @@ function createFederatedResolver<DTO, Service>(resolverOpts: FederatedAutoResolv
   return AutoResolver;
 }
 
-function createEntityAutoResolver<DTO, Entity, C, U>(
-  resolverOpts: EntityCRUDAutoResolverOpts<DTO, Entity, C, U>,
+function createEntityAutoResolver<DTO, Entity, C, U, R, PS extends PagingStrategies>(
+  resolverOpts: EntityCRUDAutoResolverOpts<DTO, Entity, C, U, R, PS>,
 ): Provider {
   const { DTOClass, EntityClass } = resolverOpts;
   class Service extends AssemblerQueryService<DTO, Entity> {
@@ -104,8 +123,8 @@ function createEntityAutoResolver<DTO, Entity, C, U>(
   return AutoResolver;
 }
 
-function createAssemblerAutoResolver<DTO, Asmblr, C, U>(
-  resolverOpts: AssemblerCRUDAutoResolverOpts<DTO, Asmblr, C, U>,
+function createAssemblerAutoResolver<DTO, Asmblr, C, U, R, PS extends PagingStrategies>(
+  resolverOpts: AssemblerCRUDAutoResolverOpts<DTO, Asmblr, C, U, R, PS>,
 ): Provider {
   const { DTOClass, AssemblerClass } = resolverOpts;
   @Resolver(() => DTOClass)
@@ -123,8 +142,8 @@ function createAssemblerAutoResolver<DTO, Asmblr, C, U>(
   return AutoResolver;
 }
 
-function createServiceAutoResolver<DTO, Service, C, U>(
-  resolverOpts: ServiceCRUDAutoResolverOpts<DTO, Service, C, U>,
+function createServiceAutoResolver<DTO, Service, C, U, R, PS extends PagingStrategies>(
+  resolverOpts: ServiceCRUDAutoResolverOpts<DTO, Service, C, U, R, PS>,
 ): Provider {
   const { DTOClass, ServiceClass } = resolverOpts;
   @Resolver(() => DTOClass)
@@ -138,8 +157,8 @@ function createServiceAutoResolver<DTO, Service, C, U>(
   return AutoResolver;
 }
 
-function createResolver<DTO, EntityServiceOrAssembler, C, U>(
-  resolverOpts: AutoResolverOpts<DTO, EntityServiceOrAssembler, C, U>,
+function createResolver<DTO, EntityServiceOrAssembler, C, U, R, PS extends PagingStrategies>(
+  resolverOpts: AutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS>,
 ): Provider {
   if (isFederatedResolverOpts(resolverOpts)) {
     return createFederatedResolver(resolverOpts);
@@ -153,6 +172,8 @@ function createResolver<DTO, EntityServiceOrAssembler, C, U>(
   return createEntityAutoResolver(resolverOpts);
 }
 
-export const createResolvers = (opts: AutoResolverOpts<unknown, unknown, unknown, unknown>[]): Provider[] => {
+export const createResolvers = (
+  opts: AutoResolverOpts<unknown, unknown, unknown, unknown, unknown, PagingStrategies>[],
+): Provider[] => {
   return opts.map((opt) => createResolver(opt));
 };

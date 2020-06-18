@@ -1,10 +1,11 @@
 import { Query } from '@nestjs-query/core';
 import { offsetToCursor } from 'graphql-relay';
-import { CursorQueryArgsType } from '../../query';
 import { EdgeType } from '../edge.type';
-import { PagingMeta, PagingResults, QueryMany, QueryResults } from './interfaces';
+import { CursorQueryArgsType } from '../../../query';
+import { CursorConnectionType } from '../cursor-connection.type';
+import { PagingMeta, QueryMany, QueryResults } from './interfaces';
 
-const EMPTY_PAGING_RESULTS = <DTO>(): PagingResults<DTO> => ({
+const EMPTY_PAGING_RESULTS = <DTO>(): CursorConnectionType<DTO> => ({
   edges: [],
   pageInfo: { hasNextPage: false, hasPreviousPage: false },
 });
@@ -18,7 +19,7 @@ const DEFAULT_PAGING_META = (): PagingMeta => ({
 });
 
 export class CursorPager<DTO> {
-  async page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>): Promise<PagingResults<DTO>> {
+  async page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>): Promise<CursorConnectionType<DTO>> {
     const pagingMeta = this.getPageMeta(query);
     if (!CursorPager.pagingMetaHasLimitOrOffset(pagingMeta)) {
       return EMPTY_PAGING_RESULTS();
@@ -73,7 +74,7 @@ export class CursorPager<DTO> {
     return { offset, limit, isBackward, isForward, hasBefore };
   }
 
-  createPagingResult(results: QueryResults<DTO>, pagingMeta: PagingMeta): PagingResults<DTO> {
+  createPagingResult(results: QueryResults<DTO>, pagingMeta: PagingMeta): CursorConnectionType<DTO> {
     const { nodes, hasExtraNode } = results;
     const { offset, hasBefore, isBackward, isForward } = pagingMeta;
     const endOffset = Math.max(0, offset + nodes.length - 1);
