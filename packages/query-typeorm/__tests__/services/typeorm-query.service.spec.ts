@@ -7,6 +7,7 @@ import {
   Repository,
   SelectQueryBuilder,
   UpdateQueryBuilder,
+  EntityManager,
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 import { TypeOrmQueryService, TypeOrmQueryServiceOpts } from '../../src';
@@ -101,7 +102,27 @@ describe('TypeOrmQueryService', (): void => {
         const queryResult = await queryService.queryRelations(TestRelation, relationName, entity, query);
         return expect(queryResult).toEqual(relations);
       });
+
+      it('should look up the type when the relation.type is a string', async () => {
+        const entity = testEntities()[0];
+        const relations = testRelations(entity.testEntityPk);
+        const query: Query<TestRelation> = { filter: { relationName: { eq: 'name' } } };
+        const { queryService, mockRepo, mockRelationQueryBuilder } = createQueryService<TestEntity, TestRelation>();
+        const selectQueryBuilder: SelectQueryBuilder<TestRelation> = mock(SelectQueryBuilder);
+        const mockManger = mock(EntityManager);
+        const mockRelationRepo = mock<Repository<TestRelation>>();
+        // @ts-ignore
+        when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: 'TestRelation' }] });
+        when(mockRepo.manager).thenReturn(instance(mockManger));
+        when(mockManger.getRepository('TestRelation')).thenReturn(instance(mockRelationRepo));
+        when(mockRelationRepo.target).thenReturn(TestRelation);
+        when(mockRelationQueryBuilder.select(objectContaining(entity), query)).thenReturn(instance(selectQueryBuilder));
+        when(selectQueryBuilder.getMany()).thenResolve(relations);
+        const queryResult = await queryService.queryRelations(TestRelation, relationName, entity, query);
+        return expect(queryResult).toEqual(relations);
+      });
     });
+
     describe('with multiple entities', () => {
       it('call select and return the result', async () => {
         const entities = testEntities();

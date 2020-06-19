@@ -217,6 +217,9 @@ export abstract class RelationQueryService<Entity> {
     if (!relationMeta) {
       throw new Error(`Unable to find relation ${relationName} on ${this.EntityClass.name}`);
     }
+    if (typeof relationMeta.type === 'string') {
+      return this.repo.manager.getRepository(relationMeta.type).target as Class<unknown>;
+    }
     return relationMeta.type as Class<unknown>;
   }
 }
