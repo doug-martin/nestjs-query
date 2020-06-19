@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.2](https://github.com/doug-martin/nestjs-query/compare/v0.14.1...v0.14.2) (2020-06-19)
+
+
+### Bug Fixes
+
+* **typeorm:** Allow using string based typeorm relations ([55c157d](https://github.com/doug-martin/nestjs-query/commit/55c157dbea9ce8c1186a2c2ea17f847857fd2226))
+
+
+
+
+
 ## [0.14.1](https://github.com/doug-martin/nestjs-query/compare/v0.14.0...v0.14.1) (2020-06-19)
 
 

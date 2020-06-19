@@ -1,6 +1,6 @@
 {
   "name": "todo-item-graphql",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "description": "",
   "author": "",
   "private": true,
@@ -20,7 +20,7 @@
     "@apollo/federation": "0.16.8",
     "@nestjs-query/core": "0.14.0",
     "@nestjs-query/query-graphql": "0.14.1",
-    "@nestjs-query/query-typeorm": "0.14.0",
+    "@nestjs-query/query-typeorm": "0.14.2",
     "@nestjs/common": "7.2.0",
     "@nestjs/core": "7.2.0",
     "@nestjs/graphql": "7.4.1",
