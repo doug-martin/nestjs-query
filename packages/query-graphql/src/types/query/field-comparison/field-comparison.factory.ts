@@ -45,9 +45,14 @@ const knownTypes: Set<ReturnTypeFuncValue> = new Set([
   GraphQLTimestamp,
 ]);
 
+const isNamed = (Type: any): Type is { name: string } => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  return 'name' in Type && typeof Type.name === 'string';
+};
+
 /** @internal */
 const getTypeName = <T>(Type: ReturnTypeFuncValue): string => {
-  if (knownTypes.has(Type) || typeof Type === 'function') {
+  if (knownTypes.has(Type) || isNamed(Type)) {
     const typeName = (Type as { name: string }).name;
     return upperCaseFirst(typeName);
   }
