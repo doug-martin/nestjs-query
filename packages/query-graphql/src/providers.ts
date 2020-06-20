@@ -10,7 +10,7 @@ import { Assembler } from '@nestjs-query/core/src';
 import { Provider, Inject } from '@nestjs/common';
 import { Resolver } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
-import { InjectPubSub } from './decorators/inject-pub-sub.decorator';
+import { InjectPubSub } from './decorators';
 import { CRUDResolver, CRUDResolverOpts, FederationResolver, RelationsOpts } from './resolvers';
 import { PagingStrategies } from './types/query/paging';
 

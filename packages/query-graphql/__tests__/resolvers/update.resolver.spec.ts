@@ -8,8 +8,8 @@ import {
   UpdateOneInputType,
   UpdateResolver,
   UpdateResolverOpts,
+  InjectPubSub,
 } from '../../src';
-import { InjectPubSub } from '../../src/decorators/inject-pub-sub.decorator';
 import { UpdatedEvent } from '../../src/resolvers/update.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
 import { expectSDL } from '../__fixtures__';
