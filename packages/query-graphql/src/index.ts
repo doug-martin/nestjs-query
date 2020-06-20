@@ -9,6 +9,7 @@ export {
   Reference,
   ReferenceTypeFunc,
   ReferenceDecoratorOpts,
+  InjectPubSub,
 } from './decorators';
 export * from './resolvers';
 export * from './federation';
