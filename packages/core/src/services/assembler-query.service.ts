@@ -46,6 +46,10 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     return this.assembler.convertAsyncToDTOs(this.queryService.query(this.assembler.convertQuery(query)));
   }
 
+  count(filter: Filter<DTO>): Promise<number> {
+    return this.queryService.count(this.assembler.convertQuery({ filter }).filter || {});
+  }
+
   /**
    * Query for relations for an array of DTOs. This method will return a map with the DTO as the key and the relations as the value.
    * @param RelationClass - The class of the relation.
@@ -92,6 +96,37 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     return this.queryService.queryRelations(RelationClass, relationName, this.assembler.convertToEntity(dto), query);
   }
 
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    filter: Filter<Relation>,
+  ): Promise<number>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO[],
+    filter: Filter<Relation>,
+  ): Promise<Map<DTO, number>>;
+
+  async countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO | DTO[],
+    filter: Filter<Relation>,
+  ): Promise<number | Map<DTO, number>> {
+    if (Array.isArray(dto)) {
+      const entities = this.assembler.convertToEntities(dto);
+      const relationMap = await this.queryService.countRelations(RelationClass, relationName, entities, filter);
+      return entities.reduce((map, e, index) => {
+        const entry = relationMap.get(e) ?? 0;
+        map.set(dto[index], entry);
+        return map;
+      }, new Map<DTO, number>());
+    }
+    return this.queryService.countRelations(RelationClass, relationName, this.assembler.convertToEntity(dto), filter);
+  }
   /**
    * Find a relation for an array of DTOs. This will return a Map where the key is the DTO and the value is to relation or undefined if not found.
    * @param RelationClass - the class of the relation

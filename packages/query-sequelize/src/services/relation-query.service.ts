@@ -1,4 +1,5 @@
 import { Query, Class, AssemblerFactory } from '@nestjs-query/core';
+import { Filter } from '@nestjs-query/core/src';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { FilterQueryBuilder } from '../query';
 
@@ -57,6 +58,37 @@ export abstract class RelationQueryService<Entity extends Model> {
       relationQueryBuilder.findOptions(assembler.convertQuery(query)),
     );
     return assembler.convertToDTOs((relations as unknown) as Model[]);
+  }
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+  ): Promise<Map<Entity, number>>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity,
+    filter: Filter<Relation>,
+  ): Promise<number>;
+
+  async countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity | Entity[],
+    filter: Filter<Relation>,
+  ): Promise<number | Map<Entity, number>> {
+    if (Array.isArray(dto)) {
+      return this.batchCountRelations(RelationClass, relationName, dto, filter);
+    }
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
+    return this.ensureIsEntity(dto).$count(
+      relationName,
+      relationQueryBuilder.countOptions(assembler.convertQuery({ filter })),
+    );
   }
 
   /**
@@ -188,6 +220,30 @@ export abstract class RelationQueryService<Entity extends Model> {
       map.set(e, assembler.convertToDTOs((relations as unknown) as Model[]));
       return map;
     }, Promise.resolve(new Map<Entity, Relation[]>()));
+  }
+
+  /**
+   * Query for an array of relations for multiple dtos.
+   * @param RelationClass - The class to serialize the relations into.
+   * @param entities - The entities to query relations for.
+   * @param relationName - The name of relation to query for.
+   * @param query - A query to filter, page or sort relations.
+   */
+  private async batchCountRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+  ): Promise<Map<Entity, number>> {
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
+    const findOptions = relationQueryBuilder.countOptions(assembler.convertQuery({ filter }));
+    return entities.reduce(async (mapPromise, e) => {
+      const map = await mapPromise;
+      const count = await this.ensureIsEntity(e).$count(relationName, findOptions);
+      map.set(e, count);
+      return map;
+    }, Promise.resolve(new Map<Entity, number>()));
   }
 
   /**

@@ -15,6 +15,7 @@ import { expectSDL } from '../__fixtures__';
 import {
   createResolverFromNest,
   readBasicResolverSDL,
+  readConnectionWithTotalCountSDL,
   readCustomConnectionResolverSDL,
   readCustomNameResolverSDL,
   readCustomQueryResolverSDL,
@@ -134,7 +135,28 @@ describe('ReadResolver', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           },
+          totalCountFn: expect.any(Function),
         });
+      });
+
+      it('should call the service count with the provided input', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const input: CursorQueryArgsType<TestResolverDTO> = {
+          filter: {
+            stringField: { eq: 'foo' },
+          },
+          paging: { first: 1 },
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 0 } }))).thenResolve(output);
+        const result = await resolver.queryMany(input);
+        when(mockService.count(objectContaining(input.filter!))).thenResolve(10);
+        return expect(result.totalCount).resolves.toBe(10);
       });
     });
 
@@ -215,5 +237,19 @@ describe('ReadResolver', () => {
       const result = await resolver.findById(input);
       return expect(result).toEqual(output);
     });
+  });
+
+  it('should expose totalCount on connections if enableTotalCount is true ', () => {
+    @ObjectType('TotalCountDTO')
+    class TotalCountDTO extends TestResolverDTO {}
+    @Resolver(() => TotalCountDTO)
+    class TestTotalCountSDLResolver extends ReadResolver(TotalCountDTO, { enableTotalCount: true }) {
+      @Query(() => TotalCountDTO)
+      test(): TotalCountDTO {
+        return { id: '1', stringField: 'foo' };
+      }
+    }
+
+    return expectSDL([TestTotalCountSDLResolver], readConnectionWithTotalCountSDL);
   });
 });

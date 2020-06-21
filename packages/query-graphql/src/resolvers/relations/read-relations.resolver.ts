@@ -3,7 +3,7 @@ import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverField } from '../../decorators';
-import { DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
+import { CountRelationsLoader, DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
 import { ConnectionType, PagingStrategies, QueryArgsType } from '../../types';
 import { transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
@@ -12,6 +12,7 @@ import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 export interface ReadRelationsResolverOpts extends RelationsOpts {
   pagingStrategy?: PagingStrategies;
+  enableTotalCount?: boolean;
 }
 
 const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
@@ -49,14 +50,18 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   }
   const commonResolverOpts = removeRelationOpts(relation);
   const relationDTO = relation.DTO;
+  const dtoName = getDTONames(DTOClass).baseName;
   const { pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
   const relationName = relation.relationName ?? pluralBaseNameLower;
-  const loaderName = `load${pluralBaseName}For${DTOClass.name}`;
+  const relationLoaderName = `load${pluralBaseName}For${DTOClass.name}`;
+  const countRelationLoaderName = `count${pluralBaseName}For${DTOClass.name}`;
   const queryLoader = new QueryRelationsLoader<DTO, Relation>(relationDTO, relationName);
+  const countLoader = new CountRelationsLoader<DTO, Relation>(relationDTO, relationName);
+  const connectionName = `${dtoName}${pluralBaseName}Connection`;
   @ArgsType()
   class RelationQA extends QueryArgsType(relationDTO, relation) {}
 
-  const CT = ConnectionType(relationDTO, RelationQA);
+  const CT = ConnectionType(relationDTO, RelationQA, { ...relation, connectionName });
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadManyMixin extends Base {
     @ResolverField(pluralBaseNameLower, () => CT.resolveType, { nullable: relation.nullable }, commonResolverOpts)
@@ -66,8 +71,21 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
       @Context() context: ExecutionContext,
     ): Promise<ConnectionType<Relation>> {
       const qa = await transformAndValidate(RelationQA, q);
-      const loader = DataLoaderFactory.getOrCreateLoader(context, loaderName, queryLoader.createLoader(this.service));
-      return CT.createFromPromise((query) => loader.load({ dto, query }), qa);
+      const relationLoader = DataLoaderFactory.getOrCreateLoader(
+        context,
+        relationLoaderName,
+        queryLoader.createLoader(this.service),
+      );
+      const relationCountLoader = DataLoaderFactory.getOrCreateLoader(
+        context,
+        countRelationLoaderName,
+        countLoader.createLoader(this.service),
+      );
+      return CT.createFromPromise(
+        (query) => relationLoader.load({ dto, query }),
+        qa,
+        (filter) => relationCountLoader.load({ dto, filter }),
+      );
     }
   }
   return ReadManyMixin;
@@ -78,10 +96,13 @@ export const ReadRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: ReadRel
 >(
   Base: B,
 ): B => {
-  const { many, one, pagingStrategy } = relations;
+  const { many, one, pagingStrategy, enableTotalCount } = relations;
   const manyRelations = flattenRelations(many ?? {});
   const oneRelations = flattenRelations(one ?? {});
-  const WithMany = manyRelations.reduce((RB, a) => ReadManyRelationMixin(DTOClass, { pagingStrategy, ...a })(RB), Base);
+  const WithMany = manyRelations.reduce(
+    (RB, a) => ReadManyRelationMixin(DTOClass, { enableTotalCount, pagingStrategy, ...a })(RB),
+    Base,
+  );
   return oneRelations.reduce((RB, a) => ReadOneRelationMixin(DTOClass, a)(RB), WithMany);
 };
 

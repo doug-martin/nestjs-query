@@ -1,11 +1,17 @@
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { ConnectionType, CursorPagingType } from '../../../src';
-import { connectionObjectTypeSDL, expectSDL } from '../../__fixtures__';
+import { connectionObjectTypeSDL, connectionObjectTypeWithTotalCountSDL, expectSDL } from '../../__fixtures__';
 
 describe('ConnectionType', (): void => {
   @ObjectType('Test')
   class TestDto {
+    @Field()
+    stringField!: string;
+  }
+
+  @ObjectType('TestTotalCount')
+  class TestTotalCountDto {
     @Field()
     stringField!: string;
   }
@@ -16,7 +22,7 @@ describe('ConnectionType', (): void => {
     return plainToClass(CursorPagingType(), paging);
   };
 
-  it('should store metadata', async () => {
+  it('should create the connection SDL', async () => {
     @Resolver()
     class TestConnectionTypeResolver {
       @Query(() => TestConnection)
@@ -26,6 +32,19 @@ describe('ConnectionType', (): void => {
     }
 
     return expectSDL([TestConnectionTypeResolver], connectionObjectTypeSDL);
+  });
+
+  it('should create the connection SDL with totalCount if enabled', async () => {
+    const TestConnectionWithTotalCount = ConnectionType(TestTotalCountDto, { enableTotalCount: true });
+    @Resolver()
+    class TestConnectionTypeResolver {
+      @Query(() => TestConnectionWithTotalCount)
+      test(): ConnectionType<TestDto> | undefined {
+        return undefined;
+      }
+    }
+
+    return expectSDL([TestConnectionTypeResolver], connectionObjectTypeWithTotalCountSDL);
   });
 
   it('should throw an error if the object is not registered with @nestjs/graphql', () => {
@@ -43,6 +62,7 @@ describe('ConnectionType', (): void => {
     expect(new TestConnection()).toEqual({
       pageInfo: { hasNextPage: false, hasPreviousPage: false },
       edges: [],
+      totalCountFn: expect.any(Function),
     });
   });
 
@@ -57,6 +77,7 @@ describe('ConnectionType', (): void => {
           hasNextPage: false,
           hasPreviousPage: false,
         },
+        totalCountFn: expect.any(Function),
       });
     });
 
@@ -70,6 +91,7 @@ describe('ConnectionType', (): void => {
           hasNextPage: false,
           hasPreviousPage: false,
         },
+        totalCountFn: expect.any(Function),
       });
     });
 
@@ -101,6 +123,7 @@ describe('ConnectionType', (): void => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           },
+          totalCountFn: expect.any(Function),
         });
       });
 
@@ -131,6 +154,7 @@ describe('ConnectionType', (): void => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           },
+          totalCountFn: expect.any(Function),
         });
       });
     });
@@ -159,6 +183,7 @@ describe('ConnectionType', (): void => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           },
+          totalCountFn: expect.any(Function),
         });
       });
 
@@ -191,6 +216,7 @@ describe('ConnectionType', (): void => {
             hasPreviousPage: true,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
           },
+          totalCountFn: expect.any(Function),
         });
       });
     });
@@ -209,6 +235,7 @@ describe('ConnectionType', (): void => {
           hasNextPage: false,
           hasPreviousPage: false,
         },
+        totalCountFn: expect.any(Function),
       });
     });
   });

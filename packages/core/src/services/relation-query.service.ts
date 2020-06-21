@@ -1,6 +1,6 @@
 import { Class } from '../common';
 import { mergeQuery } from '../helpers';
-import { Query } from '../interfaces';
+import { Filter, Query } from '../interfaces';
 import { NoOpQueryService } from './noop-query.service';
 import { ProxyQueryService } from './proxy-query.service';
 import { QueryService } from './query.service';
@@ -80,6 +80,44 @@ export class RelationQueryService<DTO> extends ProxyQueryService<DTO> {
       }, Promise.resolve(new Map<DTO, Relation[]>()));
     }
     return service.query(mergeQuery(query, qf(dto)));
+  }
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    filter: Filter<Relation>,
+  ): Promise<Map<DTO, number>>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    filter: Filter<Relation>,
+  ): Promise<number>;
+
+  async countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO | DTO[],
+    filter: Filter<Relation>,
+  ): Promise<number | Map<DTO, number>> {
+    const serviceRelation = this.getRelation<Relation>(relationName);
+    if (!serviceRelation) {
+      if (Array.isArray(dto)) {
+        return super.countRelations(RelationClass, relationName, dto, filter);
+      }
+      return super.countRelations(RelationClass, relationName, dto, filter);
+    }
+    const { query: qf, service } = serviceRelation;
+    if (Array.isArray(dto)) {
+      return dto.reduce(async (mapPromise, d) => {
+        const map = await mapPromise;
+        const relations = await service.count(mergeQuery({ filter }, qf(d)).filter || {});
+        return map.set(d, relations);
+      }, Promise.resolve(new Map<DTO, number>()));
+    }
+    return service.count(mergeQuery({ filter }, qf(dto)).filter || {});
   }
 
   /**

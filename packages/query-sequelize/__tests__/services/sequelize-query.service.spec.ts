@@ -1,5 +1,5 @@
 import { DeepPartial, Filter, Query, QueryService } from '@nestjs-query/core';
-import { FindOptions } from 'sequelize';
+import { CountOptions, FindOptions } from 'sequelize';
 import { instance, mock, when, objectContaining, deepEqual } from 'ts-mockito';
 import { ModelCtor } from 'sequelize-typescript';
 import { SequelizeQueryService } from '../../src';
@@ -84,6 +84,19 @@ describe('SequelizeQueryService', (): void => {
     });
   });
 
+  describe('#count', () => {
+    it('call select and return the result', async () => {
+      const entities = testEntities();
+      const filter: Filter<TestEntity> = { stringType: { eq: 'foo' } };
+      const countOptions: CountOptions = {};
+      const { queryService, mockQueryBuilder, mockModelCtor } = createQueryService();
+      when(mockQueryBuilder.countOptions(deepEqual({ filter }))).thenReturn(countOptions);
+      when(mockModelCtor.count(countOptions)).thenResolve(entities.length);
+      const queryResult = await queryService.count(filter);
+      return expect(queryResult).toEqual(entities.length);
+    });
+  });
+
   describe('#queryRelations', () => {
     const relationName = 'testRelations';
     describe('with one entity', () => {
@@ -151,6 +164,79 @@ describe('SequelizeQueryService', (): void => {
           new Map([
             [mockModelInstances[0], entityOneRelations],
             [mockModelInstances[0], []],
+          ]),
+        );
+      });
+    });
+  });
+  describe('#countRelations', () => {
+    const relationName = 'testRelations';
+    describe('with one entity', () => {
+      it('call count and return the result', async () => {
+        const entity = testEntities()[0];
+        const relations = testRelations(entity.testEntityPk);
+        const filter: Filter<TestRelation> = { relationName: { eq: 'name' } };
+        const countOptions: CountOptions = {};
+        const mockModel = mock(TestEntity);
+        const mockModelInstance = instance(mockModel);
+        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService<TestRelation>();
+        // @ts-ignore
+        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        when(mockModelCtor.build(mockModelInstance)).thenReturn(mockModelInstance);
+        when(mockRelationQueryBuilder.countOptions(deepEqual({ filter }))).thenReturn(countOptions);
+        when(mockModel.$count(relationName, countOptions)).thenResolve(relations.length);
+        const queryResult = await queryService.countRelations(TestRelation, relationName, instance(mockModel), filter);
+        return expect(queryResult).toEqual(relations.length);
+      });
+    });
+    describe('with multiple entities', () => {
+      it('call select and return the result', async () => {
+        const entities = testEntities();
+        const entityOneRelations = testRelations(entities[0].testEntityPk);
+        const entityTwoRelations = testRelations(entities[1].testEntityPk);
+        const filter: Filter<TestRelation> = {
+          relationName: { isNot: null },
+        };
+        const countOptions: CountOptions = {};
+        const mockModel = mock(TestEntity);
+        const mockModelInstances = [instance(mockModel), instance(mockModel)];
+        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService();
+        // @ts-ignore
+        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
+        when(mockRelationQueryBuilder.countOptions(deepEqual({ filter }))).thenReturn(countOptions);
+        when(mockModel.$count(relationName, countOptions))
+          .thenResolve(entityOneRelations.length)
+          .thenResolve(entityTwoRelations.length);
+        const queryResult = await queryService.countRelations(TestRelation, relationName, mockModelInstances, filter);
+        return expect(queryResult).toEqual(
+          new Map([
+            [mockModelInstances[0], entityOneRelations.length],
+            [mockModelInstances[1], entityTwoRelations.length],
+          ]),
+        );
+      });
+
+      it('should return an empty array if no results are found.', async () => {
+        const entities = testEntities();
+        const entityOneRelations = testRelations(entities[0].testEntityPk);
+        const filter: Filter<TestRelation> = {
+          relationName: { isNot: null },
+        };
+        const countOptions: CountOptions = {};
+        const mockModel = mock(TestEntity);
+        const mockModelInstances = [instance(mockModel), instance(mockModel)];
+        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService();
+        // @ts-ignore
+        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
+        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
+        when(mockRelationQueryBuilder.countOptions(deepEqual({ filter }))).thenReturn(countOptions);
+        when(mockModel.$count(relationName, countOptions)).thenResolve(entityOneRelations.length).thenResolve(0);
+        const queryResult = await queryService.countRelations(TestRelation, relationName, mockModelInstances, filter);
+        return expect(queryResult).toEqual(
+          new Map([
+            [mockModelInstances[0], entityOneRelations.length],
+            [mockModelInstances[0], 0],
           ]),
         );
       });

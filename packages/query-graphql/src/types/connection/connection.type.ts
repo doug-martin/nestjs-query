@@ -6,8 +6,9 @@ import {
   StaticQueryArgsType,
 } from '../query';
 import { ArrayConnectionType, StaticArrayConnectionType } from './array-connection.type';
-import { StaticCursorConnectionType, CursorConnectionType } from './cursor';
+import { StaticCursorConnectionType, CursorConnectionType, CursorConnectionOptions } from './cursor';
 import { Connection } from './interfaces';
+import { isStaticQueryArgsType } from '../query/query-args.type';
 
 export type StaticConnectionType<DTO> = StaticArrayConnectionType<DTO> | StaticCursorConnectionType<DTO>;
 export type ConnectionType<DTO> = Connection<DTO>;
@@ -19,17 +20,26 @@ export function ConnectionType<DTO>(
 export function ConnectionType<DTO>(
   DTOClass: Class<DTO>,
   QueryArgsType: StaticQueryArgsType<DTO>,
+  opts?: CursorConnectionOptions,
 ): StaticCursorConnectionType<DTO>;
-export function ConnectionType<DTO>(DTOClass: Class<DTO>): StaticCursorConnectionType<DTO>;
+export function ConnectionType<DTO>(
+  DTOClass: Class<DTO>,
+  opts?: CursorConnectionOptions,
+): StaticCursorConnectionType<DTO>;
 export function ConnectionType<DTO, QueryType extends StaticQueryArgsType<DTO>>(
   DTOClass: Class<DTO>,
-  QueryArgsType?: QueryType,
+  QueryArgsType?: QueryType | CursorConnectionOptions,
+  opts?: CursorConnectionOptions,
 ): StaticConnectionType<DTO> {
-  if (QueryArgsType) {
+  if (isStaticQueryArgsType(QueryArgsType)) {
     const { PageType } = QueryArgsType;
     if (!PageType || PageType.strategy === PagingStrategies.OFFSET) {
       return ArrayConnectionType(DTOClass);
     }
   }
-  return CursorConnectionType(DTOClass);
+  let cursorOpts: CursorConnectionOptions | undefined = opts;
+  if (!cursorOpts && !isStaticQueryArgsType(QueryArgsType)) {
+    cursorOpts = QueryArgsType as CursorConnectionOptions;
+  }
+  return CursorConnectionType(DTOClass, cursorOpts);
 }

@@ -15,6 +15,7 @@ import { TagEntity } from './tag.entity';
           EntityClass: TagEntity,
           CreateDTOClass: TagInputDTO,
           UpdateDTOClass: TagInputDTO,
+          enableTotalCount: true,
         },
       ],
     }),

@@ -1,4 +1,5 @@
 import { Query, Class, AssemblerFactory } from '@nestjs-query/core';
+import { Filter } from '@nestjs-query/core/src';
 import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder } from 'typeorm';
 import { FilterQueryBuilder, RelationQueryBuilder } from '../query';
 
@@ -53,6 +54,34 @@ export abstract class RelationQueryService<Entity> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     return assembler.convertAsyncToDTOs(relationQueryBuilder.select(dto, assembler.convertQuery(query)).getMany());
+  }
+
+  async countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+  ): Promise<Map<Entity, number>>;
+
+  async countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity,
+    filter: Filter<Relation>,
+  ): Promise<number>;
+
+  async countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity | Entity[],
+    filter: Filter<Relation>,
+  ): Promise<number | Map<Entity, number>> {
+    if (Array.isArray(dto)) {
+      return this.batchCountRelations(RelationClass, relationName, dto, filter);
+    }
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
+    return relationQueryBuilder.select(dto, assembler.convertQuery({ filter })).getCount();
   }
 
   /**
@@ -185,6 +214,34 @@ export abstract class RelationQueryService<Entity> {
       results.set(e, assembler.convertToDTOs(relations));
       return results;
     }, new Map<Entity, Relation[]>());
+  }
+
+  /**
+   * Count the number of relations for multiple dtos.
+   * @param RelationClass - The class to serialize the relations into.
+   * @param entities - The entities to query relations for.
+   * @param relationName - The name of relation to query for.
+   * @param filter - The filter to apply to the relation query.
+   */
+  private async batchCountRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+  ): Promise<Map<Entity, number>> {
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
+    const convertedQuery = assembler.convertQuery({ filter });
+    const entityRelations = await Promise.all(
+      entities.map((e) => {
+        return relationQueryBuilder.select(e, convertedQuery).getCount();
+      }),
+    );
+    return entityRelations.reduce((results, relationCount, index) => {
+      const e = entities[index];
+      results.set(e, relationCount);
+      return results;
+    }, new Map<Entity, number>());
   }
 
   /**

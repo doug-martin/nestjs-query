@@ -73,6 +73,12 @@ describe('NoOpQueryService', () => {
     when(mockQueryService.query(query)).thenResolve(result);
     return expect(queryService.query(query)).resolves.toBe(result);
   });
+  it('should proxy to the underlying service when calling count', () => {
+    const query = {};
+    const result = 1;
+    when(mockQueryService.count(query)).thenResolve(result);
+    return expect(queryService.count(query)).resolves.toBe(result);
+  });
   it('should proxy to the underlying service when calling queryRelations with one dto', () => {
     const relationName = 'test';
     const dto = new TestType();
@@ -89,6 +95,24 @@ describe('NoOpQueryService', () => {
     const result = new Map([[{ foo: 'bar' }, []]]);
     when(mockQueryService.queryRelations(TestType, relationName, dtos, query)).thenResolve(result);
     return expect(queryService.queryRelations(TestType, relationName, dtos, query)).resolves.toBe(result);
+  });
+
+  it('should proxy to the underlying service when calling countRelations with one dto', () => {
+    const relationName = 'test';
+    const dto = new TestType();
+    const query = {};
+    const result = 1;
+    when(mockQueryService.countRelations(TestType, relationName, dto, query)).thenResolve(result);
+    return expect(queryService.countRelations(TestType, relationName, dto, query)).resolves.toBe(result);
+  });
+
+  it('should proxy to the underlying service when calling countRelations with many dtos', () => {
+    const relationName = 'test';
+    const dtos = [new TestType()];
+    const query = {};
+    const result = new Map([[{ foo: 'bar' }, 1]]);
+    when(mockQueryService.countRelations(TestType, relationName, dtos, query)).thenResolve(result);
+    return expect(queryService.countRelations(TestType, relationName, dtos, query)).resolves.toBe(result);
   });
 
   it('should proxy to the underlying service when calling removeRelation', () => {

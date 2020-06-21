@@ -4,6 +4,7 @@ import omit from 'lodash.omit';
 import { getDTONames } from '../common';
 import { ResolverQuery } from '../decorators';
 import { ConnectionType, QueryArgsType, QueryArgsTypeOpts, StaticConnectionType, StaticQueryArgsType } from '../types';
+import { CursorConnectionOptions } from '../types/connection/cursor';
 import { CursorQueryArgsTypeOpts } from '../types/query/query-args';
 import { transformAndValidate } from './helpers';
 import {
@@ -25,7 +26,8 @@ export type ReadResolverOpts<DTO> = {
   QueryArgs?: StaticQueryArgsType<DTO>;
   Connection?: StaticConnectionType<DTO>;
 } & ResolverOpts &
-  QueryArgsTypeOpts<DTO>;
+  QueryArgsTypeOpts<DTO> &
+  Pick<CursorConnectionOptions, 'enableTotalCount'>;
 
 export interface ReadResolver<DTO, QT extends QueryArgsType<DTO>, CT extends ConnectionType<DTO>>
   extends ServiceResolver<DTO> {
@@ -42,9 +44,11 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: 
 >(
   BaseClass: B,
 ): Class<ReadResolverFromOpts<DTO, ReadOpts>> & B => {
+  const { baseNameLower, pluralBaseNameLower, baseName } = getDTONames(DTOClass, opts);
   const { QueryArgs = QueryArgsType(DTOClass, opts) } = opts;
-  const { Connection = ConnectionType(DTOClass, QueryArgs) } = opts;
-  const { baseNameLower, pluralBaseNameLower } = getDTONames(DTOClass, opts);
+  const {
+    Connection = ConnectionType(DTOClass, QueryArgs, { ...opts, connectionName: `${baseName}Connection` }),
+  } = opts;
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
   @ArgsType()
@@ -60,7 +64,11 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: 
     @ResolverQuery(() => Connection.resolveType, { name: pluralBaseNameLower }, commonResolverOpts, opts.many ?? {})
     async queryMany(@Args() query: QA): Promise<ConnectionType<DTO>> {
       const qa = await transformAndValidate(QA, query);
-      return Connection.createFromPromise((q) => this.service.query(q), qa);
+      return Connection.createFromPromise(
+        (q) => this.service.query(q),
+        qa,
+        (filter) => this.service.count(filter),
+      );
     }
   }
   return ReadResolverBase as Class<ReadResolverFromOpts<DTO, ReadOpts>> & B;

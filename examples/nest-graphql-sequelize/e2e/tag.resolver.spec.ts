@@ -88,19 +88,21 @@ describe('TagResolver (sequelize - e2e)', () => {
             todoItems(sorting: [{ field: id, direction: ASC }]) {
               ${pageInfoField}
               ${edgeNodes('id')}
+              totalCount
             }
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.tag.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.tag.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
         });
@@ -118,18 +120,20 @@ describe('TagResolver (sequelize - e2e)', () => {
           tags {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags);
         });
@@ -145,18 +149,20 @@ describe('TagResolver (sequelize - e2e)', () => {
           tags(filter: { id: { in: [1, 2, 3] } }) {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
         });
@@ -172,18 +178,20 @@ describe('TagResolver (sequelize - e2e)', () => {
           tags(sorting: [{field: id, direction: DESC}]) {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
         });
@@ -200,18 +208,20 @@ describe('TagResolver (sequelize - e2e)', () => {
           tags(paging: {first: 2}) {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
+            totalCount
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             });
+            expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
           });
@@ -227,18 +237,20 @@ describe('TagResolver (sequelize - e2e)', () => {
           tags(paging: {first: 2, after: "YXJyYXljb25uZWN0aW9uOjE="}) {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
+            totalCount
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
+            expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
           });
@@ -642,21 +654,27 @@ describe('TagResolver (sequelize - e2e)', () => {
               todoItems {
                 ${pageInfoField}
                 ${edgeNodes(todoItemFields)}
+                totalCount
               }
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems;
+          const {
+            edges,
+            pageInfo,
+            totalCount,
+          }: CursorConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems;
           expect(body.data.addTodoItemsToTag.id).toBe('1');
-          expect(edges).toHaveLength(5);
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(5);
+          expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node.title)).toEqual([
             'Create Nest App',
             'Create Entity',
@@ -686,21 +704,27 @@ describe('TagResolver (sequelize - e2e)', () => {
               todoItems {
                 ${pageInfoField}
                 ${edgeNodes(todoItemFields)}
+                totalCount
               }
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems;
+          const {
+            edges,
+            pageInfo,
+            totalCount,
+          }: CursorConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems;
           expect(body.data.removeTodoItemsFromTag.id).toBe('1');
-          expect(edges).toHaveLength(2);
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(2);
+          expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.title)).toEqual(['Create Nest App', 'Create Entity']);
         });
     });

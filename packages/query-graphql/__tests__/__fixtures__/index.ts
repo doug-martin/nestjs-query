@@ -41,4 +41,7 @@ export const cursorQueryArgsTypeSDL = readGraphql(resolve(__dirname, './cursor-q
 export const offsetQueryArgsTypeSDL = readGraphql(resolve(__dirname, './offset-query-args-type.graphql'));
 export const noPagingQueryArgsTypeSDL = readGraphql(resolve(__dirname, './no-paging-query-args-type.graphql'));
 export const connectionObjectTypeSDL = readGraphql(resolve(__dirname, './connection-object-type.graphql'));
+export const connectionObjectTypeWithTotalCountSDL = readGraphql(
+  resolve(__dirname, './connection-object-type-with-total-count.graphql'),
+);
 export const edgeObjectTypeSDL = readGraphql(resolve(__dirname, './edge-object-type.graphql'));

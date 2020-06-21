@@ -45,6 +45,7 @@ const knownTypes: Set<ReturnTypeFuncValue> = new Set([
   GraphQLTimestamp,
 ]);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isNamed = (Type: any): Type is { name: string } => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   return 'name' in Type && typeof Type.name === 'string';

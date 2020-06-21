@@ -10,7 +10,7 @@ type TestResolverDTO {
 
     """Specify to sort results."""
     sorting: [TestRelationDTOSort!] = []
-  ): TestRelationDTOConnection!
+  ): TestResolverDTORelationsConnection!
 }
 
 input CursorPaging {
@@ -121,7 +121,7 @@ type PageInfo {
   endCursor: ConnectionCursor
 }
 
-type TestRelationDTOConnection {
+type TestResolverDTORelationsConnection {
   """Paging information"""
   pageInfo: PageInfo!
 

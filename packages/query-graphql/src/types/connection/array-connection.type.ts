@@ -1,9 +1,7 @@
-import { Class, Query } from '@nestjs-query/core';
+import { Class } from '@nestjs-query/core';
 import { OffsetQueryArgsType, NoPagingQueryArgsType } from '../query/query-args';
-import { StaticConnection } from './interfaces';
+import { QueryMany, StaticConnection } from './interfaces';
 import { getMetadataStorage } from '../../metadata';
-
-export type QueryMany<DTO> = (query: Query<DTO>) => Promise<DTO[]>;
 
 export type StaticArrayConnectionType<DTO> = StaticConnection<
   DTO,
@@ -14,7 +12,7 @@ export type StaticArrayConnectionType<DTO> = StaticConnection<
 export type ArrayConnectionType<DTO> = DTO[];
 export function ArrayConnectionType<DTO>(TItemClass: Class<DTO>): StaticArrayConnectionType<DTO> {
   const metadataStorage = getMetadataStorage();
-  const existing = metadataStorage.getConnectionType<DTO, StaticArrayConnectionType<DTO>>('array', TItemClass);
+  const existing = metadataStorage.getConnectionType<DTO, StaticArrayConnectionType<DTO>>('array', TItemClass.name);
   if (existing) {
     return existing;
   }
@@ -28,6 +26,6 @@ export function ArrayConnectionType<DTO>(TItemClass: Class<DTO>): StaticArrayCon
       return queryMany(query);
     }
   }
-  metadataStorage.addConnectionType('array', TItemClass, AbstractConnection);
+  metadataStorage.addConnectionType('array', TItemClass.name, AbstractConnection);
   return AbstractConnection;
 }

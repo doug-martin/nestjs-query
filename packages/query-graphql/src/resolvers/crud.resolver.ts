@@ -25,6 +25,7 @@ export interface CRUDResolverOpts<
   UpdateDTOClass?: Class<U>;
   enableSubscriptions?: boolean;
   pagingStrategy?: PS;
+  enableTotalCount?: boolean;
   create?: CreateResolverOpts<DTO, C>;
   read?: R;
   update?: UpdateResolverOpts<DTO, U>;
@@ -77,6 +78,7 @@ export const CRUDResolver = <
     UpdateDTOClass,
     enableSubscriptions,
     pagingStrategy,
+    enableTotalCount,
     relations = {},
     references = {},
     create = {},
@@ -87,9 +89,13 @@ export const CRUDResolver = <
   } = opts;
 
   const referencable = Refereceable(DTOClass, referenceBy);
-  const relatable = Relatable(DTOClass, { relations, references, pagingStrategy });
+  const relatable = Relatable(DTOClass, { relations, references, pagingStrategy, enableTotalCount });
   const creatable = Creatable(DTOClass, { CreateDTOClass, enableSubscriptions, ...create });
-  const readable = Readable(DTOClass, { pagingStrategy, ...read } as MergePagingStrategyOpts<DTO, R, PS>);
+  const readable = Readable(DTOClass, { enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<
+    DTO,
+    R,
+    PS
+  >);
   const updateable = Updateable(DTOClass, { UpdateDTOClass, enableSubscriptions, ...update });
   const deleteResolver = DeleteResolver(DTOClass, { enableSubscriptions, ...deleteArgs });
 

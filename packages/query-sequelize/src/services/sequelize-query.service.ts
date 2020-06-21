@@ -46,6 +46,10 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
     return this.model.findAll<Entity>(this.filterQueryBuilder.findOptions(query));
   }
 
+  async count(filter: Filter<Entity>): Promise<number> {
+    return this.model.count(this.filterQueryBuilder.countOptions({ filter }));
+  }
+
   /**
    * Find an entity by it's `id`.
    *
