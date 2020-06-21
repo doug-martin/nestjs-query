@@ -1,5 +1,5 @@
 import { Filter, Paging, Query, SortField } from '@nestjs-query/core';
-import { FindOptions, Filterable, DestroyOptions, Order, OrderItem, UpdateOptions } from 'sequelize';
+import { FindOptions, Filterable, DestroyOptions, Order, OrderItem, UpdateOptions, CountOptions } from 'sequelize';
 import { WhereBuilder } from './where.builder';
 
 /**
@@ -39,6 +39,12 @@ export class FilterQueryBuilder<Entity> {
     opts = this.applyFilter(opts, query.filter);
     opts = this.applySorting(opts, query.sorting);
     opts = this.applyPaging(opts, query.paging);
+    return opts;
+  }
+
+  countOptions(query: Query<Entity>): CountOptions {
+    let opts: CountOptions = {};
+    opts = this.applyFilter(opts, query.filter);
     return opts;
   }
 

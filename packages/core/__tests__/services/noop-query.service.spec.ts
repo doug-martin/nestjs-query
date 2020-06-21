@@ -36,9 +36,18 @@ describe('NoOpQueryService', () => {
   it('should throw a NotImplementedException when calling query', () => {
     return expect(instance.query({})).rejects.toThrow('query is not implemented');
   });
+
+  it('should throw a NotImplementedException when calling count', () => {
+    return expect(instance.count({})).rejects.toThrow('count is not implemented');
+  });
   it('should throw a NotImplementedException when calling queryRelations', () => {
     return expect(instance.queryRelations(TestType, 'test', new TestType(), {})).rejects.toThrow(
       'queryRelations is not implemented',
+    );
+  });
+  it('should throw a NotImplementedException when calling countRelations', () => {
+    return expect(instance.countRelations(TestType, 'test', new TestType(), {})).rejects.toThrow(
+      'countRelations is not implemented',
     );
   });
   it('should throw a NotImplementedException when calling removeRelation', () => {

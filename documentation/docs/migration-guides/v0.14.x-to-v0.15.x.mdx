@@ -1,0 +1,153 @@
+---
+title: v0.14.x to v0.15.x
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+In the `v0.15.x` the cursor connection type was updated to allow for enabling a `totalCount` field. When enabling this field `nestjs-query` needed to explicitly name each connection type to allow each relation connection to independently enable the `totalCount` field.
+
+In previous versions of `nestjs-query` the connection type was shared between all instances which caused the totalCount field to not always be exposed. In `v0.15.x` all instances of a connection are uniquely named.
+
+For example, suppose the following DTOS.
+
+<Tabs
+  defaultValue="todoitem"
+  values={[
+    { label: 'todo-item.dto.ts', value: 'todoitem', },
+    { label: 'sub-task.dto.ts', value: 'subtask', },
+  ]
+}>
+<TabItem value="todoitem">
+
+```ts title="todo-item.dto.ts"
+import { FilterableField, Connection } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
+
+@ObjectType('TodoItem')
+@Connection('subTasks', () => SubTaskDTO, { enableTotalCount: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+
+  @FilterableField()
+  priority!: number;
+}
+
+```
+
+</TabItem>
+<TabItem value="subtask">
+
+```ts title="sub-task.dto.ts"
+import { FilterableField, Relation } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
+
+@ObjectType('SubTask')
+@Relation('todoItem', () => TodoItemDTO, { disableRemove: true })
+export class SubTaskDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+
+  @FilterableField()
+  todoItemId!: string;
+}
+
+```
+
+</TabItem>
+</Tabs>
+
+In previous versions the generated graphql would have been
+
+```graphql
+type TodoItem {
+  id: ID!
+  title: String!
+  description: String
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  age: Float!
+  priority: Float!
+  subTasks(
+    paging: CursorPaging = { first: 10 }
+
+    filter: SubTaskFilter = {}
+
+    sorting: [SubTaskSort!] = []
+  ): SubTaskConnection!
+}
+
+type SubTaskConnection {
+  pageInfo: PageInfo!
+  edges: [SubTaskEdge!]!
+}
+```
+
+In the latest version the relation gets its own connection type.
+
+```graphql
+type TodoItem {
+  id: ID!
+  title: String!
+  description: String
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  age: Float!
+  priority: Float!
+  subTasks(
+    paging: CursorPaging = { first: 10 }
+
+    filter: SubTaskFilter = {}
+
+    sorting: [SubTaskSort!] = []
+  ): TodoItemSubTasksConnection!
+}
+
+type TodoItemSubTasksConnection {
+  pageInfo: PageInfo!
+  edges: [SubTaskEdge!]!
+  totalCount: Int!
+}
+```
+
+
+
+
+
+
+

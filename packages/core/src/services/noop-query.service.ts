@@ -66,6 +66,10 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
     return Promise.reject(new NotImplementedException('query is not implemented'));
   }
 
+  count(filter: Filter<DTO>): Promise<number> {
+    return Promise.reject(new NotImplementedException('count is not implemented'));
+  }
+
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
@@ -87,6 +91,29 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
     query: Query<Relation>,
   ): Promise<Relation[] | Map<DTO, Relation[]>> {
     return Promise.reject(new NotImplementedException('queryRelations is not implemented'));
+  }
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entity: DTO,
+    filter: Filter<Relation>,
+  ): Promise<number>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    filter: Filter<Relation>,
+  ): Promise<Map<DTO, number>>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entity: DTO | DTO[],
+    filter: Filter<Relation>,
+  ): Promise<number | Map<DTO, number>> {
+    return Promise.reject(new NotImplementedException('countRelations is not implemented'));
   }
 
   removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {

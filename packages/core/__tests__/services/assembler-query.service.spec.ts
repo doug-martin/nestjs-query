@@ -44,6 +44,16 @@ describe('AssemblerQueryService', () => {
     });
   });
 
+  describe('count', () => {
+    it('transform the filter and results', () => {
+      const mockQueryService = mock<QueryService<TestEntity>>();
+      const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
+      when(mockQueryService.count(objectContaining({ bar: { eq: 'bar' } }))).thenResolve(1);
+
+      return expect(assemblerService.count({ foo: { eq: 'bar' } })).resolves.toEqual(1);
+    });
+  });
+
   describe('findById', () => {
     it('should transform the results', () => {
       const mockQueryService = mock<QueryService<TestEntity>>();
@@ -119,6 +129,42 @@ describe('AssemblerQueryService', () => {
       return expect(
         assemblerService.queryRelations(TestDTO, 'test', [{ foo: 'bar' }], { filter: { foo: { eq: 'bar' } } }),
       ).resolves.toEqual(new Map([[dto, []]]));
+    });
+  });
+
+  describe('countRelations', () => {
+    it('should transform the results for a single entity', () => {
+      const mockQueryService = mock<QueryService<TestEntity>>();
+      const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
+      when(
+        mockQueryService.countRelations(
+          TestDTO,
+          'test',
+          objectContaining({ bar: 'bar' }),
+          objectContaining({ foo: { eq: 'bar' } }),
+        ),
+      ).thenResolve(1);
+
+      return expect(
+        assemblerService.countRelations(TestDTO, 'test', { foo: 'bar' }, { foo: { eq: 'bar' } }),
+      ).resolves.toEqual(1);
+    });
+
+    it('should transform multiple entities', () => {
+      const mockQueryService = mock<QueryService<TestEntity>>();
+      const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
+      const dto: TestDTO = { foo: 'bar' };
+      const entity: TestEntity = { bar: 'bar' };
+      when(
+        mockQueryService.countRelations(TestDTO, 'test', deepEqual([entity]), objectContaining({ foo: { eq: 'bar' } })),
+      ).thenCall((relationClass, relation, entities) => {
+        return Promise.resolve(
+          new Map<TestEntity, number>([[entities[0], 1]]),
+        );
+      });
+      return expect(
+        assemblerService.countRelations(TestDTO, 'test', [{ foo: 'bar' }], { foo: { eq: 'bar' } }),
+      ).resolves.toEqual(new Map([[dto, 1]]));
     });
   });
 

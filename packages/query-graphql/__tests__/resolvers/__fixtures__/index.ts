@@ -92,6 +92,9 @@ export const readCustomConnectionResolverSDL = readGraphql(
 );
 export const readCustomQueryResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-custom-query.resolver.graphql'));
 export const readOffsetQueryResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-offset-query.resolver.graphql'));
+export const readConnectionWithTotalCountSDL = readGraphql(
+  resolve(__dirname, 'read', 'read-connection-with-total-count.resolver.graphql'),
+);
 
 export const updateBasicResolverSDL = readGraphql(resolve(__dirname, 'update', 'update-basic.resolver.graphql'));
 export const updateDisabledResolverSDL = readGraphql(resolve(__dirname, 'update', 'update-disabled.resolver.graphql'));

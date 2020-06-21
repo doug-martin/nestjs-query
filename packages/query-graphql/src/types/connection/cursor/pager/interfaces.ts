@@ -1,5 +1,5 @@
-import { Query } from '@nestjs-query/core';
 import { CursorQueryArgsType } from '../../../query';
+import { Count, QueryMany } from '../../interfaces';
 import { CursorConnectionType } from '../cursor-connection.type';
 
 export interface PagingMeta {
@@ -15,8 +15,12 @@ export interface QueryResults<DTO> {
   hasExtraNode: boolean;
 }
 
-export type QueryMany<DTO> = (query: Query<DTO>) => Promise<DTO[]>;
+export type CountFn = () => Promise<number>;
+
+export type PagerResult<DTO> = {
+  totalCount: CountFn;
+} & Omit<CursorConnectionType<DTO>, 'totalCount'>;
 
 export interface Pager<DTO> {
-  page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>): Promise<CursorConnectionType<DTO>>;
+  page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>, count: Count<DTO>): Promise<PagerResult<DTO>>;
 }

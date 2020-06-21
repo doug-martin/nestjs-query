@@ -96,20 +96,22 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             subTasks {
               ${pageInfoField}
               ${edgeNodes(subTaskFields)}
+              totalCount
             }
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
-          expect(edges).toHaveLength(3);
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(3);
+          expect(edges).toHaveLength(3);
           edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
         });
     });
@@ -125,19 +127,21 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             tags(sorting: [{ field: id, direction: ASC }]) {
               ${pageInfoField}
               ${edgeNodes(tagFields)}
+              totalCount
             }
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.todoItem.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.todoItem.tags;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
         });
@@ -155,18 +159,20 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItems {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
@@ -194,18 +200,20 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItems(filter: { id: { in: [1, 2, 3] } }) {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
@@ -225,18 +233,20 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItems(sorting: [{field: id, direction: DESC}]) {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual([
             {
@@ -265,18 +275,20 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItems(paging: {first: 2}) {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
+            totalCount
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             });
+            expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
               { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
@@ -295,18 +307,20 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItems(paging: {first: 2, after: "YXJyYXljb25uZWN0aW9uOjE="}) {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
+            totalCount
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
+            expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
               { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
@@ -895,21 +909,27 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               subTasks {
                 ${pageInfoField}
                 ${edgeNodes(subTaskFields)}
+                totalCount
               }
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
+          const {
+            edges,
+            pageInfo,
+            totalCount,
+          }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
           expect(body.data.addSubTasksToTodoItem.id).toBe('1');
-          expect(edges).toHaveLength(6);
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(6);
+          expect(edges).toHaveLength(6);
           edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
         });
     });
@@ -935,21 +955,23 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               tags(sorting: [{ field: id, direction: ASC }]) {
                 ${pageInfoField}
                 ${edgeNodes(tagFields)}
+                totalCount
               }
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
           expect(body.data.addTagsToTodoItem.id).toBe('1');
-          expect(edges).toHaveLength(5);
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(5);
+          expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
         });
     });
@@ -975,21 +997,23 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               tags(sorting: [{ field: id, direction: ASC }]) {
                 ${pageInfoField}
                 ${edgeNodes(tagFields)}
+                totalCount
               }
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
           expect(body.data.removeTagsFromTodoItem.id).toBe('1');
-          expect(edges).toHaveLength(2);
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(2);
+          expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
         });
     });

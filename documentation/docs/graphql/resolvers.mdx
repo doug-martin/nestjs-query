@@ -123,6 +123,8 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
 
 * `pagingStrategy?` - Specify to use an alternate paging strategy (`CURSOR`, `OFFSET`, 'NONE'). See [Paging Strategy](#paging-strategy).
 
+* `enableTotalCount?` - When using `CURSOR` based paging set to true to expose a `totalCount` field on all connection from this resolver.
+
 * `create` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `CreateDTOClass` - The input DTO to use for create mutations.
     * `CreateOneInput` - The `InputType` to use for create one mutations.
@@ -132,6 +134,7 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
     * `QueryArgs` - The `ArgsType` to use to filter records in `queryMany` endpoint.
     * `Connection` - The `ObjectType` to return from the `queryMany` endpoint.
     * `pagingStrategy?` - Specify to use an alternate paging strategy (`CURSOR`, `OFFSET`, 'NONE'). See [Paging Strategy](#paging-strategy).
+    * `enableTotalCount?` - When using `CURSOR` based paging set to true to expose a `totalCount` field on the connection.
     * `defaultResultSize=10` - The default number of results to return
     * `maxResultsSize=50` - The maximum number of results an end user can specify to return from a query.
     * `defaultSort=[]` - The default sort to use when querying for records.
@@ -837,6 +840,172 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
       @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
   ) {
     super(service);
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### Paging with Total Count
+
+:::note
+This section **ONLY** applies to `CURSOR` connections.
+:::
+:::warning
+Enabling `totalCount` can be expensive. If your table is large the `totalCount` query may be expensive, use with caution.
+:::
+:::info
+The `totalCount` field is not eagerly fetched. It will only be executed if the field is queried from the client.
+:::
+
+When using the `CURSOR` paging strategy (the default) you have the option to expose a `totalCount` field to allow clients to fetch a total count of records in a connection.
+
+To enable the `totalCount` field for connections (including relations) in a resolver set the `enableTotalCount` option to `true`.
+
+<Tabs
+  defaultValue="module"
+  values={[
+    { label: 'NestjsQueryGraphQLModule', value: 'module', },
+    { label: 'CRUDResolver', value: 'resolver', },
+  ]
+}>
+<TabItem value="module">
+
+```ts title="todo-item.module.ts" {14}
+import { NestjsQueryGraphQLModule, PagingStrategies } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [{
+        DTOClass: TodoItemDTO,
+        EntityClass: TodoItemEntity,
+        enableTotalCount: true,
+      }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
+<TabItem value="resolver">
+
+```ts title="todo-item.resolver.ts" {9}
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Resolver()
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  enableTotalCount: true,
+}) {
+  constructor(
+      @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+  ) {
+    super(service);
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+When setting `enableTotalCount` to `true` you will be able to query for `totalCount` on `cursor` connections
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems {
+    totalCount
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges {
+      node {
+        id
+        title
+        description
+      }
+    }
+  }
+}
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": {
+      "totalCount": 5,
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+        "endCursor": "YXJyYXljb25uZWN0aW9uOjQ="
+      },
+      "edges": [
+        {
+          "node": {
+            "id": "1",
+            "title": "Create Nest App",
+            "description": null
+          }
+        },
+        {
+          "node": {
+            "id": "2",
+            "title": "Create Entity",
+            "description": null
+          }
+        },
+        {
+          "node": {
+            "id": "3",
+            "title": "Create Entity Service",
+            "description": null
+          }
+        },
+        {
+          "node": {
+            "id": "4",
+            "title": "Add Todo Item Resolver",
+            "description": null
+          }
+        },
+        {
+          "node": {
+            "id": "5",
+            "title": "How to create item With Sub Tasks",
+            "description": null
+          }
+        }
+      ]
+    }
   }
 }
 ```

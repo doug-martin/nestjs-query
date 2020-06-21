@@ -2,6 +2,7 @@ import { Class } from '@nestjs-query/core';
 import { DTONamesOpts } from '../../common';
 import { ResolverMethodOpts } from '../../decorators';
 import { QueryArgsTypeOpts } from '../../types';
+import { CursorConnectionOptions } from '../../types/connection/cursor';
 
 export type ReferencesKeys<DTO, Reference> = {
   [F in keyof Reference]?: keyof DTO;
@@ -52,7 +53,8 @@ export type ResolverRelation<Relation> = {
   disableRemove?: boolean;
 } & DTONamesOpts &
   ResolverMethodOpts &
-  QueryArgsTypeOpts<Relation>;
+  QueryArgsTypeOpts<Relation> &
+  Pick<CursorConnectionOptions, 'enableTotalCount'>;
 
 export type RelationTypeMap<RT> = Record<string, RT>;
 

@@ -28,26 +28,43 @@ type PageInfo {
   endCursor: ConnectionCursor
 }
 
-type TestConnection {
+type TotalCountDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TotalCountDTOEdge {
+  """The node containing the TotalCountDTO"""
+  node: TotalCountDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type TotalCountDTOConnection {
   """Paging information"""
   pageInfo: PageInfo!
 
   """Array of edges."""
-  edges: [TestResolverDTOEdge!]!
+  edges: [TotalCountDTOEdge!]!
+
+  """Fetch total count of records"""
+  totalCount: Int!
 }
 
 type Query {
-  test: TestResolverDTO!
-  tests(
+  totalCountDTO(id: ID!): TotalCountDTO
+  totalCountDTOS(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}
 
     """Specify to filter the records returned."""
-    filter: TestResolverDTOFilter = {}
+    filter: TotalCountDTOFilter = {}
 
     """Specify to sort results."""
-    sorting: [TestResolverDTOSort!] = []
-  ): TestConnection!
+    sorting: [TotalCountDTOSort!] = []
+  ): TotalCountDTOConnection!
+  test: TotalCountDTO!
 }
 
 input CursorPaging {
@@ -64,9 +81,9 @@ input CursorPaging {
   last: Int
 }
 
-input TestResolverDTOFilter {
-  and: [TestResolverDTOFilter!]
-  or: [TestResolverDTOFilter!]
+input TotalCountDTOFilter {
+  and: [TotalCountDTOFilter!]
+  or: [TotalCountDTOFilter!]
   id: IDFilterComparison
   stringField: StringFieldComparison
 }
@@ -105,13 +122,13 @@ input StringFieldComparison {
   notIn: [String!]
 }
 
-input TestResolverDTOSort {
-  field: TestResolverDTOSortFields!
+input TotalCountDTOSort {
+  field: TotalCountDTOSortFields!
   direction: SortDirection!
   nulls: SortNulls
 }
 
-enum TestResolverDTOSortFields {
+enum TotalCountDTOSortFields {
   id
   stringField
 }

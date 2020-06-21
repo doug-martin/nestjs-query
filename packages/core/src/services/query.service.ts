@@ -16,6 +16,13 @@ export interface QueryService<DTO> {
   query(query: Query<DTO>): Promise<DTO[]>;
 
   /**
+   * Count the number of records that match the filter.
+   * @param filter - the filter
+   * @returns a promise with the total number of records.
+   */
+  count(filter: Filter<DTO>): Promise<number>;
+
+  /**
    * Finds a record by `id`.
    * @param id - the id of the record to find.
    * @returns the found record or undefined.
@@ -42,6 +49,24 @@ export interface QueryService<DTO> {
     dtos: DTO[],
     query: Query<Relation>,
   ): Promise<Map<DTO, Relation[]>>;
+
+  /**
+   * Count the number of relations
+   * @param filter - Filter to create a where clause.
+   */
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entity: DTO,
+    filter: Filter<Relation>,
+  ): Promise<number>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entity: DTO[],
+    filter: Filter<Relation>,
+  ): Promise<Map<DTO, number>>;
 
   /**
    * Finds a single relation.

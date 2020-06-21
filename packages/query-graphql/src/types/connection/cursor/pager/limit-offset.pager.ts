@@ -1,13 +1,14 @@
 import { Query } from '@nestjs-query/core';
 import { offsetToCursor } from 'graphql-relay';
+import { Count, QueryMany } from '../../interfaces';
 import { EdgeType } from '../edge.type';
 import { CursorQueryArgsType } from '../../../query';
-import { CursorConnectionType } from '../cursor-connection.type';
-import { PagingMeta, QueryMany, QueryResults } from './interfaces';
+import { PagerResult, PagingMeta, QueryResults } from './interfaces';
 
-const EMPTY_PAGING_RESULTS = <DTO>(): CursorConnectionType<DTO> => ({
+const EMPTY_PAGING_RESULTS = <DTO>(): PagerResult<DTO> => ({
   edges: [],
   pageInfo: { hasNextPage: false, hasPreviousPage: false },
+  totalCount: () => Promise.resolve(0),
 });
 
 const DEFAULT_PAGING_META = (): PagingMeta => ({
@@ -19,7 +20,7 @@ const DEFAULT_PAGING_META = (): PagingMeta => ({
 });
 
 export class CursorPager<DTO> {
-  async page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>): Promise<CursorConnectionType<DTO>> {
+  async page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>, count: Count<DTO>): Promise<PagerResult<DTO>> {
     const pagingMeta = this.getPageMeta(query);
     if (!CursorPager.pagingMetaHasLimitOrOffset(pagingMeta)) {
       return EMPTY_PAGING_RESULTS();
@@ -28,7 +29,7 @@ export class CursorPager<DTO> {
     if (this.isEmptyPage(results, pagingMeta)) {
       return EMPTY_PAGING_RESULTS();
     }
-    return this.createPagingResult(results, pagingMeta);
+    return this.createPagingResult(results, pagingMeta, () => count(query.filter ?? {}));
   }
 
   private static pagingMetaHasLimitOrOffset(pagingMeta: PagingMeta): boolean {
@@ -74,7 +75,11 @@ export class CursorPager<DTO> {
     return { offset, limit, isBackward, isForward, hasBefore };
   }
 
-  createPagingResult(results: QueryResults<DTO>, pagingMeta: PagingMeta): CursorConnectionType<DTO> {
+  createPagingResult(
+    results: QueryResults<DTO>,
+    pagingMeta: PagingMeta,
+    totalCount: () => Promise<number>,
+  ): PagerResult<DTO> {
     const { nodes, hasExtraNode } = results;
     const { offset, hasBefore, isBackward, isForward } = pagingMeta;
     const endOffset = Math.max(0, offset + nodes.length - 1);
@@ -88,7 +93,7 @@ export class CursorPager<DTO> {
     };
 
     const edges: EdgeType<DTO>[] = nodes.map((node, i) => ({ node, cursor: offsetToCursor(offset + i) }));
-    return { edges, pageInfo };
+    return { edges, pageInfo, totalCount };
   }
 
   isEmptyPage(results: QueryResults<DTO>, pagingMeta: PagingMeta): boolean {

@@ -67,6 +67,10 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
     return this.filterQueryBuilder.select(query).getMany();
   }
 
+  async count(filter: Filter<Entity>): Promise<number> {
+    return this.filterQueryBuilder.select({ filter }).getCount();
+  }
+
   /**
    * Find an entity by it's `id`.
    *

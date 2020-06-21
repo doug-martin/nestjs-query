@@ -1,12 +1,19 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, Int } from '@nestjs/graphql';
 import { Class } from '@nestjs-query/core';
+import { NotImplementedException } from '@nestjs/common';
+import { SkipIf } from '../../../decorators';
 import { CursorQueryArgsType } from '../../query';
 import { getMetadataStorage } from '../../../metadata';
 import { UnregisteredObjectType } from '../../type.errors';
-import { createPager, QueryMany } from './pager';
-import { StaticConnection } from '../interfaces';
+import { CountFn, createPager } from './pager';
+import { Count, QueryMany, StaticConnection } from '../interfaces';
 import { EdgeType } from './edge.type';
 import { PageInfoType } from './page-info.type';
+
+export type CursorConnectionOptions = {
+  enableTotalCount?: boolean;
+  connectionName?: string;
+};
 
 export type StaticCursorConnectionType<DTO> = StaticConnection<
   DTO,
@@ -17,22 +24,33 @@ export type StaticCursorConnectionType<DTO> = StaticConnection<
 export type CursorConnectionType<DTO> = {
   pageInfo: PageInfoType;
   edges: EdgeType<DTO>[];
+  totalCount?: Promise<number>;
 };
 
-export function CursorConnectionType<DTO>(TItemClass: Class<DTO>): StaticCursorConnectionType<DTO> {
+const DEFAULT_COUNT = () => Promise.reject(new NotImplementedException('totalCount not implemented'));
+
+export function CursorConnectionType<DTO>(
+  TItemClass: Class<DTO>,
+  opts: CursorConnectionOptions = {},
+): StaticCursorConnectionType<DTO> {
   const metadataStorage = getMetadataStorage();
-  const existing = metadataStorage.getConnectionType<DTO, StaticCursorConnectionType<DTO>>('cursor', TItemClass);
+  let { connectionName } = opts;
+  if (!connectionName) {
+    const objMetadata = metadataStorage.getGraphqlObjectMetadata(TItemClass);
+    if (!objMetadata) {
+      throw new UnregisteredObjectType(TItemClass, 'Unable to make ConnectionType.');
+    }
+    connectionName = `${objMetadata.name}Connection`;
+  }
+  const existing = metadataStorage.getConnectionType<DTO, StaticCursorConnectionType<DTO>>('cursor', connectionName);
   if (existing) {
     return existing;
   }
-  const objMetadata = metadataStorage.getGraphqlObjectMetadata(TItemClass);
-  if (!objMetadata) {
-    throw new UnregisteredObjectType(TItemClass, 'Unable to make ConnectionType.');
-  }
+
   const pager = createPager<DTO>();
   const E = EdgeType(TItemClass);
   const PIT = PageInfoType();
-  @ObjectType(`${objMetadata.name}Connection`)
+  @ObjectType(connectionName)
   class AbstractConnection implements CursorConnectionType<DTO> {
     static get resolveType() {
       return this;
@@ -41,18 +59,23 @@ export function CursorConnectionType<DTO>(TItemClass: Class<DTO>): StaticCursorC
     static async createFromPromise(
       queryMany: QueryMany<DTO>,
       query: CursorQueryArgsType<DTO>,
+      count?: Count<DTO>,
     ): Promise<AbstractConnection> {
-      const { pageInfo, edges } = await pager.page(queryMany, query);
+      const { pageInfo, edges, totalCount } = await pager.page(queryMany, query, count ?? DEFAULT_COUNT);
       return new AbstractConnection(
         // create the appropriate graphql instance
         new PIT(pageInfo.hasNextPage, pageInfo.hasPreviousPage, pageInfo.startCursor, pageInfo.endCursor),
         edges.map(({ node, cursor }) => new E(node, cursor)),
+        totalCount,
       );
     }
 
-    constructor(pageInfo?: PageInfoType, edges?: EdgeType<DTO>[]) {
+    private readonly totalCountFn: CountFn;
+
+    constructor(pageInfo?: PageInfoType, edges?: EdgeType<DTO>[], totalCountFn?: CountFn) {
       this.pageInfo = pageInfo ?? { hasNextPage: false, hasPreviousPage: false };
       this.edges = edges ?? [];
+      this.totalCountFn = totalCountFn ?? DEFAULT_COUNT;
     }
 
     @Field(() => PIT, { description: 'Paging information' })
@@ -60,7 +83,12 @@ export function CursorConnectionType<DTO>(TItemClass: Class<DTO>): StaticCursorC
 
     @Field(() => [E], { description: 'Array of edges.' })
     edges!: EdgeType<DTO>[];
+
+    @SkipIf(() => !opts.enableTotalCount, Field(() => Int, { description: 'Fetch total count of records' }))
+    get totalCount(): Promise<number> {
+      return this.totalCountFn();
+    }
   }
-  metadataStorage.addConnectionType('cursor', TItemClass, AbstractConnection);
+  metadataStorage.addConnectionType('cursor', connectionName, AbstractConnection);
   return AbstractConnection;
 }

@@ -10,6 +10,7 @@ import { UpdateRelationsMixin } from './update-relations.resolver';
 
 export interface RelatableOpts<DTO> {
   pagingStrategy?: PagingStrategies;
+  enableTotalCount?: boolean;
   relations: RelationsOpts;
   references: ReferencesOpts<DTO>;
 }
@@ -19,7 +20,7 @@ export const Relatable = <DTO>(DTOClass: Class<DTO>, opts: RelatableOpts<DTO>) =
 >(
   Base: B,
 ): B => {
-  const { pagingStrategy, references, relations } = opts;
+  const { pagingStrategy, enableTotalCount, references, relations } = opts;
   const metaRelations = getRelationsFromMetadata(DTOClass);
   const mergedRelations = mergeRelations(relations, metaRelations);
 
@@ -27,7 +28,7 @@ export const Relatable = <DTO>(DTOClass: Class<DTO>, opts: RelatableOpts<DTO>) =
   const mergedReferences = mergeReferences(references, metaReferences);
 
   const referencesMixin = ReferencesRelationMixin(DTOClass, mergedReferences);
-  const readRelationsMixin = ReadRelationsMixin(DTOClass, { ...mergedRelations, pagingStrategy });
+  const readRelationsMixin = ReadRelationsMixin(DTOClass, { ...mergedRelations, enableTotalCount, pagingStrategy });
   const updateRelationsMixin = UpdateRelationsMixin(DTOClass, mergedRelations);
 
   return referencesMixin(

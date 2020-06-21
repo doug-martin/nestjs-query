@@ -197,18 +197,20 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           subTasks {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(15);
           expect(edges).toHaveLength(10);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 10));
         });
@@ -224,18 +226,20 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           subTasks(filter: { id: { in: [1, 2, 3] } }) {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 3));
         });
@@ -251,18 +255,20 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           subTasks(sorting: [{field: id, direction: DESC}]) {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
+            totalCount
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
+          expect(totalCount).toBe(15);
           expect(edges).toHaveLength(10);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice().reverse().slice(0, 10));
         });
@@ -279,18 +285,20 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           subTasks(paging: {first: 2}) {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
+            totalCount
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             });
+            expect(totalCount).toBe(15);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 2));
           });
@@ -306,18 +314,20 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           subTasks(paging: {first: 2, after: "YXJyYXljb25uZWN0aW9uOjE="}) {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
+            totalCount
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             });
+            expect(totalCount).toBe(15);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(subTasks.slice(2, 4));
           });

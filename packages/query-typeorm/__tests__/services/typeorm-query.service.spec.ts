@@ -86,6 +86,20 @@ describe('TypeOrmQueryService', (): void => {
     });
   });
 
+  describe('#count', () => {
+    it('call select and return the result', async () => {
+      const entities = testEntities();
+      const filter: Filter<TestEntity> = { stringType: { eq: 'foo' } };
+      const { queryService, mockQueryBuilder, mockRepo } = createQueryService();
+      const selectQueryBuilder: SelectQueryBuilder<TestEntity> = mock(SelectQueryBuilder);
+      when(mockRepo.target).thenReturn(TestEntity);
+      when(mockQueryBuilder.select(deepEqual({ filter }))).thenReturn(instance(selectQueryBuilder));
+      when(selectQueryBuilder.getCount()).thenResolve(entities.length);
+      const count = await queryService.count(filter);
+      return expect(count).toEqual(entities.length);
+    });
+  });
+
   describe('#queryRelations', () => {
     describe('with one entity', () => {
       it('call select and return the result', async () => {
@@ -176,6 +190,79 @@ describe('TypeOrmQueryService', (): void => {
           new Map([
             [entities[0], entityOneRelations],
             [entities[1], []],
+          ]),
+        );
+      });
+    });
+  });
+
+  describe('#countRelations', () => {
+    describe('with one entity', () => {
+      it('call count and return the result', async () => {
+        const entity = testEntities()[0];
+        const relations = testRelations(entity.testEntityPk);
+        const filter: Filter<TestRelation> = { relationName: { eq: 'name' } };
+        const { queryService, mockRepo, mockRelationQueryBuilder } = createQueryService<TestEntity, TestRelation>();
+        const selectQueryBuilder: SelectQueryBuilder<TestRelation> = mock(SelectQueryBuilder);
+        // @ts-ignore
+        when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
+        when(mockRepo.target).thenReturn(TestEntity);
+        when(mockRelationQueryBuilder.select(objectContaining(entity), deepEqual({ filter }))).thenReturn(
+          instance(selectQueryBuilder),
+        );
+        when(selectQueryBuilder.getCount()).thenResolve(relations.length);
+        const count = await queryService.countRelations(TestRelation, relationName, entity, filter);
+        return expect(count).toEqual(relations.length);
+      });
+
+      it('should look up the type when the relation.type is a string', async () => {
+        const entity = testEntities()[0];
+        const relations = testRelations(entity.testEntityPk);
+        const filter: Filter<TestRelation> = { relationName: { eq: 'name' } };
+        const { queryService, mockRepo, mockRelationQueryBuilder } = createQueryService<TestEntity, TestRelation>();
+        const selectQueryBuilder: SelectQueryBuilder<TestRelation> = mock(SelectQueryBuilder);
+        const mockManger = mock(EntityManager);
+        const mockRelationRepo = mock<Repository<TestRelation>>();
+        // @ts-ignore
+        when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: 'TestRelation' }] });
+        when(mockRepo.manager).thenReturn(instance(mockManger));
+        when(mockManger.getRepository('TestRelation')).thenReturn(instance(mockRelationRepo));
+        when(mockRelationRepo.target).thenReturn(TestRelation);
+        when(mockRelationQueryBuilder.select(objectContaining(entity), deepEqual({ filter }))).thenReturn(
+          instance(selectQueryBuilder),
+        );
+        when(selectQueryBuilder.getCount()).thenResolve(relations.length);
+        const count = await queryService.countRelations(TestRelation, relationName, entity, filter);
+        return expect(count).toEqual(relations.length);
+      });
+    });
+
+    describe('with multiple entities', () => {
+      it('call count and return the result', async () => {
+        const entities = testEntities();
+        const entityOneRelations = testRelations(entities[0].testEntityPk);
+        const entityTwoRelations = testRelations(entities[1].testEntityPk);
+        const { queryService, mockRepo, mockRelationQueryBuilder } = createQueryService();
+        const relationQueryBuilder: SelectQueryBuilder<TestRelation> = mock(SelectQueryBuilder);
+        const filter: Filter<TestRelation> = { relationName: { isNot: null } };
+        when(mockRepo.target).thenReturn(TestEntity);
+        // @ts-ignore
+        when(mockRepo.metadata).thenReturn({ relations: [{ propertyName: relationName, type: TestRelation }] });
+        when(mockRelationQueryBuilder.select(entities[0], objectContaining({ filter }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(mockRelationQueryBuilder.select(entities[1], objectContaining({ filter }))).thenReturn(
+          instance(relationQueryBuilder),
+        );
+        when(relationQueryBuilder.getCount())
+          .thenResolve(entityOneRelations.length)
+          .thenResolve(entityTwoRelations.length);
+
+        const countResult = await queryService.countRelations(TestRelation, relationName, entities, filter);
+        return expect(countResult).toEqual(
+          new Map([
+            [entities[0], entityOneRelations.length],
+            [entities[1], entityTwoRelations.length],
           ]),
         );
       });

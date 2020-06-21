@@ -400,7 +400,7 @@ type TodoItem {
     filter: SubTaskFilter = {}
 
     sorting: [SubTaskSort!] = []
-  ): SubTaskConnection!
+  ): TodoItemSubTasksConnection!
 }
 ```
 
@@ -420,6 +420,69 @@ input RelationsInput {
 :::note
 If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodoItem` mutation would also be exposed with the same arguments as `addSubTasksToTodoItem`.
 :::
+
+### Total Count
+
+:::warning
+Enabling `totalCount` can be expensive. If your table is large the `totalCount` query may be expensive, use with caution.
+:::
+:::info
+The `totalCount` field is not eagerly fetched. It will only be executed if the field is queried from the client.
+:::
+
+When using the `@Connection` decorator you can enable the `totalCount` field. The `totalCount` field will return the total number of records included in the connection.
+
+```ts title="todo-item/todo-item.dto.ts" {6}
+import { FilterableField, Connection } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/sub-task.dto'
+
+@ObjectType('TodoItem')
+@Connection('subTasks', () => SubTaskDTO, { disableRemove: true, enableTotalCount: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+The generated graphql will include a `TodoItemSubTasksConnection` with a `totalCount` field.
+
+```graphql {19}
+type TodoItem {
+  id: ID!
+  title: String!
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  subTasks(
+    paging: CursorPaging = { first: 10 }
+
+    filter: SubTaskFilter = {}
+
+    sorting: [SubTaskSort!] = []
+  ): TodoItemSubTasksConnection!
+}
+
+type TodoItemSubTasksConnection {
+  pageInfo: PageInfo!
+  edges: [SubTaskEdge!]!
+  totalCount: Int!
+}
+
+```
 
 ## Options
 

@@ -28,7 +28,7 @@ export class ProxyQueryService<DTO> implements QueryService<DTO> {
    * @param dtos - the dtos to find relations for.
    * @param query - A query to use to filter, page, and sort relations.
    */
-  async queryRelations<Relation>(
+  queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
@@ -42,7 +42,7 @@ export class ProxyQueryService<DTO> implements QueryService<DTO> {
    * @param relationName - The name of relation to query for.
    * @param query - A query to filter, page and sort relations.
    */
-  async queryRelations<Relation>(
+  queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
@@ -59,6 +59,32 @@ export class ProxyQueryService<DTO> implements QueryService<DTO> {
       return this.proxied.queryRelations(RelationClass, relationName, dto, query);
     }
     return this.proxied.queryRelations(RelationClass, relationName, dto, query);
+  }
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    filter: Filter<Relation>,
+  ): Promise<Map<DTO, number>>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    filter: Filter<Relation>,
+  ): Promise<number>;
+
+  async countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO | DTO[],
+    filter: Filter<Relation>,
+  ): Promise<number | Map<DTO, number>> {
+    if (Array.isArray(dto)) {
+      return this.proxied.countRelations(RelationClass, relationName, dto, filter);
+    }
+    return this.proxied.countRelations(RelationClass, relationName, dto, filter);
   }
 
   /**
@@ -122,6 +148,10 @@ export class ProxyQueryService<DTO> implements QueryService<DTO> {
 
   query(query: Query<DTO>): Promise<DTO[]> {
     return this.proxied.query(query);
+  }
+
+  count(filter: Filter<DTO>): Promise<number> {
+    return this.proxied.count(filter);
   }
 
   updateMany<U extends DeepPartial<DTO>>(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {

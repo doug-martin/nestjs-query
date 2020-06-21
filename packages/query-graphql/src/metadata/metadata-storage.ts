@@ -103,22 +103,22 @@ export class GraphQLQueryMetadataStorage {
     return this.getValue(this.sortTypeStorage, type);
   }
 
-  addConnectionType<DTO, SCT extends StaticConnectionType<DTO>>(
+  addConnectionType<DTO>(
     connectionType: ConnectionTypes,
-    type: Class<DTO>,
-    staticConnectionType: SCT,
+    connectionName: string,
+    staticConnectionType: StaticConnectionType<DTO>,
   ): void {
     this.connectionTypeStorage.set(
-      `${connectionType}-${type.name}`,
+      `${connectionType}-${connectionName}`,
       staticConnectionType as StaticConnectionType<unknown>,
     );
   }
 
   getConnectionType<DTO, SCT extends StaticConnectionType<DTO>>(
     connectionType: ConnectionTypes,
-    type: Class<DTO>,
+    connectionName: string,
   ): SCT | undefined {
-    return this.getValue(this.connectionTypeStorage, `${connectionType}-${type.name}`);
+    return this.getValue(this.connectionTypeStorage, `${connectionType}-${connectionName}`);
   }
 
   addEdgeType<T>(type: Class<T>, edgeType: Class<EdgeType<T>>): void {

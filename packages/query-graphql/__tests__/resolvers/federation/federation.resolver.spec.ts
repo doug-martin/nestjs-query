@@ -177,6 +177,7 @@ describe('FederationResolver', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           },
+          totalCountFn: expect.any(Function),
         });
       });
 
@@ -223,6 +224,7 @@ describe('FederationResolver', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           },
+          totalCountFn: expect.any(Function),
         });
       });
     });
