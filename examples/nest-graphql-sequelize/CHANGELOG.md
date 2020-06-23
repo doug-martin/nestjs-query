@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0](https://github.com/doug-martin/nestjs-query/compare/v0.14.3...v0.15.0) (2020-06-23)
+
+
+### Features
+
+* **graphql,connection:** Add totalCount to connections ([ed1e84a](https://github.com/doug-martin/nestjs-query/commit/ed1e84a2feb6f89c3b270fcbc1d0eaf6aec5e575))
+
+
+
+
+
 ## [0.14.3](https://github.com/doug-martin/nestjs-query/compare/v0.14.2...v0.14.3) (2020-06-20)
 
 **Note:** Version bump only for package nest-graphql-sequelize
