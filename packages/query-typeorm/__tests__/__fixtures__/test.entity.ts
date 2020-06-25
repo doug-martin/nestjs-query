@@ -1,19 +1,10 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, ManyToMany, JoinTable, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
 import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestRelation } from './test-relation.entity';
 
 @Entity()
 export class TestEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'test_entity_pk' })
   testEntityPk!: string;
 
   @Column({ name: 'string_type' })

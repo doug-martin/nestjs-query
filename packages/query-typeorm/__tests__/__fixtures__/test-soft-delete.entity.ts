@@ -1,8 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, DeleteDateColumn } from 'typeorm';
+import { Column, Entity, DeleteDateColumn, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class TestSoftDeleteEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'test_entity_pk' })
   testEntityPk!: string;
 
   @Column({ name: 'string_type' })

@@ -3,6 +3,13 @@ import { Filter } from '@nestjs-query/core/src';
 import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder } from 'typeorm';
 import { FilterQueryBuilder, RelationQueryBuilder } from '../query';
 
+interface RelationMetadata {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  type: string | Function;
+  isOneToOne: boolean;
+  isManyToOne: boolean;
+}
+
 /**
  * Base class to house relations loading.
  * @internal
@@ -180,7 +187,13 @@ export abstract class RelationQueryService<Entity> {
     relationId: string | number,
   ): Promise<Entity> {
     const entity = await this.repo.findOneOrFail(id);
-    await this.createRelationQueryBuilder(entity, relationName).remove(relationId);
+    const meta = this.getRelationMeta(relationName);
+    if (meta.isOneToOne || meta.isManyToOne) {
+      await this.createRelationQueryBuilder(entity, relationName).set(null);
+    } else {
+      await this.createRelationQueryBuilder(entity, relationName).remove(relationId);
+    }
+
     return entity;
   }
 
@@ -269,11 +282,16 @@ export abstract class RelationQueryService<Entity> {
     return this.repo.createQueryBuilder().relation(relationName).of(entity);
   }
 
-  private getRelationEntity(relationName: string): Class<unknown> {
+  private getRelationMeta(relationName: string): RelationMetadata {
     const relationMeta = this.repo.metadata.relations.find((r) => r.propertyName === relationName);
     if (!relationMeta) {
       throw new Error(`Unable to find relation ${relationName} on ${this.EntityClass.name}`);
     }
+    return relationMeta;
+  }
+
+  private getRelationEntity(relationName: string): Class<unknown> {
+    const relationMeta = this.getRelationMeta(relationName);
     if (typeof relationMeta.type === 'string') {
       return this.repo.manager.getRepository(relationMeta.type).target as Class<unknown>;
     }

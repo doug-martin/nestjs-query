@@ -9,7 +9,7 @@ import {
 } from '@nestjs-query/core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { MethodNotAllowedException } from '@nestjs/common';
+import { MethodNotAllowedException, NotFoundException } from '@nestjs/common';
 import { FilterQueryBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
 
@@ -98,7 +98,11 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param id - The id of the record to find.
    */
   async getById(id: string | number): Promise<Entity> {
-    return this.repo.findOneOrFail(id);
+    const entity = await this.findById(id);
+    if (!entity) {
+      throw new NotFoundException(`Unable to find ${this.EntityClass.name} with id: ${id}`);
+    }
+    return entity;
   }
 
   /**

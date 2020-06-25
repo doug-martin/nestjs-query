@@ -11,31 +11,31 @@ describe('RelationQueryBuilder', (): void => {
 
   const manyToOneSelect =
     `SELECT` +
-    ` "testEntity"."testEntityPk" AS "testEntity_testEntityPk",` +
+    ` "testEntity"."test_entity_pk" AS "testEntity_test_entity_pk",` +
     ` "testEntity"."string_type" AS "testEntity_string_type",` +
     ` "testEntity"."bool_type" AS "testEntity_bool_type",` +
     ` "testEntity"."number_type" AS "testEntity_number_type",` +
     ` "testEntity"."date_type" AS "testEntity_date_type",` +
     ` "testEntity"."oneTestRelationTestRelationPk" AS "testEntity_oneTestRelationTestRelationPk"` +
     ` FROM "test_entity" "testEntity"` +
-    ` INNER JOIN "test_relation" "TestRelation" ON "TestRelation"."test_entity_id" = "testEntity"."testEntityPk"` +
-    ` WHERE ("TestRelation"."testRelationPk" = ?)`;
+    ` INNER JOIN "test_relation" "TestRelation" ON "TestRelation"."test_entity_id" = "testEntity"."test_entity_pk"` +
+    ` WHERE ("TestRelation"."test_relation_pk" = ?)`;
 
   const manyToManyNonOwnerSelectQuery =
     `SELECT` +
-    ` "manyTestEntities"."testEntityPk" AS "manyTestEntities_testEntityPk",` +
+    ` "manyTestEntities"."test_entity_pk" AS "manyTestEntities_test_entity_pk",` +
     ` "manyTestEntities"."string_type" AS "manyTestEntities_string_type",` +
     ` "manyTestEntities"."bool_type" AS "manyTestEntities_bool_type",` +
     ` "manyTestEntities"."number_type" AS "manyTestEntities_number_type",` +
     ` "manyTestEntities"."date_type" AS "manyTestEntities_date_type",` +
     ` "manyTestEntities"."oneTestRelationTestRelationPk" AS "manyTestEntities_oneTestRelationTestRelationPk"` +
     ` FROM "test_entity" "manyTestEntities"` +
-    ` INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = "manyTestEntities"."testEntityPk"` +
+    ` INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = "manyTestEntities"."test_entity_pk"` +
     ' WHERE ("test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = ?)';
 
   const oneToManySelect =
     `SELECT` +
-    ` "testRelations"."testRelationPk" AS "testRelations_testRelationPk",` +
+    ` "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk",` +
     ` "testRelations"."relation_name" AS "testRelations_relation_name",` +
     ` "testRelations"."test_entity_id" AS "testRelations_test_entity_id"` +
     ` FROM "test_relation" "testRelations"` +
@@ -43,25 +43,25 @@ describe('RelationQueryBuilder', (): void => {
 
   const manyToManyOwnerSelect =
     'SELECT ' +
-    `"manyTestRelations"."testRelationPk" AS "manyTestRelations_testRelationPk",` +
+    `"manyTestRelations"."test_relation_pk" AS "manyTestRelations_test_relation_pk",` +
     ' "manyTestRelations"."relation_name" AS "manyTestRelations_relation_name",' +
     ' "manyTestRelations"."test_entity_id" AS "manyTestRelations_test_entity_id"' +
     ` FROM "test_relation" "manyTestRelations"` +
-    ` INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = "manyTestRelations"."testRelationPk"` +
+    ` INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = "manyTestRelations"."test_relation_pk"` +
     ' WHERE ("test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = ?)';
 
   const oneToOneOwnerSelect =
     `SELECT` +
-    ` "oneTestRelation"."testRelationPk" AS "oneTestRelation_testRelationPk",` +
+    ` "oneTestRelation"."test_relation_pk" AS "oneTestRelation_test_relation_pk",` +
     ` "oneTestRelation"."relation_name" AS "oneTestRelation_relation_name",` +
     ` "oneTestRelation"."test_entity_id" AS "oneTestRelation_test_entity_id"` +
     ` FROM "test_relation" "oneTestRelation"` +
-    ` INNER JOIN "test_entity" "TestEntity" ON "TestEntity"."oneTestRelationTestRelationPk" = "oneTestRelation"."testRelationPk"` +
-    ' WHERE ("TestEntity"."testEntityPk" = ?)';
+    ` INNER JOIN "test_entity" "TestEntity" ON "TestEntity"."oneTestRelationTestRelationPk" = "oneTestRelation"."test_relation_pk"` +
+    ' WHERE ("TestEntity"."test_entity_pk" = ?)';
 
   const oneToOneNonOwnerSelect =
     `SELECT` +
-    ` "oneTestEntity"."testEntityPk" AS "oneTestEntity_testEntityPk",` +
+    ` "oneTestEntity"."test_entity_pk" AS "oneTestEntity_test_entity_pk",` +
     ` "oneTestEntity"."string_type" AS "oneTestEntity_string_type",` +
     ` "oneTestEntity"."bool_type" AS "oneTestEntity_bool_type",` +
     ` "oneTestEntity"."number_type" AS "oneTestEntity_number_type",` +
@@ -301,7 +301,7 @@ describe('RelationQueryBuilder', (): void => {
               { field: 'testRelationPk', direction: SortDirection.DESC },
             ],
           },
-          ` ORDER BY "testRelations"."relation_name" ASC, "testRelations"."testRelationPk" DESC`,
+          ` ORDER BY "testRelations"."relation_name" ASC, "testRelations"."test_relation_pk" DESC`,
           [testEntity.testEntityPk],
         );
       });

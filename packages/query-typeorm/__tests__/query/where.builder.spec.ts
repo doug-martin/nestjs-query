@@ -9,7 +9,7 @@ describe('WhereBuilder', (): void => {
 
   const baseQuery =
     'SELECT' +
-    ' "TestEntity"."testEntityPk" AS "TestEntity_testEntityPk",' +
+    ' "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk",' +
     ' "TestEntity"."string_type" AS "TestEntity_string_type",' +
     ' "TestEntity"."bool_type" AS "TestEntity_bool_type",' +
     ' "TestEntity"."number_type" AS "TestEntity_number_type",' +
