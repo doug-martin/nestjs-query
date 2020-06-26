@@ -1,20 +1,21 @@
 // this is needed to create a query builder in sequelize :(
-import { Sequelize } from 'sequelize-typescript';
+import { Sequelize, SequelizeOptions } from 'sequelize-typescript';
 import { TestEntityTestRelationEntity } from './test-entity-test-relation.entity';
 import { TestRelation } from './test-relation.entity';
 import { TestEntity } from './test.entity';
+import { seed } from './seeds';
 
-const sequelize = new Sequelize({
+export const CONNECTION_OPTIONS: SequelizeOptions = {
   dialect: 'sqlite',
   database: ':memory:',
   logging: false,
   models: [TestEntity, TestEntityTestRelationEntity, TestRelation],
-});
+};
 
-export function syncSequelize(): Promise<Sequelize> {
-  return sequelize.sync();
-}
-
-export function closeSequelize(): Promise<void> {
-  return sequelize.close();
-}
+export const truncate = async (sequelize: Sequelize): Promise<void> => {
+  await sequelize.truncate({ cascade: true, restartIdentity: true });
+};
+export const refresh = async (sequelize: Sequelize): Promise<void> => {
+  await truncate(sequelize);
+  return seed(sequelize);
+};

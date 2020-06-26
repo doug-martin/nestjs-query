@@ -6,10 +6,10 @@ import { TestEntity } from './test.entity';
 @AssemblerSerializer((instance: TestRelation) => instance.get({ plain: true }))
 // eslint-disable-next-line @typescript-eslint/no-use-before-define,@typescript-eslint/ban-types
 @AssemblerDeserializer((obj: object) => TestRelation.build(obj))
-@Table({})
+@Table({ timestamps: false })
 export class TestRelation extends Model<TestRelation> {
   @PrimaryKey
-  @Column('uuid')
+  @Column
   testRelationPk!: string;
 
   @Column({ field: 'relation_name' })
@@ -19,12 +19,12 @@ export class TestRelation extends Model<TestRelation> {
   @Column({ field: 'test_entity_id' })
   testEntityId?: string;
 
-  @BelongsTo(() => TestEntity)
+  @BelongsTo(() => TestEntity, 'testEntityId')
   testEntity?: TestEntity;
 
   @BelongsToMany(() => TestEntity, () => TestEntityTestRelationEntity)
   manyTestEntities?: TestEntity[];
 
-  @BelongsTo(() => TestEntity)
+  @BelongsTo(() => TestEntity, 'oneTestEntityId')
   oneTestEntity?: TestEntity;
 }

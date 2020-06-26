@@ -2,7 +2,7 @@ import { Model, Table, ForeignKey, Column } from 'sequelize-typescript';
 import { TestRelation } from './test-relation.entity';
 import { TestEntity } from './test.entity';
 
-@Table
+@Table({})
 export class TestEntityTestRelationEntity extends Model<TestEntityTestRelationEntity> {
   @ForeignKey(() => TestEntity)
   @Column({ field: 'test_entity_id' })
