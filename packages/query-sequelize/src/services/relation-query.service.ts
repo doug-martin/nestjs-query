@@ -1,8 +1,14 @@
 import { Query, Class, AssemblerFactory } from '@nestjs-query/core';
 import { Filter } from '@nestjs-query/core/src';
 import { Model, ModelCtor } from 'sequelize-typescript';
+import { ModelCtor as SequelizeModelCtor } from 'sequelize';
 import { FilterQueryBuilder } from '../query';
 
+interface SequelizeAssociation {
+  target: SequelizeModelCtor<any>;
+  isMultiAssociation: boolean;
+  isSingleAssociation: boolean;
+}
 /**
  * Base class to house relations loading.
  * @internal
@@ -190,7 +196,13 @@ export abstract class RelationQueryService<Entity extends Model> {
     relationId: string | number,
   ): Promise<Entity> {
     const entity = await this.getById(id);
-    await entity.$remove(relationName, relationId);
+    const association = this.getAssociation(relationName);
+    if (association.isSingleAssociation) {
+      // todo update that this line to remove the casting once https://github.com/RobinBuschmann/sequelize-typescript/issues/803 is addressed.
+      await entity.$set(relationName as keyof Entity, (null as unknown) as string);
+    } else {
+      await entity.$remove(relationName, relationId);
+    }
     return entity;
   }
 
@@ -276,11 +288,15 @@ export abstract class RelationQueryService<Entity extends Model> {
     return e;
   }
 
-  private getRelationEntity(relationName: string): ModelCtor {
+  private getAssociation(relationName: string): SequelizeAssociation {
     const association = this.model.associations[relationName];
     if (!association) {
       throw new Error(`Unable to find relation ${relationName} on ${this.model.name}`);
     }
-    return association.target as ModelCtor;
+    return association;
+  }
+
+  private getRelationEntity(relationName: string): ModelCtor {
+    return this.getAssociation(relationName).target as ModelCtor;
   }
 }

@@ -1,242 +1,140 @@
-import { DeepPartial, Filter, Query, QueryService } from '@nestjs-query/core';
-import { CountOptions, FindOptions } from 'sequelize';
-import { instance, mock, when, objectContaining, deepEqual } from 'ts-mockito';
-import { ModelCtor } from 'sequelize-typescript';
+import { DeepPartial } from '@nestjs-query/core';
+import { Test, TestingModule } from '@nestjs/testing';
+import { InjectModel, SequelizeModule } from '@nestjs/sequelize';
+import { ModelCtor, Sequelize } from 'sequelize-typescript';
 import { SequelizeQueryService } from '../../src';
 import { FilterQueryBuilder } from '../../src/query';
-import { closeSequelize, syncSequelize } from '../__fixtures__/sequelize.fixture';
-import { TestEntity } from '../__fixtures__/test.entity';
+import { CONNECTION_OPTIONS, refresh, truncate } from '../__fixtures__/sequelize.fixture';
+import { PLAIN_TEST_ENTITIES, PLAIN_TEST_RELATIONS } from '../__fixtures__/seeds';
+import { TestEntityTestRelationEntity } from '../__fixtures__/test-entity-test-relation.entity';
 import { TestRelation } from '../__fixtures__/test-relation.entity';
+import { TestEntity } from '../__fixtures__/test.entity';
 
 describe('SequelizeQueryService', (): void => {
-  beforeAll(() => syncSequelize());
+  let moduleRef: TestingModule;
 
-  afterAll(() => closeSequelize());
-
-  const plainEntities = [
-    {
-      testEntityPk: 'entity-id1',
-      stringType: 'foo',
-      boolType: true,
-      dateType: new Date(),
-      numberType: 1,
-    },
-    {
-      testEntityPk: 'entity-id2',
-      stringType: 'bar',
-      boolType: false,
-      dateType: new Date(),
-      numberType: 2,
-    },
-  ];
-
-  const testEntities = (): TestEntity[] => plainEntities.map((e) => new TestEntity(e));
-
-  const testRelations = (entityId: string): TestRelation[] => [
-    new TestRelation({ testRelationPk: `relation-${entityId}-id1`, relationName: 'name 1', testEntityId: entityId }),
-    new TestRelation({ testRelationPk: `relation-${entityId}-id2`, relationName: 'name 2', testEntityId: entityId }),
-  ];
-
-  @QueryService(TestEntity)
-  class TestSequelizeQueryService extends SequelizeQueryService<TestEntity> {
-    constructor(
-      readonly model: ModelCtor<TestEntity>,
-      filterQueryBuilder?: FilterQueryBuilder<TestEntity>,
-      readonly relationFilterQueryBuilder?: FilterQueryBuilder<TestRelation>,
-    ) {
-      super(model, filterQueryBuilder);
-    }
-
-    getRelationQueryBuilder<Relation>(): FilterQueryBuilder<Relation> {
-      return (this.relationFilterQueryBuilder as unknown) as FilterQueryBuilder<Relation>;
+  class TestEntityService extends SequelizeQueryService<TestEntity> {
+    constructor(@InjectModel(TestEntity) readonly model: ModelCtor<TestEntity>) {
+      super(model);
     }
   }
 
-  type MockQueryService<Relation = unknown> = {
-    mockModelCtor: ModelCtor<TestEntity>;
-    queryService: QueryService<TestEntity>;
-    mockQueryBuilder: FilterQueryBuilder<TestEntity>;
-    mockRelationQueryBuilder: FilterQueryBuilder<TestRelation>;
-  };
-
-  function createQueryService<Relation = unknown>(): MockQueryService<Relation> {
-    const mockQueryBuilder = mock<FilterQueryBuilder<TestEntity>>(FilterQueryBuilder);
-    const mockRelationQueryBuilder = mock<FilterQueryBuilder<TestRelation>>(FilterQueryBuilder);
-    const mockModel = mock<ModelCtor<TestEntity>>();
-    const queryService = new TestSequelizeQueryService(
-      instance(mockModel),
-      instance(mockQueryBuilder),
-      instance(mockRelationQueryBuilder),
-    );
-    return { mockQueryBuilder, mockModelCtor: mockModel, queryService, mockRelationQueryBuilder };
+  class TestRelationService extends SequelizeQueryService<TestRelation> {
+    constructor(@InjectModel(TestRelation) readonly model: ModelCtor<TestRelation>) {
+      super(model);
+    }
   }
+
+  afterEach(() => moduleRef.get(Sequelize).close());
+
+  beforeEach(async () => {
+    moduleRef = await Test.createTestingModule({
+      imports: [
+        SequelizeModule.forRoot(CONNECTION_OPTIONS),
+        SequelizeModule.forFeature([TestEntity, TestRelation, TestEntityTestRelationEntity]),
+      ],
+      providers: [TestEntityService, TestRelationService],
+    }).compile();
+    const sequelize = moduleRef.get(Sequelize);
+    await sequelize.sync();
+    await refresh(sequelize);
+  });
+
+  it('should create a filterQueryBuilder and assemblerService based on the repo passed in if not provided', () => {
+    const queryService = moduleRef.get(TestEntityService);
+    expect(queryService.filterQueryBuilder).toBeInstanceOf(FilterQueryBuilder);
+  });
 
   describe('#query', () => {
     it('call select and return the result', async () => {
-      const entities = testEntities();
-      const query: Query<TestEntity> = { filter: { stringType: { eq: 'foo' } } };
-      const findOptions: FindOptions = {};
-      const { queryService, mockQueryBuilder, mockModelCtor } = createQueryService();
-      when(mockQueryBuilder.findOptions(query)).thenReturn(findOptions);
-      when(mockModelCtor.findAll(findOptions)).thenResolve(entities);
-      const queryResult = await queryService.query(query);
-      return expect(queryResult).toEqual(entities);
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo1' } } });
+      return expect(queryResult.map((e) => e.get({ plain: true }))).toEqual([PLAIN_TEST_ENTITIES[0]]);
     });
   });
 
   describe('#count', () => {
     it('call select and return the result', async () => {
-      const entities = testEntities();
-      const filter: Filter<TestEntity> = { stringType: { eq: 'foo' } };
-      const countOptions: CountOptions = {};
-      const { queryService, mockQueryBuilder, mockModelCtor } = createQueryService();
-      when(mockQueryBuilder.countOptions(deepEqual({ filter }))).thenReturn(countOptions);
-      when(mockModelCtor.count(countOptions)).thenResolve(entities.length);
-      const queryResult = await queryService.count(filter);
-      return expect(queryResult).toEqual(entities.length);
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.count({ stringType: { like: 'foo%' } });
+      return expect(queryResult).toBe(10);
     });
   });
 
   describe('#queryRelations', () => {
-    const relationName = 'testRelations';
     describe('with one entity', () => {
       it('call select and return the result', async () => {
-        const entity = testEntities()[0];
-        const relations = testRelations(entity.testEntityPk);
-        const query: Query<TestRelation> = { filter: { relationName: { eq: 'name' } } };
-        const findOptions: FindOptions = {};
-        const mockModel = mock(TestEntity);
-        const mockModelInstance = instance(mockModel);
-        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService<TestRelation>();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        when(mockModelCtor.build(mockModelInstance)).thenReturn(mockModelInstance);
-        when(mockRelationQueryBuilder.findOptions(query)).thenReturn(findOptions);
-        when(mockModel.$get(relationName, findOptions)).thenResolve(relations);
-        const queryResult = await queryService.queryRelations(TestRelation, relationName, instance(mockModel), query);
-        return expect(queryResult).toEqual(relations);
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.queryRelations(
+          TestRelation,
+          'testRelations',
+          TestEntity.build(PLAIN_TEST_ENTITIES[0]),
+          {
+            filter: { relationName: { isNot: null } },
+          },
+        );
+        return expect(queryResult.map((r) => r.testEntityId)).toEqual([
+          PLAIN_TEST_ENTITIES[0].testEntityPk,
+          PLAIN_TEST_ENTITIES[0].testEntityPk,
+          PLAIN_TEST_ENTITIES[0].testEntityPk,
+        ]);
       });
     });
+
     describe('with multiple entities', () => {
       it('call select and return the result', async () => {
-        const entities = testEntities();
-        const entityOneRelations = testRelations(entities[0].testEntityPk);
-        const entityTwoRelations = testRelations(entities[1].testEntityPk);
-        const query = {
-          paging: { limit: 2 },
-        };
-        const findOptions: FindOptions = {};
-        const mockModel = mock(TestEntity);
-        const mockModelInstances = [instance(mockModel), instance(mockModel)];
-        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
-        when(mockRelationQueryBuilder.findOptions(query)).thenReturn(findOptions);
-        when(mockModel.$get(relationName, findOptions)).thenResolve(entityOneRelations);
-        when(mockModel.$get(relationName, findOptions)).thenResolve(entityTwoRelations);
-        const queryResult = await queryService.queryRelations(TestRelation, relationName, mockModelInstances, query);
-        return expect(queryResult).toEqual(
-          new Map([
-            [mockModelInstances[0], entityOneRelations],
-            [mockModelInstances[1], entityTwoRelations],
-          ]),
-        );
+        const entities = PLAIN_TEST_ENTITIES.slice(0, 3).map((pe) => TestEntity.build(pe));
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', entities, {
+          filter: { relationName: { isNot: null } },
+        });
+
+        expect(queryResult.size).toBe(3);
+        entities.forEach((e) => expect(queryResult.get(e)).toHaveLength(3));
       });
 
       it('should return an empty array if no results are found.', async () => {
-        const entities = testEntities();
-        const entityOneRelations = testRelations(entities[0].testEntityPk);
-        const query = {
-          paging: { limit: 2 },
-        };
-        const findOptions: FindOptions = {};
-        const mockModel = mock(TestEntity);
-        const mockModelInstances = [instance(mockModel), instance(mockModel)];
-        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
-        when(mockRelationQueryBuilder.findOptions(query)).thenReturn(findOptions);
-        when(mockModel.$get(relationName, findOptions)).thenResolve(entityOneRelations).thenResolve([]);
-        const queryResult = await queryService.queryRelations(TestRelation, relationName, mockModelInstances, query);
-        return expect(queryResult).toEqual(
-          new Map([
-            [mockModelInstances[0], entityOneRelations],
-            [mockModelInstances[0], []],
-          ]),
-        );
+        const entities: TestEntity[] = [
+          PLAIN_TEST_ENTITIES[0] as TestEntity,
+          { testEntityPk: 'does-not-exist' } as TestEntity,
+        ];
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', entities, {
+          filter: { relationName: { isNot: null } },
+        });
+
+        expect(queryResult.size).toBe(2);
+        expect(queryResult.get(entities[0])).toHaveLength(3);
+        expect(queryResult.get(entities[1])).toHaveLength(0);
       });
     });
   });
+
   describe('#countRelations', () => {
-    const relationName = 'testRelations';
     describe('with one entity', () => {
       it('call count and return the result', async () => {
-        const entity = testEntities()[0];
-        const relations = testRelations(entity.testEntityPk);
-        const filter: Filter<TestRelation> = { relationName: { eq: 'name' } };
-        const countOptions: CountOptions = {};
-        const mockModel = mock(TestEntity);
-        const mockModelInstance = instance(mockModel);
-        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService<TestRelation>();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        when(mockModelCtor.build(mockModelInstance)).thenReturn(mockModelInstance);
-        when(mockRelationQueryBuilder.countOptions(deepEqual({ filter }))).thenReturn(countOptions);
-        when(mockModel.$count(relationName, countOptions)).thenResolve(relations.length);
-        const queryResult = await queryService.countRelations(TestRelation, relationName, instance(mockModel), filter);
-        return expect(queryResult).toEqual(relations.length);
+        const queryService = moduleRef.get(TestEntityService);
+        const entity = TestEntity.build(PLAIN_TEST_ENTITIES[0]);
+        const countResult = await queryService.countRelations(TestRelation, 'testRelations', entity, {
+          relationName: { isNot: null },
+        });
+        return expect(countResult).toEqual(3);
       });
     });
-    describe('with multiple entities', () => {
-      it('call select and return the result', async () => {
-        const entities = testEntities();
-        const entityOneRelations = testRelations(entities[0].testEntityPk);
-        const entityTwoRelations = testRelations(entities[1].testEntityPk);
-        const filter: Filter<TestRelation> = {
-          relationName: { isNot: null },
-        };
-        const countOptions: CountOptions = {};
-        const mockModel = mock(TestEntity);
-        const mockModelInstances = [instance(mockModel), instance(mockModel)];
-        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
-        when(mockRelationQueryBuilder.countOptions(deepEqual({ filter }))).thenReturn(countOptions);
-        when(mockModel.$count(relationName, countOptions))
-          .thenResolve(entityOneRelations.length)
-          .thenResolve(entityTwoRelations.length);
-        const queryResult = await queryService.countRelations(TestRelation, relationName, mockModelInstances, filter);
-        return expect(queryResult).toEqual(
-          new Map([
-            [mockModelInstances[0], entityOneRelations.length],
-            [mockModelInstances[1], entityTwoRelations.length],
-          ]),
-        );
-      });
 
-      it('should return an empty array if no results are found.', async () => {
-        const entities = testEntities();
-        const entityOneRelations = testRelations(entities[0].testEntityPk);
-        const filter: Filter<TestRelation> = {
+    describe('with multiple entities', () => {
+      it('call count and return the result', async () => {
+        const entities = PLAIN_TEST_ENTITIES.slice(0, 3).map((pe) => TestEntity.build(pe));
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.countRelations(TestRelation, 'testRelations', entities, {
           relationName: { isNot: null },
-        };
-        const countOptions: CountOptions = {};
-        const mockModel = mock(TestEntity);
-        const mockModelInstances = [instance(mockModel), instance(mockModel)];
-        const { queryService, mockModelCtor, mockRelationQueryBuilder } = createQueryService();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
-        when(mockRelationQueryBuilder.countOptions(deepEqual({ filter }))).thenReturn(countOptions);
-        when(mockModel.$count(relationName, countOptions)).thenResolve(entityOneRelations.length).thenResolve(0);
-        const queryResult = await queryService.countRelations(TestRelation, relationName, mockModelInstances, filter);
-        return expect(queryResult).toEqual(
+        });
+
+        expect(queryResult).toEqual(
           new Map([
-            [mockModelInstances[0], entityOneRelations.length],
-            [mockModelInstances[0], 0],
+            [entities[0], 3],
+            [entities[1], 3],
+            [entities[2], 3],
           ]),
         );
       });
@@ -244,306 +142,297 @@ describe('SequelizeQueryService', (): void => {
   });
 
   describe('#findRelation', () => {
-    const relationName = 'oneTestRelation';
     describe('with one entity', () => {
       it('call select and return the result', async () => {
-        const entity = testEntities()[0];
-        const relation = testRelations(entity.testEntityPk)[0];
-        const mockModel = mock(TestEntity);
-        const modelInstance = instance(mockModel);
-        const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        when(mockModelCtor.build(modelInstance)).thenReturn(modelInstance);
-        when(mockModel.$get(relationName)).thenResolve(relation);
-        const queryResult = await queryService.findRelation(TestRelation, relationName, modelInstance);
-        return expect(queryResult).toEqual(relation);
+        const entity = TestEntity.build(PLAIN_TEST_ENTITIES[0]);
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
+
+        expect(queryResult!.get({ plain: true })).toEqual(PLAIN_TEST_RELATIONS[0]);
       });
 
       it('should return undefined select if no results are found.', async () => {
-        const mockModel = mock(TestEntity);
-        const modelInstance = instance(mockModel);
-        const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        when(mockModelCtor.build(modelInstance)).thenReturn(modelInstance);
-        when(mockModel.$get(relationName)).thenResolve(null);
-        const queryResult = await queryService.findRelation(TestRelation, relationName, modelInstance);
-        return expect(queryResult).toBeUndefined();
+        const entity = { ...PLAIN_TEST_ENTITIES[0], testEntityPk: 'not-real' } as TestEntity;
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
+
+        expect(queryResult).toBeUndefined();
       });
 
       it('throw an error if a relation with that name is not found.', async () => {
-        const mockModel = mock(TestEntity);
-        const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({});
-        return expect(queryService.findRelation(TestRelation, relationName, instance(mockModel))).rejects.toThrow(
-          `Unable to find relation ${relationName} on `,
+        const queryService = moduleRef.get(TestEntityService);
+        const entity = TestEntity.build(PLAIN_TEST_ENTITIES[0]);
+        return expect(queryService.findRelation(TestRelation, 'badRelation', entity)).rejects.toThrow(
+          'Unable to find relation badRelation on TestEntity',
         );
       });
     });
 
     describe('with multiple entities', () => {
       it('call select and return the result', async () => {
-        const entities = testEntities();
-        const entityOneRelation = testRelations(entities[0].testEntityPk)[0];
-        const entityTwoRelation = testRelations(entities[1].testEntityPk)[0];
-        const mockModel = mock(TestEntity);
-        const mockModelInstances = [instance(mockModel), instance(mockModel)];
-        const { queryService, mockModelCtor } = createQueryService();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
-        when(mockModel.$get(relationName)).thenResolve(entityOneRelation).thenResolve(entityTwoRelation);
-        const queryResult = await queryService.findRelation(TestRelation, relationName, mockModelInstances);
-        return expect(queryResult).toEqual(
+        const entities = PLAIN_TEST_ENTITIES.slice(0, 3).map((pe) => TestEntity.build(pe));
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities);
+
+        expect(queryResult).toEqual(
           new Map([
-            [mockModelInstances[0], entityOneRelation],
-            [mockModelInstances[1], entityTwoRelation],
+            [entities[0], expect.objectContaining(PLAIN_TEST_RELATIONS[0])],
+            [entities[1], expect.objectContaining(PLAIN_TEST_RELATIONS[3])],
+            [entities[2], expect.objectContaining(PLAIN_TEST_RELATIONS[6])],
           ]),
         );
       });
 
       it('should return undefined select if no results are found.', async () => {
-        const entities = testEntities();
-        const entityOneRelation = testRelations(entities[0].testEntityPk)[0];
-        const mockModel = mock(TestEntity);
-        const mockModelInstances = [instance(mockModel), instance(mockModel)];
-        const { queryService, mockModelCtor } = createQueryService();
-        // @ts-ignore
-        when(mockModelCtor.associations).thenReturn({ [relationName]: { target: TestRelation } });
-        mockModelInstances.forEach((mi) => when(mockModelCtor.build(mi)).thenReturn(mi));
-        when(mockModel.$get(relationName)).thenResolve(null).thenResolve(entityOneRelation);
-        const queryResult = await queryService.findRelation(TestRelation, relationName, mockModelInstances);
-        return expect(queryResult).toEqual(new Map([[mockModelInstances[0], entityOneRelation]]));
+        const entities: TestEntity[] = [
+          PLAIN_TEST_ENTITIES[0] as TestEntity,
+          { testEntityPk: 'does-not-exist' } as TestEntity,
+        ];
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities);
+
+        expect(queryResult).toEqual(new Map([[entities[0], expect.objectContaining(PLAIN_TEST_RELATIONS[0])]]));
       });
     });
   });
 
   describe('#addRelations', () => {
-    const relationName = 'testRelations';
     it('call select and return the result', async () => {
-      const entity = testEntities()[0];
-      const relations = testRelations(entity.testEntityPk);
-      const relationIds = relations.map((r) => r.testRelationPk);
-      const mockModel = mock(TestEntity);
-      const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-      const modelInstance = instance(mockModel);
-      // this is required to make tests pass see https://github.com/NagRock/ts-mockito/issues/163
-      // @ts-ignore
-      modelInstance.then = undefined;
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenResolve(
-        modelInstance,
+      const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.addRelations(
+        'testRelations',
+        entity.testEntityPk,
+        PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => (r as TestRelation).testRelationPk),
       );
-      when(mockModel.$add(relationName, relationIds)).thenResolve(relations);
-      const queryResult = await queryService.addRelations(relationName, entity.testEntityPk, relationIds);
-      return expect(queryResult).toEqual(modelInstance);
+      expect(queryResult).toEqual(expect.objectContaining(entity));
+
+      const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+      expect(relations).toHaveLength(6);
     });
   });
 
   describe('#setRelation', () => {
-    const relationName = 'oneTestRelation';
     it('call select and return the result', async () => {
-      const entity = testEntities()[0];
-      const relation = testRelations(entity.testEntityPk)[0];
-      const relationId = relation.testRelationPk;
-      const mockModel = mock(TestEntity);
-      const modelInstance = instance(mockModel);
-      const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-      // this is required to make tests pass see https://github.com/NagRock/ts-mockito/issues/163
-      // @ts-ignore
-      modelInstance.then = undefined;
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenResolve(
-        modelInstance,
+      const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.setRelation(
+        'oneTestRelation',
+        entity.testEntityPk,
+        PLAIN_TEST_RELATIONS[1].testRelationPk,
       );
-      when(mockModel.$set(relationName, relationId)).thenResolve(relation);
-      const queryResult = await queryService.setRelation(relationName, entity.testEntityPk, relationId);
-      return expect(queryResult).toEqual(modelInstance);
+      expect(queryResult).toEqual(expect.objectContaining(entity));
+
+      const relation = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
+      expect(relation!.testRelationPk).toBe(PLAIN_TEST_RELATIONS[1].testRelationPk);
     });
   });
 
   describe('#removeRelations', () => {
-    const relationName = 'testRelations';
     it('call select and return the result', async () => {
-      const entity = testEntities()[0];
-      const relations = testRelations(entity.testEntityPk);
-      const relationIds = relations.map((r) => r.testRelationPk);
-      const mockModel = mock(TestEntity);
-      const modelInstance = instance(mockModel);
-      const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-      // this is required to make tests pass see https://github.com/NagRock/ts-mockito/issues/163
-      // @ts-ignore
-      modelInstance.then = undefined;
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenResolve(
-        modelInstance,
+      const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.removeRelations(
+        'testRelations',
+        entity.testEntityPk,
+        PLAIN_TEST_RELATIONS.slice(0, 3).map((r) => r.testRelationPk),
       );
-      when(mockModel.$add(relationName, relationIds)).thenResolve(relations);
-      const queryResult = await queryService.removeRelations(relationName, entity.testEntityPk, relationIds);
-      return expect(queryResult).toEqual(modelInstance);
+      expect(queryResult).toEqual(expect.objectContaining(entity));
+
+      const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+      expect(relations).toHaveLength(0);
     });
   });
-  //
+
   describe('#removeRelation', () => {
-    const relationName = 'oneTestRelation';
-    it('call select and return the result', async () => {
-      const entity = testEntities()[0];
-      const relation = testRelations(entity.testEntityPk)[0];
-      const relationId = relation.testRelationPk;
-      const mockModel = mock(TestEntity);
-      const modelInstance = instance(mockModel);
-      const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-      // this is required to make tests pass see https://github.com/NagRock/ts-mockito/issues/163
-      // @ts-ignore
-      modelInstance.then = undefined;
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenResolve(
-        modelInstance,
-      );
-      when(mockModel.$set(relationName, relationId)).thenResolve(relation);
-      const queryResult = await queryService.removeRelation(relationName, entity.testEntityPk, relationId);
-      return expect(queryResult).toEqual(modelInstance);
+    describe('oneToOne', () => {
+      it('set the relation to null', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.removeRelation(
+          'oneTestRelation',
+          entity.testEntityPk,
+          PLAIN_TEST_RELATIONS[0].testRelationPk,
+        );
+        expect(queryResult).toEqual(expect.objectContaining(entity));
+
+        const relation = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
+        expect(relation).toBeUndefined();
+      });
+    });
+
+    describe('manyToOne', () => {
+      it('set the relation to null', async () => {
+        const relation = PLAIN_TEST_RELATIONS[0] as TestRelation;
+        const queryService = moduleRef.get(TestRelationService);
+        const queryResult = await queryService.removeRelation(
+          'testEntity',
+          relation.testRelationPk,
+          PLAIN_TEST_ENTITIES[0].testEntityPk,
+        );
+        expect(queryResult).toEqual(expect.objectContaining({ ...relation, testEntityId: null }));
+
+        const entity = await queryService.findRelation(TestEntity, 'testEntity', queryResult);
+        expect(entity).toBeUndefined();
+      });
+    });
+
+    describe('oneToMany', () => {
+      it('set the relation to null', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.removeRelation(
+          'testRelations',
+          entity.testEntityPk,
+          PLAIN_TEST_RELATIONS[0].testRelationPk,
+        );
+        expect(queryResult).toEqual(expect.objectContaining(entity));
+
+        const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+        expect(relations).toHaveLength(2);
+      });
     });
   });
 
   describe('#findById', () => {
-    it('call findOne on the repo', async () => {
-      const entity = testEntities()[0];
-      const { queryService, mockModelCtor } = createQueryService();
-      when(mockModelCtor.findByPk(entity.testEntityPk)).thenResolve(entity);
-      const queryResult = await queryService.findById(entity.testEntityPk);
-      expect(queryResult).toEqual(entity);
+    it('return the entity if found', async () => {
+      const entity = PLAIN_TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const found = await queryService.findById(entity.testEntityPk);
+      expect(found).toEqual(expect.objectContaining(entity));
     });
 
     it('return undefined if not found', async () => {
-      const { queryService, mockModelCtor } = createQueryService();
-      when(mockModelCtor.findByPk(1)).thenResolve(null);
-      const queryResult = await queryService.findById(1);
-      expect(queryResult).toBeUndefined();
+      const queryService = moduleRef.get(TestEntityService);
+      const found = await queryService.findById('bad-id');
+      expect(found).toBeUndefined();
     });
   });
 
   describe('#getById', () => {
-    it('call findByPk on the model with rejectOnEmpty', async () => {
-      const entity = testEntities()[0];
-      const { queryService, mockModelCtor } = createQueryService();
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenResolve(entity);
-      const queryResult = await queryService.getById(entity.testEntityPk);
-      expect(queryResult).toEqual(entity);
+    it('return the entity if found', async () => {
+      const entity = PLAIN_TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const found = await queryService.getById(entity.testEntityPk);
+      expect(found).toEqual(expect.objectContaining(entity));
+    });
+
+    it('throw an error if the record is not found', () => {
+      const queryService = moduleRef.get(TestEntityService);
+      return expect(queryService.getById('bad-id')).rejects.toThrow('Unable to find TestEntity with id: bad-id');
     });
   });
 
   describe('#createMany', () => {
     it('call save on the repo with instances of entities when passed plain objects', async () => {
-      const entities = testEntities();
-      const { queryService, mockModelCtor } = createQueryService();
-      when(mockModelCtor.bulkCreate(deepEqual(plainEntities))).thenResolve(entities);
-      const queryResult = await queryService.createMany(plainEntities as DeepPartial<TestEntity>[]);
-      expect(queryResult).toEqual(entities);
+      await truncate(moduleRef.get(Sequelize));
+      const queryService = moduleRef.get(TestEntityService);
+      const created = await queryService.createMany(PLAIN_TEST_ENTITIES);
+      expect(created.map((c) => c.get({ plain: true }))).toEqual(expect.objectContaining(PLAIN_TEST_ENTITIES));
+    });
+
+    it('call save on the repo with instances of entities when passed instances', async () => {
+      await truncate(moduleRef.get(Sequelize));
+      const queryService = moduleRef.get(TestEntityService);
+      const entities = PLAIN_TEST_ENTITIES.map((pe) => TestEntity.build(pe));
+      const created = await queryService.createMany(entities as DeepPartial<TestEntity>[]);
+      expect(created.map((c) => c.get({ plain: true }))).toEqual(PLAIN_TEST_ENTITIES);
+    });
+
+    it('should reject if the entities already exist', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      return expect(queryService.createMany(PLAIN_TEST_ENTITIES)).rejects.toThrow('Entity already exists');
     });
   });
 
   describe('#createOne', () => {
     it('call save on the repo with an instance of the entity when passed a plain object', async () => {
-      const entities = testEntities();
-      const { queryService, mockModelCtor } = createQueryService();
-      when(mockModelCtor.create(deepEqual(plainEntities[0]))).thenResolve(entities[0]);
-      const queryResult = await queryService.createOne(plainEntities[0] as DeepPartial<TestEntity>);
-      expect(queryResult).toEqual(entities[0]);
+      await truncate(moduleRef.get(Sequelize));
+      const entity = PLAIN_TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const created = await queryService.createOne(entity);
+      expect(created).toEqual(expect.objectContaining(entity));
+    });
+
+    it('call save on the repo with an instance of the entity when passed an instance', async () => {
+      await truncate(moduleRef.get(Sequelize));
+      const entity = PLAIN_TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const created = await queryService.createOne(entity as DeepPartial<TestEntity>);
+      expect(created).toEqual(expect.objectContaining(entity));
+    });
+
+    it('should reject if the entity contains an id', async () => {
+      const entity = PLAIN_TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      return expect(queryService.createOne(entity)).rejects.toThrow('Entity already exists');
     });
   });
 
   describe('#deleteMany', () => {
-    it('create call destroy with the generated options', async () => {
-      const affected = 10;
-      const deleteMany: Filter<TestEntity> = { stringType: { eq: 'foo' } };
-      const destroyOptions = {};
-      const { queryService, mockQueryBuilder, mockModelCtor } = createQueryService();
-      when(mockQueryBuilder.destroyOptions(objectContaining({ filter: deleteMany }))).thenReturn(destroyOptions);
-      when(mockModelCtor.destroy(destroyOptions)).thenResolve(affected);
-      const queryResult = await queryService.deleteMany(deleteMany);
-      expect(queryResult).toEqual({ deletedCount: affected });
+    it('delete all records that match the query', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const { deletedCount } = await queryService.deleteMany({
+        testEntityPk: { in: PLAIN_TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) },
+      });
+      expect(deletedCount).toEqual(5);
+      const allCount = await queryService.count({});
+      expect(allCount).toBe(5);
     });
   });
 
   describe('#deleteOne', () => {
-    it('call getOne and then remove the entity', async () => {
-      const entity = testEntities()[0];
-      const { testEntityPk } = entity;
-      const mockModel = mock(TestEntity);
-      const modelInstance = instance(mockModel);
-      const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-      // this is required to make tests pass see https://github.com/NagRock/ts-mockito/issues/163
-      // @ts-ignore
-      modelInstance.then = undefined;
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenResolve(
-        modelInstance,
-      );
-      when(mockModel.destroy()).thenResolve();
-      const queryResult = await queryService.deleteOne(testEntityPk);
-      return expect(queryResult).toEqual(modelInstance);
+    it('remove the entity', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const deleted = await queryService.deleteOne(PLAIN_TEST_ENTITIES[0].testEntityPk);
+      expect(deleted).toEqual(expect.objectContaining(PLAIN_TEST_ENTITIES[0]));
     });
 
     it('call fail if the entity is not found', async () => {
-      const entity = testEntities()[0];
-      const { testEntityPk } = entity;
-      const err = new Error('not found');
-      const mockModel = mock(TestEntity);
-      const modelInstance = instance(mockModel);
-      const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-      // this is required to make tests pass see https://github.com/NagRock/ts-mockito/issues/163
-      // @ts-ignore
-      modelInstance.then = undefined;
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenReject(err);
-      return expect(queryService.deleteOne(testEntityPk)).rejects.toThrow(err);
+      const queryService = moduleRef.get(TestEntityService);
+      return expect(queryService.deleteOne('bad-id')).rejects.toThrow('Unable to find TestEntity with id: bad-id');
     });
   });
 
   describe('#updateMany', () => {
-    it('create call update with the generated options', async () => {
-      const affected = 10;
-      const entities = testEntities();
-      const updateMany: Filter<TestEntity> = { stringType: { eq: 'foo' } };
-      const update = plainEntities[0];
-      const updateOptions = { where: {} };
-      const { queryService, mockQueryBuilder, mockModelCtor } = createQueryService();
-      when(mockQueryBuilder.updateOptions(objectContaining({ filter: updateMany }))).thenReturn(updateOptions);
-      when(mockModelCtor.update(update, updateOptions)).thenResolve([affected, entities]);
-      const queryResult = await queryService.updateMany(update, updateMany);
-      expect(queryResult).toEqual({ updatedCount: affected });
+    it('update all entities in the filter', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const filter = {
+        testEntityPk: { in: PLAIN_TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) },
+      };
+      await queryService.updateMany({ stringType: 'updated' }, filter);
+      const entities = await queryService.query({ filter });
+      expect(entities).toHaveLength(5);
+      entities.forEach((e) => expect(e.stringType).toBe('updated'));
+    });
+
+    it('should reject if the update contains a primary key', () => {
+      const queryService = moduleRef.get(TestEntityService);
+      return expect(queryService.updateMany({ testEntityPk: 'updated' }, {})).rejects.toThrow(
+        'Id cannot be specified when updating',
+      );
     });
   });
 
   describe('#updateOne', () => {
-    it('call getOne and then remove the entity', async () => {
-      const entity = testEntities()[0];
-      const { testEntityPk } = entity;
-      const update = { stringType: 'baz' };
-      const mockModel = mock(TestEntity);
-      const modelInstance = instance(mockModel);
-      const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-      // this is required to make tests pass see https://github.com/NagRock/ts-mockito/issues/163
-      // @ts-ignore
-      modelInstance.then = undefined;
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenResolve(
-        modelInstance,
-      );
-      when(mockModel.update(update)).thenResolve(entity);
-      const queryResult = await queryService.updateOne(testEntityPk, update);
-      expect(queryResult).toEqual(entity);
+    it('update the entity', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const updated = await queryService.updateOne(PLAIN_TEST_ENTITIES[0].testEntityPk, { stringType: 'updated' });
+      expect(updated).toEqual(expect.objectContaining({ ...PLAIN_TEST_ENTITIES[0], stringType: 'updated' }));
+    });
+
+    it('should reject if the update contains a primary key', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      return expect(
+        queryService.updateOne(PLAIN_TEST_ENTITIES[0].testEntityPk, { testEntityPk: 'bad-id' }),
+      ).rejects.toThrow('Id cannot be specified when updating');
     });
 
     it('call fail if the entity is not found', async () => {
-      const entity = testEntities()[0];
-      const { testEntityPk } = entity;
-      const update = { stringType: 'baz' };
-      const err = new Error('not found');
-      const mockModel = mock(TestEntity);
-      const modelInstance = instance(mockModel);
-      const { queryService, mockModelCtor } = createQueryService<TestRelation>();
-      // this is required to make tests pass see https://github.com/NagRock/ts-mockito/issues/163
-      // @ts-ignore
-      modelInstance.then = undefined;
-      when(mockModelCtor.findByPk(entity.testEntityPk, objectContaining({ rejectOnEmpty: true }))).thenReject(err);
-      return expect(queryService.updateOne(testEntityPk, update)).rejects.toThrow(err);
+      const queryService = moduleRef.get(TestEntityService);
+      return expect(queryService.updateOne('bad-id', { stringType: 'updated' })).rejects.toThrow(
+        'Unable to find TestEntity with id: bad-id',
+      );
     });
   });
 });
