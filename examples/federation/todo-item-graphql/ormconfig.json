@@ -6,11 +6,5 @@
   "username": "federation_todo_item",
   "database": "federation_todo_item",
   "autoLoadEntities": true,
-  "entities": [
-    "./dist/**/*.entity.js"
-  ],
-  "synchronize": true,
-  "seeds": [
-    "./dist/seeds.js"
-  ]
+  "synchronize": true
 }

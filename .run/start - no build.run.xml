@@ -1,10 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="start - no build" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/examples/nest-graphql-typeorm/package.json" />
+  <configuration default="false" name="start - typeorm" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/examples/package.json" />
     <command value="run" />
     <scripts>
       <script value="start" />
     </scripts>
+    <arguments value="-- typeorm" />
     <node-interpreter value="project" />
     <envs />
     <method v="2" />

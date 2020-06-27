@@ -6,11 +6,5 @@
   "username": "federation_sub_task",
   "database": "federation_sub_task",
   "autoLoadEntities": true,
-  "entities": [
-    "dist/**/*.entity.js"
-  ],
-  "seeds": [
-    "./dist/seeds.js"
-  ],
   "synchronize": true
 }

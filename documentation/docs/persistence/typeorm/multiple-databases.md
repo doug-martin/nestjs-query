@@ -157,4 +157,4 @@ export class SecretService extends TypeOrmQueryService<SecretEntity> {
 
 For the sake of brevity, the `AssemblerService` is not covered here, as it should not directly interact with the database itself. Therefore, no further adaptations are required. This also applies to the `Resolver`!
 
-For a full example see the [examples](https://github.com/doug-martin/nestjs-query/tree/master/examples/nest-graphql-typeorm-multidb).
+For a full example see the [examples](https://github.com/doug-martin/nestjs-query/tree/master/examples/typeorm-multidb).

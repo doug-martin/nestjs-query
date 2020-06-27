@@ -1,0 +1,114 @@
+{
+  "collection": "@nestjs/schematics",
+  "monorepo": true,
+  "projects": {
+    "basic": {
+      "type": "application",
+      "root": "basic",
+      "entryFile": "main",
+      "sourceRoot": "basic/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "federation:gateway": {
+      "type": "application",
+      "root": "federation/gateway",
+      "entryFile": "main",
+      "sourceRoot": "federation/graphql-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "federation:sub-task": {
+      "type": "application",
+      "root": "federation/sub-task-graphql",
+      "entryFile": "main",
+      "sourceRoot": "federation/sub-task-graphql/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "federation:tag": {
+      "type": "application",
+      "root": "federation/tag-graphql",
+      "entryFile": "main",
+      "sourceRoot": "federation/tag-graphql/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "federation:todo-item": {
+      "type": "application",
+      "root": "federation/todo-item-graphql",
+      "entryFile": "main",
+      "sourceRoot": "federation/todo-item-graphql/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "offset-paging": {
+      "type": "application",
+      "root": "offset-paging",
+      "entryFile": "main",
+      "sourceRoot": "offset-paging/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "no-paging": {
+      "type": "application",
+      "root": "no-paging",
+      "entryFile": "main",
+      "sourceRoot": "no-paging/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "sequelize": {
+      "type": "application",
+      "root": "sequelize",
+      "entryFile": "main",
+      "sourceRoot": "sequelize/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "subscriptions": {
+      "type": "application",
+      "root": "subscriptions",
+      "entryFile": "main",
+      "sourceRoot": "subscriptions/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "typeorm": {
+      "type": "application",
+      "root": "typeorm",
+      "entryFile": "main",
+      "sourceRoot": "typeorm/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "typeorm-multidb": {
+      "type": "application",
+      "root": "typeorm-multidb",
+      "entryFile": "main",
+      "sourceRoot": "typeorm-multidb/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
+    "typeorm-soft-delete": {
+      "type": "application",
+      "root": "typeorm-multidb",
+      "entryFile": "main",
+      "sourceRoot": "typeorm-multidb/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    }
+  }
+}

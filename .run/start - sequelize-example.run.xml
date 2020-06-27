@@ -1,22 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="start - sequelize-example" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/examples/nest-graphql-sequelize/package.json" />
+  <configuration default="false" name="start - sequelize" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/examples/package.json" />
     <command value="run" />
     <scripts>
       <script value="start" />
     </scripts>
+    <arguments value="-- sequelize" />
     <node-interpreter value="project" />
     <envs />
-    <method v="2">
-      <option name="NpmBeforeRunTask" enabled="true">
-        <package-json value="$PROJECT_DIR$/package.json" />
-        <command value="run" />
-        <scripts>
-          <script value="build" />
-        </scripts>
-        <node-interpreter value="project" />
-        <envs />
-      </option>
-    </method>
+    <method v="2" />
   </configuration>
 </component>

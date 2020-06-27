@@ -1,0 +1,9 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5436,
+  "username": "basic",
+  "database": "basic",
+  "autoLoadEntities": true,
+  "synchronize": true
+}

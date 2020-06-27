@@ -1,0 +1,9 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5436,
+  "username": "typeorm",
+  "database": "typeorm",
+  "autoLoadEntities": true,
+  "synchronize": true
+}

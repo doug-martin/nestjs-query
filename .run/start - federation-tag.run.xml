@@ -9,12 +9,13 @@
     <envs />
     <method v="2" />
   </configuration>
-  <configuration default="false" name="start - federation-tag" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/examples/federation/tag-graphql/package.json" />
+  <configuration default="false" name="start - federation:tag" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/examples/package.json" />
     <command value="run" />
     <scripts>
       <script value="start" />
     </scripts>
+    <arguments value="-- federation:tag" />
     <node-interpreter value="project" />
     <envs />
     <method v="2" />
