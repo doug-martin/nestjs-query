@@ -5,6 +5,7 @@ import { ModelCtor as SequelizeModelCtor } from 'sequelize';
 import { FilterQueryBuilder } from '../query';
 
 interface SequelizeAssociation {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   target: SequelizeModelCtor<any>;
   isMultiAssociation: boolean;
   isSingleAssociation: boolean;

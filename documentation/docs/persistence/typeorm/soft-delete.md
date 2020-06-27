@@ -101,4 +101,4 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 
 ## Complete Example
 
-To see a complete example [see here.](https://github.com/doug-martin/nestjs-query/tree/master/examples/nest-graphql-typeorm-soft-delete)
+To see a complete example [see here.](https://github.com/doug-martin/nestjs-query/tree/master/examples/typeorm-soft-delete)

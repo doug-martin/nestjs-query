@@ -1,8 +1,7 @@
 {
   "tagVersionPrefix": "v",
   "packages": [
-    "examples/*",
-    "examples/federation/*",
+    "examples",
     "packages/*"
   ],
   "command": {

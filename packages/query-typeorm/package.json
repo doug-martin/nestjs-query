@@ -43,9 +43,9 @@
   },
   "scripts": {
     "prepublishOnly": "npm run build",
-    "build": "npm run clean && npm run compile",
-    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
-    "compile": "tsc -p tsconfig.build.json"
+    "prebuild": "npm run clean",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo"
   },
   "bugs": {
     "url": "https://github.com/doug-martin/nestjs-query/issues"

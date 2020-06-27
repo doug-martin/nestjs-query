@@ -1,10 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="start - federation-sub-task" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/examples/federation/sub-task-graphql/package.json" />
+  <configuration default="false" name="start - federation:sub-task" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/examples/package.json" />
     <command value="run" />
     <scripts>
       <script value="start" />
     </scripts>
+    <arguments value="-- federation:sub-task" />
     <node-interpreter value="project" />
     <envs />
     <method v="2" />

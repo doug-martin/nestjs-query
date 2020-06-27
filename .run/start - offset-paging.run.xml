@@ -1,10 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="start - offset-paging" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/examples/nest-graphql-offset-paging/package.json" />
+    <package-json value="$PROJECT_DIR$/examples/package.json" />
     <command value="run" />
     <scripts>
       <script value="start" />
     </scripts>
+    <arguments value="-- offset-paging" />
     <node-interpreter value="project" />
     <envs />
     <method v="2" />

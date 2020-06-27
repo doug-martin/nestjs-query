@@ -1,10 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="start - federation-todoitem" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/examples/federation/todo-item-graphql/package.json" />
+  <configuration default="false" name="start - federation:todo-item" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/examples/package.json" />
     <command value="run" />
     <scripts>
       <script value="start" />
     </scripts>
+    <arguments value="-- federation:todo-item" />
     <node-interpreter value="project" />
     <envs />
     <method v="2" />
