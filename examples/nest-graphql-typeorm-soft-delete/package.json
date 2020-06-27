@@ -1,6 +1,6 @@
 {
   "name": "nest-graphql-typeorm-soft-delete",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "",
   "author": "",
   "private": true,
@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@nestjs-query/core": "0.15.0",
-    "@nestjs-query/query-graphql": "0.15.0",
-    "@nestjs-query/query-typeorm": "0.15.0",
+    "@nestjs-query/query-graphql": "0.15.1",
+    "@nestjs-query/query-typeorm": "0.15.1",
     "@nestjs/common": "7.2.0",
     "@nestjs/core": "7.2.0",
     "@nestjs/graphql": "7.4.6",
