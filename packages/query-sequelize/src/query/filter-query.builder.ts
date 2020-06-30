@@ -1,5 +1,15 @@
-import { Filter, Paging, Query, SortField } from '@nestjs-query/core';
-import { FindOptions, Filterable, DestroyOptions, Order, OrderItem, UpdateOptions, CountOptions } from 'sequelize';
+import { Filter, getFilterFields, Paging, Query, SortField } from '@nestjs-query/core';
+import {
+  FindOptions,
+  Filterable,
+  DestroyOptions,
+  Order,
+  OrderItem,
+  UpdateOptions,
+  CountOptions,
+  Association,
+} from 'sequelize';
+import { Model, ModelCtor } from 'sequelize-typescript';
 import { WhereBuilder } from './where.builder';
 
 /**
@@ -26,8 +36,11 @@ interface Pageable<Entity> {
  *
  * Class that will convert a Query into a `sequelize` Query Builder.
  */
-export class FilterQueryBuilder<Entity> {
-  constructor(readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>()) {}
+export class FilterQueryBuilder<Entity extends Model<Entity>> {
+  constructor(
+    readonly model: ModelCtor<Entity>,
+    readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
+  ) {}
 
   /**
    * Create a `sequelize` SelectQueryBuilder with `WHERE`, `ORDER BY` and `LIMIT/OFFSET` clauses.
@@ -35,7 +48,7 @@ export class FilterQueryBuilder<Entity> {
    * @param query - the query to apply.
    */
   findOptions(query: Query<Entity>): FindOptions {
-    let opts: FindOptions = {};
+    let opts: FindOptions = this.applyAssociationIncludes({}, query.filter);
     opts = this.applyFilter(opts, query.filter);
     opts = this.applySorting(opts, query.sorting);
     opts = this.applyPaging(opts, query.paging);
@@ -43,7 +56,8 @@ export class FilterQueryBuilder<Entity> {
   }
 
   countOptions(query: Query<Entity>): CountOptions {
-    let opts: CountOptions = {};
+    let opts: CountOptions = this.applyAssociationIncludes({}, query.filter);
+    opts.distinct = true;
     opts = this.applyFilter(opts, query.filter);
     return opts;
   }
@@ -103,7 +117,7 @@ export class FilterQueryBuilder<Entity> {
       return filterable;
     }
     // eslint-disable-next-line no-param-reassign
-    filterable.where = this.whereBuilder.build(filter);
+    filterable.where = this.whereBuilder.build(filter, this.getReferencedRelations(filter));
     return filterable;
   }
 
@@ -128,5 +142,33 @@ export class FilterQueryBuilder<Entity> {
       },
     );
     return qb;
+  }
+
+  private applyAssociationIncludes<Opts extends FindOptions | CountOptions>(
+    findOpts: Opts,
+    filter?: Filter<Entity>,
+  ): Opts {
+    if (!filter) {
+      return findOpts;
+    }
+    const referencedRelations = this.getReferencedRelations(filter);
+    return [...referencedRelations.values()].reduce((find, association) => {
+      // eslint-disable-next-line no-param-reassign
+      find.include = [...(find.include || []), { association, attributes: [] }];
+      return find;
+    }, findOpts);
+  }
+
+  private getReferencedRelations(filter: Filter<Entity>): Map<string, Association> {
+    const { relationNames } = this;
+    const referencedFields = getFilterFields(filter);
+    const referencedRelations = referencedFields.filter((f) => relationNames.includes(f));
+    return referencedRelations.reduce((map, r) => {
+      return map.set(r, this.model.associations[r]);
+    }, new Map<string, Association>());
+  }
+
+  private get relationNames(): string[] {
+    return Object.keys(this.model.associations || {});
   }
 }

@@ -7,7 +7,7 @@ describe('WhereBuilder', (): void => {
   const createWhereBuilder = () => new WhereBuilder<TestEntity>();
 
   const assertSQL = (filter: Filter<TestEntity>, expectedWhereOpts: WhereOptions): void => {
-    const actual = createWhereBuilder().build(filter);
+    const actual = createWhereBuilder().build(filter, new Map());
     expect(actual).toEqual(expectedWhereOpts);
   };
 

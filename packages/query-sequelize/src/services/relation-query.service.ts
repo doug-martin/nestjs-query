@@ -58,8 +58,9 @@ export abstract class RelationQueryService<Entity extends Model> {
     if (Array.isArray(dto)) {
       return this.batchQueryRelations(RelationClass, relationName, dto, query);
     }
-    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
+    const relationEntity = this.getRelationEntity(relationName);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
+    const relationQueryBuilder = this.getRelationQueryBuilder<Model>(relationEntity);
     const relations = await this.ensureIsEntity(dto).$get(
       relationName as keyof Entity,
       relationQueryBuilder.findOptions(assembler.convertQuery(query)),
@@ -90,8 +91,9 @@ export abstract class RelationQueryService<Entity extends Model> {
     if (Array.isArray(dto)) {
       return this.batchCountRelations(RelationClass, relationName, dto, filter);
     }
-    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
+    const relationEntity = this.getRelationEntity(relationName);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
+    const relationQueryBuilder = this.getRelationQueryBuilder<Model>(relationEntity);
     return this.ensureIsEntity(dto).$count(
       relationName,
       relationQueryBuilder.countOptions(assembler.convertQuery({ filter })),
@@ -207,8 +209,8 @@ export abstract class RelationQueryService<Entity extends Model> {
     return entity;
   }
 
-  getRelationQueryBuilder<Relation>(): FilterQueryBuilder<Relation> {
-    return new FilterQueryBuilder<Relation>();
+  getRelationQueryBuilder<Relation extends Model>(model: ModelCtor<Relation>): FilterQueryBuilder<Relation> {
+    return new FilterQueryBuilder<Relation>(model);
   }
 
   /**
@@ -224,8 +226,9 @@ export abstract class RelationQueryService<Entity extends Model> {
     entities: Entity[],
     query: Query<Relation>,
   ): Promise<Map<Entity, Relation[]>> {
-    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
+    const relationEntity = this.getRelationEntity(relationName);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
+    const relationQueryBuilder = this.getRelationQueryBuilder(relationEntity);
     const findOptions = relationQueryBuilder.findOptions(assembler.convertQuery(query));
     return entities.reduce(async (mapPromise, e) => {
       const map = await mapPromise;
@@ -248,8 +251,9 @@ export abstract class RelationQueryService<Entity extends Model> {
     entities: Entity[],
     filter: Filter<Relation>,
   ): Promise<Map<Entity, number>> {
-    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationQueryBuilder = this.getRelationQueryBuilder<Model>();
+    const relationEntity = this.getRelationEntity(relationName);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
+    const relationQueryBuilder = this.getRelationQueryBuilder<Model>(relationEntity);
     const findOptions = relationQueryBuilder.countOptions(assembler.convertQuery({ filter }));
     return entities.reduce(async (mapPromise, e) => {
       const map = await mapPromise;
