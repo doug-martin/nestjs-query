@@ -1,4 +1,4 @@
-import { Filter, Paging, Query, SortField } from '@nestjs-query/core';
+import { Filter, Paging, Query, SortField, getFilterFields } from '@nestjs-query/core';
 import {
   DeleteQueryBuilder,
   QueryBuilder,
@@ -47,6 +47,7 @@ export class FilterQueryBuilder<Entity> {
    */
   select(query: Query<Entity>): SelectQueryBuilder<Entity> {
     let qb = this.createQueryBuilder();
+    qb = this.applyRelationJoins(qb, query.filter);
     qb = this.applyFilter(qb, query.filter, qb.alias);
     qb = this.applySorting(qb, query.sorting, qb.alias);
     qb = this.applyPaging(qb, query.paging);
@@ -107,7 +108,7 @@ export class FilterQueryBuilder<Entity> {
     if (!filter) {
       return qb;
     }
-    return this.whereBuilder.build(qb, filter, alias);
+    return this.whereBuilder.build(qb, filter, this.getReferencedRelations(filter), alias);
   }
 
   /**
@@ -132,5 +133,25 @@ export class FilterQueryBuilder<Entity> {
    */
   private createQueryBuilder(): SelectQueryBuilder<Entity> {
     return this.repo.createQueryBuilder();
+  }
+
+  private applyRelationJoins(qb: SelectQueryBuilder<Entity>, filter?: Filter<Entity>): SelectQueryBuilder<Entity> {
+    if (!filter) {
+      return qb;
+    }
+    const referencedRelations = this.getReferencedRelations(filter);
+    return referencedRelations.reduce((rqb, relation) => {
+      return rqb.leftJoin(`${rqb.alias}.${relation}`, relation);
+    }, qb);
+  }
+
+  private getReferencedRelations(filter: Filter<Entity>): string[] {
+    const { relationNames } = this;
+    const referencedFields = getFilterFields(filter);
+    return referencedFields.filter((f) => relationNames.includes(f));
+  }
+
+  private get relationNames(): string[] {
+    return this.repo.metadata.relations.map((r) => r.propertyName);
   }
 }

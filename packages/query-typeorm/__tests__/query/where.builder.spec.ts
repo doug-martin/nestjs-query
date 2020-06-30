@@ -22,7 +22,7 @@ describe('WhereBuilder', (): void => {
   const createWhereBuilder = () => new WhereBuilder<TestEntity>();
 
   const assertSQL = (filter: Filter<TestEntity>, expectedSql: string, expectedArgs: any[]): void => {
-    const selectQueryBuilder = createWhereBuilder().build(getQueryBuilder(), filter, 'TestEntity');
+    const selectQueryBuilder = createWhereBuilder().build(getQueryBuilder(), filter, [], 'TestEntity');
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
     expect(sql).toEqual(`${baseQuery}${expectedSql}`);
     expect(params).toEqual(expectedArgs);
