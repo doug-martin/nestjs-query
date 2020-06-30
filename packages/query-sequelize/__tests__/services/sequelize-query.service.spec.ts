@@ -51,6 +51,57 @@ describe('SequelizeQueryService', (): void => {
       const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo1' } } });
       return expect(queryResult.map((e) => e.get({ plain: true }))).toEqual([PLAIN_TEST_ENTITIES[0]]);
     });
+    describe('filter on relations', () => {
+      describe('oneToOne', () => {
+        it('should allow filtering on a one to one relation', async () => {
+          const entity = PLAIN_TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              oneTestRelation: {
+                testRelationPk: {
+                  in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
+                },
+              },
+            },
+          });
+          expect(queryResult.map((e) => e.get({ plain: true }))).toEqual([entity]);
+        });
+      });
+
+      describe('manyToOne', () => {
+        it('should allow filtering on a many to one relation', async () => {
+          const queryService = moduleRef.get(TestRelationService);
+          const queryResults = await queryService.query({
+            filter: {
+              testEntity: {
+                testEntityPk: {
+                  in: [PLAIN_TEST_ENTITIES[0].testEntityPk, PLAIN_TEST_ENTITIES[1].testEntityPk],
+                },
+              },
+            },
+          });
+          expect(queryResults.map((e) => e.get({ plain: true }))).toEqual(PLAIN_TEST_RELATIONS.slice(0, 6));
+        });
+      });
+
+      describe('oneToMany', () => {
+        it('should allow filtering on a many to one relation', async () => {
+          const entity = PLAIN_TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              testRelations: {
+                relationName: {
+                  in: [PLAIN_TEST_RELATIONS[0].relationName, PLAIN_TEST_RELATIONS[1].relationName],
+                },
+              },
+            },
+          });
+          expect(queryResult.map((e) => e.get({ plain: true }))).toEqual([entity]);
+        });
+      });
+    });
   });
 
   describe('#count', () => {
@@ -58,6 +109,52 @@ describe('SequelizeQueryService', (): void => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.count({ stringType: { like: 'foo%' } });
       return expect(queryResult).toBe(10);
+    });
+
+    describe('with relations', () => {
+      describe('oneToOne', () => {
+        it('should properly count the number of records with the associated relations', async () => {
+          const entity = PLAIN_TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const count = await queryService.count({
+            oneTestRelation: {
+              testRelationPk: {
+                in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
+              },
+            },
+          });
+          expect(count).toEqual(1);
+        });
+      });
+
+      describe('manyToOne', () => {
+        it('set the relation to null', async () => {
+          const queryService = moduleRef.get(TestRelationService);
+          const count = await queryService.count({
+            testEntity: {
+              testEntityPk: {
+                in: [PLAIN_TEST_ENTITIES[0].testEntityPk, PLAIN_TEST_ENTITIES[2].testEntityPk],
+              },
+            },
+          });
+          expect(count).toEqual(6);
+        });
+      });
+
+      describe('oneToMany', () => {
+        it('set the relation to null', async () => {
+          const relation = PLAIN_TEST_RELATIONS[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const count = await queryService.count({
+            testRelations: {
+              testEntityId: {
+                in: [relation.testEntityId as string],
+              },
+            },
+          });
+          expect(count).toEqual(1);
+        });
+      });
     });
   });
 

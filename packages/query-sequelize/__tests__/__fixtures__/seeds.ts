@@ -34,11 +34,13 @@ export const PLAIN_TEST_RELATIONS: Pick<
       testRelationPk: `test-relations-${te.testEntityPk}-2`,
       relationName: `${te.stringType}-test-relation`,
       testEntityId: te.testEntityPk,
+      oneTestEntityId: null,
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-3`,
       relationName: `${te.stringType}-test-relation`,
       testEntityId: te.testEntityPk,
+      oneTestEntityId: null,
     },
   ];
 }, [] as Pick<TestRelation, 'testRelationPk' | 'relationName' | 'testEntityId'>[]);

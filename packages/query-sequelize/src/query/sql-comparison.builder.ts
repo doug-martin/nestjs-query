@@ -47,8 +47,9 @@ export class SQLComparisonBuilder<Entity> {
     field: F,
     cmp: FilterComparisonOperators<Entity[F]>,
     val: EntityComparisonField<Entity, F>,
+    alias?: string,
   ): WhereOptions {
-    const col = `${field as string}`;
+    const col = alias ? `$${alias}.${field as string}$` : `${field as string}`;
     const normalizedCmp = (cmp as string).toLowerCase();
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)

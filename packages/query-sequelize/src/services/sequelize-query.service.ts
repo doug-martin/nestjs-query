@@ -24,10 +24,11 @@ import { RelationQueryService } from './relation-query.service';
  */
 export class SequelizeQueryService<Entity extends Model<Entity>> extends RelationQueryService<Entity>
   implements QueryService<Entity> {
-  readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder<Entity>();
+  readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   constructor(readonly model: ModelCtor<Entity>) {
     super();
+    this.filterQueryBuilder = new FilterQueryBuilder<Entity>(model);
   }
 
   /**

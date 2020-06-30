@@ -1,12 +1,12 @@
 import { FindOptions, Op, UpdateOptions, DestroyOptions } from 'sequelize';
-import { anything, instance, mock, verify, when } from 'ts-mockito';
+import { anything, instance, mock, verify, when, deepEqual } from 'ts-mockito';
 import { Query, SortDirection, SortNulls } from '@nestjs-query/core';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { FilterQueryBuilder, WhereBuilder } from '../../src/query';
 
 describe('FilterQueryBuilder', (): void => {
   const getEntityQueryBuilder = (whereBuilder: WhereBuilder<TestEntity>): FilterQueryBuilder<TestEntity> =>
-    new FilterQueryBuilder(whereBuilder);
+    new FilterQueryBuilder(TestEntity, whereBuilder);
 
   const assertFindOptions = (
     query: Query<TestEntity>,
@@ -37,13 +37,13 @@ describe('FilterQueryBuilder', (): void => {
       it('should not call whereBuilder#build', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
         assertFindOptions({}, instance(mockWhereBuilder), {});
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(query.filter)).thenCall(() => {
+        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
           return { [Op.and]: { stringType: 'foo' } };
         });
         assertFindOptions(query, instance(mockWhereBuilder), {
@@ -56,7 +56,7 @@ describe('FilterQueryBuilder', (): void => {
       it('should apply empty paging args', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
         assertFindOptions({}, instance(mockWhereBuilder), {});
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply paging args going forward', () => {
@@ -71,7 +71,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { limit: 10, offset: 11 },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply paging args going backward', () => {
@@ -86,7 +86,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { limit: 10, offset: 10 },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply paging with just a limit', () => {
@@ -100,7 +100,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { limit: 10 },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply paging with just an offset', () => {
@@ -114,7 +114,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { offset: 10 },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
     });
 
@@ -128,7 +128,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { order: [['numberType', 'ASC']] },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply ASC NULLS_FIRST sorting', () => {
@@ -140,7 +140,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { order: [['numberType', 'ASC NULLS FIRST']] },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply ASC NULLS_LAST sorting', () => {
@@ -152,7 +152,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { order: [['numberType', 'ASC NULLS LAST']] },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply DESC sorting', () => {
@@ -164,7 +164,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { order: [['numberType', 'DESC']] },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply DESC NULLS_FIRST sorting', () => {
@@ -187,7 +187,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { order: [['numberType', 'DESC NULLS LAST']] },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply multiple sorts', () => {
@@ -211,7 +211,7 @@ describe('FilterQueryBuilder', (): void => {
             ],
           },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
     });
   });
@@ -221,7 +221,7 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(query.filter)).thenCall(() => {
+        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
           return { [Op.and]: { stringType: 'foo' } };
         });
         assertUpdateOptions(query, instance(mockWhereBuilder), {
@@ -241,7 +241,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { where: {}, limit: 10 },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
     });
   });
@@ -251,7 +251,7 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(query.filter)).thenCall(() => {
+        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
           return { [Op.and]: { stringType: 'foo' } };
         });
         assertDestroyOptions(query, instance(mockWhereBuilder), {
@@ -271,7 +271,7 @@ describe('FilterQueryBuilder', (): void => {
           instance(mockWhereBuilder),
           { limit: 10 },
         );
-        verify(mockWhereBuilder.build(anything())).never();
+        verify(mockWhereBuilder.build(anything(), anything())).never();
       });
     });
   });
