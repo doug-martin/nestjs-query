@@ -5,4 +5,5 @@ export {
   transformFilter,
   transformQuery,
   transformSort,
+  getFilterFields,
 } from './query.helpers';

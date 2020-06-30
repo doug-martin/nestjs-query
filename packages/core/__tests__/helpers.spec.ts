@@ -9,6 +9,7 @@ import {
   transformQuery,
   transformSort,
 } from '../src';
+import { getFilterFields } from '../src/helpers/query.helpers';
 
 class TestDTO {
   first!: string;
@@ -322,5 +323,66 @@ describe('applyFilter', () => {
     expect(applyFilter({ first: 'oo', last: 'bar' }, filter)).toBe(true);
     expect(applyFilter({ first: 'foo', last: 'baz' }, filter)).toBe(true);
     expect(applyFilter({ first: 'fo', last: 'ba' }, filter)).toBe(false);
+  });
+});
+
+describe('getFilterFields', () => {
+  class Test {
+    strField!: string;
+
+    boolField!: string;
+
+    testRelation!: Test;
+  }
+
+  it('should get all fields at root of filter', () => {
+    const filter: Filter<Test> = {
+      boolField: { is: true },
+      strField: { eq: '' },
+      testRelation: {
+        boolField: { is: false },
+      },
+    };
+    expect(getFilterFields(filter).sort()).toEqual(['boolField', 'strField', 'testRelation']);
+  });
+
+  it('should get all fields in and', () => {
+    const filter: Filter<Test> = {
+      and: [
+        { boolField: { is: true } },
+        { strField: { eq: '' } },
+        {
+          testRelation: {
+            boolField: { is: false },
+          },
+        },
+      ],
+    };
+    expect(getFilterFields(filter).sort()).toEqual(['boolField', 'strField', 'testRelation']);
+  });
+
+  it('should get all fields in or', () => {
+    const filter: Filter<Test> = {
+      or: [
+        { boolField: { is: true } },
+        { strField: { eq: '' } },
+        {
+          testRelation: {
+            boolField: { is: false },
+          },
+        },
+      ],
+    };
+    expect(getFilterFields(filter).sort()).toEqual(['boolField', 'strField', 'testRelation']);
+  });
+
+  it('should merge all identifiers  between root, and, or', () => {
+    const filter: Filter<Test> = {
+      or: [{ and: [{ boolField: { is: true } }, { strField: { eq: '' } }] }],
+      testRelation: {
+        boolField: { is: false },
+      },
+    };
+    expect(getFilterFields(filter).sort()).toEqual(['boolField', 'strField', 'testRelation']);
   });
 });

@@ -1,6 +1,8 @@
 /**
  * Field comparisons with a type of `boolean`.
  */
+import { Filter } from './filter.interface';
+
 export interface BooleanFieldComparisons {
   /**
    * Is operator.
@@ -179,6 +181,20 @@ export interface StringFieldComparisons extends CommonFieldComparisonType<string
   notILike?: string;
 }
 
+type BuiltInTypes =
+  | boolean
+  | boolean
+  | string
+  | string
+  | number
+  | Date
+  | RegExp
+  | bigint
+  | symbol
+  | null
+  | undefined
+  | never;
+
 /**
  * Type for field comparisons.
  *
@@ -186,13 +202,18 @@ export interface StringFieldComparisons extends CommonFieldComparisonType<string
  * * `boolean|null|undefined|never` - [[BooleanFieldComparisons]]
  * * all other types use [[CommonFieldComparisonType]]
  */
-export type FilterFieldComparison<FieldType> = FieldType extends string
-  ? StringFieldComparisons
-  : FieldType extends boolean
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type FilterFieldComparison<FieldType> = FieldType extends string | String
+  ? StringFieldComparisons // eslint-disable-next-line @typescript-eslint/ban-types
+  : FieldType extends boolean | Boolean
   ? BooleanFieldComparisons
   : FieldType extends null | undefined | never
-  ? BooleanFieldComparisons
-  : CommonFieldComparisonType<FieldType>;
+  ? BooleanFieldComparisons // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  : FieldType extends number | Date | RegExp | bigint | BuiltInTypes[] | symbol
+  ? CommonFieldComparisonType<FieldType>
+  : FieldType extends Array<infer U>
+  ? CommonFieldComparisonType<U> | Filter<U>
+  : CommonFieldComparisonType<FieldType> | Filter<FieldType>;
 
 /**
  * Type for all comparison operators for a field type.
