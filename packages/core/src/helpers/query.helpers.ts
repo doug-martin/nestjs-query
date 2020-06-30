@@ -54,4 +54,21 @@ export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
   return merge(base, source);
 };
 
+export const getFilterFields = <DTO>(filter: Filter<DTO>): string[] => {
+  const fieldSet: Set<string> = Object.keys(filter).reduce((fields: Set<string>, filterField: string): Set<string> => {
+    if (filterField === 'and' || filterField === 'or') {
+      const andOrFilters = filter[filterField];
+      if (andOrFilters !== undefined) {
+        return andOrFilters.reduce((andOrFields, andOrFilter) => {
+          return new Set<string>([...andOrFields, ...getFilterFields(andOrFilter)]);
+        }, fields);
+      }
+    } else {
+      fields.add(filterField);
+    }
+    return fields;
+  }, new Set<string>());
+  return [...fieldSet];
+};
+
 export const applyFilter = <DTO>(dto: DTO, filter: Filter<DTO>): boolean => FilterBuilder.build(filter)(dto);
