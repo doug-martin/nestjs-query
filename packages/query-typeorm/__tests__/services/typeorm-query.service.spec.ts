@@ -64,6 +64,58 @@ describe('TypeOrmQueryService', (): void => {
       const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo1' } } });
       return expect(queryResult).toEqual([TEST_ENTITIES[0]]);
     });
+
+    describe('filter on relations', () => {
+      describe('oneToOne', () => {
+        it('should allow filtering on a one to one relation', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              oneTestRelation: {
+                testRelationPk: {
+                  in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
+                },
+              },
+            },
+          });
+          expect(queryResult).toEqual([entity]);
+        });
+      });
+
+      describe('manyToOne', () => {
+        it('should allow filtering on a many to one relation', async () => {
+          const queryService = moduleRef.get(TestRelationService);
+          const queryResults = await queryService.query({
+            filter: {
+              testEntity: {
+                testEntityPk: {
+                  in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk],
+                },
+              },
+            },
+          });
+          expect(queryResults).toEqual(TEST_RELATIONS.slice(0, 6));
+        });
+      });
+
+      describe('oneToMany', () => {
+        it('should allow filtering on a many to one relation', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              testRelations: {
+                relationName: {
+                  in: [TEST_RELATIONS[0].relationName, TEST_RELATIONS[1].relationName],
+                },
+              },
+            },
+          });
+          expect(queryResult).toEqual([entity]);
+        });
+      });
+    });
   });
 
   describe('#count', () => {
@@ -71,6 +123,52 @@ describe('TypeOrmQueryService', (): void => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.count({ stringType: { like: 'foo%' } });
       return expect(queryResult).toBe(10);
+    });
+
+    describe('with relations', () => {
+      describe('oneToOne', () => {
+        it('should properly count the number pf records with the associated relations', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const count = await queryService.count({
+            oneTestRelation: {
+              testRelationPk: {
+                in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
+              },
+            },
+          });
+          expect(count).toEqual(1);
+        });
+      });
+
+      describe('manyToOne', () => {
+        it('set the relation to null', async () => {
+          const queryService = moduleRef.get(TestRelationService);
+          const count = await queryService.count({
+            testEntity: {
+              testEntityPk: {
+                in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[2].testEntityPk],
+              },
+            },
+          });
+          expect(count).toEqual(6);
+        });
+      });
+
+      describe('oneToMany', () => {
+        it('set the relation to null', async () => {
+          const relation = TEST_RELATIONS[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const count = await queryService.count({
+            testRelations: {
+              testEntityId: {
+                in: [relation.testEntityId as string],
+              },
+            },
+          });
+          expect(count).toEqual(1);
+        });
+      });
     });
   });
 
