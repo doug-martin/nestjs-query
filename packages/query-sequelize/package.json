@@ -35,7 +35,7 @@
     "@types/sequelize": "4.28.9",
     "sequelize": "5.22.1",
     "sequelize-typescript": "1.1.0",
-    "sqlite3": "4.2.0",
+    "sqlite3": "5.0.0",
     "ts-mockito": "2.6.1",
     "typescript": "3.9.5"
   },
