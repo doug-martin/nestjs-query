@@ -4,12 +4,12 @@ type Query {
 
 input DeleteMany {
   """Filter to find records to delete"""
-  filter: DeleteManyDTOFilter!
+  filter: DeleteManyDTODeleteFilter!
 }
 
-input DeleteManyDTOFilter {
-  and: [DeleteManyDTOFilter!]
-  or: [DeleteManyDTOFilter!]
+input DeleteManyDTODeleteFilter {
+  and: [DeleteManyDTODeleteFilter!]
+  or: [DeleteManyDTODeleteFilter!]
   field: StringFieldComparison
 }
 

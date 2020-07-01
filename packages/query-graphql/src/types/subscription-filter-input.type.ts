@@ -2,7 +2,7 @@ import { Filter, Class } from '@nestjs-query/core';
 import { Field, InputType } from '@nestjs/graphql';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { FilterType } from './query';
+import { SubscriptionFilterType } from './query';
 
 export interface SubscriptionFilterInputType<DTO> {
   filter?: Filter<DTO>;
@@ -13,7 +13,7 @@ export interface SubscriptionFilterInputType<DTO> {
  * @param DTOClass - The DTO used to create a FilterType for the filter.
  */
 export function SubscriptionFilterInputType<DTO>(DTOClass: Class<DTO>): Class<SubscriptionFilterInputType<DTO>> {
-  const F = FilterType(DTOClass);
+  const F = SubscriptionFilterType(DTOClass);
 
   @InputType({ isAbstract: true })
   class SubscriptionFilterInput implements SubscriptionFilterInputType<DTO> {

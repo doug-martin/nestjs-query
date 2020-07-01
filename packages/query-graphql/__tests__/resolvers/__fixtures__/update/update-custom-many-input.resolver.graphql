@@ -32,16 +32,16 @@ input UpdateTestResolverDTO {
 
 input CustomUpdateManyInput {
   """Filter used to find fields to update"""
-  filter: TestResolverDTOFilter!
+  filter: TestResolverDTOUpdateFilter!
 
   """The update to apply to all records found using the filter"""
   update: TestResolverInputDTO!
   other: String!
 }
 
-input TestResolverDTOFilter {
-  and: [TestResolverDTOFilter!]
-  or: [TestResolverDTOFilter!]
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
   id: IDFilterComparison
   stringField: StringFieldComparison
 }

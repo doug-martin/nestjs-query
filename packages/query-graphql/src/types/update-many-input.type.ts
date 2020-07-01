@@ -2,7 +2,7 @@ import { DeepPartial, Filter, Class } from '@nestjs-query/core';
 import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmptyObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { FilterType } from './query';
+import { UpdateFilterType } from './query';
 
 export interface UpdateManyInputType<DTO, U extends DeepPartial<DTO>> {
   filter: Filter<DTO>;
@@ -18,7 +18,7 @@ export function UpdateManyInputType<DTO, U extends DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
   UpdateType: Class<U>,
 ): Class<UpdateManyInputType<DTO, U>> {
-  const F = FilterType(DTOClass);
+  const F = UpdateFilterType(DTOClass);
 
   @InputType({ isAbstract: true })
   class UpdateManyInput implements UpdateManyInputType<DTO, U> {

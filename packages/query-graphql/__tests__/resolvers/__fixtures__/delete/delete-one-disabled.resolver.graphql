@@ -18,12 +18,12 @@ type Mutation {
 
 input DeleteManyTestResolverDTOSInput {
   """Filter to find records to delete"""
-  filter: TestResolverDTOFilter!
+  filter: TestResolverDTODeleteFilter!
 }
 
-input TestResolverDTOFilter {
-  and: [TestResolverDTOFilter!]
-  or: [TestResolverDTOFilter!]
+input TestResolverDTODeleteFilter {
+  and: [TestResolverDTODeleteFilter!]
+  or: [TestResolverDTODeleteFilter!]
   id: IDFilterComparison
   stringField: StringFieldComparison
 }

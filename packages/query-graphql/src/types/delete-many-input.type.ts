@@ -2,7 +2,7 @@ import { Filter, Class } from '@nestjs-query/core';
 import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmptyObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { FilterType } from './query';
+import { DeleteFilterType } from './query';
 
 export interface DeleteManyInputType<T> {
   filter: Filter<T>;
@@ -13,7 +13,7 @@ export interface DeleteManyInputType<T> {
  * @param DTOClass - The class the delete many input type is for. This will be used to create FilterType.
  */
 export function DeleteManyInputType<DTO>(DTOClass: Class<DTO>): Class<DeleteManyInputType<DTO>> {
-  const F = FilterType(DTOClass);
+  const F = DeleteFilterType(DTOClass);
   @InputType({ isAbstract: true })
   class DeleteManyInput implements DeleteManyInputType<DTO> {
     @IsNotEmptyObject()

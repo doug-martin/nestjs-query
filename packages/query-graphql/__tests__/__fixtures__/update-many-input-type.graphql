@@ -4,15 +4,15 @@ type Query {
 
 input UpdateMany {
   """Filter used to find fields to update"""
-  filter: FakeUpdateManyTypeFilter!
+  filter: FakeUpdateManyTypeUpdateFilter!
 
   """The update to apply to all records found using the filter"""
   update: FakeUpdateManyInput!
 }
 
-input FakeUpdateManyTypeFilter {
-  and: [FakeUpdateManyTypeFilter!]
-  or: [FakeUpdateManyTypeFilter!]
+input FakeUpdateManyTypeUpdateFilter {
+  and: [FakeUpdateManyTypeUpdateFilter!]
+  or: [FakeUpdateManyTypeUpdateFilter!]
   name: StringFieldComparison
 }
 

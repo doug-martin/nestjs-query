@@ -498,7 +498,7 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskFilter!" was not provided.',
+            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.',
           );
         });
     });
@@ -622,7 +622,7 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskFilter!" was not provided.',
+            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.',
           );
         });
     });
