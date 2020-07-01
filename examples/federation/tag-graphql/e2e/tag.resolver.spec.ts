@@ -478,7 +478,7 @@ describe('Federated - TagResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagFilter!" was not provided.',
+            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
           );
         });
     });
@@ -599,7 +599,7 @@ describe('Federated - TagResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagFilter!" was not provided.',
+            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
           );
         });
     });

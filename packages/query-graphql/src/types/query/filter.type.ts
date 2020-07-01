@@ -6,23 +6,18 @@ import { getMetadataStorage } from '../../metadata';
 import { createFilterComparisonType } from './field-comparison';
 import { UnregisteredObjectType } from '../type.errors';
 
-export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+function getOrCreateFilterType<T>(TClass: Class<T>, name: string): Class<Filter<T>> {
   const metadataStorage = getMetadataStorage();
-  const existing = metadataStorage.getFilterType<T>(TClass);
+  const existing = metadataStorage.getFilterType<T>(name);
   if (existing) {
     return existing;
   }
-  const objMetadata = metadataStorage.getGraphqlObjectMetadata(TClass);
-  if (!objMetadata) {
-    throw new UnregisteredObjectType(TClass, 'No fields found to create FilterType.');
-  }
-  const prefix = objMetadata.name;
   const fields = metadataStorage.getFilterableObjectFields(TClass);
   if (!fields) {
     throw new Error(`No fields found to create GraphQLFilter for ${TClass.name}`);
   }
 
-  @InputType(`${prefix}Filter`)
+  @InputType(name)
   class GraphQLFilter {
     @ValidateNested()
     @Field(() => [GraphQLFilter], { nullable: true })
@@ -41,6 +36,30 @@ export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
     Field(() => FC, { nullable: true })(GraphQLFilter.prototype, propertyName);
     Type(() => FC)(GraphQLFilter.prototype, propertyName);
   });
-  metadataStorage.addFilterType(TClass, GraphQLFilter as Class<Filter<T>>);
+  metadataStorage.addFilterType(name, GraphQLFilter as Class<Filter<T>>);
   return GraphQLFilter as Class<Filter<T>>;
+}
+
+function getObjectTypeName<DTO>(DTOClass: Class<DTO>): string {
+  const objMetadata = getMetadataStorage().getGraphqlObjectMetadata(DTOClass);
+  if (!objMetadata) {
+    throw new UnregisteredObjectType(DTOClass, 'No fields found to create FilterType.');
+  }
+  return objMetadata.name;
+}
+
+export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+  return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}Filter`);
+}
+
+export function DeleteFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+  return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}DeleteFilter`);
+}
+
+export function UpdateFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+  return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}UpdateFilter`);
+}
+
+export function SubscriptionFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+  return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}SubscriptionFilter`);
 }

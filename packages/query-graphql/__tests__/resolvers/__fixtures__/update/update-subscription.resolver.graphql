@@ -32,15 +32,15 @@ input UpdateTestResolverDTO {
 
 input UpdateManyTestResolverDTOSInput {
   """Filter used to find fields to update"""
-  filter: TestResolverDTOFilter!
+  filter: TestResolverDTOUpdateFilter!
 
   """The update to apply to all records found using the filter"""
   update: UpdateTestResolverDTO!
 }
 
-input TestResolverDTOFilter {
-  and: [TestResolverDTOFilter!]
-  or: [TestResolverDTOFilter!]
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
   id: IDFilterComparison
   stringField: StringFieldComparison
 }
@@ -86,5 +86,12 @@ type Subscription {
 
 input UpdateOneTestResolverDTOSubscriptionFilterInput {
   """Specify to filter the records returned."""
-  filter: TestResolverDTOFilter!
+  filter: TestResolverDTOSubscriptionFilter!
+}
+
+input TestResolverDTOSubscriptionFilter {
+  and: [TestResolverDTOSubscriptionFilter!]
+  or: [TestResolverDTOSubscriptionFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
 }

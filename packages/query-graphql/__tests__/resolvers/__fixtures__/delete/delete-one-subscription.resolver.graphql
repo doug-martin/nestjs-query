@@ -29,12 +29,12 @@ input DeleteOneInput {
 
 input DeleteManyTestResolverDTOSInput {
   """Filter to find records to delete"""
-  filter: TestResolverDTOFilter!
+  filter: TestResolverDTODeleteFilter!
 }
 
-input TestResolverDTOFilter {
-  and: [TestResolverDTOFilter!]
-  or: [TestResolverDTOFilter!]
+input TestResolverDTODeleteFilter {
+  and: [TestResolverDTODeleteFilter!]
+  or: [TestResolverDTODeleteFilter!]
   id: IDFilterComparison
   stringField: StringFieldComparison
 }
@@ -79,5 +79,12 @@ type Subscription {
 
 input DeleteOneTestResolverDTOSubscriptionFilterInput {
   """Specify to filter the records returned."""
-  filter: TestResolverDTOFilter!
+  filter: TestResolverDTOSubscriptionFilter!
+}
+
+input TestResolverDTOSubscriptionFilter {
+  and: [TestResolverDTOSubscriptionFilter!]
+  or: [TestResolverDTOSubscriptionFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
 }

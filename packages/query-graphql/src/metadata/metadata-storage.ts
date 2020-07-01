@@ -40,7 +40,7 @@ type ConnectionTypes = 'cursor' | 'array';
 export class GraphQLQueryMetadataStorage {
   private readonly filterableObjectStorage: Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>;
 
-  private readonly filterTypeStorage: Map<Class<unknown>, Class<Filter<unknown>>>;
+  private readonly filterTypeStorage: Map<string, Class<Filter<unknown>>>;
 
   private readonly sortTypeStorage: Map<Class<unknown>, Class<SortField<unknown>>>;
 
@@ -54,7 +54,7 @@ export class GraphQLQueryMetadataStorage {
 
   constructor() {
     this.filterableObjectStorage = new Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>();
-    this.filterTypeStorage = new Map<Class<unknown>, Class<Filter<unknown>>>();
+    this.filterTypeStorage = new Map<string, Class<Filter<unknown>>>();
     this.sortTypeStorage = new Map<Class<unknown>, Class<SortField<unknown>>>();
     this.connectionTypeStorage = new Map<string, StaticConnectionType<unknown>>();
     this.edgeTypeStorage = new Map<Class<unknown>, Class<EdgeType<unknown>>>();
@@ -87,12 +87,12 @@ export class GraphQLQueryMetadataStorage {
     return typeFields;
   }
 
-  addFilterType<T>(type: Class<T>, filterType: Class<Filter<T>>): void {
-    this.filterTypeStorage.set(type, filterType);
+  addFilterType<T>(name: string, filterType: Class<Filter<T>>): void {
+    this.filterTypeStorage.set(name, filterType);
   }
 
-  getFilterType<T>(type: Class<T>): Class<Filter<T>> | undefined {
-    return this.getValue(this.filterTypeStorage, type);
+  getFilterType<T>(name: string): Class<Filter<T>> | undefined {
+    return this.getValue(this.filterTypeStorage, name);
   }
 
   addSortType<T>(type: Class<T>, sortType: Class<SortField<T>>): void {

@@ -92,7 +92,7 @@ describe('DeleteResolver', () => {
   });
 
   describe('#deleteMany', () => {
-    it('should not delete a new type if the DeleteManyArgs is supplied', () => {
+    it('should not create a new delete type if the DeleteManyArgs is supplied', () => {
       @InputType()
       class CustomDeleteManyInput extends DeleteManyInputType(TestResolverDTO) {
         @Field()
