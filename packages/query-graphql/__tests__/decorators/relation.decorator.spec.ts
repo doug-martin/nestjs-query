@@ -1,5 +1,6 @@
+// eslint-disable-next-line max-classes-per-file
 import { ObjectType } from '@nestjs/graphql';
-import { Relation, Connection, PagingStrategies } from '../../src';
+import { Relation, Connection, PagingStrategies, FilterableRelation, FilterableConnection } from '../../src';
 import { getMetadataStorage } from '../../src/metadata';
 
 @ObjectType()
@@ -14,12 +15,7 @@ describe('@Relation', () => {
     class TestDTO {}
 
     const relations = getMetadataStorage().getRelations(TestDTO);
-    expect(relations).toHaveLength(1);
-    const relation = relations![0];
-    expect(relation.name).toBe('test');
-    expect(relation.relationTypeFunc).toBe(relationFn);
-    expect(relation.isMany).toBe(false);
-    expect(relation.relationOpts).toBe(relationOpts);
+    expect(relations).toEqual({ one: { test: { DTO: TestRelation, ...relationOpts } } });
   });
 
   it('should set the isMany flag if the relationFn returns an array', () => {
@@ -30,12 +26,37 @@ describe('@Relation', () => {
     class TestDTO {}
 
     const relations = getMetadataStorage().getRelations(TestDTO);
-    expect(relations).toHaveLength(1);
-    const relation = relations![0];
-    expect(relation.name).toBe('tests');
-    expect(relation.relationTypeFunc).toBe(relationFn);
-    expect(relation.isMany).toBe(true);
-    expect(relation.relationOpts).toEqual({ ...relationOpts, pagingStrategy: PagingStrategies.OFFSET });
+    expect(relations).toEqual({
+      many: { tests: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.OFFSET } },
+    });
+  });
+});
+
+describe('@FilterableRelation', () => {
+  it('should add the relation metadata to the metadata storage', () => {
+    const relationFn = () => TestRelation;
+    const relationOpts = { disableRead: true };
+    @ObjectType()
+    @FilterableRelation('test', relationFn, relationOpts)
+    class TestDTO {}
+
+    const relations = getMetadataStorage().getRelations(TestDTO);
+    expect(relations).toEqual({ one: { test: { DTO: TestRelation, ...relationOpts, allowFiltering: true } } });
+  });
+
+  it('should set the isMany flag if the relationFn returns an array', () => {
+    const relationFn = () => [TestRelation];
+    const relationOpts = { disableRead: true };
+    @ObjectType()
+    @FilterableRelation('tests', relationFn, relationOpts)
+    class TestDTO {}
+
+    const relations = getMetadataStorage().getRelations(TestDTO);
+    expect(relations).toEqual({
+      many: {
+        tests: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.OFFSET, allowFiltering: true },
+      },
+    });
   });
 });
 
@@ -48,11 +69,25 @@ describe('@Connection', () => {
     class TestDTO {}
 
     const relations = getMetadataStorage().getRelations(TestDTO);
-    expect(relations).toHaveLength(1);
-    const relation = relations![0];
-    expect(relation.name).toBe('test');
-    expect(relation.relationTypeFunc).toBe(relationFn);
-    expect(relation.isMany).toBe(true);
-    expect(relation.relationOpts).toEqual({ pagingStrategy: PagingStrategies.CURSOR, ...relationOpts });
+    expect(relations).toEqual({
+      many: { test: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.CURSOR } },
+    });
+  });
+});
+
+describe('@FilterableConnection', () => {
+  it('should add the relation metadata to the metadata storage', () => {
+    const relationFn = () => TestRelation;
+    const relationOpts = { disableRead: true };
+    @ObjectType()
+    @FilterableConnection('test', relationFn, relationOpts)
+    class TestDTO {}
+
+    const relations = getMetadataStorage().getRelations(TestDTO);
+    expect(relations).toEqual({
+      many: {
+        test: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.CURSOR, allowFiltering: true },
+      },
+    });
   });
 });

@@ -223,6 +223,72 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
         });
     });
 
+    it(`should allow querying on subTasks`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItems(filter: { subTasks: { title: { in: ["Create Nest App - Sub Task 1", "Create Entity - Sub Task 1"] } } }) {
+            ${pageInfoField}
+            ${edgeNodes(todoItemFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, totalCount, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          expect(pageInfo).toEqual({
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          });
+          expect(totalCount).toBe(2);
+          expect(edges).toHaveLength(2);
+
+          expect(edges.map((e) => e.node)).toEqual([
+            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+          ]);
+        });
+    });
+
+    it(`should allow querying on tags`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItems(filter: { tags: { name: { eq: "Home" } } }) {
+            ${pageInfoField}
+            ${edgeNodes(todoItemFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, totalCount, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          expect(pageInfo).toEqual({
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          });
+          expect(totalCount).toBe(2);
+          expect(edges).toHaveLength(2);
+
+          expect(edges.map((e) => e.node)).toEqual([
+            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
+          ]);
+        });
+    });
+
     it(`should allow sorting`, () => {
       return request(app.getHttpServer())
         .post('/graphql')

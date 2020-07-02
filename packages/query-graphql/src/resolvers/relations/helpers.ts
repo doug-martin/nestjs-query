@@ -33,19 +33,7 @@ export const removeRelationOpts = <Relation>(
 };
 
 export const getRelationsFromMetadata = <DTO>(DTOClass: Class<DTO>): RelationsOpts => {
-  const relations: RelationsOpts = {};
-  const metaRelations = getMetadataStorage().getRelations(DTOClass) ?? [];
-  metaRelations.forEach((r) => {
-    const relationType = r.relationTypeFunc();
-    const DTO = Array.isArray(relationType) ? relationType[0] : relationType;
-    const opts = { ...r.relationOpts, DTO };
-    if (r.isMany) {
-      relations.many = { ...relations.many, [r.name]: opts };
-    } else {
-      relations.one = { ...relations.one, [r.name]: opts };
-    }
-  });
-  return relations;
+  return getMetadataStorage().getRelations(DTOClass);
 };
 
 export const mergeRelations = (into: RelationsOpts, from: RelationsOpts): RelationsOpts => {

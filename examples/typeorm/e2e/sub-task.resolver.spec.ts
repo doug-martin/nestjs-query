@@ -245,6 +245,35 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
         });
     });
 
+    it(`should allow querying on todoItem`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          subTasks(filter: { todoItem: { title: { like: "Create Entity%" } } }) {
+            ${pageInfoField}
+            ${edgeNodes(subTaskFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+          expect(pageInfo).toEqual({
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          });
+          expect(totalCount).toBe(6);
+          expect(edges).toHaveLength(6);
+          expect(edges.map((e) => e.node)).toEqual(subTasks.slice(3, 9));
+        });
+    });
+
     it(`should allow sorting`, () => {
       return request(app.getHttpServer())
         .post('/graphql')

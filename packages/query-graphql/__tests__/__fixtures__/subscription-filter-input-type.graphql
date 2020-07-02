@@ -3,8 +3,8 @@ type Query {
 }
 
 input TestDtoFilter {
-  and: [TestFilterDtoFilter!]
-  or: [TestFilterDtoFilter!]
+  and: [TestFilterDtoSubscriptionFilter!]
+  or: [TestFilterDtoSubscriptionFilter!]
   id: NumberFieldComparison
   boolField: BooleanFieldComparison
   dateField: DateFieldComparison
@@ -15,14 +15,11 @@ input TestDtoFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
-  filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
-  filterableConnection: TestFilterDtoFilterTestRelationDtoFilter
-  filterableRelations: TestFilterDtoFilterTestRelationDtoFilter
 }
 
-input TestFilterDtoFilter {
-  and: [TestFilterDtoFilter!]
-  or: [TestFilterDtoFilter!]
+input TestFilterDtoSubscriptionFilter {
+  and: [TestFilterDtoSubscriptionFilter!]
+  or: [TestFilterDtoSubscriptionFilter!]
   id: NumberFieldComparison
   boolField: BooleanFieldComparison
   dateField: DateFieldComparison
@@ -33,9 +30,6 @@ input TestFilterDtoFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
-  filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
-  filterableConnection: TestFilterDtoFilterTestRelationDtoFilter
-  filterableRelations: TestFilterDtoFilterTestRelationDtoFilter
 }
 
 input NumberFieldComparison {
@@ -216,12 +210,4 @@ scalar Timestamp
 input TimestampFieldComparisonBetween {
   lower: Timestamp!
   upper: Timestamp!
-}
-
-input TestFilterDtoFilterTestRelationDtoFilter {
-  and: [TestFilterDtoFilterTestRelationDtoFilter!]
-  or: [TestFilterDtoFilterTestRelationDtoFilter!]
-  id: NumberFieldComparison
-  relationName: StringFieldComparison
-  relationAge: NumberFieldComparison
 }

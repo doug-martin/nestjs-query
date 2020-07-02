@@ -10,6 +10,9 @@ export { MutationArgsType } from './mutation-args.type';
 export {
   CursorPagingType,
   FilterType,
+  UpdateFilterType,
+  DeleteFilterType,
+  SubscriptionFilterType,
   QueryArgsType,
   SortType,
   StaticPagingTypes,
