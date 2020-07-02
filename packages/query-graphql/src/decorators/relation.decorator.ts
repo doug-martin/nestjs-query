@@ -24,6 +24,27 @@ export function Relation<DTO, Relation>(
   };
 }
 
+export function FilterableRelation<DTO, Relation>(
+  name: string,
+  relationTypeFunction: RelationTypeFunc<Relation>,
+  options?: RelationDecoratorOpts<Relation>,
+) {
+  return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
+    const isMany = Array.isArray(relationTypeFunction());
+    const relationOpts = {
+      ...(isMany ? { pagingStrategy: PagingStrategies.OFFSET, ...options } : options),
+      allowFiltering: true,
+    };
+    getMetadataStorage().addRelation(DTOClass, name, {
+      name,
+      isMany,
+      relationOpts,
+      relationTypeFunc: relationTypeFunction,
+    });
+    return DTOClass;
+  };
+}
+
 export function Connection<DTO, Relation>(
   name: string,
   relationTypeFunction: ConnectionTypeFunc<Relation>,
@@ -34,6 +55,23 @@ export function Connection<DTO, Relation>(
       name,
       isMany: true,
       relationOpts: { pagingStrategy: PagingStrategies.CURSOR, ...options },
+      relationTypeFunc: relationTypeFunction,
+    });
+    return DTOClass;
+  };
+}
+
+export function FilterableConnection<DTO, Relation>(
+  name: string,
+  relationTypeFunction: ConnectionTypeFunc<Relation>,
+  options?: RelationDecoratorOpts<Relation>,
+) {
+  const relationOpts = { pagingStrategy: PagingStrategies.CURSOR, ...options, allowFiltering: true };
+  return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
+    getMetadataStorage().addRelation(DTOClass, name, {
+      name,
+      isMany: true,
+      relationOpts,
       relationTypeFunc: relationTypeFunction,
     });
     return DTOClass;

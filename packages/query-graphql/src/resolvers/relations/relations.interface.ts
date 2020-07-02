@@ -51,6 +51,13 @@ export type ResolverRelation<Relation> = {
    * Disable remove relation graphql endpoints
    */
   disableRemove?: boolean;
+
+  /**
+   * Set to true if you should be able to filter on this relation.
+   *
+   * This will only work with relations defined through an ORM (typeorm or sequelize).
+   */
+  allowFiltering?: boolean;
 } & DTONamesOpts &
   ResolverMethodOpts &
   QueryArgsTypeOpts<Relation> &

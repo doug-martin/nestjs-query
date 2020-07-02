@@ -34,6 +34,11 @@ export const mutationArgsTypeSDL = readGraphql(resolve(__dirname, './mutation-ar
 export const relationInputTypeSDL = readGraphql(resolve(__dirname, './relation-input-type.graphql'));
 export const relationsInputTypeSDL = readGraphql(resolve(__dirname, './relations-input-type.graphql'));
 export const filterInputTypeSDL = readGraphql(resolve(__dirname, './filter-input-type.graphql'));
+export const updateFilterInputTypeSDL = readGraphql(resolve(__dirname, './update-filter-input-type.graphql'));
+export const deleteFilterInputTypeSDL = readGraphql(resolve(__dirname, './delete-filter-input-type.graphql'));
+export const subscriptionFilterInputTypeSDL = readGraphql(
+  resolve(__dirname, './subscription-filter-input-type.graphql'),
+);
 export const pagingInputTypeSDL = readGraphql(resolve(__dirname, './paging-input-type.graphql'));
 export const pageInfoObjectTypeSDL = readGraphql(resolve(__dirname, './page-info-object-type.graphql'));
 export const sortingInputTypeSDL = readGraphql(resolve(__dirname, './sorting-input-type.graphql'));

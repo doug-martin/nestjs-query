@@ -13,10 +13,26 @@ import {
   InputType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { FilterableField, FilterType } from '../../../src';
-import { expectSDL, filterInputTypeSDL } from '../../__fixtures__';
+import {
+  FilterableField,
+  FilterType,
+  Relation,
+  FilterableRelation,
+  Connection,
+  FilterableConnection,
+  UpdateFilterType,
+  DeleteFilterType,
+  SubscriptionFilterType,
+} from '../../../src';
+import {
+  expectSDL,
+  filterInputTypeSDL,
+  updateFilterInputTypeSDL,
+  deleteFilterInputTypeSDL,
+  subscriptionFilterInputTypeSDL,
+} from '../../__fixtures__';
 
-describe('GraphQLFilterType', (): void => {
+describe('filter types', (): void => {
   enum NumberEnum {
     ONE,
     TWO,
@@ -45,7 +61,21 @@ describe('GraphQLFilterType', (): void => {
     id!: number;
   }
 
+  @ObjectType('TestRelationDto')
+  class TestRelation extends BaseType {
+    @FilterableField()
+    relationName!: string;
+
+    @FilterableField()
+    relationAge!: number;
+  }
+
   @ObjectType('TestFilterDto')
+  @Relation('unfilterableRelation', () => TestRelation)
+  @FilterableRelation('filterableRelation', () => TestRelation)
+  @FilterableRelation('filterableRelations', () => [TestRelation])
+  @Connection('unfilterableConnection', () => TestRelation)
+  @FilterableConnection('filterableConnection', () => TestRelation)
   class TestDto extends BaseType {
     @FilterableField()
     boolField!: boolean;
@@ -77,65 +107,269 @@ describe('GraphQLFilterType', (): void => {
     @Field()
     nonFilterField!: number;
   }
-  const TestGraphQLFilter: Class<Filter<TestDto>> = FilterType(TestDto);
-  @InputType()
-  class TestDtoFilter extends TestGraphQLFilter {}
 
-  it('should throw an error if the class is not annotated with @ObjectType', () => {
-    class TestInvalidFilter {}
+  describe('FilterType', () => {
+    const TestGraphQLFilter: Class<Filter<TestDto>> = FilterType(TestDto);
+    @InputType()
+    class TestDtoFilter extends TestGraphQLFilter {}
 
-    expect(() => FilterType(TestInvalidFilter)).toThrow(
-      'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType',
-    );
-  });
+    it('should throw an error if the class is not annotated with @ObjectType', () => {
+      class TestInvalidFilter {}
 
-  it('should create the correct filter graphql schema', () => {
-    @Resolver()
-    class FilterTypeSpec {
-      @Query(() => Int)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      test(@Args('input') input: TestDtoFilter): number {
-        return 1;
+      expect(() => FilterType(TestInvalidFilter)).toThrow(
+        'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType',
+      );
+    });
+
+    it('should create the correct filter graphql schema', () => {
+      @Resolver()
+      class FilterTypeSpec {
+        @Query(() => Int)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        test(@Args('input') input: TestDtoFilter): number {
+          return 1;
+        }
       }
-    }
-    return expectSDL([FilterTypeSpec], filterInputTypeSDL);
+      return expectSDL([FilterTypeSpec], filterInputTypeSDL);
+    });
+
+    it('should throw an error if no fields are found', () => {
+      @ObjectType('TestNoFields')
+      class TestInvalidFilter {}
+
+      expect(() => FilterType(TestInvalidFilter)).toThrow(
+        'No fields found to create GraphQLFilter for TestInvalidFilter',
+      );
+    });
+
+    it('should throw an error when the field type is unknown', () => {
+      enum EnumField {
+        ONE = 'one',
+      }
+      @ObjectType('TestBadField')
+      class TestInvalidFilter {
+        @FilterableField(() => EnumField)
+        fakeType!: EnumField;
+      }
+
+      expect(() => FilterType(TestInvalidFilter)).toThrow('Unable to create filter comparison for {"ONE":"one"}.');
+    });
+
+    it('should convert and filters to filter class', () => {
+      const filterObject: Filter<TestDto> = {
+        and: [{ stringField: { eq: 'foo' } }],
+      };
+      const filterInstance = plainToClass(TestDtoFilter, filterObject);
+      expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
+
+    it('should convert or filters to filter class', () => {
+      const filterObject: Filter<TestDto> = {
+        or: [{ stringField: { eq: 'foo' } }],
+      };
+      const filterInstance = plainToClass(TestDtoFilter, filterObject);
+      expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
   });
 
-  it('should throw an error if no fields are found', () => {
-    @ObjectType('TestNoFields')
-    class TestInvalidFilter {}
+  describe('UpdateFilterType', () => {
+    const TestGraphQLFilter: Class<Filter<TestDto>> = UpdateFilterType(TestDto);
 
-    expect(() => FilterType(TestInvalidFilter)).toThrow(
-      'No fields found to create GraphQLFilter for TestInvalidFilter',
-    );
+    @InputType()
+    class TestDtoFilter extends TestGraphQLFilter {}
+
+    it('should throw an error if the class is not annotated with @ObjectType', () => {
+      class TestInvalidFilter {}
+
+      expect(() => UpdateFilterType(TestInvalidFilter)).toThrow(
+        'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType',
+      );
+    });
+
+    it('should create the correct filter graphql schema', () => {
+      @Resolver()
+      class FilterTypeSpec {
+        @Query(() => Int)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        test(@Args('input') input: TestDtoFilter): number {
+          return 1;
+        }
+      }
+      return expectSDL([FilterTypeSpec], updateFilterInputTypeSDL);
+    });
+
+    it('should throw an error if no fields are found', () => {
+      @ObjectType('TestNoFields')
+      class TestInvalidFilter {}
+
+      expect(() => UpdateFilterType(TestInvalidFilter)).toThrow(
+        'No fields found to create GraphQLFilter for TestInvalidFilter',
+      );
+    });
+
+    it('should throw an error when the field type is unknown', () => {
+      enum EnumField {
+        ONE = 'one',
+      }
+      @ObjectType('TestBadField')
+      class TestInvalidFilter {
+        @FilterableField(() => EnumField)
+        fakeType!: EnumField;
+      }
+
+      expect(() => UpdateFilterType(TestInvalidFilter)).toThrow(
+        'Unable to create filter comparison for {"ONE":"one"}.',
+      );
+    });
+
+    it('should convert and filters to filter class', () => {
+      const filterObject: Filter<TestDto> = {
+        and: [{ stringField: { eq: 'foo' } }],
+      };
+      const filterInstance = plainToClass(TestDtoFilter, filterObject);
+      expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
+
+    it('should convert or filters to filter class', () => {
+      const filterObject: Filter<TestDto> = {
+        or: [{ stringField: { eq: 'foo' } }],
+      };
+      const filterInstance = plainToClass(TestDtoFilter, filterObject);
+      expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
   });
 
-  it('should throw an error when the field type is unknown', () => {
-    enum EnumField {
-      ONE = 'one',
-    }
-    @ObjectType('TestBadField')
-    class TestInvalidFilter {
-      @FilterableField(() => EnumField)
-      fakeType!: EnumField;
-    }
+  describe('DeleteFilterType', () => {
+    const TestGraphQLFilter: Class<Filter<TestDto>> = DeleteFilterType(TestDto);
 
-    expect(() => FilterType(TestInvalidFilter)).toThrow('Unable to create filter comparison for {"ONE":"one"}.');
+    @InputType()
+    class TestDtoFilter extends TestGraphQLFilter {}
+
+    it('should throw an error if the class is not annotated with @ObjectType', () => {
+      class TestInvalidFilter {}
+
+      expect(() => DeleteFilterType(TestInvalidFilter)).toThrow(
+        'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType',
+      );
+    });
+
+    it('should create the correct filter graphql schema', () => {
+      @Resolver()
+      class FilterTypeSpec {
+        @Query(() => Int)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        test(@Args('input') input: TestDtoFilter): number {
+          return 1;
+        }
+      }
+      return expectSDL([FilterTypeSpec], deleteFilterInputTypeSDL);
+    });
+
+    it('should throw an error if no fields are found', () => {
+      @ObjectType('TestNoFields')
+      class TestInvalidFilter {}
+
+      expect(() => DeleteFilterType(TestInvalidFilter)).toThrow(
+        'No fields found to create GraphQLFilter for TestInvalidFilter',
+      );
+    });
+
+    it('should throw an error when the field type is unknown', () => {
+      enum EnumField {
+        ONE = 'one',
+      }
+      @ObjectType('TestBadField')
+      class TestInvalidFilter {
+        @FilterableField(() => EnumField)
+        fakeType!: EnumField;
+      }
+
+      expect(() => DeleteFilterType(TestInvalidFilter)).toThrow(
+        'Unable to create filter comparison for {"ONE":"one"}.',
+      );
+    });
+
+    it('should convert and filters to filter class', () => {
+      const filterObject: Filter<TestDto> = {
+        and: [{ stringField: { eq: 'foo' } }],
+      };
+      const filterInstance = plainToClass(TestDtoFilter, filterObject);
+      expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
+
+    it('should convert or filters to filter class', () => {
+      const filterObject: Filter<TestDto> = {
+        or: [{ stringField: { eq: 'foo' } }],
+      };
+      const filterInstance = plainToClass(TestDtoFilter, filterObject);
+      expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
   });
 
-  it('should convert and filters to filter class', () => {
-    const filterObject: Filter<TestDto> = {
-      and: [{ stringField: { eq: 'foo' } }],
-    };
-    const filterInstance = plainToClass(TestDtoFilter, filterObject);
-    expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
-  });
+  describe('SubscriptionFilterType', () => {
+    const TestGraphQLFilter: Class<Filter<TestDto>> = SubscriptionFilterType(TestDto);
 
-  it('should convert or filters to filter class', () => {
-    const filterObject: Filter<TestDto> = {
-      or: [{ stringField: { eq: 'foo' } }],
-    };
-    const filterInstance = plainToClass(TestDtoFilter, filterObject);
-    expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+    @InputType()
+    class TestDtoFilter extends TestGraphQLFilter {}
+
+    it('should throw an error if the class is not annotated with @ObjectType', () => {
+      class TestInvalidFilter {}
+
+      expect(() => SubscriptionFilterType(TestInvalidFilter)).toThrow(
+        'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType',
+      );
+    });
+
+    it('should create the correct filter graphql schema', () => {
+      @Resolver()
+      class FilterTypeSpec {
+        @Query(() => Int)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        test(@Args('input') input: TestDtoFilter): number {
+          return 1;
+        }
+      }
+      return expectSDL([FilterTypeSpec], subscriptionFilterInputTypeSDL);
+    });
+
+    it('should throw an error if no fields are found', () => {
+      @ObjectType('TestNoFields')
+      class TestInvalidFilter {}
+
+      expect(() => SubscriptionFilterType(TestInvalidFilter)).toThrow(
+        'No fields found to create GraphQLFilter for TestInvalidFilter',
+      );
+    });
+
+    it('should throw an error when the field type is unknown', () => {
+      enum EnumField {
+        ONE = 'one',
+      }
+      @ObjectType('TestBadField')
+      class TestInvalidFilter {
+        @FilterableField(() => EnumField)
+        fakeType!: EnumField;
+      }
+
+      expect(() => SubscriptionFilterType(TestInvalidFilter)).toThrow(
+        'Unable to create filter comparison for {"ONE":"one"}.',
+      );
+    });
+
+    it('should convert and filters to filter class', () => {
+      const filterObject: Filter<TestDto> = {
+        and: [{ stringField: { eq: 'foo' } }],
+      };
+      const filterInstance = plainToClass(TestDtoFilter, filterObject);
+      expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
+
+    it('should convert or filters to filter class', () => {
+      const filterObject: Filter<TestDto> = {
+        or: [{ stringField: { eq: 'foo' } }],
+      };
+      const filterInstance = plainToClass(TestDtoFilter, filterObject);
+      expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
   });
 });

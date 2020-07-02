@@ -168,6 +168,35 @@ describe('TagResolver (sequelize - e2e)', () => {
         });
     });
 
+    it(`should allow querying on todoItems`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          tags(filter: { todoItems: { title: { like: "Create Entity%" } } }, sorting: [{field: id, direction: ASC}]) {
+            ${pageInfoField}
+            ${edgeNodes(tagFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
+          expect(pageInfo).toEqual({
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          });
+          expect(totalCount).toBe(3);
+          expect(edges).toHaveLength(3);
+          expect(edges.map((e) => e.node)).toEqual([tags[0], tags[2], tags[4]]);
+        });
+    });
+
     it(`should allow sorting`, () => {
       return request(app.getHttpServer())
         .post('/graphql')

@@ -4,7 +4,7 @@ import { Class, Filter, SortField } from '@nestjs-query/core';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
 import { EnumMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
-import { ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
+import { RelationsOpts, ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
 import { ReferencesKeys } from '../resolvers/relations/relations.interface';
 import { EdgeType, StaticConnectionType } from '../types/connection';
 
@@ -139,8 +139,23 @@ export class GraphQLQueryMetadataStorage {
     relations.push(relation);
   }
 
-  getRelations<T>(type: Class<T>): RelationDescriptor<unknown>[] | undefined {
-    return this.relationStorage.get(type);
+  getRelations<T>(type: Class<T>): RelationsOpts {
+    const relations: RelationsOpts = {};
+    const metaRelations = this.relationStorage.get(type);
+    if (!metaRelations) {
+      return relations;
+    }
+    metaRelations.forEach((r) => {
+      const relationType = r.relationTypeFunc();
+      const DTO = Array.isArray(relationType) ? relationType[0] : relationType;
+      const opts = { ...r.relationOpts, DTO };
+      if (r.isMany) {
+        relations.many = { ...relations.many, [r.name]: opts };
+      } else {
+        relations.one = { ...relations.one, [r.name]: opts };
+      }
+    });
+    return relations;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
