@@ -48,7 +48,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
    * @param query - the query to apply.
    */
   findOptions(query: Query<Entity>): FindOptions {
-    let opts: FindOptions = this.applyAssociationIncludes({}, query.filter);
+    let opts: FindOptions = this.applyAssociationIncludes({ subQuery: false }, query.filter);
     opts = this.applyFilter(opts, query.filter);
     opts = this.applySorting(opts, query.sorting);
     opts = this.applyPaging(opts, query.paging);
