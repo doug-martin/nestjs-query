@@ -28,7 +28,7 @@
     "graphql-tools": "6.0.11",
     "pg": "8.2.1",
     "rimraf": "3.0.2",
-    "rxjs": "6.5.5",
+    "rxjs": "6.6.0",
     "typeorm": "0.2.25",
     "sequelize": "5.22.2",
     "sequelize-typescript": "1.1.0",
