@@ -13,7 +13,7 @@ describe('FilterQueryBuilder', (): void => {
     whereBuilder: WhereBuilder<TestEntity>,
     expectedFindOptions: FindOptions,
   ): void => {
-    expect(getEntityQueryBuilder(whereBuilder).findOptions(query)).toEqual(expectedFindOptions);
+    expect(getEntityQueryBuilder(whereBuilder).findOptions(query)).toEqual({ ...expectedFindOptions, subQuery: false });
   };
 
   const assertUpdateOptions = (

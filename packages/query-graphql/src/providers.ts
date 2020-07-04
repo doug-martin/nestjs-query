@@ -11,7 +11,7 @@ import { Provider, Inject } from '@nestjs/common';
 import { Resolver } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { InjectPubSub } from './decorators';
-import { CRUDResolver, CRUDResolverOpts, FederationResolver, RelationsOpts } from './resolvers';
+import { CRUDResolver, CRUDResolverOpts, FederationResolver } from './resolvers';
 import { PagingStrategies } from './types/query/paging';
 
 type CRUDAutoResolverOpts<DTO, C, U, R, PS extends PagingStrategies> = CRUDResolverOpts<DTO, C, U, R, PS> & {
@@ -48,7 +48,7 @@ export type ServiceCRUDAutoResolverOpts<DTO, QueryService, C, U, R, PS extends P
   ServiceClass: Class<QueryService>;
 };
 
-export type FederatedAutoResolverOpts<DTO, Service> = RelationsOpts & {
+export type FederatedAutoResolverOpts<DTO, Service> = {
   type: 'federated';
   DTOClass: Class<DTO>;
   Service: Class<Service>;
@@ -85,7 +85,7 @@ function createFederatedResolver<DTO, Service>(resolverOpts: FederatedAutoResolv
   const { DTOClass } = resolverOpts;
 
   @Resolver(() => DTOClass)
-  class AutoResolver extends FederationResolver(DTOClass, resolverOpts) {
+  class AutoResolver extends FederationResolver(DTOClass) {
     constructor(
       @Inject(resolverOpts.Service) readonly service: QueryService<DTO>,
       @InjectPubSub() readonly pubSub: PubSub,

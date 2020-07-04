@@ -1,6 +1,6 @@
 import { Class, DeepPartial } from '@nestjs-query/core';
 import { PagingStrategies } from '../types';
-import { ReferencesOpts, Relatable, RelationsOpts } from './relations';
+import { Relatable } from './relations';
 import { Readable, ReadResolverFromOpts, ReadResolverOpts } from './read.resolver';
 import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver';
 import { Refereceable, ReferenceResolverOpts } from './reference.resolver';
@@ -30,9 +30,6 @@ export interface CRUDResolverOpts<
   read?: R;
   update?: UpdateResolverOpts<DTO, U>;
   delete?: DeleteResolverOpts<DTO>;
-  relations?: RelationsOpts;
-  references?: ReferencesOpts<DTO>;
-  reference?: ReferenceResolverOpts<DTO>;
   referenceBy?: ReferenceResolverOpts<DTO>;
 }
 
@@ -79,8 +76,6 @@ export const CRUDResolver = <
     enableSubscriptions,
     pagingStrategy,
     enableTotalCount,
-    relations = {},
-    references = {},
     create = {},
     read = {},
     update = {},
@@ -89,7 +84,7 @@ export const CRUDResolver = <
   } = opts;
 
   const referencable = Refereceable(DTOClass, referenceBy);
-  const relatable = Relatable(DTOClass, { relations, references, pagingStrategy, enableTotalCount });
+  const relatable = Relatable(DTOClass, { enableTotalCount });
   const creatable = Creatable(DTOClass, { CreateDTOClass, enableSubscriptions, ...create });
   const readable = Readable(DTOClass, { enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<
     DTO,

@@ -1,8 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import { Field, ObjectType } from '@nestjs/graphql';
-import { PagingStrategies, ReferencesOpts, Relatable } from '../../../src';
+import { PagingStrategies, Relatable, FilterableField } from '../../../src';
 import { Connection, Reference, Relation } from '../../../src/decorators';
-import { FilterableField } from '../../../src/decorators/filterable-field.decorator';
 import * as readRelations from '../../../src/resolvers/relations/read-relations.resolver';
 import * as referenceRelation from '../../../src/resolvers/relations/references-relation.resolver';
 import * as removeRelations from '../../../src/resolvers/relations/remove-relations.resolver';
@@ -29,7 +28,7 @@ describe('Relatable', () => {
     @Connection('testConnection', () => TestRelation)
     class Test {}
 
-    Relatable(Test, { relations: {}, references: {} })(BaseServiceResolver);
+    Relatable(Test, {})(BaseServiceResolver);
 
     const relations = {
       one: { testRelation: { DTO: TestRelation } },
@@ -41,78 +40,21 @@ describe('Relatable', () => {
     expect(referenceMixinSpy).toHaveBeenCalledWith(Test, {});
   });
 
-  it('should call the mixins with the relations that are passed in', () => {
-    const relations = {
-      one: { testRelation: { DTO: TestRelation } },
-      many: { testConnection: { DTO: TestRelation } },
-    };
-
-    @ObjectType()
-    class Test {}
-
-    Relatable(Test, { relations, references: {} })(BaseServiceResolver);
-
-    expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, {});
-  });
-
-  it('should call the mixins with the relations and the correct pagingStrategy', () => {
-    const relations = {
-      one: { testRelation: { DTO: TestRelation } },
-      many: { testConnection: { DTO: TestRelation } },
-    };
-
-    @ObjectType()
-    class Test {}
-
-    Relatable(Test, { pagingStrategy: PagingStrategies.OFFSET, relations, references: {} })(BaseServiceResolver);
-
-    expect(readMixinSpy).toHaveBeenCalledWith(Test, { ...relations, pagingStrategy: PagingStrategies.OFFSET });
-    expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, {});
-  });
-
-  it('should call the mixins with the references derived from decorators', () => {
-    @ObjectType()
-    @Reference('testRelation', () => TestRelation, { id: 'relationId' })
-    @Reference('testRelation2', () => TestRelation, { id: 'relationId' })
-    class Test {
-      @Field()
-      relationId!: number;
-    }
-
-    Relatable(Test, { relations: {}, references: {} })(BaseServiceResolver);
-
-    const references = {
-      testRelation: { DTO: TestRelation, keys: { id: 'relationId' } },
-      testRelation2: { DTO: TestRelation, keys: { id: 'relationId' } },
-    };
-    const relations = { many: {}, one: {} };
-    expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, references);
-  });
-
   it('should call the mixins with the references passed in', () => {
     @ObjectType()
+    @Reference('testReference', () => TestRelation, { id: 'relationId' })
     class Test {
       @Field()
       relationId!: number;
     }
 
-    const references: ReferencesOpts<Test> = {
-      testRelation: { DTO: TestRelation, keys: { id: 'relationId' } },
-    };
-    const relations = { many: {}, one: {} };
-    Relatable(Test, { relations: {}, references })(BaseServiceResolver);
+    Relatable(Test, {})(BaseServiceResolver);
 
-    expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(removeMixinSpy).toHaveBeenCalledWith(Test, relations);
-    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, references);
+    expect(readMixinSpy).toHaveBeenCalledWith(Test, {});
+    expect(updateMixinSpy).toHaveBeenCalledWith(Test, {});
+    expect(removeMixinSpy).toHaveBeenCalledWith(Test, {});
+    expect(referenceMixinSpy).toHaveBeenCalledWith(Test, {
+      testReference: { DTO: TestRelation, keys: { id: 'relationId' } },
+    });
   });
 });

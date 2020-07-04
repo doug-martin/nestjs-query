@@ -4,16 +4,6 @@ export { ReadResolver, ReadResolverOpts } from './read.resolver';
 export { UpdateResolver, UpdateResolverOpts } from './update.resolver';
 export { DeleteResolver, DeleteResolverOpts } from './delete.resolver';
 export { ReferenceResolver, ReferenceResolverOpts } from './reference.resolver';
-export {
-  Relatable,
-  RemoveRelationsResolver,
-  ReadRelationsResolver,
-  UpdateRelationsResolver,
-  ResolverRelation,
-  RelationsOpts,
-  RelationTypeMap,
-  ReferencesOpts,
-  ResolverRelationReference,
-} from './relations';
+export { Relatable, ResolverRelation, ResolverRelationReference } from './relations';
 export { ResolverOpts } from './resolver.interface';
 export { FederationResolver } from './federation';

@@ -4,14 +4,13 @@ import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverField } from '../../decorators';
 import { CountRelationsLoader, DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
-import { ConnectionType, PagingStrategies, QueryArgsType } from '../../types';
+import { ConnectionType, QueryArgsType } from '../../types';
 import { transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 export interface ReadRelationsResolverOpts extends RelationsOpts {
-  pagingStrategy?: PagingStrategies;
   enableTotalCount?: boolean;
 }
 
@@ -96,11 +95,11 @@ export const ReadRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: ReadRel
 >(
   Base: B,
 ): B => {
-  const { many, one, pagingStrategy, enableTotalCount } = relations;
+  const { many, one, enableTotalCount } = relations;
   const manyRelations = flattenRelations(many ?? {});
   const oneRelations = flattenRelations(one ?? {});
   const WithMany = manyRelations.reduce(
-    (RB, a) => ReadManyRelationMixin(DTOClass, { enableTotalCount, pagingStrategy, ...a })(RB),
+    (RB, a) => ReadManyRelationMixin(DTOClass, { enableTotalCount, ...a })(RB),
     Base,
   );
   return oneRelations.reduce((RB, a) => ReadOneRelationMixin(DTOClass, a)(RB), WithMany);
