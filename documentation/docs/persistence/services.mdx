@@ -643,24 +643,3 @@ export class SubTask extends Model<SubTaskEntity> {
 
 Notice how the `todoItem` is not decorated with a field decorator, instead it is exposed through the `@Relation` decorator.
 
-If you do not decorate the class with `@Connection` or `@Relation` you can alternatively specify them in the resolver.
-
-```ts {10}
-import { QueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
-import { Resolver } from '@nestjs/graphql';
-import { TodoItem } from '../todo-item/todo-item';
-import { SubTask } from './sub-task';
-
-@Resolver(() => SubTask)
-export class SubTaskResolver extends CRUDResolver(SubTask, {
-  relations: {
-    one: { todoItem: { DTO: TodoItem, disableRemove: true } },
-  },
-}) {
-  constructor(@InjectQueryService(SubTask) readonly service: QueryService<SubTask>) {
-    super(service);
-  }
-}
-```
-
