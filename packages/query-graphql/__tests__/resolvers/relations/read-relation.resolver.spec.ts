@@ -1,13 +1,7 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when } from 'ts-mockito';
-import {
-  CursorQueryArgsType,
-  NoPagingQueryArgsType,
-  OffsetQueryArgsType,
-  PagingStrategies,
-  ReadRelationsResolver,
-  RelationsOpts,
-} from '../../../src';
+import { CursorQueryArgsType, NoPagingQueryArgsType, OffsetQueryArgsType, PagingStrategies } from '../../../src';
+import { ReadRelationsResolver, RelationsOpts } from '../../../src/resolvers/relations';
 import { expectSDL } from '../../__fixtures__';
 import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 import {
@@ -278,9 +272,11 @@ describe('ReadRelationsResolver', () => {
     describe('many limit offset query', () => {
       @Resolver(() => TestResolverDTO)
       class TestResolver extends ReadRelationsResolver(TestResolverDTO, {
-        pagingStrategy: PagingStrategies.OFFSET,
         one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
-        many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
+        many: {
+          relations: { DTO: TestRelationDTO, pagingStrategy: PagingStrategies.OFFSET },
+          customs: { DTO: TestRelationDTO, relationName: 'others', pagingStrategy: PagingStrategies.OFFSET },
+        },
       }) {
         constructor(service: TestService) {
           super(service);
@@ -341,9 +337,11 @@ describe('ReadRelationsResolver', () => {
     describe('many limit no paging', () => {
       @Resolver(() => TestResolverDTO)
       class TestResolver extends ReadRelationsResolver(TestResolverDTO, {
-        pagingStrategy: PagingStrategies.NONE,
         one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
-        many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
+        many: {
+          relations: { DTO: TestRelationDTO, pagingStrategy: PagingStrategies.NONE },
+          customs: { DTO: TestRelationDTO, pagingStrategy: PagingStrategies.NONE, relationName: 'others' },
+        },
       }) {
         constructor(service: TestService) {
           super(service);

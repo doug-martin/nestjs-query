@@ -4,7 +4,7 @@ import { Class, Filter, SortField } from '@nestjs-query/core';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
 import { EnumMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
-import { RelationsOpts, ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
+import { ReferencesOpts, RelationsOpts, ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
 import { ReferencesKeys } from '../resolvers/relations/relations.interface';
 import { EdgeType, StaticConnectionType } from '../types/connection';
 
@@ -168,8 +168,15 @@ export class GraphQLQueryMetadataStorage {
     references.push(reference as ReferenceDescriptor<unknown, unknown>);
   }
 
-  getReferences<T>(type: Class<T>): ReferenceDescriptor<T, unknown>[] | undefined {
-    return this.referenceStorage.get(type);
+  getReferences<T>(type: Class<T>): ReferencesOpts<T> {
+    const metaReferences = this.referenceStorage.get(type);
+    if (!metaReferences) {
+      return {};
+    }
+    return metaReferences.reduce((references, r) => {
+      const opts = { ...r.relationOpts, DTO: r.relationTypeFunc(), keys: r.keys };
+      return { ...references, [r.name]: opts };
+    }, {} as ReferencesOpts<T>);
   }
 
   getGraphqlObjectMetadata<T>(objType: Class<T>): ObjectTypeMetadata | undefined {
