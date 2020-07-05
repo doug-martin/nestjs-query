@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.16.0](https://github.com/doug-martin/nestjs-query/compare/v0.15.1...v0.16.0) (2020-07-05)
+
+
+### Bug Fixes
+
+* **sequelize:** Change query to not use sub queries ([80c69d6](https://github.com/doug-martin/nestjs-query/commit/80c69d6b285725eb99dc05675044185d2f4343a8))
+
+
+### Features
+
+* **sequelize:** Add support for querying for nested relations ([92a51c1](https://github.com/doug-martin/nestjs-query/commit/92a51c120aa2bf6da915037628aad041fa0fc34c))
+
+
+
+
+
 ## [0.15.1](https://github.com/doug-martin/nestjs-query/compare/v0.15.0...v0.15.1) (2020-06-27)
 
 **Note:** Version bump only for package @nestjs-query/query-sequelize

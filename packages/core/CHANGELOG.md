@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.16.0](https://github.com/doug-martin/nestjs-query/compare/v0.15.1...v0.16.0) (2020-07-05)
+
+
+### Features
+
+* **core:** Add type support for nest objects in filter ([cd9d0b5](https://github.com/doug-martin/nestjs-query/commit/cd9d0b524c1f4c384dc9e5ac6baeb5a49bc068e7))
+
+
+
+
+
 # [0.15.0](https://github.com/doug-martin/nestjs-query/compare/v0.14.3...v0.15.0) (2020-06-23)
 
 
