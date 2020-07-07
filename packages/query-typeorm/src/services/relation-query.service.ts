@@ -1,5 +1,4 @@
-import { Query, Class, AssemblerFactory } from '@nestjs-query/core';
-import { Filter } from '@nestjs-query/core/src';
+import { Query, Class, AssemblerFactory, Filter } from '@nestjs-query/core';
 import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder } from 'typeorm';
 import { FilterQueryBuilder, RelationQueryBuilder } from '../query';
 
