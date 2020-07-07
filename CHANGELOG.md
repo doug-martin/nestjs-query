@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.1](https://github.com/doug-martin/nestjs-query/compare/v0.16.0...v0.16.1) (2020-07-07)
+
+
+### Bug Fixes
+
+* **typeorm:** Fix import path in relation service [#363](https://github.com/doug-martin/nestjs-query/issues/363) ([0e6d484](https://github.com/doug-martin/nestjs-query/commit/0e6d484920960ed1966360a89af979230667b5f7))
+
+
+
+
+
 # [0.16.0](https://github.com/doug-martin/nestjs-query/compare/v0.15.1...v0.16.0) (2020-07-05)
 
 
