@@ -27,8 +27,8 @@
     "typeorm": "^0.2.7"
   },
   "devDependencies": {
-    "@nestjs/common": "7.3.1",
-    "@nestjs/testing": "7.3.1",
+    "@nestjs/common": "7.3.2",
+    "@nestjs/testing": "7.3.2",
     "@nestjs/typeorm": "7.1.0",
     "class-transformer": "0.2.3",
     "sqlite3": "5.0.0",
