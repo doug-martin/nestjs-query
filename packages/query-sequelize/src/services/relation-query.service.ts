@@ -1,5 +1,4 @@
-import { Query, Class, AssemblerFactory } from '@nestjs-query/core';
-import { Filter } from '@nestjs-query/core/src';
+import { Query, Class, AssemblerFactory, Filter } from '@nestjs-query/core';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { ModelCtor as SequelizeModelCtor } from 'sequelize';
 import { FilterQueryBuilder } from '../query';
