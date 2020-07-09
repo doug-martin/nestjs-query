@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.2](https://github.com/doug-martin/nestjs-query/compare/v0.16.1...v0.16.2) (2020-07-09)
+
+
+### Bug Fixes
+
+* **imports:** Remove additional /src references ([9528772](https://github.com/doug-martin/nestjs-query/commit/9528772fd4f9b4448112d912e913d07fddf4b619))
+
+
+
+
+
 ## [0.16.1](https://github.com/doug-martin/nestjs-query/compare/v0.16.0...v0.16.1) (2020-07-07)
 
 **Note:** Version bump only for package @nestjs-query/query-graphql
