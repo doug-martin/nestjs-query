@@ -1,5 +1,15 @@
 import { mock, instance, objectContaining, when, deepEqual } from 'ts-mockito';
-import { AbstractAssembler, AssemblerQueryService, Query, QueryService, transformQuery } from '../../src';
+import {
+  AbstractAssembler,
+  AggregateQuery,
+  AggregateResponse,
+  AssemblerQueryService,
+  Query,
+  QueryService,
+  transformAggregateQuery,
+  transformAggregateResponse,
+  transformQuery,
+} from '../../src';
 
 describe('AssemblerQueryService', () => {
   class TestDTO {
@@ -15,12 +25,6 @@ describe('AssemblerQueryService', () => {
       super(TestDTO, TestEntity);
     }
 
-    convertQuery(query: Query<TestDTO>): Query<TestEntity> {
-      return transformQuery(query, {
-        foo: 'bar',
-      });
-    }
-
     convertToDTO(entity: TestEntity): TestDTO {
       return {
         foo: entity.bar,
@@ -31,6 +35,24 @@ describe('AssemblerQueryService', () => {
       return {
         bar: dto.foo,
       };
+    }
+
+    convertQuery(query: Query<TestDTO>): Query<TestEntity> {
+      return transformQuery(query, {
+        foo: 'bar',
+      });
+    }
+
+    convertAggregateQuery(aggregate: AggregateQuery<TestDTO>): AggregateQuery<TestEntity> {
+      return transformAggregateQuery(aggregate, {
+        foo: 'bar',
+      });
+    }
+
+    convertAggregateResponse(aggregate: AggregateResponse<TestEntity>): AggregateResponse<TestDTO> {
+      return transformAggregateResponse(aggregate, {
+        bar: 'foo',
+      });
     }
   }
 

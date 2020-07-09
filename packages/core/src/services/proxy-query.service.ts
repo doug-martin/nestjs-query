@@ -1,5 +1,12 @@
 import { Class, DeepPartial } from '../common';
-import { DeleteManyResponse, Filter, Query, UpdateManyResponse } from '../interfaces';
+import {
+  AggregateQuery,
+  AggregateResponse,
+  DeleteManyResponse,
+  Filter,
+  Query,
+  UpdateManyResponse,
+} from '../interfaces';
 import { QueryService } from './query.service';
 
 export class ProxyQueryService<DTO> implements QueryService<DTO> {
@@ -148,6 +155,10 @@ export class ProxyQueryService<DTO> implements QueryService<DTO> {
 
   query(query: Query<DTO>): Promise<DTO[]> {
     return this.proxied.query(query);
+  }
+
+  aggregate(filter: Filter<DTO>, query: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>> {
+    return this.proxied.aggregate(filter, query);
   }
 
   count(filter: Filter<DTO>): Promise<number> {

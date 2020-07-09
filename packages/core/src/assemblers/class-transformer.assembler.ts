@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { Query } from '../interfaces';
+import { AggregateQuery, AggregateResponse, Query } from '../interfaces';
 import { getCoreMetadataStorage } from '../metadata';
 import { AbstractAssembler } from './abstract.assembler';
 import { Class } from '../common';
@@ -18,6 +18,14 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
 
   convertQuery(query: Query<DTO>): Query<Entity> {
     return query as Query<Entity>;
+  }
+
+  convertAggregateQuery(aggregate: AggregateQuery<DTO>): AggregateQuery<Entity> {
+    return (aggregate as unknown) as AggregateQuery<Entity>;
+  }
+
+  convertAggregateResponse(aggregate: AggregateResponse<Entity>): AggregateResponse<DTO> {
+    return aggregate as AggregateResponse<DTO>;
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types

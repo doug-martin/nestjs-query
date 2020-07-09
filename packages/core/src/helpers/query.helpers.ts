@@ -2,8 +2,8 @@ import merge from 'lodash.merge';
 import { Filter, Query, SortField } from '../interfaces';
 import { FilterBuilder } from './filter.builder';
 
-export type QueryFieldMap<From, To> = {
-  [F in keyof From]?: keyof To;
+export type QueryFieldMap<From, To, T extends keyof To = keyof To> = {
+  [F in keyof From]?: T;
 };
 
 export const transformSort = <From, To>(

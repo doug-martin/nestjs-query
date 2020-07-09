@@ -1,5 +1,5 @@
 import { Class } from '../common';
-import { Query } from '../interfaces';
+import { AggregateQuery, AggregateResponse, Query } from '../interfaces';
 import { getCoreMetadataStorage } from '../metadata';
 
 export interface Assembler<DTO, Entity> {
@@ -20,6 +20,18 @@ export interface Assembler<DTO, Entity> {
    * @param query - the query to convert.
    */
   convertQuery(query: Query<DTO>): Query<Entity>;
+
+  /**
+   * Convert a DTO query to an entity query.
+   * @param aggregate - the aggregate query to convert.
+   */
+  convertAggregateQuery(aggregate: AggregateQuery<DTO>): AggregateQuery<Entity>;
+
+  /**
+   * Convert a Entity aggregate response query to an dto aggregate.
+   * @param aggregate - the aggregate query to convert.
+   */
+  convertAggregateResponse(aggregate: AggregateResponse<Entity>): AggregateResponse<DTO>;
 
   /**
    * Convert an array of entities to a an of DTOs
