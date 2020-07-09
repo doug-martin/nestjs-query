@@ -1,6 +1,13 @@
 import { Assembler } from '../assemblers';
 import { Class, DeepPartial } from '../common';
-import { DeleteManyResponse, Filter, Query, UpdateManyResponse } from '../interfaces';
+import {
+  AggregateQuery,
+  AggregateResponse,
+  DeleteManyResponse,
+  Filter,
+  Query,
+  UpdateManyResponse,
+} from '../interfaces';
 import { QueryService } from './query.service';
 
 export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
@@ -44,6 +51,14 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
 
   query(query: Query<DTO>): Promise<DTO[]> {
     return this.assembler.convertAsyncToDTOs(this.queryService.query(this.assembler.convertQuery(query)));
+  }
+
+  async aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>> {
+    const aggregateResponse = await this.queryService.aggregate(
+      this.assembler.convertQuery({ filter }).filter || {},
+      this.assembler.convertAggregateQuery(aggregate),
+    );
+    return this.assembler.convertAggregateResponse(aggregateResponse);
   }
 
   count(filter: Filter<DTO>): Promise<number> {

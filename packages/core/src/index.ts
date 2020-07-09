@@ -9,7 +9,16 @@ export {
   NoOpQueryService,
   QueryServiceRelation,
 } from './services';
-export { transformFilter, transformQuery, transformSort, applyFilter, getFilterFields, QueryFieldMap } from './helpers';
+export {
+  transformFilter,
+  transformQuery,
+  transformSort,
+  applyFilter,
+  getFilterFields,
+  QueryFieldMap,
+  transformAggregateQuery,
+  transformAggregateResponse,
+} from './helpers';
 export {
   ClassTransformerAssembler,
   DefaultAssembler,

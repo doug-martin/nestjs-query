@@ -1,5 +1,5 @@
 import { Class } from '../common';
-import { Query } from '../interfaces';
+import { AggregateQuery, Query, AggregateResponse } from '../interfaces';
 import { getCoreMetadataStorage } from '../metadata';
 import { Assembler } from './assembler';
 
@@ -38,6 +38,10 @@ export abstract class AbstractAssembler<DTO, Entity> implements Assembler<DTO, E
   abstract convertToEntity(dto: DTO): Entity;
 
   abstract convertQuery(query: Query<DTO>): Query<Entity>;
+
+  abstract convertAggregateQuery(aggregate: AggregateQuery<DTO>): AggregateQuery<Entity>;
+
+  abstract convertAggregateResponse(aggregate: AggregateResponse<Entity>): AggregateResponse<DTO>;
 
   convertToDTOs(entities: Entity[]): DTO[] {
     return entities.map((e) => this.convertToDTO(e));

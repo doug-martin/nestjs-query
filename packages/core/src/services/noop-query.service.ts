@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NotImplementedException } from '@nestjs/common';
-import { Filter, UpdateManyResponse, Query, DeleteManyResponse } from '../interfaces';
+import {
+  Filter,
+  UpdateManyResponse,
+  Query,
+  DeleteManyResponse,
+  AggregateQuery,
+  AggregateResponse,
+} from '../interfaces';
 import { QueryService } from './query.service';
 import { DeepPartial, Class } from '../common';
 
@@ -64,6 +71,10 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
 
   query(query: Query<DTO>): Promise<DTO[]> {
     return Promise.reject(new NotImplementedException('query is not implemented'));
+  }
+
+  aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>> {
+    return Promise.reject(new NotImplementedException('aggregate is not implemented'));
   }
 
   count(filter: Filter<DTO>): Promise<number> {

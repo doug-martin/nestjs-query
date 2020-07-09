@@ -1,4 +1,13 @@
-import { transformQuery, Query, AbstractAssembler, Assembler } from '../../src';
+import {
+  transformQuery,
+  Query,
+  AbstractAssembler,
+  Assembler,
+  AggregateQuery,
+  AggregateResponse,
+  transformAggregateQuery,
+  transformAggregateResponse,
+} from '../../src';
 
 describe('ClassTransformerAssembler', () => {
   class TestDTO {
@@ -33,6 +42,20 @@ describe('ClassTransformerAssembler', () => {
       return transformQuery(query, {
         firstName: 'first',
         lastName: 'last',
+      });
+    }
+
+    convertAggregateQuery(aggregate: AggregateQuery<TestDTO>): AggregateQuery<TestEntity> {
+      return transformAggregateQuery(aggregate, {
+        firstName: 'first',
+        lastName: 'last',
+      });
+    }
+
+    convertAggregateResponse(aggregate: AggregateResponse<TestEntity>): AggregateResponse<TestDTO> {
+      return transformAggregateResponse(aggregate, {
+        first: 'firstName',
+        last: 'lastName',
       });
     }
   }

@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DeepPartial, Class } from '../common';
-import { DeleteManyResponse, Filter, Query, UpdateManyResponse } from '../interfaces';
+import {
+  AggregateQuery,
+  AggregateResponse,
+  DeleteManyResponse,
+  Filter,
+  Query,
+  UpdateManyResponse,
+} from '../interfaces';
 
 /**
  * Base interface for all QueryServices.
@@ -14,6 +21,13 @@ export interface QueryService<DTO> {
    * @returns a promise with an array of records that match the query.
    */
   query(query: Query<DTO>): Promise<DTO[]>;
+
+  /**
+   * Perform an aggregate query
+   * @param filter
+   * @param aggregate
+   */
+  aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>>;
 
   /**
    * Count the number of records that match the filter.
