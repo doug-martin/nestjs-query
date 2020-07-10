@@ -1,9 +1,18 @@
-import { Query, DeleteManyResponse, UpdateManyResponse, DeepPartial, QueryService, Filter } from '@nestjs-query/core';
+import {
+  Query,
+  DeleteManyResponse,
+  UpdateManyResponse,
+  DeepPartial,
+  QueryService,
+  Filter,
+  AggregateQuery,
+  AggregateResponse,
+} from '@nestjs-query/core';
 import lodashPick from 'lodash.pick';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { WhereOptions } from 'sequelize';
 import { NotFoundException } from '@nestjs/common';
-import { FilterQueryBuilder } from '../query';
+import { FilterQueryBuilder, AggregateBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
 
 /**
@@ -46,6 +55,14 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
    */
   async query(query: Query<Entity>): Promise<Entity[]> {
     return this.model.findAll<Entity>(this.filterQueryBuilder.findOptions(query));
+  }
+
+  async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
+    const result = await this.model.findOne(this.filterQueryBuilder.aggregateOptions({ filter }, aggregate));
+    if (!result) {
+      return {};
+    }
+    return AggregateBuilder.convertToAggregateResponse(result.get({ plain: true }) as Record<string, unknown>);
   }
 
   async count(filter: Filter<Entity>): Promise<number> {

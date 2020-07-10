@@ -1,4 +1,4 @@
-import { Filter, getFilterFields, Paging, Query, SortField } from '@nestjs-query/core';
+import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@nestjs-query/core';
 import {
   FindOptions,
   Filterable,
@@ -8,8 +8,10 @@ import {
   UpdateOptions,
   CountOptions,
   Association,
+  Projectable,
 } from 'sequelize';
 import { Model, ModelCtor } from 'sequelize-typescript';
+import { AggregateBuilder } from './aggregate.builder';
 import { WhereBuilder } from './where.builder';
 
 /**
@@ -40,6 +42,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
   constructor(
     readonly model: ModelCtor<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
+    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(model),
   ) {}
 
   /**
@@ -52,6 +55,18 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
     opts = this.applyFilter(opts, query.filter);
     opts = this.applySorting(opts, query.sorting);
     opts = this.applyPaging(opts, query.paging);
+    return opts;
+  }
+
+  /**
+   * Create a `sequelize` SelectQueryBuilder with `WHERE`, `ORDER BY` and `LIMIT/OFFSET` clauses.
+   *
+   * @param query - the query to apply.
+   */
+  aggregateOptions(query: Query<Entity>, aggregate: AggregateQuery<Entity>): FindOptions {
+    let opts: FindOptions = {};
+    opts = this.applyAggregate(opts, aggregate);
+    opts = this.applyFilter(opts, query.filter);
     return opts;
   }
 
@@ -142,6 +157,12 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
       },
     );
     return qb;
+  }
+
+  private applyAggregate<P extends Projectable>(opts: P, aggregate: AggregateQuery<Entity>): P {
+    // eslint-disable-next-line no-param-reassign
+    opts.attributes = this.aggregateBuilder.build(aggregate).attributes;
+    return opts;
   }
 
   private applyAssociationIncludes<Opts extends FindOptions | CountOptions>(

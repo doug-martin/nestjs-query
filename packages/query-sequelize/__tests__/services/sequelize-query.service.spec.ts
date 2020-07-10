@@ -104,6 +104,82 @@ describe('SequelizeQueryService', (): void => {
     });
   });
 
+  describe('#aggregate', () => {
+    it('call select with the aggregate columns and return the result', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.aggregate(
+        {},
+        {
+          count: ['testEntityPk'],
+          avg: ['numberType'],
+          sum: ['numberType'],
+          max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
+        },
+      );
+      return expect(queryResult).toEqual({
+        avg: {
+          numberType: 5.5,
+        },
+        count: {
+          testEntityPk: 10,
+        },
+        max: {
+          dateType: expect.stringMatching('2020-02-10'),
+          numberType: 10,
+          stringType: 'foo9',
+          testEntityPk: 'test-entity-9',
+        },
+        min: {
+          dateType: expect.stringMatching('2020-02-01'),
+          numberType: 1,
+          stringType: 'foo1',
+          testEntityPk: 'test-entity-1',
+        },
+        sum: {
+          numberType: 55,
+        },
+      });
+    });
+
+    it('call select with the aggregate columns and return the result with a filter', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.aggregate(
+        { stringType: { in: ['foo1', 'foo2', 'foo3'] } },
+        {
+          count: ['testEntityPk'],
+          avg: ['numberType'],
+          sum: ['numberType'],
+          max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
+        },
+      );
+      return expect(queryResult).toEqual({
+        avg: {
+          numberType: 2,
+        },
+        count: {
+          testEntityPk: 3,
+        },
+        max: {
+          dateType: expect.stringMatching('2020-02-03'),
+          numberType: 3,
+          stringType: 'foo3',
+          testEntityPk: 'test-entity-3',
+        },
+        min: {
+          dateType: expect.stringMatching('2020-02-01'),
+          numberType: 1,
+          stringType: 'foo1',
+          testEntityPk: 'test-entity-1',
+        },
+        sum: {
+          numberType: 6,
+        },
+      });
+    });
+  });
+
   describe('#count', () => {
     it('call select and return the result', async () => {
       const queryService = moduleRef.get(TestEntityService);
