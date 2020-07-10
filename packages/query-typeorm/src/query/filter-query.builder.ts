@@ -1,4 +1,4 @@
-import { Filter, Paging, Query, SortField, getFilterFields } from '@nestjs-query/core';
+import { Filter, Paging, Query, SortField, getFilterFields, AggregateQuery } from '@nestjs-query/core';
 import {
   DeleteQueryBuilder,
   QueryBuilder,
@@ -8,6 +8,7 @@ import {
   WhereExpression,
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
+import { AggregateBuilder } from './aggregate.builder';
 import { WhereBuilder } from './where.builder';
 
 /**
@@ -38,6 +39,7 @@ export class FilterQueryBuilder<Entity> {
   constructor(
     readonly repo: Repository<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
+    readonly aggregateBulder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(),
   ) {}
 
   /**
@@ -51,6 +53,13 @@ export class FilterQueryBuilder<Entity> {
     qb = this.applyFilter(qb, query.filter, qb.alias);
     qb = this.applySorting(qb, query.sorting, qb.alias);
     qb = this.applyPaging(qb, query.paging);
+    return qb;
+  }
+
+  aggregate(query: Query<Entity>, aggregate: AggregateQuery<Entity>): SelectQueryBuilder<Entity> {
+    let qb = this.createQueryBuilder();
+    qb = this.applyAggregate(qb, aggregate, qb.alias);
+    qb = this.applyFilter(qb, query.filter, qb.alias);
     return qb;
   }
 
@@ -95,6 +104,21 @@ export class FilterQueryBuilder<Entity> {
       return qb;
     }
     return qb.limit(paging.limit).offset(paging.offset);
+  }
+
+  /**
+   * Applies the filter from a Query to a `typeorm` QueryBuilder.
+   *
+   * @param qb - the `typeorm` QueryBuilder.
+   * @param aggregate - the aggregates to select.
+   * @param alias - optional alias to use to qualify an identifier
+   */
+  private applyAggregate<Qb extends SelectQueryBuilder<Entity>>(
+    qb: Qb,
+    aggregate: AggregateQuery<Entity>,
+    alias?: string,
+  ): Qb {
+    return this.aggregateBulder.build(qb, aggregate, alias);
   }
 
   /**
