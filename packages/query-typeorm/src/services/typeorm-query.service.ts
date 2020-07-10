@@ -6,11 +6,13 @@ import {
   Class,
   QueryService,
   Filter,
+  AggregateQuery,
+  AggregateResponse,
 } from '@nestjs-query/core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { MethodNotAllowedException, NotFoundException } from '@nestjs/common';
-import { FilterQueryBuilder } from '../query';
+import { FilterQueryBuilder, AggregateBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
 
 export interface TypeOrmQueryServiceOpts<Entity> {
@@ -65,6 +67,11 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    */
   async query(query: Query<Entity>): Promise<Entity[]> {
     return this.filterQueryBuilder.select(query).getMany();
+  }
+
+  async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
+    const result = await this.filterQueryBuilder.aggregate({ filter }, aggregate).getRawOne<Record<string, unknown>>();
+    return AggregateBuilder.convertToAggregateResponse(result);
   }
 
   async count(filter: Filter<Entity>): Promise<number> {
