@@ -154,6 +154,73 @@ describe('AssemblerQueryService', () => {
     });
   });
 
+  describe('aggregateRelations', () => {
+    it('should transform the results for a single entity', () => {
+      const mockQueryService = mock<QueryService<TestEntity>>();
+      const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
+      const aggQuery: AggregateQuery<TestDTO> = { count: ['foo'] };
+      const result: AggregateResponse<TestDTO> = { count: { foo: 1 } };
+      when(
+        mockQueryService.aggregateRelations(
+          TestDTO,
+          'test',
+          objectContaining({ bar: 'bar' }),
+          objectContaining({ foo: { eq: 'bar' } }),
+          aggQuery,
+        ),
+      ).thenResolve(result);
+
+      return expect(
+        assemblerService.aggregateRelations(TestDTO, 'test', { foo: 'bar' }, { foo: { eq: 'bar' } }, aggQuery),
+      ).resolves.toEqual(result);
+    });
+
+    it('should transform the results for multiple entities', () => {
+      const mockQueryService = mock<QueryService<TestEntity>>();
+      const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
+      const dto: TestDTO = { foo: 'bar' };
+      const entity: TestEntity = { bar: 'bar' };
+      const aggQuery: AggregateQuery<TestDTO> = { count: ['foo'] };
+      const result: AggregateResponse<TestDTO> = { count: { foo: 1 } };
+      when(
+        mockQueryService.aggregateRelations(
+          TestDTO,
+          'test',
+          deepEqual([entity]),
+          objectContaining({ foo: { eq: 'bar' } }),
+          aggQuery,
+        ),
+      ).thenCall((relationClass, relation, entities) => {
+        return Promise.resolve(
+          new Map<TestEntity, AggregateResponse<TestDTO>>([[entities[0], result]]),
+        );
+      });
+      return expect(
+        assemblerService.aggregateRelations(TestDTO, 'test', [{ foo: 'bar' }], { foo: { eq: 'bar' } }, aggQuery),
+      ).resolves.toEqual(new Map([[dto, result]]));
+    });
+
+    it('should return an empty array for dtos with no aggregateRelations', () => {
+      const mockQueryService = mock<QueryService<TestEntity>>();
+      const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
+      const dto: TestDTO = { foo: 'bar' };
+      const entity: TestEntity = { bar: 'bar' };
+      const aggQuery: AggregateQuery<TestDTO> = { count: ['foo'] };
+      when(
+        mockQueryService.aggregateRelations(
+          TestDTO,
+          'test',
+          deepEqual([entity]),
+          objectContaining({ foo: { eq: 'bar' } }),
+          aggQuery,
+        ),
+      ).thenResolve(new Map<TestEntity, AggregateResponse<TestDTO>>());
+      return expect(
+        assemblerService.aggregateRelations(TestDTO, 'test', [{ foo: 'bar' }], { foo: { eq: 'bar' } }, aggQuery),
+      ).resolves.toEqual(new Map([[dto, {}]]));
+    });
+  });
+
   describe('countRelations', () => {
     it('should transform the results for a single entity', () => {
       const mockQueryService = mock<QueryService<TestEntity>>();

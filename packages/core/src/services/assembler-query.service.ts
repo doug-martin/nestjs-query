@@ -207,4 +207,49 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
       this.queryService.updateOne(id, this.assembler.convertToEntity((update as unknown) as DTO)),
     );
   }
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation>>;
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO | DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation> | Map<DTO, AggregateResponse<Relation>>> {
+    if (Array.isArray(dto)) {
+      const entities = this.assembler.convertToEntities(dto);
+      const relationMap = await this.queryService.aggregateRelations(
+        RelationClass,
+        relationName,
+        entities,
+        filter,
+        aggregate,
+      );
+      return entities.reduce((map, e, index) => {
+        const entry = relationMap.get(e) ?? {};
+        map.set(dto[index], entry);
+        return map;
+      }, new Map<DTO, AggregateResponse<Relation>>());
+    }
+    return this.queryService.aggregateRelations(
+      RelationClass,
+      relationName,
+      this.assembler.convertToEntity(dto),
+      filter,
+      aggregate,
+    );
+  }
 }

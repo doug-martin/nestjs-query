@@ -1,5 +1,5 @@
 import { mock, reset, instance, when, deepEqual } from 'ts-mockito';
-import { QueryService, RelationQueryService } from '../../src';
+import { AggregateQuery, QueryService, RelationQueryService } from '../../src';
 
 describe('RelationQueryService', () => {
   const mockQueryService: QueryService<TestType> = mock<QueryService<TestType>>();
@@ -121,6 +121,68 @@ describe('RelationQueryService', () => {
       const result = new Map([[{ foo: 'bar' }, []]]);
       when(mockQueryService.queryRelations(TestType, relationName, dtos, query)).thenResolve(result);
       return expect(queryService.queryRelations(TestType, relationName, dtos, query)).resolves.toBe(result);
+    });
+  });
+
+  describe('#aggregateRelations', () => {
+    it('should proxy to the underlying service when calling queryRelations with one dto', async () => {
+      const relationName = 'test';
+      const dto = new TestType();
+      const result = { count: { foo: 1 } };
+      const filter = {};
+      const relationFilter = {};
+      const relationAggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
+      testRelationFn.mockReturnValue({ filter: relationFilter });
+      when(mockRelationService.aggregate(deepEqual(relationFilter), relationAggregateQuery)).thenResolve(result);
+      await expect(
+        queryService.aggregateRelations(TestType, relationName, dto, filter, relationAggregateQuery),
+      ).resolves.toBe(result);
+      return expect(testRelationFn).toHaveBeenCalledWith(dto);
+    });
+
+    it('should proxy to the underlying service when calling queryRelations with many dtos', async () => {
+      const relationName = 'test';
+      const dtos = [new TestType()];
+      const relationResults = { count: { foo: 1 } };
+      const result = new Map([[dtos[0], relationResults]]);
+      const filter = {};
+      const relationFilter = {};
+      const relationAggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
+      testRelationFn.mockReturnValue({ filter: relationFilter });
+      when(mockRelationService.aggregate(deepEqual(relationFilter), relationAggregateQuery)).thenResolve(
+        relationResults,
+      );
+      return expect(
+        queryService.aggregateRelations(TestType, relationName, dtos, filter, relationAggregateQuery),
+      ).resolves.toEqual(result);
+    });
+
+    it('should proxy to the underlying service when calling queryRelations with one dto and a unknown relation', () => {
+      const relationName = 'unknown';
+      const dto = new TestType();
+      const filter = {};
+      const aggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
+      const result = { count: { foo: 1 } };
+      when(mockQueryService.aggregateRelations(TestType, relationName, dto, filter, aggregateQuery)).thenResolve(
+        result,
+      );
+      return expect(queryService.aggregateRelations(TestType, relationName, dto, filter, aggregateQuery)).resolves.toBe(
+        result,
+      );
+    });
+
+    it('should proxy to the underlying service when calling queryRelations with many dtos and a unknown relation', () => {
+      const relationName = 'unknown';
+      const dtos = [new TestType()];
+      const filter = {};
+      const aggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
+      const result = new Map([[dtos[0], { count: { foo: 1 } }]]);
+      when(mockQueryService.aggregateRelations(TestType, relationName, dtos, filter, aggregateQuery)).thenResolve(
+        result,
+      );
+      return expect(
+        queryService.aggregateRelations(TestType, relationName, dtos, filter, aggregateQuery),
+      ).resolves.toBe(result);
     });
   });
 
