@@ -46,14 +46,14 @@ export interface QueryService<DTO> {
   /**
    * Query for an array of relations.
    * * @param RelationClass - The class to serialize the Relations into
-   * @param entity - The entity to query relations for.
+   * @param dto - The dto to query relations for.
    * @param relationName - The name of relation to query for.
    * @param query - A query to filter, page or sort relations.
    */
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    entity: DTO,
+    dto: DTO,
     query: Query<Relation>,
   ): Promise<Relation[]>;
 
@@ -65,41 +65,61 @@ export interface QueryService<DTO> {
   ): Promise<Map<DTO, Relation[]>>;
 
   /**
+   * Aggregate relations for a DTO.
+   * * @param RelationClass - The class to serialize the Relations into
+   * @param dto - The DTO to query relations for.
+   * @param relationName - The name of relation to query for.
+   * @param filter - A filter to apply to relations.
+   * @param aggregate - The aggregate query
+   */
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation>>;
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+
+  /**
    * Count the number of relations
    * @param filter - Filter to create a where clause.
    */
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    entity: DTO,
+    dto: DTO,
     filter: Filter<Relation>,
   ): Promise<number>;
 
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    entity: DTO[],
+    dto: DTO[],
     filter: Filter<Relation>,
   ): Promise<Map<DTO, number>>;
 
   /**
    * Finds a single relation.
    * @param RelationClass - The class to serialize the Relation into
-   * @param entity - The entity to find the relation on.
+   * @param dto - The dto to find the relation on.
    * @param relationName - The name of the relation to query for.
    */
-  findRelation<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    entity: DTO,
-  ): Promise<Relation | undefined>;
+  findRelation<Relation>(RelationClass: Class<Relation>, relationName: string, dto: DTO): Promise<Relation | undefined>;
 
   /**
    * Finds a single relation for each DTO passed in.
    *
-   * @param RelationClass - The class to serialize the Relation into
-   * @param entity - The entity to find the relation on.
+   * @param RelationClass - The class to serialize the Relation into*
    * @param relationName - The name of the relation to query for.
+   * @param dtos - The dto to find the relation on.
    */
   findRelation<Relation>(
     RelationClass: Class<Relation>,
@@ -110,34 +130,34 @@ export interface QueryService<DTO> {
   /**
    * Adds multiple relations.
    * @param relationName - The name of the relation to query for.
-   * @param id - The id of the entity to add the relation to.
+   * @param id - The id of the dto to add the relation to.
    * @param relationIds - The ids of the relations to add.
    */
   addRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO>;
 
   /**
-   * Set the relation on the entity.
+   * Set the relation on the dto.
    *
    * @param relationName - The name of the relation to query for.
-   * @param id - The id of the entity to set the relation on.
-   * @param relationId - The id of the relation to set on the entity.
+   * @param id - The id of the dto to set the relation on.
+   * @param relationId - The id of the relation to set on the dto.
    */
   setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO>;
 
   /**
    * Removes multiple relations.
    * @param relationName - The name of the relation to query for.
-   * @param id - The id of the entity to add the relation to.
+   * @param id - The id of the dto to add the relation to.
    * @param relationIds - The ids of the relations to add.
    */
   removeRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO>;
 
   /**
-   * Remove the relation on the entity.
+   * Remove the relation on the dto.
    *
    * @param relationName - The name of the relation to query for.
-   * @param id - The id of the entity to set the relation on.
-   * @param relationId - The id of the relation to set on the entity.
+   * @param id - The id of the dto to set the relation on.
+   * @param relationId - The id of the relation to set on the dto.
    */
   removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO>;
 

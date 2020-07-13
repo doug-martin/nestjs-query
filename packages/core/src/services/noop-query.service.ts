@@ -45,11 +45,7 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
     return Promise.reject(new NotImplementedException('findById is not implemented'));
   }
 
-  findRelation<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    entity: DTO,
-  ): Promise<Relation | undefined>;
+  findRelation<Relation>(RelationClass: Class<Relation>, relationName: string, dto: DTO): Promise<Relation | undefined>;
 
   findRelation<Relation>(
     RelationClass: Class<Relation>,
@@ -60,7 +56,7 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
   findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    entity: DTO | DTO[],
+    dto: DTO | DTO[],
   ): Promise<(Relation | undefined) | Map<DTO, Relation | undefined>> {
     return Promise.reject(new NotImplementedException('findRelation is not implemented'));
   }
@@ -84,7 +80,7 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    entity: DTO,
+    dto: DTO,
     query: Query<Relation>,
   ): Promise<Relation[]>;
 
@@ -98,7 +94,7 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    entity: DTO | DTO[],
+    dto: DTO | DTO[],
     query: Query<Relation>,
   ): Promise<Relation[] | Map<DTO, Relation[]>> {
     return Promise.reject(new NotImplementedException('queryRelations is not implemented'));
@@ -107,7 +103,7 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    entity: DTO,
+    dto: DTO,
     filter: Filter<Relation>,
   ): Promise<number>;
 
@@ -121,7 +117,7 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    entity: DTO | DTO[],
+    dto: DTO | DTO[],
     filter: Filter<Relation>,
   ): Promise<number | Map<DTO, number>> {
     return Promise.reject(new NotImplementedException('countRelations is not implemented'));
@@ -145,5 +141,31 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
 
   updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U): Promise<DTO> {
     return Promise.reject(new NotImplementedException('updateOne is not implemented'));
+  }
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation>>;
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO | DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation> | Map<DTO, AggregateResponse<Relation>>> {
+    return Promise.reject(new NotImplementedException('aggregateRelations is not implemented'));
   }
 }

@@ -69,4 +69,10 @@ describe('NoOpQueryService', () => {
   it('should throw a NotImplementedException when calling updateOne', () => {
     return expect(instance.updateOne(1, { foo: 'bar' })).rejects.toThrow('updateOne is not implemented');
   });
+
+  it('should throw a NotImplementedException when calling aggregateRelations', () => {
+    return expect(instance.aggregateRelations(TestType, 'test', new TestType(), {}, {})).rejects.toThrow(
+      'aggregateRelations is not implemented',
+    );
+  });
 });

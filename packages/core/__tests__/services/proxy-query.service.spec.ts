@@ -2,7 +2,7 @@ import { mock, reset, instance, when } from 'ts-mockito';
 import { QueryService, AggregateQuery } from '../../src';
 import { ProxyQueryService } from '../../src/services/proxy-query.service';
 
-describe('NoOpQueryService', () => {
+describe('ProxyQueryService', () => {
   class TestType {
     foo!: string;
   }
@@ -103,6 +103,28 @@ describe('NoOpQueryService', () => {
     const result = new Map([[{ foo: 'bar' }, []]]);
     when(mockQueryService.queryRelations(TestType, relationName, dtos, query)).thenResolve(result);
     return expect(queryService.queryRelations(TestType, relationName, dtos, query)).resolves.toBe(result);
+  });
+
+  it('should proxy to the underlying service when calling aggregateRelations with one dto', () => {
+    const relationName = 'test';
+    const dto = new TestType();
+    const filter = {};
+    const aggQuery: AggregateQuery<TestType> = { count: ['foo'] };
+    const result = { count: { foo: 1 } };
+    when(mockQueryService.aggregateRelations(TestType, relationName, dto, filter, aggQuery)).thenResolve(result);
+    return expect(queryService.aggregateRelations(TestType, relationName, dto, filter, aggQuery)).resolves.toBe(result);
+  });
+
+  it('should proxy to the underlying service when calling aggregateRelations with many dtos', () => {
+    const relationName = 'test';
+    const dtos = [new TestType()];
+    const filter = {};
+    const aggQuery: AggregateQuery<TestType> = { count: ['foo'] };
+    const result = new Map([[{ foo: 'bar' }, { count: { foo: 1 } }]]);
+    when(mockQueryService.aggregateRelations(TestType, relationName, dtos, filter, aggQuery)).thenResolve(result);
+    return expect(queryService.aggregateRelations(TestType, relationName, dtos, filter, aggQuery)).resolves.toBe(
+      result,
+    );
   });
 
   it('should proxy to the underlying service when calling countRelations with one dto', () => {

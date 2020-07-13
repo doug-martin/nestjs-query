@@ -172,4 +172,31 @@ export class ProxyQueryService<DTO> implements QueryService<DTO> {
   updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U): Promise<DTO> {
     return this.proxied.updateOne(id, update);
   }
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation>>;
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO | DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation> | Map<DTO, AggregateResponse<Relation>>> {
+    if (Array.isArray(dto)) {
+      return this.proxied.aggregateRelations(RelationClass, relationName, dto, filter, aggregate);
+    }
+    return this.proxied.aggregateRelations(RelationClass, relationName, dto, filter, aggregate);
+  }
 }

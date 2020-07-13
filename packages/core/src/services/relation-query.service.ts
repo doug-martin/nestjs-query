@@ -1,6 +1,6 @@
 import { Class } from '../common';
 import { mergeQuery } from '../helpers';
-import { Filter, Query } from '../interfaces';
+import { Filter, Query, AggregateQuery, AggregateResponse } from '../interfaces';
 import { NoOpQueryService } from './noop-query.service';
 import { ProxyQueryService } from './proxy-query.service';
 import { QueryService } from './query.service';
@@ -80,6 +80,47 @@ export class RelationQueryService<DTO> extends ProxyQueryService<DTO> {
       }, Promise.resolve(new Map<DTO, Relation[]>()));
     }
     return service.query(mergeQuery(query, qf(dto)));
+  }
+
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation>>;
+
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO | DTO[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation> | Map<DTO, AggregateResponse<Relation>>> {
+    const serviceRelation = this.getRelation<Relation>(relationName);
+    if (!serviceRelation) {
+      if (Array.isArray(dto)) {
+        return super.aggregateRelations(RelationClass, relationName, dto, filter, aggregate);
+      }
+      return super.aggregateRelations(RelationClass, relationName, dto, filter, aggregate);
+    }
+    const { query: qf, service } = serviceRelation;
+    if (Array.isArray(dto)) {
+      return dto.reduce(async (mapPromise, d) => {
+        const map = await mapPromise;
+        const relations = await service.aggregate(mergeQuery({ filter }, qf(d)).filter ?? {}, aggregate);
+        return map.set(d, relations);
+      }, Promise.resolve(new Map<DTO, AggregateResponse<Relation>>()));
+    }
+    return service.aggregate(mergeQuery({ filter }, qf(dto)).filter ?? {}, aggregate);
   }
 
   countRelations<Relation>(
