@@ -93,3 +93,7 @@ export function UpdateFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
 export function SubscriptionFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
   return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}SubscriptionFilter`);
 }
+
+export function AggregateFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+  return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}AggregateFilter`);
+}

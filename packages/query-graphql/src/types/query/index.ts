@@ -8,7 +8,13 @@ export {
   StaticOffsetQueryArgsType,
   StaticCursorQueryArgsType,
 } from './query-args';
-export { FilterType, DeleteFilterType, UpdateFilterType, SubscriptionFilterType } from './filter.type';
+export {
+  FilterType,
+  DeleteFilterType,
+  UpdateFilterType,
+  SubscriptionFilterType,
+  AggregateFilterType,
+} from './filter.type';
 export {
   CursorPagingType,
   OffsetPagingType,

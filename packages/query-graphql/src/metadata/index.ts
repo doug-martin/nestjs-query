@@ -1,5 +1,7 @@
 import { GraphQLQueryMetadataStorage } from './metadata-storage';
 
+export { FilterableFieldDescriptor } from './metadata-storage';
+
 /** @internal */
 let storage: GraphQLQueryMetadataStorage;
 /** @internal */

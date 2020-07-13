@@ -1,5 +1,5 @@
 import { mock, reset, instance, when } from 'ts-mockito';
-import { QueryService } from '../../src';
+import { QueryService, AggregateQuery } from '../../src';
 import { ProxyQueryService } from '../../src/services/proxy-query.service';
 
 describe('NoOpQueryService', () => {
@@ -72,6 +72,14 @@ describe('NoOpQueryService', () => {
     const result = [{ foo: 'bar' }];
     when(mockQueryService.query(query)).thenResolve(result);
     return expect(queryService.query(query)).resolves.toBe(result);
+  });
+
+  it('should proxy to the underlying service when calling aggregate', () => {
+    const filter = {};
+    const aggregate: AggregateQuery<TestType> = { count: ['foo'] };
+    const result = { count: { foo: 1 } };
+    when(mockQueryService.aggregate(filter, aggregate)).thenResolve(result);
+    return expect(queryService.aggregate(filter, aggregate)).resolves.toBe(result);
   });
   it('should proxy to the underlying service when calling count', () => {
     const query = {};

@@ -37,6 +37,10 @@ describe('NoOpQueryService', () => {
     return expect(instance.query({})).rejects.toThrow('query is not implemented');
   });
 
+  it('should throw a NotImplementedException when calling aggregate', () => {
+    return expect(instance.aggregate({}, {})).rejects.toThrow('aggregate is not implemented');
+  });
+
   it('should throw a NotImplementedException when calling count', () => {
     return expect(instance.count({})).rejects.toThrow('count is not implemented');
   });

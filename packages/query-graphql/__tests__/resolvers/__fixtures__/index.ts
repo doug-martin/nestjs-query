@@ -129,3 +129,8 @@ export const updateManySubscriptionResolverSDL = readGraphql(
 export const referenceBasicResolverSDL = readGraphql(
   resolve(__dirname, 'reference', 'reference-basic.resolver.graphql'),
 );
+
+export const aggregateResolverSDL = readGraphql(resolve(__dirname, 'aggregate', 'aggregate.resolver.graphql'));
+export const aggregateDisabledResolverSDL = readGraphql(
+  resolve(__dirname, 'aggregate', 'aggregate-disabled.resolver.graphql'),
+);

@@ -1,5 +1,6 @@
 import { Class, DeepPartial } from '@nestjs-query/core';
 import { PagingStrategies } from '../types';
+import { Aggregateable, AggregateResolverOpts } from './aggregate.resolver';
 import { Relatable } from './relations';
 import { Readable, ReadResolverFromOpts, ReadResolverOpts } from './read.resolver';
 import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver';
@@ -31,6 +32,7 @@ export interface CRUDResolverOpts<
   update?: UpdateResolverOpts<DTO, U>;
   delete?: DeleteResolverOpts<DTO>;
   referenceBy?: ReferenceResolverOpts<DTO>;
+  aggregate?: AggregateResolverOpts;
 }
 
 export interface CRUDResolver<
@@ -81,10 +83,12 @@ export const CRUDResolver = <
     update = {},
     delete: deleteArgs = {},
     referenceBy = {},
+    aggregate,
   } = opts;
 
   const referencable = Refereceable(DTOClass, referenceBy);
   const relatable = Relatable(DTOClass, { enableTotalCount });
+  const aggregateable = Aggregateable(DTOClass, aggregate);
   const creatable = Creatable(DTOClass, { CreateDTOClass, enableSubscriptions, ...create });
   const readable = Readable(DTOClass, { enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<
     DTO,
@@ -94,5 +98,5 @@ export const CRUDResolver = <
   const updateable = Updateable(DTOClass, { UpdateDTOClass, enableSubscriptions, ...update });
   const deleteResolver = DeleteResolver(DTOClass, { enableSubscriptions, ...deleteArgs });
 
-  return referencable(relatable(creatable(readable(updateable(deleteResolver)))));
+  return referencable(relatable(aggregateable(creatable(readable(updateable(deleteResolver))))));
 };
