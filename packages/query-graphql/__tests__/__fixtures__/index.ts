@@ -22,6 +22,11 @@ export const expectSDL = async (resolvers: Function[], sdl: string): Promise<voi
   return expect(printSchema(schema)).toEqual(sdl);
 };
 
+export const aggregateArgsTypeSDL = readGraphql(resolve(__dirname, './aggregate-args-type.graphql'));
+export const aggregateResponseTypeSDL = readGraphql(resolve(__dirname, './aggregate-response-type.graphql'));
+export const aggregateResponseTypeWithCustomNameSDL = readGraphql(
+  resolve(__dirname, './aggregate-response-type-with-custom-name.graphql'),
+);
 export const deleteManyResponseTypeSDL = readGraphql(resolve(__dirname, './delete-many-response-type.graphql'));
 export const updateManyResponseTypeSDL = readGraphql(resolve(__dirname, './update-many-response-type.graphql'));
 export const createOneInputTypeSDL = readGraphql(resolve(__dirname, './create-one-input-type.graphql'));

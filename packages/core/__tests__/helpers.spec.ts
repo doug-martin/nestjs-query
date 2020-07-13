@@ -1,31 +1,40 @@
 import {
+  AggregateResponse,
   applyFilter,
   Filter,
   Query,
   QueryFieldMap,
   SortDirection,
   SortField,
+  transformAggregateQuery,
+  transformAggregateResponse,
   transformFilter,
   transformQuery,
   transformSort,
 } from '../src';
 import { getFilterFields } from '../src/helpers/query.helpers';
+import { AggregateQuery } from '../src/interfaces/aggregate-query.interface';
 
 class TestDTO {
   first!: string;
 
   last!: string;
+
+  age?: number;
 }
 
 class TestEntity {
   firstName!: string;
 
   lastName!: string;
+
+  ageInYears?: number;
 }
 
 const fieldMap: QueryFieldMap<TestDTO, TestEntity> = {
   first: 'firstName',
   last: 'lastName',
+  age: 'ageInYears',
 };
 
 describe('transformSort', () => {
@@ -384,5 +393,114 @@ describe('getFilterFields', () => {
       },
     };
     expect(getFilterFields(filter).sort()).toEqual(['boolField', 'strField', 'testRelation']);
+  });
+});
+
+describe('transformAggregateQuery', () => {
+  it('should transform an aggregate query', () => {
+    const aggQuery: AggregateQuery<TestDTO> = {
+      count: ['first'],
+      sum: ['age'],
+      max: ['first', 'last', 'age'],
+      min: ['first', 'last', 'age'],
+    };
+    const entityAggQuery: AggregateQuery<TestEntity> = {
+      count: ['firstName'],
+      sum: ['ageInYears'],
+      max: ['firstName', 'lastName', 'ageInYears'],
+      min: ['firstName', 'lastName', 'ageInYears'],
+    };
+    expect(transformAggregateQuery(aggQuery, fieldMap)).toEqual(entityAggQuery);
+  });
+
+  it('should throw an error if an unknown field is encountered', () => {
+    const aggQuery: AggregateQuery<TestDTO> = {
+      count: ['first'],
+      sum: ['age'],
+      max: ['first', 'last', 'age'],
+      min: ['first', 'last', 'age'],
+    };
+    // @ts-ignore
+    expect(() => transformAggregateQuery(aggQuery, { last: 'lastName' })).toThrow(
+      "No corresponding field found for 'first' when transforming aggregateQuery",
+    );
+  });
+});
+
+describe('transformAggregateResponse', () => {
+  it('should transform an aggregate query', () => {
+    const aggResponse: AggregateResponse<TestDTO> = {
+      count: {
+        first: 2,
+      },
+      sum: {
+        age: 101,
+      },
+      max: {
+        first: 'firstz',
+        last: 'lastz',
+        age: 100,
+      },
+      min: {
+        first: 'firsta',
+        last: 'lasta',
+        age: 1,
+      },
+    };
+    const entityAggResponse: AggregateResponse<TestEntity> = {
+      count: {
+        firstName: 2,
+      },
+      sum: {
+        ageInYears: 101,
+      },
+      max: {
+        firstName: 'firstz',
+        lastName: 'lastz',
+        ageInYears: 100,
+      },
+      min: {
+        firstName: 'firsta',
+        lastName: 'lasta',
+        ageInYears: 1,
+      },
+    };
+    expect(transformAggregateResponse(aggResponse, fieldMap)).toEqual(entityAggResponse);
+  });
+
+  it('should handle empty aggregate fields', () => {
+    const aggResponse: AggregateResponse<TestDTO> = {
+      count: {
+        first: 2,
+      },
+    };
+    const entityAggResponse: AggregateResponse<TestEntity> = {
+      count: {
+        firstName: 2,
+      },
+    };
+    expect(transformAggregateResponse(aggResponse, fieldMap)).toEqual(entityAggResponse);
+  });
+
+  it('should throw an error if the field is not found', () => {
+    let aggResponse: AggregateResponse<TestDTO> = {
+      count: {
+        first: 2,
+      },
+    };
+    // @ts-ignore
+    expect(() => transformAggregateResponse(aggResponse, { last: 'lastName' })).toThrow(
+      "No corresponding field found for 'first' when transforming aggregateQuery",
+    );
+
+    aggResponse = {
+      max: {
+        age: 10,
+      },
+    };
+    // @ts-ignore
+    expect(() => transformAggregateResponse(aggResponse, { last: 'lastName' })).toThrow(
+      "No corresponding field found for 'age' when transforming aggregateQuery",
+    );
   });
 });

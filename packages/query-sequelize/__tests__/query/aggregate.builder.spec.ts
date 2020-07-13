@@ -38,7 +38,7 @@ describe('AggregateBuilder', (): void => {
   it('or multiple operators for a single field together', (): void => {
     assertSQL(
       {
-        count: ['testEntityPk'],
+        count: ['testEntityPk', 'stringType'],
         avg: ['numberType'],
         sum: ['numberType'],
         max: ['stringType', 'dateType', 'numberType'],
@@ -47,6 +47,7 @@ describe('AggregateBuilder', (): void => {
       {
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('test_entity_pk')), 'COUNT_testEntityPk'],
+          [sequelize.fn('COUNT', sequelize.col('string_type')), 'COUNT_stringType'],
           [sequelize.fn('SUM', sequelize.col('number_type')), 'SUM_numberType'],
           [sequelize.fn('AVG', sequelize.col('number_type')), 'AVG_numberType'],
           [sequelize.fn('MAX', sequelize.col('string_type')), 'MAX_stringType'],

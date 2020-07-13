@@ -15,3 +15,4 @@ export { Reference, ReferenceDecoratorOpts, ReferenceTypeFunc } from './referenc
 export { ResolverSubscription, SubscriptionResolverMethodOpts } from './resolver-subscription.decorator';
 export { InjectPubSub } from './inject-pub-sub.decorator';
 export * from './skip-if.decorator';
+export * from './aggregate-query-param.decorator';

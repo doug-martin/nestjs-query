@@ -12,7 +12,7 @@ export const CONNECTION_OPTIONS: ConnectionOptions = {
   dropSchema: true,
   entities: [TestEntity, TestSoftDeleteEntity, TestRelation, TestEntityRelationEntity],
   synchronize: true,
-  logging: true,
+  logging: false,
 };
 
 export function createTestConnection(): Promise<Connection> {

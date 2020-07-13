@@ -403,7 +403,7 @@ describe('TypeOrmQueryService', (): void => {
       expect(queryResult).toEqual(entity);
 
       const relation = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
-      expect(relation!.testRelationPk).toBe(TEST_RELATIONS[1].testRelationPk);
+      expect(relation?.testRelationPk).toBe(TEST_RELATIONS[1].testRelationPk);
     });
   });
 

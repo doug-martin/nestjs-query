@@ -1,6 +1,6 @@
 import { TypeMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/type-metadata.storage';
 import { LazyMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage';
-import { Class, Filter, SortField } from '@nestjs-query/core';
+import { AggregateResponse, Class, Filter, SortField } from '@nestjs-query/core';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
 import { EnumMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
@@ -11,7 +11,7 @@ import { EdgeType, StaticConnectionType } from '../types/connection';
 /**
  * @internal
  */
-interface FilterableFieldDescriptor<T> {
+export interface FilterableFieldDescriptor<T> {
   propertyName: string;
   target: Class<T>;
   returnTypeFunc?: ReturnTypeFunc;
@@ -52,6 +52,8 @@ export class GraphQLQueryMetadataStorage {
 
   private readonly referenceStorage: Map<Class<unknown>, ReferenceDescriptor<unknown, unknown>[]>;
 
+  private readonly aggregateStorage: Map<string, Class<AggregateResponse<unknown>>>;
+
   constructor() {
     this.filterableObjectStorage = new Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>();
     this.filterTypeStorage = new Map<string, Class<Filter<unknown>>>();
@@ -60,6 +62,7 @@ export class GraphQLQueryMetadataStorage {
     this.edgeTypeStorage = new Map<Class<unknown>, Class<EdgeType<unknown>>>();
     this.relationStorage = new Map<Class<unknown>, RelationDescriptor<unknown>[]>();
     this.referenceStorage = new Map<Class<unknown>, ReferenceDescriptor<unknown, unknown>[]>();
+    this.aggregateStorage = new Map<string, Class<AggregateResponse<unknown>>>();
   }
 
   addFilterableObjectField<T>(type: Class<T>, field: FilterableFieldDescriptor<unknown>): void {
@@ -177,6 +180,14 @@ export class GraphQLQueryMetadataStorage {
       const opts = { ...r.relationOpts, DTO: r.relationTypeFunc(), keys: r.keys };
       return { ...references, [r.name]: opts };
     }, {} as ReferencesOpts<T>);
+  }
+
+  addAggregateResponseType<T>(name: string, agg: Class<AggregateResponse<T>>): void {
+    this.aggregateStorage.set(name, agg);
+  }
+
+  getAggregateResponseType<T>(name: string): Class<AggregateResponse<T>> | undefined {
+    return this.aggregateStorage.get(name);
   }
 
   getGraphqlObjectMetadata<T>(objType: Class<T>): ObjectTypeMetadata | undefined {
