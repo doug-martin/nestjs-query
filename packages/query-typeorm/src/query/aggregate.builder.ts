@@ -17,6 +17,13 @@ const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN)_(.*)/;
  * Builds a WHERE clause from a Filter.
  */
 export class AggregateBuilder<Entity> {
+  static async asyncConvertToAggregateResponse<Entity>(
+    responsePromise: Promise<Record<string, unknown>>,
+  ): Promise<AggregateResponse<Entity>> {
+    const aggResponse = await responsePromise;
+    return this.convertToAggregateResponse(aggResponse);
+  }
+
   static convertToAggregateResponse<Entity>(response: Record<string, unknown>): AggregateResponse<Entity> {
     return Object.keys(response).reduce((agg, resultField: string) => {
       const matchResult = AGG_REGEXP.exec(resultField);

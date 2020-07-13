@@ -39,7 +39,7 @@ export class FilterQueryBuilder<Entity> {
   constructor(
     readonly repo: Repository<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
-    readonly aggregateBulder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(),
+    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(),
   ) {}
 
   /**
@@ -113,12 +113,8 @@ export class FilterQueryBuilder<Entity> {
    * @param aggregate - the aggregates to select.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private applyAggregate<Qb extends SelectQueryBuilder<Entity>>(
-    qb: Qb,
-    aggregate: AggregateQuery<Entity>,
-    alias?: string,
-  ): Qb {
-    return this.aggregateBulder.build(qb, aggregate, alias);
+  applyAggregate<Qb extends SelectQueryBuilder<Entity>>(qb: Qb, aggregate: AggregateQuery<Entity>, alias?: string): Qb {
+    return this.aggregateBuilder.build(qb, aggregate, alias);
   }
 
   /**

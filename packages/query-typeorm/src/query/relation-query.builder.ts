@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Class, Query } from '@nestjs-query/core';
+import { AggregateQuery, Class, Query } from '@nestjs-query/core';
 import { Repository, SelectQueryBuilder, ObjectLiteral, Brackets } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 import { FilterQueryBuilder } from './filter-query.builder';
@@ -48,6 +48,16 @@ export class RelationQueryBuilder<Entity, Relation> {
     relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
     relationBuilder = this.filterQueryBuilder.applyPaging(relationBuilder, query.paging);
     return this.filterQueryBuilder.applySorting(relationBuilder, query.sorting, relationBuilder.alias);
+  }
+
+  aggregate(
+    entity: Entity,
+    query: Query<Relation>,
+    aggregateQuery: AggregateQuery<Relation>,
+  ): SelectQueryBuilder<Relation> {
+    let relationBuilder = this.createRelationQueryBuilder(entity);
+    relationBuilder = this.filterQueryBuilder.applyAggregate(relationBuilder, aggregateQuery, relationBuilder.alias);
+    return this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
   }
 
   private createRelationQueryBuilder(entity: Entity): SelectQueryBuilder<Relation> {

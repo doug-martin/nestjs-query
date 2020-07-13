@@ -70,8 +70,9 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
   }
 
   async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
-    const result = await this.filterQueryBuilder.aggregate({ filter }, aggregate).getRawOne<Record<string, unknown>>();
-    return AggregateBuilder.convertToAggregateResponse(result);
+    return AggregateBuilder.asyncConvertToAggregateResponse(
+      this.filterQueryBuilder.aggregate({ filter }, aggregate).getRawOne<Record<string, unknown>>(),
+    );
   }
 
   async count(filter: Filter<Entity>): Promise<number> {
