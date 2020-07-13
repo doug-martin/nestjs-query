@@ -1,6 +1,6 @@
-import { Query, Class, AssemblerFactory, Filter } from '@nestjs-query/core';
+import { Query, Class, AssemblerFactory, Filter, AggregateQuery, AggregateResponse } from '@nestjs-query/core';
 import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder } from 'typeorm';
-import { FilterQueryBuilder, RelationQueryBuilder } from '../query';
+import { AggregateBuilder, FilterQueryBuilder, RelationQueryBuilder } from '../query';
 
 interface RelationMetadata {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -60,6 +60,42 @@ export abstract class RelationQueryService<Entity> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     return assembler.convertAsyncToDTOs(relationQueryBuilder.select(dto, assembler.convertQuery(query)).getMany());
+  }
+
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<Entity, AggregateResponse<Relation>>>;
+
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity,
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation>>;
+
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity | Entity[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation> | Map<Entity, AggregateResponse<Relation>>> {
+    if (Array.isArray(dto)) {
+      return this.batchAggregateRelations(RelationClass, relationName, dto, filter, aggregate);
+    }
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
+    const aggResponse = await AggregateBuilder.asyncConvertToAggregateResponse(
+      relationQueryBuilder
+        .aggregate(dto, assembler.convertQuery({ filter }), assembler.convertAggregateQuery(aggregate))
+        .getRawOne<Record<string, unknown>>(),
+    );
+    return assembler.convertAggregateResponse(aggResponse);
   }
 
   async countRelations<Relation>(
@@ -226,6 +262,37 @@ export abstract class RelationQueryService<Entity> {
       results.set(e, assembler.convertToDTOs(relations));
       return results;
     }, new Map<Entity, Relation[]>());
+  }
+
+  /**
+   * Query for an array of relations for multiple dtos.
+   * @param RelationClass - The class to serialize the relations into.
+   * @param entities - The entities to query relations for.
+   * @param relationName - The name of relation to query for.
+   * @param query - A query to filter, page or sort relations.
+   */
+  private async batchAggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<Entity, AggregateResponse<Relation>>> {
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
+    const relationQueryBuilder = this.getRelationQueryBuilder<Relation>(relationName);
+    const convertedQuery = assembler.convertQuery({ filter });
+    const entityRelations = await Promise.all(
+      entities.map(async (e) => {
+        return AggregateBuilder.asyncConvertToAggregateResponse(
+          relationQueryBuilder.aggregate(e, convertedQuery, aggregate).getRawOne<Record<string, unknown>>(),
+        );
+      }),
+    );
+    return entityRelations.reduce((results, relationAgg, index) => {
+      const e = entities[index];
+      results.set(e, relationAgg);
+      return results;
+    }, new Map<Entity, AggregateResponse<Relation>>());
   }
 
   /**
