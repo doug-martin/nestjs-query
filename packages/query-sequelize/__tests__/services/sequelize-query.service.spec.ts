@@ -283,6 +283,174 @@ describe('SequelizeQueryService', (): void => {
     });
   });
 
+  describe('#aggregateRelations', () => {
+    describe('with one entity', () => {
+      it('call select and return the result', async () => {
+        const queryService = moduleRef.get(TestEntityService);
+        const aggResult = await queryService.aggregateRelations(
+          TestRelation,
+          'testRelations',
+          TestEntity.build(PLAIN_TEST_ENTITIES[0]),
+          { relationName: { isNot: null } },
+          { count: ['testRelationPk'] },
+        );
+        return expect(aggResult).toEqual({
+          count: {
+            testRelationPk: 3,
+          },
+        });
+      });
+    });
+
+    describe('with multiple entities', () => {
+      it('call select and return the result', async () => {
+        const entities = PLAIN_TEST_ENTITIES.slice(0, 3).map((pe) => TestEntity.build(pe));
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.aggregateRelations(
+          TestRelation,
+          'testRelations',
+          entities,
+          { relationName: { isNot: null } },
+          {
+            count: ['testRelationPk', 'relationName', 'testEntityId'],
+            min: ['testRelationPk', 'relationName', 'testEntityId'],
+            max: ['testRelationPk', 'relationName', 'testEntityId'],
+          },
+        );
+
+        expect(queryResult.size).toBe(3);
+        expect(queryResult).toEqual(
+          new Map([
+            [
+              entities[0],
+              {
+                count: {
+                  relationName: 3,
+                  testEntityId: 3,
+                  testRelationPk: 3,
+                },
+                max: {
+                  relationName: 'foo1-test-relation',
+                  testEntityId: 'test-entity-1',
+                  testRelationPk: 'test-relations-test-entity-1-3',
+                },
+                min: {
+                  relationName: 'foo1-test-relation',
+                  testEntityId: 'test-entity-1',
+                  testRelationPk: 'test-relations-test-entity-1-1',
+                },
+              },
+            ],
+            [
+              entities[1],
+              {
+                count: {
+                  relationName: 3,
+                  testEntityId: 3,
+                  testRelationPk: 3,
+                },
+                max: {
+                  relationName: 'foo2-test-relation',
+                  testEntityId: 'test-entity-2',
+                  testRelationPk: 'test-relations-test-entity-2-3',
+                },
+                min: {
+                  relationName: 'foo2-test-relation',
+                  testEntityId: 'test-entity-2',
+                  testRelationPk: 'test-relations-test-entity-2-1',
+                },
+              },
+            ],
+            [
+              entities[2],
+              {
+                count: {
+                  relationName: 3,
+                  testEntityId: 3,
+                  testRelationPk: 3,
+                },
+                max: {
+                  relationName: 'foo3-test-relation',
+                  testEntityId: 'test-entity-3',
+                  testRelationPk: 'test-relations-test-entity-3-3',
+                },
+                min: {
+                  relationName: 'foo3-test-relation',
+                  testEntityId: 'test-entity-3',
+                  testRelationPk: 'test-relations-test-entity-3-1',
+                },
+              },
+            ],
+          ]),
+        );
+      });
+
+      it('should return an empty array if no results are found.', async () => {
+        const entities: TestEntity[] = [
+          PLAIN_TEST_ENTITIES[0] as TestEntity,
+          { testEntityPk: 'does-not-exist' } as TestEntity,
+        ];
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.aggregateRelations(
+          TestRelation,
+          'testRelations',
+          entities,
+          { relationName: { isNot: null } },
+          {
+            count: ['testRelationPk', 'relationName', 'testEntityId'],
+            min: ['testRelationPk', 'relationName', 'testEntityId'],
+            max: ['testRelationPk', 'relationName', 'testEntityId'],
+          },
+        );
+
+        expect(queryResult).toEqual(
+          new Map([
+            [
+              entities[0],
+              {
+                count: {
+                  relationName: 3,
+                  testEntityId: 3,
+                  testRelationPk: 3,
+                },
+                max: {
+                  relationName: 'foo1-test-relation',
+                  testEntityId: 'test-entity-1',
+                  testRelationPk: 'test-relations-test-entity-1-3',
+                },
+                min: {
+                  relationName: 'foo1-test-relation',
+                  testEntityId: 'test-entity-1',
+                  testRelationPk: 'test-relations-test-entity-1-1',
+                },
+              },
+            ],
+            [
+              { testEntityPk: 'does-not-exist' } as TestEntity,
+              {
+                count: {
+                  relationName: 0,
+                  testEntityId: 0,
+                  testRelationPk: 0,
+                },
+                max: {
+                  relationName: null,
+                  testEntityId: null,
+                  testRelationPk: null,
+                },
+                min: {
+                  relationName: null,
+                  testEntityId: null,
+                  testRelationPk: null,
+                },
+              },
+            ],
+          ]),
+        );
+      });
+    });
+  });
+
   describe('#countRelations', () => {
     describe('with one entity', () => {
       it('call count and return the result', async () => {

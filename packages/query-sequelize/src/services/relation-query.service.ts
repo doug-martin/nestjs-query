@@ -1,7 +1,7 @@
-import { Query, Class, AssemblerFactory, Filter } from '@nestjs-query/core';
+import { Query, Class, AssemblerFactory, Filter, AggregateQuery, AggregateResponse } from '@nestjs-query/core';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { ModelCtor as SequelizeModelCtor } from 'sequelize';
-import { FilterQueryBuilder } from '../query';
+import { AggregateBuilder, FilterQueryBuilder } from '../query';
 
 interface SequelizeAssociation {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,6 +65,55 @@ export abstract class RelationQueryService<Entity extends Model> {
       relationQueryBuilder.findOptions(assembler.convertQuery(query)),
     );
     return assembler.convertToDTOs((relations as unknown) as Model[]);
+  }
+
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<Entity, AggregateResponse<Relation>>>;
+
+  /**
+   * Query for an array of relations.
+   * @param RelationClass - The class to serialize the relations into.
+   * @param dto - The dto to query relations for.
+   * @param relationName - The name of relation to query for.
+   * @param query - A query to filter, page and sort relations.
+   */
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity,
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation>>;
+
+  async aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity | Entity[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation> | Map<Entity, AggregateResponse<Relation>>> {
+    if (Array.isArray(dto)) {
+      return this.batchAggregateRelations(RelationClass, relationName, dto, filter, aggregate);
+    }
+    const relationEntity = this.getRelationEntity(relationName);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
+    const relationQueryBuilder = this.getRelationQueryBuilder<Model>(relationEntity);
+    const results = ((await this.ensureIsEntity(dto).$get(
+      relationName as keyof Entity,
+      relationQueryBuilder.aggregateOptions(
+        assembler.convertQuery({ filter }),
+        assembler.convertAggregateQuery(aggregate),
+      ),
+    )) as unknown) as Model[];
+    const [agg] = results.map((r) =>
+      AggregateBuilder.convertToAggregateResponse(r.get({ plain: true }) as Record<string, unknown>),
+    );
+    return assembler.convertAggregateResponse(agg);
   }
 
   countRelations<Relation>(
@@ -235,6 +284,41 @@ export abstract class RelationQueryService<Entity extends Model> {
       map.set(e, assembler.convertToDTOs((relations as unknown) as Model[]));
       return map;
     }, Promise.resolve(new Map<Entity, Relation[]>()));
+  }
+
+  /**
+   * Query for an array of relations for multiple dtos.
+   * @param RelationClass - The class to serialize the relations into.
+   * @param entities - The entities to query relations for.
+   * @param relationName - The name of relation to query for.
+   * @param query - A query to filter, page or sort relations.
+   */
+  private async batchAggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<Entity, AggregateResponse<Relation>>> {
+    const relationEntity = this.getRelationEntity(relationName);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
+    const relationQueryBuilder = this.getRelationQueryBuilder(relationEntity);
+    const findOptions = relationQueryBuilder.aggregateOptions(
+      assembler.convertQuery({ filter }),
+      assembler.convertAggregateQuery(aggregate),
+    );
+    return entities.reduce(async (mapPromise, e) => {
+      const map = await mapPromise;
+      const results = ((await this.ensureIsEntity(e).$get(
+        relationName as keyof Entity,
+        findOptions,
+      )) as unknown) as Model[];
+      const [agg] = results.map((r) =>
+        AggregateBuilder.convertToAggregateResponse(r.get({ plain: true }) as Record<string, unknown>),
+      );
+      map.set(e, assembler.convertAggregateResponse(agg));
+      return map;
+    }, Promise.resolve(new Map<Entity, AggregateResponse<Relation>>()));
   }
 
   /**
