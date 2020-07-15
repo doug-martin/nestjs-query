@@ -17,6 +17,7 @@ import { SubTaskEntity } from './sub-task.entity';
           CreateDTOClass: CreateSubTaskDTO,
           UpdateDTOClass: SubTaskUpdateDTO,
           enableTotalCount: true,
+          enableAggregate: true,
         },
       ],
     }),

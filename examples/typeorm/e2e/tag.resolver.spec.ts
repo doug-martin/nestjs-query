@@ -1,3 +1,4 @@
+import { AggregateResponse } from '@nestjs-query/core';
 import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
@@ -7,7 +8,14 @@ import { AppModule } from '../src/app.module';
 import { TagDTO } from '../src/tag/dto/tag.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
+import {
+  edgeNodes,
+  pageInfoField,
+  tagFields,
+  todoItemFields,
+  tagAggregateFields,
+  todoItemAggregateFields,
+} from './graphql-fragments';
 
 describe('TagResolver (typeorm - e2e)', () => {
   let app: INestApplication;
@@ -105,6 +113,33 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
+        });
+    });
+
+    it(`should return todoItems aggregate`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          tag(id: 1) {
+            todoItemsAggregate {
+              ${todoItemAggregateFields}
+            }
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const agg: AggregateResponse<TodoItemDTO> = body.data.tag.todoItemsAggregate;
+          expect(agg).toEqual({
+            avg: { id: 1.5 },
+            count: { completed: 2, created: 2, description: 0, id: 2, title: 2, updated: 2 },
+            max: { description: null, id: '2', title: 'Create Nest App' },
+            min: { description: null, id: '1', title: 'Create Entity' },
+            sum: { id: 3 },
+          });
         });
     });
   });
@@ -284,6 +319,58 @@ describe('TagResolver (typeorm - e2e)', () => {
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
           });
       });
+    });
+  });
+
+  describe('aggregate', () => {
+    it(`should return a aggregate response`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+          tagAggregate {
+              ${tagAggregateFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const res: AggregateResponse<TodoItemDTO> = body.data.tagAggregate;
+          expect(res).toEqual({
+            count: { id: 5, name: 5, created: 5, updated: 5 },
+            sum: { id: 15 },
+            avg: { id: 3 },
+            min: { id: '1', name: 'Blocked' },
+            max: { id: '5', name: 'Work' },
+          });
+        });
+    });
+
+    it(`should allow filtering`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+          tagAggregate(filter: { name: { in: ["Urgent", "Blocked", "Work"] } }) {
+              ${tagAggregateFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const res: AggregateResponse<TodoItemDTO> = body.data.tagAggregate;
+          expect(res).toEqual({
+            count: { id: 3, name: 3, created: 3, updated: 3 },
+            sum: { id: 9 },
+            avg: { id: 3 },
+            min: { id: '1', name: 'Blocked' },
+            max: { id: '5', name: 'Work' },
+          });
+        });
     });
   });
 

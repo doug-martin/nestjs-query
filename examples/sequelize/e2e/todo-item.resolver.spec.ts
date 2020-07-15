@@ -1,8 +1,19 @@
+import { AggregateResponse } from '@nestjs-query/core';
 import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
+import {
+  subTaskAggregateFields,
+  tagAggregateFields,
+  todoItemAggregateFields,
+  edgeNodes,
+  pageInfoField,
+  subTaskFields,
+  tagFields,
+  todoItemFields,
+} from './graphql-fragments';
 import { AppModule } from '../src/app.module';
 import { config } from '../src/config';
 import { AUTH_HEADER_NAME } from '../src/constants';
@@ -10,7 +21,6 @@ import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { TagDTO } from '../src/tag/dto/tag.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
 
 describe('TodoItemResolver (sequelize - e2e)', () => {
   let app: INestApplication;
@@ -116,6 +126,33 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
         });
     });
 
+    it(`should return subTasksAggregate`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItem(id: 1) {
+            subTasksAggregate {
+              ${subTaskAggregateFields}
+            }
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const agg: AggregateResponse<TagDTO> = body.data.todoItem.subTasksAggregate;
+          expect(agg).toEqual({
+            avg: { id: 2 },
+            count: { completed: 3, description: 0, id: 3, title: 3, todoItemId: 3 },
+            max: { description: null, id: '3', title: 'Create Nest App - Sub Task 3', todoItemId: 1 },
+            min: { description: null, id: '1', title: 'Create Nest App - Sub Task 1', todoItemId: 1 },
+            sum: { id: 6 },
+          });
+        });
+    });
+
     it(`should return tags as a connection`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -144,6 +181,33 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
+        });
+    });
+
+    it(`should return tagsAggregate`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItem(id: 1) {
+            tagsAggregate {
+              ${tagAggregateFields}
+            }
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const agg: AggregateResponse<TagDTO> = body.data.todoItem.tagsAggregate;
+          expect(agg).toEqual({
+            avg: { id: 1.5 },
+            count: { created: 2, id: 2, name: 2, updated: 2 },
+            max: { id: '2', name: 'Urgent' },
+            min: { id: '1', name: 'Home' },
+            sum: { id: 3 },
+          });
         });
     });
   });
@@ -400,6 +464,78 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ]);
           });
       });
+    });
+  });
+
+  describe('aggregate', () => {
+    it('should require a header secret', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+            todoItemAggregate {
+              ${todoItemAggregateFields}
+            }
+        }`,
+        })
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
+        });
+    });
+
+    it(`should return a aggregate response`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set(AUTH_HEADER_NAME, config.auth.header)
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+          todoItemAggregate {
+              ${todoItemAggregateFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const res: AggregateResponse<TodoItemDTO> = body.data.todoItemAggregate;
+          expect(res).toEqual({
+            avg: { id: 3 },
+            count: { completed: 5, created: 5, description: 0, id: 5, title: 5, updated: 5 },
+            max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
+            min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
+            sum: { id: 15 },
+          });
+        });
+    });
+
+    it(`should allow filtering`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set(AUTH_HEADER_NAME, config.auth.header)
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+          todoItemAggregate(filter: { completed: { is: false } }) {
+              ${todoItemAggregateFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const res: AggregateResponse<TodoItemDTO> = body.data.todoItemAggregate;
+          expect(res).toEqual({
+            count: { id: 4, title: 4, description: 0, completed: 4, created: 4, updated: 4 },
+            sum: { id: 14 },
+            avg: { id: 3.5 },
+            min: { id: '2', title: 'Add Todo Item Resolver', description: null },
+            max: { id: '5', title: 'How to create item With Sub Tasks', description: null },
+          });
+        });
     });
   });
 
