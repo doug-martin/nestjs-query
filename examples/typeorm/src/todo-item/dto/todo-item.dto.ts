@@ -5,11 +5,7 @@ import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 import { TagDTO } from '../../tag/dto/tag.dto';
 
 @ObjectType('TodoItem')
-@FilterableConnection('subTasks', () => SubTaskDTO, {
-  disableRemove: true,
-  enableAggregate: false,
-  guards: [AuthGuard],
-})
+@FilterableConnection('subTasks', () => SubTaskDTO, { disableRemove: true, guards: [AuthGuard] })
 @FilterableConnection('tags', () => TagDTO, { guards: [AuthGuard] })
 export class TodoItemDTO {
   @FilterableField(() => ID)
