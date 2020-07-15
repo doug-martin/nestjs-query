@@ -53,6 +53,11 @@ export type ResolverRelation<Relation> = {
   disableRemove?: boolean;
 
   /**
+   * Enable aggregation queries.
+   */
+  enableAggregate?: boolean;
+
+  /**
    * Set to true if you should be able to filter on this relation.
    *
    * This will only work with relations defined through an ORM (typeorm or sequelize).

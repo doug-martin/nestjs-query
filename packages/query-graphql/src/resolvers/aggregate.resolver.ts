@@ -8,7 +8,7 @@ import { transformAndValidate } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver } from './resolver.interface';
 
 export type AggregateResolverOpts = {
-  enabled: boolean;
+  enabled?: boolean;
 } & ResolverMethodOpts;
 
 export interface AggregateResolver<DTO> extends ServiceResolver<DTO> {
