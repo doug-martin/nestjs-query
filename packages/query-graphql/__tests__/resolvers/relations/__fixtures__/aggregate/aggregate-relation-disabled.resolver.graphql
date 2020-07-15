@@ -1,0 +1,38 @@
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTORelationsCountAggregate {
+  id: Int
+  testResolverId: Int
+}
+
+type TestResolverDTORelationsMinAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTORelationsMaxAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsCountAggregate {
+  id: Int
+  testResolverId: Int
+}
+
+type TestResolverDTOTestsMinAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsMaxAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type Query {
+  test: TestResolverDTO!
+}

@@ -71,3 +71,16 @@ export const referenceRelationSDL = readGraphql(resolve(__dirname, 'reference', 
 export const referenceRelationNullableSDL = readGraphql(
   resolve(__dirname, 'reference', 'reference-relation-nullable.resolver.graphql'),
 );
+
+export const aggregateRelationEmptyResolverSDL = readGraphql(
+  resolve(__dirname, 'aggregate', 'aggregate-relation-empty.resolver.graphql'),
+);
+export const aggregateRelationResolverSDL = readGraphql(
+  resolve(__dirname, 'aggregate', 'aggregate-relation.resolver.graphql'),
+);
+export const aggregateRelationCustomNameSDL = readGraphql(
+  resolve(__dirname, 'aggregate', 'aggregate-relation-custom-name.resolver.graphql'),
+);
+export const aggregateRelationDisabledSDL = readGraphql(
+  resolve(__dirname, 'aggregate', 'aggregate-relation-disabled.resolver.graphql'),
+);
