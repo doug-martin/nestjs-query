@@ -23,6 +23,8 @@ const guards = [AuthGuard];
           CreateDTOClass: TodoItemInputDTO,
           UpdateDTOClass: TodoItemUpdateDTO,
           enableTotalCount: true,
+          enableAggregate: true,
+          aggregate: { guards },
           create: { guards },
           update: { guards },
           delete: { guards },
