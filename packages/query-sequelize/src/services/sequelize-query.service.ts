@@ -62,7 +62,7 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
     if (!result) {
       return {};
     }
-    return AggregateBuilder.convertToAggregateResponse(result.get({ plain: true }) as Record<string, unknown>);
+    return AggregateBuilder.convertToAggregateResponse((result as unknown) as Record<string, unknown>);
   }
 
   async count(filter: Filter<Entity>): Promise<number> {
