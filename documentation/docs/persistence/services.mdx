@@ -255,6 +255,48 @@ try {
 }
 ```
 
+### Aggregating
+
+To perform an `aggregate` query you can use the `aggregate` method which accepts a `Filter` and `AggregateQuery`.
+
+Supported aggregates are `count`, 'sum', 'avg', `min` and `max`.
+
+In this example we'll aggregate on all records.
+
+```ts
+const aggregateResponse = await this.service.aggregate({}, {
+    count: ['id'],
+    min: ['title'],
+    max: ['title']
+});
+```
+
+The response will look like the following
+
+```ts
+{
+  count: {
+    id: 10
+  },
+  min: {
+    title: 'Aggregate Todo Items'
+  },
+  min: {
+    title: 'Query Todo Items'
+  },
+}
+```
+
+In this example we'll aggregate on all completed TodoItems
+
+```ts
+const aggregateResponse = await this.service.aggregate({ completed: { is: true } }, {
+    count: ['id'],
+    min: ['title'],
+    max: ['title']
+});
+```
+
 ## Creating
 
 ### Create One

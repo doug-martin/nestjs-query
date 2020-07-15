@@ -1,0 +1,624 @@
+---
+title: Aggregations
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+When aggregations are enabled `nestjs-query` will expose a new query that enables using the following common aggregations `count`, `avg`, `sum`, `min`, and `max`.
+
+
+:::note
+Only fields decorated with `@FilterableField` will be exposed in aggregate queries.
+:::
+
+All examples will be based on the following `TodoItem` DTO. All fields except `age`, because it is not decorated with `@FilterableField`, will be exposed in aggregate queries.
+
+```ts  title="todo-item/dto/todo-item.dto.ts"
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+
+  @Field()
+  age!: number;
+
+  @FilterableField()
+  priority!: number;
+}
+
+```
+
+### Enabling Aggregate Queries
+
+To enable aggregate queries you can set the `enableAggregate` option in your resolver
+
+```ts title="todo-item/todo-item.module.ts" {19}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemInputDTO } from './dto/todo-item-input.dto';
+import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [
+        {
+          DTOClass: TodoItemDTO,
+          EntityClass: TodoItemEntity,
+          CreateDTOClass: TodoItemInputDTO,
+          UpdateDTOClass: TodoItemUpdateDTO,
+          enableAggregate: true
+        },
+      ],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+All aggregate queries use the following naming convention `${objectName}Aggregate`.
+
+Below is a fragment from the generated schema for `TodoItem`
+
+:::info
+`nestjs-query` will only expose number fields for `avg` and `sum`.
+:::
+
+```graphql {10}
+type Query {
+  todoItem(id: ID!): TodoItem
+  todoItems(
+    paging: CursorPaging = { first: 10 }
+
+    filter: TodoItemFilter = {}
+
+    sorting: [TodoItemSort!] = []
+  ): TodoItemConnection!
+  todoItemAggregate(filter: TodoItemAggregateFilter): TodoItemAggregateResponse!
+}
+
+input TodoItemAggregateFilter {
+  and: [TodoItemAggregateFilter!]
+  or: [TodoItemAggregateFilter!]
+  id: IDFilterComparison
+  title: StringFieldComparison
+  description: StringFieldComparison
+  completed: BooleanFieldComparison
+  created: DateFieldComparison
+  updated: DateFieldComparison
+  priority: NumberFieldComparison
+}
+
+type TodoItemAggregateResponse {
+  count: TodoItemCountAggregate
+  sum: TodoItemSumAggregate
+  avg: TodoItemAvgAggregate
+  min: TodoItemMinAggregate
+  max: TodoItemMaxAggregate
+}
+
+type TodoItemAvgAggregate {
+  id: Float
+  priority: Float
+}
+
+type TodoItemCountAggregate {
+  id: Int
+  title: Int
+  description: Int
+  completed: Int
+  created: Int
+  updated: Int
+  priority: Int
+}
+
+type TodoItemMaxAggregate {
+  id: ID
+  title: String
+  description: String
+  created: DateTime
+  updated: DateTime
+  priority: Float
+}
+
+type TodoItemMinAggregate {
+  id: ID
+  title: String
+  description: String
+  created: DateTime
+  updated: DateTime
+  priority: Float
+}
+
+type TodoItemSumAggregate {
+  id: Float
+  priority: Float
+}
+
+```
+
+
+
+## Examples
+### Basic
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItemAggregate {
+    count {
+      id
+    }
+    sum {
+      id
+    }
+    avg {
+      id
+    }
+    min {
+      id
+      title
+      created
+    }
+    max {
+      id
+      title
+      created
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItemAggregate": {
+      "count": {
+        "id": 5
+      },
+      "sum": {
+        "id": 15
+      },
+      "avg": {
+        "id": 3
+      },
+      "min": {
+        "id": "1",
+        "title": "Add Todo Item Resolver",
+        "created": "2020-07-13T01:12:29.773Z"
+      },
+      "max": {
+        "id": "5",
+        "title": "How to create item With Sub Tasks",
+        "created": "2020-07-15T07:12:29.773Z"
+      }
+    }
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+### With Filter
+
+You can also provide a filter to only aggregate on a subset of data.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItemAggregate(filter: { completed: { is: false } }) {
+    count {
+      id
+    }
+    min {
+      id
+      title
+      created
+    }
+    max {
+      id
+      title
+      created
+    }
+  }
+}
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItemAggregate": {
+      "count": {
+        "id": 4
+      },
+      "min": {
+        "id": "2",
+        "title": "Add Todo Item Resolver",
+        "created": "2020-07-15T07:12:29.773Z"
+      },
+      "max": {
+        "id": "5",
+        "title": "How to create item With Sub Tasks",
+        "created": "2020-07-15T07:12:29.773Z"
+      }
+    }
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+When using the `count` aggregate only non-null fields will be counted.
+
+For example assume description is null for all todo items you will get `0` back.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItemAggregate(filter: { completed: { is: false } }) {
+    count {
+      id
+      title
+      description
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response">
+
+ ```json
+{
+  "data": {
+    "todoItemAggregate": {
+      "count": {
+        "id": 4,
+        "title": 4,
+        "description": 0
+      }
+    }
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+## Aggregating Relations
+
+When using the `enableAggregate` option any defined `many` relations will also expose a aggregate query `{relationName}Aggregate`
+
+Building on the previous example assume `TodoItem` has a `subTasks` connection.
+
+The following schema fragment will be created
+
+```graphql {17-19}
+type TodoItem {
+  id: ID!
+  title: String!
+  description: String
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  age: Float!
+  priority: Float!
+  subTasks(
+    paging: CursorPaging = { first: 10 }
+
+    filter: SubTaskFilter = {}
+
+    sorting: [SubTaskSort!] = []
+  ): TodoItemSubTasksConnection!
+  subTasksAggregate(
+    filter: SubTaskAggregateFilter
+  ): TodoItemSubTasksAggregateResponse!
+}
+
+type TodoItemSubTasksAggregateResponse {
+  count: TodoItemSubTasksCountAggregate
+  sum: TodoItemSubTasksSumAggregate
+  avg: TodoItemSubTasksAvgAggregate
+  min: TodoItemSubTasksMinAggregate
+  max: TodoItemSubTasksMaxAggregate
+}
+
+type TodoItemSubTasksAvgAggregate {
+  id: Float
+}
+
+type TodoItemSubTasksCountAggregate {
+  id: Int
+  title: Int
+  description: Int
+  completed: Int
+  created: Int
+  updated: Int
+  todoItemId: Int
+}
+
+type TodoItemSubTasksMaxAggregate {
+  id: ID
+  title: String
+  description: String
+  created: DateTime
+  updated: DateTime
+  todoItemId: String
+}
+
+type TodoItemSubTasksMinAggregate {
+  id: ID
+  title: String
+  description: String
+  created: DateTime
+  updated: DateTime
+  todoItemId: String
+}
+
+type TodoItemSubTasksSumAggregate {
+  id: Float
+}
+```
+
+## Examples
+
+### Basic
+
+In this example we'll aggregate on all related `subTasks`.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItem(id: 5) {
+    subTasksAggregate {
+      count {
+        id
+      }
+      sum {
+        id
+      }
+      avg {
+        id
+      }
+      min {
+        id
+        title
+      }
+      max {
+        id
+        title
+      }
+    }
+  }
+}
+
+```
+
+</TabItem>
+
+<TabItem value="response">
+
+ ```json
+{
+  "data": {
+    "todoItem": {
+      "subTasksAggregate": {
+        "count": {
+          "id": 3
+        },
+        "sum": {
+          "id": 42
+        },
+        "avg": {
+          "id": 14
+        },
+        "min": {
+          "id": "13",
+          "title": "How to create item With Sub Tasks - Sub Task 1"
+        },
+        "max": {
+          "id": "15",
+          "title": "How to create item With Sub Tasks - Sub Task 3"
+        }
+      }
+    }
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+### With Filter
+
+This example will aggregate all related `subTasks` that are not completed.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItem(id: 5) {
+    subTasksAggregate(filter: { completed: { is: false } }) {
+      count {
+        id
+      }
+      min {
+        id
+        title
+      }
+      max {
+        id
+        title
+      }
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response">
+
+ ```json
+{
+  "data": {
+    "todoItem": {
+      "subTasksAggregate": {
+        "count": {
+          "id": 2
+        },
+        "min": {
+          "id": "14",
+          "title": "How to create item With Sub Tasks - Sub Task 2"
+        },
+        "max": {
+          "id": "15",
+          "title": "How to create item With Sub Tasks - Sub Task 3"
+        }
+      }
+    }
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+## Advanced
+
+### Enabling Aggregates Only For Root
+
+When using the `enableAggregate` option it will enable aggregates on the root type as well as all relations. If you only want to expose aggregate functionality on the root type you can specify the `aggregate` option.
+
+```ts {19}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemInputDTO } from './dto/todo-item-input.dto';
+import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [
+        {
+          DTOClass: TodoItemDTO,
+          EntityClass: TodoItemEntity,
+          CreateDTOClass: TodoItemInputDTO,
+          UpdateDTOClass: TodoItemUpdateDTO,
+          aggregate: { enabled: true }
+        },
+      ],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+### Disable Aggregate for Single Relation
+
+You can also selectively disable aggregates on an individual relation by specifying the enableAggregate option when defining the relation.
+
+```ts {7}
+import { FilterableField, FilterableConnection } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+import { AuthGuard } from '../../auth.guard';
+import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
+
+@ObjectType('TodoItem')
+@FilterableConnection('subTasks', () => SubTaskDTO, { enableAggregate: false })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+
+  @Field()
+  age!: number;
+
+  @FilterableField()
+  priority!: number;
+}
+
+```

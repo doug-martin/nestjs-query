@@ -154,7 +154,14 @@ export class UserEntity extends Model<UserEntity> {
 To properly translate the `UserDTO` into the `UserEntity` and back you can extend an `Assembler` that the `QueryService` will use.
 
 ```ts title="user.assembler.ts"
-import { AbstractAssembler, Assembler, Query, transformQuery } from '@nestjs-query/core';
+import {
+  AbstractAssembler,
+  Assembler,
+  Query,
+  transformQuery,
+  transformAggregateQuery,
+  transformAggregateResponse
+} from '@nestjs-query/core';
 import { UserDTO } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 
@@ -182,6 +189,22 @@ export class UserAssembler extends AbstractAssembler<UserDTO, UserEntity> {
     entity.first = dto.firstName;
     entity.last = dto.lastName;
     return entity;
+  }
+
+  convertAggregateQuery(aggregate: AggregateQuery<TestDTO>): AggregateQuery<TestEntity> {
+     return transformAggregateQuery(aggregate, {
+       firstName: 'first',
+       lastName: 'last',
+       emailAddress: 'email',
+    });
+  }
+
+  convertAggregateResponse(aggregate: AggregateResponse<TestEntity>): AggregateResponse<TestDTO> {
+    return transformAggregateResponse(aggregate, {
+      first: 'firstName',
+      last: 'lastName',
+      email: 'emailAddress'
+    });
   }
 }
 
@@ -256,6 +279,34 @@ convertToEntity(dto: UserDTO): UserEntity {
   entity.first = dto.firstName;
   entity.last = dto.lastName;
   return entity;
+}
+```
+
+### Converting Aggregate Query
+
+The `convertAggregateQuery` is used to convert an `AggregateQuery`. This examples uses the `transformAggregateQuery` helper to map aggregate query fields.
+
+```ts
+convertAggregateQuery(aggregate: AggregateQuery<TestDTO>): AggregateQuery<TestEntity> {
+   return transformAggregateQuery(aggregate, {
+     firstName: 'first',
+     lastName: 'last',
+     emailAddress: 'email',
+  });
+}
+```
+
+### Converting Aggregate Response
+
+The `convertAggregateResponse` is used to convert an `AggregateResponse`. This examples uses the `transformAggregateResponse` helper to map aggregate response fields.
+
+```ts
+convertAggregateResponse(aggregate: AggregateResponse<TestEntity>): AggregateResponse<TestDTO> {
+  return transformAggregateResponse(aggregate, {
+    first: 'firstName',
+    last: 'lastName',
+    email: 'emailAddress'
+  });
 }
 ```
 
