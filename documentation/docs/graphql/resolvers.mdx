@@ -125,6 +125,10 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
 
 * `enableTotalCount?` - When using `CURSOR` based paging set to true to expose a `totalCount` field on all connection from this resolver.
 
+* `enableTotalCount?` - When using `CURSOR` based paging set to true to expose a `totalCount` field on all connection from this resolver.
+
+* `enableAggregate?` - When set to true an aggregate query will be enabled on the type and all relations (unless the explicitly disable it). See [Aggregation](./aggregations.mdx)
+
 * `create` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
     * `CreateDTOClass` - The input DTO to use for create mutations.
     * `CreateOneInput` - The `InputType` to use for create one mutations.
@@ -149,7 +153,9 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
     * `DeleteOneInput` - The `InputType` to use for delete one mutations.
     * `DeleteManyInput` - The `InputType` to use for delete many mutations.
 
-* `relations` - See the [relations docs](./relations).
+* `aggregate` - In addition to [`ResolverOptions`](#resolveroptions) you can also specify the following
+    * `enabled` - Set to true to enable aggregations. If this is used in place of the root `enableAggregate` option relations will not have aggregate queries exposed.
+
 
 #### `ResolverOptions`
 
