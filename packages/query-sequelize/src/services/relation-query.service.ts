@@ -105,14 +105,12 @@ export abstract class RelationQueryService<Entity extends Model> {
     const relationQueryBuilder = this.getRelationQueryBuilder<Model>(relationEntity);
     const results = ((await this.ensureIsEntity(dto).$get(
       relationName as keyof Entity,
-      relationQueryBuilder.aggregateOptions(
+      relationQueryBuilder.relationAggregateOptions(
         assembler.convertQuery({ filter }),
         assembler.convertAggregateQuery(aggregate),
       ),
-    )) as unknown) as Model[];
-    const [agg] = results.map((r) =>
-      AggregateBuilder.convertToAggregateResponse(r.get({ plain: true }) as Record<string, unknown>),
-    );
+    )) as unknown) as Record<string, unknown>[];
+    const [agg] = results.map((r) => AggregateBuilder.convertToAggregateResponse(r));
     return assembler.convertAggregateResponse(agg);
   }
 
@@ -303,19 +301,17 @@ export abstract class RelationQueryService<Entity extends Model> {
     const relationEntity = this.getRelationEntity(relationName);
     const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
     const relationQueryBuilder = this.getRelationQueryBuilder(relationEntity);
-    const findOptions = relationQueryBuilder.aggregateOptions(
+    const findOptions = relationQueryBuilder.relationAggregateOptions(
       assembler.convertQuery({ filter }),
       assembler.convertAggregateQuery(aggregate),
     );
     return entities.reduce(async (mapPromise, e) => {
       const map = await mapPromise;
-      const results = ((await this.ensureIsEntity(e).$get(
-        relationName as keyof Entity,
-        findOptions,
-      )) as unknown) as Model[];
-      const [agg] = results.map((r) =>
-        AggregateBuilder.convertToAggregateResponse(r.get({ plain: true }) as Record<string, unknown>),
-      );
+      const results = (await this.ensureIsEntity(e).$get(relationName as keyof Entity, findOptions)) as Record<
+        string,
+        unknown
+      >[];
+      const [agg] = results.map((r) => AggregateBuilder.convertToAggregateResponse(r));
       map.set(e, assembler.convertAggregateResponse(agg));
       return map;
     }, Promise.resolve(new Map<Entity, AggregateResponse<Relation>>()));

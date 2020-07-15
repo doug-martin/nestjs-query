@@ -64,7 +64,15 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
    * @param query - the query to apply.
    */
   aggregateOptions(query: Query<Entity>, aggregate: AggregateQuery<Entity>): FindOptions {
-    let opts: FindOptions = {};
+    let opts: FindOptions = { raw: true };
+    opts = this.applyAggregate(opts, aggregate);
+    opts = this.applyFilter(opts, query.filter);
+    return opts;
+  }
+
+  relationAggregateOptions(query: Query<Entity>, aggregate: AggregateQuery<Entity>): FindOptions {
+    // joinTableAttributes is used by many-to-many relations and must be empty.
+    let opts: FindOptions = { joinTableAttributes: [], raw: true } as FindOptions;
     opts = this.applyAggregate(opts, aggregate);
     opts = this.applyFilter(opts, query.filter);
     return opts;
