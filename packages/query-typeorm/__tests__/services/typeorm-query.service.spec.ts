@@ -139,13 +139,13 @@ describe('TypeOrmQueryService', (): void => {
           testEntityPk: 10,
         },
         max: {
-          dateType: '2020-02-10 00:00:00.000',
+          dateType: expect.stringMatching('2020-02-10'),
           numberType: 10,
           stringType: 'foo9',
           testEntityPk: 'test-entity-9',
         },
         min: {
-          dateType: '2020-02-01 06:00:00.000',
+          dateType: expect.stringMatching('2020-02-01'),
           numberType: 1,
           stringType: 'foo1',
           testEntityPk: 'test-entity-1',
@@ -176,13 +176,13 @@ describe('TypeOrmQueryService', (): void => {
           testEntityPk: 3,
         },
         max: {
-          dateType: '2020-02-03 06:00:00.000',
+          dateType: expect.stringMatching('2020-02-03'),
           numberType: 3,
           stringType: 'foo3',
           testEntityPk: 'test-entity-3',
         },
         min: {
-          dateType: '2020-02-01 06:00:00.000',
+          dateType: expect.stringMatching('2020-02-01'),
           numberType: 1,
           stringType: 'foo1',
           testEntityPk: 'test-entity-1',
