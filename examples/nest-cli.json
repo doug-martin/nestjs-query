@@ -11,6 +11,15 @@
         "tsConfigPath": "./tsconfig.build.json"
       }
     },
+    "complexity": {
+      "type": "application",
+      "root": "complexity",
+      "entryFile": "main",
+      "sourceRoot": "complexity/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
     "federation:gateway": {
       "type": "application",
       "root": "federation/gateway",

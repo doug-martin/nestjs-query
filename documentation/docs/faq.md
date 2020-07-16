@@ -57,3 +57,15 @@ To read more and see examples read the following docs.
 
 * [`@FilterableRelation`](./graphql/relations.mdx#filterablerelation-decorator)
 * [`@FilterableConnection`](./graphql/relations.mdx#filterableconnection-decorator)
+
+
+## Does nestjs-query support specifying complexity.
+
+Yes! 
+
+The `@FilterableField` decorator accepts the same arguments as the `@Field` decorator from `@nestjs/graphql`
+
+The `@Relation` `@FilterableRelation`, `@Connection` and `@FilterableConnection` decorators also accept a complexity option.
+
+To read more about complexity [see the nestjs docs](https://docs.nestjs.com/graphql/complexity)
+
