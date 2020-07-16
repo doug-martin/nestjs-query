@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/doug-martin/nestjs-query/compare/v0.16.2...v0.17.0) (2020-07-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency graphql-tools to v6.0.13 ([802bb5b](https://github.com/doug-martin/nestjs-query/commit/802bb5bae9a19ba87366a363aab70480f2c3d213))
+
+
+### Features
+
+* **aggregations:** Add aggregation support to sequelize ([c37b7ae](https://github.com/doug-martin/nestjs-query/commit/c37b7aeb00fc60e7dc55893fe712dcad454edddb))
+* **aggregations:** Add aggregations interfaces ([d67e733](https://github.com/doug-martin/nestjs-query/commit/d67e73393d2cb8d2f0dc131a8455bb798a270e14))
+* **aggregations:** Add aggregations to graphql ([af075d2](https://github.com/doug-martin/nestjs-query/commit/af075d2e93b6abbbfbe32afcc917350f803fadaa))
+* **aggregations,relations:** Add relation aggregation graphql enpoints ([56bb7e0](https://github.com/doug-martin/nestjs-query/commit/56bb7e0be3298ebe76159327ce54229818a6067b))
+* **aggregations,relations,core:** Add relation aggregation to core ([a489588](https://github.com/doug-martin/nestjs-query/commit/a4895881a1e9ff76811b264cc58eeea116b3edfd))
+* **aggregations,sequelize:** Add relation aggregation to sequelize ([93e7c1b](https://github.com/doug-martin/nestjs-query/commit/93e7c1ba3d03b222b08f39bbbfaf4365ce50204e))
+* **aggregations,sequelize:** Fix aggregation on many-to-many relations ([db6ecb2](https://github.com/doug-martin/nestjs-query/commit/db6ecb2527a96ba232c8af911e4eb2f6ab9f8a65))
+* **aggregations,typeorm:** Add relation aggregation to typeorm ([2bf35a9](https://github.com/doug-martin/nestjs-query/commit/2bf35a92ce80b1f3026fd87cb62cad17eb6eff03))
+* **aggretations:** Add aggregations support to typeorm ([7233c23](https://github.com/doug-martin/nestjs-query/commit/7233c2397d0ac332e5209ab87ae62f5f555609d6))
+
+
+
+
+
 ## [0.16.2](https://github.com/doug-martin/nestjs-query/compare/v0.16.1...v0.16.2) (2020-07-09)
 
 

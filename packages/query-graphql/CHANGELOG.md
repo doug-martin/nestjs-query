@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/doug-martin/nestjs-query/compare/v0.16.2...v0.17.0) (2020-07-16)
+
+
+### Features
+
+* **aggregations:** Add aggregations to graphql ([af075d2](https://github.com/doug-martin/nestjs-query/commit/af075d2e93b6abbbfbe32afcc917350f803fadaa))
+* **aggregations,relations:** Add relation aggregation graphql enpoints ([56bb7e0](https://github.com/doug-martin/nestjs-query/commit/56bb7e0be3298ebe76159327ce54229818a6067b))
+
+
+
+
+
 ## [0.16.2](https://github.com/doug-martin/nestjs-query/compare/v0.16.1...v0.16.2) (2020-07-09)
 
 

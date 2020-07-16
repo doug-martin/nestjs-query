@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/doug-martin/nestjs-query/compare/v0.16.2...v0.17.0) (2020-07-16)
+
+
+### Features
+
+* **aggregations:** Add aggregations to graphql ([af075d2](https://github.com/doug-martin/nestjs-query/commit/af075d2e93b6abbbfbe32afcc917350f803fadaa))
+* **aggregations,typeorm:** Add relation aggregation to typeorm ([2bf35a9](https://github.com/doug-martin/nestjs-query/commit/2bf35a92ce80b1f3026fd87cb62cad17eb6eff03))
+* **aggretations:** Add aggregations support to typeorm ([7233c23](https://github.com/doug-martin/nestjs-query/commit/7233c2397d0ac332e5209ab87ae62f5f555609d6))
+
+
+
+
+
 ## [0.16.2](https://github.com/doug-martin/nestjs-query/compare/v0.16.1...v0.16.2) (2020-07-09)
 
 **Note:** Version bump only for package @nestjs-query/query-typeorm
