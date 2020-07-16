@@ -31,7 +31,12 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadOneMixin extends Base {
-    @ResolverField(baseNameLower, () => relationDTO, { nullable: relation.nullable }, commonResolverOpts)
+    @ResolverField(
+      baseNameLower,
+      () => relationDTO,
+      { nullable: relation.nullable, complexity: relation.complexity },
+      commonResolverOpts,
+    )
     [`find${baseName}`](@Parent() dto: DTO, @Context() context: ExecutionContext): Promise<Relation | undefined> {
       return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load(dto);
     }
@@ -63,7 +68,12 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   const CT = ConnectionType(relationDTO, RelationQA, { ...relation, connectionName });
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadManyMixin extends Base {
-    @ResolverField(pluralBaseNameLower, () => CT.resolveType, { nullable: relation.nullable }, commonResolverOpts)
+    @ResolverField(
+      pluralBaseNameLower,
+      () => CT.resolveType,
+      { nullable: relation.nullable, complexity: relation.complexity },
+      commonResolverOpts,
+    )
     async [`query${pluralBaseName}`](
       @Parent() dto: DTO,
       @Args() q: RelationQA,

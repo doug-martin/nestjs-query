@@ -27,7 +27,12 @@ const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: Resolve
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadOneMixin extends Base {
-    @ResolverField(baseNameLower, () => relationDTO, { nullable: reference.nullable }, commonResolverOpts)
+    @ResolverField(
+      baseNameLower,
+      () => relationDTO,
+      { nullable: reference.nullable, complexity: reference.complexity },
+      commonResolverOpts,
+    )
     [`${baseNameLower}Reference`](@Parent() dto: DTO): RepresentationType {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       return { __typename: baseName, ...pluckFields<DTO, Relation>(dto, reference.keys) };

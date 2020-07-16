@@ -1,4 +1,5 @@
 import { Class } from '@nestjs-query/core';
+import { Complexity } from '@nestjs/graphql';
 import { DTONamesOpts } from '../../common';
 import { ResolverMethodOpts } from '../../decorators';
 import { QueryArgsTypeOpts } from '../../types';
@@ -23,6 +24,8 @@ export interface ResolverRelationReference<DTO, Reference> extends DTONamesOpts,
    * Set to true if the relation is nullable
    */
   nullable?: boolean;
+
+  complexity?: Complexity;
 }
 
 export type ResolverRelation<Relation> = {
@@ -63,6 +66,8 @@ export type ResolverRelation<Relation> = {
    * This will only work with relations defined through an ORM (typeorm or sequelize).
    */
   allowFiltering?: boolean;
+
+  complexity?: Complexity;
 } & DTONamesOpts &
   ResolverMethodOpts &
   QueryArgsTypeOpts<Relation> &
