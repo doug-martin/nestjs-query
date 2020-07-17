@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.2](https://github.com/doug-martin/nestjs-query/compare/v0.17.1...v0.17.2) (2020-07-17)
+
+
+### Bug Fixes
+
+* **typeorm:** Ensure record is entity instance when saving ([3cdbbaf](https://github.com/doug-martin/nestjs-query/commit/3cdbbaff11b18bcc5e6fd29fd182e2bd66b14f17)), closes [#380](https://github.com/doug-martin/nestjs-query/issues/380)
+
+
+
+
+
 # [0.17.0](https://github.com/doug-martin/nestjs-query/compare/v0.16.2...v0.17.0) (2020-07-16)
 
 
