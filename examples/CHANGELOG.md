@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.1](https://github.com/doug-martin/nestjs-query/compare/v0.17.0...v0.17.1) (2020-07-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency graphql-tools to v6.0.14 ([acb7e48](https://github.com/doug-martin/nestjs-query/commit/acb7e48a052829d847f8d406123857bf411959d8))
+
+
+### Features
+
+* **complexity:** Add complexity support for relations ([aa85325](https://github.com/doug-martin/nestjs-query/commit/aa853257e693cc656d6ef00d08d547f1988f16c5))
+
+
+
+
+
 # [0.17.0](https://github.com/doug-martin/nestjs-query/compare/v0.16.2...v0.17.0) (2020-07-16)
 
 
