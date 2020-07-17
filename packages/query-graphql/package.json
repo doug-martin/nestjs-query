@@ -70,6 +70,6 @@
     "graphql-relay": "0.6.0",
     "graphql-subscriptions": "1.1.0",
     "ts-mockito": "2.6.1",
-    "typescript": "3.9.6"
+    "typescript": "3.9.7"
   }
 }
