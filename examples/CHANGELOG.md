@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.3](https://github.com/doug-martin/nestjs-query/compare/v0.17.2...v0.17.3) (2020-07-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency apollo-server-express to v2.16.0 ([0870afe](https://github.com/doug-martin/nestjs-query/commit/0870afe470e90ddeb02da79a3b06bb27b1787c3a))
+
+
+
+
+
 ## [0.17.2](https://github.com/doug-martin/nestjs-query/compare/v0.17.1...v0.17.2) (2020-07-17)
 
 **Note:** Version bump only for package nestjs-query-examples

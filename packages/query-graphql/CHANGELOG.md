@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.3](https://github.com/doug-martin/nestjs-query/compare/v0.17.2...v0.17.3) (2020-07-17)
+
+
+### Bug Fixes
+
+* **graphql:** Fix filters to transform to expected type [#317](https://github.com/doug-martin/nestjs-query/issues/317) ([0d28b0b](https://github.com/doug-martin/nestjs-query/commit/0d28b0b968468f821e9b6cf7d53e6d95af22e710))
+
+
+
+
+
 ## [0.17.2](https://github.com/doug-martin/nestjs-query/compare/v0.17.1...v0.17.2) (2020-07-17)
 
 **Note:** Version bump only for package @nestjs-query/query-graphql
