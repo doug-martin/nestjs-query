@@ -123,8 +123,8 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param record - The entity to create.
    */
   async createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
-    await this.ensureEntityDoesNotExist(record);
-    return this.repo.save(record);
+    const entity = await this.ensureIsEntityAndDoesNotExist(record);
+    return this.repo.save(entity);
   }
 
   /**
@@ -140,8 +140,8 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param records - The entities to create.
    */
   async createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
-    await Promise.all(records.map((r) => this.ensureEntityDoesNotExist(r)));
-    return this.repo.save(records);
+    const entities = await Promise.all(records.map((r) => this.ensureIsEntityAndDoesNotExist(r)));
+    return this.repo.save(entities);
   }
 
   /**
@@ -260,22 +260,30 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
     return { updatedCount: result.affected || 0 };
   }
 
-  async ensureEntityDoesNotExist(e: DeepPartial<Entity>): Promise<void> {
-    if (this.repo.hasId((e as unknown) as Entity)) {
-      const found = await this.repo.findOne(this.repo.getId((e as unknown) as Entity));
+  private async ensureIsEntityAndDoesNotExist(e: DeepPartial<Entity>): Promise<Entity> {
+    if (!(e instanceof this.EntityClass)) {
+      return this.ensureEntityDoesNotExist(this.repo.create(e));
+    }
+    return this.ensureEntityDoesNotExist(e);
+  }
+
+  private async ensureEntityDoesNotExist(e: Entity): Promise<Entity> {
+    if (this.repo.hasId(e)) {
+      const found = await this.repo.findOne(this.repo.getId(e));
       if (found) {
         throw new Error('Entity already exists');
       }
     }
+    return e;
   }
 
-  ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
+  private ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
     if (this.repo.hasId((e as unknown) as Entity)) {
       throw new Error('Id cannot be specified when updating');
     }
   }
 
-  ensureSoftDeleteEnabled(): void {
+  private ensureSoftDeleteEnabled(): void {
     if (!this.useSoftDelete) {
       throw new MethodNotAllowedException(`Restore not allowed for non soft deleted entity ${this.EntityClass.name}.`);
     }
