@@ -34,7 +34,7 @@
     "sqlite3": "5.0.0",
     "ts-mockito": "2.6.1",
     "typeorm": "0.2.25",
-    "typescript": "3.9.6"
+    "typescript": "3.9.7"
   },
   "repository": {
     "type": "git",
