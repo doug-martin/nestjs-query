@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { applyFilter, Class, DeepPartial, DeleteManyResponse, UpdateManyResponse } from '@nestjs-query/core';
+import { Class, DeepPartial, DeleteManyResponse, UpdateManyResponse } from '@nestjs-query/core';
 import { ArgsType, InputType, Resolver, Args, PartialType } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { DTONames, getDTONames } from '../common';
@@ -14,7 +14,7 @@ import {
 } from '../types';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
 import { ResolverMutation, ResolverSubscription } from '../decorators';
-import { transformAndValidate } from './helpers';
+import { createSubscriptionFilter, transformAndValidate } from './helpers';
 
 export type UpdatedEvent<DTO> = { [eventName: string]: DTO };
 export interface UpdateResolverOpts<DTO, U extends DeepPartial<DTO> = DeepPartial<DTO>>
@@ -113,15 +113,7 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
   @ArgsType()
   class UOSA extends SubscriptionArgsType(SI) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateOneSubscriptionFilter = (payload: any, variables: UOSA): boolean => {
-    if (variables.input?.filter) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const dto = payload[updateOneEvent] as DTO;
-      return applyFilter(dto, variables.input.filter);
-    }
-    return true;
-  };
+  const updateOneSubscriptionFilter = createSubscriptionFilter(SI, updateOneEvent);
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateResolverBase extends BaseClass {
