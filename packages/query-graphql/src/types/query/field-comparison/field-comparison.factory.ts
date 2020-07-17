@@ -12,6 +12,7 @@ import {
   GraphQLTimestamp,
   GraphQLISODateTime,
 } from '@nestjs/graphql';
+import { Type } from 'class-transformer';
 import { getMetadataStorage } from '../../../metadata';
 import { IsUndefined } from '../../validators';
 import { getOrCreateFloatFieldComparison } from './float-field-comparison.type';
@@ -46,24 +47,24 @@ const knownTypes: Set<ReturnTypeFuncValue> = new Set([
 ]);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isNamed = (Type: any): Type is { name: string } => {
+const isNamed = (SomeType: any): SomeType is { name: string } => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  return 'name' in Type && typeof Type.name === 'string';
+  return 'name' in SomeType && typeof SomeType.name === 'string';
 };
 
 /** @internal */
-const getTypeName = <T>(Type: ReturnTypeFuncValue): string => {
-  if (knownTypes.has(Type) || isNamed(Type)) {
-    const typeName = (Type as { name: string }).name;
+const getTypeName = <T>(SomeType: ReturnTypeFuncValue): string => {
+  if (knownTypes.has(SomeType) || isNamed(SomeType)) {
+    const typeName = (SomeType as { name: string }).name;
     return upperCaseFirst(typeName);
   }
-  if (typeof Type === 'object') {
-    const enumType = getMetadataStorage().getGraphqlEnumMetadata(Type);
+  if (typeof SomeType === 'object') {
+    const enumType = getMetadataStorage().getGraphqlEnumMetadata(SomeType);
     if (enumType) {
       return upperCaseFirst(enumType.name);
     }
   }
-  throw new Error(`Unable to create filter comparison for ${JSON.stringify(Type)}.`);
+  throw new Error(`Unable to create filter comparison for ${JSON.stringify(SomeType)}.`);
 };
 
 /** @internal */
@@ -92,50 +93,62 @@ export function createFilterComparisonType<T>(
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     eq?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     neq?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     gt?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     gte?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     lt?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     lte?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     like?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     notLike?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     iLike?: T;
 
     @Field(() => fieldType, { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     notILike?: T;
 
     @Field(() => [fieldType], { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     in?: T[];
 
     @Field(() => [fieldType], { nullable: true })
     @IsUndefined()
+    @Type(() => TClass)
     notIn?: T[];
   }
 

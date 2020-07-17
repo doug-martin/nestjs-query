@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 // eslint-disable-next-line max-classes-per-file
-import { Class, DeepPartial, applyFilter } from '@nestjs-query/core';
+import { Class, DeepPartial } from '@nestjs-query/core';
 import { Args, ArgsType, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { DTONames, getDTONames } from '../common';
@@ -16,7 +16,7 @@ import {
   SubscriptionArgsType,
   SubscriptionFilterInputType,
 } from '../types';
-import { transformAndValidate } from './helpers';
+import { createSubscriptionFilter, transformAndValidate } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
 
 export type CreatedEvent<DTO> = { [eventName: string]: DTO };
@@ -115,14 +115,7 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
   class SA extends SubscriptionArgsType(SI) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const subscriptionFilter = (payload: any, variables: SA): boolean => {
-    if (variables.input?.filter) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const dto = payload[createdEvent] as DTO;
-      return applyFilter(dto, variables.input.filter);
-    }
-    return true;
-  };
+  const subscriptionFilter = createSubscriptionFilter(SI, createdEvent);
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class CreateResolverBase extends BaseClass {

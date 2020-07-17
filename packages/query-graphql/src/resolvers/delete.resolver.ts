@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { applyFilter, Class, DeleteManyResponse } from '@nestjs-query/core';
+import { Class, DeleteManyResponse } from '@nestjs-query/core';
 import omit from 'lodash.omit';
 import { ObjectType, ArgsType, Resolver, Args, PartialType, InputType } from '@nestjs/graphql';
 import { DTONames, getDTONames } from '../common';
@@ -14,7 +14,7 @@ import {
   SubscriptionFilterInputType,
 } from '../types';
 import { ResolverMutation, ResolverSubscription } from '../decorators';
-import { transformAndValidate } from './helpers';
+import { createSubscriptionFilter, transformAndValidate } from './helpers';
 
 export type DeletedEvent<DTO> = { [eventName: string]: DTO };
 export interface DeleteResolverOpts<DTO> extends SubscriptionResolverOpts {
@@ -85,14 +85,7 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   class DOSA extends SubscriptionArgsType(SI) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const deleteOneSubscriptionFilter = (payload: any, variables: DOSA): boolean => {
-    if (variables.input?.filter) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const dto = payload[deletedOneEvent] as DTO;
-      return applyFilter(dto, variables.input.filter);
-    }
-    return true;
-  };
+  const deleteOneSubscriptionFilter = createSubscriptionFilter(SI, deletedOneEvent);
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class DeleteResolverBase extends BaseClass {
