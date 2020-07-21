@@ -212,8 +212,8 @@ export type FilterFieldComparison<FieldType> = FieldType extends string | String
   : FieldType extends number | Date | RegExp | bigint | BuiltInTypes[] | symbol
   ? CommonFieldComparisonType<FieldType>
   : FieldType extends Array<infer U>
-  ? CommonFieldComparisonType<U> | Filter<U>
-  : CommonFieldComparisonType<FieldType> | Filter<FieldType>;
+  ? CommonFieldComparisonType<U> & Filter<U>
+  : CommonFieldComparisonType<FieldType> & Filter<FieldType>;
 
 /**
  * Type for all comparison operators for a field type.
