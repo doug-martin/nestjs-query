@@ -22,6 +22,7 @@ export const createSubscriptionFilter = <DTO, Input extends SubscriptionFilterIn
   payloadKey: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): ((payload: any, variables: SubscriptionArgsType<Input>, context: any) => boolean | Promise<boolean>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return async (payload: any, variables: SubscriptionArgsType<Input>): Promise<boolean> => {
     const { input } = variables;
     if (input) {
