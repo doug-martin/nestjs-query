@@ -1,9 +1,40 @@
-import { FilterableField, FilterableConnection } from '@nestjs-query/query-graphql';
+/* eslint-disable no-param-reassign */
+import {
+  FilterableField,
+  FilterableConnection,
+  BeforeCreateOne,
+  CreateOneInputType,
+  BeforeCreateMany,
+  CreateManyInputType,
+  BeforeUpdateOne,
+  UpdateOneInputType,
+  BeforeUpdateMany,
+  UpdateManyInputType,
+} from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
+import { GqlContext } from '../../auth.guard';
+import { getUserName } from '../../helpers';
 
 @ObjectType('Tag')
 @FilterableConnection('todoItems', () => TodoItemDTO)
+@BeforeCreateOne((input: CreateOneInputType<TagDTO>, context: GqlContext) => {
+  input.input.createdBy = getUserName(context);
+  return input;
+})
+@BeforeCreateMany((input: CreateManyInputType<TagDTO>, context: GqlContext) => {
+  const createdBy = getUserName(context);
+  input.input = input.input.map((c) => ({ ...c, createdBy }));
+  return input;
+})
+@BeforeUpdateOne((input: UpdateOneInputType<TagDTO>, context: GqlContext) => {
+  input.update.updatedBy = getUserName(context);
+  return input;
+})
+@BeforeUpdateMany((input: UpdateManyInputType<TagDTO, TagDTO>, context: GqlContext) => {
+  input.update.updatedBy = getUserName(context);
+  return input;
+})
 export class TagDTO {
   @FilterableField(() => ID)
   id!: number;
@@ -16,4 +47,10 @@ export class TagDTO {
 
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
 }

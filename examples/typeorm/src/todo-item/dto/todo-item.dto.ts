@@ -31,4 +31,10 @@ export class TodoItemDTO {
 
   @FilterableField()
   priority!: number;
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
 }
