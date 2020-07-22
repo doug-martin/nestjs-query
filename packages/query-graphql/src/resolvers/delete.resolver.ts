@@ -13,7 +13,13 @@ import {
   SubscriptionArgsType,
   SubscriptionFilterInputType,
 } from '../types';
-import { ResolverMutation, ResolverSubscription } from '../decorators';
+import {
+  getDeleteManyHook,
+  getDeleteOneHook,
+  MutationArgs,
+  ResolverMutation,
+  ResolverSubscription,
+} from '../decorators';
 import { createSubscriptionFilter, transformAndValidate } from './helpers';
 
 export type DeletedEvent<DTO> = { [eventName: string]: DTO };
@@ -63,6 +69,8 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   const deletedOneEvent = getDTOEventName(EventType.DELETED_ONE, DTOClass);
   const deletedManyEvent = getDTOEventName(EventType.DELETED_MANY, DTOClass);
   const { DeleteOneInput = DeleteOneInputType(), DeleteManyInput = defaultDeleteManyInput(dtoNames, DTOClass) } = opts;
+  const deleteOneHook = getDeleteOneHook(DTOClass);
+  const deleteManyHook = getDeleteManyHook(DTOClass);
   const DMR = DeleteManyResponseType();
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput');
@@ -90,7 +98,7 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   @Resolver(() => DTOClass, { isAbstract: true })
   class DeleteResolverBase extends BaseClass {
     @ResolverMutation(() => DeleteOneResponse, { name: `deleteOne${baseName}` }, commonResolverOpts, opts.one ?? {})
-    async deleteOne(@Args() input: DO): Promise<Partial<DTO>> {
+    async deleteOne(@MutationArgs(DO, deleteOneHook) input: DO): Promise<Partial<DTO>> {
       const deleteOne = await transformAndValidate(DO, input);
       const deletedResponse = await this.service.deleteOne(deleteOne.input.id);
       if (enableOneSubscriptions) {
@@ -100,7 +108,7 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
     }
 
     @ResolverMutation(() => DMR, { name: `deleteMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
-    async deleteMany(@Args() input: DM): Promise<DeleteManyResponse> {
+    async deleteMany(@MutationArgs(DM, deleteManyHook) input: DM): Promise<DeleteManyResponse> {
       const deleteMany = await transformAndValidate(DM, input);
       const deleteManyResponse = await this.service.deleteMany(deleteMany.input.filter);
       if (enableManySubscriptions) {

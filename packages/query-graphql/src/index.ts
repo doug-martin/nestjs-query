@@ -12,6 +12,18 @@ export {
   ReferenceTypeFunc,
   ReferenceDecoratorOpts,
   InjectPubSub,
+  BeforeCreateOne,
+  CreateOneHook,
+  BeforeCreateMany,
+  CreateManyHook,
+  BeforeUpdateOne,
+  UpdateOneHook,
+  BeforeUpdateMany,
+  UpdateManyHook,
+  BeforeDeleteOne,
+  DeleteOneHook,
+  BeforeDeleteMany,
+  DeleteManyHook,
 } from './decorators';
 export * from './resolvers';
 export * from './federation';

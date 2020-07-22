@@ -7,7 +7,15 @@ import { Class, DeepPartial } from '@nestjs-query/core';
 import { Args, ArgsType, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { DTONames, getDTONames } from '../common';
-import { ResolverMutation, ResolverSubscription } from '../decorators';
+import {
+  ResolverMutation,
+  ResolverSubscription,
+  getCreateOneHook,
+  getCreateManyHook,
+  MutationArgs,
+  CreateOneHook,
+  CreateManyHook,
+} from '../decorators';
 import { EventType, getDTOEventName } from '../subscription';
 import {
   CreateManyInputType,
@@ -16,7 +24,7 @@ import {
   SubscriptionArgsType,
   SubscriptionFilterInputType,
 } from '../types';
-import { createSubscriptionFilter, transformAndValidate } from './helpers';
+import { createSubscriptionFilter } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
 
 export type CreatedEvent<DTO> = { [eventName: string]: DTO };
@@ -71,6 +79,20 @@ const defaultCreateManyInput = <C>(dtoNames: DTONames, InputDTO: Class<C>): Clas
   return CM;
 };
 
+const lookupCreateOneHook = <DTO, C extends DeepPartial<DTO>>(
+  DTOClass: Class<DTO>,
+  CreateDTOClass: Class<C>,
+): CreateOneHook<C> | undefined => {
+  return (getCreateOneHook(CreateDTOClass) ?? getCreateOneHook(DTOClass)) as CreateOneHook<C> | undefined;
+};
+
+const lookupCreateManyHook = <DTO, C extends DeepPartial<DTO>>(
+  DTOClass: Class<DTO>,
+  CreateDTOClass: Class<C>,
+): CreateManyHook<C> | undefined => {
+  return (getCreateManyHook(CreateDTOClass) ?? getCreateManyHook(DTOClass)) as CreateManyHook<C> | undefined;
+};
+
 /**
  * @internal
  * Mixin to add `create` graphql endpoints.
@@ -91,7 +113,8 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
     CreateOneInput = defaultCreateOneInput(dtoNames, CreateDTOClass),
     CreateManyInput = defaultCreateManyInput(dtoNames, CreateDTOClass),
   } = opts;
-
+  const createOneHook = lookupCreateOneHook(DTOClass, CreateDTOClass);
+  const createManyHook = lookupCreateManyHook(DTOClass, CreateDTOClass);
   const commonResolverOpts = omit(
     opts,
     'dtoName',
@@ -120,9 +143,8 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
   @Resolver(() => DTOClass, { isAbstract: true })
   class CreateResolverBase extends BaseClass {
     @ResolverMutation(() => DTOClass, { name: `createOne${baseName}` }, commonResolverOpts, opts.one ?? {})
-    async createOne(@Args() input: CO): Promise<DTO> {
-      const createOne = await transformAndValidate(CO, input);
-      const created = await this.service.createOne(createOne.input.input);
+    async createOne(@MutationArgs(CO, createOneHook) input: CO): Promise<DTO> {
+      const created = await this.service.createOne(input.input.input);
       if (enableOneSubscriptions) {
         await this.publishCreatedEvent(created);
       }
@@ -130,9 +152,8 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
     }
 
     @ResolverMutation(() => [DTOClass], { name: `createMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
-    async createMany(@Args() input: CM): Promise<DTO[]> {
-      const createMany = await transformAndValidate(CM, input);
-      const created = await this.service.createMany(createMany.input.input);
+    async createMany(@MutationArgs(CM, createManyHook) input: CM): Promise<DTO[]> {
+      const created = await this.service.createMany(input.input.input);
       if (enableManySubscriptions) {
         await Promise.all(created.map((c) => this.publishCreatedEvent(c)));
       }
