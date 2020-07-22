@@ -1,4 +1,4 @@
-import { AggregateResponse } from '@nestjs-query/core';
+import { AggregateResponse, getQueryServiceToken, QueryService } from '@nestjs-query/core';
 import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
@@ -16,6 +16,8 @@ import {
   tagAggregateFields,
   todoItemAggregateFields,
 } from './graphql-fragments';
+import { USER_HEADER_NAME } from '../src/constants';
+import { TagEntity } from '../src/tag/tag.entity';
 
 describe('TagResolver (typeorm - e2e)', () => {
   let app: INestApplication;
@@ -401,6 +403,35 @@ describe('TagResolver (typeorm - e2e)', () => {
         });
     });
 
+    it('should call beforeCreateOne hook when creating a tag', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set(USER_HEADER_NAME, 'E2E Test')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            createOneTag(
+              input: {
+                tag: { name: "Before Create One Tag" }
+              }
+            ) {
+              ${tagFields}
+              createdBy
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            createOneTag: {
+              id: '7',
+              name: 'Before Create One Tag',
+              createdBy: 'E2E Test',
+            },
+          },
+        });
+    });
+
     it('should validate a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -448,8 +479,39 @@ describe('TagResolver (typeorm - e2e)', () => {
         .expect(200, {
           data: {
             createManyTags: [
-              { id: '7', name: 'Create Many Tag - 1' },
-              { id: '8', name: 'Create Many Tag - 2' },
+              { id: '8', name: 'Create Many Tag - 1' },
+              { id: '9', name: 'Create Many Tag - 2' },
+            ],
+          },
+        });
+    });
+
+    it('should call beforeCreateMany hook when creating multiple tags', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set(USER_HEADER_NAME, 'E2E Test')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            createManyTags(
+              input: {
+                tags: [
+                  { name: "Before Create Many Tag - 1" },
+                  { name: "Before Create Many Tag - 2" }
+                ]
+              }
+            ) {
+              ${tagFields}
+              createdBy
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            createManyTags: [
+              { id: '10', name: 'Before Create Many Tag - 1', createdBy: 'E2E Test' },
+              { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'E2E Test' },
             ],
           },
         });
@@ -502,6 +564,36 @@ describe('TagResolver (typeorm - e2e)', () => {
             updateOneTag: {
               id: '6',
               name: 'Update Test Tag',
+            },
+          },
+        });
+    });
+
+    it('should call beforeUpdateOne hook when updating a tag', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set(USER_HEADER_NAME, 'E2E Test')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateOneTag(
+              input: {
+                id: "7",
+                update: { name: "Before Update One Test Tag" }
+              }
+            ) {
+              ${tagFields}
+              updatedBy
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            updateOneTag: {
+              id: '7',
+              name: 'Before Update One Test Tag',
+              updatedBy: 'E2E Test',
             },
           },
         });
@@ -565,7 +657,7 @@ describe('TagResolver (typeorm - e2e)', () => {
           query: `mutation {
             updateManyTags(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: ["8", "9"]} },
                 update: { name: "Update Many Tag" }
               }
             ) {
@@ -579,6 +671,49 @@ describe('TagResolver (typeorm - e2e)', () => {
               updatedCount: 2,
             },
           },
+        });
+    });
+
+    it('should call beforeUpdateMany hook when updating multiple tags', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set(USER_HEADER_NAME, 'E2E Test')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateManyTags(
+              input: {
+                filter: {id: { in: ["10", "11"]} },
+                update: { name: "Before Update Many Tag" }
+              }
+            ) {
+              updatedCount
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            updateManyTags: {
+              updatedCount: 2,
+            },
+          },
+        })
+        .then(async () => {
+          const queryService = app.get<QueryService<TagEntity>>(getQueryServiceToken(TagEntity));
+          const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } });
+          expect(
+            todoItems.map((ti) => {
+              return {
+                id: ti.id,
+                name: ti.name,
+                updatedBy: ti.updatedBy,
+              };
+            }),
+          ).toEqual([
+            { id: 10, name: 'Before Update Many Tag', updatedBy: 'E2E Test' },
+            { id: 11, name: 'Before Update Many Tag', updatedBy: 'E2E Test' },
+          ]);
         });
     });
 

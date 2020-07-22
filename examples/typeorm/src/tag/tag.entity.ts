@@ -25,4 +25,10 @@ export class TagEntity {
 
   @ManyToMany((): ObjectType<TodoItemEntity> => TodoItemEntity, (td) => td.tags)
   todoItems!: TodoItemEntity[];
+
+  @Column({ nullable: true })
+  createdBy?: string;
+
+  @Column({ nullable: true })
+  updatedBy?: string;
 }

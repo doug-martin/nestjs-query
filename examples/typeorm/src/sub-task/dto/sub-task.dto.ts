@@ -25,4 +25,10 @@ export class SubTaskDTO {
 
   @FilterableField()
   todoItemId!: string;
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
 }

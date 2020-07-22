@@ -1,4 +1,4 @@
-import { AggregateResponse } from '@nestjs-query/core';
+import { AggregateResponse, getQueryServiceToken, QueryService } from '@nestjs-query/core';
 import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
@@ -6,7 +6,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import { config } from '../src/config';
-import { AUTH_HEADER_NAME } from '../src/constants';
+import { AUTH_HEADER_NAME, USER_HEADER_NAME } from '../src/constants';
 import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { TagDTO } from '../src/tag/dto/tag.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
@@ -21,6 +21,7 @@ import {
   tagAggregateFields,
   subTaskAggregateFields,
 } from './graphql-fragments';
+import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
 
 describe('TodoItemResolver (typeorm - e2e)', () => {
   let app: INestApplication;
@@ -327,7 +328,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItems(filter: { tags: { name: { eq: "Home" } } }) {
+          todoItems(filter: { tags: { name: { eq: "Home" } } }, sorting: [{field: id, direction: ASC}]) {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
             totalCount
@@ -593,6 +594,41 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         });
     });
 
+    it('should call the beforeCreateOne hook', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set({
+          [AUTH_HEADER_NAME]: config.auth.header,
+          [USER_HEADER_NAME]: 'E2E Test',
+        })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            createOneTodoItem(
+              input: {
+                todoItem: { title: "Create One Hook Todo", completed: false }
+              }
+            ) {
+              id
+              title
+              completed
+              createdBy
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            createOneTodoItem: {
+              id: '7',
+              title: 'Create One Hook Todo',
+              completed: false,
+              createdBy: 'E2E Test',
+            },
+          },
+        });
+    });
+
     it('should validate a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
@@ -646,7 +682,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         });
     });
 
-    it('should allow creating a todoItem', () => {
+    it('should allow creating multiple todoItems', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
@@ -671,8 +707,44 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .expect(200, {
           data: {
             createManyTodoItems: [
-              { id: '7', title: 'Many Test Todo 1', completed: false },
-              { id: '8', title: 'Many Test Todo 2', completed: true },
+              { id: '8', title: 'Many Test Todo 1', completed: false },
+              { id: '9', title: 'Many Test Todo 2', completed: true },
+            ],
+          },
+        });
+    });
+
+    it('should call the beforeCreateMany hook when creating multiple todoItems', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set({
+          [AUTH_HEADER_NAME]: config.auth.header,
+          [USER_HEADER_NAME]: 'E2E Test',
+        })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            createManyTodoItems(
+              input: {
+                todoItems: [
+                  { title: "Many Create Hook 1", completed: false },
+                  { title: "Many Create Hook 2", completed: true }
+                ]
+              }
+            ) {
+              id
+              title
+              completed
+              createdBy
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            createManyTodoItems: [
+              { id: '10', title: 'Many Create Hook 1', completed: false, createdBy: 'E2E Test' },
+              { id: '11', title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' },
             ],
           },
         });
@@ -756,6 +828,42 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               id: '6',
               title: 'Update Test Todo',
               completed: true,
+            },
+          },
+        });
+    });
+
+    it('should call the beforeUpdateOne hook', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set({
+          [AUTH_HEADER_NAME]: config.auth.header,
+          [USER_HEADER_NAME]: 'E2E Test',
+        })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateOneTodoItem(
+              input: {
+                id: "7",
+                update: { title: "Update One Hook Todo", completed: true }
+              }
+            ) {
+              id
+              title
+              completed
+              updatedBy
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            updateOneTodoItem: {
+              id: '7',
+              title: 'Update One Hook Todo',
+              completed: true,
+              updatedBy: 'E2E Test',
             },
           },
         });
@@ -864,6 +972,53 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               updatedCount: 2,
             },
           },
+        });
+    });
+
+    it('should call the beforeUpdateMany hook when updating todoItem', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set({
+          [AUTH_HEADER_NAME]: config.auth.header,
+          [USER_HEADER_NAME]: 'E2E Test',
+        })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateManyTodoItems(
+              input: {
+                filter: {id: { in: ["10", "11"]} },
+                update: { title: "Update Many Hook", completed: true }
+              }
+            ) {
+              updatedCount
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            updateManyTodoItems: {
+              updatedCount: 2,
+            },
+          },
+        })
+        .then(async () => {
+          const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
+          const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } });
+          expect(
+            todoItems.map((ti) => {
+              return {
+                id: ti.id,
+                title: ti.title,
+                completed: ti.completed,
+                updatedBy: ti.updatedBy,
+              };
+            }),
+          ).toEqual([
+            { id: 10, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
+            { id: 11, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
+          ]);
         });
     });
 

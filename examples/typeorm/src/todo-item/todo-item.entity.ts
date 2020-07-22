@@ -40,4 +40,10 @@ export class TodoItemEntity {
 
   @Column({ type: 'integer', nullable: false, default: 0 })
   priority!: number;
+
+  @Column({ nullable: true })
+  createdBy?: string;
+
+  @Column({ nullable: true })
+  updatedBy?: string;
 }

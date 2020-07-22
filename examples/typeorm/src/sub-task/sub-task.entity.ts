@@ -39,4 +39,10 @@ export class SubTaskEntity {
 
   @UpdateDateColumn()
   updated!: Date;
+
+  @Column({ nullable: true })
+  createdBy?: string;
+
+  @Column({ nullable: true })
+  updatedBy?: string;
 }
