@@ -1,30 +1,22 @@
 import { AggregateQuery } from '@nestjs-query/core';
-import { GraphQLResolveInfo, SelectionNode, FieldNode, Kind } from 'graphql';
+import { GraphQLResolveInfo } from 'graphql';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import graphqlFields from 'graphql-fields';
 
-const isFieldNode = (node: SelectionNode): node is FieldNode => {
-  return node.kind === Kind.FIELD;
-};
-
+const EXCLUDED_FIELDS = ['__typename'];
+const QUERY_OPERATORS: (keyof AggregateQuery<unknown>)[] = ['count', 'avg', 'sum', 'min', 'max'];
 export const AggregateQueryParam = createParamDecorator(<DTO>(data: unknown, ctx: ExecutionContext) => {
   const info = GqlExecutionContext.create(ctx).getInfo<GraphQLResolveInfo>();
-  const query = info.fieldNodes.map(({ selectionSet }) => {
-    return selectionSet?.selections.reduce((aggQuery, selection) => {
-      if (isFieldNode(selection)) {
-        const aggType = selection.name.value;
-        const fields = selection.selectionSet?.selections
-          .map((s) => {
-            if (isFieldNode(s)) {
-              return s.name.value;
-            }
-            return undefined;
-          })
-          .filter((f) => !!f);
-        return { ...aggQuery, [aggType]: fields };
-      }
-      return aggQuery;
-    }, {} as AggregateQuery<DTO>);
-  })[0];
-  return query || {};
+  const fields = graphqlFields(info, {}, { excludedFields: EXCLUDED_FIELDS }) as Record<
+    keyof AggregateQuery<DTO>,
+    Record<keyof DTO, unknown>
+  >;
+  return QUERY_OPERATORS.filter((operator) => !!fields[operator]).reduce((query, operator) => {
+    const queryFields = Object.keys(fields[operator]) as (keyof DTO)[];
+    if (queryFields && queryFields.length) {
+      return { ...query, [operator]: queryFields };
+    }
+    return query;
+  }, {} as AggregateQuery<DTO>);
 });
