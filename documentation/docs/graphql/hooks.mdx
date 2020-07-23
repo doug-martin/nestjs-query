@@ -41,7 +41,7 @@ export type GqlContext = { req: { headers: Record<string, string> } };
 
 ### @BeforeCreateOne
 
-The `@BeforeCreateOne` decorator can be used to modify incoming `createOne` mutations with information from graphql
+The `@BeforeCreateOne` decorator can be used to modify incoming `createOne` mutations with information from the graphql
 context.
 
 In this example we set the createdBy field based on the context.
@@ -74,8 +74,8 @@ export class TodoItemDTO {
 
 ### @BeforeCreateMany
 
-The `@BeforeCreateMany` decorator can be used to modify incoming `createMany` mutations with information from graphql
-context.
+The `@BeforeCreateMany` decorator can be used to modify incoming `createMany` mutations with information from the
+graphql context.
 
 In this example we set the createdBy field on each record based on the context.
 
@@ -108,7 +108,7 @@ export class TodoItemDTO {
 
 ### @BeforeUpdateOne
 
-The `@BeforeUpdateOne` decorator can be used to modify incoming `updateOne` mutations with information from graphql
+The `@BeforeUpdateOne` decorator can be used to modify incoming `updateOne` mutations with information from the graphql
 context.
 
 In this example we set the updatedBy field in the update.
@@ -139,10 +139,10 @@ export class TodoItemDTO {
 
 ```
 
-### @BeforeUpdateOne
+### @BeforeUpdateMany
 
-The `@BeforeUpdateMany` decorator can be used to modify incoming `updateMany` mutations with information from graphql
-context.
+The `@BeforeUpdateMany` decorator can be used to modify incoming `updateMany` mutations with information from the
+graphql context.
 
 In this example we set the updatedBy field in the update.
 
