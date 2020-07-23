@@ -46,6 +46,7 @@ module.exports = {
       'graphql/resolvers',
       'graphql/queries',
       'graphql/mutations',
+      'graphql/hooks',
       'graphql/aggregations',
       'graphql/subscriptions',
       'graphql/relations',
