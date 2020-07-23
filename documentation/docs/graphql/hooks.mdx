@@ -1,0 +1,175 @@
+---
+title: Hooks
+---
+
+`nestjs-query` provides the following hooks that allow you to modify incoming requests.
+
+* `@BeforeCreateOne` - invoked before any `createOne` mutation.
+* `@BeforeCreateMany` - invoked before any `createMany` mutation.
+* `@BeforeUpdateOne` - invoked before any `updateOne` mutation.
+* `@BeforeUpdateMany` - invoked before any `updateMany` mutation.
+* `@BeforeDeleteOne` - invoked before any `deleteOne` mutation.
+* `@BeforeDeleteMany` - invoked before any `deleteMany` mutation.
+
+Each hook is low touch implementation intended to allow modifying incoming requests. The are not
+intended to replace `pipes`, `guards` or `interceptors`.
+
+## Usage
+
+In order to use a hook you only need to decorate your DTO with the corresponding decorator.
+
+Each hook expects a function that accepts two arguments the corresponding input and the graphql context.
+
+:::warning
+The graphql context by default only contains the incoming request!
+:::
+
+:::note
+If you provide a custom `create` or `update` DTO you can also decorate those classes with corresponding decorators.
+:::
+
+:::note
+All of the examples reference a GqlContext. This is for the sake of the example you could define a custom type the
+represents the information in the context based on the guards and interceptors used in your application.
+
+We have defined our `GqlContext` as
+
+```ts
+export type GqlContext = { req: { headers: Record<string, string> } };
+```
+:::
+
+### @BeforeCreateOne
+
+The `@BeforeCreateOne` decorator can be used to modify incoming `createOne` mutations with information from graphql
+context.
+
+In this example we set the createdBy field based on the context.
+
+```ts {7-10}
+import { FilterableField, BeforeCreateOne, CreateOneInputType } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+import { GqlContext } from '../../interfaces';
+import { getUserName } from '../../helpers';
+
+@ObjectType('TodoItem')
+@BeforeCreateOne((input: CreateOneInputType<TodoItemDTO>, context: GqlContext) => {
+  input.input.createdBy = getUserName(context);
+  return input;
+})
+export class TodoItemDTO {
+
+ /**
+ Other fields
+ **/
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
+}
+
+```
+
+### @BeforeCreateMany
+
+The `@BeforeCreateMany` decorator can be used to modify incoming `createMany` mutations with information from graphql
+context.
+
+In this example we set the createdBy field on each record based on the context.
+
+```ts {7-11}
+import { FilterableField, BeforeCreateMany, CreateManyInputType } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+import { GqlContext } from '../../interfaces';
+import { getUserName } from '../../helpers';
+
+@ObjectType('TodoItem')
+@BeforeCreateMany((input: CreateManyInputType<TodoItemDTO>, context: GqlContext) => {
+  const createdBy = getUserName(context);
+  input.input = input.input.map((c) => ({ ...c, createdBy }));
+  return input;
+})
+export class TodoItemDTO {
+
+   /**
+   Other fields
+   **/
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
+}
+
+```
+
+### @BeforeUpdateOne
+
+The `@BeforeUpdateOne` decorator can be used to modify incoming `updateOne` mutations with information from graphql
+context.
+
+In this example we set the updatedBy field in the update.
+
+```ts {7-10}
+import { FilterableField, BeforeUpdateOne, UpdateOneInputType } from '@nestjs-query/query-graphql';
+import { ObjectType } from '@nestjs/graphql';
+import { GqlContext } from '../../interfaces';
+import { getUserName } from '../../helpers';
+
+@ObjectType('TodoItem')
+@BeforeUpdateOne((input: UpdateOneInputType<TodoItemDTO>, context: GqlContext) => {
+  input.update.updatedBy = getUserName(context);
+  return input;
+})
+export class TodoItemDTO {
+
+  /**
+  Other fields
+  **/
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
+}
+
+```
+
+### @BeforeUpdateOne
+
+The `@BeforeUpdateMany` decorator can be used to modify incoming `updateMany` mutations with information from graphql
+context.
+
+In this example we set the updatedBy field in the update.
+
+```ts {7-10}
+import { FilterableField, BeforeUpdateMany, UpdateManyInputType } from '@nestjs-query/query-graphql';
+import { ObjectType } from '@nestjs/graphql';
+import { GqlContext } from '../../interfaces';
+import { getUserName } from '../../helpers';
+
+@ObjectType('TodoItem')
+@BeforeUpdateMany((input: UpdateManyInputType<TodoItemDTO, TodoItemDTO>, context: GqlContext) => {
+  input.update.updatedBy = getUserName(context);
+  return input;
+})
+export class TodoItemDTO {
+
+  /**
+  Other fields
+  **/
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
+}
+
+```
+
+
