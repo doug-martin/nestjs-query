@@ -1,6 +1,6 @@
 {
   "name": "nestjs-query-examples",
-  "version": "0.17.3",
+  "version": "0.17.4",
   "description": "",
   "author": "",
   "private": true,
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@nestjs-query/core": "0.17.2",
-    "@nestjs-query/query-graphql": "0.17.3",
+    "@nestjs-query/query-graphql": "0.17.4",
     "@nestjs-query/query-sequelize": "0.17.2",
     "@nestjs-query/query-typeorm": "0.17.2",
     "@nestjs/common": "7.3.2",

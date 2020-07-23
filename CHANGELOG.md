@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.4](https://github.com/doug-martin/nestjs-query/compare/v0.17.3...v0.17.4) (2020-07-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency graphql-tools to v6.0.15 ([a45ece7](https://github.com/doug-martin/nestjs-query/commit/a45ece763127793d97dbe1bbff150309962abf62))
+
+
+### Features
+
+* **graphql,hooks:** Add before hooks to graphql mutations ([3448955](https://github.com/doug-martin/nestjs-query/commit/3448955331ae24f3b08c1d8b459b13e0ae96c79f))
+
+
+
+
+
 ## [0.17.3](https://github.com/doug-martin/nestjs-query/compare/v0.17.2...v0.17.3) (2020-07-17)
 
 
