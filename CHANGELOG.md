@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.5](https://github.com/doug-martin/nestjs-query/compare/v0.17.4...v0.17.5) (2020-07-24)
+
+
+### Bug Fixes
+
+* **graphql,aggregations:** Exclude __typename in aggregations ([3897673](https://github.com/doug-martin/nestjs-query/commit/3897673681b30425debc329ad5d5bb442b3838fe))
+
+
+
+
+
 ## [0.17.4](https://github.com/doug-martin/nestjs-query/compare/v0.17.3...v0.17.4) (2020-07-23)
 
 
