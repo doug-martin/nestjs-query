@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.6](https://github.com/doug-martin/nestjs-query/compare/v0.17.5...v0.17.6) (2020-07-24)
+
+
+### Bug Fixes
+
+* **graphql:** Include inherited references and relations ([26dd6f9](https://github.com/doug-martin/nestjs-query/commit/26dd6f972379cad736f483912c7a2cf44d0ba966))
+
+
+
+
+
 ## [0.17.5](https://github.com/doug-martin/nestjs-query/compare/v0.17.4...v0.17.5) (2020-07-24)
 
 
