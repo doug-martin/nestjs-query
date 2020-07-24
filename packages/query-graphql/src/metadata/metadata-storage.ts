@@ -1,9 +1,8 @@
-import { TypeMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/type-metadata.storage';
 import { LazyMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage';
-import { AggregateResponse, Class, Filter, SortField } from '@nestjs-query/core';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
-import { ReturnTypeFunc, FieldOptions } from '@nestjs/graphql';
 import { EnumMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
+import { AggregateResponse, Class, Filter, SortField } from '@nestjs-query/core';
+import { ReturnTypeFunc, FieldOptions, TypeMetadataStorage } from '@nestjs/graphql';
 import { ReferencesOpts, RelationsOpts, ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
 import { ReferencesKeys } from '../resolvers/relations/relations.interface';
 import { EdgeType, StaticConnectionType } from '../types/connection';
@@ -143,22 +142,8 @@ export class GraphQLQueryMetadataStorage {
   }
 
   getRelations<T>(type: Class<T>): RelationsOpts {
-    const relations: RelationsOpts = {};
-    const metaRelations = this.relationStorage.get(type);
-    if (!metaRelations) {
-      return relations;
-    }
-    metaRelations.forEach((r) => {
-      const relationType = r.relationTypeFunc();
-      const DTO = Array.isArray(relationType) ? relationType[0] : relationType;
-      const opts = { ...r.relationOpts, DTO };
-      if (r.isMany) {
-        relations.many = { ...relations.many, [r.name]: opts };
-      } else {
-        relations.one = { ...relations.one, [r.name]: opts };
-      }
-    });
-    return relations;
+    const relationDescriptors = this.getRelationsDescriptors(type);
+    return this.convertRelationsToOpts(relationDescriptors);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -172,14 +157,8 @@ export class GraphQLQueryMetadataStorage {
   }
 
   getReferences<T>(type: Class<T>): ReferencesOpts<T> {
-    const metaReferences = this.referenceStorage.get(type);
-    if (!metaReferences) {
-      return {};
-    }
-    return metaReferences.reduce((references, r) => {
-      const opts = { ...r.relationOpts, DTO: r.relationTypeFunc(), keys: r.keys };
-      return { ...references, [r.name]: opts };
-    }, {} as ReferencesOpts<T>);
+    const descriptors = this.getReferenceDescriptors(type);
+    return this.convertReferencesToOpts(descriptors);
   }
 
   addAggregateResponseType<T>(name: string, agg: Class<AggregateResponse<T>>): void {
@@ -218,5 +197,55 @@ export class GraphQLQueryMetadataStorage {
       return (val as unknown) as V;
     }
     return undefined;
+  }
+
+  private getRelationsDescriptors(type: Class<unknown>): RelationDescriptor<unknown>[] {
+    const metaRelations = this.relationStorage.get(type) ?? [];
+    const relationNames = metaRelations.map((t) => t.name);
+    const baseClass = Object.getPrototypeOf(type) as Class<unknown>;
+    if (baseClass) {
+      const inheritedRelations = this.getRelationsDescriptors(baseClass).filter(
+        // filter out duplicates
+        (t) => !relationNames.includes(t.name),
+      );
+      return [...inheritedRelations, ...metaRelations];
+    }
+    return metaRelations;
+  }
+
+  private getReferenceDescriptors<DTO>(type: Class<unknown>): ReferenceDescriptor<DTO, unknown>[] {
+    const metaReferences = this.referenceStorage.get(type) ?? [];
+    const referenceNames = metaReferences.map((r) => r.name);
+    const baseClass = Object.getPrototypeOf(type) as Class<unknown>;
+    if (baseClass) {
+      const inheritedReferences = this.getReferenceDescriptors(baseClass).filter(
+        // filter out duplicates
+        (t) => !referenceNames.includes(t.name),
+      );
+      return [...inheritedReferences, ...metaReferences];
+    }
+    return metaReferences;
+  }
+
+  private convertRelationsToOpts(relations: RelationDescriptor<unknown>[]): RelationsOpts {
+    const relationOpts: RelationsOpts = {};
+    relations.forEach((r) => {
+      const relationType = r.relationTypeFunc();
+      const DTO = Array.isArray(relationType) ? relationType[0] : relationType;
+      const opts = { ...r.relationOpts, DTO };
+      if (r.isMany) {
+        relationOpts.many = { ...relationOpts.many, [r.name]: opts };
+      } else {
+        relationOpts.one = { ...relationOpts.one, [r.name]: opts };
+      }
+    });
+    return relationOpts;
+  }
+
+  private convertReferencesToOpts<DTO>(references: ReferenceDescriptor<DTO, unknown>[]): ReferencesOpts<DTO> {
+    return references.reduce((referenceOpts, r) => {
+      const opts = { ...r.relationOpts, DTO: r.relationTypeFunc(), keys: r.keys };
+      return { ...referenceOpts, [r.name]: opts };
+    }, {} as ReferencesOpts<DTO>);
   }
 }
