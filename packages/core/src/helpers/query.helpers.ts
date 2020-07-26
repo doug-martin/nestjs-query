@@ -1,6 +1,8 @@
 import merge from 'lodash.merge';
-import { Filter, Query, SortField } from '../interfaces';
+import { Filter, Paging, Query, SortField } from '../interfaces';
 import { FilterBuilder } from './filter.builder';
+import { SortBuilder } from './sort.builder';
+import { PageBuilder } from './page.builder';
 
 export type QueryFieldMap<From, To, T extends keyof To = keyof To> = {
   [F in keyof From]?: T;
@@ -71,4 +73,26 @@ export const getFilterFields = <DTO>(filter: Filter<DTO>): string[] => {
   return [...fieldSet];
 };
 
-export const applyFilter = <DTO>(dto: DTO, filter: Filter<DTO>): boolean => FilterBuilder.build(filter)(dto);
+export function applyFilter<DTO>(dto: DTO[], filter: Filter<DTO>): DTO[];
+export function applyFilter<DTO>(dto: DTO, filter: Filter<DTO>): boolean;
+export function applyFilter<DTO>(dtoOrArray: DTO | DTO[], filter: Filter<DTO>): boolean | DTO[] {
+  const filterFunc = FilterBuilder.build(filter);
+  if (Array.isArray(dtoOrArray)) {
+    return dtoOrArray.filter((dto) => filterFunc(dto));
+  }
+  return filterFunc(dtoOrArray);
+}
+
+export const applySort = <DTO>(dtos: DTO[], sortFields: SortField<DTO>[]): DTO[] => {
+  return SortBuilder.build(sortFields)(dtos);
+};
+
+export const applyPaging = <DTO>(dtos: DTO[], paging: Paging): DTO[] => {
+  return PageBuilder.build<DTO>(paging)(dtos);
+};
+
+export const applyQuery = <DTO>(dtos: DTO[], query: Query<DTO>): DTO[] => {
+  const filtered = applyFilter(dtos, query.filter ?? {});
+  const sorted = applySort(filtered, query.sorting ?? []);
+  return applyPaging(sorted, query.paging ?? {});
+};
