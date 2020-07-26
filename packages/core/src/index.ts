@@ -18,6 +18,9 @@ export {
   QueryFieldMap,
   transformAggregateQuery,
   transformAggregateResponse,
+  applySort,
+  applyPaging,
+  applyQuery,
 } from './helpers';
 export {
   ClassTransformerAssembler,
