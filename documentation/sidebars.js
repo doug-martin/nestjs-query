@@ -53,6 +53,7 @@ module.exports = {
       'graphql/types',
       'graphql/federation',
     ],
+    Utilities: ['utilities/query-helpers'],
     'Migration Guides': [
       'migration-guides/v0.5.x-to-v0.6.x',
       'migration-guides/v0.10.x-to-v0.11.x',
