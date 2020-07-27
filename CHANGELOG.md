@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.7](https://github.com/doug-martin/nestjs-query/compare/v0.17.6...v0.17.7) (2020-07-27)
+
+
+### Features
+
+* **core:** Added applySort, applyPaging and applyQuery [#405](https://github.com/doug-martin/nestjs-query/issues/405) ([9f9ae0d](https://github.com/doug-martin/nestjs-query/commit/9f9ae0d0722c685483f1b2e1bd501a0f3df3ff85))
+
+
+
+
+
 ## [0.17.6](https://github.com/doug-martin/nestjs-query/compare/v0.17.5...v0.17.6) (2020-07-24)
 
 

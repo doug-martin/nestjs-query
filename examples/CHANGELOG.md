@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.7](https://github.com/doug-martin/nestjs-query/compare/v0.17.6...v0.17.7) (2020-07-27)
+
+**Note:** Version bump only for package nestjs-query-examples
+
+
+
+
+
 ## [0.17.6](https://github.com/doug-martin/nestjs-query/compare/v0.17.5...v0.17.6) (2020-07-24)
 
 **Note:** Version bump only for package nestjs-query-examples
