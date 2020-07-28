@@ -13,7 +13,7 @@ module.exports = {
         alt: 'Nestjs-query Logo',
         src: 'img/logo.svg',
       },
-      links: [
+      items: [
         { to: 'docs/introduction/getting-started', label: 'Docs', position: 'left' },
         { to: 'docs/faq', label: 'FAQ', position: 'left' },
         { to: 'blog', label: 'Blog', position: 'left' },
