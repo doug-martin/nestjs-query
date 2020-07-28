@@ -6,7 +6,7 @@ The `@nestjs-query/query-graphql` package provided base `Resolvers` and graphql 
 
 ## Installation
 
-[Installation Docs](../introduction/install#nestjs-queryquery-graphql)
+[Installation Docs](../introduction/install.md#nestjs-queryquery-graphql)
 
 ### Docs
 

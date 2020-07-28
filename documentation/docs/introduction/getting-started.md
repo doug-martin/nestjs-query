@@ -33,10 +33,10 @@ Nestjs-query is composed of multiple packages
 
 ## Migration Guides
 
-* [`v0.15.x` to `v0.16.x`](../migration-guides/v0.15.x-to-v0.16.x)
-* [`v0.14.x` to `v0.15.x`](../migration-guides/v0.14.x-to-v0.15.x)
-* [`v0.13.x` to `v0.14.x`](../migration-guides/v0.13.x-to-v0.14.x)
-* [`v0.12.x` to `v0.13.x`](../migration-guides/v0.12.x-to-v0.13.x)
-* [`v0.10.x` to `v0.11.x`](../migration-guides/v0.10.x-to-v0.11.x)
-* [`v0.5.x` to `v0.6.x`](../migration-guides/v0.5.x-to-v0.6.x)
+* [`v0.15.x` to `v0.16.x`](../migration-guides/v0.15.x-to-v0.16.x.mdx)
+* [`v0.14.x` to `v0.15.x`](../migration-guides/v0.14.x-to-v0.15.x.mdx)
+* [`v0.13.x` to `v0.14.x`](../migration-guides/v0.13.x-to-v0.14.x.md)
+* [`v0.12.x` to `v0.13.x`](../migration-guides/v0.12.x-to-v0.13.x.md)
+* [`v0.10.x` to `v0.11.x`](../migration-guides/v0.10.x-to-v0.11.x.mdx)
+* [`v0.5.x` to `v0.6.x`](../migration-guides/v0.5.x-to-v0.6.x.md)
 
