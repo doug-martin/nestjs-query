@@ -2,19 +2,20 @@ import { LazyMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storage
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { EnumMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
 import { AggregateResponse, Class, Filter, SortField } from '@nestjs-query/core';
-import { ReturnTypeFunc, FieldOptions, TypeMetadataStorage } from '@nestjs/graphql';
+import { ReturnTypeFunc, TypeMetadataStorage } from '@nestjs/graphql';
 import { ReferencesOpts, RelationsOpts, ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
 import { ReferencesKeys } from '../resolvers/relations/relations.interface';
 import { EdgeType, StaticConnectionType } from '../types/connection';
+import { FilterableFieldOptions } from '../decorators';
 
 /**
  * @internal
  */
-export interface FilterableFieldDescriptor<T> {
+export interface FilterableFieldDescriptor {
   propertyName: string;
-  target: Class<T>;
+  target: Class<unknown>;
   returnTypeFunc?: ReturnTypeFunc;
-  advancedOptions?: FieldOptions;
+  advancedOptions?: FilterableFieldOptions;
 }
 
 interface RelationDescriptor<Relation> {
@@ -37,7 +38,7 @@ type ConnectionTypes = 'cursor' | 'array';
  * @internal
  */
 export class GraphQLQueryMetadataStorage {
-  private readonly filterableObjectStorage: Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>;
+  private readonly filterableObjectStorage: Map<Class<unknown>, FilterableFieldDescriptor[]>;
 
   private readonly filterTypeStorage: Map<string, Class<Filter<unknown>>>;
 
@@ -54,7 +55,7 @@ export class GraphQLQueryMetadataStorage {
   private readonly aggregateStorage: Map<string, Class<AggregateResponse<unknown>>>;
 
   constructor() {
-    this.filterableObjectStorage = new Map<Class<unknown>, FilterableFieldDescriptor<unknown>[]>();
+    this.filterableObjectStorage = new Map<Class<unknown>, FilterableFieldDescriptor[]>();
     this.filterTypeStorage = new Map<string, Class<Filter<unknown>>>();
     this.sortTypeStorage = new Map<Class<unknown>, Class<SortField<unknown>>>();
     this.connectionTypeStorage = new Map<string, StaticConnectionType<unknown>>();
@@ -64,7 +65,7 @@ export class GraphQLQueryMetadataStorage {
     this.aggregateStorage = new Map<string, Class<AggregateResponse<unknown>>>();
   }
 
-  addFilterableObjectField<T>(type: Class<T>, field: FilterableFieldDescriptor<unknown>): void {
+  addFilterableObjectField<T>(type: Class<T>, field: FilterableFieldDescriptor): void {
     let fields = this.filterableObjectStorage.get(type);
     if (!fields) {
       fields = [];
@@ -73,7 +74,7 @@ export class GraphQLQueryMetadataStorage {
     fields.push(field);
   }
 
-  getFilterableObjectFields<T>(type: Class<T>): FilterableFieldDescriptor<unknown>[] | undefined {
+  getFilterableObjectFields<T>(type: Class<T>): FilterableFieldDescriptor[] | undefined {
     const typeFields = this.filterableObjectStorage.get(type) ?? [];
     const fieldNames = typeFields.map((t) => t.propertyName);
     const baseClass = Object.getPrototypeOf(type) as Class<unknown>;

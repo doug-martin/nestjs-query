@@ -1,10 +1,10 @@
-import { Class } from '@nestjs-query/core';
+import { Class, FilterComparisonOperators } from '@nestjs-query/core';
 import { Field, FieldOptions, ReturnTypeFunc } from '@nestjs/graphql';
 import { getMetadataStorage } from '../metadata';
 
-/** @internal */
-export const filterFieldMetaDataKey = 'filter:field';
-
+export type FilterableFieldOptions = {
+  allowedComparisons?: FilterComparisonOperators<unknown>[];
+} & FieldOptions;
 /**
  * Decorator for Fields that should be filterable through a [[FilterType]]
  *
@@ -36,17 +36,17 @@ export const filterFieldMetaDataKey = 'filter:field';
  * ```
  */
 export function FilterableField(): PropertyDecorator & MethodDecorator;
-export function FilterableField(options: FieldOptions): PropertyDecorator & MethodDecorator;
+export function FilterableField(options: FilterableFieldOptions): PropertyDecorator & MethodDecorator;
 export function FilterableField(
   returnTypeFunction?: ReturnTypeFunc,
-  options?: FieldOptions,
+  options?: FilterableFieldOptions,
 ): PropertyDecorator & MethodDecorator;
-export function FilterableField(
-  returnTypeFuncOrOptions?: ReturnTypeFunc | FieldOptions,
-  maybeOptions?: FieldOptions,
+export function FilterableField<T>(
+  returnTypeFuncOrOptions?: ReturnTypeFunc | FilterableFieldOptions,
+  maybeOptions?: FilterableFieldOptions,
 ): MethodDecorator | PropertyDecorator {
   let returnTypeFunc: ReturnTypeFunc | undefined;
-  let advancedOptions: FieldOptions | undefined;
+  let advancedOptions: FilterableFieldOptions | undefined;
   if (typeof returnTypeFuncOrOptions === 'function') {
     returnTypeFunc = returnTypeFuncOrOptions;
     advancedOptions = maybeOptions;

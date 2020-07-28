@@ -1,4 +1,4 @@
-import { Class, FilterFieldComparison } from '@nestjs-query/core';
+import { Class, FilterFieldComparison, FilterComparisonOperators } from '@nestjs-query/core';
 import { IsBoolean, IsOptional } from 'class-validator';
 import { upperCaseFirst } from 'upper-case-first';
 import {
@@ -22,6 +22,7 @@ import { getOrCreateBooleanFieldComparison } from './boolean-field-comparison.ty
 import { getOrCreateNumberFieldComparison } from './number-field-comparison.type';
 import { getOrCreateDateFieldComparison } from './date-field-comparison.type';
 import { getOrCreateTimestampFieldComparison } from './timestamp-field-comparison.type';
+import { SkipIf } from '../../../decorators';
 
 /** @internal */
 const filterComparisonMap = new Map<string, () => Class<FilterFieldComparison<unknown>>>();
@@ -67,88 +68,111 @@ const getTypeName = <T>(SomeType: ReturnTypeFuncValue): string => {
   throw new Error(`Unable to create filter comparison for ${JSON.stringify(SomeType)}.`);
 };
 
+const isCustomFieldComparison = <T>(options: FilterComparisonOptions<T>): boolean => {
+  return !!options.allowedComparisons;
+};
+
+const getComparisonTypeName = <T>(fieldType: ReturnTypeFuncValue, options: FilterComparisonOptions<T>): string => {
+  if (isCustomFieldComparison(options)) {
+    return `${upperCaseFirst(options.fieldName)}FilterComparison`;
+  }
+  return `${getTypeName(fieldType)}FilterComparison`;
+};
+
+const isNotAllowedChecker = (options: FilterComparisonOptions<unknown>) => {
+  const { allowedComparisons } = options;
+  return (cmp: FilterComparisonOperators<unknown>) => () => {
+    return allowedComparisons ? !allowedComparisons.includes(cmp) : false;
+  };
+};
+
+type FilterComparisonOptions<T> = {
+  FieldType: Class<T>;
+  fieldName: string;
+  allowedComparisons?: FilterComparisonOperators<T>[];
+  returnTypeFunc?: ReturnTypeFunc;
+};
+
 /** @internal */
-export function createFilterComparisonType<T>(
-  TClass: Class<T>,
-  returnTypeFunc?: ReturnTypeFunc,
-): Class<FilterFieldComparison<T>> {
-  const fieldType = returnTypeFunc ? returnTypeFunc() : TClass;
-  const inputName = `${getTypeName(fieldType)}FilterComparison`;
+export function createFilterComparisonType<T>(options: FilterComparisonOptions<T>): Class<FilterFieldComparison<T>> {
+  const { FieldType, returnTypeFunc } = options;
+  const fieldType = returnTypeFunc ? returnTypeFunc() : FieldType;
+  const inputName = getComparisonTypeName(fieldType, options);
   const generator = filterComparisonMap.get(inputName);
   if (generator) {
     return generator() as Class<FilterFieldComparison<T>>;
   }
-
+  const isNotAllowed = isNotAllowedChecker(options as FilterComparisonOptions<unknown>);
   @InputType(inputName)
   class Fc {
-    @Field(() => Boolean, { nullable: true })
+    @SkipIf(isNotAllowed('is'), Field(() => Boolean, { nullable: true }))
     @IsBoolean()
     @IsOptional()
     is?: boolean | null;
 
-    @Field(() => Boolean, { nullable: true })
+    @SkipIf(isNotAllowed('isNot'), Field(() => Boolean, { nullable: true }))
     @IsBoolean()
     @IsOptional()
     isNot?: boolean | null;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('eq'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     eq?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('neq'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     neq?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('gt'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     gt?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('gte'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     gte?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('lt'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     lt?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('lte'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     lte?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('like'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     like?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('notLike'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     notLike?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('iLike'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     iLike?: T;
 
-    @Field(() => fieldType, { nullable: true })
+    @SkipIf(isNotAllowed('notILike'), Field(() => fieldType, { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     notILike?: T;
 
-    @Field(() => [fieldType], { nullable: true })
+    @SkipIf(isNotAllowed('in'), Field(() => [fieldType], { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     in?: T[];
 
-    @Field(() => [fieldType], { nullable: true })
+    @SkipIf(isNotAllowed('notIn'), Field(() => [fieldType], { nullable: true }))
     @IsUndefined()
-    @Type(() => TClass)
+    @Type(() => FieldType)
     notIn?: T[];
   }
 

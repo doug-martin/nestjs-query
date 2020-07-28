@@ -7,7 +7,7 @@ import { UnregisteredObjectType } from '../type.errors';
 
 function NumberAggregatedType<DTO>(
   name: string,
-  fields: FilterableFieldDescriptor<unknown>[],
+  fields: FilterableFieldDescriptor[],
   NumberType: GraphQLScalarType,
 ): Class<NumberAggregate<DTO>> {
   const fieldNames = fields.map((f) => f.propertyName);
@@ -20,7 +20,7 @@ function NumberAggregatedType<DTO>(
   return Aggregated;
 }
 
-function AggregatedType<DTO>(name: string, fields: FilterableFieldDescriptor<unknown>[]): Class<TypeAggregate<DTO>> {
+function AggregatedType<DTO>(name: string, fields: FilterableFieldDescriptor[]): Class<TypeAggregate<DTO>> {
   @ObjectType(name)
   class Aggregated {}
   fields.forEach(({ propertyName, target, returnTypeFunc }) => {

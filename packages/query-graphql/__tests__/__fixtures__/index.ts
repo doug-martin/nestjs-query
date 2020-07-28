@@ -39,6 +39,9 @@ export const mutationArgsTypeSDL = readGraphql(resolve(__dirname, './mutation-ar
 export const relationInputTypeSDL = readGraphql(resolve(__dirname, './relation-input-type.graphql'));
 export const relationsInputTypeSDL = readGraphql(resolve(__dirname, './relations-input-type.graphql'));
 export const filterInputTypeSDL = readGraphql(resolve(__dirname, './filter-input-type.graphql'));
+export const filterAllowedComparisonsInputTypeSDL = readGraphql(
+  resolve(__dirname, './filter-allowed-comparisons-input-type.graphql'),
+);
 export const updateFilterInputTypeSDL = readGraphql(resolve(__dirname, './update-filter-input-type.graphql'));
 export const deleteFilterInputTypeSDL = readGraphql(resolve(__dirname, './delete-filter-input-type.graphql'));
 export const subscriptionFilterInputTypeSDL = readGraphql(
