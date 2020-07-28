@@ -1,4 +1,4 @@
-import { Filter, FilterComparisonOperators, FilterComparisons, FilterFieldComparison } from '../interfaces';
+import { Filter, FilterComparisons, FilterFieldComparison } from '../interfaces';
 import { ComparisonBuilder } from './comparison.builder';
 import { ComparisonField, FilterFn } from './types';
 
@@ -48,7 +48,7 @@ export class FilterBuilder {
     field: T,
     cmp: FilterFieldComparison<DTO[T]>,
   ): FilterFn<DTO> {
-    const operators = Object.keys(cmp) as FilterComparisonOperators<DTO[T]>[];
+    const operators = Object.keys(cmp) as (keyof FilterFieldComparison<DTO[T]>)[];
     return this.orFilterFn(
       ...operators.map((operator) =>
         ComparisonBuilder.build(field, operator, cmp[operator] as ComparisonField<DTO, T>),

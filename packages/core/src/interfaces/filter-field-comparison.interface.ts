@@ -203,7 +203,7 @@ type BuiltInTypes =
  * * all other types use [[CommonFieldComparisonType]]
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type FilterFieldComparison<FieldType> = FieldType extends string | String
+type FilterFieldComparisonType<FieldType, IsKeys extends true | false> = FieldType extends string | String
   ? StringFieldComparisons // eslint-disable-next-line @typescript-eslint/ban-types
   : FieldType extends boolean | Boolean
   ? BooleanFieldComparisons
@@ -212,12 +212,24 @@ export type FilterFieldComparison<FieldType> = FieldType extends string | String
   : FieldType extends number | Date | RegExp | bigint | BuiltInTypes[] | symbol
   ? CommonFieldComparisonType<FieldType>
   : FieldType extends Array<infer U>
-  ? CommonFieldComparisonType<U> | Filter<U>
+  ? CommonFieldComparisonType<U> | Filter<U> // eslint-disable-next-line @typescript-eslint/ban-types
+  : IsKeys extends true
+  ? CommonFieldComparisonType<FieldType> & StringFieldComparisons & Filter<FieldType>
   : CommonFieldComparisonType<FieldType> | Filter<FieldType>;
+
+/**
+ * Type for field comparisons.
+ *
+ * * `string` - [[StringFieldComparisons]]
+ * * `boolean|null|undefined|never` - [[BooleanFieldComparisons]]
+ * * all other types use [[CommonFieldComparisonType]]
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type FilterFieldComparison<FieldType> = FilterFieldComparisonType<FieldType, false>;
 
 /**
  * Type for all comparison operators for a field type.
  *
  * @typeparam FieldType - The TS type of the field.
  */
-export type FilterComparisonOperators<FieldType> = keyof FilterFieldComparison<FieldType>;
+export type FilterComparisonOperators<FieldType> = keyof FilterFieldComparisonType<FieldType, true>;

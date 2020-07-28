@@ -1,5 +1,5 @@
 import { WhereOptions, Op, Association } from 'sequelize';
-import { Filter, FilterComparisonOperators, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
+import { Filter, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
 import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
 
 /**
@@ -87,7 +87,7 @@ export class WhereBuilder<Entity> {
     if (alias && associations.has(alias)) {
       colName = (associations.get(alias)?.target.rawAttributes[colName as string]?.field ?? colName) as T;
     }
-    const opts = Object.keys(cmp) as FilterComparisonOperators<Entity[T]>[];
+    const opts = Object.keys(cmp) as (keyof FilterFieldComparison<Entity[T]>)[];
     if (opts.length === 1) {
       const cmpType = opts[0];
       return this.sqlComparisonBuilder.build(colName, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias);

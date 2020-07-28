@@ -2,10 +2,12 @@ import { Class, Filter } from '@nestjs-query/core';
 import { InputType, Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
+import { upperCaseFirst } from 'upper-case-first';
 import { getMetadataStorage } from '../../metadata';
 import { ResolverRelation } from '../../resolvers/relations';
 import { createFilterComparisonType } from './field-comparison';
 import { UnregisteredObjectType } from '../type.errors';
+import { getDTONames } from '../../common';
 
 export type FilterableRelations = Record<string, Class<unknown>>;
 
@@ -37,8 +39,14 @@ function getOrCreateFilterType<T>(
     or?: Filter<T>[];
   }
 
-  fields.forEach(({ propertyName, target, returnTypeFunc }) => {
-    const FC = createFilterComparisonType(target, returnTypeFunc);
+  const { baseName } = getDTONames(TClass);
+  fields.forEach(({ propertyName, target, advancedOptions, returnTypeFunc }) => {
+    const FC = createFilterComparisonType({
+      FieldType: target,
+      fieldName: `${baseName}${upperCaseFirst(propertyName)}`,
+      allowedComparisons: advancedOptions?.allowedComparisons,
+      returnTypeFunc,
+    });
     ValidateNested()(GraphQLFilter.prototype, propertyName);
     Field(() => FC, { nullable: true })(GraphQLFilter.prototype, propertyName);
     Type(() => FC)(GraphQLFilter.prototype, propertyName);

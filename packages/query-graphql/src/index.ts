@@ -1,6 +1,7 @@
 export * from './types';
 export {
   FilterableField,
+  FilterableFieldOptions,
   ResolverMethodOpts,
   Relation,
   FilterableRelation,

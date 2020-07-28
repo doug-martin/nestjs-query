@@ -30,6 +30,7 @@ import {
   updateFilterInputTypeSDL,
   deleteFilterInputTypeSDL,
   subscriptionFilterInputTypeSDL,
+  filterAllowedComparisonsInputTypeSDL,
 } from '../../__fixtures__';
 
 describe('filter types', (): void => {
@@ -169,6 +170,45 @@ describe('filter types', (): void => {
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
       expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+    });
+
+    describe('allowedComparisons option', () => {
+      @ObjectType('TestAllowedComparison')
+      class TestAllowedComparisonsDto extends BaseType {
+        @FilterableField({ allowedComparisons: ['is'] })
+        boolField!: boolean;
+
+        @FilterableField({ allowedComparisons: ['eq', 'neq'] })
+        dateField!: Date;
+
+        @FilterableField(() => Float, { allowedComparisons: ['gt', 'gte'] })
+        floatField!: number;
+
+        @FilterableField(() => Int, { allowedComparisons: ['lt', 'lte'] })
+        intField!: number;
+
+        @FilterableField({ allowedComparisons: ['eq', 'neq', 'gt', 'gte', 'lt', 'lte'] })
+        numberField!: number;
+
+        @FilterableField({ allowedComparisons: ['like', 'notLike'] })
+        stringField!: string;
+      }
+
+      const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestAllowedComparisonsDto);
+      @InputType()
+      class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
+
+      it('should only expose allowed comparisons', () => {
+        @Resolver()
+        class FilterTypeSpec {
+          @Query(() => Int)
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          test(@Args('input') input: TestComparisonDtoFilter): number {
+            return 1;
+          }
+        }
+        return expectSDL([FilterTypeSpec], filterAllowedComparisonsInputTypeSDL);
+      });
     });
   });
 

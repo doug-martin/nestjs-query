@@ -1,4 +1,4 @@
-export { FilterableField } from './filterable-field.decorator';
+export { FilterableField, FilterableFieldOptions } from './filterable-field.decorator';
 export { ResolverMethodOpts } from './resolver-method.decorator';
 export {
   Connection,

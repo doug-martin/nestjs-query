@@ -1,5 +1,5 @@
 import { Brackets, WhereExpression } from 'typeorm';
-import { Filter, FilterComparisonOperators, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
+import { Filter, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
 import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
 
 /**
@@ -121,7 +121,7 @@ export class WhereBuilder<Entity> {
     }
     return where.andWhere(
       new Brackets((qb) => {
-        const opts = Object.keys(cmp) as FilterComparisonOperators<Entity[T]>[];
+        const opts = Object.keys(cmp) as (keyof FilterFieldComparison<Entity[T]>)[];
         const sqlComparisons = opts.map((cmpType) =>
           this.sqlComparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias),
         );
