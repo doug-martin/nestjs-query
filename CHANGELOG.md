@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.8](https://github.com/doug-martin/nestjs-query/compare/v0.17.7...v0.17.8) (2020-07-28)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.59 ([ffe2ae9](https://github.com/doug-martin/nestjs-query/commit/ffe2ae926bb43edcd970fd7618bcb5a62a8d43c4))
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.59 ([7a80894](https://github.com/doug-martin/nestjs-query/commit/7a8089499e402163383a53ce51fbee590f633c76))
+* **deps:** update dependency apollo-server-express to v2.16.1 ([4989294](https://github.com/doug-martin/nestjs-query/commit/49892946b7b2d6f67ec7402946c07cee7b9bee44))
+
+
+### Features
+
+* **graphql:** Allow specifying allowed comparisons on filterable fields ([ced2792](https://github.com/doug-martin/nestjs-query/commit/ced27920e5c2278c2a04c027a692e25b3306f6cb))
+
+
+
+
+
 ## [0.17.7](https://github.com/doug-martin/nestjs-query/compare/v0.17.6...v0.17.7) (2020-07-27)
 
 

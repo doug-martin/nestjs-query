@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.8](https://github.com/doug-martin/nestjs-query/compare/v0.17.7...v0.17.8) (2020-07-28)
+
+
+### Features
+
+* **graphql:** Allow specifying allowed comparisons on filterable fields ([ced2792](https://github.com/doug-martin/nestjs-query/commit/ced27920e5c2278c2a04c027a692e25b3306f6cb))
+
+
+
+
+
 ## [0.17.7](https://github.com/doug-martin/nestjs-query/compare/v0.17.6...v0.17.7) (2020-07-27)
 
 **Note:** Version bump only for package @nestjs-query/query-sequelize
