@@ -18,6 +18,9 @@ If you use the @nestjs/graphql `Field` decorator it will not be exposed in the q
 In addition to the normal field options you can also specify the following options
 * `allowedComparisons` - An array of allowed comparisons. You can use this option to allow a subset of filter comparisons when querying through graphql. 
   * This option is useful if the field is expensive to query on for certain operators, or your data source supports a limited set of comparisons.
+* `filterRequired` - When set to `true` the field will be required whenever a `filter` is used. The `filter` requirement applies to all `read`, `update`, and `delete` endpoints that use a `filter`.
+  * The `filterRequired` option is useful when your entity has an index that requires a subset of fields to be used to provide certain level of query performance.
+  * **NOTE**: When a field is a required in a filter the default `filter` option is ignored.   
 
 ### Example
 
@@ -68,6 +71,34 @@ export class TodoItemDTO {
   title!: string;
 
   @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+### Example - filterRequired
+
+In the following example the `filterRequired` option is applied to the `completed` field, ensuring that all enpoints that use a filter will require a comparison on the `completed` field.
+
+```ts title="todo-item.dto.ts" {12}
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ filterRequired: true })
   completed!: boolean;
 
   @Field(() => GraphQLISODateTime)
