@@ -38,8 +38,9 @@ export function CursorQueryArgsType<DTO>(
     paging?: CursorPagingType;
 
     @Field(() => F, {
-      defaultValue: opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter,
+      defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
       description: 'Specify to filter the records returned.',
+      nullable: false,
     })
     @ValidateNested()
     @Type(() => F)

@@ -11,11 +11,16 @@ import { getDTONames } from '../../common';
 
 export type FilterableRelations = Record<string, Class<unknown>>;
 
+export interface FilterConstructor<T> {
+  hasRequiredFilters: boolean;
+  new (): Filter<T>;
+}
+
 function getOrCreateFilterType<T>(
   TClass: Class<T>,
   name: string,
   filterableRelations: FilterableRelations = {},
-): Class<Filter<T>> {
+): FilterConstructor<T> {
   const metadataStorage = getMetadataStorage();
   const existing = metadataStorage.getFilterType<T>(name);
   if (existing) {
@@ -25,9 +30,12 @@ function getOrCreateFilterType<T>(
   if (!fields) {
     throw new Error(`No fields found to create GraphQLFilter for ${TClass.name}`);
   }
+  const hasRequiredFilters = fields.some((f) => f.advancedOptions?.filterRequired === true);
 
   @InputType(name)
   class GraphQLFilter {
+    static hasRequiredFilters: boolean = hasRequiredFilters;
+
     @ValidateNested()
     @Field(() => [GraphQLFilter], { nullable: true })
     @Type(() => GraphQLFilter)
@@ -47,8 +55,9 @@ function getOrCreateFilterType<T>(
       allowedComparisons: advancedOptions?.allowedComparisons,
       returnTypeFunc,
     });
+    const nullable = advancedOptions?.filterRequired !== true;
     ValidateNested()(GraphQLFilter.prototype, propertyName);
-    Field(() => FC, { nullable: true })(GraphQLFilter.prototype, propertyName);
+    Field(() => FC, { nullable })(GraphQLFilter.prototype, propertyName);
     Type(() => FC)(GraphQLFilter.prototype, propertyName);
   });
   Object.keys(filterableRelations).forEach((field) => {
@@ -61,8 +70,8 @@ function getOrCreateFilterType<T>(
       Type(() => FC)(GraphQLFilter.prototype, field);
     }
   });
-  metadataStorage.addFilterType(name, GraphQLFilter as Class<Filter<T>>);
-  return GraphQLFilter as Class<Filter<T>>;
+  metadataStorage.addFilterType(name, GraphQLFilter as FilterConstructor<T>);
+  return GraphQLFilter as FilterConstructor<T>;
 }
 
 function getObjectTypeName<DTO>(DTOClass: Class<DTO>): string {
@@ -84,24 +93,24 @@ function getFilterableRelations(relations: Record<string, ResolverRelation<unkno
   return filterableRelations;
 }
 
-export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+export function FilterType<T>(TClass: Class<T>): FilterConstructor<T> {
   const { one = {}, many = {} } = getMetadataStorage().getRelations(TClass);
   const filterableRelations: FilterableRelations = { ...getFilterableRelations(one), ...getFilterableRelations(many) };
   return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}Filter`, filterableRelations);
 }
 
-export function DeleteFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+export function DeleteFilterType<T>(TClass: Class<T>): FilterConstructor<T> {
   return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}DeleteFilter`);
 }
 
-export function UpdateFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+export function UpdateFilterType<T>(TClass: Class<T>): FilterConstructor<T> {
   return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}UpdateFilter`);
 }
 
-export function SubscriptionFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+export function SubscriptionFilterType<T>(TClass: Class<T>): FilterConstructor<T> {
   return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}SubscriptionFilter`);
 }
 
-export function AggregateFilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+export function AggregateFilterType<T>(TClass: Class<T>): FilterConstructor<T> {
   return getOrCreateFilterType(TClass, `${getObjectTypeName(TClass)}AggregateFilter`);
 }

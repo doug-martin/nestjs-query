@@ -9,6 +9,9 @@ import {
   cursorQueryArgsTypeSDL,
   offsetQueryArgsTypeSDL,
   noPagingQueryArgsTypeSDL,
+  cursorQueryArgsFilterRequiredTypeSDL,
+  offsetQueryArgsFilterRequiredTypeSDL,
+  noPagingQueryArgsFilterRequiredTypeSDL,
 } from '../../__fixtures__';
 
 describe('QueryType', (): void => {
@@ -66,6 +69,12 @@ describe('QueryType', (): void => {
     dateOptional?: Date;
   }
 
+  @nestjsGraphql.ObjectType()
+  class TestFilterRequiredDto {
+    @FilterableField({ filterRequired: true })
+    requiredFilterableField!: string;
+  }
+
   describe('cursor query args', () => {
     @nestjsGraphql.ArgsType()
     class TestCursorQuery extends QueryArgsType(TestDto) {}
@@ -114,6 +123,21 @@ describe('QueryType', (): void => {
       expect(queryInstance.filter).toBeInstanceOf(TestCursorQuery.FilterType);
     });
 
+    it('should make the filter required if there is a filterRequired field', () => {
+      @nestjsGraphql.ArgsType()
+      class TestFilterRequiredQuery extends QueryArgsType(TestFilterRequiredDto) {}
+
+      @nestjsGraphql.Resolver()
+      class TestResolver {
+        @nestjsGraphql.Query(() => String)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        test(@nestjsGraphql.Args() query: TestFilterRequiredQuery): string {
+          return 'hello';
+        }
+      }
+      return expectSDL([TestResolver], cursorQueryArgsFilterRequiredTypeSDL);
+    });
+
     describe('options', () => {
       it('by default first should be set to 10 in the paging object', () => {
         QueryArgsType(TestDto);
@@ -124,6 +148,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: {},
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: [],
@@ -140,6 +165,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: {},
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: [],
@@ -195,6 +221,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: filter,
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: [],
@@ -212,6 +239,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: {},
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: sort,
@@ -269,6 +297,23 @@ describe('QueryType', (): void => {
       expect(queryInstance.filter).toBeInstanceOf(TestOffsetQuery.FilterType);
     });
 
+    it('should make the filter required if there is a filterRequired field', () => {
+      @nestjsGraphql.ArgsType()
+      class TestFilterRequiredQuery extends QueryArgsType(TestFilterRequiredDto, {
+        pagingStrategy: PagingStrategies.OFFSET,
+      }) {}
+
+      @nestjsGraphql.Resolver()
+      class TestResolver {
+        @nestjsGraphql.Query(() => String)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        test(@nestjsGraphql.Args() query: TestFilterRequiredQuery): string {
+          return 'hello';
+        }
+      }
+      return expectSDL([TestResolver], offsetQueryArgsFilterRequiredTypeSDL);
+    });
+
     describe('options', () => {
       it('by default limit should be set to 10 in the paging object', () => {
         QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET });
@@ -279,6 +324,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: {},
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: [],
@@ -295,6 +341,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: {},
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: [],
@@ -331,6 +378,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: filter,
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: [],
@@ -348,6 +396,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: {},
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: sort,
@@ -393,6 +442,23 @@ describe('QueryType', (): void => {
       expect(queryInstance.filter).toBeInstanceOf(TestNoPagingQuery.FilterType);
     });
 
+    it('should make the filter required if there is a filterRequired field', () => {
+      @nestjsGraphql.ArgsType()
+      class TestFilterRequiredQuery extends QueryArgsType(TestFilterRequiredDto, {
+        pagingStrategy: PagingStrategies.NONE,
+      }) {}
+
+      @nestjsGraphql.Resolver()
+      class TestResolver {
+        @nestjsGraphql.Query(() => String)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        test(@nestjsGraphql.Args() query: TestFilterRequiredQuery): string {
+          return 'hello';
+        }
+      }
+      return expectSDL([TestResolver], noPagingQueryArgsFilterRequiredTypeSDL);
+    });
+
     describe('options', () => {
       it('allow specifying a default filter', () => {
         const filter = { booleanField: { is: true } };
@@ -400,6 +466,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: filter,
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: [],
@@ -413,6 +480,7 @@ describe('QueryType', (): void => {
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: {},
           description: 'Specify to filter the records returned.',
+          nullable: false,
         });
         expect(fieldSpy).toHaveBeenCalledWith(expect.any(Function), {
           defaultValue: sort,

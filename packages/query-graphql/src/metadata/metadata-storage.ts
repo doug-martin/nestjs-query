@@ -1,12 +1,13 @@
 import { LazyMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { EnumMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
-import { AggregateResponse, Class, Filter, SortField } from '@nestjs-query/core';
+import { AggregateResponse, Class, SortField } from '@nestjs-query/core';
 import { ReturnTypeFunc, TypeMetadataStorage } from '@nestjs/graphql';
 import { ReferencesOpts, RelationsOpts, ResolverRelation, ResolverRelationReference } from '../resolvers/relations';
 import { ReferencesKeys } from '../resolvers/relations/relations.interface';
 import { EdgeType, StaticConnectionType } from '../types/connection';
 import { FilterableFieldOptions } from '../decorators';
+import { FilterConstructor } from '../types/query/filter.type';
 
 /**
  * @internal
@@ -40,7 +41,7 @@ type ConnectionTypes = 'cursor' | 'array';
 export class GraphQLQueryMetadataStorage {
   private readonly filterableObjectStorage: Map<Class<unknown>, FilterableFieldDescriptor[]>;
 
-  private readonly filterTypeStorage: Map<string, Class<Filter<unknown>>>;
+  private readonly filterTypeStorage: Map<string, FilterConstructor<unknown>>;
 
   private readonly sortTypeStorage: Map<Class<unknown>, Class<SortField<unknown>>>;
 
@@ -56,7 +57,7 @@ export class GraphQLQueryMetadataStorage {
 
   constructor() {
     this.filterableObjectStorage = new Map<Class<unknown>, FilterableFieldDescriptor[]>();
-    this.filterTypeStorage = new Map<string, Class<Filter<unknown>>>();
+    this.filterTypeStorage = new Map<string, FilterConstructor<unknown>>();
     this.sortTypeStorage = new Map<Class<unknown>, Class<SortField<unknown>>>();
     this.connectionTypeStorage = new Map<string, StaticConnectionType<unknown>>();
     this.edgeTypeStorage = new Map<Class<unknown>, Class<EdgeType<unknown>>>();
@@ -90,11 +91,11 @@ export class GraphQLQueryMetadataStorage {
     return typeFields;
   }
 
-  addFilterType<T>(name: string, filterType: Class<Filter<T>>): void {
+  addFilterType<T>(name: string, filterType: FilterConstructor<T>): void {
     this.filterTypeStorage.set(name, filterType);
   }
 
-  getFilterType<T>(name: string): Class<Filter<T>> | undefined {
+  getFilterType<T>(name: string): FilterConstructor<T> | undefined {
     return this.getValue(this.filterTypeStorage, name);
   }
 
