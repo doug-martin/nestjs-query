@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.9](https://github.com/doug-martin/nestjs-query/compare/v0.17.8...v0.17.9) (2020-07-29)
+
+
+### Features
+
+* **graphql:** Allow specifying fields that are required when querying ([a425ba7](https://github.com/doug-martin/nestjs-query/commit/a425ba73b0fc5a184db5b10a709ed78fd234ba7a))
+
+
+
+
+
 ## [0.17.8](https://github.com/doug-martin/nestjs-query/compare/v0.17.7...v0.17.8) (2020-07-28)
 
 
