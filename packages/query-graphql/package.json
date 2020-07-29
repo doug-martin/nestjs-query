@@ -48,7 +48,7 @@
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/graphql": "^7.0.0",
-    "class-transformer": "^0.2.3",
+    "class-transformer": "^0.2.3 || ^0.3.0",
     "class-validator": "^0.12.2",
     "dataloader": "^2.0.0",
     "graphql": "^15.0.0",
@@ -65,7 +65,7 @@
     "@types/lodash.omit": "4.5.6",
     "@types/node-fetch": "2.5.7",
     "@types/pluralize": "0.0.29",
-    "class-transformer": "0.2.3",
+    "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
     "dataloader": "2.0.0",
     "graphql": "15.3.0",

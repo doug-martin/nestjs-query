@@ -23,14 +23,14 @@
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/typeorm": "^7.0.0",
-    "class-transformer": "^0.2.3",
+    "class-transformer": "^0.2.3 || ^0.3.0",
     "typeorm": "^0.2.7"
   },
   "devDependencies": {
     "@nestjs/common": "7.4.1",
     "@nestjs/testing": "7.4.1",
     "@nestjs/typeorm": "7.1.0",
-    "class-transformer": "0.2.3",
+    "class-transformer": "0.3.1",
     "sqlite3": "5.0.0",
     "ts-mockito": "2.6.1",
     "typeorm": "0.2.25",
