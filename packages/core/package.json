@@ -35,13 +35,13 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
-    "class-transformer": "^0.2.3"
+    "class-transformer": "^0.2.3 || ^0.3.0"
   },
   "devDependencies": {
     "@nestjs/common": "7.3.2",
     "@nestjs/testing": "7.3.2",
     "@types/lodash.merge": "4.6.6",
-    "class-transformer": "0.2.3",
+    "class-transformer": "0.3.1",
     "ts-mockito": "2.6.1",
     "typescript": "3.9.7"
   }
