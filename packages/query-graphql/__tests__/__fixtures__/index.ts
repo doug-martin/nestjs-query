@@ -42,6 +42,9 @@ export const filterInputTypeSDL = readGraphql(resolve(__dirname, './filter-input
 export const filterAllowedComparisonsInputTypeSDL = readGraphql(
   resolve(__dirname, './filter-allowed-comparisons-input-type.graphql'),
 );
+export const filterRequiredFieldInputTypeSDL = readGraphql(
+  resolve(__dirname, './filter-required-field-input-type.graphql'),
+);
 export const updateFilterInputTypeSDL = readGraphql(resolve(__dirname, './update-filter-input-type.graphql'));
 export const deleteFilterInputTypeSDL = readGraphql(resolve(__dirname, './delete-filter-input-type.graphql'));
 export const subscriptionFilterInputTypeSDL = readGraphql(
@@ -51,8 +54,17 @@ export const pagingInputTypeSDL = readGraphql(resolve(__dirname, './paging-input
 export const pageInfoObjectTypeSDL = readGraphql(resolve(__dirname, './page-info-object-type.graphql'));
 export const sortingInputTypeSDL = readGraphql(resolve(__dirname, './sorting-input-type.graphql'));
 export const cursorQueryArgsTypeSDL = readGraphql(resolve(__dirname, './cursor-query-args-type.graphql'));
+export const cursorQueryArgsFilterRequiredTypeSDL = readGraphql(
+  resolve(__dirname, './cursor-query-args-required-filter-type.graphql'),
+);
 export const offsetQueryArgsTypeSDL = readGraphql(resolve(__dirname, './offset-query-args-type.graphql'));
+export const offsetQueryArgsFilterRequiredTypeSDL = readGraphql(
+  resolve(__dirname, './offset-query-args-required-filter-type.graphql'),
+);
 export const noPagingQueryArgsTypeSDL = readGraphql(resolve(__dirname, './no-paging-query-args-type.graphql'));
+export const noPagingQueryArgsFilterRequiredTypeSDL = readGraphql(
+  resolve(__dirname, './no-paging-query-args-required-filter-type.graphql'),
+);
 export const connectionObjectTypeSDL = readGraphql(resolve(__dirname, './connection-object-type.graphql'));
 export const connectionObjectTypeWithTotalCountSDL = readGraphql(
   resolve(__dirname, './connection-object-type-with-total-count.graphql'),

@@ -31,6 +31,7 @@ import {
   deleteFilterInputTypeSDL,
   subscriptionFilterInputTypeSDL,
   filterAllowedComparisonsInputTypeSDL,
+  filterRequiredFieldInputTypeSDL,
 } from '../../__fixtures__';
 
 describe('filter types', (): void => {
@@ -208,6 +209,36 @@ describe('filter types', (): void => {
           }
         }
         return expectSDL([FilterTypeSpec], filterAllowedComparisonsInputTypeSDL);
+      });
+    });
+
+    describe('filterRequired option', () => {
+      @ObjectType('TestFilterRequiredComparison')
+      class TestFilterRequiredDto extends BaseType {
+        @FilterableField({ filterRequired: true })
+        requiredField!: boolean;
+
+        @FilterableField({ filterRequired: false })
+        nonRequiredField!: Date;
+
+        @FilterableField()
+        notSpecifiedField!: number;
+      }
+
+      const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestFilterRequiredDto);
+      @InputType()
+      class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
+
+      it('should only expose allowed comparisons', () => {
+        @Resolver()
+        class FilterTypeSpec {
+          @Query(() => Int)
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          test(@Args('input') input: TestComparisonDtoFilter): number {
+            return 1;
+          }
+        }
+        return expectSDL([FilterTypeSpec], filterRequiredFieldInputTypeSDL);
       });
     });
   });

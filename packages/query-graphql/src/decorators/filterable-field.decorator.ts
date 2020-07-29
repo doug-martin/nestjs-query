@@ -4,6 +4,7 @@ import { getMetadataStorage } from '../metadata';
 
 export type FilterableFieldOptions = {
   allowedComparisons?: FilterComparisonOperators<unknown>[];
+  filterRequired?: boolean;
 } & FieldOptions;
 /**
  * Decorator for Fields that should be filterable through a [[FilterType]]

@@ -1,0 +1,54 @@
+type Query {
+  test(
+    """Specify to filter the records returned."""
+    filter: TestFilterRequiredDtoFilter!
+
+    """Specify to sort results."""
+    sorting: [TestFilterRequiredDtoSort!] = []
+  ): String!
+}
+
+input TestFilterRequiredDtoFilter {
+  and: [TestFilterRequiredDtoFilter!]
+  or: [TestFilterRequiredDtoFilter!]
+  requiredFilterableField: StringFieldComparison!
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestFilterRequiredDtoSort {
+  field: TestFilterRequiredDtoSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestFilterRequiredDtoSortFields {
+  requiredFilterableField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
