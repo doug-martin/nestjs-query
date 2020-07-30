@@ -158,6 +158,42 @@ describe('ReadResolver', () => {
         when(mockService.count(objectContaining(input.filter!))).thenResolve(10);
         return expect(result.totalCount).resolves.toBe(10);
       });
+
+      it('should do paging with offset', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const input: CursorQueryArgsType<TestResolverDTO> = {
+          filter: {
+            stringField: { eq: 'foo' },
+          },
+          paging: { first: 1, offset: 1 },
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 1 } }))).thenResolve(output);
+        const result = await resolver.queryMany(input);
+        return expect(result).toEqual({
+          edges: [
+            {
+              cursor: 'YXJyYXljb25uZWN0aW9uOjE=',
+              node: {
+                id: 'id-1',
+                stringField: 'foo',
+              },
+            },
+          ],
+          pageInfo: {
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
+            hasNextPage: false,
+            hasPreviousPage: true,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
+          },
+          totalCountFn: expect.any(Function),
+        });
+      });
     });
 
     describe('queryMany array connection', () => {
