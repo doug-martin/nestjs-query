@@ -1,8 +1,9 @@
 import { Paging } from '@nestjs-query/core';
-import { Min, Validate, IsPositive } from 'class-validator';
+import { IsOptional, IsPositive, Min, Validate } from 'class-validator';
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { cursorToOffset } from 'graphql-relay';
-import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
+import { Expose } from 'class-transformer';
+import { ConnectionCursorScalar, ConnectionCursorType } from '../../cursor.scalar';
 import { CannotUseWith, CannotUseWithout, IsUndefined } from '../../validators';
 import { PagingStrategies } from './constants';
 
@@ -66,6 +67,13 @@ export const CursorPagingType = (): StaticCursorPagingType => {
     @IsPositive()
     last?: number;
 
+    @Field(() => Int, { name: 'offset', nullable: true, description: 'Paginate offset' })
+    @Expose({ name: 'offset' })
+    @IsOptional()
+    @Validate(CannotUseWith, ['after', 'before'])
+    @Min(0)
+    inOffset?: number;
+
     get limit(): number | undefined {
       if (this.isForwardPaging) {
         return this.first || 0;
@@ -86,6 +94,9 @@ export const CursorPagingType = (): StaticCursorPagingType => {
     }
 
     get offset(): number | undefined {
+      if (this.inOffset != null) {
+        return this.inOffset;
+      }
       if (this.isForwardPaging) {
         const { after } = this;
         const limit = after ? cursorToOffset(after) + 1 : 0;
