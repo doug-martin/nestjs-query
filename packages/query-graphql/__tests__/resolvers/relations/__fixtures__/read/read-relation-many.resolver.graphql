@@ -25,6 +25,9 @@ input CursorPaging {
 
   """Paginate last"""
   last: Int
+
+  """Paginate offset"""
+  offset: Int
 }
 
 """Cursor for paging through collections"""

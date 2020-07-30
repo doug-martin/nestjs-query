@@ -79,6 +79,9 @@ input CursorPaging {
 
   """Paginate last"""
   last: Int
+
+  """Paginate offset"""
+  offset: Int
 }
 
 input TotalCountDTOFilter {
