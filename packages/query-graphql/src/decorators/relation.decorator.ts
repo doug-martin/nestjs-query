@@ -1,79 +1,87 @@
-import { Class } from '@nestjs-query/core';
-import { getMetadataStorage } from '../metadata';
-import { ResolverRelation } from '../resolvers/relations';
+import { ArrayReflector, Class, getPrototypeChain } from '@nestjs-query/core';
+import { RelationsOpts, ResolverRelation } from '../resolvers/relations';
 import { PagingStrategies } from '../types/query/paging';
+import { RELATION_KEY } from './constants';
+
+export const reflector = new ArrayReflector(RELATION_KEY);
 
 export type RelationDecoratorOpts<Relation> = Omit<ResolverRelation<Relation>, 'DTO'>;
 export type RelationTypeFunc<Relation> = () => Class<Relation> | Class<Relation>[];
 export type ConnectionTypeFunc<Relation> = () => Class<Relation>;
 
+interface RelationDescriptor<Relation> {
+  name: string;
+  relationTypeFunc: () => Class<Relation> | Class<Relation>[];
+  isMany: boolean;
+  relationOpts?: Omit<ResolverRelation<Relation>, 'DTO'>;
+}
+
+function getRelationsDescriptors<DTO>(DTOClass: Class<DTO>): RelationDescriptor<unknown>[] {
+  return getPrototypeChain(DTOClass).reduce((relations, cls) => {
+    const relationNames = relations.map((t) => t.name);
+    const metaRelations = reflector.get<unknown, RelationDescriptor<unknown>>(cls) ?? [];
+    const inheritedRelations = metaRelations.filter((t) => !relationNames.includes(t.name));
+    return [...inheritedRelations, ...relations];
+  }, [] as RelationDescriptor<unknown>[]);
+}
+
+function convertRelationsToOpts(relations: RelationDescriptor<unknown>[]): RelationsOpts {
+  const relationOpts: RelationsOpts = {};
+  relations.forEach((r) => {
+    const relationType = r.relationTypeFunc();
+    const DTO = Array.isArray(relationType) ? relationType[0] : relationType;
+    const opts = { ...r.relationOpts, DTO };
+    if (r.isMany) {
+      relationOpts.many = { ...relationOpts.many, [r.name]: opts };
+    } else {
+      relationOpts.one = { ...relationOpts.one, [r.name]: opts };
+    }
+  });
+  return relationOpts;
+}
+
+export function getRelations<DTO>(DTOClass: Class<DTO>): RelationsOpts {
+  const relationDescriptors = getRelationsDescriptors(DTOClass);
+  return convertRelationsToOpts(relationDescriptors);
+}
+
 export function Relation<DTO, Relation>(
   name: string,
-  relationTypeFunction: RelationTypeFunc<Relation>,
+  relationTypeFunc: RelationTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
 ) {
   return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-    const isMany = Array.isArray(relationTypeFunction());
-    getMetadataStorage().addRelation(DTOClass, name, {
-      name,
-      isMany,
-      relationOpts: isMany ? { pagingStrategy: PagingStrategies.OFFSET, ...options } : options,
-      relationTypeFunc: relationTypeFunction,
-    });
+    const isMany = Array.isArray(relationTypeFunc());
+    const relationOpts = isMany ? { pagingStrategy: PagingStrategies.OFFSET, ...options } : options;
+    reflector.append(DTOClass, { name, isMany, relationOpts, relationTypeFunc });
     return DTOClass;
   };
 }
 
 export function FilterableRelation<DTO, Relation>(
   name: string,
-  relationTypeFunction: RelationTypeFunc<Relation>,
+  relationTypeFunc: RelationTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
 ) {
-  return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-    const isMany = Array.isArray(relationTypeFunction());
-    const relationOpts = {
-      ...(isMany ? { pagingStrategy: PagingStrategies.OFFSET, ...options } : options),
-      allowFiltering: true,
-    };
-    getMetadataStorage().addRelation(DTOClass, name, {
-      name,
-      isMany,
-      relationOpts,
-      relationTypeFunc: relationTypeFunction,
-    });
-    return DTOClass;
-  };
+  return Relation(name, relationTypeFunc, { ...options, allowFiltering: true });
 }
 
 export function Connection<DTO, Relation>(
   name: string,
-  relationTypeFunction: ConnectionTypeFunc<Relation>,
+  relationTypeFunc: ConnectionTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
 ) {
+  const relationOpts = { pagingStrategy: PagingStrategies.CURSOR, ...options };
   return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-    getMetadataStorage().addRelation(DTOClass, name, {
-      name,
-      isMany: true,
-      relationOpts: { pagingStrategy: PagingStrategies.CURSOR, ...options },
-      relationTypeFunc: relationTypeFunction,
-    });
+    reflector.append(DTOClass, { name, isMany: true, relationOpts, relationTypeFunc });
     return DTOClass;
   };
 }
 
 export function FilterableConnection<DTO, Relation>(
   name: string,
-  relationTypeFunction: ConnectionTypeFunc<Relation>,
+  relationTypeFunc: ConnectionTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
 ) {
-  const relationOpts = { pagingStrategy: PagingStrategies.CURSOR, ...options, allowFiltering: true };
-  return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-    getMetadataStorage().addRelation(DTOClass, name, {
-      name,
-      isMany: true,
-      relationOpts,
-      relationTypeFunc: relationTypeFunction,
-    });
-    return DTOClass;
-  };
+  return Connection(name, relationTypeFunc, { ...options, allowFiltering: true });
 }

@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Class } from '@nestjs-query/core';
-import { getMetadataStorage } from '../../../metadata';
+import { Class, ValueReflector } from '@nestjs-query/core';
 import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
-import { UnregisteredObjectType } from '../../type.errors';
+import { getGraphqlObjectName } from '../../../common';
 
 export interface EdgeTypeConstructor<DTO> {
   new (node: DTO, cursor: ConnectionCursorType): EdgeType<DTO>;
@@ -13,30 +12,23 @@ export interface EdgeType<DTO> {
   cursor: ConnectionCursorType;
 }
 
+const reflector = new ValueReflector('nestjs-query:edge-type');
 export function EdgeType<DTO>(DTOClass: Class<DTO>): EdgeTypeConstructor<DTO> {
-  const metaDataStorage = getMetadataStorage();
-  const existing = metaDataStorage.getEdgeType(DTOClass);
-  if (existing) {
-    return existing;
-  }
-  const objMetadata = metaDataStorage.getGraphqlObjectMetadata(DTOClass);
-  if (!objMetadata) {
-    throw new UnregisteredObjectType(DTOClass, 'Unable to make EdgeType for class.');
-  }
+  return reflector.memoize(DTOClass, () => {
+    const objName = getGraphqlObjectName(DTOClass, 'Unable to make EdgeType for class.');
+    @ObjectType(`${objName}Edge`)
+    class AbstractEdge implements EdgeType<DTO> {
+      constructor(node: DTO, cursor: ConnectionCursorType) {
+        this.node = node;
+        this.cursor = cursor;
+      }
 
-  @ObjectType(`${objMetadata.name}Edge`)
-  class AbstractEdge implements EdgeType<DTO> {
-    constructor(node: DTO, cursor: ConnectionCursorType) {
-      this.node = node;
-      this.cursor = cursor;
+      @Field(() => DTOClass, { description: `The node containing the ${objName}` })
+      node!: DTO;
+
+      @Field(() => ConnectionCursorScalar, { description: 'Cursor for this node.' })
+      cursor!: ConnectionCursorType;
     }
-
-    @Field(() => DTOClass, { description: `The node containing the ${objMetadata.name}` })
-    node!: DTO;
-
-    @Field(() => ConnectionCursorScalar, { description: 'Cursor for this node.' })
-    cursor!: ConnectionCursorType;
-  }
-  metaDataStorage.addEdgeType(DTOClass, AbstractEdge);
-  return AbstractEdge;
+    return AbstractEdge;
+  });
 }

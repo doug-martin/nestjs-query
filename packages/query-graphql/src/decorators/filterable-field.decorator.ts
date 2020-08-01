@@ -1,11 +1,20 @@
-import { Class, FilterComparisonOperators } from '@nestjs-query/core';
+import { ArrayReflector, Class, FilterComparisonOperators, getPrototypeChain } from '@nestjs-query/core';
 import { Field, FieldOptions, ReturnTypeFunc } from '@nestjs/graphql';
-import { getMetadataStorage } from '../metadata';
+import { FILTERABLE_FIELD_KEY } from './constants';
 
+const reflector = new ArrayReflector(FILTERABLE_FIELD_KEY);
 export type FilterableFieldOptions = {
   allowedComparisons?: FilterComparisonOperators<unknown>[];
   filterRequired?: boolean;
 } & FieldOptions;
+
+export interface FilterableFieldDescriptor {
+  propertyName: string;
+  target: Class<unknown>;
+  returnTypeFunc?: ReturnTypeFunc;
+  advancedOptions?: FilterableFieldOptions;
+}
+
 /**
  * Decorator for Fields that should be filterable through a [[FilterType]]
  *
@@ -62,8 +71,8 @@ export function FilterableField<T>(
     propertyName: string | symbol,
     descriptor: TypedPropertyDescriptor<D>,
   ): TypedPropertyDescriptor<D> | void => {
-    const Ctx = Reflect.getMetadata('design:type', target.constructor.prototype, propertyName) as Class<unknown>;
-    getMetadataStorage().addFilterableObjectField(target.constructor as Class<unknown>, {
+    const Ctx = Reflect.getMetadata('design:type', target, propertyName) as Class<unknown>;
+    reflector.append(target.constructor as Class<unknown>, {
       propertyName: propertyName.toString(),
       target: Ctx,
       returnTypeFunc,
@@ -77,4 +86,13 @@ export function FilterableField<T>(
     }
     return Field()(target, propertyName, descriptor);
   };
+}
+
+export function getFilterableFields<DTO>(DTOClass: Class<DTO>): FilterableFieldDescriptor[] {
+  return getPrototypeChain(DTOClass).reduce((fields, Cls) => {
+    const existingFieldNames = fields.map((t) => t.propertyName);
+    const typeFields = reflector.get<unknown, FilterableFieldDescriptor>(Cls) ?? [];
+    const newFields = typeFields.filter((t) => !existingFieldNames.includes(t.propertyName));
+    return [...newFields, ...fields];
+  }, [] as FilterableFieldDescriptor[]);
 }

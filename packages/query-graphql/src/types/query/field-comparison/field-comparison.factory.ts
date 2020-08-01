@@ -13,7 +13,6 @@ import {
   GraphQLISODateTime,
 } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { getMetadataStorage } from '../../../metadata';
 import { IsUndefined } from '../../validators';
 import { getOrCreateFloatFieldComparison } from './float-field-comparison.type';
 import { getOrCreateIntFieldComparison } from './int-field-comparison.type';
@@ -23,6 +22,7 @@ import { getOrCreateNumberFieldComparison } from './number-field-comparison.type
 import { getOrCreateDateFieldComparison } from './date-field-comparison.type';
 import { getOrCreateTimestampFieldComparison } from './timestamp-field-comparison.type';
 import { SkipIf } from '../../../decorators';
+import { getGraphqlEnumMetadata } from '../../../common';
 
 /** @internal */
 const filterComparisonMap = new Map<string, () => Class<FilterFieldComparison<unknown>>>();
@@ -60,7 +60,7 @@ const getTypeName = <T>(SomeType: ReturnTypeFuncValue): string => {
     return upperCaseFirst(typeName);
   }
   if (typeof SomeType === 'object') {
-    const enumType = getMetadataStorage().getGraphqlEnumMetadata(SomeType);
+    const enumType = getGraphqlEnumMetadata(SomeType);
     if (enumType) {
       return upperCaseFirst(enumType.name);
     }

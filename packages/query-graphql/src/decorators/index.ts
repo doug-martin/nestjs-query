@@ -1,4 +1,9 @@
-export { FilterableField, FilterableFieldOptions } from './filterable-field.decorator';
+export {
+  FilterableField,
+  FilterableFieldOptions,
+  FilterableFieldDescriptor,
+  getFilterableFields,
+} from './filterable-field.decorator';
 export { ResolverMethodOpts } from './resolver-method.decorator';
 export {
   Connection,
@@ -7,6 +12,7 @@ export {
   RelationTypeFunc,
   FilterableConnection,
   FilterableRelation,
+  getRelations,
 } from './relation.decorator';
 export * from './resolver-mutation.decorator';
 export * from './resolver-query.decorator';
