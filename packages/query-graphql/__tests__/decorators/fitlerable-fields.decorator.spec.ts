@@ -1,13 +1,12 @@
 import * as nestjsGraphQL from '@nestjs/graphql';
 import { FilterableField } from '../../src';
-import { getMetadataStorage } from '../../src/metadata';
+import { getFilterableFields } from '../../src/decorators';
 
-const { Float, ObjectType } = nestjsGraphQL;
+const { Float, ObjectType, Field, Int } = nestjsGraphQL;
 
 describe('FilterableField decorator', (): void => {
   const fieldSpy = jest.spyOn(nestjsGraphQL, 'Field');
-  beforeEach(() => getMetadataStorage().clear());
-  afterEach(() => getMetadataStorage().clear());
+  beforeAll(() => jest.clearAllMocks());
 
   it('should store metadata', () => {
     const floatReturnFunc = () => Float;
@@ -25,7 +24,7 @@ describe('FilterableField decorator', (): void => {
       @FilterableField(undefined, { nullable: true })
       numberField?: number;
     }
-    const fields = getMetadataStorage().getFilterableObjectFields(TestDto);
+    const fields = getFilterableFields(TestDto);
     expect(fields).toMatchObject([
       { propertyName: 'stringField', target: String, advancedOptions: undefined, returnTypeFunc: undefined },
       {
@@ -47,5 +46,51 @@ describe('FilterableField decorator', (): void => {
     expect(fieldSpy).toHaveBeenNthCalledWith(2, { nullable: true });
     expect(fieldSpy).toHaveBeenNthCalledWith(3, floatReturnFunc, { nullable: true });
     expect(fieldSpy).toHaveBeenNthCalledWith(4, { nullable: true });
+  });
+
+  describe('getFilterableObjectFields', () => {
+    @ObjectType({ isAbstract: true })
+    class BaseType {
+      @FilterableField(() => Int)
+      id!: number;
+
+      @Field()
+      referenceId!: number;
+    }
+
+    @ObjectType()
+    class ImplementingClass extends BaseType {
+      @FilterableField()
+      implemented!: boolean;
+    }
+
+    @ObjectType()
+    class DuplicateImplementor extends ImplementingClass {
+      @FilterableField({ name: 'test' })
+      id!: number;
+
+      @Field()
+      someReferenceId!: number;
+    }
+
+    it('should return filterable fields for a type', () => {
+      expect(getFilterableFields(BaseType)).toEqual([
+        { propertyName: 'id', target: Number, returnTypeFunc: expect.any(Function) },
+      ]);
+    });
+
+    it('should return inherited filterable fields for a type', () => {
+      expect(getFilterableFields(ImplementingClass)).toEqual([
+        { propertyName: 'id', target: Number, returnTypeFunc: expect.any(Function) },
+        { propertyName: 'implemented', target: Boolean },
+      ]);
+    });
+
+    it('should exclude duplicate fields inherited filterable fields for a type', () => {
+      expect(getFilterableFields(DuplicateImplementor)).toEqual([
+        { propertyName: 'implemented', target: Boolean },
+        { propertyName: 'id', target: Number, advancedOptions: { name: 'test' } },
+      ]);
+    });
   });
 });

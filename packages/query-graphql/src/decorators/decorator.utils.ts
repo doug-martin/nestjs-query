@@ -1,5 +1,3 @@
-import { Class } from '@nestjs-query/core';
-
 export type ComposableDecorator = MethodDecorator | PropertyDecorator | ClassDecorator | ParameterDecorator;
 export type ComposedDecorator = MethodDecorator & PropertyDecorator & ClassDecorator & ParameterDecorator;
 
@@ -25,17 +23,4 @@ export function composeDecorators(...decorators: ComposableDecorator[]): Compose
       );
     });
   };
-}
-
-type ClassDecoratorDataFunc<Data> = (data: Data) => ClassDecorator;
-export const classMetadataDecorator = <Data>(key: string): ClassDecoratorDataFunc<Data> => {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  return (data: Data) => (target: Function): void => {
-    Reflect.defineMetadata(key, data, target);
-  };
-};
-
-export type MetaValue<MetaType> = MetaType | undefined;
-export function getClassMetadata<DTO, MetaType>(DTOClass: Class<DTO>, key: string): MetaValue<MetaType> {
-  return Reflect.getMetadata(key, DTOClass) as MetaValue<MetaType>;
 }
