@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.10](https://github.com/doug-martin/nestjs-query/compare/v0.17.9...v0.17.10) (2020-08-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.60 ([8982a12](https://github.com/doug-martin/nestjs-query/commit/8982a125ca013e824554a3313d63710d77cf3cad))
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.60 ([3663b9b](https://github.com/doug-martin/nestjs-query/commit/3663b9b96557d6fe190578d41d62ac2540121e88))
+* **deps:** update dependency rxjs to v6.6.2 ([7062be9](https://github.com/doug-martin/nestjs-query/commit/7062be9df416ed3d6e5dca96cbeef98a835a3a6c))
+
+
+
+
+
 ## [0.17.9](https://github.com/doug-martin/nestjs-query/compare/v0.17.8...v0.17.9) (2020-07-29)
 
 

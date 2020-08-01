@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.10](https://github.com/doug-martin/nestjs-query/compare/v0.17.9...v0.17.10) (2020-08-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency rxjs to v6.6.2 ([7062be9](https://github.com/doug-martin/nestjs-query/commit/7062be9df416ed3d6e5dca96cbeef98a835a3a6c))
+
+
+
+
+
 ## [0.17.9](https://github.com/doug-martin/nestjs-query/compare/v0.17.8...v0.17.9) (2020-07-29)
 
 **Note:** Version bump only for package nestjs-query-examples
