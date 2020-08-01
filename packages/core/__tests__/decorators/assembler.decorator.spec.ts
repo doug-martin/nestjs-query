@@ -1,5 +1,4 @@
 import { Assembler, AssemblerFactory, ClassTransformerAssembler, DefaultAssembler } from '../../src';
-import { getCoreMetadataStorage } from '../../src/metadata';
 
 class TestFrom {
   first!: string;
@@ -14,9 +13,6 @@ class TestTo {
 }
 
 describe('@Assembler', () => {
-  beforeEach(() => getCoreMetadataStorage().clear());
-  afterAll(() => getCoreMetadataStorage().clear());
-
   it('should register an assembler with metadata', () => {
     @Assembler(TestFrom, TestTo)
     class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {
@@ -29,7 +25,6 @@ describe('@Assembler', () => {
   });
 
   it('should throw an error when registering an assembler for the same From To combo', () => {
-    @Assembler(TestFrom, TestTo)
     class TestAssembler extends ClassTransformerAssembler<TestFrom, TestTo> {
       toPlain(dtoOrEntity: TestFrom | TestTo) {
         return dtoOrEntity;

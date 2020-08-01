@@ -1,8 +1,9 @@
 import { plainToClass } from 'class-transformer';
 import { AggregateQuery, AggregateResponse, Query } from '../interfaces';
-import { getCoreMetadataStorage } from '../metadata';
 import { AbstractAssembler } from './abstract.assembler';
 import { Class } from '../common';
+import { getAssemblerSerializer } from './assembler.serializer';
+import { getAssemblerDeserializer } from './assembler.deserializer';
 
 /**
  * Base assembler that uses class-transformer to transform to and from the DTO/Entity.
@@ -30,7 +31,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
 
   // eslint-disable-next-line @typescript-eslint/ban-types
   convert<T>(cls: Class<T>, obj: object): T {
-    const deserializer = getCoreMetadataStorage().getAssemblerDeserializer(cls);
+    const deserializer = getAssemblerDeserializer(cls);
     if (deserializer) {
       return deserializer(obj);
     }
@@ -40,12 +41,12 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
   // eslint-disable-next-line @typescript-eslint/ban-types
   toPlain(entityOrDto: Entity | DTO): object {
     if (entityOrDto instanceof this.EntityClass) {
-      const serializer = getCoreMetadataStorage().getAssemblerSerializer(this.EntityClass);
+      const serializer = getAssemblerSerializer(this.EntityClass);
       if (serializer) {
         return serializer(entityOrDto);
       }
     } else if (entityOrDto instanceof this.DTOClass) {
-      const serializer = getCoreMetadataStorage().getAssemblerSerializer(this.DTOClass);
+      const serializer = getAssemblerSerializer(this.DTOClass);
       if (serializer) {
         return serializer(entityOrDto);
       }
