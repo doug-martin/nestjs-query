@@ -1,6 +1,6 @@
-import { Class } from '../common';
+import { Class, MapReflector, MetaValue, ValueReflector } from '../common';
 import { AggregateQuery, AggregateResponse, Query } from '../interfaces';
-import { getCoreMetadataStorage } from '../metadata';
+import { ASSEMBLER_CLASSES_KEY, ASSEMBLER_KEY } from './constants';
 
 export interface Assembler<DTO, Entity> {
   /**
@@ -68,6 +68,14 @@ export interface Assembler<DTO, Entity> {
   convertAsyncToEntities(dtos: Promise<DTO[]>): Promise<Entity[]>;
 }
 
+const assemblerReflector = new ValueReflector(ASSEMBLER_CLASSES_KEY);
+const reflector = new MapReflector<Class<unknown>>(ASSEMBLER_KEY);
+
+export interface AssemblerClasses<DTO, Entity> {
+  DTOClass: Class<DTO>;
+  EntityClass: Class<Entity>;
+}
+
 /**
  * Class decorator for Assemblers to register them with nestjs-query
  * @param DTOClass - the DTO class.
@@ -75,10 +83,24 @@ export interface Assembler<DTO, Entity> {
  */
 export function Assembler<DTO, Entity>(DTOClass: Class<DTO>, EntityClass: Class<Entity>) {
   return <Cls extends Class<Assembler<DTO, Entity>>>(cls: Cls): Cls | void => {
-    if (getCoreMetadataStorage().hasAssembler(DTOClass, EntityClass)) {
+    if (reflector.has(DTOClass, EntityClass)) {
       throw new Error(`Assembler already registered for ${DTOClass.name} ${EntityClass.name}`);
     }
-    getCoreMetadataStorage().addAssembler(DTOClass, EntityClass, cls);
+    assemblerReflector.set(cls, { DTOClass, EntityClass });
+    reflector.set(DTOClass, EntityClass, cls);
     return cls;
   };
+}
+
+export function getAssembler<DTO, Entity>(
+  DTOClass: Class<DTO>,
+  EntityClass: Class<Entity>,
+): MetaValue<Class<Assembler<DTO, Entity>>> {
+  return reflector.get(DTOClass, EntityClass);
+}
+
+export function getAssemblerClasses<DTO, Entity>(
+  AssemblerClass: Class<Assembler<DTO, Entity>>,
+): MetaValue<AssemblerClasses<DTO, Entity>> {
+  return assemblerReflector.get(AssemblerClass as Class<Assembler<unknown, unknown>>);
 }

@@ -1,7 +1,6 @@
 import { Class } from '../common';
 import { AggregateQuery, Query, AggregateResponse } from '../interfaces';
-import { getCoreMetadataStorage } from '../metadata';
-import { Assembler } from './assembler';
+import { Assembler, getAssemblerClasses } from './assembler';
 
 /**
  * Base implementation for Assemblers that requires the implementation of.
@@ -20,7 +19,7 @@ export abstract class AbstractAssembler<DTO, Entity> implements Assembler<DTO, E
    * @param EntityClass - Optional class definition for the entity. If not provided it will be looked up from the \@Assembler annotation.
    */
   constructor(DTOClass?: Class<DTO>, EntityClass?: Class<Entity>) {
-    const classes = getCoreMetadataStorage().getAssemblerClasses(this.constructor as Class<Assembler<DTO, Entity>>);
+    const classes = getAssemblerClasses(this.constructor as Class<Assembler<DTO, Entity>>);
     const DTOClas = DTOClass ?? classes?.DTOClass;
     const EntityClas = EntityClass ?? classes?.EntityClass;
     if (!DTOClas || !EntityClas) {

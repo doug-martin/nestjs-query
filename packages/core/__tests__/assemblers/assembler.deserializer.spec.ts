@@ -1,5 +1,5 @@
-import { AssemblerDeserializer } from '../../src/assemblers';
-import { getCoreMetadataStorage } from '../../src/metadata';
+import { getAssemblerDeserializer } from '../../src/assemblers/assembler.deserializer';
+import { AssemblerDeserializer } from '../../src';
 
 describe('AssemblerDeserializer decorator', () => {
   it('should register a serializer', () => {
@@ -10,7 +10,7 @@ describe('AssemblerDeserializer decorator', () => {
       foo!: string;
     }
 
-    expect(getCoreMetadataStorage().getAssemblerDeserializer(TestSerializer)!({ bar: 'bar' })).toEqual({ foo: 'bar' });
+    expect(getAssemblerDeserializer(TestSerializer)!({ bar: 'bar' })).toEqual({ foo: 'bar' });
   });
 
   it('should throw an error if the serializer is registered twice', () => {
