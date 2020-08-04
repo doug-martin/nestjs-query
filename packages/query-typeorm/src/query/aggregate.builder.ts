@@ -24,6 +24,24 @@ export class AggregateBuilder<Entity> {
     return this.convertToAggregateResponse(aggResponse);
   }
 
+  static getAggregateAliases<Entity>(query: AggregateQuery<Entity>): string[] {
+    const aggs: [AggregateFuncs, (keyof Entity)[] | undefined][] = [
+      [AggregateFuncs.COUNT, query.count],
+      [AggregateFuncs.SUM, query.sum],
+      [AggregateFuncs.AVG, query.avg],
+      [AggregateFuncs.MAX, query.max],
+      [AggregateFuncs.MIN, query.min],
+    ];
+    return aggs.reduce((cols, [func, fields]) => {
+      const aliases = (fields ?? []).map((f) => this.getAggregateAlias(func, f));
+      return [...cols, ...aliases];
+    }, [] as string[]);
+  }
+
+  static getAggregateAlias<Entity>(func: AggregateFuncs, field: keyof Entity): string {
+    return `${func}_${field as string}`;
+  }
+
   static convertToAggregateResponse<Entity>(response: Record<string, unknown>): AggregateResponse<Entity> {
     return Object.keys(response).reduce((agg, resultField: string) => {
       const matchResult = AGG_REGEXP.exec(resultField);
@@ -71,8 +89,7 @@ export class AggregateBuilder<Entity> {
     }
     return fields.map((field) => {
       const col = alias ? `${alias}.${field as string}` : (field as string);
-      const aggAlias = `${func}_${field as string}`;
-      return [`${func}(${col})`, aggAlias];
+      return [`${func}(${col})`, AggregateBuilder.getAggregateAlias(func, field)];
     });
   }
 }

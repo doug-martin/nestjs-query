@@ -1,6 +1,8 @@
 import { Query, Class, AssemblerFactory, Filter, AggregateQuery, AggregateResponse } from '@nestjs-query/core';
-import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder } from 'typeorm';
-import { AggregateBuilder, FilterQueryBuilder, RelationQueryBuilder } from '../query';
+import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder, ObjectLiteral } from 'typeorm';
+import lodashFilter from 'lodash.filter';
+import lodashOmit from 'lodash.omit';
+import { AggregateBuilder, EntityIndexRelation, FilterQueryBuilder, RelationQueryBuilder } from '../query';
 
 interface RelationMetadata {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -252,15 +254,16 @@ export abstract class RelationQueryService<Entity> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const convertedQuery = assembler.convertQuery(query);
-    const entityRelations = await Promise.all(
-      entities.map((e) => {
-        return relationQueryBuilder.select(e, convertedQuery).getMany();
-      }),
-    );
-    return entityRelations.reduce((results, relations, index) => {
+    const entityRelations = await relationQueryBuilder.batchSelect(entities, convertedQuery).getRawAndEntities();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return entityRelations.raw.reduce((results: Map<Entity, Relation[]>, rawRelation: EntityIndexRelation<unknown>) => {
+      // eslint-disable-next-line no-underscore-dangle
+      const index: number = rawRelation.__nestjsQuery__entityIndex__;
       const e = entities[index];
-      results.set(e, assembler.convertToDTOs(relations));
-      return results;
+      const relationDtos = assembler.convertToDTOs(
+        this.getRelationsFromPrimaryKeys(relationQueryBuilder, rawRelation, entityRelations.entities),
+      );
+      return results.set(e, [...(results.get(e) ?? []), ...relationDtos]);
     }, new Map<Entity, Relation[]>());
   }
 
@@ -281,16 +284,17 @@ export abstract class RelationQueryService<Entity> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder<Relation>(relationName);
     const convertedQuery = assembler.convertQuery({ filter });
-    const entityRelations = await Promise.all(
-      entities.map(async (e) => {
-        return AggregateBuilder.asyncConvertToAggregateResponse(
-          relationQueryBuilder.aggregate(e, convertedQuery, aggregate).getRawOne<Record<string, unknown>>(),
-        );
-      }),
-    );
-    return entityRelations.reduce((results, relationAgg, index) => {
+    const rawAggregates = await relationQueryBuilder
+      .batchAggregate(entities, convertedQuery, aggregate)
+      .getRawMany<EntityIndexRelation<Record<string, unknown>>>();
+    return rawAggregates.reduce((results, relationAgg) => {
+      // eslint-disable-next-line no-underscore-dangle
+      const index = relationAgg.__nestjsQuery__entityIndex__;
       const e = entities[index];
-      results.set(e, relationAgg);
+      results.set(
+        e,
+        AggregateBuilder.convertToAggregateResponse(lodashOmit(relationAgg, relationQueryBuilder.entityIndexColName)),
+      );
       return results;
     }, new Map<Entity, AggregateResponse<Relation>>());
   }
@@ -362,5 +366,18 @@ export abstract class RelationQueryService<Entity> {
       return this.repo.manager.getRepository(relationMeta.type).target as Class<unknown>;
     }
     return relationMeta.type as Class<unknown>;
+  }
+
+  private getRelationsFromPrimaryKeys<Relation>(
+    relationBuilder: RelationQueryBuilder<Entity, Relation>,
+    rawResult: ObjectLiteral,
+    relations: Relation[],
+  ): Relation[] {
+    const pks = relationBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName();
+    const filter = pks.reduce((keys, key) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      return { ...keys, [key.propertyName]: rawResult[key.columnName] };
+    }, {} as Partial<Entity>);
+    return lodashFilter(relations, filter) as Relation[];
   }
 }
