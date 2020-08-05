@@ -84,7 +84,7 @@ export class TodoItemDTO {
 
 ### Example - filterRequired
 
-In the following example the `filterRequired` option is applied to the `completed` field, ensuring that all enpoints that use a filter will require a comparison on the `completed` field.
+In the following example the `filterRequired` option is applied to the `completed` field, ensuring that all endpoints that use a filter will require a comparison on the `completed` field.
 
 ```ts title="todo-item.dto.ts" {12}
 import { FilterableField } from '@nestjs-query/query-graphql';
