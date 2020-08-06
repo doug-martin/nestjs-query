@@ -314,14 +314,6 @@ describe('applyFilter', () => {
     expect(applyFilter({ first: 'e', last: 'bar' }, filter)).toBe(true);
   });
 
-  it('should throw an error for an unknown operator', () => {
-    const filter: Filter<TestDTO> = {
-      // @ts-ignore
-      first: { foo: 'bar' },
-    };
-    expect(() => applyFilter({ first: 'baz', last: 'kaz' }, filter)).toThrow('unknown operator "foo"');
-  });
-
   it('should handle and grouping', () => {
     const filter: Filter<TestDTO> = {
       and: [{ first: { eq: 'foo' } }, { last: { like: '%bar' } }],
@@ -341,6 +333,135 @@ describe('applyFilter', () => {
     expect(applyFilter({ first: 'oo', last: 'bar' }, filter)).toBe(true);
     expect(applyFilter({ first: 'foo', last: 'baz' }, filter)).toBe(true);
     expect(applyFilter({ first: 'fo', last: 'ba' }, filter)).toBe(false);
+  });
+
+  it('should handle nested objects', () => {
+    type ParentDTO = TestDTO & { child: TestDTO };
+    const parentFilter: Filter<ParentDTO> = {
+      child: { or: [{ first: { eq: 'foo' } }, { last: { like: '%bar' } }] },
+    };
+    const withChild = (child: TestDTO): ParentDTO => ({
+      first: 'baz',
+      last: 'qux',
+      child,
+    });
+    expect(applyFilter(withChild({ first: 'foo', last: 'bar' }), parentFilter)).toBe(true);
+    expect(applyFilter(withChild({ first: 'foo', last: 'foobar' }), parentFilter)).toBe(true);
+    expect(applyFilter(withChild({ first: 'oo', last: 'foobar' }), parentFilter)).toBe(true);
+    expect(applyFilter(withChild({ first: 'foo', last: 'baz' }), parentFilter)).toBe(true);
+    expect(applyFilter(withChild({ first: 'oo', last: 'baz' }), parentFilter)).toBe(false);
+
+    type GrandParentDTO = TestDTO & { child: ParentDTO };
+    const grandParentFilter: Filter<GrandParentDTO> = {
+      child: { child: { or: [{ first: { eq: 'foo' } }, { last: { like: '%bar' } }] } },
+    };
+    const withGrandChild = (child: TestDTO): GrandParentDTO => ({
+      first: 'baz',
+      last: 'qux',
+      child: { first: 'baz', last: 'qux', child },
+    });
+    expect(applyFilter(withGrandChild({ first: 'foo', last: 'bar' }), grandParentFilter)).toBe(true);
+    expect(applyFilter(withGrandChild({ first: 'foo', last: 'foobar' }), grandParentFilter)).toBe(true);
+    expect(applyFilter(withGrandChild({ first: 'oo', last: 'foobar' }), grandParentFilter)).toBe(true);
+    expect(applyFilter(withGrandChild({ first: 'foo', last: 'baz' }), grandParentFilter)).toBe(true);
+    expect(applyFilter(withGrandChild({ first: 'oo', last: 'baz' }), grandParentFilter)).toBe(false);
+  });
+
+  describe('nested nulls', () => {
+    type ParentDTO = TestDTO & { child: TestDTO | null };
+    type GrandParentDTO = TestDTO & { child: ParentDTO | null };
+    const singleNestedNull = (): ParentDTO => ({ child: null });
+    const doubleNestedNull = (): GrandParentDTO => ({ child: null });
+
+    it('should handle like comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { like: '%foo' } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { like: '%foo' } } } })).toBe(false);
+    });
+
+    it('should handle notLike comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { notLike: '%foo' } } })).toBe(true);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { notLike: '%foo' } } } })).toBe(true);
+    });
+
+    it('should handle iLike comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { iLike: '%foo' } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { iLike: '%foo' } } } })).toBe(false);
+    });
+
+    it('should handle notILike comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { notILike: '%foo' } } })).toBe(true);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { notILike: '%foo' } } } })).toBe(true);
+    });
+
+    it('should handle in comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { in: ['foo'] } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { in: ['foo'] } } } })).toBe(false);
+    });
+
+    it('should handle notIn comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { notIn: ['foo'] } } })).toBe(true);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { notIn: ['foo'] } } } })).toBe(true);
+    });
+
+    it('should handle between comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { between: { lower: 'foo', upper: 'bar' } } } })).toBe(
+        false,
+      );
+      expect(
+        applyFilter(doubleNestedNull(), { child: { child: { first: { between: { lower: 'foo', upper: 'bar' } } } } }),
+      ).toBe(false);
+    });
+
+    it('should handle notBetween comparisons', () => {
+      expect(
+        applyFilter(singleNestedNull(), { child: { first: { notBetween: { lower: 'foo', upper: 'bar' } } } }),
+      ).toBe(true);
+      expect(
+        applyFilter(doubleNestedNull(), {
+          child: { child: { first: { notBetween: { lower: 'foo', upper: 'bar' } } } },
+        }),
+      ).toBe(true);
+    });
+
+    it('should handle gt comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { gt: 'foo' } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { gt: 'foo' } } } })).toBe(false);
+    });
+
+    it('should handle gte comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { gte: 'foo' } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { gte: 'foo' } } } })).toBe(false);
+    });
+
+    it('should handle lt comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { lt: 'foo' } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { lt: 'foo' } } } })).toBe(false);
+    });
+
+    it('should handle lte comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { lte: 'foo' } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { lte: 'foo' } } } })).toBe(false);
+    });
+
+    it('should handle eq comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { eq: 'foo' } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { eq: 'foo' } } } })).toBe(false);
+    });
+
+    it('should handle neq comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { neq: 'foo' } } })).toBe(true);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { neq: 'foo' } } } })).toBe(true);
+    });
+
+    it('should handle is comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { is: null } } })).toBe(true);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { is: null } } } })).toBe(true);
+    });
+
+    it('should handle isNot comparisons', () => {
+      expect(applyFilter(singleNestedNull(), { child: { first: { isNot: null } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { isNot: null } } } })).toBe(false);
+    });
   });
 });
 

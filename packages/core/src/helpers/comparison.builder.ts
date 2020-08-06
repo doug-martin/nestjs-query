@@ -1,4 +1,4 @@
-import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '../interfaces';
+import { CommonFieldComparisonBetweenType, FilterComparisonOperators, Filter } from '../interfaces';
 import { ComparisonField, FilterFn } from './types';
 
 type LikeComparisonOperators = 'like' | 'notLike' | 'iLike' | 'notILike';
@@ -6,6 +6,10 @@ type InComparisonOperators = 'in' | 'notIn';
 type BetweenComparisonOperators = 'between' | 'notBetween';
 type RangeComparisonOperators = 'gt' | 'gte' | 'lt' | 'lte';
 type BooleanComparisonOperators = 'eq' | 'neq' | 'is' | 'isNot';
+
+const compare = <DTO>(filter: (dto: DTO) => boolean, fallback: boolean): FilterFn<DTO> => {
+  return (dto?: DTO) => (dto ? filter(dto) : fallback);
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isLikeComparisonOperator = (op: any): op is LikeComparisonOperators => {
@@ -30,6 +34,19 @@ const isRangeComparisonOperators = (op: any): op is RangeComparisonOperators => 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isBooleanComparisonOperators = (op: any): op is BooleanComparisonOperators => {
   return op === 'eq' || op === 'neq' || op === 'is' || op === 'isNot';
+};
+
+export const isComparison = <DTO>(maybeComparison: Filter<DTO>[keyof DTO]): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return Object.keys(maybeComparison as Record<string, any>).every((op) => {
+    return (
+      isLikeComparisonOperator(op) ||
+      isInComparisonOperators(op) ||
+      isBetweenComparisonOperators(op) ||
+      isRangeComparisonOperators(op) ||
+      isBooleanComparisonOperators(op)
+    );
+  });
 };
 
 export class ComparisonBuilder {
@@ -63,9 +80,9 @@ export class ComparisonBuilder {
     val: DTO[F],
   ): FilterFn<DTO> {
     if (cmp === 'neq' || cmp === 'isNot') {
-      return (dto: DTO): boolean => dto[field] !== val;
+      return (dto?: DTO): boolean => (dto ? dto[field] : null) !== val;
     }
-    return (dto: DTO): boolean => dto[field] === val;
+    return (dto?: DTO): boolean => (dto ? dto[field] : null) === val;
   }
 
   private static rangeComparison<DTO, F extends keyof DTO>(
@@ -74,15 +91,15 @@ export class ComparisonBuilder {
     val: DTO[F],
   ): FilterFn<DTO> {
     if (cmp === 'gt') {
-      return (dto: DTO): boolean => dto[field] > val;
+      return compare((dto) => dto[field] > val, false);
     }
     if (cmp === 'gte') {
-      return (dto: DTO): boolean => dto[field] >= val;
+      return compare((dto) => dto[field] >= val, false);
     }
     if (cmp === 'lt') {
-      return (dto: DTO): boolean => dto[field] < val;
+      return compare((dto) => dto[field] < val, false);
     }
-    return (dto: DTO): boolean => dto[field] <= val;
+    return compare((dto) => dto[field] <= val, false);
   }
 
   private static likeComparison<DTO, F extends keyof DTO>(
@@ -92,20 +109,18 @@ export class ComparisonBuilder {
   ): FilterFn<DTO> {
     if (cmp === 'like') {
       const likeRegexp = this.likeSearchToRegexp(val);
-      return (dto: DTO): boolean => {
-        return likeRegexp.test((dto[field] as unknown) as string);
-      };
+      return compare((dto) => likeRegexp.test((dto[field] as unknown) as string), false);
     }
     if (cmp === 'notLike') {
       const likeRegexp = this.likeSearchToRegexp(val);
-      return (dto: DTO): boolean => !likeRegexp.test((dto[field] as unknown) as string);
+      return compare((dto) => !likeRegexp.test((dto[field] as unknown) as string), true);
     }
     if (cmp === 'iLike') {
       const likeRegexp = this.likeSearchToRegexp(val, true);
-      return (dto: DTO): boolean => likeRegexp.test((dto[field] as unknown) as string);
+      return compare((dto) => likeRegexp.test((dto[field] as unknown) as string), false);
     }
     const likeRegexp = this.likeSearchToRegexp(val, true);
-    return (dto: DTO): boolean => !likeRegexp.test((dto[field] as unknown) as string);
+    return compare((dto) => !likeRegexp.test((dto[field] as unknown) as string), true);
   }
 
   private static inComparison<DTO, F extends keyof DTO>(
@@ -114,9 +129,9 @@ export class ComparisonBuilder {
     val: DTO[F][],
   ): FilterFn<DTO> {
     if (cmp === 'notIn') {
-      return (dto: DTO): boolean => !val.includes(dto[field]);
+      return compare((dto) => !val.includes(dto[field]), true);
     }
-    return (dto: DTO): boolean => val.includes(dto[field]);
+    return compare((dto) => val.includes(dto[field]), false);
   }
 
   private static betweenComparison<DTO, F extends keyof DTO>(
@@ -126,15 +141,15 @@ export class ComparisonBuilder {
   ): FilterFn<DTO> {
     const { lower, upper } = val;
     if (cmp === 'notBetween') {
-      return (dto: DTO): boolean => {
+      return compare((dto) => {
         const dtoVal = dto[field];
         return dtoVal < lower || dtoVal > upper;
-      };
+      }, true);
     }
-    return (dto: DTO): boolean => {
+    return compare((dto) => {
       const dtoVal = dto[field];
       return dtoVal >= lower && dtoVal <= upper;
-    };
+    }, false);
   }
 
   private static likeSearchToRegexp(likeStr: string, caseInsensitive = false): RegExp {
