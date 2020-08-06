@@ -1,47 +1,54 @@
 import { Filter, FilterComparisons, FilterFieldComparison } from '../interfaces';
-import { ComparisonBuilder } from './comparison.builder';
+import { ComparisonBuilder, isComparison } from './comparison.builder';
 import { ComparisonField, FilterFn } from './types';
 
 export class FilterBuilder {
   static build<DTO>(filter: Filter<DTO>): FilterFn<DTO> {
     const { and, or } = filter;
     const filters: FilterFn<DTO>[] = [];
-    if (and && and.length) {
+
+    if (and) {
       filters.push(this.andFilterFn(...and.map((f) => this.build(f))));
     }
-    if (or && or.length) {
+
+    if (or) {
       filters.push(this.orFilterFn(...or.map((f) => this.build(f))));
     }
-    filters.push(this.filterFields(filter));
+
+    filters.push(this.filterFieldsOrNested(filter));
     return this.andFilterFn(...filters);
   }
 
   private static andFilterFn<DTO>(...filterFns: FilterFn<DTO>[]): FilterFn<DTO> {
-    return (dto) => filterFns.every((fn) => fn(dto));
+    return (dto) => filterFns.every((filter) => filter(dto));
   }
 
   private static orFilterFn<DTO>(...filterFns: FilterFn<DTO>[]): FilterFn<DTO> {
-    return (dto) => filterFns.some((fn) => fn(dto));
+    return (dto) => filterFns.some((filter) => filter(dto));
   }
 
-  private static filterFields<DTO>(filter: Filter<DTO>): FilterFn<DTO> {
+  private static filterFieldsOrNested<DTO>(filter: Filter<DTO>): FilterFn<DTO> {
     return this.andFilterFn(
       ...Object.keys(filter)
         .filter((k) => k !== 'and' && k !== 'or')
-        .map((field) =>
-          this.withFilterComparison(
-            field as keyof DTO,
-            this.getField(filter as FilterComparisons<DTO>, field as keyof DTO),
-          ),
-        ),
+        .map((fieldOrNested) => {
+          const value = this.getField(filter as FilterComparisons<DTO>, fieldOrNested as keyof DTO);
+
+          if (isComparison(filter[fieldOrNested as keyof DTO])) {
+            return this.withFilterComparison(fieldOrNested as keyof DTO, value);
+          }
+
+          const nestedFilterFn = this.build(value);
+          return (dto?: DTO) => nestedFilterFn(dto ? dto[fieldOrNested as keyof DTO] : null);
+        }),
     );
   }
 
   private static getField<DTO, K extends keyof FilterComparisons<DTO>>(
     obj: FilterComparisons<DTO>,
     field: K,
-  ): FilterFieldComparison<DTO[K]> {
-    return obj[field] as FilterFieldComparison<DTO[K]>;
+  ): FilterFieldComparison<DTO[K]> & Filter<DTO[K]> {
+    return obj[field] as FilterFieldComparison<DTO[K]> & Filter<DTO[K]>;
   }
 
   private static withFilterComparison<DTO, T extends keyof DTO>(
