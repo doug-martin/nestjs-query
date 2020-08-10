@@ -2,7 +2,7 @@ import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { getConnectionToken } from '@nestjs/typeorm';
+import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import { TagTodoItemDTO } from '../src/tag/dto/tag-todo-item.dto';
 import { TagDTO } from '../src/tag/dto/tag.dto';
@@ -30,10 +30,10 @@ describe('Federated - TagResolver (e2e)', () => {
     );
 
     await app.init();
-    await refresh(app.get(getConnectionToken('tag-db')));
+    await refresh(app.get(Connection));
   });
 
-  afterAll(() => refresh(app.get(getConnectionToken('tag-db'))));
+  afterAll(() => refresh(app.get(Connection)));
 
   const tags = [
     { id: '1', name: 'Urgent' },

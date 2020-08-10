@@ -3,7 +3,6 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import { getConnectionToken } from '@nestjs/typeorm';
 import { AppModule } from '../src/app.module';
 import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { refresh, edgeNodes, pageInfoField, subTaskFields, todoItemFields } from './__fixtures__';
@@ -28,7 +27,7 @@ describe('Federated - SubTaskResolver (e2e)', () => {
     );
 
     await app.init();
-    await refresh(app.get(getConnectionToken('sub-task-db')));
+    await refresh(app.get(Connection));
   });
 
   afterAll(() => refresh(app.get(Connection)));

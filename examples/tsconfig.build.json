@@ -6,6 +6,7 @@
     "skipLibCheck": true
   },
   "include": [
+    "./helpers",
     "**/src",
     "**/ormconfig.json"
   ],

@@ -1,9 +1,0 @@
-{
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5436,
-  "username": "limit_offset",
-  "database": "limit_offset",
-  "autoLoadEntities": true,
-  "synchronize": true
-}

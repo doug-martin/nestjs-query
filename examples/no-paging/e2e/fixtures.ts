@@ -2,14 +2,10 @@ import { Connection } from 'typeorm';
 import { SubTaskEntity } from '../src/sub-task/sub-task.entity';
 import { TagEntity } from '../src/tag/tag.entity';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
+import { executeTruncate } from '../../helpers';
 
 const tables = ['todo_item', 'sub_task', 'tag'];
-export const truncate = async (connection: Connection): Promise<void> => {
-  await tables.reduce(async (prev, table) => {
-    await prev;
-    await connection.query(`TRUNCATE ${table} RESTART IDENTITY CASCADE`);
-  }, Promise.resolve());
-};
+export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables);
 
 export const refresh = async (connection: Connection): Promise<void> => {
   await truncate(connection);

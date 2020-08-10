@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { TodoItemModule } from './todo-item/todo-item.module';
-import * as ormconfig from '../ormconfig.json';
+import { typeormOrmConfig } from '../../helpers';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormconfig as TypeOrmModuleOptions),
+    TypeOrmModule.forRoot(typeormOrmConfig('typeorm_soft_delete')),
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
     }),

@@ -11,7 +11,7 @@ import { TodoItemService } from './todo-item.service';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([SubTaskEntity], 'sub-task-db')],
+      imports: [NestjsQueryTypeOrmModule.forFeature([SubTaskEntity])],
       services: [TodoItemService],
       resolvers: [
         {

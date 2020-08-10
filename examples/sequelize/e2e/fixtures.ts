@@ -2,10 +2,10 @@ import { Sequelize } from 'sequelize';
 import { SubTaskEntity } from '../src/sub-task/sub-task.entity';
 import { TagEntity } from '../src/tag/tag.entity';
 import { TodoItemEntity } from '../src/todo-item/entity/todo-item.entity';
+import { executeTruncate } from '../../helpers';
 
-export const truncate = async (sequelize: Sequelize): Promise<void> => {
-  await sequelize.truncate({ cascade: true, restartIdentity: true });
-};
+const tables = ['TodoItemEntities', 'SubTaskEntities', 'TagEntities'];
+export const truncate = async (sequelize: Sequelize): Promise<void> => executeTruncate(sequelize, tables);
 
 export const refresh = async (connection: Sequelize): Promise<void> => {
   await truncate(connection);

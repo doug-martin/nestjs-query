@@ -29,6 +29,7 @@
     "graphql-query-complexity": "0.6.0",
     "graphql-tools": "6.0.16",
     "pg": "8.3.0",
+    "mysql2": "2.1.0",
     "rimraf": "3.0.2",
     "rxjs": "6.6.2",
     "sequelize": "5.22.3",
