@@ -2,7 +2,7 @@ import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { getConnectionToken } from '@nestjs/typeorm';
+import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
@@ -28,10 +28,10 @@ describe('Federated - TodoItemResolver (e2e)', () => {
     );
 
     await app.init();
-    await refresh(app.get(getConnectionToken('todo-item-db')));
+    await refresh(app.get(Connection));
   });
 
-  afterAll(() => refresh(app.get(getConnectionToken('todo-item-db'))));
+  afterAll(() => refresh(app.get(Connection)));
 
   describe('find one', () => {
     it(`should find a todo item by id`, () => {

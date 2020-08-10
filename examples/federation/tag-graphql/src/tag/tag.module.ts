@@ -13,7 +13,7 @@ import { TodoItemService } from './todo-item.service';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([TagEntity, TagTodoItemEntity], 'tag-db')],
+      imports: [NestjsQueryTypeOrmModule.forFeature([TagEntity, TagTodoItemEntity])],
       services: [TodoItemService],
       resolvers: [
         {

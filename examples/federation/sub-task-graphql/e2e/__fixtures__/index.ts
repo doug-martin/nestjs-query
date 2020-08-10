@@ -1,13 +1,9 @@
 import { Connection } from 'typeorm';
 import { SubTaskEntity } from '../../src/sub-task/sub-task.entity';
+import { executeTruncate } from '../../../../helpers';
 
 const tables = ['sub_task'];
-export const truncate = async (connection: Connection): Promise<void> => {
-  await tables.reduce(async (prev, table) => {
-    await prev;
-    await connection.query(`TRUNCATE ${table} RESTART IDENTITY CASCADE`);
-  }, Promise.resolve());
-};
+export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables);
 
 export const refresh = async (connection: Connection): Promise<void> => {
   await truncate(connection);

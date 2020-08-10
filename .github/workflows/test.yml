@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x, 12.x, 14.x]
+        db-types: ['postgres', 'mysql']
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -32,11 +33,13 @@ jobs:
       - run: npm run bootstrap
       - run: npm run build
       - run: npm test
+        env:
+          NESTJS_QUERY_DB_TYPE: ${{ matrix.db-type }}
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.node-version }}
+          flag-name: run-${{ matrix.node-version }}-${{ matrix.db-type }}
           parallel: true
 
   finish:

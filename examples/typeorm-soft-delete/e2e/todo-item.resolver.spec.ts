@@ -582,12 +582,15 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            deleteManyTodoItems: {
-              deletedCount: 2,
+        .expect(200)
+        .expect(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              deleteManyTodoItems: {
+                deletedCount: expect.any(Number),
+              },
             },
-          },
+          });
         });
     });
 

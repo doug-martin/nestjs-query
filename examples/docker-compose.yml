@@ -4,7 +4,7 @@ services:
   postgres:
     image: "postgres:11"
     volumes:
-      - ./init-scripts:/docker-entrypoint-initdb.d/
+      - ./init-scripts/postgres:/docker-entrypoint-initdb.d/
     environment:
       - "POSTGRES_USER=nestjs_query"
       - "POSTGRES_HOST_AUTH_METHOD=trust"
@@ -12,6 +12,17 @@ services:
       - "5432"
     ports:
       - "5436:5432"
+  mysql:
+    image: "mysql:5"
+    volumes:
+      - ./init-scripts/mysql:/docker-entrypoint-initdb.d/
+    environment:
+      - "MYSQL_USER=nestjs_query"
+      - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
   redis:
     image: "redis:6"
     ports:

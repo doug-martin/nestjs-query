@@ -1,9 +1,0 @@
-{
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5436,
-  "username": "no_paging",
-  "database": "no_paging",
-  "autoLoadEntities": true,
-  "synchronize": true
-}

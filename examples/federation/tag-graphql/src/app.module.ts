@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { GraphQLFederationModule } from '@nestjs/graphql';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { TagModule } from './tag/tag.module';
-import * as ormconfig from '../ormconfig.json';
+import { typeormOrmConfig } from '../../../helpers';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormconfig as TypeOrmModuleOptions),
+    TypeOrmModule.forRoot(typeormOrmConfig('federation_tag')),
     GraphQLFederationModule.forRoot({
       autoSchemaFile: 'schema.gql',
     }),

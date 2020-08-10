@@ -5,6 +5,7 @@
     "rootDir": "."
   },
   "include": [
+    "./helpers",
     "**/src",
     "**/e2e",
     "**/ormconfig.json"

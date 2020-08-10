@@ -1,9 +1,0 @@
-{
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5436,
-  "username": "complexity",
-  "database": "complexity",
-  "autoLoadEntities": true,
-  "synchronize": true
-}

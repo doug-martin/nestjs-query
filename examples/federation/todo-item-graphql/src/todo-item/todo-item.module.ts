@@ -9,7 +9,7 @@ import { TodoItemEntity } from './todo-item.entity';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity], 'todo-item-db')],
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
       resolvers: [
         {
           DTOClass: TodoItemDTO,
