@@ -14,6 +14,7 @@ export const sequelizeMysqlOptions = (
     database,
     autoLoadModels: true,
     synchronize: true,
+    logging: false,
     ...overrides,
   };
 };
@@ -31,6 +32,7 @@ export const sequelizePostgresOptions = (
     database,
     autoLoadModels: true,
     synchronize: true,
+    logging: false,
     ...overrides,
   };
 };

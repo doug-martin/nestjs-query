@@ -1,9 +1,9 @@
 export const dbType = process.env.NESTJS_QUERY_DB_TYPE ?? 'postgres';
 export const truncateSql = (table: string): string[] => {
   if (dbType === 'mysql') {
-    return [`DELETE FROM ${table}`, `ALTER TABLE ${table} AUTO_INCREMENT = 1`];
+    return [`DELETE FROM \`${table}\``, `ALTER TABLE \`${table}\` AUTO_INCREMENT = 1`];
   }
-  return [`TRUNCATE ${table} RESTART IDENTITY CASCADE`];
+  return [`TRUNCATE "${table}" RESTART IDENTITY CASCADE`];
 };
 
 interface QueryExecutor {
