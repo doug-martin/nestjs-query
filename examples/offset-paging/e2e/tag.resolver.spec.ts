@@ -582,11 +582,11 @@ describe('TagResolver (limitOffset - e2e)', () => {
           const { id, todoItems }: { id: string; todoItems: TodoItemDTO[] } = body.data.addTodoItemsToTag;
           expect(id).toBe('1');
           expect(todoItems).toHaveLength(5);
-          expect(todoItems.map((e) => e.title)).toEqual([
-            'Create Nest App',
+          expect(todoItems.map((e) => e.title).sort()).toEqual([
+            'Add Todo Item Resolver',
             'Create Entity',
             'Create Entity Service',
-            'Add Todo Item Resolver',
+            'Create Nest App',
             'How to create item With Sub Tasks',
           ]);
         });
@@ -619,7 +619,7 @@ describe('TagResolver (limitOffset - e2e)', () => {
           const { id, todoItems }: { id: string; todoItems: TodoItemDTO[] } = body.data.removeTodoItemsFromTag;
           expect(id).toBe('1');
           expect(todoItems).toHaveLength(2);
-          expect(todoItems.map((e) => e.title)).toEqual(['Create Nest App', 'Create Entity']);
+          expect(todoItems.map((e) => e.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
         });
     });
   });
