@@ -791,11 +791,11 @@ describe('TagResolver (sequelize - e2e)', () => {
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node.title)).toEqual([
-            'Create Nest App',
+          expect(edges.map((e) => e.node.title).sort()).toEqual([
+            'Add Todo Item Resolver',
             'Create Entity',
             'Create Entity Service',
-            'Add Todo Item Resolver',
+            'Create Nest App',
             'How to create item With Sub Tasks',
           ]);
         });
@@ -841,7 +841,7 @@ describe('TagResolver (sequelize - e2e)', () => {
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.title)).toEqual(['Create Nest App', 'Create Entity']);
+          expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
         });
     });
   });
