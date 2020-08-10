@@ -689,11 +689,11 @@ describe('TagResolver (complexity - e2e)', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          expect(edges.map((e) => e.node.title)).toEqual([
-            'Create Nest App',
+          expect(edges.map((e) => e.node.title).sort()).toEqual([
+            'Add Todo Item Resolver',
             'Create Entity',
             'Create Entity Service',
-            'Add Todo Item Resolver',
+            'Create Nest App',
             'How to create item With Sub Tasks',
           ]);
         });
@@ -733,7 +733,7 @@ describe('TagResolver (complexity - e2e)', () => {
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          expect(edges.map((e) => e.node.title)).toEqual(['Create Nest App', 'Create Entity']);
+          expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
         });
     });
   });

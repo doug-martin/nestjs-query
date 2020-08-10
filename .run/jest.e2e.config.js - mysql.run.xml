@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="jest.e2e.config.js - mysql" type="JavaScriptTestRunnerJest">
+    <config-file value="$PROJECT_DIR$/jest.e2e.config.js" />
+    <node-interpreter value="project" />
+    <node-options value="" />
+    <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+    <working-dir value="$PROJECT_DIR$" />
+    <jest-options value="--runInBand --coverage" />
+    <envs>
+      <env name="NESTJS_QUERY_DB_TYPE" value="mysql" />
+    </envs>
+    <scope-kind value="ALL" />
+    <method v="2" />
+  </configuration>
+</component>
