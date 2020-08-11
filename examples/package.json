@@ -1,6 +1,6 @@
 {
   "name": "nestjs-query-examples",
-  "version": "0.17.10",
+  "version": "0.18.0",
   "description": "",
   "author": "",
   "private": true,
@@ -12,10 +12,10 @@
     "start": "nest start --watch"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.17.10",
-    "@nestjs-query/query-graphql": "0.17.10",
-    "@nestjs-query/query-sequelize": "0.17.10",
-    "@nestjs-query/query-typeorm": "0.17.10",
+    "@nestjs-query/core": "0.18.0",
+    "@nestjs-query/query-graphql": "0.18.0",
+    "@nestjs-query/query-sequelize": "0.18.0",
+    "@nestjs-query/query-typeorm": "0.18.0",
     "@nestjs/common": "7.4.2",
     "@nestjs/core": "7.4.2",
     "@nestjs/graphql": "7.6.0",
@@ -28,8 +28,8 @@
     "graphql": "15.3.0",
     "graphql-query-complexity": "0.6.0",
     "graphql-tools": "6.0.16",
-    "pg": "8.3.0",
     "mysql2": "2.1.0",
+    "pg": "8.3.0",
     "rimraf": "3.0.2",
     "rxjs": "6.6.2",
     "sequelize": "5.22.3",

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/doug-martin/nestjs-query/compare/v0.17.10...v0.18.0) (2020-08-11)
+
+**Note:** Version bump only for package @nestjs-query/query-sequelize
+
+
+
+
+
 ## [0.17.10](https://github.com/doug-martin/nestjs-query/compare/v0.17.9...v0.17.10) (2020-08-01)
 
 **Note:** Version bump only for package @nestjs-query/query-sequelize

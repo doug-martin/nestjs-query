@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/doug-martin/nestjs-query/compare/v0.17.10...v0.18.0) (2020-08-11)
+
+
+### Bug Fixes
+
+* **type:** Pin dev dependencies ([442db4c](https://github.com/doug-martin/nestjs-query/commit/442db4cd9b9d48d0c6a20209f0b44c4a314660ac))
+
+
+### Features
+
+* **typeorm:** Switch to use unioned queries for relations ([327c676](https://github.com/doug-martin/nestjs-query/commit/327c6760e3e1a7db6bb0f872928d0502345c925f))
+
+
+
+
+
 ## [0.17.10](https://github.com/doug-martin/nestjs-query/compare/v0.17.9...v0.17.10) (2020-08-01)
 
 **Note:** Version bump only for package @nestjs-query/query-typeorm

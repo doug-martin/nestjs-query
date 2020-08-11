@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/doug-martin/nestjs-query/compare/v0.17.10...v0.18.0) (2020-08-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency graphql-tools to v6.0.16 ([df3784d](https://github.com/doug-martin/nestjs-query/commit/df3784d33d0e6db04a2a160b60edf49ce52dc2ba))
+* **e2e:** Making tests deterministic ([175cc2e](https://github.com/doug-martin/nestjs-query/commit/175cc2edc02a2bb58db4557812c00b657f708ca6))
+* **tests:** Fix tests to be deterministic ([5dd6dac](https://github.com/doug-martin/nestjs-query/commit/5dd6dacc2ccace913c64343726474b51f814a1e4))
+
+
+
+
+
 ## [0.17.10](https://github.com/doug-martin/nestjs-query/compare/v0.17.9...v0.17.10) (2020-08-01)
 
 

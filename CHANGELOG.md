@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/doug-martin/nestjs-query/compare/v0.17.10...v0.18.0) (2020-08-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.61 ([c2f03b8](https://github.com/doug-martin/nestjs-query/commit/c2f03b872d8ac111f257ef280a51ade4a5ea7ddb))
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.61 ([e052793](https://github.com/doug-martin/nestjs-query/commit/e0527932cfd52a4096441805b076b42ad739c525))
+* **deps:** update dependency graphql-tools to v6.0.16 ([df3784d](https://github.com/doug-martin/nestjs-query/commit/df3784d33d0e6db04a2a160b60edf49ce52dc2ba))
+* **e2e:** Making tests deterministic ([175cc2e](https://github.com/doug-martin/nestjs-query/commit/175cc2edc02a2bb58db4557812c00b657f708ca6))
+* **tests:** Fix tests to be deterministic ([5dd6dac](https://github.com/doug-martin/nestjs-query/commit/5dd6dacc2ccace913c64343726474b51f814a1e4))
+* **type:** Pin dev dependencies ([442db4c](https://github.com/doug-martin/nestjs-query/commit/442db4cd9b9d48d0c6a20209f0b44c4a314660ac))
+* **workflow:** Fix github actions matrix reference ([a4d9447](https://github.com/doug-martin/nestjs-query/commit/a4d9447e863f0663385c652b9a1d34752d47817a))
+
+
+### Features
+
+* **typeorm:** Switch to use unioned queries for relations ([327c676](https://github.com/doug-martin/nestjs-query/commit/327c6760e3e1a7db6bb0f872928d0502345c925f))
+
+
+
+
+
 ## [0.17.10](https://github.com/doug-martin/nestjs-query/compare/v0.17.9...v0.17.10) (2020-08-01)
 
 
