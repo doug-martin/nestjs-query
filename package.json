@@ -38,7 +38,7 @@
     "jest-extended": "0.11.5",
     "lerna": "3.22.1",
     "prettier": "2.0.5",
-    "ts-jest": "26.1.4",
+    "ts-jest": "26.2.0",
     "tsconfig-extends": "1.0.1",
     "typescript": "3.9.7"
   }
