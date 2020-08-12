@@ -104,7 +104,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           variables: {},
           query: `{
           todoItem(id: 1) {
-            subTasks {
+            subTasks(sorting: { field: id, direction: ASC }) {
               ${pageInfoField}
               ${edgeNodes(subTaskFields)}
               totalCount

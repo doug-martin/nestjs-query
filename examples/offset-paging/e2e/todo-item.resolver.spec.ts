@@ -84,7 +84,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           variables: {},
           query: `{
           todoItem(id: 1) {
-            subTasks {
+            subTasks(sorting: { field: id, direction: ASC }) {
               ${subTaskFields}
             }
           }
