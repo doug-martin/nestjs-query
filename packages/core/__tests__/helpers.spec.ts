@@ -335,36 +335,177 @@ describe('applyFilter', () => {
     expect(applyFilter({ first: 'fo', last: 'ba' }, filter)).toBe(false);
   });
 
-  it('should handle nested objects', () => {
+  describe('nested objects', () => {
     type ParentDTO = TestDTO & { child: TestDTO };
-    const parentFilter: Filter<ParentDTO> = {
-      child: { or: [{ first: { eq: 'foo' } }, { last: { like: '%bar' } }] },
-    };
     const withChild = (child: TestDTO): ParentDTO => ({
-      first: 'baz',
-      last: 'qux',
+      first: 'bar',
       child,
     });
-    expect(applyFilter(withChild({ first: 'foo', last: 'bar' }), parentFilter)).toBe(true);
-    expect(applyFilter(withChild({ first: 'foo', last: 'foobar' }), parentFilter)).toBe(true);
-    expect(applyFilter(withChild({ first: 'oo', last: 'foobar' }), parentFilter)).toBe(true);
-    expect(applyFilter(withChild({ first: 'foo', last: 'baz' }), parentFilter)).toBe(true);
-    expect(applyFilter(withChild({ first: 'oo', last: 'baz' }), parentFilter)).toBe(false);
-
     type GrandParentDTO = TestDTO & { child: ParentDTO };
-    const grandParentFilter: Filter<GrandParentDTO> = {
-      child: { child: { or: [{ first: { eq: 'foo' } }, { last: { like: '%bar' } }] } },
-    };
     const withGrandChild = (child: TestDTO): GrandParentDTO => ({
-      first: 'baz',
-      last: 'qux',
-      child: { first: 'baz', last: 'qux', child },
+      first: 'bar',
+      child: { first: 'baz', child },
     });
-    expect(applyFilter(withGrandChild({ first: 'foo', last: 'bar' }), grandParentFilter)).toBe(true);
-    expect(applyFilter(withGrandChild({ first: 'foo', last: 'foobar' }), grandParentFilter)).toBe(true);
-    expect(applyFilter(withGrandChild({ first: 'oo', last: 'foobar' }), grandParentFilter)).toBe(true);
-    expect(applyFilter(withGrandChild({ first: 'foo', last: 'baz' }), grandParentFilter)).toBe(true);
-    expect(applyFilter(withGrandChild({ first: 'oo', last: 'baz' }), grandParentFilter)).toBe(false);
+
+    it('should handle like comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { like: '%foo' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { like: '%foo' } } } };
+      expect(applyFilter(withChild({ first: 'afoo' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'bar' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'afoo' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'bar' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle notLike comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { notLike: '%foo' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { notLike: '%foo' } } } };
+      expect(applyFilter(withChild({ first: 'bar' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'afoo' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'bar' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'afoo' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle iLike comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { iLike: '%foo' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { iLike: '%foo' } } } };
+      expect(applyFilter(withChild({ first: 'AFOO' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'bar' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'AFOO' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'bar' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle notILike comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { notILike: '%foo' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { notILike: '%foo' } } } };
+      expect(applyFilter(withChild({ first: 'bar' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'AFOO' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'bar' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'AFOO' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle in comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { in: ['foo'] } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { in: ['foo'] } } } };
+      expect(applyFilter(withChild({ first: 'foo' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'bar' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'foo' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'bar' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle notIn comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { notIn: ['foo'] } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { notIn: ['foo'] } } } };
+      expect(applyFilter(withChild({ first: 'bar' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'foo' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'bar' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'foo' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle between comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { between: { lower: 'a', upper: 'c' } } } };
+      const grandParentFilter: Filter<GrandParentDTO> = {
+        child: { child: { first: { between: { lower: 'a', upper: 'c' } } } },
+      };
+      expect(applyFilter(withChild({ first: 'b' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'd' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'b' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'd' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle notBetween comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { notBetween: { lower: 'a', upper: 'c' } } } };
+      const grandParentFilter: Filter<GrandParentDTO> = {
+        child: { child: { first: { notBetween: { lower: 'a', upper: 'c' } } } },
+      };
+      expect(applyFilter(withChild({ first: 'd' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'b' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'd' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'b' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle gt comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { gt: 'c' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { gt: 'c' } } } };
+      expect(applyFilter(withChild({ first: 'd' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'b' }), parentFilter)).toBe(false);
+      expect(applyFilter(withChild({ first: 'c' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'd' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'b' }), grandParentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'c' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle gte comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { gte: 'c' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { gte: 'c' } } } };
+      expect(applyFilter(withChild({ first: 'c' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'd' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'b' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'c' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'd' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'b' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle lt comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { lt: 'c' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { lt: 'c' } } } };
+      expect(applyFilter(withChild({ first: 'b' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'd' }), parentFilter)).toBe(false);
+      expect(applyFilter(withChild({ first: 'c' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'b' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'd' }), grandParentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'c' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle lte comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { lte: 'c' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { lte: 'c' } } } };
+      expect(applyFilter(withChild({ first: 'c' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'b' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'd' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'c' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'b' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'd' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle eq comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { eq: 'foo' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { eq: 'foo' } } } };
+      expect(applyFilter(withChild({ first: 'foo' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'bar' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'foo' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'bar' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle neq comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { neq: 'foo' } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { neq: 'foo' } } } };
+      expect(applyFilter(withChild({ first: 'bar' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: 'foo' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: 'bar' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: 'foo' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle is comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { is: null } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { is: null } } } };
+      expect(applyFilter(withChild({ first: null }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({}), parentFilter)).toBe(true); // undefined
+      expect(applyFilter(withChild({ first: 'foo' }), parentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({ first: null }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({}), grandParentFilter)).toBe(true); // undefined
+      expect(applyFilter(withGrandChild({ first: 'foo' }), grandParentFilter)).toBe(false);
+    });
+
+    it('should handle isNot comparisons', () => {
+      const parentFilter: Filter<ParentDTO> = { child: { first: { isNot: null } } };
+      const grandParentFilter: Filter<GrandParentDTO> = { child: { child: { first: { isNot: null } } } };
+      expect(applyFilter(withChild({ first: 'foo' }), parentFilter)).toBe(true);
+      expect(applyFilter(withChild({ first: null }), parentFilter)).toBe(false);
+      expect(applyFilter(withChild({}), parentFilter)).toBe(false); // undefined
+      expect(applyFilter(withGrandChild({ first: 'foo' }), grandParentFilter)).toBe(true);
+      expect(applyFilter(withGrandChild({ first: null }), grandParentFilter)).toBe(false);
+      expect(applyFilter(withGrandChild({}), grandParentFilter)).toBe(false); // undefined
+    });
   });
 
   describe('nested nulls', () => {
