@@ -79,10 +79,18 @@ export class ComparisonBuilder {
     field: F,
     val: DTO[F],
   ): FilterFn<DTO> {
-    if (cmp === 'neq' || cmp === 'isNot') {
+    if (cmp === 'neq') {
       return (dto?: DTO): boolean => (dto ? dto[field] : null) !== val;
     }
-    return (dto?: DTO): boolean => (dto ? dto[field] : null) === val;
+    if (cmp === 'isNot') {
+      // eslint-disable-next-line eqeqeq
+      return (dto?: DTO): boolean => (dto ? dto[field] : null) != val;
+    }
+    if (cmp === 'eq') {
+      return (dto?: DTO): boolean => (dto ? dto[field] : null) === val;
+    }
+    // eslint-disable-next-line eqeqeq
+    return (dto?: DTO): boolean => (dto ? dto[field] : null) == val;
   }
 
   private static rangeComparison<DTO, F extends keyof DTO>(
