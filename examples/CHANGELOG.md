@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.1](https://github.com/doug-martin/nestjs-query/compare/v0.18.0...v0.18.1) (2020-08-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency graphql-query-complexity to v0.7.0 ([d47bba1](https://github.com/doug-martin/nestjs-query/commit/d47bba1def07445f3e6e190d4382653f0d21ceaf))
+* **deps:** update dependency graphql-tools to v6.0.17 ([b0d1648](https://github.com/doug-martin/nestjs-query/commit/b0d1648509daeb63ec3973ae598de4529ac093d8))
+* **deps:** update dependency graphql-tools to v6.0.18 ([9678548](https://github.com/doug-martin/nestjs-query/commit/9678548965217ecf63151ff72f75d1358a06c181))
+* **tests:** Make subTask connections tests order consistently ([ab8bab2](https://github.com/doug-martin/nestjs-query/commit/ab8bab23d1679b06e60966999a0d4e2e1f258e78))
+
+
+
+
+
 # [0.18.0](https://github.com/doug-martin/nestjs-query/compare/v0.17.10...v0.18.0) (2020-08-11)
 
 

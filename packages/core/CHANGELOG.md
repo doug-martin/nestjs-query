@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.1](https://github.com/doug-martin/nestjs-query/compare/v0.18.0...v0.18.1) (2020-08-14)
+
+
+### Bug Fixes
+
+* **core:** Fix potential stack overflow with filter comparison ([f498802](https://github.com/doug-martin/nestjs-query/commit/f49880274a32e681d9072253135a8669bec7b3b2))
+
+
+### Features
+
+* **core:** refactor null compares and improve tests ([3582ed2](https://github.com/doug-martin/nestjs-query/commit/3582ed2f6b4aa5e3fa78bd9986621b9816566156))
+* refactored filter builder to support nested object filters ([1ee8dbf](https://github.com/doug-martin/nestjs-query/commit/1ee8dbf5a0ae1a1258b203da1e68901e2b8d20f8))
+
+
+
+
+
 # [0.18.0](https://github.com/doug-martin/nestjs-query/compare/v0.17.10...v0.18.0) (2020-08-11)
 
 **Note:** Version bump only for package @nestjs-query/core

@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.1](https://github.com/doug-martin/nestjs-query/compare/v0.18.0...v0.18.1) (2020-08-14)
+
+
+### Bug Fixes
+
+* **core:** Fix potential stack overflow with filter comparison ([f498802](https://github.com/doug-martin/nestjs-query/commit/f49880274a32e681d9072253135a8669bec7b3b2))
+* **deps:** update dependency graphql-query-complexity to v0.7.0 ([d47bba1](https://github.com/doug-martin/nestjs-query/commit/d47bba1def07445f3e6e190d4382653f0d21ceaf))
+* **deps:** update dependency graphql-tools to v6.0.17 ([b0d1648](https://github.com/doug-martin/nestjs-query/commit/b0d1648509daeb63ec3973ae598de4529ac093d8))
+* **deps:** update dependency graphql-tools to v6.0.18 ([9678548](https://github.com/doug-martin/nestjs-query/commit/9678548965217ecf63151ff72f75d1358a06c181))
+* **tests:** Make subTask connections tests order consistently ([ab8bab2](https://github.com/doug-martin/nestjs-query/commit/ab8bab23d1679b06e60966999a0d4e2e1f258e78))
+
+
+### Features
+
+* **core:** refactor null compares and improve tests ([3582ed2](https://github.com/doug-martin/nestjs-query/commit/3582ed2f6b4aa5e3fa78bd9986621b9816566156))
+* refactored filter builder to support nested object filters ([1ee8dbf](https://github.com/doug-martin/nestjs-query/commit/1ee8dbf5a0ae1a1258b203da1e68901e2b8d20f8))
+
+
+
+
+
 # [0.18.0](https://github.com/doug-martin/nestjs-query/compare/v0.17.10...v0.18.0) (2020-08-11)
 
 
