@@ -7,15 +7,16 @@ export class FilterBuilder {
     const { and, or } = filter;
     const filters: FilterFn<DTO>[] = [];
 
-    if (and) {
+    if (and && and.length) {
       filters.push(this.andFilterFn(...and.map((f) => this.build(f))));
     }
 
-    if (or) {
+    if (or && or.length) {
       filters.push(this.orFilterFn(...or.map((f) => this.build(f))));
     }
-
-    filters.push(this.filterFieldsOrNested(filter));
+    if (Object.keys(filter).length) {
+      filters.push(this.filterFieldsOrNested(filter));
+    }
     return this.andFilterFn(...filters);
   }
 
@@ -31,16 +32,7 @@ export class FilterBuilder {
     return this.andFilterFn(
       ...Object.keys(filter)
         .filter((k) => k !== 'and' && k !== 'or')
-        .map((fieldOrNested) => {
-          const value = this.getField(filter as FilterComparisons<DTO>, fieldOrNested as keyof DTO);
-
-          if (isComparison(filter[fieldOrNested as keyof DTO])) {
-            return this.withFilterComparison(fieldOrNested as keyof DTO, value);
-          }
-
-          const nestedFilterFn = this.build(value);
-          return (dto?: DTO) => nestedFilterFn(dto ? dto[fieldOrNested as keyof DTO] : null);
-        }),
+        .map((fieldOrNested) => this.withComparison(filter, fieldOrNested as keyof DTO)),
     );
   }
 
@@ -61,5 +53,17 @@ export class FilterBuilder {
         ComparisonBuilder.build(field, operator, cmp[operator] as ComparisonField<DTO, T>),
       ),
     );
+  }
+
+  private static withComparison<DTO>(filter: FilterComparisons<DTO>, fieldOrNested: keyof DTO): FilterFn<DTO> {
+    const value = this.getField(filter, fieldOrNested);
+    if (isComparison(value)) {
+      return this.withFilterComparison(fieldOrNested, value);
+    }
+    if (typeof value !== 'object') {
+      throw new Error(`unknown comparison ${JSON.stringify(fieldOrNested)}`);
+    }
+    const nestedFilterFn = this.build(value);
+    return (dto?: DTO) => nestedFilterFn(dto ? dto[fieldOrNested] : null);
   }
 }
