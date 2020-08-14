@@ -2,6 +2,15 @@
   "collection": "@nestjs/schematics",
   "monorepo": true,
   "projects": {
+    "auth": {
+      "type": "application",
+      "root": "auth",
+      "entryFile": "main",
+      "sourceRoot": "auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.build.json"
+      }
+    },
     "basic": {
       "type": "application",
       "root": "basic",
