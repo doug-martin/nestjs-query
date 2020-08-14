@@ -314,6 +314,14 @@ describe('applyFilter', () => {
     expect(applyFilter({ first: 'e', last: 'bar' }, filter)).toBe(true);
   });
 
+  it('should throw an error for an unknown operator', () => {
+    const filter: Filter<TestDTO> = {
+      // @ts-ignore
+      first: { foo: 'bar' },
+    };
+    expect(() => applyFilter({ first: 'baz', last: 'kaz' }, filter)).toThrow('unknown comparison "foo"');
+  });
+
   it('should handle and grouping', () => {
     const filter: Filter<TestDTO> = {
       and: [{ first: { eq: 'foo' } }, { last: { like: '%bar' } }],

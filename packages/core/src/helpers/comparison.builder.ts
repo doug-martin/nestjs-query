@@ -1,4 +1,9 @@
-import { CommonFieldComparisonBetweenType, FilterComparisonOperators, Filter } from '../interfaces';
+import {
+  CommonFieldComparisonBetweenType,
+  FilterComparisonOperators,
+  Filter,
+  FilterFieldComparison,
+} from '../interfaces';
 import { ComparisonField, FilterFn } from './types';
 
 type LikeComparisonOperators = 'like' | 'notLike' | 'iLike' | 'notILike';
@@ -36,7 +41,9 @@ const isBooleanComparisonOperators = (op: any): op is BooleanComparisonOperators
   return op === 'eq' || op === 'neq' || op === 'is' || op === 'isNot';
 };
 
-export const isComparison = <DTO>(maybeComparison: Filter<DTO>[keyof DTO]): boolean => {
+export const isComparison = <DTO, K extends keyof DTO>(
+  maybeComparison: FilterFieldComparison<DTO[K]> | Filter<DTO[K]>,
+): maybeComparison is FilterFieldComparison<DTO[K]> => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return Object.keys(maybeComparison as Record<string, any>).every((op) => {
     return (
