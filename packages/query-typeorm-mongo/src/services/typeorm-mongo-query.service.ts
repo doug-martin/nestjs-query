@@ -9,12 +9,8 @@ import {
   QueryService,
   UpdateManyResponse,
 } from '@nestjs-query/core';
-import { Logger, MethodNotAllowedException, NotFoundException } from '@nestjs/common';
+import { Logger, NotFoundException } from '@nestjs/common';
 import { FindConditions, MongoRepository } from 'typeorm';
-
-export interface TypeOrmMongoQueryServiceOpts<Entity> {
-  useSoftDelete?: boolean;
-}
 
 const mongoOperatorMapper: { [k: string]: string } = {
   eq: '$eq',
@@ -46,11 +42,7 @@ const mongoOperatorMapper: { [k: string]: string } = {
 export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
   protected readonly logger = new Logger(TypeOrmMongoQueryService.name);
 
-  readonly useSoftDelete: boolean;
-
-  constructor(readonly repo: MongoRepository<Entity>, opts?: TypeOrmMongoQueryServiceOpts<Entity>) {
-    this.useSoftDelete = opts?.useSoftDelete ?? false;
-  }
+  constructor(readonly repo: MongoRepository<Entity>) {}
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   get EntityClass(): Class<Entity> {
@@ -230,9 +222,6 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    */
   async deleteOne(id: string | number): Promise<Entity> {
     const entity = await this.repo.findOneOrFail(id);
-    if (this.useSoftDelete) {
-      return this.repo.softRemove(entity);
-    }
     return this.repo.remove(entity);
   }
 
@@ -250,48 +239,8 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * @param filter - A `Filter` to find records to delete.
    */
   async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
-    if (this.useSoftDelete) {
-      const res = await this.repo.softDelete(this.buildExpression(filter));
-      return { deletedCount: res.affected || 0 };
-    }
     const res = await this.repo.deleteMany(this.buildExpression(filter));
     return { deletedCount: res.deletedCount || 0 };
-  }
-
-  /**
-   * Restore an entity by `id`.
-   *
-   * @example
-   *
-   * ```ts
-   * const restoredTodo = await this.service.restoreOne(1);
-   * ```
-   *
-   * @param id - The `id` of the entity to restore.
-   */
-  async restoreOne(id: string): Promise<Entity> {
-    this.ensureSoftDeleteEnabled();
-    await this.repo.restore(id);
-    return this.getById(id);
-  }
-
-  /**
-   * Restores multiple records with a `@nestjs-query/core` `Filter`.
-   *
-   * @example
-   *
-   * ```ts
-   * const { updatedCount } = this.service.restoreMany({
-   *   created: { lte: new Date('2020-1-1') }
-   * });
-   * ```
-   *
-   * @param filter - A `Filter` to find records to delete.
-   */
-  async restoreMany(filter: Filter<Entity>): Promise<UpdateManyResponse> {
-    this.ensureSoftDeleteEnabled();
-    const res = await this.repo.restore(this.buildExpression(filter));
-    return { updatedCount: res.affected || 0 };
   }
 
   private async ensureIsEntityAndDoesNotExist(e: DeepPartial<Entity>): Promise<Entity> {
@@ -314,12 +263,6 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
   private ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
     if (this.repo.hasId((e as unknown) as Entity)) {
       throw new Error('Id cannot be specified when updating');
-    }
-  }
-
-  private ensureSoftDeleteEnabled(): void {
-    if (!this.useSoftDelete) {
-      throw new MethodNotAllowedException(`Restore not allowed for non soft deleted entity ${this.EntityClass.name}.`);
     }
   }
 
