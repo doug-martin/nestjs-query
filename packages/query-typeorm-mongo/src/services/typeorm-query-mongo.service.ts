@@ -5,7 +5,6 @@ import {
   DeepPartial,
   DeleteManyResponse,
   Filter,
-  FilterComparisons,
   Query,
   QueryService,
   UpdateManyResponse,
@@ -16,6 +15,17 @@ import { FindConditions, MongoRepository } from 'typeorm';
 export interface TypeOrmMongoQueryServiceOpts<Entity> {
   useSoftDelete?: boolean;
 }
+
+const mongoOperatorMapper: { [k: string]: string } = {
+  eq: '$eq',
+  neq: '$ne',
+  gt: '$gt',
+  gte: '$gte',
+  lt: '$lt',
+  lte: '$lte',
+  in: '$in',
+  notIn: '$nin',
+};
 
 /**
  * Base class for all query services that use a `typeorm` Repository.
@@ -48,35 +58,34 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
   }
 
   protected buildExpression(filter: Filter<Entity>): FindConditions<Entity> {
-    const where: FindConditions<Entity> = {};
-
-    Object.entries(filter).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        where[`$${key}`] = value.map((subFilter) => this.buildExpression(subFilter));
-      } else if (value) {
-        Object.entries(value).forEach(([fieldKey, fieldValue]) => {
-          let mongoOperator: string | undefined;
-          if (['eq', 'gt', 'gte', 'lt', 'lte', 'in'].includes(fieldKey)) {
-            mongoOperator = `$${fieldKey}`;
-          }
-          if (fieldKey === 'neq') {
-            mongoOperator = '$ne';
-          }
-          if (fieldKey === 'notIn') {
-            mongoOperator = '$nin';
-          }
-          if (mongoOperator) {
-            where[key] = {
-              [mongoOperator]: fieldValue,
-            };
-          } else {
-            this.logger.error(`Operator ${fieldKey} not supported yet`);
-          }
-        });
+    return Object.entries(filter).reduce((prev: FindConditions<Entity>, [key, value]) => {
+      if (!value) {
+        return prev;
       }
-    });
-
-    return where;
+      if (Array.isArray(value)) {
+        return {
+          ...prev,
+          [`$${key}`]: value.map((subFilter) => this.buildExpression(subFilter)),
+        };
+      }
+      const findConditions = Object.entries(value).reduce(
+        (prevCondition: FindConditions<Entity>, [fieldKey, fieldValue]) => {
+          if (mongoOperatorMapper[fieldKey]) {
+            return {
+              ...prevCondition,
+              [mongoOperatorMapper[fieldKey]]: fieldValue,
+            };
+          }
+          this.logger.error(`Operator ${fieldKey} not supported yet`);
+          return prevCondition;
+        },
+        {},
+      );
+      return {
+        ...prev,
+        [key]: findConditions,
+      };
+    }, {});
   }
 
   /**
@@ -314,6 +323,95 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
     }
   }
 
+  /**
+   * Adds multiple relations.
+   * @param relationName - The name of the relation to query for.
+   * @param id - The id of the dto to add the relation to.
+   * @param relationIds - The ids of the relations to add.
+   */
+  addRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<Entity> {
+    throw new Error('Not implemented yet');
+  }
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<Map<Entity, AggregateResponse<Relation>>>;
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity,
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation>>;
+
+  aggregateRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity | Entity[],
+    filter: Filter<Relation>,
+    aggregate: AggregateQuery<Relation>,
+  ): Promise<AggregateResponse<Relation> | Map<Entity, AggregateResponse<Relation>>> {
+    throw new Error('Not implemented yet');
+  }
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    filter: Filter<Relation>,
+  ): Promise<Map<Entity, number>>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity,
+    filter: Filter<Relation>,
+  ): Promise<number>;
+
+  countRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity | Entity[],
+    filter: Filter<Relation>,
+  ): Promise<number | Map<Entity, number>> {
+    throw new Error('Not implemented yet');
+  }
+
+  findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: Entity[],
+  ): Promise<Map<Entity, Relation | undefined>>;
+  findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity,
+  ): Promise<Relation | undefined>;
+  async findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: Entity | Entity[],
+  ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
+    const dtos: Entity[] = Array.isArray(dto) ? dto : [dto];
+    const relationRepo = this.repo.manager.getRepository(RelationClass);
+    return dtos.reduce(async (prev, curr) => {
+      const map = await prev;
+      map.set(curr, await relationRepo.findOne(curr[relationName as keyof Entity]));
+      return map;
+    }, Promise.resolve(new Map<Entity, Relation | undefined>()));
+  }
+
+  queryRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: Entity[],
+    query: Query<Relation>,
+  ): Promise<Map<Entity, Relation[]>>;
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
@@ -323,66 +421,13 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
-    dtos: Entity[],
+    dto: Entity | Entity[],
     query: Query<Relation>,
-  ): Promise<Map<Entity, Relation[]>>;
-  queryRelations(RelationClass: any, relationName: any, dtos: any, query: any) {
+  ): Promise<Relation[] | Map<Entity, Relation[]>> {
     throw new Error('Not implemented yet');
   }
 
-  aggregateRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: Entity,
-    filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation>>;
-  aggregateRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dtos: Entity[],
-    filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<Entity, AggregateResponse<Relation>>>;
-  aggregateRelations(RelationClass: any, relationName: any, dtos: any, filter: any, aggregate: any) {
-    throw new Error('Not implemented yet');
-  }
-
-  countRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: Entity,
-    filter: Filter<Relation>,
-  ): Promise<number>;
-  countRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: Entity[],
-    filter: Filter<Relation>,
-  ): Promise<Map<Entity, number>>;
-  countRelations(RelationClass: any, relationName: any, dto: any, filter: any) {
-    throw new Error('Not implemented yet');
-  }
-
-  findRelation<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: Entity,
-  ): Promise<Relation | undefined>;
-  findRelation<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dtos: Entity[],
-  ): Promise<Map<Entity, Relation | undefined>>;
-  findRelation(RelationClass: any, relationName: any, dtos: any) {
-    throw new Error('Not implemented yet');
-  }
-
-  addRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<Entity> {
-    throw new Error('Not implemented yet');
-  }
-
-  setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<Entity> {
+  removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<Entity> {
     throw new Error('Not implemented yet');
   }
 
@@ -394,7 +439,7 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
     throw new Error('Not implemented yet');
   }
 
-  removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<Entity> {
+  setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<Entity> {
     throw new Error('Not implemented yet');
   }
 }
