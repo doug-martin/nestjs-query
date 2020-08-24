@@ -1,1 +1,1 @@
-export * from './typeorm-query-mongo.service';
+export * from './typeorm-mongo-query.service';
