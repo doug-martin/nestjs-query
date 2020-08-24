@@ -126,7 +126,7 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param id - The id of the record to find.
    */
-  async findById(id: string | number): Promise<Entity | undefined> {
+  async findById(id: string): Promise<Entity | undefined> {
     return this.repo.findOne(id);
   }
 
@@ -143,7 +143,7 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param id - The id of the record to find.
    */
-  async getById(id: string | number): Promise<Entity> {
+  async getById(id: string): Promise<Entity> {
     const entity = await this.findById(id);
     if (!entity) {
       throw new NotFoundException(`Unable to find ${this.EntityClass.name} with id: ${id}`);
@@ -192,7 +192,7 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * @param id - The `id` of the record.
    * @param update - A `Partial` of the entity with fields to update.
    */
-  async updateOne<U extends DeepPartial<Entity>>(id: number | string, update: U): Promise<Entity> {
+  async updateOne<U extends DeepPartial<Entity>>(id: string, update: U): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
     const entity = await this.repo.findOneOrFail(id);
     return this.repo.save(this.repo.merge(entity, update));
@@ -269,7 +269,7 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    *
    * @param id - The `id` of the entity to restore.
    */
-  async restoreOne(id: string | number): Promise<Entity> {
+  async restoreOne(id: string): Promise<Entity> {
     this.ensureSoftDeleteEnabled();
     await this.repo.restore(id);
     return this.getById(id);
