@@ -36,8 +36,92 @@ describe('TypegooseQueryService', () => {
   describe('#query', () => {
     it('call find and return the result', async () => {
       const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({});
+      return expect(queryResult).toHaveLength(TEST_ENTITIES.length);
+    });
+
+    it('should support eq operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo1' } } });
       return expect(queryResult).toEqual([TEST_ENTITIES[0]]);
+    });
+
+    it('should support neq operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { stringType: { neq: 'foo1' } } });
+      return expect(queryResult).toHaveLength(TEST_ENTITIES.length - 1);
+    });
+
+    it('should support gt operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { numberType: { gt: 5 } } });
+      return expect(queryResult).toHaveLength(TEST_ENTITIES.length - 5);
+    });
+
+    it('should support gte operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { numberType: { gte: 5 } } });
+      return expect(queryResult).toHaveLength(TEST_ENTITIES.length - 4);
+    });
+
+    it('should support lt operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { numberType: { lt: 10 } } });
+      return expect(queryResult).toHaveLength(9);
+    });
+
+    it('should support lte operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { numberType: { lte: 10 } } });
+      return expect(queryResult).toHaveLength(10);
+    });
+
+    it('should support in operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { numberType: { in: [1, 2, 3] } } });
+      return expect(queryResult).toEqual([TEST_ENTITIES[0], TEST_ENTITIES[1], TEST_ENTITIES[2]]);
+    });
+
+    it('should support notIn operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { numberType: { notIn: [1, 2, 3] } } });
+      return expect(queryResult).toHaveLength(12);
+    });
+
+    it('should support is operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { boolType: { is: true } } });
+      return expect(queryResult).toHaveLength(7);
+    });
+
+    it('should support isNot operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { boolType: { isNot: true } } });
+      return expect(queryResult).toHaveLength(8);
+    });
+
+    it('should support like operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { stringType: { like: 'foo%' } } });
+      return expect(queryResult).toHaveLength(15);
+    });
+
+    it('should support notLike operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { stringType: { notLike: 'foo%' } } });
+      return expect(queryResult).toHaveLength(0);
+    });
+
+    it('should support iLike operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { stringType: { iLike: 'FOO%' } } });
+      return expect(queryResult).toHaveLength(15);
+    });
+
+    it('should support notILike operator', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.query({ filter: { stringType: { notILike: 'FOO%' } } });
+      return expect(queryResult).toHaveLength(0);
     });
   });
 
