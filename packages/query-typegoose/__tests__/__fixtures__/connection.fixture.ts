@@ -18,4 +18,5 @@ export const prepareDb = async (): Promise<void> => {
 
 export const closeDbConnection = async (): Promise<void> => {
   await connections[connections.length - 1].close();
+  await mongoServer.stop();
 };
