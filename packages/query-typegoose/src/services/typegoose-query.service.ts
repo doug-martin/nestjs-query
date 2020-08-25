@@ -12,6 +12,7 @@ import {
 import { Logger, NotFoundException } from '@nestjs/common';
 import { FilterQuery, UpdateQuery } from 'mongoose';
 import { ReturnModelType } from '@typegoose/typegoose';
+import escapeRegExp from 'lodash.escaperegexp';
 
 const mongoOperatorMapper: { [k: string]: string } = {
   eq: '$eq',
@@ -22,6 +23,8 @@ const mongoOperatorMapper: { [k: string]: string } = {
   lte: '$lte',
   in: '$in',
   notIn: '$nin',
+  is: '$eq',
+  isNot: '$ne',
 };
 
 /**
@@ -62,6 +65,20 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
             return {
               ...prevCondition,
               [mongoOperatorMapper[fieldKey]]: fieldValue,
+            };
+          }
+          if (['like', 'notLike', 'iLike', 'notILike'].includes(fieldKey)) {
+            const regExpStr = (escapeRegExp as (str: string) => string)(fieldValue as string).replace('%', '.*');
+            const regExp = new RegExp(regExpStr, fieldKey.toLowerCase().includes('ilike') ? 'i' : undefined);
+            if (fieldKey.startsWith('not')) {
+              return {
+                ...prevCondition,
+                $not: { $regex: regExp },
+              };
+            }
+            return {
+              ...prevCondition,
+              $regex: regExp,
             };
           }
           this.logger.error(`Operator ${fieldKey} not supported yet`);
