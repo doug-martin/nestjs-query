@@ -10,7 +10,8 @@ import {
   UpdateManyResponse,
 } from '@nestjs-query/core';
 import { Logger, NotFoundException } from '@nestjs/common';
-import { FindConditions, MongoRepository } from 'typeorm';
+import { FilterQuery, UpdateQuery } from 'mongoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 const mongoOperatorMapper: { [k: string]: string } = {
   eq: '$eq',
@@ -39,18 +40,13 @@ const mongoOperatorMapper: { [k: string]: string } = {
  * }
  * ```
  */
-export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
-  protected readonly logger = new Logger(TypeOrmMongoQueryService.name);
+export class TypegooseQueryService<Entity> implements QueryService<Entity> {
+  protected readonly logger = new Logger(TypegooseQueryService.name);
 
-  constructor(readonly repo: MongoRepository<Entity>) {}
+  constructor(readonly Model: ReturnModelType<new () => Entity>) {}
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  get EntityClass(): Class<Entity> {
-    return this.repo.target as Class<Entity>;
-  }
-
-  protected buildExpression(filter: Filter<Entity>): FindConditions<Entity> {
-    return Object.entries(filter).reduce((prev: FindConditions<Entity>, [key, value]) => {
+  protected buildExpression(filter: Filter<Entity>): FilterQuery<new () => Entity> {
+    return Object.entries(filter).reduce((prev: FilterQuery<new () => Entity>, [key, value]) => {
       if (!value) {
         return prev;
       }
@@ -61,7 +57,7 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
         };
       }
       const findConditions = Object.entries(value).reduce(
-        (prevCondition: FindConditions<Entity>, [fieldKey, fieldValue]) => {
+        (prevCondition: FilterQuery<new () => Entity>, [fieldKey, fieldValue]) => {
           if (mongoOperatorMapper[fieldKey]) {
             return {
               ...prevCondition,
@@ -75,9 +71,13 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
       );
       return {
         ...prev,
-        [key]: findConditions,
+        [this.getSchemaKey(key)]: findConditions,
       };
     }, {});
+  }
+
+  private getSchemaKey(key: string) {
+    return key === 'id' ? '_id' : key;
   }
 
   /**
@@ -93,12 +93,19 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param query - The Query used to filter, page, and sort rows.
    */
-  query(query: Query<Entity>): Promise<Entity[]> {
-    return this.repo.find({
-      where: this.buildExpression(query.filter || {}),
-      skip: query.paging?.offset,
-      take: query.paging?.limit,
-    });
+  async query(query: Query<Entity>): Promise<Entity[]> {
+    const entities = await this.Model.find(
+      this.buildExpression(query.filter || {}),
+      {},
+      {
+        limit: query.paging?.limit,
+        skip: query.paging?.offset,
+        sort: (query.sorting || []).map((sort) => ({
+          [this.getSchemaKey(sort.field.toString())]: sort.direction.toLowerCase(),
+        })),
+      },
+    ).exec();
+    return entities.map((doc) => doc.toObject() as Entity);
   }
 
   aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
@@ -106,7 +113,7 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
   }
 
   count(filter: Filter<Entity>): Promise<number> {
-    return this.repo.count(this.buildExpression(filter));
+    return this.Model.count(this.buildExpression(filter)).exec();
   }
 
   /**
@@ -119,7 +126,8 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * @param id - The id of the record to find.
    */
   async findById(id: string): Promise<Entity | undefined> {
-    return this.repo.findOne(id);
+    const doc = await this.Model.findById(id);
+    return doc?.toObject() as Entity;
   }
 
   /**
@@ -138,7 +146,7 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
   async getById(id: string): Promise<Entity> {
     const entity = await this.findById(id);
     if (!entity) {
-      throw new NotFoundException(`Unable to find ${this.EntityClass.name} with id: ${id}`);
+      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
     }
     return entity;
   }
@@ -153,8 +161,9 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * @param record - The entity to create.
    */
   async createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
-    const entity = await this.ensureIsEntityAndDoesNotExist(record);
-    return this.repo.save(entity);
+    const doc = new this.Model(record);
+    await doc.save(record);
+    return doc.toObject() as Entity;
   }
 
   /**
@@ -169,9 +178,8 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * ```
    * @param records - The entities to create.
    */
-  async createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
-    const entities = await Promise.all(records.map((r) => this.ensureIsEntityAndDoesNotExist(r)));
-    return this.repo.save(entities);
+  createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
+    return Promise.all(records.map((r) => this.createOne(r)));
   }
 
   /**
@@ -186,8 +194,11 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    */
   async updateOne<U extends DeepPartial<Entity>>(id: string, update: U): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
-    const entity = await this.repo.findOneOrFail(id);
-    return this.repo.save(this.repo.merge(entity, update));
+    const doc = await this.Model.findByIdAndUpdate(id, update as UpdateQuery<new () => Entity>, { new: true });
+    if (doc) {
+      return doc.toObject() as Entity;
+    }
+    throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
   }
 
   /**
@@ -205,8 +216,11 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    */
   async updateMany<U extends DeepPartial<Entity>>(update: U, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
-    const res = await this.repo.updateMany(this.buildExpression(filter), { $set: update });
-    return { updatedCount: res.result.nModified || 0 };
+    const res = (await this.Model.updateMany(
+      this.buildExpression(filter),
+      update as UpdateQuery<new () => Entity>,
+    ).exec()) as { nModified: number };
+    return { updatedCount: res.nModified || 0 };
   }
 
   /**
@@ -221,8 +235,11 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * @param id - The `id` of the entity to delete.
    */
   async deleteOne(id: string | number): Promise<Entity> {
-    const entity = await this.repo.findOneOrFail(id);
-    return this.repo.remove(entity);
+    const doc = await this.Model.findByIdAndDelete(id);
+    if (doc) {
+      return doc.toObject() as Entity;
+    }
+    throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
   }
 
   /**
@@ -239,29 +256,12 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
    * @param filter - A `Filter` to find records to delete.
    */
   async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
-    const res = await this.repo.deleteMany(this.buildExpression(filter));
+    const res = await this.Model.deleteMany(this.buildExpression(filter)).exec();
     return { deletedCount: res.deletedCount || 0 };
   }
 
-  private async ensureIsEntityAndDoesNotExist(e: DeepPartial<Entity>): Promise<Entity> {
-    if (!(e instanceof this.EntityClass)) {
-      return this.ensureEntityDoesNotExist(this.repo.create(e));
-    }
-    return this.ensureEntityDoesNotExist(e);
-  }
-
-  private async ensureEntityDoesNotExist(e: Entity): Promise<Entity> {
-    if (this.repo.hasId(e)) {
-      const found = await this.repo.findOne(this.repo.getId(e));
-      if (found) {
-        throw new Error('Entity already exists');
-      }
-    }
-    return e;
-  }
-
   private ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
-    if (this.repo.hasId((e as unknown) as Entity)) {
+    if (Object.keys(e).includes('id')) {
       throw new Error('Id cannot be specified when updating');
     }
   }
@@ -335,16 +335,20 @@ export class TypeOrmMongoQueryService<Entity> implements QueryService<Entity> {
     relationName: string,
     dto: Entity,
   ): Promise<Relation | undefined>;
-  async findRelation<Relation>(
+  findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
   ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
+    const relationModel = this.Model.model(RelationClass.name);
     const dtos: Entity[] = Array.isArray(dto) ? dto : [dto];
-    const relationRepo = this.repo.manager.getRepository(RelationClass);
     return dtos.reduce(async (prev, curr) => {
       const map = await prev;
-      map.set(curr, await relationRepo.findOne(curr[relationName as keyof Entity]));
+      const referenceId = curr[relationName as keyof Entity];
+      if (referenceId) {
+        const relationDoc = await relationModel.findOne(referenceId);
+        map.set(curr, relationDoc?.toObject());
+      }
       return map;
     }, Promise.resolve(new Map<Entity, Relation | undefined>()));
   }
