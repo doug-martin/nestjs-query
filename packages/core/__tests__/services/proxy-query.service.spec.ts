@@ -17,7 +17,7 @@ describe('ProxyQueryService', () => {
     const id = 1;
     const relationIds = [1, 2, 3];
     const result = { foo: 'bar' };
-    when(mockQueryService.addRelations(relationName, id, relationIds)).thenResolve(result);
+    when(mockQueryService.addRelations(relationName, id, relationIds, undefined)).thenResolve(result);
     return expect(queryService.addRelations(relationName, id, relationIds)).resolves.toBe(result);
   });
   it('should proxy to the underlying service when calling createMany', () => {
@@ -38,19 +38,19 @@ describe('ProxyQueryService', () => {
   });
   it('should proxy to the underlying service when calling deleteOne', () => {
     const result = { foo: 'bar' };
-    when(mockQueryService.deleteOne(1)).thenResolve(result);
+    when(mockQueryService.deleteOne(1, undefined)).thenResolve(result);
     return expect(queryService.deleteOne(1)).resolves.toBe(result);
   });
   it('should proxy to the underlying service when calling findById', () => {
     const result = { foo: 'bar' };
-    when(mockQueryService.findById(1)).thenResolve(result);
+    when(mockQueryService.findById(1, undefined)).thenResolve(result);
     return expect(queryService.findById(1)).resolves.toBe(result);
   });
   it('should proxy to the underlying service when calling findRelation with one dto', () => {
     const relationName = 'test';
     const dto = new TestType();
     const result = { foo: 'bar' };
-    when(mockQueryService.findRelation(TestType, relationName, dto)).thenResolve(result);
+    when(mockQueryService.findRelation(TestType, relationName, dto, undefined)).thenResolve(result);
     return expect(queryService.findRelation(TestType, relationName, dto)).resolves.toBe(result);
   });
 
@@ -58,13 +58,13 @@ describe('ProxyQueryService', () => {
     const relationName = 'test';
     const dtos = [new TestType()];
     const result = new Map([[{ foo: 'bar' }, undefined]]);
-    when(mockQueryService.findRelation(TestType, relationName, dtos)).thenResolve(result);
+    when(mockQueryService.findRelation(TestType, relationName, dtos, undefined)).thenResolve(result);
     return expect(queryService.findRelation(TestType, relationName, dtos)).resolves.toBe(result);
   });
 
   it('should proxy to the underlying service when calling getById', () => {
     const result = { foo: 'bar' };
-    when(mockQueryService.getById(1)).thenResolve(result);
+    when(mockQueryService.getById(1, undefined)).thenResolve(result);
     return expect(queryService.getById(1)).resolves.toBe(result);
   });
   it('should proxy to the underlying service when calling query', () => {
@@ -150,7 +150,7 @@ describe('ProxyQueryService', () => {
     const id = 1;
     const relationId = 2;
     const result = { foo: 'bar' };
-    when(mockQueryService.removeRelation(relationName, id, relationId)).thenResolve(result);
+    when(mockQueryService.removeRelation(relationName, id, relationId, undefined)).thenResolve(result);
     return expect(queryService.removeRelation(relationName, id, relationId)).resolves.toBe(result);
   });
   it('should proxy to the underlying service when calling removeRelations', () => {
@@ -158,7 +158,7 @@ describe('ProxyQueryService', () => {
     const id = 1;
     const relationIds = [2];
     const result = { foo: 'bar' };
-    when(mockQueryService.removeRelations(relationName, id, relationIds)).thenResolve(result);
+    when(mockQueryService.removeRelations(relationName, id, relationIds, undefined)).thenResolve(result);
     return expect(queryService.removeRelations(relationName, id, relationIds)).resolves.toBe(result);
   });
   it('should proxy to the underlying service when calling setRelation', () => {
@@ -166,7 +166,7 @@ describe('ProxyQueryService', () => {
     const id = 1;
     const relationId = 2;
     const result = { foo: 'bar' };
-    when(mockQueryService.setRelation(relationName, id, relationId)).thenResolve(result);
+    when(mockQueryService.setRelation(relationName, id, relationId, undefined)).thenResolve(result);
     return expect(queryService.setRelation(relationName, id, relationId)).resolves.toBe(result);
   });
   it('should proxy to the underlying service when calling updateMany', () => {
@@ -180,7 +180,7 @@ describe('ProxyQueryService', () => {
     const id = 1;
     const update = { foo: 'bar' };
     const result = { foo: 'bar' };
-    when(mockQueryService.updateOne(id, update)).thenResolve(result);
+    when(mockQueryService.updateOne(id, update, undefined)).thenResolve(result);
     return expect(queryService.updateOne(id, update)).resolves.toBe(result);
   });
 });

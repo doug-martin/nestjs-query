@@ -52,6 +52,10 @@ export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFiel
   };
 };
 
+export const mergeFilter = <T>(base: Filter<T>, source: Filter<T>): Filter<T> => {
+  return merge(base, source);
+};
+
 export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
   return merge(base, source);
 };

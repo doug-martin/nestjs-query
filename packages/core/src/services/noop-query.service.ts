@@ -7,6 +7,12 @@ import {
   DeleteManyResponse,
   AggregateQuery,
   AggregateResponse,
+  ModifyRelationOptions,
+  DeleteOneOptions,
+  FindByIdOptions,
+  FindRelationOptions,
+  GetByIdOptions,
+  UpdateOneOptions,
 } from '../interfaces';
 import { QueryService } from './query.service';
 import { DeepPartial, Class } from '../common';
@@ -21,7 +27,12 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
 
-  addRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO> {
+  addRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('addRelations is not implemented'));
   }
 
@@ -37,31 +48,38 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
     return Promise.reject(new NotImplementedException('deleteMany is not implemented'));
   }
 
-  deleteOne(id: number | string): Promise<DTO> {
+  deleteOne(id: number | string, opts?: DeleteOneOptions<DTO>): Promise<DTO> {
     return Promise.reject(new NotImplementedException('deleteOne is not implemented'));
   }
 
-  findById(id: string | number): Promise<DTO | undefined> {
+  findById(id: string | number, opts?: FindByIdOptions<DTO>): Promise<DTO | undefined> {
     return Promise.reject(new NotImplementedException('findById is not implemented'));
   }
 
-  findRelation<Relation>(RelationClass: Class<Relation>, relationName: string, dto: DTO): Promise<Relation | undefined>;
+  findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    opts?: FindRelationOptions<Relation>,
+  ): Promise<Relation | undefined>;
 
   findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
+    opts?: FindRelationOptions<Relation>,
   ): Promise<Map<DTO, Relation | undefined>>;
 
   findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
+    opts?: FindRelationOptions<Relation>,
   ): Promise<(Relation | undefined) | Map<DTO, Relation | undefined>> {
     return Promise.reject(new NotImplementedException('findRelation is not implemented'));
   }
 
-  getById(id: string | number): Promise<DTO> {
+  getById(id: string | number, opts?: GetByIdOptions<DTO>): Promise<DTO> {
     return Promise.reject(new NotImplementedException('getById is not implemented'));
   }
 
@@ -123,15 +141,30 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
     return Promise.reject(new NotImplementedException('countRelations is not implemented'));
   }
 
-  removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
+  removeRelation<Relation>(
+    relationName: string,
+    id: string | number,
+    relationId: string | number,
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('removeRelation is not implemented'));
   }
 
-  removeRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO> {
+  removeRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('removeRelations is not implemented'));
   }
 
-  setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
+  setRelation<Relation>(
+    relationName: string,
+    id: string | number,
+    relationId: string | number,
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('setRelation is not implemented'));
   }
 
@@ -139,7 +172,7 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
     return Promise.reject(new NotImplementedException('updateMany is not implemented'));
   }
 
-  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U): Promise<DTO> {
+  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO> {
     return Promise.reject(new NotImplementedException('updateOne is not implemented'));
   }
 
