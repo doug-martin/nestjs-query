@@ -43,7 +43,7 @@ describe('TypegooseQueryService', () => {
     it('should support eq operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo1' } } });
-      return expect(queryResult).toEqual([TEST_ENTITIES[0]]);
+      return expect(queryResult).toEqual([TEST_ENTITIES[0].getOutputData()]);
     });
 
     it('should support neq operator', async () => {
@@ -79,7 +79,7 @@ describe('TypegooseQueryService', () => {
     it('should support in operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { numberType: { in: [1, 2, 3] } } });
-      return expect(queryResult).toEqual([TEST_ENTITIES[0], TEST_ENTITIES[1], TEST_ENTITIES[2]]);
+      return expect(queryResult).toEqual(TEST_ENTITIES.slice(0, 3).map((e) => e.getOutputData()));
     });
 
     it('should support notIn operator', async () => {
@@ -138,7 +138,7 @@ describe('TypegooseQueryService', () => {
       const entity = TEST_ENTITIES[0];
       const queryService = moduleRef.get(TestEntityService);
       const found = await queryService.findById(entity.id.toString());
-      expect(found).toEqual(entity);
+      expect(found).toEqual(entity.getOutputData());
     });
 
     it('return undefined if not found', async () => {
@@ -153,7 +153,7 @@ describe('TypegooseQueryService', () => {
       const entity = TEST_ENTITIES[0];
       const queryService = moduleRef.get(TestEntityService);
       const found = await queryService.getById(entity.id.toString());
-      expect(found).toEqual(entity);
+      expect(found).toEqual(entity.getOutputData());
     });
 
     it('return undefined if not found', () => {
@@ -225,7 +225,7 @@ describe('TypegooseQueryService', () => {
     it('remove the entity', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const deleted = await queryService.deleteOne(TEST_ENTITIES[0].id.toString());
-      expect(deleted).toEqual(TEST_ENTITIES[0]);
+      expect(deleted).toEqual(TEST_ENTITIES[0].getOutputData());
     });
 
     it('call fail if the entity is not found', async () => {
@@ -259,7 +259,7 @@ describe('TypegooseQueryService', () => {
       const queryService = moduleRef.get(TestEntityService);
       const updated = await queryService.updateOne(TEST_ENTITIES[0].id.toString(), { stringType: 'updated' });
       expect(updated).toEqual({
-        ...TEST_ENTITIES[0],
+        ...TEST_ENTITIES[0].getOutputData(),
         stringType: 'updated',
       });
     });
@@ -287,7 +287,7 @@ describe('TypegooseQueryService', () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.findRelation(TestReference, 'testReference', [entity]);
 
-      expect(queryResult.values().next().value).toEqual(TEST_REFERENCES[0]);
+      expect(queryResult.values().next().value).toEqual(TEST_REFERENCES[0].getOutputData());
     });
 
     it('should return undefined select if no results are found.', async () => {

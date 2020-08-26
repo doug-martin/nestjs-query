@@ -8,4 +8,11 @@ export class TestReference {
 
   @prop({ required: true })
   name!: string;
+
+  getOutputData(): TestReference {
+    return {
+      ...this,
+      id: this.id,
+    };
+  }
 }
