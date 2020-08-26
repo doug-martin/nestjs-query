@@ -22,12 +22,19 @@ export class TestEntity {
   @prop({ ref: TestReference })
   testReference?: Ref<TestReference>;
 
-  getInputData() {
+  getInputData(): Partial<TestEntity> {
     return {
       stringType: this.stringType,
       boolType: this.boolType,
       numberType: this.numberType,
       dateType: this.dateType,
+    };
+  }
+
+  getOutputData(): TestEntity {
+    return {
+      ...this,
+      id: this.id,
     };
   }
 }
