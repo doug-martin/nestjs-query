@@ -7,6 +7,10 @@ import {
   Filter,
   AggregateQuery,
   AggregateResponse,
+  FindByIdOptions,
+  GetByIdOptions,
+  UpdateOneOptions,
+  DeleteOneOptions,
 } from '@nestjs-query/core';
 import lodashPick from 'lodash.pick';
 import { Model, ModelCtor } from 'sequelize-typescript';
@@ -77,9 +81,10 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
    * const todoItem = await this.service.findById(1);
    * ```
    * @param id - The id of the record to find.
+   * @param opts - Additional options
    */
-  async findById(id: string | number): Promise<Entity | undefined> {
-    const model = await this.model.findByPk<Entity>(id);
+  async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
+    const model = await this.model.findOne<Entity>(this.filterQueryBuilder.findByIdOptions(id, opts ?? {}));
     if (!model) {
       return undefined;
     }
@@ -98,9 +103,10 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
    * }
    * ```
    * @param id - The id of the record to find.
+   * @param opts - Additional options
    */
-  async getById(id: string | number): Promise<Entity> {
-    const entity = await this.model.findByPk<Entity>(id);
+  async getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity> {
+    const entity = await this.findById(id, opts ?? {});
     if (!entity) {
       throw new NotFoundException(`Unable to find ${this.model.name} with id: ${id}`);
     }
@@ -147,10 +153,15 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
    * ```
    * @param id - The `id` of the record.
    * @param update - A `Partial` of the entity with fields to update.
+   * @param opts - Additional options.
    */
-  async updateOne<U extends DeepPartial<Entity>>(id: number | string, update: U): Promise<Entity> {
+  async updateOne<U extends DeepPartial<Entity>>(
+    id: number | string,
+    update: U,
+    opts?: UpdateOneOptions<Entity>,
+  ): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
-    const entity = await this.getById(id);
+    const entity = await this.getById(id, opts);
     return entity.update(this.getChangedValues(update));
   }
 
@@ -186,9 +197,10 @@ export class SequelizeQueryService<Entity extends Model<Entity>> extends Relatio
    * ```
    *
    * @param id - The `id` of the entity to delete.
+   * @param opts - Additional options.
    */
-  async deleteOne(id: string | number): Promise<Entity> {
-    const entity = await this.getById(id);
+  async deleteOne(id: string | number, opts?: DeleteOneOptions<Entity>): Promise<Entity> {
+    const entity = await this.getById(id, opts);
     await entity.destroy();
     return entity;
   }
