@@ -330,12 +330,12 @@ describe('SequelizeQueryService', (): void => {
                   testRelationPk: 3,
                 },
                 max: {
-                  relationName: 'foo1-test-relation',
+                  relationName: 'foo1-test-relation-two',
                   testEntityId: 'test-entity-1',
                   testRelationPk: 'test-relations-test-entity-1-3',
                 },
                 min: {
-                  relationName: 'foo1-test-relation',
+                  relationName: 'foo1-test-relation-one',
                   testEntityId: 'test-entity-1',
                   testRelationPk: 'test-relations-test-entity-1-1',
                 },
@@ -350,12 +350,12 @@ describe('SequelizeQueryService', (): void => {
                   testRelationPk: 3,
                 },
                 max: {
-                  relationName: 'foo2-test-relation',
+                  relationName: 'foo2-test-relation-two',
                   testEntityId: 'test-entity-2',
                   testRelationPk: 'test-relations-test-entity-2-3',
                 },
                 min: {
-                  relationName: 'foo2-test-relation',
+                  relationName: 'foo2-test-relation-one',
                   testEntityId: 'test-entity-2',
                   testRelationPk: 'test-relations-test-entity-2-1',
                 },
@@ -370,12 +370,12 @@ describe('SequelizeQueryService', (): void => {
                   testRelationPk: 3,
                 },
                 max: {
-                  relationName: 'foo3-test-relation',
+                  relationName: 'foo3-test-relation-two',
                   testEntityId: 'test-entity-3',
                   testRelationPk: 'test-relations-test-entity-3-3',
                 },
                 min: {
-                  relationName: 'foo3-test-relation',
+                  relationName: 'foo3-test-relation-one',
                   testEntityId: 'test-entity-3',
                   testRelationPk: 'test-relations-test-entity-3-1',
                 },
@@ -414,12 +414,12 @@ describe('SequelizeQueryService', (): void => {
                   testRelationPk: 3,
                 },
                 max: {
-                  relationName: 'foo1-test-relation',
+                  relationName: 'foo1-test-relation-two',
                   testEntityId: 'test-entity-1',
                   testRelationPk: 'test-relations-test-entity-1-3',
                 },
                 min: {
-                  relationName: 'foo1-test-relation',
+                  relationName: 'foo1-test-relation-one',
                   testEntityId: 'test-entity-1',
                   testRelationPk: 'test-relations-test-entity-1-1',
                 },
@@ -492,6 +492,20 @@ describe('SequelizeQueryService', (): void => {
         expect(queryResult!.get({ plain: true })).toEqual(PLAIN_TEST_RELATIONS[0]);
       });
 
+      it('apply the filter option', async () => {
+        const entity = TestEntity.build(PLAIN_TEST_ENTITIES[0]);
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult1 = await queryService.findRelation(TestRelation, 'oneTestRelation', entity, {
+          filter: { relationName: { eq: PLAIN_TEST_RELATIONS[0].relationName } },
+        });
+        expect(queryResult1!.get({ plain: true })).toEqual(PLAIN_TEST_RELATIONS[0]);
+
+        const queryResult2 = await queryService.findRelation(TestRelation, 'oneTestRelation', entity, {
+          filter: { relationName: { eq: PLAIN_TEST_RELATIONS[1].relationName } },
+        });
+        expect(queryResult2).toBeUndefined();
+      });
+
       it('should return undefined select if no results are found.', async () => {
         const entity = { ...PLAIN_TEST_ENTITIES[0], testEntityPk: 'not-real' } as TestEntity;
         const queryService = moduleRef.get(TestEntityService);
@@ -524,6 +538,22 @@ describe('SequelizeQueryService', (): void => {
         );
       });
 
+      it('should apply the filter option', async () => {
+        const entities = PLAIN_TEST_ENTITIES.slice(0, 3).map((pe) => TestEntity.build(pe));
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities, {
+          filter: {
+            testRelationPk: { in: [PLAIN_TEST_RELATIONS[0].testRelationPk, PLAIN_TEST_RELATIONS[6].testRelationPk] },
+          },
+        });
+        expect(queryResult).toEqual(
+          new Map([
+            [entities[0], expect.objectContaining(PLAIN_TEST_RELATIONS[0])],
+            [entities[2], expect.objectContaining(PLAIN_TEST_RELATIONS[6])],
+          ]),
+        );
+      });
+
       it('should return undefined select if no results are found.', async () => {
         const entities: TestEntity[] = [
           PLAIN_TEST_ENTITIES[0] as TestEntity,
@@ -551,6 +581,38 @@ describe('SequelizeQueryService', (): void => {
       const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
       expect(relations).toHaveLength(6);
     });
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.addRelations(
+            'testRelations',
+            entity.testEntityPk,
+            PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
+            {
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
+      });
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.addRelations<TestRelation>(
+            'testRelations',
+            entity.testEntityPk,
+            PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
+            {
+              relationFilter: { relationName: { like: '%-one' } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find all testRelations to add to TestEntity');
+      });
+    });
   });
 
   describe('#setRelation', () => {
@@ -567,6 +629,33 @@ describe('SequelizeQueryService', (): void => {
       const relation = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
       expect(relation!.testRelationPk).toBe(PLAIN_TEST_RELATIONS[1].testRelationPk);
     });
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.setRelation('oneTestRelation', entity.testEntityPk, PLAIN_TEST_RELATIONS[1].testRelationPk, {
+            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+          }),
+        ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
+      });
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.setRelation<TestRelation>(
+            'oneTestRelation',
+            entity.testEntityPk,
+            PLAIN_TEST_RELATIONS[1].testRelationPk,
+            {
+              relationFilter: { relationName: { like: '%-one' } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find oneTestRelation to set on TestEntity');
+      });
+    });
   });
 
   describe('#removeRelations', () => {
@@ -582,6 +671,38 @@ describe('SequelizeQueryService', (): void => {
 
       const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
       expect(relations).toHaveLength(0);
+    });
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.removeRelations(
+            'testRelations',
+            entity.testEntityPk,
+            PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
+            {
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
+      });
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.removeRelations<TestRelation>(
+            'testRelations',
+            entity.testEntityPk,
+            PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
+            {
+              relationFilter: { relationName: { like: '%-one' } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find all testRelations to remove from TestEntity');
+      });
     });
   });
 
@@ -600,6 +721,38 @@ describe('SequelizeQueryService', (): void => {
         const relation = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
         expect(relation).toBeUndefined();
       });
+
+      describe('with modify options', () => {
+        it('should throw an error if the entity is not found with the id and provided filter', async () => {
+          const entity = PLAIN_TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          return expect(
+            queryService.removeRelation(
+              'oneTestRelation',
+              entity.testEntityPk,
+              PLAIN_TEST_RELATIONS[1].testRelationPk,
+              {
+                filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+              },
+            ),
+          ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
+        });
+
+        it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+          const entity = PLAIN_TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          return expect(
+            queryService.removeRelation<TestRelation>(
+              'oneTestRelation',
+              entity.testEntityPk,
+              PLAIN_TEST_RELATIONS[1].testRelationPk,
+              {
+                relationFilter: { relationName: { like: '%-one' } },
+              },
+            ),
+          ).rejects.toThrow('Unable to find oneTestRelation to remove from TestEntity');
+        });
+      });
     });
 
     describe('manyToOne', () => {
@@ -615,6 +768,28 @@ describe('SequelizeQueryService', (): void => {
 
         const entity = await queryService.findRelation(TestEntity, 'testEntity', queryResult);
         expect(entity).toBeUndefined();
+      });
+
+      describe('with modify options', () => {
+        it('should throw an error if the entity is not found with the id and provided filter', async () => {
+          const relation = PLAIN_TEST_RELATIONS[0];
+          const queryService = moduleRef.get(TestRelationService);
+          return expect(
+            queryService.removeRelation('testEntity', relation.testRelationPk, PLAIN_TEST_ENTITIES[1].testEntityPk, {
+              filter: { relationName: { eq: PLAIN_TEST_RELATIONS[1].relationName } },
+            }),
+          ).rejects.toThrow('Unable to find TestRelation with id: test-relations-test-entity-1-1');
+        });
+
+        it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+          const relation = PLAIN_TEST_RELATIONS[0];
+          const queryService = moduleRef.get(TestRelationService);
+          return expect(
+            queryService.removeRelation('testEntity', relation.testRelationPk, PLAIN_TEST_ENTITIES[0].testEntityPk, {
+              relationFilter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+            }),
+          ).rejects.toThrow('Unable to find testEntity to remove from TestRelation');
+        });
       });
     });
 
@@ -632,6 +807,33 @@ describe('SequelizeQueryService', (): void => {
         const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
         expect(relations).toHaveLength(2);
       });
+
+      describe('with modify options', () => {
+        it('should throw an error if the entity is not found with the id and provided filter', async () => {
+          const entity = PLAIN_TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          return expect(
+            queryService.removeRelation('testRelations', entity.testEntityPk, PLAIN_TEST_RELATIONS[4].testRelationPk, {
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+            }),
+          ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
+        });
+
+        it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+          const entity = PLAIN_TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          return expect(
+            queryService.removeRelation<TestRelation>(
+              'testRelations',
+              entity.testEntityPk,
+              PLAIN_TEST_RELATIONS[4].testRelationPk,
+              {
+                relationFilter: { relationName: { like: '%-one' } },
+              },
+            ),
+          ).rejects.toThrow('Unable to find testRelations to remove from TestEntity');
+        });
+      });
     });
   });
 
@@ -648,6 +850,26 @@ describe('SequelizeQueryService', (): void => {
       const found = await queryService.findById('bad-id');
       expect(found).toBeUndefined();
     });
+
+    describe('with filter', () => {
+      it('should return an entity if all filters match', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const found = await queryService.findById(entity.testEntityPk, {
+          filter: { stringType: { eq: entity.stringType } },
+        });
+        expect(found).toEqual(expect.objectContaining(entity));
+      });
+
+      it('should return an undefined if an entitity with the pk and filter is not found', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const found = await queryService.findById(entity.testEntityPk, {
+          filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+        });
+        expect(found).toBeUndefined();
+      });
+    });
   });
 
   describe('#getById', () => {
@@ -658,9 +880,30 @@ describe('SequelizeQueryService', (): void => {
       expect(found).toEqual(expect.objectContaining(entity));
     });
 
-    it('throw an error if the record is not found', () => {
+    it('should throw an error if the record is not found', () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.getById('bad-id')).rejects.toThrow('Unable to find TestEntity with id: bad-id');
+    });
+
+    describe('with filter', () => {
+      it('should return an entity if all filters match', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const found = await queryService.getById(entity.testEntityPk, {
+          filter: { stringType: { eq: entity.stringType } },
+        });
+        expect(found).toEqual(expect.objectContaining(entity));
+      });
+
+      it('should return an undefined if an entitity with the pk and filter is not found', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.getById(entity.testEntityPk, {
+            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+          }),
+        ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
+      });
     });
   });
 
@@ -733,6 +976,27 @@ describe('SequelizeQueryService', (): void => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.deleteOne('bad-id')).rejects.toThrow('Unable to find TestEntity with id: bad-id');
     });
+
+    describe('with filter', () => {
+      it('should delete the entity if all filters match', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const deleted = await queryService.deleteOne(entity.testEntityPk, {
+          filter: { stringType: { eq: entity.stringType } },
+        });
+        expect(deleted).toEqual(expect.objectContaining(PLAIN_TEST_ENTITIES[0]));
+      });
+
+      it('should return throw an error if unable to find ', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.deleteOne(entity.testEntityPk, {
+            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+          }),
+        ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
+      });
+    });
   });
 
   describe('#updateMany', () => {
@@ -774,6 +1038,31 @@ describe('SequelizeQueryService', (): void => {
       return expect(queryService.updateOne('bad-id', { stringType: 'updated' })).rejects.toThrow(
         'Unable to find TestEntity with id: bad-id',
       );
+    });
+
+    describe('with filter', () => {
+      it('should update the entity if all filters match', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const updated = await queryService.updateOne(
+          entity.testEntityPk,
+          { stringType: 'updated' },
+          { filter: { stringType: { eq: entity.stringType } } },
+        );
+        expect(updated).toEqual(expect.objectContaining({ ...PLAIN_TEST_ENTITIES[0], stringType: 'updated' }));
+      });
+
+      it('should throw an error if unable to find the entity', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.updateOne(
+            entity.testEntityPk,
+            { stringType: 'updated' },
+            { filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } } },
+          ),
+        ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
+      });
     });
   });
 });

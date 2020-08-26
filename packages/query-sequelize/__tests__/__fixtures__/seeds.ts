@@ -26,19 +26,19 @@ export const PLAIN_TEST_RELATIONS: Pick<
     ...relations,
     {
       testRelationPk: `test-relations-${te.testEntityPk}-1`,
-      relationName: `${te.stringType}-test-relation`,
+      relationName: `${te.stringType}-test-relation-one`,
       testEntityId: te.testEntityPk,
       oneTestEntityId: te.testEntityPk,
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-2`,
-      relationName: `${te.stringType}-test-relation`,
+      relationName: `${te.stringType}-test-relation-two`,
       testEntityId: te.testEntityPk,
       oneTestEntityId: null,
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-3`,
-      relationName: `${te.stringType}-test-relation`,
+      relationName: `${te.stringType}-test-relation-three`,
       testEntityId: te.testEntityPk,
       oneTestEntityId: null,
     },

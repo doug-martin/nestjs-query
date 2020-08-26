@@ -61,6 +61,23 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
   /**
    * Create a `sequelize` SelectQueryBuilder with `WHERE`, `ORDER BY` and `LIMIT/OFFSET` clauses.
    *
+   * @param pk - The primary key(s) of records to find.
+   * @param query - the query to apply.
+   */
+  findByIdOptions(pk: string | number | (string | number)[], query: Query<Entity>): FindOptions {
+    let opts: FindOptions = this.applyAssociationIncludes({ subQuery: false }, query.filter);
+    opts = this.applyFilter(opts, {
+      ...query.filter,
+      [this.model.primaryKeyAttribute]: { [Array.isArray(pk) ? 'in' : 'eq']: pk },
+    });
+    opts = this.applySorting(opts, query.sorting);
+    opts = this.applyPaging(opts, query.paging);
+    return opts;
+  }
+
+  /**
+   * Create a `sequelize` SelectQueryBuilder with `WHERE`, `ORDER BY` and `LIMIT/OFFSET` clauses.
+   *
    * @param query - the query to apply.
    */
   aggregateOptions(query: Query<Entity>, aggregate: AggregateQuery<Entity>): FindOptions {
