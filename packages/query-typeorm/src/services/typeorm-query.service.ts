@@ -8,6 +8,11 @@ import {
   Filter,
   AggregateQuery,
   AggregateResponse,
+  FindByIdOptions,
+  GetByIdOptions,
+  UpdateOneOptions,
+  DeleteOneOptions,
+  Filterable,
 } from '@nestjs-query/core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -88,8 +93,8 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    * @param id - The id of the record to find.
    */
-  async findById(id: string | number): Promise<Entity | undefined> {
-    return this.repo.findOne(id);
+  async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
+    return this.filterQueryBuilder.selectById(id, opts ?? {}).getOne();
   }
 
   /**
@@ -105,8 +110,8 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    * @param id - The id of the record to find.
    */
-  async getById(id: string | number): Promise<Entity> {
-    const entity = await this.findById(id);
+  async getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity> {
+    const entity = await this.findById(id, opts);
     if (!entity) {
       throw new NotFoundException(`Unable to find ${this.EntityClass.name} with id: ${id}`);
     }
@@ -153,10 +158,15 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    * @param id - The `id` of the record.
    * @param update - A `Partial` of the entity with fields to update.
+   * @param opts - Additional options.
    */
-  async updateOne<U extends DeepPartial<Entity>>(id: number | string, update: U): Promise<Entity> {
+  async updateOne<U extends DeepPartial<Entity>>(
+    id: number | string,
+    update: U,
+    opts?: UpdateOneOptions<Entity>,
+  ): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
-    const entity = await this.repo.findOneOrFail(id);
+    const entity = await this.getById(id, opts);
     return this.repo.save(this.repo.merge(entity, update));
   }
 
@@ -192,9 +202,10 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    *
    * @param id - The `id` of the entity to delete.
+   * @param filter Additional filter to use when finding the entity to delete.
    */
-  async deleteOne(id: string | number): Promise<Entity> {
-    const entity = await this.repo.findOneOrFail(id);
+  async deleteOne(id: string | number, opts?: DeleteOneOptions<Entity>): Promise<Entity> {
+    const entity = await this.getById(id, opts);
     if (this.useSoftDelete) {
       return this.repo.softRemove(entity);
     }
@@ -234,11 +245,12 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    *
    * @param id - The `id` of the entity to restore.
+   * @param opts Additional filter to use when finding the entity to restore.
    */
-  async restoreOne(id: string | number): Promise<Entity> {
+  async restoreOne(id: string | number, opts?: Filterable<Entity>): Promise<Entity> {
     this.ensureSoftDeleteEnabled();
     await this.repo.restore(id);
-    return this.getById(id);
+    return this.getById(id, opts);
   }
 
   /**
