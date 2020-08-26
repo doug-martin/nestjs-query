@@ -56,6 +56,16 @@ export class FilterQueryBuilder<Entity> {
     return qb;
   }
 
+  selectById(id: string | number | (string | number)[], query: Query<Entity>): SelectQueryBuilder<Entity> {
+    let qb = this.createQueryBuilder();
+    qb = this.applyRelationJoins(qb, query.filter);
+    qb = qb.andWhereInIds(id);
+    qb = this.applyFilter(qb, query.filter, qb.alias);
+    qb = this.applySorting(qb, query.sorting, qb.alias);
+    qb = this.applyPaging(qb, query.paging);
+    return qb;
+  }
+
   aggregate(query: Query<Entity>, aggregate: AggregateQuery<Entity>): SelectQueryBuilder<Entity> {
     let qb = this.createQueryBuilder();
     qb = this.applyAggregate(qb, aggregate, qb.alias);
