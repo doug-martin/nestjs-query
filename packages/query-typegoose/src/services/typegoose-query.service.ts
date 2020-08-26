@@ -122,7 +122,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
         })),
       },
     ).exec();
-    return entities.map((doc) => doc.toObject() as Entity);
+    return entities.map((doc) => doc.toObject({ virtuals: true }) as Entity);
   }
 
   aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
@@ -144,7 +144,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
    */
   async findById(id: string): Promise<Entity | undefined> {
     const doc = await this.Model.findById(id);
-    return doc?.toObject() as Entity;
+    return doc?.toObject({ virtuals: true }) as Entity;
   }
 
   /**
@@ -180,7 +180,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
   async createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
     const doc = new this.Model(record);
     await doc.save(record);
-    return doc.toObject() as Entity;
+    return doc.toObject({ virtuals: true }) as Entity;
   }
 
   /**
@@ -213,7 +213,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     this.ensureIdIsNotPresent(update);
     const doc = await this.Model.findByIdAndUpdate(id, update as UpdateQuery<new () => Entity>, { new: true });
     if (doc) {
-      return doc.toObject() as Entity;
+      return doc.toObject({ virtuals: true }) as Entity;
     }
     throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
   }
@@ -254,7 +254,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
   async deleteOne(id: string | number): Promise<Entity> {
     const doc = await this.Model.findByIdAndDelete(id);
     if (doc) {
-      return doc.toObject() as Entity;
+      return doc.toObject({ virtuals: true }) as Entity;
     }
     throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
   }
@@ -364,7 +364,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
       const referenceId = curr[relationName as keyof Entity];
       if (referenceId) {
         const relationDoc = await relationModel.findOne(referenceId);
-        map.set(curr, relationDoc?.toObject());
+        map.set(curr, relationDoc?.toObject({ virtuals: true }));
       }
       return map;
     }, Promise.resolve(new Map<Entity, Relation | undefined>()));
