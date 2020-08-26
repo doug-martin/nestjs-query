@@ -32,8 +32,8 @@ describe('RelationQueryService', () => {
       const id = 1;
       const relationIds = [1, 2, 3];
       const result = { foo: 'bar' };
-      when(mockQueryService.addRelations(relationName, id, relationIds)).thenResolve(result);
-      return expect(queryService.addRelations(relationName, id, relationIds)).resolves.toBe(result);
+      when(mockQueryService.addRelations(relationName, id, relationIds, undefined)).thenResolve(result);
+      return expect(queryService.addRelations(relationName, id, relationIds, undefined)).resolves.toBe(result);
     });
   });
 
@@ -42,22 +42,23 @@ describe('RelationQueryService', () => {
       const relationName = 'test';
       const dto = new TestType();
       const result = { foo: 'bar' };
-      const query = {};
+      const query = { filter: { foo: { eq: 'bar' } } };
       testRelationFn.mockReturnValue(query);
       when(mockRelationService.query(deepEqual({ ...query, paging: { limit: 1 } }))).thenResolve([result]);
-      await expect(queryService.findRelation(TestType, relationName, dto)).resolves.toBe(result);
+      const findResult = await queryService.findRelation(TestType, relationName, dto);
+      expect(findResult).toBe(result);
       return expect(testRelationFn).toHaveBeenCalledWith(dto);
     });
 
     it('should call the relationService findRelation with multiple dtos', async () => {
       const relationName = 'test';
       const dtos = [new TestType()];
-      const query = {};
+      const query = { filter: { foo: { eq: 'bar' } } };
       testRelationFn.mockReturnValue(query);
       const resultRelations = [{ foo: 'baz' }];
       const result = new Map([[dtos[0], resultRelations[0]]]);
       when(mockRelationService.query(deepEqual({ ...query, paging: { limit: 1 } }))).thenResolve(resultRelations);
-      await expect(queryService.findRelation(TestType, relationName, dtos)).resolves.toEqual(result);
+      await expect(queryService.findRelation(TestType, relationName, dtos, undefined)).resolves.toEqual(result);
       return expect(testRelationFn).toHaveBeenCalledWith(dtos[0]);
     });
 
@@ -65,8 +66,8 @@ describe('RelationQueryService', () => {
       const relationName = 'otherRelation';
       const dto = new TestType();
       const result = { foo: 'baz' };
-      when(mockQueryService.findRelation(TestType, relationName, dto)).thenResolve(result);
-      await expect(queryService.findRelation(TestType, relationName, dto)).resolves.toEqual(result);
+      when(mockQueryService.findRelation(TestType, relationName, dto, undefined)).thenResolve(result);
+      await expect(queryService.findRelation(TestType, relationName, dto, undefined)).resolves.toEqual(result);
       return expect(testRelationFn).not.toHaveBeenCalled();
     });
 
@@ -74,7 +75,7 @@ describe('RelationQueryService', () => {
       const relationName = 'otherRelation';
       const dtos = [new TestType()];
       const result = new Map([[dtos[0], { foo: 'baz' }]]);
-      when(mockQueryService.findRelation(TestType, relationName, dtos)).thenResolve(result);
+      when(mockQueryService.findRelation(TestType, relationName, dtos, undefined)).thenResolve(result);
       await expect(queryService.findRelation(TestType, relationName, dtos)).resolves.toEqual(result);
       return expect(testRelationFn).not.toHaveBeenCalled();
     });
@@ -236,7 +237,7 @@ describe('RelationQueryService', () => {
       const id = 1;
       const relationId = 2;
       const result = { foo: 'bar' };
-      when(mockQueryService.removeRelation(relationName, id, relationId)).thenResolve(result);
+      when(mockQueryService.removeRelation(relationName, id, relationId, undefined)).thenResolve(result);
       return expect(queryService.removeRelation(relationName, id, relationId)).resolves.toBe(result);
     });
   });
@@ -247,7 +248,7 @@ describe('RelationQueryService', () => {
       const id = 1;
       const relationIds = [2];
       const result = { foo: 'bar' };
-      when(mockQueryService.removeRelations(relationName, id, relationIds)).thenResolve(result);
+      when(mockQueryService.removeRelations(relationName, id, relationIds, undefined)).thenResolve(result);
       return expect(queryService.removeRelations(relationName, id, relationIds)).resolves.toBe(result);
     });
   });
@@ -257,7 +258,7 @@ describe('RelationQueryService', () => {
       const id = 1;
       const relationId = 2;
       const result = { foo: 'bar' };
-      when(mockQueryService.setRelation(relationName, id, relationId)).thenResolve(result);
+      when(mockQueryService.setRelation(relationName, id, relationId, undefined)).thenResolve(result);
       return expect(queryService.setRelation(relationName, id, relationId)).resolves.toBe(result);
     });
   });

@@ -21,6 +21,8 @@ export {
   applySort,
   applyPaging,
   applyQuery,
+  mergeQuery,
+  mergeFilter,
 } from './helpers';
 export {
   ClassTransformerAssembler,

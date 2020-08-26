@@ -1,6 +1,7 @@
 export {
   applyFilter,
   mergeQuery,
+  mergeFilter,
   QueryFieldMap,
   transformFilter,
   transformQuery,

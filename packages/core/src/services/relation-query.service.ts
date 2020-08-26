@@ -1,6 +1,6 @@
 import { Class } from '../common';
 import { mergeQuery } from '../helpers';
-import { Filter, Query, AggregateQuery, AggregateResponse } from '../interfaces';
+import { Filter, Query, AggregateQuery, AggregateResponse, FindRelationOptions } from '../interfaces';
 import { NoOpQueryService } from './noop-query.service';
 import { ProxyQueryService } from './proxy-query.service';
 import { QueryService } from './query.service';
@@ -166,11 +166,13 @@ export class RelationQueryService<DTO> extends ProxyQueryService<DTO> {
    * @param RelationClass - the class of the relation
    * @param relationName - the name of the relation to load.
    * @param dtos - the dtos to find the relation for.
+   * @param filter - Additional filter to apply when finding relations
    */
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
+    opts?: FindRelationOptions<Relation>,
   ): Promise<Map<DTO, Relation | undefined>>;
 
   /**
@@ -178,34 +180,37 @@ export class RelationQueryService<DTO> extends ProxyQueryService<DTO> {
    * @param RelationClass - The class to serialize the relation into.
    * @param dto - The dto to find the relation for.
    * @param relationName - The name of the relation to query for.
+   * @param filter - Additional filter to apply when finding relations
    */
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
+    opts?: FindRelationOptions<Relation>,
   ): Promise<Relation | undefined>;
 
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
+    opts?: FindRelationOptions<Relation>,
   ): Promise<(Relation | undefined) | Map<DTO, Relation | undefined>> {
     const serviceRelation = this.getRelation<Relation>(relationName);
     if (!serviceRelation) {
       if (Array.isArray(dto)) {
-        return super.findRelation(RelationClass, relationName, dto);
+        return super.findRelation(RelationClass, relationName, dto, opts);
       }
-      return super.findRelation(RelationClass, relationName, dto);
+      return super.findRelation(RelationClass, relationName, dto, opts);
     }
     const { query: qf, service } = serviceRelation;
     if (Array.isArray(dto)) {
       return dto.reduce(async (mapPromise, d) => {
         const map = await mapPromise;
-        const relation = await service.query(mergeQuery(qf(d), { paging: { limit: 1 } }));
+        const relation = await service.query(mergeQuery(qf(d), { paging: { limit: 1 }, filter: opts?.filter }));
         return map.set(d, relation[0]);
       }, Promise.resolve(new Map<DTO, Relation | undefined>()));
     }
-    return (await service.query(mergeQuery(qf(dto), { paging: { limit: 1 } })))[0];
+    return (await service.query(mergeQuery(qf(dto), { paging: { limit: 1 }, filter: opts?.filter })))[0];
   }
 
   getRelation<Relation>(name: string): QueryServiceRelation<DTO, Relation> | undefined {

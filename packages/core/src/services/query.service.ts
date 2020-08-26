@@ -5,8 +5,14 @@ import {
   AggregateResponse,
   DeleteManyResponse,
   Filter,
+  ModifyRelationOptions,
   Query,
   UpdateManyResponse,
+  FindRelationOptions,
+  FindByIdOptions,
+  GetByIdOptions,
+  UpdateOneOptions,
+  DeleteOneOptions,
 } from '../interfaces';
 
 /**
@@ -39,9 +45,10 @@ export interface QueryService<DTO> {
   /**
    * Finds a record by `id`.
    * @param id - the id of the record to find.
+   * @param opts - Additional options to apply when finding by id.
    * @returns the found record or undefined.
    */
-  findById(id: string | number): Promise<DTO | undefined>;
+  findById(id: string | number, opts?: FindByIdOptions<DTO>): Promise<DTO | undefined>;
 
   /**
    * Query for an array of relations.
@@ -111,8 +118,14 @@ export interface QueryService<DTO> {
    * @param RelationClass - The class to serialize the Relation into
    * @param dto - The dto to find the relation on.
    * @param relationName - The name of the relation to query for.
+   * @param opts - Additional options.
    */
-  findRelation<Relation>(RelationClass: Class<Relation>, relationName: string, dto: DTO): Promise<Relation | undefined>;
+  findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DTO,
+    opts?: FindRelationOptions<Relation>,
+  ): Promise<Relation | undefined>;
 
   /**
    * Finds a single relation for each DTO passed in.
@@ -120,11 +133,13 @@ export interface QueryService<DTO> {
    * @param RelationClass - The class to serialize the Relation into*
    * @param relationName - The name of the relation to query for.
    * @param dtos - The dto to find the relation on.
+   * @param opts - Additional options.
    */
   findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
+    opts?: FindRelationOptions<Relation>,
   ): Promise<Map<DTO, Relation | undefined>>;
 
   /**
@@ -132,8 +147,14 @@ export interface QueryService<DTO> {
    * @param relationName - The name of the relation to query for.
    * @param id - The id of the dto to add the relation to.
    * @param relationIds - The ids of the relations to add.
+   * @param opts - Additional options.
    */
-  addRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO>;
+  addRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO>;
 
   /**
    * Set the relation on the dto.
@@ -141,16 +162,28 @@ export interface QueryService<DTO> {
    * @param relationName - The name of the relation to query for.
    * @param id - The id of the dto to set the relation on.
    * @param relationId - The id of the relation to set on the dto.
+   * @param opts - Additional options.
    */
-  setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO>;
+  setRelation<Relation>(
+    relationName: string,
+    id: string | number,
+    relationId: string | number,
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO>;
 
   /**
    * Removes multiple relations.
    * @param relationName - The name of the relation to query for.
    * @param id - The id of the dto to add the relation to.
    * @param relationIds - The ids of the relations to add.
+   * @param opts - Additional options.
    */
-  removeRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO>;
+  removeRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO>;
 
   /**
    * Remove the relation on the dto.
@@ -158,8 +191,14 @@ export interface QueryService<DTO> {
    * @param relationName - The name of the relation to query for.
    * @param id - The id of the dto to set the relation on.
    * @param relationId - The id of the relation to set on the dto.
+   * @param opts - Additional options.
    */
-  removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO>;
+  removeRelation<Relation>(
+    relationName: string,
+    id: string | number,
+    relationId: string | number,
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO>;
 
   /**
    * Gets a record by `id`.
@@ -167,9 +206,10 @@ export interface QueryService<DTO> {
    * **NOTE** This method will return a rejected Promise if the record is not found.
    *
    * @param id - the id of the record.
+   * @param opts - Additional options to apply when getting by id.
    * @returns the found record or a rejected promise.
    */
-  getById(id: string | number): Promise<DTO>;
+  getById(id: string | number, opts?: GetByIdOptions<DTO>): Promise<DTO>;
 
   /**
    * Create a single record.
@@ -191,9 +231,10 @@ export interface QueryService<DTO> {
    * Update one record.
    * @param id - the id of the record to update
    * @param update - The update to apply.
+   * @param opts - Additional opts to apply when updating one entity.
    * @returns the updated record.
    */
-  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U): Promise<DTO>;
+  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO>;
 
   /**
    * Updates multiple records using a filter.
@@ -205,8 +246,9 @@ export interface QueryService<DTO> {
   /**
    * Delete a single record by id.
    * @param id - the id of the record to delete.
+   * @param opts - Additional opts to apply when deleting by id.
    */
-  deleteOne(id: number | string): Promise<DTO>;
+  deleteOne(id: number | string, opts?: DeleteOneOptions<DTO>): Promise<DTO>;
 
   /**
    * Delete multiple records using a filter.

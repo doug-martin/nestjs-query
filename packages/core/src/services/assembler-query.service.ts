@@ -4,17 +4,31 @@ import {
   AggregateQuery,
   AggregateResponse,
   DeleteManyResponse,
+  DeleteOneOptions,
   Filter,
+  Filterable,
+  FindByIdOptions,
+  FindRelationOptions,
+  GetByIdOptions,
+  ModifyRelationOptions,
   Query,
   UpdateManyResponse,
+  UpdateOneOptions,
 } from '../interfaces';
 import { QueryService } from './query.service';
 
 export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
   constructor(readonly assembler: Assembler<DTO, Entity>, readonly queryService: QueryService<Entity>) {}
 
-  addRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO> {
-    return this.assembler.convertAsyncToDTO(this.queryService.addRelations(relationName, id, relationIds));
+  addRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
+    return this.assembler.convertAsyncToDTO(
+      this.queryService.addRelations(relationName, id, relationIds, this.convertModifyRelationsOptions(opts)),
+    );
   }
 
   createMany<C extends DeepPartial<DTO>>(items: C[]): Promise<DTO[]> {
@@ -33,20 +47,20 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     return this.queryService.deleteMany(this.assembler.convertQuery({ filter }).filter!);
   }
 
-  deleteOne(id: number | string): Promise<DTO> {
-    return this.assembler.convertAsyncToDTO(this.queryService.deleteOne(id));
+  deleteOne(id: number | string, opts?: DeleteOneOptions<DTO>): Promise<DTO> {
+    return this.assembler.convertAsyncToDTO(this.queryService.deleteOne(id, this.convertFilterable(opts)));
   }
 
-  async findById(id: string | number): Promise<DTO | undefined> {
-    const entity = await this.queryService.findById(id);
+  async findById(id: string | number, opts?: FindByIdOptions<DTO>): Promise<DTO | undefined> {
+    const entity = await this.queryService.findById(id, this.convertFilterable(opts));
     if (!entity) {
       return undefined;
     }
     return this.assembler.convertToDTO(entity);
   }
 
-  getById(id: string | number): Promise<DTO> {
-    return this.assembler.convertAsyncToDTO(this.queryService.getById(id));
+  getById(id: string | number, opts?: GetByIdOptions<DTO>): Promise<DTO> {
+    return this.assembler.convertAsyncToDTO(this.queryService.getById(id, this.convertFilterable(opts)));
   }
 
   query(query: Query<DTO>): Promise<DTO[]> {
@@ -147,11 +161,13 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
    * @param RelationClass - the class of the relation
    * @param relationName - the name of the relation to load.
    * @param dtos - the dtos to find the relation for.
+   * @param filter - Additional filter to apply when finding relations
    */
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
+    opts?: FindRelationOptions<Relation>,
   ): Promise<Map<DTO, Relation | undefined>>;
 
   /**
@@ -159,21 +175,24 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
    * @param RelationClass - The class to serialize the relation into.
    * @param dto - The dto to find the relation for.
    * @param relationName - The name of the relation to query for.
+   * @param filter - Additional filter to apply when finding relations
    */
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
+    opts?: FindRelationOptions<Relation>,
   ): Promise<Relation | undefined>;
 
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
+    opts?: FindRelationOptions<Relation>,
   ): Promise<(Relation | undefined) | Map<DTO, Relation | undefined>> {
     if (Array.isArray(dto)) {
       const entities = this.assembler.convertToEntities(dto);
-      const relationMap = await this.queryService.findRelation(RelationClass, relationName, entities);
+      const relationMap = await this.queryService.findRelation(RelationClass, relationName, entities, opts);
       return entities.reduce((map, e, index) => {
         map.set(dto[index], relationMap.get(e));
         return map;
@@ -182,16 +201,37 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     return this.queryService.findRelation(RelationClass, relationName, this.assembler.convertToEntity(dto));
   }
 
-  removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
-    return this.assembler.convertAsyncToDTO(this.queryService.removeRelation(relationName, id, relationId));
+  removeRelation<Relation>(
+    relationName: string,
+    id: string | number,
+    relationId: string | number,
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
+    return this.assembler.convertAsyncToDTO(
+      this.queryService.removeRelation(relationName, id, relationId, this.convertModifyRelationsOptions(opts)),
+    );
   }
 
-  removeRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<DTO> {
-    return this.assembler.convertAsyncToDTO(this.queryService.removeRelations(relationName, id, relationIds));
+  removeRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
+    return this.assembler.convertAsyncToDTO(
+      this.queryService.removeRelations(relationName, id, relationIds, this.convertModifyRelationsOptions(opts)),
+    );
   }
 
-  setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<DTO> {
-    return this.assembler.convertAsyncToDTO(this.queryService.setRelation(relationName, id, relationId));
+  setRelation<Relation>(
+    relationName: string,
+    id: string | number,
+    relationId: string | number,
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
+    return this.assembler.convertAsyncToDTO(
+      this.queryService.setRelation(relationName, id, relationId, this.convertModifyRelationsOptions(opts)),
+    );
   }
 
   updateMany<U extends DeepPartial<DTO>>(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {
@@ -202,9 +242,13 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     );
   }
 
-  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U): Promise<DTO> {
+  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO> {
     return this.assembler.convertAsyncToDTO(
-      this.queryService.updateOne(id, this.assembler.convertToEntity((update as unknown) as DTO)),
+      this.queryService.updateOne(
+        id,
+        this.assembler.convertToEntity((update as unknown) as DTO),
+        this.convertFilterable(opts),
+      ),
     );
   }
 
@@ -251,5 +295,24 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
       filter,
       aggregate,
     );
+  }
+
+  private convertFilterable(filterable?: Filterable<DTO>): Filterable<Entity> | undefined {
+    if (!filterable) {
+      return filterable;
+    }
+    return { ...filterable, filter: this.assembler.convertQuery({ filter: filterable?.filter }).filter };
+  }
+
+  private convertModifyRelationsOptions<Relation>(
+    modifyRelationOptions?: ModifyRelationOptions<DTO, Relation>,
+  ): ModifyRelationOptions<Entity, Relation> | undefined {
+    if (!modifyRelationOptions) {
+      return undefined;
+    }
+    return {
+      filter: this.assembler.convertQuery({ filter: modifyRelationOptions?.filter }).filter,
+      relationFilter: modifyRelationOptions.relationFilter,
+    };
   }
 }
