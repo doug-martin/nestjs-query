@@ -4,6 +4,7 @@ import { DTONamesOpts } from '../../common';
 import { ResolverMethodOpts } from '../../decorators';
 import { QueryArgsTypeOpts } from '../../types';
 import { CursorConnectionOptions } from '../../types/connection/cursor';
+import { CRUDAuthOptions } from '../../auth';
 
 export type ReferencesKeys<DTO, Reference> = {
   [F in keyof Reference]?: keyof DTO;
@@ -68,6 +69,8 @@ export type ResolverRelation<Relation> = {
   allowFiltering?: boolean;
 
   complexity?: Complexity;
+
+  auth?: CRUDAuthOptions<Relation>;
 } & DTONamesOpts &
   ResolverMethodOpts &
   QueryArgsTypeOpts<Relation> &

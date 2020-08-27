@@ -67,7 +67,7 @@ describe('RemoveRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      when(mockService.removeRelation('relation', input.id, input.relationId)).thenResolve(output);
+      when(mockService.removeRelation('relation', input.id, input.relationId, undefined)).thenResolve(output);
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeRelationFromTestResolverDTO({ input });
@@ -84,7 +84,7 @@ describe('RemoveRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      when(mockService.removeRelation('other', input.id, input.relationId)).thenResolve(output);
+      when(mockService.removeRelation('other', input.id, input.relationId, undefined)).thenResolve(output);
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeCustomFromTestResolverDTO({ input });
@@ -119,7 +119,9 @@ describe('RemoveRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      when(mockService.removeRelations('relations', input.id, deepEqual(input.relationIds))).thenResolve(output);
+      when(mockService.removeRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
+        output,
+      );
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeRelationsFromTestResolverDTO({ input });
@@ -136,7 +138,9 @@ describe('RemoveRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      when(mockService.removeRelations('others', input.id, deepEqual(input.relationIds))).thenResolve(output);
+      when(mockService.removeRelations('others', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
+        output,
+      );
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeCustomsFromTestResolverDTO({ input });

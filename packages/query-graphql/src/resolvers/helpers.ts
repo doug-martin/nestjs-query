@@ -1,8 +1,9 @@
-import { applyFilter, Class } from '@nestjs-query/core';
+import { applyFilter, Class, Filter } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
 import { SubscriptionArgsType, SubscriptionFilterInputType } from '../types';
+import { CRUDAuthService } from '../auth';
 
 /** @internal */
 export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Promise<T> => {
@@ -33,4 +34,25 @@ export const createSubscriptionFilter = <DTO, Input extends SubscriptionFilterIn
     }
     return true;
   };
+};
+
+export const getAuthFilter = async <DTO>(
+  authService?: CRUDAuthService<DTO>,
+  context?: unknown,
+): Promise<Filter<DTO> | undefined> => {
+  if (!context || !authService) {
+    return undefined;
+  }
+  return authService.authFilter(context);
+};
+
+export const getRelationAuthFilter = async <DTO, Relation>(
+  relationName: string,
+  authService?: CRUDAuthService<DTO>,
+  context?: unknown,
+): Promise<Filter<Relation> | undefined> => {
+  if (!context || !authService) {
+    return undefined;
+  }
+  return authService.relationAuthFilter(relationName, context);
 };

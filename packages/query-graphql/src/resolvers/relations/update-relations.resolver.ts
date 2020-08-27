@@ -1,11 +1,11 @@
 import { Class } from '@nestjs-query/core';
-import { Resolver, ArgsType, Args } from '@nestjs/graphql';
+import { Resolver, ArgsType, Args, Context } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverMutation } from '../../decorators';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
 import { transformAndValidate } from '../helpers';
 import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
-import { flattenRelations, removeRelationOpts } from './helpers';
+import { flattenRelations, getModifyRelationOptions, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
@@ -27,9 +27,13 @@ const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateOneMixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
-    async [`set${baseName}On${dtoNames.baseName}`](@Args() setArgs: SetArgs): Promise<DTO> {
+    async [`set${baseName}On${dtoNames.baseName}`](
+      @Args() setArgs: SetArgs,
+      @Context() context?: unknown,
+    ): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
-      return this.service.setRelation(relationName, input.id, input.relationId);
+      const opts = await getModifyRelationOptions(baseNameLower, this.authService, context);
+      return this.service.setRelation(relationName, input.id, input.relationId, opts);
     }
   }
   return UpdateOneMixin;
@@ -54,9 +58,13 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateManyMixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
-    async [`add${pluralBaseName}To${dtoNames.baseName}`](@Args() addArgs: AddArgs): Promise<DTO> {
+    async [`add${pluralBaseName}To${dtoNames.baseName}`](
+      @Args() addArgs: AddArgs,
+      @Context() context?: unknown,
+    ): Promise<DTO> {
       const { input } = await transformAndValidate(AddArgs, addArgs);
-      return this.service.addRelations(relationName, input.id, input.relationIds);
+      const opts = await getModifyRelationOptions(pluralBaseNameLower, this.authService, context);
+      return this.service.addRelations(relationName, input.id, input.relationIds, opts);
     }
   }
   return UpdateManyMixin;

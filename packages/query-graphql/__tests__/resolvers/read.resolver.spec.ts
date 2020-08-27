@@ -1,6 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import { ArgsType, Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
-import { objectContaining, when } from 'ts-mockito';
+import { objectContaining, when, deepEqual } from 'ts-mockito';
+import { Filter } from '@nestjs-query/core';
 import {
   ConnectionType,
   CursorQueryArgsType,
@@ -26,6 +27,7 @@ import {
   TestResolverDTO,
   TestService,
 } from './__fixtures__';
+import { TestResolverAuthService } from './__fixtures__/test-resolver-auth.service';
 
 describe('ReadResolver', () => {
   const expectResolverSDL = (sdl: string, opts?: ReadResolverOpts<TestResolverDTO>) => {
@@ -98,13 +100,13 @@ describe('ReadResolver', () => {
     describe('#queryMany cursor connection', () => {
       @Resolver(() => TestResolverDTO)
       class TestResolver extends ReadResolver(TestResolverDTO) {
-        constructor(service: TestService) {
+        constructor(service: TestService, readonly authService: TestResolverAuthService) {
           super(service);
         }
       }
 
       it('should call the service query with the provided input', async () => {
-        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const { resolver, mockService, mockAuthService } = await createResolverFromNest(TestResolver);
         const input: CursorQueryArgsType<TestResolverDTO> = {
           filter: {
             stringField: { eq: 'foo' },
@@ -117,8 +119,53 @@ describe('ReadResolver', () => {
             stringField: 'foo',
           },
         ];
+        const context = {};
+        when(mockAuthService.authFilter(context)).thenResolve({});
         when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 0 } }))).thenResolve(output);
-        const result = await resolver.queryMany(input);
+        const result = await resolver.queryMany(input, context);
+        return expect(result).toEqual({
+          edges: [
+            {
+              cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              node: {
+                id: 'id-1',
+                stringField: 'foo',
+              },
+            },
+          ],
+          pageInfo: {
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          },
+          totalCountFn: expect.any(Function),
+        });
+      });
+
+      it('should invoke the auth service for a filter for the DTO', async () => {
+        const { resolver, mockService, mockAuthService } = await createResolverFromNest(TestResolver);
+        const input: CursorQueryArgsType<TestResolverDTO> = {
+          filter: {
+            stringField: { eq: 'foo' },
+          },
+          paging: { first: 1 },
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        const authFilter = { id: { eq: '1' } };
+        const context = {};
+        when(mockAuthService.authFilter(context)).thenResolve(authFilter);
+        when(
+          mockService.query(
+            objectContaining({ filter: { ...input.filter, ...authFilter }, paging: { limit: 2, offset: 0 } }),
+          ),
+        ).thenResolve(output);
+        const result = await resolver.queryMany(input, context);
         return expect(result).toEqual({
           edges: [
             {
@@ -140,7 +187,7 @@ describe('ReadResolver', () => {
       });
 
       it('should call the service count with the provided input', async () => {
-        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const { resolver, mockService, mockAuthService } = await createResolverFromNest(TestResolver);
         const input: CursorQueryArgsType<TestResolverDTO> = {
           filter: {
             stringField: { eq: 'foo' },
@@ -153,9 +200,38 @@ describe('ReadResolver', () => {
             stringField: 'foo',
           },
         ];
+        const context = {};
+        when(mockAuthService.authFilter(context)).thenResolve({});
         when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 0 } }))).thenResolve(output);
-        const result = await resolver.queryMany(input);
+        const result = await resolver.queryMany(input, context);
         when(mockService.count(objectContaining(input.filter!))).thenResolve(10);
+        return expect(result.totalCount).resolves.toBe(10);
+      });
+
+      it('should call the service count with the provided input and auth filter', async () => {
+        const { resolver, mockService, mockAuthService } = await createResolverFromNest(TestResolver);
+        const input: CursorQueryArgsType<TestResolverDTO> = {
+          filter: {
+            stringField: { eq: 'foo' },
+          },
+          paging: { first: 1 },
+        };
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo',
+          },
+        ];
+        const context = {};
+        const authFilter = { id: { eq: '1' } };
+        when(mockAuthService.authFilter(context)).thenResolve(authFilter);
+        when(
+          mockService.query(
+            objectContaining({ filter: { ...input.filter, ...authFilter }, paging: { limit: 2, offset: 0 } }),
+          ),
+        ).thenResolve(output);
+        const result = await resolver.queryMany(input, context);
+        when(mockService.count(objectContaining({ ...input.filter!, ...authFilter }))).thenResolve(10);
         return expect(result.totalCount).resolves.toBe(10);
       });
     });
@@ -219,22 +295,41 @@ describe('ReadResolver', () => {
   describe('#findById', () => {
     @Resolver(() => TestResolverDTO)
     class TestResolver extends ReadResolver(TestResolverDTO) {
-      constructor(service: TestService) {
+      constructor(service: TestService, readonly authService: TestResolverAuthService) {
         super(service);
       }
     }
+
     it('should not expose findById method if disabled', () => {
       return expectResolverSDL(readOneDisabledResolverSDL, { one: { disabled: true } });
     });
+
     it('should call the service findById with the provided input', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
-      const input = 'id-1';
+      const { resolver, mockService, mockAuthService } = await createResolverFromNest(TestResolver);
+      const input = { id: 'id-1' };
       const output: TestResolverDTO = {
         id: 'id-1',
         stringField: 'foo',
       };
-      when(mockService.findById(input)).thenResolve(output);
-      const result = await resolver.findById(input);
+      const context = {};
+      when(mockAuthService.authFilter(context)).thenResolve({});
+      when(mockService.findById(input.id, deepEqual({ filter: {} }))).thenResolve(output);
+      const result = await resolver.findById(input, context);
+      return expect(result).toEqual(output);
+    });
+
+    it('should call the service findById with the provided input filter from the authService', async () => {
+      const { resolver, mockService, mockAuthService } = await createResolverFromNest(TestResolver);
+      const input = { id: 'id-1' };
+      const output: TestResolverDTO = {
+        id: 'id-1',
+        stringField: 'foo',
+      };
+      const context = {};
+      const authFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
+      when(mockAuthService.authFilter(context)).thenResolve(authFilter);
+      when(mockService.findById(input.id, deepEqual({ filter: authFilter }))).thenResolve(output);
+      const result = await resolver.findById(input, context);
       return expect(result).toEqual(output);
     });
   });

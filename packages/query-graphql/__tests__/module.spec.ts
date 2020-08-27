@@ -21,7 +21,7 @@ describe('NestjsQueryGraphQLModule', () => {
     });
     expect(graphqlModule.imports).toHaveLength(1);
     expect(graphqlModule.module).toBe(NestjsQueryGraphQLModule);
-    expect(graphqlModule.providers).toHaveLength(2);
-    expect(graphqlModule.exports).toHaveLength(3);
+    expect(graphqlModule.providers).toHaveLength(3);
+    expect(graphqlModule.exports).toHaveLength(4);
   });
 });

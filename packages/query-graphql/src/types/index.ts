@@ -44,3 +44,4 @@ export { RelationInputType } from './relation-input.type';
 export { SubscriptionArgsType } from './subscription-args.type';
 export { SubscriptionFilterInputType } from './subscription-filter-input.type';
 export { AggregateResponseType, AggregateResponseOpts, AggregateArgsType } from './aggregate';
+export { FindOneArgsType } from './find-one-args.type';

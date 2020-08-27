@@ -1,11 +1,11 @@
 import { Class } from '@nestjs-query/core';
-import { Resolver, ArgsType, Args } from '@nestjs/graphql';
+import { Resolver, ArgsType, Args, Context } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverMutation } from '../../decorators';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
 import { transformAndValidate } from '../helpers';
 import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
-import { flattenRelations, removeRelationOpts } from './helpers';
+import { flattenRelations, getModifyRelationOptions, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
@@ -27,9 +27,13 @@ const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
   @Resolver(() => DTOClass, { isAbstract: true })
   class RemoveOneMixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
-    async [`remove${baseName}From${dtoNames.baseName}`](@Args() setArgs: SetArgs): Promise<DTO> {
+    async [`remove${baseName}From${dtoNames.baseName}`](
+      @Args() setArgs: SetArgs,
+      @Context() context?: unknown,
+    ): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
-      return this.service.removeRelation(relationName, input.id, input.relationId);
+      const opts = await getModifyRelationOptions(baseNameLower, this.authService, context);
+      return this.service.removeRelation(relationName, input.id, input.relationId, opts);
     }
   }
   return RemoveOneMixin;
@@ -54,9 +58,13 @@ const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation:
   @Resolver(() => DTOClass, { isAbstract: true })
   class Mixin extends Base {
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
-    async [`remove${pluralBaseName}From${dtoNames.baseName}`](@Args() addArgs: AddArgs): Promise<DTO> {
+    async [`remove${pluralBaseName}From${dtoNames.baseName}`](
+      @Args() addArgs: AddArgs,
+      @Context() context?: unknown,
+    ): Promise<DTO> {
       const { input } = await transformAndValidate(AddArgs, addArgs);
-      return this.service.removeRelations(relationName, input.id, input.relationIds);
+      const opts = await getModifyRelationOptions(pluralBaseNameLower, this.authService, context);
+      return this.service.removeRelations(relationName, input.id, input.relationIds, opts);
     }
   }
   return Mixin;

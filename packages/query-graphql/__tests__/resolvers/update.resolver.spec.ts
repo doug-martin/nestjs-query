@@ -1,5 +1,5 @@
 import { when, objectContaining, anything, verify, deepEqual, mock, instance } from 'ts-mockito';
-import { UpdateManyResponse } from '@nestjs-query/core';
+import { Filter, UpdateManyResponse } from '@nestjs-query/core';
 import { Resolver, Query, Field, InputType } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import {
@@ -30,6 +30,7 @@ import {
   updateOneSubscriptionResolverSDL,
   updateSubscriptionResolverSDL,
 } from './__fixtures__';
+import { TestResolverAuthService } from './__fixtures__/test-resolver-auth.service';
 
 describe('UpdateResolver', () => {
   const expectResolverSDL = (sdl: string, opts?: UpdateResolverOpts<TestResolverDTO>) => {
@@ -46,7 +47,11 @@ describe('UpdateResolver', () => {
   const createTestResolver = (opts?: UpdateResolverOpts<TestResolverDTO>) => {
     @Resolver(() => TestResolverDTO)
     class TestResolver extends UpdateResolver(TestResolverDTO, opts) {
-      constructor(service: TestService, @InjectPubSub() readonly pubSub: PubSub) {
+      constructor(
+        service: TestService,
+        @InjectPubSub() readonly pubSub: PubSub,
+        readonly authService: TestResolverAuthService,
+      ) {
         super(service);
       }
     }
@@ -87,7 +92,7 @@ describe('UpdateResolver', () => {
     });
 
     it('should call the service updateOne with the provided input', async () => {
-      const { resolver, mockService } = await createTestResolver();
+      const { resolver, mockService, mockAuthService } = await createTestResolver();
       const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
         id: 'id-1',
         update: {
@@ -98,8 +103,34 @@ describe('UpdateResolver', () => {
         id: 'id-1',
         stringField: 'foo',
       };
-      when(mockService.updateOne(input.id, objectContaining(input.update))).thenResolve(output);
-      const result = await resolver.updateOne({ input });
+      const context = {};
+      when(mockAuthService.authFilter(context)).thenResolve({});
+      when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
+        output,
+      );
+      const result = await resolver.updateOne({ input }, context);
+      return expect(result).toEqual(output);
+    });
+
+    it('should call the service updateOne with the provided input and filter from authService', async () => {
+      const { resolver, mockService, mockAuthService } = await createTestResolver();
+      const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
+        id: 'id-1',
+        update: {
+          stringField: 'foo',
+        },
+      };
+      const output: TestResolverDTO = {
+        id: 'id-1',
+        stringField: 'foo',
+      };
+      const context = {};
+      const authFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
+      when(mockAuthService.authFilter(context)).thenResolve(authFilter);
+      when(
+        mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: authFilter })),
+      ).thenResolve(output);
+      const result = await resolver.updateOne({ input }, context);
       return expect(result).toEqual(output);
     });
   });
@@ -137,6 +168,27 @@ describe('UpdateResolver', () => {
       const result = await resolver.updateMany(input);
       return expect(result).toEqual(output);
     });
+
+    it('should call the service updateMany with the provided input and filter from authService', async () => {
+      const { resolver, mockService, mockAuthService } = await createTestResolver();
+      const input: MutationArgsType<UpdateManyInputType<TestResolverDTO, Partial<TestResolverDTO>>> = {
+        input: {
+          filter: { id: { eq: 'id-1' } },
+          update: {
+            stringField: 'foo',
+          },
+        },
+      };
+      const output: UpdateManyResponse = { updatedCount: 1 };
+      const context = {};
+      const authFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
+      when(mockAuthService.authFilter(context)).thenResolve(authFilter);
+      when(
+        mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter)),
+      ).thenResolve(output);
+      const result = await resolver.updateMany(input, context);
+      return expect(result).toEqual(output);
+    });
   });
 
   describe('updated subscription', () => {
@@ -168,7 +220,9 @@ describe('UpdateResolver', () => {
 
     describe('update one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {
-        const { resolver, mockService, mockPubSub } = await createTestResolver({ enableSubscriptions: true });
+        const { resolver, mockService, mockPubSub, mockAuthService } = await createTestResolver({
+          enableSubscriptions: true,
+        });
         const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
           id: 'id-1',
           update: {
@@ -181,15 +235,21 @@ describe('UpdateResolver', () => {
         };
         const eventName = getDTOEventName(EventType.UPDATED_ONE, TestResolverDTO);
         const event = { [eventName]: output };
-        when(mockService.updateOne(input.id, objectContaining(input.update))).thenResolve(output);
+        const context = {};
+        when(mockAuthService.authFilter(context)).thenResolve({});
+        when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
+          output,
+        );
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
-        const result = await resolver.updateOne({ input });
+        const result = await resolver.updateOne({ input }, context);
         verify(mockPubSub.publish(eventName, deepEqual(event))).once();
         return expect(result).toEqual(output);
       });
 
       it('should publish events for create one when enableSubscriptions is set to true for createOne', async () => {
-        const { resolver, mockService, mockPubSub } = await createTestResolver({ one: { enableSubscriptions: true } });
+        const { resolver, mockService, mockPubSub, mockAuthService } = await createTestResolver({
+          one: { enableSubscriptions: true },
+        });
         const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
           id: 'id-1',
           update: {
@@ -202,15 +262,21 @@ describe('UpdateResolver', () => {
         };
         const eventName = getDTOEventName(EventType.UPDATED_ONE, TestResolverDTO);
         const event = { [eventName]: output };
-        when(mockService.updateOne(input.id, objectContaining(input.update))).thenResolve(output);
+        const context = {};
+        when(mockAuthService.authFilter(context)).thenResolve({});
+        when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
+          output,
+        );
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
-        const result = await resolver.updateOne({ input });
+        const result = await resolver.updateOne({ input }, context);
         verify(mockPubSub.publish(eventName, deepEqual(event))).once();
         return expect(result).toEqual(output);
       });
 
       it('should not publish an event if enableSubscriptions is false', async () => {
-        const { resolver, mockService, mockPubSub } = await createTestResolver({ enableSubscriptions: false });
+        const { resolver, mockService, mockPubSub, mockAuthService } = await createTestResolver({
+          enableSubscriptions: false,
+        });
         const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
           id: 'id-1',
           update: {
@@ -221,14 +287,18 @@ describe('UpdateResolver', () => {
           id: 'id-1',
           stringField: 'foo',
         };
-        when(mockService.updateOne(input.id, objectContaining(input.update))).thenResolve(output);
-        const result = await resolver.updateOne({ input });
+        const context = {};
+        when(mockAuthService.authFilter(context)).thenResolve({});
+        when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
+          output,
+        );
+        const result = await resolver.updateOne({ input }, context);
         verify(mockPubSub.publish(anything(), anything())).never();
         return expect(result).toEqual(output);
       });
 
       it('should not publish an event if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
-        const { resolver, mockService, mockPubSub } = await createTestResolver({
+        const { resolver, mockService, mockPubSub, mockAuthService } = await createTestResolver({
           enableSubscriptions: true,
           one: { enableSubscriptions: false },
         });
@@ -242,8 +312,12 @@ describe('UpdateResolver', () => {
           id: 'id-1',
           stringField: 'foo',
         };
-        when(mockService.updateOne(input.id, objectContaining(input.update))).thenResolve(output);
-        const result = await resolver.updateOne({ input });
+        const context = {};
+        when(mockAuthService.authFilter(context)).thenResolve({});
+        when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
+          output,
+        );
+        const result = await resolver.updateOne({ input }, context);
         verify(mockPubSub.publish(anything(), anything())).never();
         return expect(result).toEqual(output);
       });

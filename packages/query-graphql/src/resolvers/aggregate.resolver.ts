@@ -1,10 +1,10 @@
-import { AggregateQuery, AggregateResponse, Class } from '@nestjs-query/core';
-import { Args, ArgsType, Resolver } from '@nestjs/graphql';
+import { AggregateQuery, AggregateResponse, Class, mergeFilter } from '@nestjs-query/core';
+import { Args, ArgsType, Resolver, Context } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { getDTONames } from '../common';
 import { AggregateQueryParam, ResolverMethodOpts, ResolverQuery, SkipIf } from '../decorators';
 import { AggregateArgsType, AggregateResponseType } from '../types';
-import { transformAndValidate } from './helpers';
+import { getAuthFilter, transformAndValidate } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver } from './resolver.interface';
 
 export type AggregateResolverOpts = {
@@ -37,9 +37,11 @@ export const Aggregateable = <DTO>(DTOClass: Class<DTO>, opts?: AggregateResolve
     async aggregate(
       @Args() args: AA,
       @AggregateQueryParam() query: AggregateQuery<DTO>,
+      @Context() context?: unknown,
     ): Promise<AggregateResponse<DTO>> {
       const qa = await transformAndValidate(AA, args);
-      return this.service.aggregate(qa.filter || {}, query);
+      const authFilter = await getAuthFilter(this.authService, context);
+      return this.service.aggregate(mergeFilter(qa.filter || {}, authFilter ?? {}), query);
     }
   }
   return AggregateResolverBase;

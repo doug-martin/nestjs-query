@@ -1,9 +1,10 @@
-import { Class, DeepPartial, getClassMetadata, classMetadataDecorator, MetaValue } from '@nestjs-query/core';
+import { Class, DeepPartial, getClassMetadata, classMetadataDecorator, MetaValue, Query } from '@nestjs-query/core';
 import {
   CreateManyInputType,
   CreateOneInputType,
   DeleteManyInputType,
   DeleteOneInputType,
+  FindOneArgsType,
   UpdateManyInputType,
   UpdateOneInputType,
 } from '../types';
@@ -12,6 +13,8 @@ import {
   BEFORE_CREATE_ONE_KEY,
   BEFORE_DELETE_MANY_KEY,
   BEFORE_DELETE_ONE_KEY,
+  BEFORE_FIND_ONE_KEY,
+  BEFORE_QUERY_MANY_KEY,
   BEFORE_UPDATE_MANY_KEY,
   BEFORE_UPDATE_ONE_KEY,
 } from './constants';
@@ -60,4 +63,18 @@ export type DeleteManyHook<DTO> = HookFunc<DeleteManyInputType<DTO>>;
 export const BeforeDeleteMany = classMetadataDecorator<DeleteManyHook<any>>(BEFORE_DELETE_MANY_KEY);
 export function getDeleteManyHook<DTO>(DTOClass: Class<DTO>): MetaValue<DeleteManyHook<DTO>> {
   return getClassMetadata(DTOClass, BEFORE_DELETE_MANY_KEY);
+}
+
+export type BeforeQueryManyHook<DTO> = HookFunc<Query<DTO>>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const BeforeQueryMany = classMetadataDecorator<BeforeQueryManyHook<any>>(BEFORE_QUERY_MANY_KEY);
+export function getQueryManyHook<DTO>(DTOClass: Class<DTO>): MetaValue<BeforeQueryManyHook<DTO>> {
+  return getClassMetadata(DTOClass, BEFORE_QUERY_MANY_KEY);
+}
+
+export type BeforeFindOneHook<DTO> = HookFunc<FindOneArgsType>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const BeforeFindOne = classMetadataDecorator<BeforeFindOneHook<any>>(BEFORE_FIND_ONE_KEY);
+export function getFindOneHook<DTO>(DTOClass: Class<DTO>): MetaValue<BeforeFindOneHook<DTO>> {
+  return getClassMetadata(DTOClass, BEFORE_FIND_ONE_KEY);
 }

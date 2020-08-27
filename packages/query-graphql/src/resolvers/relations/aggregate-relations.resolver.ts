@@ -1,11 +1,11 @@
-import { AggregateQuery, AggregateResponse, Class } from '@nestjs-query/core';
+import { AggregateQuery, AggregateResponse, Class, mergeFilter } from '@nestjs-query/core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { AggregateQueryParam, ResolverField } from '../../decorators';
 import { AggregateRelationsLoader, DataLoaderFactory } from '../../loader';
 import { AggregateArgsType, AggregateResponseType } from '../../types';
-import { transformAndValidate } from '../helpers';
+import { getRelationAuthFilter, transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
@@ -32,7 +32,9 @@ const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: A
   const commonResolverOpts = removeRelationOpts(relation);
   const relationDTO = relation.DTO;
   const dtoName = getDTONames(DTOClass).baseName;
-  const { pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
+  const { baseNameLower, pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, {
+    dtoName: relation.dtoName,
+  });
   const relationName = relation.relationName ?? pluralBaseNameLower;
   const aggregateRelationLoaderName = `aggregate${pluralBaseName}For${dtoName}`;
   const aggregateLoader = new AggregateRelationsLoader<DTO, Relation>(relationDTO, relationName);
@@ -55,7 +57,12 @@ const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: A
         aggregateRelationLoaderName,
         aggregateLoader.createLoader(this.service),
       );
-      return loader.load({ dto, filter: qa.filter ?? {}, aggregate: aggregateQuery });
+      const relationFilter = await getRelationAuthFilter<DTO, Relation>(baseNameLower, this.authService, context);
+      return loader.load({
+        dto,
+        filter: mergeFilter(qa.filter ?? {}, relationFilter ?? {}),
+        aggregate: aggregateQuery,
+      });
     }
   }
   return AggregateMixin;

@@ -68,7 +68,7 @@ describe('UpdateRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      when(mockService.setRelation('relation', input.id, input.relationId)).thenResolve(output);
+      when(mockService.setRelation('relation', input.id, input.relationId, undefined)).thenResolve(output);
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.setRelationOnTestResolverDTO({ input });
@@ -85,7 +85,7 @@ describe('UpdateRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      when(mockService.setRelation('other', input.id, input.relationId)).thenResolve(output);
+      when(mockService.setRelation('other', input.id, input.relationId, undefined)).thenResolve(output);
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.setCustomOnTestResolverDTO({ input });
@@ -120,7 +120,9 @@ describe('UpdateRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      when(mockService.addRelations('relations', input.id, deepEqual(input.relationIds))).thenResolve(output);
+      when(mockService.addRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
+        output,
+      );
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.addRelationsToTestResolverDTO({ input });
@@ -137,7 +139,7 @@ describe('UpdateRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo',
       };
-      when(mockService.addRelations('others', input.id, deepEqual(input.relationIds))).thenResolve(output);
+      when(mockService.addRelations('others', input.id, deepEqual(input.relationIds), undefined)).thenResolve(output);
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.addCustomsToTestResolverDTO({ input });

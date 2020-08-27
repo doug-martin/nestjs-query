@@ -29,6 +29,9 @@ type PageInfo {
 }
 
 type Query {
-  testResolverDTO(id: ID!): TestResolverDTO
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
   test: TestResolverDTO!
 }
