@@ -27,6 +27,9 @@ export class TodoItemEntity {
   @Column()
   completed!: boolean;
 
+  @Column({ nullable: false })
+  ownerId!: string;
+
   @ManyToOne(() => UserEntity, (u) => u.todoItems, {
     onDelete: 'CASCADE',
     nullable: false,

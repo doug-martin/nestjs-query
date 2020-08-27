@@ -1,8 +1,8 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginResponseDto } from './login-response.dto';
-import { LoginInputDTO } from './login-input.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
+import { LoginInputDTO } from './dto/login-input.dto';
 import { UserDTO } from '../user/user.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from './current-user.decorator';

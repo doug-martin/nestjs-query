@@ -9,7 +9,6 @@ import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-const guards = [JwtAuthGuard];
 @Module({
   providers: [TodoItemResolver],
   imports: [
@@ -24,10 +23,7 @@ const guards = [JwtAuthGuard];
           UpdateDTOClass: TodoItemUpdateDTO,
           enableTotalCount: true,
           enableAggregate: true,
-          aggregate: { guards },
-          create: { guards },
-          update: { guards },
-          delete: { guards },
+          guards: [JwtAuthGuard],
         },
       ],
     }),

@@ -5,6 +5,7 @@ import { SubTaskDTO } from './dto/sub-task.dto';
 import { CreateSubTaskDTO } from './dto/subtask-input.dto';
 import { SubTaskUpdateDTO } from './dto/subtask-update.dto';
 import { SubTaskEntity } from './sub-task.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SubTaskEntity } from './sub-task.entity';
           UpdateDTOClass: SubTaskUpdateDTO,
           enableTotalCount: true,
           enableAggregate: true,
+          guards: [JwtAuthGuard],
         },
       ],
     }),

@@ -6,19 +6,18 @@ import {
   UpdateManyInputType,
   UpdateOneInputType,
 } from '@nestjs-query/query-graphql';
-import { GqlContext } from '../../auth.guard';
-import { getUserName } from '../../helpers';
 import { SubTaskDTO } from './sub-task.dto';
+import { UserContext } from '../../auth/auth.interfaces';
 
 @InputType('SubTaskUpdate')
-@BeforeUpdateOne((input: UpdateOneInputType<SubTaskDTO>, context: GqlContext) => {
+@BeforeUpdateOne((input: UpdateOneInputType<SubTaskUpdateDTO>, context: UserContext) => {
   // eslint-disable-next-line no-param-reassign
-  input.update.updatedBy = getUserName(context);
+  input.update.updatedBy = context.req.user.username;
   return input;
 })
-@BeforeUpdateMany((input: UpdateManyInputType<SubTaskDTO, SubTaskDTO>, context: GqlContext) => {
+@BeforeUpdateMany((input: UpdateManyInputType<SubTaskDTO, SubTaskUpdateDTO>, context: UserContext) => {
   // eslint-disable-next-line no-param-reassign
-  input.update.updatedBy = getUserName(context);
+  input.update.updatedBy = context.req.user.username;
   return input;
 })
 export class SubTaskUpdateDTO {
@@ -43,4 +42,7 @@ export class SubTaskUpdateDTO {
   @IsOptional()
   @IsNotEmpty()
   todoItemId?: string;
+
+  // dont expose these fields in the graphql schema
+  updatedBy!: string;
 }

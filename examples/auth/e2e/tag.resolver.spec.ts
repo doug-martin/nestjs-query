@@ -16,11 +16,12 @@ import {
   tagAggregateFields,
   todoItemAggregateFields,
 } from './graphql-fragments';
-import { USER_HEADER_NAME } from '../src/constants';
 import { TagEntity } from '../src/tag/tag.entity';
+import { AuthService } from '../src/auth/auth.service';
 
 describe('TagResolver (auth - e2e)', () => {
   let app: INestApplication;
+  let jwtToken: string;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -44,6 +45,11 @@ describe('TagResolver (auth - e2e)', () => {
 
   afterAll(() => refresh(app.get(Connection)));
 
+  beforeEach(async () => {
+    const authService = app.get(AuthService);
+    jwtToken = (await authService.login({ username: 'nestjs-query', id: 1 })).accessToken;
+  });
+
   const tags = [
     { id: '1', name: 'Urgent' },
     { id: '2', name: 'Home' },
@@ -53,9 +59,26 @@ describe('TagResolver (auth - e2e)', () => {
   ];
 
   describe('find one', () => {
+    it(`should require auth token`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          tag(id: 1) {
+            ${tagFields}
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it(`should find a tag by id`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -71,6 +94,7 @@ describe('TagResolver (auth - e2e)', () => {
     it(`should return null if the tag is not found`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -90,6 +114,7 @@ describe('TagResolver (auth - e2e)', () => {
     it(`should return todoItems as a connection`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -121,6 +146,7 @@ describe('TagResolver (auth - e2e)', () => {
     it(`should return todoItems aggregate`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -147,9 +173,28 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('query', () => {
+    it(`should require an auth token`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          tags {
+            ${pageInfoField}
+            ${edgeNodes(tagFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it(`should return a connection`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -179,6 +224,7 @@ describe('TagResolver (auth - e2e)', () => {
     it(`should allow querying`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -208,6 +254,7 @@ describe('TagResolver (auth - e2e)', () => {
     it(`should allow querying on todoItems`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -237,6 +284,7 @@ describe('TagResolver (auth - e2e)', () => {
     it(`should allow sorting`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -267,6 +315,7 @@ describe('TagResolver (auth - e2e)', () => {
       it(`should allow paging with the 'first' field`, () => {
         return request(app.getHttpServer())
           .post('/graphql')
+          .auth(jwtToken, { type: 'bearer' })
           .send({
             operationName: null,
             variables: {},
@@ -296,6 +345,7 @@ describe('TagResolver (auth - e2e)', () => {
       it(`should allow paging with the 'first' field and 'after'`, () => {
         return request(app.getHttpServer())
           .post('/graphql')
+          .auth(jwtToken, { type: 'bearer' })
           .send({
             operationName: null,
             variables: {},
@@ -325,9 +375,26 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('aggregate', () => {
+    it(`should require an auth token`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+          tagAggregate {
+              ${tagAggregateFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it(`should return a aggregate response`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -353,6 +420,7 @@ describe('TagResolver (auth - e2e)', () => {
     it(`should allow filtering`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -377,9 +445,30 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('create one', () => {
+    it('should require an auth token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            createOneTag(
+              input: {
+                tag: { name: "Test Tag" }
+              }
+            ) {
+              ${tagFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it('should allow creating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -406,7 +495,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should call beforeCreateOne hook when creating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(USER_HEADER_NAME, 'E2E Test')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -426,7 +515,7 @@ describe('TagResolver (auth - e2e)', () => {
             createOneTag: {
               id: '7',
               name: 'Before Create One Tag',
-              createdBy: 'E2E Test',
+              createdBy: 'nestjs-query',
             },
           },
         });
@@ -435,6 +524,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should validate a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -457,9 +547,33 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('create many', () => {
+    it('should require an auth token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            createManyTags(
+              input: {
+                tags: [
+                  { name: "Create Many Tag - 1" },
+                  { name: "Create Many Tag - 2" }
+                ]
+              }
+            ) {
+              ${tagFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it('should allow creating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -489,7 +603,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should call beforeCreateMany hook when creating multiple tags', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(USER_HEADER_NAME, 'E2E Test')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -510,8 +624,8 @@ describe('TagResolver (auth - e2e)', () => {
         .expect(200, {
           data: {
             createManyTags: [
-              { id: '10', name: 'Before Create Many Tag - 1', createdBy: 'E2E Test' },
-              { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'E2E Test' },
+              { id: '10', name: 'Before Create Many Tag - 1', createdBy: 'nestjs-query' },
+              { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'nestjs-query' },
             ],
           },
         });
@@ -520,6 +634,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should validate a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -542,9 +657,31 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('update one', () => {
+    it('should require an auth token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateOneTag(
+              input: {
+                id: "6",
+                update: { name: "Update Test Tag" }
+              }
+            ) {
+              ${tagFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it('should allow updating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -572,7 +709,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should call beforeUpdateOne hook when updating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(USER_HEADER_NAME, 'E2E Test')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -593,7 +730,7 @@ describe('TagResolver (auth - e2e)', () => {
             updateOneTag: {
               id: '7',
               name: 'Before Update One Test Tag',
-              updatedBy: 'E2E Test',
+              updatedBy: 'nestjs-query',
             },
           },
         });
@@ -602,6 +739,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should require an id', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -625,6 +763,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should validate an update', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -648,9 +787,31 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('update many', () => {
+    it('should require an auth token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateManyTags(
+              input: {
+                filter: {id: { in: ["8", "9"]} },
+                update: { name: "Update Many Tag" }
+              }
+            ) {
+              updatedCount
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it('should allow updating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -677,7 +838,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should call beforeUpdateMany hook when updating multiple tags', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(USER_HEADER_NAME, 'E2E Test')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -711,8 +872,8 @@ describe('TagResolver (auth - e2e)', () => {
               };
             }),
           ).toEqual([
-            { id: 10, name: 'Before Update Many Tag', updatedBy: 'E2E Test' },
-            { id: 11, name: 'Before Update Many Tag', updatedBy: 'E2E Test' },
+            { id: 10, name: 'Before Update Many Tag', updatedBy: 'nestjs-query' },
+            { id: 11, name: 'Before Update Many Tag', updatedBy: 'nestjs-query' },
           ]);
         });
     });
@@ -720,6 +881,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should require a filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -745,6 +907,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should require a non-empty filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -768,9 +931,27 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('delete one', () => {
+    it('should require an auth token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            deleteOneTag(
+              input: { id: "6" }
+            ) {
+              ${tagFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
     it('should allow deleting a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -795,6 +976,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should require an id', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -815,9 +997,30 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('delete many', () => {
+    it('should require an auth token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            deleteManyTags(
+              input: {
+                filter: {id: { in: ["17", "18"]} },
+              }
+            ) {
+              deletedCount
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it('should allow updating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -843,6 +1046,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should require a filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -866,6 +1070,7 @@ describe('TagResolver (auth - e2e)', () => {
     it('should require a non-empty filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -888,9 +1093,36 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('addTodoItemsToTag', () => {
+    it('should require an auth token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            addTodoItemsToTag(
+              input: {
+                id: 1,
+                relationIds: ["3", "4", "5"]
+              }
+            ) {
+              ${tagFields}
+              todoItems {
+                ${pageInfoField}
+                ${edgeNodes(todoItemFields)}
+                totalCount
+              }
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it('allow adding subTasks to a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -938,9 +1170,35 @@ describe('TagResolver (auth - e2e)', () => {
   });
 
   describe('removeTodoItemsFromTag', () => {
+    it('should require an auth token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            removeTodoItemsFromTag(
+              input: {
+                id: 1,
+                relationIds: ["3", "4", "5"]
+              }
+            ) {
+              ${tagFields}
+              todoItems {
+                ${pageInfoField}
+                ${edgeNodes(todoItemFields)}
+                totalCount
+              }
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
     it('allow removing todoItems from a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
