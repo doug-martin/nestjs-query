@@ -12,14 +12,9 @@ import {
 } from '@nestjs/common';
 import { Class } from '@nestjs-query/core';
 
-/**
- * Options for resolver methods.
- */
-export interface ResolverMethodOpts {
-  /** Set to true to disable the endpoint */
-  disabled?: boolean;
+export interface BaseResolverOptions {
   /** An array of `nestjs` guards to apply to a graphql endpoint */
-  guards?: Class<CanActivate>[];
+  guards?: (Class<CanActivate> | CanActivate)[];
   /** An array of `nestjs` interceptors to apply to a graphql endpoint */
   interceptors?: Class<NestInterceptor<any, any>>[];
   /** An array of `nestjs` pipes to apply to a graphql endpoint */
@@ -28,6 +23,14 @@ export interface ResolverMethodOpts {
   filters?: Class<ExceptionFilter<any>>[];
   /** An array of additional decorators to apply to the graphql endpont * */
   decorators?: (PropertyDecorator | MethodDecorator)[];
+}
+
+/**
+ * Options for resolver methods.
+ */
+export interface ResolverMethodOpts extends BaseResolverOptions {
+  /** Set to true to disable the endpoint */
+  disabled?: boolean;
 }
 
 /**
@@ -58,7 +61,7 @@ export function isDisabled(opts: ResolverMethodOpts[]): boolean {
  */
 export function ResolverMethod(...opts: ResolverMethodOpts[]): MethodDecorator {
   return applyDecorators(
-    UseGuards(...createSetArray<Class<CanActivate>>(...opts.map((o) => o.guards ?? []))),
+    UseGuards(...createSetArray<Class<CanActivate> | CanActivate>(...opts.map((o) => o.guards ?? []))),
     UseInterceptors(...createSetArray<Class<NestInterceptor>>(...opts.map((o) => o.interceptors ?? []))),
     UsePipes(...createSetArray<Class<PipeTransform>>(...opts.map((o) => o.pipes ?? []))),
     UseFilters(...createSetArray<Class<ExceptionFilter>>(...opts.map((o) => o.filters ?? []))),

@@ -53,7 +53,10 @@ type TotalCountDTOConnection {
 }
 
 type Query {
-  totalCountDTO(id: ID!): TotalCountDTO
+  totalCountDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TotalCountDTO
   totalCountDTOS(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}

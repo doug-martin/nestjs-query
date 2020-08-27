@@ -2,6 +2,8 @@ import { ArrayReflector, Class, getPrototypeChain } from '@nestjs-query/core';
 import { RelationsOpts, ResolverRelation } from '../resolvers/relations';
 import { PagingStrategies } from '../types/query/paging';
 import { RELATION_KEY } from './constants';
+import { BaseResolverOptions } from './resolver-method.decorator';
+import { mergeBaseResolverOpts } from '../common';
 
 export const reflector = new ArrayReflector(RELATION_KEY);
 
@@ -25,12 +27,15 @@ function getRelationsDescriptors<DTO>(DTOClass: Class<DTO>): RelationDescriptor<
   }, [] as RelationDescriptor<unknown>[]);
 }
 
-function convertRelationsToOpts(relations: RelationDescriptor<unknown>[]): RelationsOpts {
+function convertRelationsToOpts(
+  relations: RelationDescriptor<unknown>[],
+  baseOpts?: BaseResolverOptions,
+): RelationsOpts {
   const relationOpts: RelationsOpts = {};
   relations.forEach((r) => {
     const relationType = r.relationTypeFunc();
     const DTO = Array.isArray(relationType) ? relationType[0] : relationType;
-    const opts = { ...r.relationOpts, DTO };
+    const opts = mergeBaseResolverOpts({ ...r.relationOpts, DTO }, baseOpts ?? {});
     if (r.isMany) {
       relationOpts.many = { ...relationOpts.many, [r.name]: opts };
     } else {
@@ -40,9 +45,9 @@ function convertRelationsToOpts(relations: RelationDescriptor<unknown>[]): Relat
   return relationOpts;
 }
 
-export function getRelations<DTO>(DTOClass: Class<DTO>): RelationsOpts {
+export function getRelations<DTO>(DTOClass: Class<DTO>, opts?: BaseResolverOptions): RelationsOpts {
   const relationDescriptors = getRelationsDescriptors(DTOClass);
-  return convertRelationsToOpts(relationDescriptors);
+  return convertRelationsToOpts(relationDescriptors, opts);
 }
 
 export function Relation<DTO, Relation>(

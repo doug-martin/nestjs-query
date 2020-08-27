@@ -38,7 +38,10 @@ type CustomConnection {
 }
 
 type Query {
-  testResolverDTO(id: ID!): TestResolverDTO
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
   testResolverDTOS(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}

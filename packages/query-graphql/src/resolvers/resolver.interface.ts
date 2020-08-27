@@ -11,7 +11,7 @@ import {
   OffsetQueryArgsType,
   QueryArgsTypeOpts,
 } from '../types/query/query-args';
-import { RelationsOpts } from './relations';
+import { CRUDAuthService } from '../auth';
 
 export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
   /**
@@ -22,10 +22,6 @@ export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
    * Options for multiple record graphql endpoints
    */
   many?: ResolverMethodOpts;
-  /**
-   * All relations that should be exposed on this resolver through `@ResolveField` from `@nestjs/graphql`
-   */
-  relations?: RelationsOpts;
 }
 
 export interface SubscriptionResolverOpts extends SubscriptionResolverMethodOpts, DTONamesOpts {
@@ -37,6 +33,7 @@ export interface SubscriptionResolverOpts extends SubscriptionResolverMethodOpts
 export interface ServiceResolver<DTO> {
   service: QueryService<DTO>;
   readonly pubSub?: GraphQLPubSub;
+  readonly authService?: CRUDAuthService<DTO>;
 }
 
 /** @internal */

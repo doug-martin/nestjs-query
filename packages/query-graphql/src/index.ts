@@ -25,6 +25,13 @@ export {
   DeleteOneHook,
   BeforeDeleteMany,
   DeleteManyHook,
+  BeforeQueryMany,
+  BeforeQueryManyHook,
+  BeforeFindOne,
+  BeforeFindOneHook,
+  CRUDAuth,
+  InjectAuthService,
+  AuthorizationService,
 } from './decorators';
 export * from './resolvers';
 export * from './federation';
@@ -32,3 +39,4 @@ export { DTONamesOpts } from './common';
 export { NestjsQueryGraphQLModule } from './module';
 export { AutoResolverOpts } from './providers';
 export { pubSubToken, GraphQLPubSub } from './subscription';
+export { CRUDAuthService, CRUDAuthOptions } from './auth';

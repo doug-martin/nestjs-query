@@ -2,6 +2,8 @@ import { ArrayReflector, Class, getPrototypeChain } from '@nestjs-query/core';
 import { ReferencesOpts, ResolverRelationReference } from '../resolvers/relations';
 import { ReferencesKeys } from '../resolvers/relations/relations.interface';
 import { REFERENCE_KEY } from './constants';
+import { BaseResolverOptions } from './resolver-method.decorator';
+import { mergeBaseResolverOpts } from '../common';
 
 const reflector = new ArrayReflector(REFERENCE_KEY);
 export type ReferenceDecoratorOpts<DTO, Relation> = Omit<ResolverRelationReference<DTO, Relation>, 'DTO'>;
@@ -23,14 +25,20 @@ function getReferenceDescriptors<DTO>(DTOClass: Class<DTO>): ReferenceDescriptor
   }, [] as ReferenceDescriptor<DTO, unknown>[]);
 }
 
-function convertReferencesToOpts<DTO>(references: ReferenceDescriptor<DTO, unknown>[]): ReferencesOpts<DTO> {
+function convertReferencesToOpts<DTO>(
+  references: ReferenceDescriptor<DTO, unknown>[],
+  baseOpts?: BaseResolverOptions,
+): ReferencesOpts<DTO> {
   return references.reduce((referenceOpts, r) => {
-    const opts = { ...r.relationOpts, DTO: r.relationTypeFunc(), keys: r.keys };
+    const opts = mergeBaseResolverOpts<ResolverRelationReference<DTO, unknown>>(
+      { ...r.relationOpts, DTO: r.relationTypeFunc(), keys: r.keys },
+      baseOpts ?? {},
+    );
     return { ...referenceOpts, [r.name]: opts };
   }, {} as ReferencesOpts<DTO>);
 }
 
-export function getReferences<DTO>(DTOClass: Class<DTO>): ReferencesOpts<DTO> {
+export function getReferences<DTO>(DTOClass: Class<DTO>, opts?: BaseResolverOptions): ReferencesOpts<DTO> {
   const referenceDescriptors = getReferenceDescriptors(DTOClass);
   return convertReferencesToOpts(referenceDescriptors);
 }

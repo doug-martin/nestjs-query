@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
-import { Class, DeleteManyResponse } from '@nestjs-query/core';
+import { Class, DeleteManyResponse, mergeFilter } from '@nestjs-query/core';
 import omit from 'lodash.omit';
-import { ObjectType, ArgsType, Resolver, Args, PartialType, InputType } from '@nestjs/graphql';
+import { ObjectType, ArgsType, Resolver, Args, PartialType, InputType, Context } from '@nestjs/graphql';
 import { DTONames, getDTONames } from '../common';
 import { EventType, getDTOEventName } from '../subscription';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
@@ -20,7 +20,7 @@ import {
   ResolverMutation,
   ResolverSubscription,
 } from '../decorators';
-import { createSubscriptionFilter, transformAndValidate } from './helpers';
+import { createSubscriptionFilter, getAuthFilter, transformAndValidate } from './helpers';
 
 export type DeletedEvent<DTO> = { [eventName: string]: DTO };
 export interface DeleteResolverOpts<DTO> extends SubscriptionResolverOpts {
@@ -35,9 +35,9 @@ export interface DeleteResolverOpts<DTO> extends SubscriptionResolverOpts {
 }
 
 export interface DeleteResolver<DTO> extends ServiceResolver<DTO> {
-  deleteOne(input: MutationArgsType<DeleteOneInputType>): Promise<Partial<DTO>>;
+  deleteOne(input: MutationArgsType<DeleteOneInputType>, context?: unknown): Promise<Partial<DTO>>;
 
-  deleteMany(input: MutationArgsType<DeleteManyInputType<DTO>>): Promise<DeleteManyResponse>;
+  deleteMany(input: MutationArgsType<DeleteManyInputType<DTO>>, context?: unknown): Promise<DeleteManyResponse>;
 
   deletedOneSubscription(input?: SubscriptionArgsType<DTO>): AsyncIterator<DeletedEvent<Partial<DTO>>>;
 
@@ -98,9 +98,10 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   @Resolver(() => DTOClass, { isAbstract: true })
   class DeleteResolverBase extends BaseClass {
     @ResolverMutation(() => DeleteOneResponse, { name: `deleteOne${baseName}` }, commonResolverOpts, opts.one ?? {})
-    async deleteOne(@MutationArgs(DO, deleteOneHook) input: DO): Promise<Partial<DTO>> {
+    async deleteOne(@MutationArgs(DO, deleteOneHook) input: DO, @Context() context?: unknown): Promise<Partial<DTO>> {
       const deleteOne = await transformAndValidate(DO, input);
-      const deletedResponse = await this.service.deleteOne(deleteOne.input.id);
+      const authFilter = await getAuthFilter(this.authService, context);
+      const deletedResponse = await this.service.deleteOne(deleteOne.input.id, { filter: authFilter });
       if (enableOneSubscriptions) {
         await this.publishDeletedOneEvent(deletedResponse);
       }
@@ -108,9 +109,13 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
     }
 
     @ResolverMutation(() => DMR, { name: `deleteMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
-    async deleteMany(@MutationArgs(DM, deleteManyHook) input: DM): Promise<DeleteManyResponse> {
+    async deleteMany(
+      @MutationArgs(DM, deleteManyHook) input: DM,
+      @Context() context?: unknown,
+    ): Promise<DeleteManyResponse> {
       const deleteMany = await transformAndValidate(DM, input);
-      const deleteManyResponse = await this.service.deleteMany(deleteMany.input.filter);
+      const authFilter = await getAuthFilter(this.authService, context);
+      const deleteManyResponse = await this.service.deleteMany(mergeFilter(deleteMany.input.filter, authFilter ?? {}));
       if (enableManySubscriptions) {
         await this.publishDeletedManyEvent(deleteManyResponse);
       }

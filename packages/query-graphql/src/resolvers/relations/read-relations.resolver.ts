@@ -1,11 +1,11 @@
-import { Class } from '@nestjs-query/core';
+import { Class, mergeQuery } from '@nestjs-query/core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverField } from '../../decorators';
 import { CountRelationsLoader, DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
 import { ConnectionType, QueryArgsType } from '../../types';
-import { transformAndValidate } from '../helpers';
+import { getRelationAuthFilter, transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
@@ -37,8 +37,12 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
       { nullable: relation.nullable, complexity: relation.complexity },
       commonResolverOpts,
     )
-    [`find${baseName}`](@Parent() dto: DTO, @Context() context: ExecutionContext): Promise<Relation | undefined> {
-      return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load(dto);
+    async [`find${baseName}`](@Parent() dto: DTO, @Context() context: ExecutionContext): Promise<Relation | undefined> {
+      const relationFilter = await getRelationAuthFilter<DTO, Relation>(baseNameLower, this.authService, context);
+      return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load({
+        dto,
+        filter: relationFilter,
+      });
     }
   }
   return ReadOneMixin;
@@ -90,9 +94,10 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
         countRelationLoaderName,
         countLoader.createLoader(this.service),
       );
+      const relationFilter = await getRelationAuthFilter<DTO, Relation>(pluralBaseNameLower, this.authService, context);
       return CT.createFromPromise(
         (query) => relationLoader.load({ dto, query }),
-        qa,
+        mergeQuery(qa, { filter: relationFilter }),
         (filter) => relationCountLoader.load({ dto, filter }),
       );
     }

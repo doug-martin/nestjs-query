@@ -1,12 +1,18 @@
-import { Class } from '@nestjs-query/core';
-import { Args, ArgsType, ID, Resolver } from '@nestjs/graphql';
+import { Class, mergeQuery, MetaValue } from '@nestjs-query/core';
+import { ArgsType, Resolver, Context } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { getDTONames } from '../common';
-import { ResolverQuery } from '../decorators';
-import { ConnectionType, QueryArgsType, QueryArgsTypeOpts, StaticConnectionType, StaticQueryArgsType } from '../types';
+import { getQueryManyHook, HookArgs, ResolverQuery, HookFunc, getFindOneHook } from '../decorators';
+import {
+  ConnectionType,
+  FindOneArgsType,
+  QueryArgsType,
+  QueryArgsTypeOpts,
+  StaticConnectionType,
+  StaticQueryArgsType,
+} from '../types';
 import { CursorConnectionOptions } from '../types/connection/cursor';
 import { CursorQueryArgsTypeOpts } from '../types/query/query-args';
-import { transformAndValidate } from './helpers';
 import {
   BaseServiceResolver,
   ConnectionTypeFromOpts,
@@ -15,6 +21,7 @@ import {
   ResolverOpts,
   ServiceResolver,
 } from './resolver.interface';
+import { getAuthFilter, transformAndValidate } from './helpers';
 
 export type ReadResolverFromOpts<DTO, Opts extends ReadResolverOpts<DTO>> = ReadResolver<
   DTO,
@@ -31,8 +38,8 @@ export type ReadResolverOpts<DTO> = {
 
 export interface ReadResolver<DTO, QT extends QueryArgsType<DTO>, CT extends ConnectionType<DTO>>
   extends ServiceResolver<DTO> {
-  queryMany(query: QT): Promise<CT>;
-  findById(id: string | number): Promise<DTO | undefined>;
+  queryMany(query: QT, context?: unknown): Promise<CT>;
+  findById(id: FindOneArgsType, context?: unknown): Promise<DTO | undefined>;
 }
 
 /**
@@ -54,16 +61,27 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: 
   @ArgsType()
   class QA extends QueryArgs {}
 
+  @ArgsType()
+  class FO extends FindOneArgsType() {}
+
+  const queryManyHook = getQueryManyHook(DTOClass) as MetaValue<HookFunc<QA>>;
+  const findOneHook = getFindOneHook(DTOClass) as MetaValue<HookFunc<QA>>;
+
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadResolverBase extends BaseClass {
     @ResolverQuery(() => DTOClass, { nullable: true, name: baseNameLower }, commonResolverOpts, opts.one ?? {})
-    async findById(@Args({ name: 'id', type: () => ID }) id: string | number): Promise<DTO | undefined> {
-      return this.service.findById(id);
+    async findById(@HookArgs(FO, findOneHook) input: FO, @Context() context?: unknown): Promise<DTO | undefined> {
+      const authFilter = await getAuthFilter(this.authService, context);
+      return this.service.findById(input.id, { filter: authFilter });
     }
 
     @ResolverQuery(() => Connection.resolveType, { name: pluralBaseNameLower }, commonResolverOpts, opts.many ?? {})
-    async queryMany(@Args() query: QA): Promise<ConnectionType<DTO>> {
-      const qa = await transformAndValidate(QA, query);
+    async queryMany(
+      @HookArgs(QA, queryManyHook) query: QA,
+      @Context() context?: unknown,
+    ): Promise<ConnectionType<DTO>> {
+      const authFilter = await getAuthFilter(this.authService, context);
+      const qa = await transformAndValidate(QA, mergeQuery(query, { filter: authFilter }));
       return Connection.createFromPromise(
         (q) => this.service.query(q),
         qa,

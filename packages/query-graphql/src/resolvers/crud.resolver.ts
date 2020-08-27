@@ -8,6 +8,9 @@ import { Refereceable, ReferenceResolverOpts } from './reference.resolver';
 import { MergePagingStrategyOpts, ResolverClass } from './resolver.interface';
 import { Updateable, UpdateResolver, UpdateResolverOpts } from './update.resolver';
 import { DeleteResolver, DeleteResolverOpts } from './delete.resolver';
+import { BaseResolverOptions } from '../decorators/resolver-method.decorator';
+import { mergeBaseResolverOpts } from '../common';
+import { RelatableOpts } from './relations/relations.resolver';
 
 export interface CRUDResolverOpts<
   DTO,
@@ -15,7 +18,7 @@ export interface CRUDResolverOpts<
   U extends DeepPartial<DTO> = DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
   PS extends PagingStrategies = PagingStrategies.CURSOR
-> {
+> extends BaseResolverOptions {
   /**
    * The DTO that should be used as input for create endpoints.
    */
@@ -89,16 +92,30 @@ export const CRUDResolver = <
   } = opts;
 
   const referencable = Refereceable(DTOClass, referenceBy);
-  const relatable = Relatable(DTOClass, { enableTotalCount, enableAggregate });
-  const aggregateable = Aggregateable(DTOClass, { enabled: enableAggregate, ...aggregate });
-  const creatable = Creatable(DTOClass, { CreateDTOClass, enableSubscriptions, ...create });
-  const readable = Readable(DTOClass, { enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<
-    DTO,
-    R,
-    PS
-  >);
-  const updateable = Updateable(DTOClass, { UpdateDTOClass, enableSubscriptions, ...update });
-  const deleteResolver = DeleteResolver(DTOClass, { enableSubscriptions, ...deleteArgs });
+  const relatable = Relatable(
+    DTOClass,
+    mergeBaseResolverOpts({ enableTotalCount, enableAggregate } as RelatableOpts<DTO>, opts),
+  );
+  const aggregateable = Aggregateable(DTOClass, {
+    enabled: enableAggregate,
+    ...mergeBaseResolverOpts(aggregate ?? {}, opts),
+  });
+  const creatable = Creatable(DTOClass, {
+    CreateDTOClass,
+    enableSubscriptions,
+    ...mergeBaseResolverOpts(create ?? {}, opts),
+  });
+  const readable = Readable(DTOClass, {
+    enableTotalCount,
+    pagingStrategy,
+    ...mergeBaseResolverOpts(read, opts),
+  } as MergePagingStrategyOpts<DTO, R, PS>);
+  const updateable = Updateable(DTOClass, {
+    UpdateDTOClass,
+    enableSubscriptions,
+    ...mergeBaseResolverOpts(update, opts),
+  });
+  const deleteResolver = DeleteResolver(DTOClass, { enableSubscriptions, ...mergeBaseResolverOpts(deleteArgs, opts) });
 
   return referencable(relatable(aggregateable(creatable(readable(updateable(deleteResolver))))));
 };

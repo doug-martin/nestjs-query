@@ -67,9 +67,9 @@ describe('FederationResolver', () => {
           id: 'id-2',
           testResolverId: dto.id,
         };
-        when(mockService.findRelation(TestRelationDTO, 'relation', deepEqual([dto]))).thenResolve(
-          new Map([[dto, output]]),
-        );
+        when(
+          mockService.findRelation(TestRelationDTO, 'relation', deepEqual([dto]), deepEqual({ filter: undefined })),
+        ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.findRelation(dto, {});
@@ -86,9 +86,9 @@ describe('FederationResolver', () => {
           id: 'id-2',
           testResolverId: dto.id,
         };
-        when(mockService.findRelation(TestRelationDTO, 'other', deepEqual([dto]))).thenResolve(
-          new Map([[dto, output]]),
-        );
+        when(
+          mockService.findRelation(TestRelationDTO, 'other', deepEqual([dto]), deepEqual({ filter: undefined })),
+        ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.findCustom(dto, {});

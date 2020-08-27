@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
-import { Class, DeepPartial, DeleteManyResponse, UpdateManyResponse } from '@nestjs-query/core';
-import { ArgsType, InputType, Resolver, Args, PartialType } from '@nestjs/graphql';
+import { Class, DeepPartial, DeleteManyResponse, mergeFilter, UpdateManyResponse } from '@nestjs-query/core';
+import { ArgsType, InputType, Resolver, Args, PartialType, Context } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { DTONames, getDTONames } from '../common';
 import { EventType, getDTOEventName } from '../subscription';
@@ -22,7 +22,7 @@ import {
   UpdateOneHook,
   UpdateManyHook,
 } from '../decorators';
-import { createSubscriptionFilter, transformAndValidate } from './helpers';
+import { createSubscriptionFilter, getAuthFilter, transformAndValidate } from './helpers';
 
 export type UpdatedEvent<DTO> = { [eventName: string]: DTO };
 export interface UpdateResolverOpts<DTO, U extends DeepPartial<DTO> = DeepPartial<DTO>>
@@ -33,9 +33,9 @@ export interface UpdateResolverOpts<DTO, U extends DeepPartial<DTO> = DeepPartia
 }
 
 export interface UpdateResolver<DTO, U extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
-  updateOne(input: MutationArgsType<UpdateOneInputType<U>>): Promise<DTO>;
+  updateOne(input: MutationArgsType<UpdateOneInputType<U>>, context?: unknown): Promise<DTO>;
 
-  updateMany(input: MutationArgsType<UpdateManyInputType<DTO, U>>): Promise<UpdateManyResponse>;
+  updateMany(input: MutationArgsType<UpdateManyInputType<DTO, U>>, context?: unknown): Promise<UpdateManyResponse>;
 
   updatedOneSubscription(input?: SubscriptionArgsType<DTO>): AsyncIterator<UpdatedEvent<DTO>>;
 
@@ -142,10 +142,11 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateResolverBase extends BaseClass {
     @ResolverMutation(() => DTOClass, { name: `updateOne${baseName}` }, commonResolverOpts, opts.one ?? {})
-    async updateOne(@MutationArgs(UO, updateOneHook) input: UO): Promise<DTO> {
+    async updateOne(@MutationArgs(UO, updateOneHook) input: UO, @Context() context?: unknown): Promise<DTO> {
       const updateOne = await transformAndValidate(UO, input);
+      const authFilter = await getAuthFilter(this.authService, context);
       const { id, update } = updateOne.input;
-      const updateResult = await this.service.updateOne(id, update);
+      const updateResult = await this.service.updateOne(id, update, { filter: authFilter });
       if (enableOneSubscriptions) {
         await this.publishUpdatedOneEvent(updateResult);
       }
@@ -153,10 +154,14 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
     }
 
     @ResolverMutation(() => UMR, { name: `updateMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
-    async updateMany(@MutationArgs(UM, updateManyHook) input: UM): Promise<UpdateManyResponse> {
+    async updateMany(
+      @MutationArgs(UM, updateManyHook) input: UM,
+      @Context() context?: unknown,
+    ): Promise<UpdateManyResponse> {
       const updateMany = await transformAndValidate(UM, input);
+      const authFilter = await getAuthFilter(this.authService, context);
       const { update, filter } = updateMany.input;
-      const updateManyResponse = await this.service.updateMany(update, filter);
+      const updateManyResponse = await this.service.updateMany(update, mergeFilter(filter, authFilter ?? {}));
       if (enableManySubscriptions) {
         await this.publishUpdatedManyEvent(updateManyResponse);
       }
