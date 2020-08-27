@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectQueryService, QueryService } from '@nestjs-query/core';
 import { UserEntity } from '../user/user.entity';
-import { LoginResponseDto } from './login-response.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
 import { AuthenticatedUser, JwtPayload } from './auth.interfaces';
 import { UserDTO } from '../user/user.dto';
 
@@ -24,14 +24,12 @@ export class AuthService {
   }
 
   async currentUser(authUser: AuthenticatedUser): Promise<UserDTO> {
-    const [user] = await this.usersService.query({
-      filter: { username: { eq: authUser.username } },
-      paging: { limit: 1 },
-    });
-    if (!user) {
+    try {
+      const user = await this.usersService.getById(authUser.id);
+      return user;
+    } catch (e) {
       throw new UnauthorizedException();
     }
-    return user;
   }
 
   login(user: AuthenticatedUser): Promise<LoginResponseDto> {

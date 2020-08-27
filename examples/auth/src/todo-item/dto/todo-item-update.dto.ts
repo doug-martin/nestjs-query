@@ -6,19 +6,18 @@ import {
   UpdateManyInputType,
   UpdateOneInputType,
 } from '@nestjs-query/query-graphql';
-import { GqlContext } from '../../auth.guard';
-import { getUserName } from '../../helpers';
 import { TodoItemDTO } from './todo-item.dto';
+import { UserContext } from '../../auth/auth.interfaces';
 
 @InputType('TodoItemUpdate')
-@BeforeUpdateOne((input: UpdateOneInputType<TodoItemDTO>, context: GqlContext) => {
+@BeforeUpdateOne((input: UpdateOneInputType<TodoItemDTO>, context: UserContext) => {
   // eslint-disable-next-line no-param-reassign
-  input.update.updatedBy = getUserName(context);
+  input.update.updatedBy = context.req.user.username;
   return input;
 })
-@BeforeUpdateMany((input: UpdateManyInputType<TodoItemDTO, TodoItemDTO>, context: GqlContext) => {
+@BeforeUpdateMany((input: UpdateManyInputType<TodoItemDTO, TodoItemDTO>, context: UserContext) => {
   // eslint-disable-next-line no-param-reassign
-  input.update.updatedBy = getUserName(context);
+  input.update.updatedBy = context.req.user.username;
   return input;
 })
 export class TodoItemUpdateDTO {

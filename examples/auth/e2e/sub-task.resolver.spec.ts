@@ -9,9 +9,11 @@ import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, subTaskAggregateFields, subTaskFields, todoItemFields } from './graphql-fragments';
+import { AuthService } from '../src/auth/auth.service';
 
 describe('SubTaskResolver (auth - e2e)', () => {
   let app: INestApplication;
+  let jwtToken: string;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -34,6 +36,11 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   afterAll(() => refresh(app.get(Connection)));
+
+  beforeEach(async () => {
+    const authService = app.get(AuthService);
+    jwtToken = (await authService.login({ username: 'nestjs-query', id: 1 })).accessToken;
+  });
 
   const subTasks = [
     { id: '1', title: 'Create Nest App - Sub Task 1', completed: true, description: null, todoItemId: '1' },
@@ -108,9 +115,25 @@ describe('SubTaskResolver (auth - e2e)', () => {
   ];
 
   describe('find one', () => {
+    it(`should require auth token`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          subTask(id: 1) {
+            ${subTaskFields}
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
     it(`should a sub task by id`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -139,6 +162,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it(`should return null if the sub task is not found`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -155,9 +179,10 @@ describe('SubTaskResolver (auth - e2e)', () => {
         });
     });
 
-    it(`should return a todo item`, () => {
+    it(`should return a todo item relation`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -189,9 +214,27 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('query', () => {
+    it(`should require an auth token`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          subTasks {
+            ${pageInfoField}
+            ${edgeNodes(subTaskFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
     it(`should return a connection`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -221,6 +264,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it(`should allow querying`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -250,6 +294,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it(`should allow querying on todoItem`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -279,6 +324,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it(`should allow sorting`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -309,6 +355,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
       it(`should allow paging with the 'first' field`, () => {
         return request(app.getHttpServer())
           .post('/graphql')
+          .auth(jwtToken, { type: 'bearer' })
           .send({
             operationName: null,
             variables: {},
@@ -338,6 +385,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
       it(`should allow paging with the 'first' field and 'after'`, () => {
         return request(app.getHttpServer())
           .post('/graphql')
+          .auth(jwtToken, { type: 'bearer' })
           .send({
             operationName: null,
             variables: {},
@@ -367,9 +415,26 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('aggregate', () => {
+    it(`should require an auth token`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+          subTaskAggregate {
+              ${subTaskAggregateFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it(`should return a aggregate response`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -400,6 +465,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it(`should allow filtering`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -429,7 +495,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('create one', () => {
-    it('should allow creating a subTask', () => {
+    it('should require an auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -445,14 +511,36 @@ describe('SubTaskResolver (auth - e2e)', () => {
             }
         }`,
         })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+    it('should allow creating a subTask', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            createOneSubTask(
+              input: {
+                subTask: { title: "Test SubTask", completed: false, todoItemId: "1" }
+              }
+            ) {
+              ${subTaskFields}
+              createdBy
+            }
+        }`,
+        })
         .expect(200, {
           data: {
             createOneSubTask: {
-              id: '16',
+              id: '46',
               title: 'Test SubTask',
               description: null,
               completed: false,
               todoItemId: '1',
+              createdBy: 'nestjs-query',
             },
           },
         });
@@ -461,6 +549,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should validate a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -483,7 +572,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('create many', () => {
-    it('should allow creating a subTask', () => {
+    it('should require an auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -502,11 +591,49 @@ describe('SubTaskResolver (auth - e2e)', () => {
             }
         }`,
         })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+    it('should allow creating a subTask', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            createManySubTasks(
+              input: {
+                subTasks: [
+                  { title: "Test Create Many SubTask - 1", completed: false, todoItemId: "2" },
+                  { title: "Test Create Many SubTask - 2", completed: true, todoItemId: "2" },
+                ]
+              }
+            ) {
+              ${subTaskFields}
+              createdBy
+            }
+        }`,
+        })
         .expect(200, {
           data: {
             createManySubTasks: [
-              { id: '17', title: 'Test Create Many SubTask - 1', description: null, completed: false, todoItemId: '2' },
-              { id: '18', title: 'Test Create Many SubTask - 2', description: null, completed: true, todoItemId: '2' },
+              {
+                id: '47',
+                title: 'Test Create Many SubTask - 1',
+                description: null,
+                completed: false,
+                todoItemId: '2',
+                createdBy: 'nestjs-query',
+              },
+              {
+                id: '48',
+                title: 'Test Create Many SubTask - 2',
+                description: null,
+                completed: true,
+                todoItemId: '2',
+                createdBy: 'nestjs-query',
+              },
             ],
           },
         });
@@ -515,6 +642,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should validate a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -537,7 +665,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('update one', () => {
-    it('should allow updating a subTask', () => {
+    it('should require an auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -546,7 +674,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
           query: `mutation {
             updateOneSubTask(
               input: {
-                id: "16",
+                id: "46",
                 update: { title: "Update Test Sub Task", completed: true }
               }
             ) {
@@ -554,14 +682,37 @@ describe('SubTaskResolver (auth - e2e)', () => {
             }
         }`,
         })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+    it('should allow updating a subTask', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateOneSubTask(
+              input: {
+                id: "46",
+                update: { title: "Update Test Sub Task", completed: true }
+              }
+            ) {
+              ${subTaskFields}
+              updatedBy
+            }
+        }`,
+        })
         .expect(200, {
           data: {
             updateOneSubTask: {
-              id: '16',
+              id: '46',
               title: 'Update Test Sub Task',
               description: null,
               completed: true,
               todoItemId: '1',
+              updatedBy: 'nestjs-query',
             },
           },
         });
@@ -570,6 +721,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should require an id', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -597,13 +749,14 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should validate an update', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             updateOneSubTask(
               input: {
-                id: "16",
+                id: "46",
                 update: { title: "" }
               }
             ) {
@@ -622,7 +775,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('update many', () => {
-    it('should allow updating a subTask', () => {
+    it('should require an auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -632,6 +785,27 @@ describe('SubTaskResolver (auth - e2e)', () => {
             updateManySubTasks(
               input: {
                 filter: {id: { in: ["17", "18"]} },
+                update: { title: "Update Many Test", completed: true }
+              }
+            ) {
+              updatedCount
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+    it('should allow updating a subTask', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateManySubTasks(
+              input: {
+                filter: {id: { in: ["47", "48"]} },
                 update: { title: "Update Many Test", completed: true }
               }
             ) {
@@ -651,6 +825,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should require a filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -676,6 +851,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should require a non-empty filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -699,7 +875,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('delete one', () => {
-    it('should allow deleting a subTask', () => {
+    it('should require an auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -708,6 +884,25 @@ describe('SubTaskResolver (auth - e2e)', () => {
           query: `mutation {
             deleteOneSubTask(
               input: { id: "16" }
+            ) {
+              ${subTaskFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
+    it('should allow deleting a subTask', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            deleteOneSubTask(
+              input: { id: "46" }
             ) {
               ${subTaskFields}
             }
@@ -729,6 +924,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should require an id', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -749,7 +945,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('delete many', () => {
-    it('should allow updating a subTask', () => {
+    it('should require an auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -758,7 +954,27 @@ describe('SubTaskResolver (auth - e2e)', () => {
           query: `mutation {
             deleteManySubTasks(
               input: {
-                filter: {id: { in: ["17", "18"]} },
+                filter: {id: { in: ["47", "48"]} },
+              }
+            ) {
+              deletedCount
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+    it('should allow deleting multiple subTasks', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            deleteManySubTasks(
+              input: {
+                filter: {id: { in: ["47", "48"]} },
               }
             ) {
               deletedCount
@@ -777,6 +993,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should require a filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -800,6 +1017,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
     it('should require a non-empty filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -822,9 +1040,29 @@ describe('SubTaskResolver (auth - e2e)', () => {
   });
 
   describe('setTodoItemOnSubTask', () => {
-    it('should set a the todoItem on a subtask', () => {
+    it('should require an auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+          setTodoItemOnSubTask(input: { id: "1", relationId: "2" }) {
+            id
+            title
+            todoItem {
+              ${todoItemFields}
+            }
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+    it('should set a the todoItem on a subTask', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -855,6 +1093,52 @@ describe('SubTaskResolver (auth - e2e)', () => {
               },
             },
           });
+        });
+    });
+    it('should not allow setting a the todoItem that does not belong to the user on a subTask ', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+          setTodoItemOnSubTask(input: { id: "1", relationId: "6" }) {
+            id
+            title
+            todoItem {
+              ${todoItemFields}
+            }
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find todoItem to set on SubTaskEntity');
+        });
+    });
+    it('should not allow setting a the todoItem on a subTask that does not belong to the user', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+          setTodoItemOnSubTask(input: { id: "16", relationId: "1" }) {
+            id
+            title
+            todoItem {
+              ${todoItemFields}
+            }
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find SubTaskEntity with id: 16');
         });
     });
   });

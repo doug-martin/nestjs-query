@@ -5,8 +5,6 @@ import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
-import { config } from '../src/config';
-import { AUTH_HEADER_NAME, USER_HEADER_NAME } from '../src/constants';
 import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { TagDTO } from '../src/tag/dto/tag.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
@@ -22,9 +20,11 @@ import {
   subTaskAggregateFields,
 } from './graphql-fragments';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
+import { AuthService } from '../src/auth/auth.service';
 
 describe('TodoItemResolver (auth - e2e)', () => {
   let app: INestApplication;
+  let jwtToken: string;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -46,12 +46,33 @@ describe('TodoItemResolver (auth - e2e)', () => {
     await refresh(app.get(Connection));
   });
 
+  beforeEach(async () => {
+    const authService = app.get(AuthService);
+    jwtToken = (await authService.login({ username: 'nestjs-query', id: 1 })).accessToken;
+  });
+
   afterAll(() => refresh(app.get(Connection)));
 
   describe('find one', () => {
+    it('should require authorization token', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItem(id: 1) {
+            ${todoItemFields}
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
     it(`should find a todo item by id`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -80,6 +101,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should return null if the todo item is not found`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -99,6 +121,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should return subTasks as a connection`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -130,6 +153,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should return subTasksAggregate`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -157,6 +181,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should return tags as a connection`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -188,6 +213,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should return tagsAggregate`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -214,9 +240,28 @@ describe('TodoItemResolver (auth - e2e)', () => {
   });
 
   describe('query', () => {
+    it(`should require authorization`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItems {
+            ${pageInfoField}
+            ${edgeNodes(todoItemFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized'));
+    });
+
     it(`should return a connection`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -258,6 +303,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should allow querying`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -291,6 +337,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should allow querying on subTasks`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -324,6 +371,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should allow querying on tags`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -357,6 +405,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should allow sorting`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -399,6 +448,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
       it(`should allow paging with the 'first' field`, () => {
         return request(app.getHttpServer())
           .post('/graphql')
+          .auth(jwtToken, { type: 'bearer' })
           .send({
             operationName: null,
             variables: {},
@@ -431,6 +481,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
       it(`should allow paging with the 'first' field and 'after'`, () => {
         return request(app.getHttpServer())
           .post('/graphql')
+          .auth(jwtToken, { type: 'bearer' })
           .send({
             operationName: null,
             variables: {},
@@ -469,7 +520,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
   });
 
   describe('aggregate', () => {
-    it('should require a header secret', () => {
+    it('should require authorization', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -483,14 +534,14 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
         });
     });
 
     it(`should return a aggregate response`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -516,7 +567,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should allow filtering`, () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -561,13 +612,13 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
         });
     });
     it('should allow creating a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -586,7 +637,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         .expect(200, {
           data: {
             createOneTodoItem: {
-              id: '6',
+              id: '16',
               title: 'Test Todo',
               completed: false,
             },
@@ -597,10 +648,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should call the beforeCreateOne hook', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set({
-          [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
-        })
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -620,10 +668,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         .expect(200, {
           data: {
             createOneTodoItem: {
-              id: '7',
+              id: '17',
               title: 'Create One Hook Todo',
               completed: false,
-              createdBy: 'E2E Test',
+              createdBy: 'nestjs-query',
             },
           },
         });
@@ -632,7 +680,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should validate a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -657,7 +705,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
   });
 
   describe('create many', () => {
-    it('should require a header secret', () => {
+    it('should require auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -678,14 +726,14 @@ describe('TodoItemResolver (auth - e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
         });
     });
 
     it('should allow creating multiple todoItems', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -707,8 +755,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
         .expect(200, {
           data: {
             createManyTodoItems: [
-              { id: '8', title: 'Many Test Todo 1', completed: false },
-              { id: '9', title: 'Many Test Todo 2', completed: true },
+              { id: '18', title: 'Many Test Todo 1', completed: false },
+              { id: '19', title: 'Many Test Todo 2', completed: true },
             ],
           },
         });
@@ -717,10 +765,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should call the beforeCreateMany hook when creating multiple todoItems', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set({
-          [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
-        })
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -743,8 +788,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
         .expect(200, {
           data: {
             createManyTodoItems: [
-              { id: '10', title: 'Many Create Hook 1', completed: false, createdBy: 'E2E Test' },
-              { id: '11', title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' },
+              { id: '20', title: 'Many Create Hook 1', completed: false, createdBy: 'nestjs-query' },
+              { id: '21', title: 'Many Create Hook 2', completed: true, createdBy: 'nestjs-query' },
             ],
           },
         });
@@ -753,7 +798,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should validate a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -778,7 +823,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
   });
 
   describe('update one', () => {
-    it('should require a header secret', () => {
+    it('should require an auth token', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -799,20 +844,20 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
         });
     });
     it('should allow updating a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             updateOneTodoItem(
               input: {
-                id: "6",
+                id: "16",
                 update: { title: "Update Test Todo", completed: true }
               }
             ) {
@@ -825,7 +870,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         .expect(200, {
           data: {
             updateOneTodoItem: {
-              id: '6',
+              id: '16',
               title: 'Update Test Todo',
               completed: true,
             },
@@ -833,20 +878,44 @@ describe('TodoItemResolver (auth - e2e)', () => {
         });
     });
 
-    it('should call the beforeUpdateOne hook', () => {
+    it('should not allow updating a todoItem that does not belong to the user', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set({
-          [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
-        })
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             updateOneTodoItem(
               input: {
-                id: "7",
+                id: "6",
+                update: { title: "Should Not Update", completed: true }
+              }
+            ) {
+              id
+              title
+              completed
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toBe('Unable to find TodoItemEntity with id: 6');
+        });
+    });
+
+    it('should call the beforeUpdateOne hook', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateOneTodoItem(
+              input: {
+                id: "17",
                 update: { title: "Update One Hook Todo", completed: true }
               }
             ) {
@@ -860,10 +929,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         .expect(200, {
           data: {
             updateOneTodoItem: {
-              id: '7',
+              id: '17',
               title: 'Update One Hook Todo',
               completed: true,
-              updatedBy: 'E2E Test',
+              updatedBy: 'nestjs-query',
             },
           },
         });
@@ -872,7 +941,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should require an id', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -900,7 +969,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should validate an update', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -945,20 +1014,20 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
         });
     });
     it('should allow updating a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             updateManyTodoItems(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: ["17", "18"]} },
                 update: { title: "Update Many Test", completed: true }
               }
             ) {
@@ -975,20 +1044,44 @@ describe('TodoItemResolver (auth - e2e)', () => {
         });
     });
 
-    it('should call the beforeUpdateMany hook when updating todoItem', () => {
+    it('should not allow update records that do not belong to the user', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set({
-          [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
-        })
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             updateManyTodoItems(
               input: {
-                filter: {id: { in: ["10", "11"]} },
+                filter: {id: { in: ["6", "7"]} },
+                update: { title: "Should not update", completed: true }
+              }
+            ) {
+              updatedCount
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            updateManyTodoItems: {
+              updatedCount: 0,
+            },
+          },
+        });
+    });
+
+    it('should call the beforeUpdateMany hook when updating todoItem', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            updateManyTodoItems(
+              input: {
+                filter: {id: { in: ["20", "21"]} },
                 update: { title: "Update Many Hook", completed: true }
               }
             ) {
@@ -1005,7 +1098,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .then(async () => {
           const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
-          const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } });
+          const todoItems = await queryService.query({ filter: { id: { in: [20, 21] } } });
           expect(
             todoItems.map((ti) => {
               return {
@@ -1016,8 +1109,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
               };
             }),
           ).toEqual([
-            { id: 10, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
-            { id: 11, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
+            { id: 20, title: 'Update Many Hook', completed: true, updatedBy: 'nestjs-query' },
+            { id: 21, title: 'Update Many Hook', completed: true, updatedBy: 'nestjs-query' },
           ]);
         });
     });
@@ -1025,7 +1118,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should require a filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1051,7 +1144,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should require a non-empty filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1093,19 +1186,19 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
         });
     });
     it('should allow deleting a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             deleteOneTodoItem(
-              input: { id: "6" }
+              input: { id: "16" }
             ) {
               id
               title
@@ -1124,10 +1217,34 @@ describe('TodoItemResolver (auth - e2e)', () => {
         });
     });
 
+    it('should not allow deleting a todoItem that does not belong to the user', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            deleteOneTodoItem(
+              input: { id: "6" }
+            ) {
+              id
+              title
+              completed
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find TodoItemEntity with id: 6');
+        });
+    });
+
     it('should require an id', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1159,7 +1276,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
           query: `mutation {
             deleteManyTodoItems(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: ["17", "18"]} },
               }
             ) {
               deletedCount
@@ -1168,20 +1285,20 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
         });
     });
-    it('should allow updating a todoItem', () => {
+    it('should allow deleting multiple todoItems', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             deleteManyTodoItems(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: ["17", "18"]} },
               }
             ) {
               deletedCount
@@ -1197,10 +1314,36 @@ describe('TodoItemResolver (auth - e2e)', () => {
         });
     });
 
+    it('should not allow deleting multiple todoItems that do not belong to the user', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            deleteManyTodoItems(
+              input: {
+                filter: {id: { in: ["6", "7"]} },
+              }
+            ) {
+              deletedCount
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            deleteManyTodoItems: {
+              deletedCount: 0,
+            },
+          },
+        });
+    });
+
     it('should require a filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1224,7 +1367,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('should require a non-empty filter', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1250,7 +1393,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('allow adding subTasks to a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1290,13 +1433,75 @@ describe('TodoItemResolver (auth - e2e)', () => {
           edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
         });
     });
+
+    it('should not allow adding subTasks to a todoItem that does not belong to the user', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            addSubTasksToTodoItem(
+              input: {
+                id: 6,
+                relationIds: ["4", "5", "6"]
+              }
+            ) {
+              id
+              title
+              subTasks {
+                ${pageInfoField}
+                ${edgeNodes(subTaskFields)}
+                totalCount
+              }
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find TodoItemEntity with id: 6');
+        });
+    });
+
+    it('should not allow adding subTasks that do not belong to a user to a todoItem', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            addSubTasksToTodoItem(
+              input: {
+                id: 1,
+                relationIds: ["16", "17", "18"]
+              }
+            ) {
+              id
+              title
+              subTasks {
+                ${pageInfoField}
+                ${edgeNodes(subTaskFields)}
+                totalCount
+              }
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find all subTasks to add to TodoItemEntity');
+        });
+    });
   });
 
   describe('addTagsToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1338,7 +1543,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it('allow adding subTasks to a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(AUTH_HEADER_NAME, config.auth.header)
+        .auth(jwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},

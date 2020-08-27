@@ -9,6 +9,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { TodoItemEntity } from '../todo-item/todo-item.entity';
+import { UserEntity } from '../user/user.entity';
 
 @Entity({ name: 'sub_task' })
 export class SubTaskEntity {
@@ -23,6 +24,15 @@ export class SubTaskEntity {
 
   @Column()
   completed!: boolean;
+
+  @Column({ nullable: false })
+  ownerId!: string;
+
+  @ManyToOne(() => UserEntity, (u) => u.todoItems, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  owner!: UserEntity;
 
   @Column({ nullable: false, name: 'todo_item_id' })
   todoItemId!: string;

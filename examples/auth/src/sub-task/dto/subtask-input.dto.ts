@@ -6,21 +6,16 @@ import {
   CreateManyInputType,
   CreateOneInputType,
 } from '@nestjs-query/query-graphql';
-import { GqlContext } from '../../auth.guard';
-import { getUserName } from '../../helpers';
-import { SubTaskDTO } from './sub-task.dto';
+import { UserContext } from '../../auth/auth.interfaces';
 
 @InputType('SubTaskInput')
-@BeforeCreateOne((input: CreateOneInputType<SubTaskDTO>, context: GqlContext) => {
-  // eslint-disable-next-line no-param-reassign
-  input.input.createdBy = getUserName(context);
-  return input;
+@BeforeCreateOne((input: CreateOneInputType<CreateSubTaskDTO>, context: UserContext) => {
+  const { id: ownerId, username: createdBy } = context.req.user;
+  return { input: { ...input.input, createdBy, ownerId } };
 })
-@BeforeCreateMany((input: CreateManyInputType<SubTaskDTO>, context: GqlContext) => {
-  const createdBy = getUserName(context);
-  // eslint-disable-next-line no-param-reassign
-  input.input = input.input.map((c) => ({ ...c, createdBy }));
-  return input;
+@BeforeCreateMany((input: CreateManyInputType<CreateSubTaskDTO>, context: UserContext) => {
+  const { id: ownerId, username: createdBy } = context.req.user;
+  return { input: input.input.map((c) => ({ ...c, createdBy, ownerId })) };
 })
 export class CreateSubTaskDTO {
   @Field()
@@ -41,4 +36,9 @@ export class CreateSubTaskDTO {
   @Field(() => ID)
   @IsNotEmpty()
   todoItemId!: string;
+
+  // dont expose in the schema
+  ownerId!: number;
+
+  createdBy!: string;
 }

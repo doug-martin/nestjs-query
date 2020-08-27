@@ -50,9 +50,9 @@ export const refresh = async (connection: Connection): Promise<void> => {
     todoItems.reduce((subTasks, todo) => {
       return [
         ...subTasks,
-        { completed: true, title: `${todo.title} - Sub Task 1`, todoItem: todo },
-        { completed: false, title: `${todo.title} - Sub Task 2`, todoItem: todo },
-        { completed: false, title: `${todo.title} - Sub Task 3`, todoItem: todo },
+        { completed: true, title: `${todo.title} - Sub Task 1`, todoItem: todo, ownerId: todo.ownerId },
+        { completed: false, title: `${todo.title} - Sub Task 2`, todoItem: todo, ownerId: todo.ownerId },
+        { completed: false, title: `${todo.title} - Sub Task 3`, todoItem: todo, ownerId: todo.ownerId },
       ];
     }, [] as Partial<SubTaskEntity>[]),
   );

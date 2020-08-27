@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { TagInputDTO } from './dto/tag-input.dto';
 import { TagDTO } from './dto/tag.dto';
 import { TagEntity } from './tag.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TagEntity } from './tag.entity';
           UpdateDTOClass: TagInputDTO,
           enableTotalCount: true,
           enableAggregate: true,
+          guards: [JwtAuthGuard],
         },
       ],
     }),
