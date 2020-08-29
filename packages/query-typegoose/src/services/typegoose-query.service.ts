@@ -9,10 +9,14 @@ import {
   QueryService,
   UpdateManyResponse,
 } from '@nestjs-query/core';
-import { Logger, NotFoundException } from '@nestjs/common';
-import { FilterQuery, UpdateQuery } from 'mongoose';
+import { NotFoundException } from '@nestjs/common';
+import { DocumentToObjectOptions, FilterQuery, UpdateQuery } from 'mongoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import escapeRegExp from 'lodash.escaperegexp';
+
+export interface TypegooseQueryServiceOpts {
+  documentToObjectOptions?: DocumentToObjectOptions;
+}
 
 const mongoOperatorMapper: { [k: string]: string } = {
   eq: '$eq',
@@ -28,25 +32,27 @@ const mongoOperatorMapper: { [k: string]: string } = {
 };
 
 /**
- * Base class for all query services that use a `typeorm` Repository.
+ * Base class for all query services that use Typegoose.
  *
  * @example
  *
  * ```ts
  * @QueryService(TodoItemEntity)
- * export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
+ * export class TodoItemService extends TypegooseQueryService<TodoItemEntity> {
  *   constructor(
- *      @InjectRepository(TodoItemEntity) repo: Repository<TodoItemEntity>,
+ *     @InjectModel(TodoItemEntity) model: ReturnModelType<typeof TodoItemEntity>,
  *   ) {
- *     super(repo);
+ *     super(model);
  *   }
  * }
  * ```
  */
 export class TypegooseQueryService<Entity> implements QueryService<Entity> {
-  protected readonly logger = new Logger(TypegooseQueryService.name);
+  protected readonly documentToObjectOptions: DocumentToObjectOptions;
 
-  constructor(readonly Model: ReturnModelType<new () => Entity>) {}
+  constructor(readonly Model: ReturnModelType<new () => Entity>, opts?: TypegooseQueryServiceOpts) {
+    this.documentToObjectOptions = opts?.documentToObjectOptions || { virtuals: true };
+  }
 
   protected buildExpression(filter: Filter<Entity>): FilterQuery<new () => Entity> {
     return Object.entries(filter).reduce((prev: FilterQuery<new () => Entity>, [key, value]) => {
@@ -81,7 +87,6 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
               $regex: regExp,
             };
           }
-          this.logger.error(`Operator ${fieldKey} not supported yet`);
           return prevCondition;
         },
         {},
@@ -93,7 +98,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     }, {});
   }
 
-  private getSchemaKey(key: string) {
+  private getSchemaKey(key: string): string {
     return key === 'id' ? '_id' : key;
   }
 
@@ -122,7 +127,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
         })),
       },
     ).exec();
-    return entities.map((doc) => doc.toObject({ virtuals: true }) as Entity);
+    return entities.map((doc) => doc.toObject(this.documentToObjectOptions) as Entity);
   }
 
   aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
@@ -144,7 +149,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
    */
   async findById(id: string): Promise<Entity | undefined> {
     const doc = await this.Model.findById(id);
-    return doc?.toObject({ virtuals: true }) as Entity;
+    return doc?.toObject(this.documentToObjectOptions) as Entity;
   }
 
   /**
@@ -180,7 +185,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
   async createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
     const doc = new this.Model(record);
     await doc.save(record);
-    return doc.toObject({ virtuals: true }) as Entity;
+    return doc.toObject(this.documentToObjectOptions) as Entity;
   }
 
   /**
@@ -213,7 +218,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     this.ensureIdIsNotPresent(update);
     const doc = await this.Model.findByIdAndUpdate(id, update as UpdateQuery<new () => Entity>, { new: true });
     if (doc) {
-      return doc.toObject({ virtuals: true }) as Entity;
+      return doc.toObject(this.documentToObjectOptions) as Entity;
     }
     throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
   }
@@ -254,7 +259,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
   async deleteOne(id: string | number): Promise<Entity> {
     const doc = await this.Model.findByIdAndDelete(id);
     if (doc) {
-      return doc.toObject({ virtuals: true }) as Entity;
+      return doc.toObject(this.documentToObjectOptions) as Entity;
     }
     throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
   }
@@ -364,7 +369,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
       const referenceId = curr[relationName as keyof Entity];
       if (referenceId) {
         const relationDoc = await relationModel.findOne(referenceId);
-        map.set(curr, relationDoc?.toObject({ virtuals: true }));
+        map.set(curr, relationDoc?.toObject(this.documentToObjectOptions));
       }
       return map;
     }, Promise.resolve(new Map<Entity, Relation | undefined>()));
