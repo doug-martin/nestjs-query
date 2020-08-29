@@ -38,7 +38,7 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
       commonResolverOpts,
     )
     async [`find${baseName}`](@Parent() dto: DTO, @Context() context: ExecutionContext): Promise<Relation | undefined> {
-      const relationFilter = await getRelationAuthFilter<DTO, Relation>(baseNameLower, this.authService, context);
+      const relationFilter = await getRelationAuthFilter<DTO, Relation>(baseNameLower, this.authorizer, context);
       return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load({
         dto,
         filter: relationFilter,
@@ -94,7 +94,7 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
         countRelationLoaderName,
         countLoader.createLoader(this.service),
       );
-      const relationFilter = await getRelationAuthFilter<DTO, Relation>(pluralBaseNameLower, this.authService, context);
+      const relationFilter = await getRelationAuthFilter<DTO, Relation>(pluralBaseNameLower, this.authorizer, context);
       return CT.createFromPromise(
         (query) => relationLoader.load({ dto, query }),
         mergeQuery(qa, { filter: relationFilter }),

@@ -3,11 +3,12 @@ import { resolve } from 'path';
 import { instance, mock } from 'ts-mockito';
 import { Test } from '@nestjs/testing';
 import { PubSub } from 'graphql-subscriptions';
-import { CRUDAuthService, pubSubToken } from '../../../src';
+import { Authorizer, pubSubToken } from '../../../src';
 import { readGraphql } from '../../__fixtures__';
 import { TestService } from './test-resolver.service';
 import { TestResolverDTO } from './test-resolver.dto';
-import { TestResolverAuthService } from './test-resolver-auth.service';
+import { TestResolverAuthorizer } from './test-resolver.authorizer';
+import { getAuthorizerToken } from '../../../src/auth';
 
 export { TestResolverDTO } from './test-resolver.dto';
 export { TestResolverInputDTO } from './test-resolver-input.dto';
@@ -17,27 +18,27 @@ interface ResolverMock<T> {
   resolver: T;
   mockService: TestService;
   mockPubSub: PubSub;
-  mockAuthService: CRUDAuthService<TestResolverDTO>;
+  mockAuthorizer: Authorizer<TestResolverDTO>;
 }
 
 export const createResolverFromNest = async <T>(ResolverClass: Class<T>): Promise<ResolverMock<T>> => {
   const mockService = mock(TestService);
   const mockPubSub = mock(PubSub);
-  const mockAuthService = mock(TestResolverAuthService);
+  const mockAuthorizer = mock(TestResolverAuthorizer);
   const moduleRef = await Test.createTestingModule({
     providers: [
       ResolverClass,
       TestService,
-      TestResolverAuthService,
+      { provide: getAuthorizerToken(TestResolverDTO), useClass: TestResolverAuthorizer },
       { provide: pubSubToken(), useValue: instance(mockPubSub) },
     ],
   })
     .overrideProvider(TestService)
     .useValue(instance(mockService))
-    .overrideProvider(TestResolverAuthService)
-    .useValue(instance(mockAuthService))
+    .overrideProvider(getAuthorizerToken(TestResolverDTO))
+    .useValue(instance(mockAuthorizer))
     .compile();
-  return { resolver: moduleRef.get(ResolverClass), mockService, mockPubSub, mockAuthService };
+  return { resolver: moduleRef.get(ResolverClass), mockService, mockPubSub, mockAuthorizer };
 };
 
 export const deleteBasicResolverSDL = readGraphql(resolve(__dirname, 'delete', 'delete-basic.resolver.graphql'));

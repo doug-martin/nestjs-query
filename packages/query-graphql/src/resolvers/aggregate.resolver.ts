@@ -40,8 +40,8 @@ export const Aggregateable = <DTO>(DTOClass: Class<DTO>, opts?: AggregateResolve
       @Context() context?: unknown,
     ): Promise<AggregateResponse<DTO>> {
       const qa = await transformAndValidate(AA, args);
-      const authFilter = await getAuthFilter(this.authService, context);
-      return this.service.aggregate(mergeFilter(qa.filter || {}, authFilter ?? {}), query);
+      const authorizeFilter = await getAuthFilter(this.authorizer, context);
+      return this.service.aggregate(mergeFilter(qa.filter || {}, authorizeFilter ?? {}), query);
     }
   }
   return AggregateResolverBase;

@@ -1,7 +1,9 @@
 import { ObjectType, ID } from '@nestjs/graphql';
-import { FilterableField } from '../../../src/decorators';
+import { Authorize, FilterableField } from '../../../src/decorators';
+import { TestResolverAuthorizer } from './test-resolver.authorizer';
 
 @ObjectType()
+@Authorize(TestResolverAuthorizer)
 export class TestResolverDTO {
   @FilterableField(() => ID)
   id!: string;

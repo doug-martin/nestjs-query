@@ -57,7 +57,7 @@ const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: A
         aggregateRelationLoaderName,
         aggregateLoader.createLoader(this.service),
       );
-      const relationFilter = await getRelationAuthFilter<DTO, Relation>(baseNameLower, this.authService, context);
+      const relationFilter = await getRelationAuthFilter<DTO, Relation>(baseNameLower, this.authorizer, context);
       return loader.load({
         dto,
         filter: mergeFilter(qa.filter ?? {}, relationFilter ?? {}),
