@@ -16,4 +16,4 @@ export const REFERENCE_KEY = 'nestjs-query:reference';
 
 export const AUTH_KEY = 'nestjs-query:auth';
 
-export const AUTH_SERVICE_KEY = 'nestjs-query:auth-service';
+export const AUTHORIZER_KEY = 'nestjs-query:authorizer';

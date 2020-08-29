@@ -2,7 +2,15 @@ import { DeleteManyResponse, Filter } from '@nestjs-query/core';
 import { Field, InputType, Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when, verify, anything, mock, instance } from 'ts-mockito';
 import { PubSub } from 'graphql-subscriptions';
-import { DeleteManyInputType, DeleteOneInputType, DeleteResolver, DeleteResolverOpts, InjectPubSub } from '../../src';
+import {
+  Authorizer,
+  DeleteManyInputType,
+  DeleteOneInputType,
+  DeleteResolver,
+  DeleteResolverOpts,
+  InjectAuthorizer,
+  InjectPubSub,
+} from '../../src';
 import { DeletedEvent } from '../../src/resolvers/delete.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
 import { expectSDL } from '../__fixtures__';
@@ -21,7 +29,6 @@ import {
   TestService,
 } from './__fixtures__';
 import { TestResolverDTO } from './__fixtures__/test-resolver.dto';
-import { TestResolverAuthService } from './__fixtures__/test-resolver-auth.service';
 
 describe('DeleteResolver', () => {
   const expectResolverSDL = (sdl: string, opts?: DeleteResolverOpts<TestResolverDTO>) => {
@@ -41,7 +48,7 @@ describe('DeleteResolver', () => {
       constructor(
         service: TestService,
         @InjectPubSub() readonly pubSub: PubSub,
-        readonly authService: TestResolverAuthService,
+        @InjectAuthorizer(TestResolverDTO) readonly authorizer: Authorizer<TestResolverDTO>,
       ) {
         super(service);
       }
@@ -82,7 +89,7 @@ describe('DeleteResolver', () => {
     });
 
     it('should call the service deleteOne with the provided input', async () => {
-      const { resolver, mockService, mockAuthService } = await createTestResolver();
+      const { resolver, mockService, mockAuthorizer } = await createTestResolver();
       const input: DeleteOneInputType = {
         id: 'id-1',
       };
@@ -91,14 +98,14 @@ describe('DeleteResolver', () => {
         stringField: 'foo',
       };
       const context = {};
-      when(mockAuthService.authFilter(context)).thenResolve({});
+      when(mockAuthorizer.authorize(context)).thenResolve({});
       when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
       const result = await resolver.deleteOne({ input }, context);
       return expect(result).toEqual(output);
     });
 
-    it('should call the service deleteOne with the provided input and authService filter', async () => {
-      const { resolver, mockService, mockAuthService } = await createTestResolver();
+    it('should call the service deleteOne with the provided input and authorizer filter', async () => {
+      const { resolver, mockService, mockAuthorizer } = await createTestResolver();
       const input: DeleteOneInputType = {
         id: 'id-1',
       };
@@ -107,9 +114,9 @@ describe('DeleteResolver', () => {
         stringField: 'foo',
       };
       const context = {};
-      const authFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
-      when(mockAuthService.authFilter(context)).thenResolve(authFilter);
-      when(mockService.deleteOne(input.id, deepEqual({ filter: authFilter }))).thenResolve(output);
+      const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
+      when(mockAuthorizer.authorize(context)).thenResolve(authorizeFilter);
+      when(mockService.deleteOne(input.id, deepEqual({ filter: authorizeFilter }))).thenResolve(output);
       const result = await resolver.deleteOne({ input }, context);
       return expect(result).toEqual(output);
     });
@@ -132,28 +139,28 @@ describe('DeleteResolver', () => {
     });
 
     it('should call the service deleteMany with the provided input', async () => {
-      const { resolver, mockService, mockAuthService } = await createTestResolver();
+      const { resolver, mockService, mockAuthorizer } = await createTestResolver();
       const input: DeleteManyInputType<TestResolverDTO> = {
         filter: { id: { eq: 'id-1' } },
       };
       const output: DeleteManyResponse = { deletedCount: 1 };
       const context = {};
-      when(mockAuthService.authFilter(context)).thenResolve({});
+      when(mockAuthorizer.authorize(context)).thenResolve({});
       when(mockService.deleteMany(objectContaining(input.filter))).thenResolve(output);
       const result = await resolver.deleteMany({ input }, context);
       return expect(result).toEqual(output);
     });
 
-    it('should call the service deleteMany with the provided input and filter from authService', async () => {
-      const { resolver, mockService, mockAuthService } = await createTestResolver();
+    it('should call the service deleteMany with the provided input and filter from authorizer', async () => {
+      const { resolver, mockService, mockAuthorizer } = await createTestResolver();
       const input: DeleteManyInputType<TestResolverDTO> = {
         filter: { id: { eq: 'id-1' } },
       };
       const output: DeleteManyResponse = { deletedCount: 1 };
       const context = {};
-      const authFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
-      when(mockAuthService.authFilter(context)).thenResolve(authFilter);
-      when(mockService.deleteMany(objectContaining({ ...input.filter, ...authFilter }))).thenResolve(output);
+      const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
+      when(mockAuthorizer.authorize(context)).thenResolve(authorizeFilter);
+      when(mockService.deleteMany(objectContaining({ ...input.filter, ...authorizeFilter }))).thenResolve(output);
       const result = await resolver.deleteMany({ input }, context);
       return expect(result).toEqual(output);
     });
@@ -188,7 +195,7 @@ describe('DeleteResolver', () => {
 
     describe('delete one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {
-        const { resolver, mockService, mockPubSub, mockAuthService } = await createTestResolver({
+        const { resolver, mockService, mockPubSub, mockAuthorizer } = await createTestResolver({
           enableSubscriptions: true,
         });
         const input: DeleteOneInputType = {
@@ -201,7 +208,7 @@ describe('DeleteResolver', () => {
         const eventName = getDTOEventName(EventType.DELETED_ONE, TestResolverDTO);
         const event = { [eventName]: output };
         const context = {};
-        when(mockAuthService.authFilter(context)).thenResolve({});
+        when(mockAuthorizer.authorize(context)).thenResolve({});
         when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.deleteOne({ input }, context);
@@ -210,7 +217,7 @@ describe('DeleteResolver', () => {
       });
 
       it('should publish events for create one when enableSubscriptions is set to true for createOne', async () => {
-        const { resolver, mockService, mockPubSub, mockAuthService } = await createTestResolver({
+        const { resolver, mockService, mockPubSub, mockAuthorizer } = await createTestResolver({
           one: { enableSubscriptions: true },
         });
         const input: DeleteOneInputType = {
@@ -223,7 +230,7 @@ describe('DeleteResolver', () => {
         const eventName = getDTOEventName(EventType.DELETED_ONE, TestResolverDTO);
         const event = { [eventName]: output };
         const context = {};
-        when(mockAuthService.authFilter(context)).thenResolve({});
+        when(mockAuthorizer.authorize(context)).thenResolve({});
         when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.deleteOne({ input }, context);
@@ -232,7 +239,7 @@ describe('DeleteResolver', () => {
       });
 
       it('should not publish an event if enableSubscriptions is false', async () => {
-        const { resolver, mockService, mockPubSub, mockAuthService } = await createTestResolver({
+        const { resolver, mockService, mockPubSub, mockAuthorizer } = await createTestResolver({
           enableSubscriptions: false,
         });
         const input: DeleteOneInputType = {
@@ -243,7 +250,7 @@ describe('DeleteResolver', () => {
           stringField: 'foo',
         };
         const context = {};
-        when(mockAuthService.authFilter(context)).thenResolve({});
+        when(mockAuthorizer.authorize(context)).thenResolve({});
         when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
         const result = await resolver.deleteOne({ input }, context);
         verify(mockPubSub.publish(anything(), anything())).never();
@@ -251,7 +258,7 @@ describe('DeleteResolver', () => {
       });
 
       it('should not publish an event if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
-        const { resolver, mockService, mockPubSub, mockAuthService } = await createTestResolver({
+        const { resolver, mockService, mockPubSub, mockAuthorizer } = await createTestResolver({
           enableSubscriptions: true,
           one: { enableSubscriptions: false },
         });
@@ -263,7 +270,7 @@ describe('DeleteResolver', () => {
           stringField: 'foo',
         };
         const context = {};
-        when(mockAuthService.authFilter(context)).thenResolve({});
+        when(mockAuthorizer.authorize(context)).thenResolve({});
         when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
         const result = await resolver.deleteOne({ input }, context);
         verify(mockPubSub.publish(anything(), anything())).never();

@@ -144,9 +144,9 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
     @ResolverMutation(() => DTOClass, { name: `updateOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async updateOne(@MutationArgs(UO, updateOneHook) input: UO, @Context() context?: unknown): Promise<DTO> {
       const updateOne = await transformAndValidate(UO, input);
-      const authFilter = await getAuthFilter(this.authService, context);
+      const authorizeFilter = await getAuthFilter(this.authorizer, context);
       const { id, update } = updateOne.input;
-      const updateResult = await this.service.updateOne(id, update, { filter: authFilter });
+      const updateResult = await this.service.updateOne(id, update, { filter: authorizeFilter });
       if (enableOneSubscriptions) {
         await this.publishUpdatedOneEvent(updateResult);
       }
@@ -159,9 +159,9 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
       @Context() context?: unknown,
     ): Promise<UpdateManyResponse> {
       const updateMany = await transformAndValidate(UM, input);
-      const authFilter = await getAuthFilter(this.authService, context);
+      const authorizeFilter = await getAuthFilter(this.authorizer, context);
       const { update, filter } = updateMany.input;
-      const updateManyResponse = await this.service.updateMany(update, mergeFilter(filter, authFilter ?? {}));
+      const updateManyResponse = await this.service.updateMany(update, mergeFilter(filter, authorizeFilter ?? {}));
       if (enableManySubscriptions) {
         await this.publishUpdatedManyEvent(updateManyResponse);
       }

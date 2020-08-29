@@ -1,2 +1,2 @@
 export * from './resolver.provider';
-export * from './auth-service.provider';
+export * from './authorizer.provider';

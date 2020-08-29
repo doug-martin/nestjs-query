@@ -100,8 +100,8 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
     @ResolverMutation(() => DeleteOneResponse, { name: `deleteOne${baseName}` }, commonResolverOpts, opts.one ?? {})
     async deleteOne(@MutationArgs(DO, deleteOneHook) input: DO, @Context() context?: unknown): Promise<Partial<DTO>> {
       const deleteOne = await transformAndValidate(DO, input);
-      const authFilter = await getAuthFilter(this.authService, context);
-      const deletedResponse = await this.service.deleteOne(deleteOne.input.id, { filter: authFilter });
+      const authorizeFilter = await getAuthFilter(this.authorizer, context);
+      const deletedResponse = await this.service.deleteOne(deleteOne.input.id, { filter: authorizeFilter });
       if (enableOneSubscriptions) {
         await this.publishDeletedOneEvent(deletedResponse);
       }
@@ -114,8 +114,10 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
       @Context() context?: unknown,
     ): Promise<DeleteManyResponse> {
       const deleteMany = await transformAndValidate(DM, input);
-      const authFilter = await getAuthFilter(this.authService, context);
-      const deleteManyResponse = await this.service.deleteMany(mergeFilter(deleteMany.input.filter, authFilter ?? {}));
+      const authorizeFilter = await getAuthFilter(this.authorizer, context);
+      const deleteManyResponse = await this.service.deleteMany(
+        mergeFilter(deleteMany.input.filter, authorizeFilter ?? {}),
+      );
       if (enableManySubscriptions) {
         await this.publishDeletedManyEvent(deleteManyResponse);
       }

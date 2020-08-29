@@ -32,7 +32,7 @@ const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
       @Context() context?: unknown,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
-      const opts = await getModifyRelationOptions(baseNameLower, this.authService, context);
+      const opts = await getModifyRelationOptions(baseNameLower, this.authorizer, context);
       return this.service.removeRelation(relationName, input.id, input.relationId, opts);
     }
   }
@@ -63,7 +63,7 @@ const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation:
       @Context() context?: unknown,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(AddArgs, addArgs);
-      const opts = await getModifyRelationOptions(pluralBaseNameLower, this.authService, context);
+      const opts = await getModifyRelationOptions(pluralBaseNameLower, this.authorizer, context);
       return this.service.removeRelations(relationName, input.id, input.relationIds, opts);
     }
   }

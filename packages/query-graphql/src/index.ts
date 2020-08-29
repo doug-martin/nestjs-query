@@ -29,9 +29,8 @@ export {
   BeforeQueryManyHook,
   BeforeFindOne,
   BeforeFindOneHook,
-  CRUDAuth,
-  InjectAuthService,
-  AuthorizationService,
+  InjectAuthorizer,
+  Authorize,
 } from './decorators';
 export * from './resolvers';
 export * from './federation';
@@ -39,4 +38,4 @@ export { DTONamesOpts } from './common';
 export { NestjsQueryGraphQLModule } from './module';
 export { AutoResolverOpts } from './providers';
 export { pubSubToken, GraphQLPubSub } from './subscription';
-export { CRUDAuthService, CRUDAuthOptions } from './auth';
+export { Authorizer, AuthorizerOptions } from './auth';

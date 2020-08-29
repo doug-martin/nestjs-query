@@ -11,7 +11,7 @@ import {
   OffsetQueryArgsType,
   QueryArgsTypeOpts,
 } from '../types/query/query-args';
-import { CRUDAuthService } from '../auth';
+import { Authorizer } from '../auth';
 
 export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
   /**
@@ -33,7 +33,7 @@ export interface SubscriptionResolverOpts extends SubscriptionResolverMethodOpts
 export interface ServiceResolver<DTO> {
   service: QueryService<DTO>;
   readonly pubSub?: GraphQLPubSub;
-  readonly authService?: CRUDAuthService<DTO>;
+  readonly authorizer?: Authorizer<DTO>;
 }
 
 /** @internal */

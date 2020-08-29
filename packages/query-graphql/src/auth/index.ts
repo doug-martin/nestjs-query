@@ -1,3 +1,3 @@
-export * from './crud-auth.interface';
-export * from './default-crud-auth.service';
+export * from './authorizer';
+export * from './default-crud.authorizer';
 export * from './tokens';

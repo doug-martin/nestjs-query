@@ -7,14 +7,13 @@ import {
   AssemblerQueryService,
   Assembler,
 } from '@nestjs-query/core';
-import { Provider, Inject } from '@nestjs/common';
+import { Provider, Inject, Optional } from '@nestjs/common';
 import { Resolver } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
-import { InjectPubSub } from '../decorators';
+import { InjectAuthorizer, InjectPubSub } from '../decorators';
 import { CRUDResolver, CRUDResolverOpts, FederationResolver } from '../resolvers';
 import { PagingStrategies } from '../types/query/paging';
-import { InjectAuthService } from '../decorators/inject-auth-service.decorator';
-import { CRUDAuthService } from '../auth';
+import { Authorizer } from '../auth';
 
 type CRUDAutoResolverOpts<DTO, C, U, R, PS extends PagingStrategies> = CRUDResolverOpts<DTO, C, U, R, PS> & {
   DTOClass: Class<DTO>;
@@ -91,7 +90,7 @@ function createFederatedResolver<DTO, Service>(resolverOpts: FederatedAutoResolv
     constructor(
       @Inject(resolverOpts.Service) readonly service: QueryService<DTO>,
       @InjectPubSub() readonly pubSub: PubSub,
-      @InjectAuthService(DTOClass) readonly authService?: CRUDAuthService<DTO>,
+      @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
       super(service);
     }
@@ -117,7 +116,7 @@ function createEntityAutoResolver<DTO, Entity, C, U, R, PS extends PagingStrateg
     constructor(
       @InjectQueryService(EntityClass) service: QueryService<Entity>,
       @InjectPubSub() readonly pubSub: PubSub,
-      @InjectAuthService(DTOClass) readonly authService?: CRUDAuthService<DTO>,
+      @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
       super(new Service(service));
     }
@@ -137,7 +136,7 @@ function createAssemblerAutoResolver<DTO, Asmblr, C, U, R, PS extends PagingStra
       @InjectAssemblerQueryService((AssemblerClass as unknown) as Class<Assembler<DTO, unknown>>)
       service: QueryService<DTO>,
       @InjectPubSub() readonly pubSub: PubSub,
-      @InjectAuthService(DTOClass) readonly authService?: CRUDAuthService<DTO>,
+      @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
       super(service);
     }
@@ -156,7 +155,7 @@ function createServiceAutoResolver<DTO, Service, C, U, R, PS extends PagingStrat
     constructor(
       @Inject(ServiceClass) service: QueryService<DTO>,
       @InjectPubSub() readonly pubSub: PubSub,
-      @InjectAuthService(DTOClass) readonly authService?: CRUDAuthService<DTO>,
+      @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
       super(service);
     }

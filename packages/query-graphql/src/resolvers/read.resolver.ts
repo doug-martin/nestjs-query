@@ -71,8 +71,8 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: 
   class ReadResolverBase extends BaseClass {
     @ResolverQuery(() => DTOClass, { nullable: true, name: baseNameLower }, commonResolverOpts, opts.one ?? {})
     async findById(@HookArgs(FO, findOneHook) input: FO, @Context() context?: unknown): Promise<DTO | undefined> {
-      const authFilter = await getAuthFilter(this.authService, context);
-      return this.service.findById(input.id, { filter: authFilter });
+      const authorizeFilter = await getAuthFilter(this.authorizer, context);
+      return this.service.findById(input.id, { filter: authorizeFilter });
     }
 
     @ResolverQuery(() => Connection.resolveType, { name: pluralBaseNameLower }, commonResolverOpts, opts.many ?? {})
@@ -80,8 +80,8 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: 
       @HookArgs(QA, queryManyHook) query: QA,
       @Context() context?: unknown,
     ): Promise<ConnectionType<DTO>> {
-      const authFilter = await getAuthFilter(this.authService, context);
-      const qa = await transformAndValidate(QA, mergeQuery(query, { filter: authFilter }));
+      const authorizeFilter = await getAuthFilter(this.authorizer, context);
+      const qa = await transformAndValidate(QA, mergeQuery(query, { filter: authorizeFilter }));
       return Connection.createFromPromise(
         (q) => this.service.query(q),
         qa,

@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
 import { SubscriptionArgsType, SubscriptionFilterInputType } from '../types';
-import { CRUDAuthService } from '../auth';
+import { Authorizer } from '../auth';
 
 /** @internal */
 export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Promise<T> => {
@@ -37,22 +37,22 @@ export const createSubscriptionFilter = <DTO, Input extends SubscriptionFilterIn
 };
 
 export const getAuthFilter = async <DTO>(
-  authService?: CRUDAuthService<DTO>,
+  authorizer?: Authorizer<DTO>,
   context?: unknown,
 ): Promise<Filter<DTO> | undefined> => {
-  if (!context || !authService) {
+  if (!context || !authorizer) {
     return undefined;
   }
-  return authService.authFilter(context);
+  return authorizer.authorize(context);
 };
 
 export const getRelationAuthFilter = async <DTO, Relation>(
   relationName: string,
-  authService?: CRUDAuthService<DTO>,
+  authorizer?: Authorizer<DTO>,
   context?: unknown,
 ): Promise<Filter<Relation> | undefined> => {
-  if (!context || !authService) {
+  if (!context || !authorizer) {
     return undefined;
   }
-  return authService.relationAuthFilter(relationName, context);
+  return authorizer.authorizeRelation(relationName, context);
 };

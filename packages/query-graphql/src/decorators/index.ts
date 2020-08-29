@@ -26,6 +26,5 @@ export * from './hook.decorator';
 export * from './mutation-args.decorator';
 export * from './decorator.utils';
 export * from './hook-args.decorator';
-export * from './auth.decorator';
-export * from './auth-service.decorator';
-export * from './inject-auth-service.decorator';
+export * from './authorizer.decorator';
+export * from './inject-authorizer.decorator';
