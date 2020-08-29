@@ -13,7 +13,7 @@ describe('TypegooseQueryService', () => {
 
   class TestEntityService extends TypegooseQueryService<TestEntity> {
     constructor(@InjectModel(TestEntity) readonly model: ReturnModelType<typeof TestEntity>) {
-      super(model);
+      super(model, { documentToObjectOptions: { virtuals: true } });
     }
   }
 
