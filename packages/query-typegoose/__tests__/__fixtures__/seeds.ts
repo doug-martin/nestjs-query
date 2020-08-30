@@ -12,6 +12,7 @@ export const TEST_ENTITIES: TestEntity[] = new Array(15)
       dateType: new Date(`2020-02-${i}`),
       numberType: i,
       stringType: `foo${i}`,
+      testReferences: [],
     });
   });
 
@@ -22,14 +23,23 @@ export const TEST_REFERENCES: TestReference[] = [1, 2, 3, 4, 5].map((i) => {
 });
 
 export const seed = async (connection: Connection): Promise<void> => {
-  await connection.collection('testentities').insertMany(TEST_ENTITIES);
-  await connection.collection('testreferences').insertMany(TEST_REFERENCES);
+  const testEntitiesCollection = connection.collection('testentities');
+  const testReferencesCollection = connection.collection('testreferences');
+
+  await testEntitiesCollection.insertMany(TEST_ENTITIES);
+  await testReferencesCollection.insertMany(TEST_REFERENCES);
 
   await Promise.all(
     TEST_REFERENCES.map((testReference, i) => {
-      return connection
-        .collection('testentities')
-        .updateOne({ stringType: TEST_ENTITIES[i + 10].stringType }, { $set: { testReference: testReference.id } });
+      return testEntitiesCollection.updateOne(
+        { stringType: TEST_ENTITIES[i + 10].stringType },
+        { $set: { testReference: testReference.id } },
+      );
     }),
+  );
+
+  await testEntitiesCollection.updateOne(
+    { stringType: TEST_ENTITIES[TEST_ENTITIES.length - 1].stringType },
+    { $set: { testReferences: TEST_REFERENCES.map((ref) => ref.id) } },
   );
 };
