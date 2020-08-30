@@ -18,19 +18,6 @@ export interface TypegooseQueryServiceOpts {
   documentToObjectOptions?: DocumentToObjectOptions;
 }
 
-const mongoOperatorMapper: { [k: string]: string } = {
-  eq: '$eq',
-  neq: '$ne',
-  gt: '$gt',
-  gte: '$gte',
-  lt: '$lt',
-  lte: '$lte',
-  in: '$in',
-  notIn: '$nin',
-  is: '$eq',
-  isNot: '$ne',
-};
-
 /**
  * Base class for all query services that use Typegoose.
  *
@@ -50,6 +37,19 @@ const mongoOperatorMapper: { [k: string]: string } = {
 export class TypegooseQueryService<Entity> implements QueryService<Entity> {
   protected readonly documentToObjectOptions: DocumentToObjectOptions;
 
+  protected mongoOperatorMapper: Record<string, string> = {
+    eq: '$eq',
+    neq: '$ne',
+    gt: '$gt',
+    gte: '$gte',
+    lt: '$lt',
+    lte: '$lte',
+    in: '$in',
+    notIn: '$nin',
+    is: '$eq',
+    isNot: '$ne',
+  };
+
   constructor(readonly Model: ReturnModelType<new () => Entity>, opts?: TypegooseQueryServiceOpts) {
     this.documentToObjectOptions = opts?.documentToObjectOptions || { virtuals: true };
   }
@@ -67,10 +67,10 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
       }
       const findConditions = Object.entries(value).reduce(
         (prevCondition: FilterQuery<new () => Entity>, [fieldKey, fieldValue]) => {
-          if (mongoOperatorMapper[fieldKey]) {
+          if (this.mongoOperatorMapper[fieldKey]) {
             return {
               ...prevCondition,
-              [mongoOperatorMapper[fieldKey]]: fieldValue,
+              [this.mongoOperatorMapper[fieldKey]]: fieldValue,
             };
           }
           if (['like', 'notLike', 'iLike', 'notILike'].includes(fieldKey)) {
@@ -130,7 +130,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     return entities.map((doc) => doc.toObject(this.documentToObjectOptions) as Entity);
   }
 
-  aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
+  aggregate(): Promise<AggregateResponse<Entity>> {
     throw new Error('Not implemented yet');
   }
 
@@ -288,13 +288,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     }
   }
 
-  /**
-   * Adds multiple relations.
-   * @param relationName - The name of the relation to query for.
-   * @param id - The id of the dto to add the relation to.
-   * @param relationIds - The ids of the relations to add.
-   */
-  addRelations<Relation>(relationName: string, id: string | number, relationIds: (string | number)[]): Promise<Entity> {
+  addRelations<Relation>(): Promise<Entity> {
     throw new Error('Not implemented yet');
   }
 
@@ -314,13 +308,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     aggregate: AggregateQuery<Relation>,
   ): Promise<AggregateResponse<Relation>>;
 
-  aggregateRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: Entity | Entity[],
-    filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation> | Map<Entity, AggregateResponse<Relation>>> {
+  aggregateRelations<Relation>(): Promise<AggregateResponse<Relation> | Map<Entity, AggregateResponse<Relation>>> {
     throw new Error('Not implemented yet');
   }
 
@@ -338,12 +326,7 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     filter: Filter<Relation>,
   ): Promise<number>;
 
-  countRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: Entity | Entity[],
-    filter: Filter<Relation>,
-  ): Promise<number | Map<Entity, number>> {
+  countRelations<Relation>(): Promise<number | Map<Entity, number>> {
     throw new Error('Not implemented yet');
   }
 
@@ -422,19 +405,15 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     }, Promise.resolve(new Map<Entity, Relation[]>()));
   }
 
-  removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<Entity> {
+  removeRelation<Relation>(): Promise<Entity> {
     throw new Error('Not implemented yet');
   }
 
-  removeRelations<Relation>(
-    relationName: string,
-    id: string | number,
-    relationIds: (string | number)[],
-  ): Promise<Entity> {
+  removeRelations<Relation>(): Promise<Entity> {
     throw new Error('Not implemented yet');
   }
 
-  setRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<Entity> {
+  setRelation<Relation>(): Promise<Entity> {
     throw new Error('Not implemented yet');
   }
 }

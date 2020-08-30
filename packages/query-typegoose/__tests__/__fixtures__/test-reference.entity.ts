@@ -1,7 +1,7 @@
 import { mongoose, prop } from '@typegoose/typegoose';
 
 export class TestReference {
-  get id() {
+  get id(): string {
     const idKey = '_id';
     return ((this as unknown) as Record<string, mongoose.Types.ObjectId>)[idKey]?.toString();
   }
