@@ -1,10 +1,12 @@
-import { FilterableField, FilterableRelation, CRUDAuth } from '@nestjs-query/query-graphql';
+import { FilterableField, FilterableRelation, Authorize, Relation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
-import { UserContext } from '../../auth/auth.interfaces';
+import { SubTaskAuthorizer } from '../sub-task.authorizer';
+import { UserDTO } from '../../user/user.dto';
 
 @ObjectType('SubTask')
-@CRUDAuth({ filter: (context: UserContext) => ({ ownerId: { eq: context.req.user.id } }) })
+@Authorize(SubTaskAuthorizer)
+@Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableRelation('todoItem', () => TodoItemDTO, { disableRemove: true })
 export class SubTaskDTO {
   @FilterableField(() => ID)
@@ -33,4 +35,7 @@ export class SubTaskDTO {
 
   @FilterableField({ nullable: true })
   updatedBy?: string;
+
+  // dont expose in graphql
+  ownerId!: number;
 }
