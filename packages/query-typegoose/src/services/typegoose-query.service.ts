@@ -393,7 +393,33 @@ export class TypegooseQueryService<Entity> implements QueryService<Entity> {
     dto: Entity | Entity[],
     query: Query<Relation>,
   ): Promise<Relation[] | Map<Entity, Relation[]>> {
-    throw new Error('Not implemented yet');
+    const relationModel = this.Model.model(RelationClass.name) as ReturnModelType<new () => Relation>;
+    const relationQS = new TypegooseQueryService(relationModel, {
+      documentToObjectOptions: this.documentToObjectOptions,
+    });
+    const dtos: Entity[] = Array.isArray(dto) ? dto : [dto];
+    return dtos.reduce(async (prev, curr) => {
+      const map = await prev;
+      const ids = curr[relationName as keyof Entity];
+      if (Array.isArray(ids)) {
+        const relQuery = {
+          ...query,
+          filter: {
+            ...query.filter,
+            id: { in: ids },
+          },
+        } as Query<Relation>;
+        const entities = await relationQS.query(relQuery);
+        const sortedEntities = ids
+          .map((id: string) => {
+            const mongoDBKey = '_id' as keyof Relation; // eslint complains about keys starting with underscore
+            return entities.find((e) => ((e[mongoDBKey] as unknown) as string).toString() === id.toString());
+          })
+          .filter((e) => !!e);
+        map.set(curr, sortedEntities as Relation[]);
+      }
+      return map;
+    }, Promise.resolve(new Map<Entity, Relation[]>()));
   }
 
   removeRelation<Relation>(relationName: string, id: string | number, relationId: string | number): Promise<Entity> {

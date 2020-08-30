@@ -307,4 +307,45 @@ describe('TypegooseQueryService', () => {
       expect(queryResult.values().next().value).toBeUndefined();
     });
   });
+
+  describe('#queryRelations', () => {
+    let testEntity: TestEntity;
+
+    beforeEach(() => {
+      testEntity = plainToClass(TestEntity, {
+        ...TEST_ENTITIES[0],
+        testReferences: TEST_REFERENCES.map((ref) => ref.id),
+      });
+    });
+
+    it('should return a map containing a list of references', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.queryRelations(TestReference, 'testReferences', testEntity, {});
+      expect(queryResult.values().next().value).toEqual(TEST_REFERENCES.map((ref) => ref.getOutputData()));
+    });
+
+    it('should apply a filter', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.queryRelations(TestReference, 'testReferences', testEntity, {
+        filter: { name: { eq: 'name2' } },
+      });
+      expect(queryResult.values().next().value).toEqual(TEST_REFERENCES.slice(1, 2).map((ref) => ref.getOutputData()));
+    });
+
+    it('should apply paging', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.queryRelations(TestReference, 'testReferences', testEntity, {
+        paging: { limit: 2, offset: 1 },
+      });
+      expect(queryResult.values().next().value).toEqual(TEST_REFERENCES.slice(1, 3).map((ref) => ref.getOutputData()));
+    });
+
+    it('should return an empty array if no results are found.', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.queryRelations(TestReference, 'testReferences', testEntity, {
+        filter: { name: { eq: 'does-not-exist' } },
+      });
+      expect(queryResult.values().next().value).toEqual([]);
+    });
+  });
 });

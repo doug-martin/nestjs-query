@@ -22,6 +22,9 @@ export class TestEntity {
   @prop({ ref: TestReference })
   testReference?: Ref<TestReference>;
 
+  @prop({ ref: TestReference })
+  testReferences?: Ref<TestReference>[];
+
   getInputData(): Partial<TestEntity> {
     return {
       stringType: this.stringType,
