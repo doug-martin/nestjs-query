@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
     "prebuild": "npm run clean",
-    "build": "tsc -p ./tsconfig.build.json",
+    "build": "tsc",
     "start": "nest start --watch"
   },
   "dependencies": {
