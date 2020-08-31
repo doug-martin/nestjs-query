@@ -1,19 +1,20 @@
 {
     "extends": "./tsconfig.build.json",
     "compilerOptions": {
-        "baseUrl": "./packages",
-        "composite": true,
+        "baseUrl": ".",
         "paths": {
-            "@nestjs-query/core": ["core/src"],
-            "@nestjs-query/query-graphql": ["query-graphql/src"],
-            "@nestjs-query/query-typeorm": ["query-typeorm/src"],
-            "@nestjs-query/query-sequelize": ["query-sequelize/src"]
+            "@nestjs-query/core": ["packages/core/src"],
+            "@nestjs-query/query-graphql": ["packages/query-graphql/src"],
+            "@nestjs-query/query-typeorm": ["packages/query-typeorm/src"],
+            "@nestjs-query/query-sequelize": ["packages/query-sequelize/src"]
         }
     },
     "references": [
-        {"path": "./packages/core/tsconfig.build.json"},
-        {"path": "./packages/query-graphql/tsconfig.build.json"},
-        {"path": "./packages/query-typeorm/tsconfig.build.json"},
-        {"path": "./packages/query-sequelize/tsconfig.build.json"}
-    ]
+        {"path": "./packages/core"},
+        {"path": "./packages/query-graphql"},
+        {"path": "./packages/query-typeorm"},
+        {"path": "./packages/query-sequelize"},
+        {"path": "./examples"}
+    ],
+    "files": []
 }

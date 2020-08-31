@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../tsconfig.build.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "."
@@ -7,7 +7,6 @@
   "include": [
     "./helpers",
     "**/src",
-    "**/e2e",
     "**/ormconfig.json"
   ],
   "exclude": [

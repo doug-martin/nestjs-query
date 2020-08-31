@@ -47,7 +47,7 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc",
     "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo"
   },
   "bugs": {
