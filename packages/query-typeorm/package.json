@@ -31,7 +31,7 @@
   "devDependencies": {
     "@nestjs/common": "7.4.2",
     "@nestjs/testing": "7.4.2",
-    "@nestjs/typeorm": "7.1.0",
+    "@nestjs/typeorm": "7.1.1",
     "@types/lodash.filter": "4.6.6",
     "@types/lodash.omit": "4.5.6",
     "class-transformer": "0.3.1",
