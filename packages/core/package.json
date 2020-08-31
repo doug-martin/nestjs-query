@@ -38,8 +38,8 @@
     "class-transformer": "^0.2.3 || ^0.3.0"
   },
   "devDependencies": {
-    "@nestjs/common": "7.4.3",
-    "@nestjs/testing": "7.4.3",
+    "@nestjs/common": "7.4.4",
+    "@nestjs/testing": "7.4.4",
     "@types/lodash.merge": "4.6.6",
     "class-transformer": "0.3.1",
     "ts-mockito": "2.6.1",
