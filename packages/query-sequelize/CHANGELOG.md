@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.19.0](https://github.com/doug-martin/nestjs-query/compare/v0.18.1...v0.19.0) (2020-09-01)
+
+
+### Features
+
+* **sequelize:** Add additional filter options to QueryService ([29fdfa7](https://github.com/doug-martin/nestjs-query/commit/29fdfa724ec199835a6493b5f9cccb6bec58f074))
+
+
+
+
+
 ## [0.18.1](https://github.com/doug-martin/nestjs-query/compare/v0.18.0...v0.18.1) (2020-08-14)
 
 **Note:** Version bump only for package @nestjs-query/query-sequelize

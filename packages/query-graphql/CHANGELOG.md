@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.19.0](https://github.com/doug-martin/nestjs-query/compare/v0.18.1...v0.19.0) (2020-09-01)
+
+
+### Features
+
+* **graphql,auth:** Add authorization to resolvers and relations ([9d76787](https://github.com/doug-martin/nestjs-query/commit/9d76787d031e6a731f28877c0df46cf4472b2faf))
+
+
+
+
+
 ## [0.18.1](https://github.com/doug-martin/nestjs-query/compare/v0.18.0...v0.18.1) (2020-08-14)
 
 **Note:** Version bump only for package @nestjs-query/query-graphql

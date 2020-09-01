@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.19.0](https://github.com/doug-martin/nestjs-query/compare/v0.18.1...v0.19.0) (2020-09-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.62 ([dc773f4](https://github.com/doug-martin/nestjs-query/commit/dc773f48996b1208b1f1c17c34977bbf6838e108))
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.62 ([ad5c2d2](https://github.com/doug-martin/nestjs-query/commit/ad5c2d21146aab5fd9ddc3982ec2cce547b58ffd))
+* **deps:** update dependency apollo-server-express to v2.17.0 ([53398fe](https://github.com/doug-martin/nestjs-query/commit/53398fe9f2e879499892066b9a6bb90879afc8bf))
+* **deps:** update dependency graphql-tools to v6.1.0 ([2394310](https://github.com/doug-martin/nestjs-query/commit/23943101d4fb52e3ba94018df4b902acf6adb2fe))
+* **deps:** update dependency pg to v8.3.2 ([1a03710](https://github.com/doug-martin/nestjs-query/commit/1a037100ce497c319bd9d0be3c17088f48fa893e))
+* **deps:** update dependency pg to v8.3.3 ([f471395](https://github.com/doug-martin/nestjs-query/commit/f471395a782eeabe679936c104fdb14521623441))
+* **example,auth:** Fix auth example ([b26e1c6](https://github.com/doug-martin/nestjs-query/commit/b26e1c62e1f3264f68dfaf637239e409145b3106))
+
+
+### Features
+
+* **auth:** Initial Investigation ([8d40636](https://github.com/doug-martin/nestjs-query/commit/8d4063620cee52be41b7847d99bdfa8a5a2f75b7))
+* **core:** Update QueryService to allow additional filtering ([474369b](https://github.com/doug-martin/nestjs-query/commit/474369bd46ee82e3c8510f0564019627367d467c))
+* **graphql,auth:** Add authorization to resolvers and relations ([9d76787](https://github.com/doug-martin/nestjs-query/commit/9d76787d031e6a731f28877c0df46cf4472b2faf))
+* **sequelize:** Add additional filter options to QueryService ([29fdfa7](https://github.com/doug-martin/nestjs-query/commit/29fdfa724ec199835a6493b5f9cccb6bec58f074))
+* **typeorm:** Add additional filter options to QueryService ([64241dc](https://github.com/doug-martin/nestjs-query/commit/64241dc9c4565c3bb2d4f168c837578bd706c48c))
+
+
+
+
+
 ## [0.18.1](https://github.com/doug-martin/nestjs-query/compare/v0.18.0...v0.18.1) (2020-08-14)
 
 
