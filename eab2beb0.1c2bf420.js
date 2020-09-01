@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[114],{172:function(e){e.exports=JSON.parse('{"allTagsPath":"/nestjs-query/blog/tags","slug":"typeorm","name":"typeorm","count":1,"permalink":"/nestjs-query/blog/tags/typeorm"}')}}]);
