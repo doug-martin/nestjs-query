@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.1](https://github.com/doug-martin/nestjs-query/compare/v0.19.0...v0.19.1) (2020-09-02)
+
+
+### Bug Fixes
+
+* **typeorm,#493:** Fix uni-directional relation SQL ([7887b8c](https://github.com/doug-martin/nestjs-query/commit/7887b8c94516194840df03139fecd0d5a0f38f65))
+
+
+
+
+
 # [0.19.0](https://github.com/doug-martin/nestjs-query/compare/v0.18.1...v0.19.0) (2020-09-01)
 
 
