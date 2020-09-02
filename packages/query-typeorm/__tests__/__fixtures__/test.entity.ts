@@ -26,6 +26,10 @@ export class TestEntity {
   @JoinTable()
   manyTestRelations?: TestRelation[];
 
+  @ManyToMany(() => TestRelation, { onDelete: 'CASCADE', nullable: false })
+  @JoinTable()
+  manyToManyUniDirectional?: TestRelation[];
+
   @OneToOne(() => TestRelation, (relation) => relation.oneTestEntity)
   @JoinColumn()
   oneTestRelation?: TestRelation;

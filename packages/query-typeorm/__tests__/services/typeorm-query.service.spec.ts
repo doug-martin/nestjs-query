@@ -97,6 +97,20 @@ describe('TypeOrmQueryService', (): void => {
           });
           expect(queryResults).toEqual(TEST_RELATIONS.slice(0, 6));
         });
+
+        it('should allow filtering on a uni directional many to one relation', async () => {
+          const queryService = moduleRef.get(TestRelationService);
+          const queryResults = await queryService.query({
+            filter: {
+              testEntityUniDirectional: {
+                testEntityPk: {
+                  in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk],
+                },
+              },
+            },
+          });
+          expect(queryResults).toEqual(TEST_RELATIONS.slice(0, 6));
+        });
       });
 
       describe('oneToMany', () => {
@@ -113,6 +127,42 @@ describe('TypeOrmQueryService', (): void => {
             },
           });
           expect(queryResult).toEqual([entity]);
+        });
+      });
+
+      describe('manyToMany', () => {
+        it('should allow filtering on a many to many relation', async () => {
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              manyTestRelations: {
+                relationName: {
+                  in: [TEST_RELATIONS[1].relationName, TEST_RELATIONS[4].relationName],
+                },
+              },
+            },
+          });
+          expect(queryResult).toEqual([
+            TEST_ENTITIES[1],
+            TEST_ENTITIES[3],
+            TEST_ENTITIES[5],
+            TEST_ENTITIES[7],
+            TEST_ENTITIES[9],
+          ]);
+        });
+
+        it('should allow filtering on a many to many uni-directional relation', async () => {
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              manyToManyUniDirectional: {
+                relationName: {
+                  in: [TEST_RELATIONS[2].relationName, TEST_RELATIONS[5].relationName],
+                },
+              },
+            },
+          });
+          expect(queryResult).toEqual([TEST_ENTITIES[2], TEST_ENTITIES[5], TEST_ENTITIES[8]]);
         });
       });
     });
@@ -280,6 +330,17 @@ describe('TypeOrmQueryService', (): void => {
           TEST_RELATIONS[1].testRelationPk,
           TEST_RELATIONS[2].testRelationPk,
         ]);
+      });
+
+      describe('manyToMany', () => {
+        it('call select and return the with a uni-directional relation', async () => {
+          const entity = TEST_ENTITIES[2];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.queryRelations(TestRelation, 'manyToManyUniDirectional', entity, {});
+          TEST_RELATIONS.filter((tr) => tr.relationName.endsWith('three')).forEach((tr) => {
+            expect(queryResult).toContainEqual(tr);
+          });
+        });
       });
     });
 
@@ -659,6 +720,16 @@ describe('TypeOrmQueryService', (): void => {
         return expect(queryService.findRelation(TestRelation, 'badRelation', TEST_ENTITIES[0])).rejects.toThrow(
           'Unable to find relation badRelation on TestEntity',
         );
+      });
+
+      describe('manyToOne', () => {
+        it('call select and return the with a uni-directional relation', async () => {
+          const entity = TEST_RELATIONS[0];
+          const queryService = moduleRef.get(TestRelationService);
+          const queryResult = await queryService.findRelation(TestEntity, 'testEntityUniDirectional', entity);
+
+          expect(queryResult).toEqual(TEST_ENTITIES[0]);
+        });
       });
     });
 

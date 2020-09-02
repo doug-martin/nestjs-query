@@ -221,7 +221,7 @@ export class RelationQueryBuilder<Entity, Relation> {
         })),
       },
     ];
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
+    const fromPrimaryKeys = relation.inverseEntityMetadata.primaryColumns.map((pk) => ({
       selectPath: `${relation.propertyName}.${pk.propertyName}`,
       databasePath: pk.databasePath,
       propertyName: pk.propertyName,
@@ -249,7 +249,7 @@ export class RelationQueryBuilder<Entity, Relation> {
   getOneToManyOrOneToOneNotOwnerMeta(relation: RelationMetadata): RelationQuery<Relation, Entity> {
     const aliasName = relation.propertyName;
     const columns = relation.inverseRelation!.joinColumns;
-    const fromPrimaryKeys: PrimaryKey[] = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
+    const fromPrimaryKeys: PrimaryKey[] = relation.inverseEntityMetadata.primaryColumns.map((pk) => ({
       selectPath: `${aliasName}.${pk.propertyName}`,
       databasePath: pk.databasePath,
       propertyName: pk.propertyName,
@@ -287,7 +287,7 @@ export class RelationQueryBuilder<Entity, Relation> {
         })),
       },
     ];
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
+    const fromPrimaryKeys = relation.inverseEntityMetadata.primaryColumns.map((pk) => ({
       selectPath: `${mainAlias}.${pk.propertyName}`,
       databasePath: pk.databasePath,
       propertyName: pk.propertyName,
@@ -325,7 +325,7 @@ export class RelationQueryBuilder<Entity, Relation> {
         })),
       },
     ];
-    const fromPrimaryKeys = relation.inverseRelation!.entityMetadata.primaryColumns.map((pk) => ({
+    const fromPrimaryKeys = relation.inverseEntityMetadata.primaryColumns.map((pk) => ({
       selectPath: `${mainAlias}.${pk.propertyName}`,
       databasePath: pk.databasePath,
       propertyName: pk.propertyName,
