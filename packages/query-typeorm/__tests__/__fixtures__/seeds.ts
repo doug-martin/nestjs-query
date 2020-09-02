@@ -29,16 +29,19 @@ export const TEST_RELATIONS: TestRelation[] = TEST_ENTITIES.reduce((relations, t
       testRelationPk: `test-relations-${te.testEntityPk}-1`,
       relationName: `${te.stringType}-test-relation-one`,
       testEntityId: te.testEntityPk,
+      uniDirectionalTestEntityId: te.testEntityPk,
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-2`,
       relationName: `${te.stringType}-test-relation-two`,
       testEntityId: te.testEntityPk,
+      uniDirectionalTestEntityId: te.testEntityPk,
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-3`,
       relationName: `${te.stringType}-test-relation-three`,
       testEntityId: te.testEntityPk,
+      uniDirectionalTestEntityId: te.testEntityPk,
     },
   ];
 }, [] as TestRelation[]);
@@ -56,6 +59,14 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
     testEntities.map((te) => {
       // eslint-disable-next-line no-param-reassign
       te.oneTestRelation = testRelations.find((tr) => tr.testRelationPk === `test-relations-${te.testEntityPk}-1`);
+      if (te.numberType % 2 === 0) {
+        // eslint-disable-next-line no-param-reassign
+        te.manyTestRelations = testRelations.filter((tr) => tr.relationName.endsWith('two'));
+      }
+      if (te.numberType % 3 === 0) {
+        // eslint-disable-next-line no-param-reassign
+        te.manyToManyUniDirectional = testRelations.filter((tr) => tr.relationName.endsWith('three'));
+      }
       return testEntityRepo.save(te);
     }),
   );

@@ -20,6 +20,8 @@ module.exports = {
           'assertUpdateSQL',
           'assertDeleteSQL',
           'assertSoftDeleteSQL',
+          'assertManyToOneUniDirectionalSQL',
+          'assertManyToManyUniDirectionalSQL'
         ],
       },
     ],

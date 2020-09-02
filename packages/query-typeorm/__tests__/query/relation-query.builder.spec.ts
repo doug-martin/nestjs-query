@@ -21,6 +21,17 @@ describe('RelationQueryBuilder', (): void => {
     ` INNER JOIN "test_relation" "TestRelation" ON "TestRelation"."test_entity_id" = "testEntity"."test_entity_pk"` +
     ` WHERE ("TestRelation"."test_relation_pk" = ?)`;
 
+  const manyToOneSelectUniDirectional =
+    'SELECT "testEntityUniDirectional"."test_entity_pk" AS "testEntityUniDirectional_test_entity_pk",' +
+    ' "testEntityUniDirectional"."string_type" AS "testEntityUniDirectional_string_type",' +
+    ' "testEntityUniDirectional"."bool_type" AS "testEntityUniDirectional_bool_type",' +
+    ' "testEntityUniDirectional"."number_type" AS "testEntityUniDirectional_number_type",' +
+    ' "testEntityUniDirectional"."date_type" AS "testEntityUniDirectional_date_type",' +
+    ' "testEntityUniDirectional"."oneTestRelationTestRelationPk" AS "testEntityUniDirectional_oneTestRelationTestRelationPk"' +
+    ' FROM "test_entity" "testEntityUniDirectional"' +
+    ' INNER JOIN "test_relation" "TestRelation" ON "TestRelation"."uni_directional_test_entity_id" = "testEntityUniDirectional"."test_entity_pk"' +
+    ' WHERE ("TestRelation"."test_relation_pk" = ?)';
+
   const manyToManyNonOwnerSelectQuery =
     `SELECT` +
     ` "manyTestEntities"."test_entity_pk" AS "manyTestEntities_test_entity_pk",` +
@@ -37,7 +48,8 @@ describe('RelationQueryBuilder', (): void => {
     `SELECT` +
     ` "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk",` +
     ` "testRelations"."relation_name" AS "testRelations_relation_name",` +
-    ` "testRelations"."test_entity_id" AS "testRelations_test_entity_id"` +
+    ` "testRelations"."test_entity_id" AS "testRelations_test_entity_id",` +
+    ` "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id"` +
     ` FROM "test_relation" "testRelations"` +
     ' WHERE ("testRelations"."test_entity_id" = ?)';
 
@@ -45,7 +57,8 @@ describe('RelationQueryBuilder', (): void => {
     'SELECT ' +
     `"manyTestRelations"."test_relation_pk" AS "manyTestRelations_test_relation_pk",` +
     ' "manyTestRelations"."relation_name" AS "manyTestRelations_relation_name",' +
-    ' "manyTestRelations"."test_entity_id" AS "manyTestRelations_test_entity_id"' +
+    ' "manyTestRelations"."test_entity_id" AS "manyTestRelations_test_entity_id",' +
+    ' "manyTestRelations"."uni_directional_test_entity_id" AS "manyTestRelations_uni_directional_test_entity_id"' +
     ` FROM "test_relation" "manyTestRelations"` +
     ` INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = "manyTestRelations"."test_relation_pk"` +
     ' WHERE ("test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = ?)';
@@ -54,7 +67,8 @@ describe('RelationQueryBuilder', (): void => {
     `SELECT` +
     ` "oneTestRelation"."test_relation_pk" AS "oneTestRelation_test_relation_pk",` +
     ` "oneTestRelation"."relation_name" AS "oneTestRelation_relation_name",` +
-    ` "oneTestRelation"."test_entity_id" AS "oneTestRelation_test_entity_id"` +
+    ` "oneTestRelation"."test_entity_id" AS "oneTestRelation_test_entity_id",` +
+    ` "oneTestRelation"."uni_directional_test_entity_id" AS "oneTestRelation_uni_directional_test_entity_id"` +
     ` FROM "test_relation" "oneTestRelation"` +
     ` INNER JOIN "test_entity" "TestEntity" ON "TestEntity"."oneTestRelationTestRelationPk" = "oneTestRelation"."test_relation_pk"` +
     ' WHERE ("TestEntity"."test_entity_pk" = ?)';
@@ -76,6 +90,16 @@ describe('RelationQueryBuilder', (): void => {
     ` "testEntityRelation"."test_entity_id" AS "testEntityRelation_test_entity_id"` +
     ` FROM "test_entity_relation_entity" "testEntityRelation"` +
     ` WHERE ("testEntityRelation"."test_entity_id" = ?)`;
+
+  const manyToManyUniDirectionalSelect =
+    'SELECT' +
+    ' "manyToManyUniDirectional"."test_relation_pk" AS "manyToManyUniDirectional_test_relation_pk",' +
+    ' "manyToManyUniDirectional"."relation_name" AS "manyToManyUniDirectional_relation_name",' +
+    ' "manyToManyUniDirectional"."test_entity_id" AS "manyToManyUniDirectional_test_entity_id",' +
+    ' "manyToManyUniDirectional"."uni_directional_test_entity_id" AS "manyToManyUniDirectional_uni_directional_test_entity_id"' +
+    ' FROM "test_relation" "manyToManyUniDirectional" ' +
+    'INNER JOIN "test_entity_many_to_many_uni_directional_test_relation" "test_entity_many_to_many_uni_directional_test_relation" ON "test_entity_many_to_many_uni_directional_test_relation"."testRelationTestRelationPk" = "manyToManyUniDirectional"."test_relation_pk" ' +
+    'WHERE ("test_entity_many_to_many_uni_directional_test_relation"."testEntityTestEntityPk" = ?)';
 
   const getRelationQueryBuilder = <Entity, Relation>(
     EntityClass: Class<Entity>,
@@ -105,6 +129,7 @@ describe('RelationQueryBuilder', (): void => {
   const assertManyToManyOwnerSQL = createSQLAsserter(TestEntity, manyToManyOwnerSelect);
 
   const assertManyToOneSQL = createSQLAsserter(TestRelation, manyToOneSelect);
+  const assertManyToOneUniDirectionalSQL = createSQLAsserter(TestRelation, manyToOneSelectUniDirectional);
 
   const assertManyToManyNonOwnerSQL = createSQLAsserter(TestRelation, manyToManyNonOwnerSelectQuery);
 
@@ -113,6 +138,7 @@ describe('RelationQueryBuilder', (): void => {
   const assertOneToOneNonOwnerSQL = createSQLAsserter(TestRelation, oneToOneNonOwnerSelect);
 
   const assertManyToManyCustomJoinSQL = createSQLAsserter(TestEntity, manyToManyCustomJoinSelect);
+  const assertManyToManyUniDirectionalSQL = createSQLAsserter(TestEntity, manyToManyUniDirectionalSelect);
 
   describe('#select', () => {
     const testEntity: TestEntity = {
@@ -144,6 +170,12 @@ describe('RelationQueryBuilder', (): void => {
       it('should work with one entity', () => {
         assertManyToOneSQL(testRelation, 'testEntity', {}, ``, [testRelation.testRelationPk]);
       });
+
+      it('should work with a uni-directional relationship', () => {
+        assertManyToOneUniDirectionalSQL(testRelation, 'testEntityUniDirectional', {}, ``, [
+          testRelation.testRelationPk,
+        ]);
+      });
     });
 
     describe('many to many', () => {
@@ -162,6 +194,12 @@ describe('RelationQueryBuilder', (): void => {
       describe('many-to-many custom join table', () => {
         it('should work with a many-to-many through a join table', () => {
           assertManyToManyCustomJoinSQL(testEntity, 'testEntityRelation', {}, ``, [testEntity.testEntityPk]);
+        });
+      });
+
+      describe('uni-directional many to many', () => {
+        it('should create the correct sql', () => {
+          assertManyToManyUniDirectionalSQL(testEntity, 'manyToManyUniDirectional', {}, ``, [testEntity.testEntityPk]);
         });
       });
     });
