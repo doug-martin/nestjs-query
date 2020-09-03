@@ -72,9 +72,9 @@ export function getQueryManyHook<DTO>(DTOClass: Class<DTO>): MetaValue<BeforeQue
   return getClassMetadata(DTOClass, BEFORE_QUERY_MANY_KEY);
 }
 
-export type BeforeFindOneHook<DTO> = HookFunc<FindOneArgsType>;
+export type BeforeFindOneHook = HookFunc<FindOneArgsType>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BeforeFindOne = classMetadataDecorator<BeforeFindOneHook<any>>(BEFORE_FIND_ONE_KEY);
-export function getFindOneHook<DTO>(DTOClass: Class<DTO>): MetaValue<BeforeFindOneHook<DTO>> {
+export const BeforeFindOne = classMetadataDecorator<BeforeFindOneHook>(BEFORE_FIND_ONE_KEY);
+export function getFindOneHook<DTO>(DTOClass: Class<DTO>): MetaValue<BeforeFindOneHook> {
   return getClassMetadata(DTOClass, BEFORE_FIND_ONE_KEY);
 }

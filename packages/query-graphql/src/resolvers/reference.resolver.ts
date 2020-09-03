@@ -5,7 +5,7 @@ import { getDTONames } from '../common';
 import { RepresentationType } from '../federation';
 import { BaseServiceResolver, ResolverClass, ServiceResolver } from './resolver.interface';
 
-export interface ReferenceResolverOpts<DTO> {
+export interface ReferenceResolverOpts {
   key?: string;
 }
 
@@ -13,7 +13,7 @@ export interface ReferenceResolverOpts<DTO> {
  * @internal
  * Mixin to expose `resolveReference` for a DTO on the resolver.
  */
-export const Refereceable = <DTO>(DTOClass: Class<DTO>, opts: ReferenceResolverOpts<DTO>) => <
+export const Referenceable = <DTO>(DTOClass: Class<DTO>, opts: ReferenceResolverOpts) => <
   B extends Class<ServiceResolver<DTO>>
 >(
   BaseClass: B,
@@ -40,5 +40,5 @@ export const Refereceable = <DTO>(DTOClass: Class<DTO>, opts: ReferenceResolverO
 
 export const ReferenceResolver = <DTO>(
   DTOClass: Class<DTO>,
-  opts: ReferenceResolverOpts<DTO> = {},
-): ResolverClass<DTO, ServiceResolver<DTO>> => Refereceable(DTOClass, opts)(BaseServiceResolver);
+  opts: ReferenceResolverOpts = {},
+): ResolverClass<DTO, ServiceResolver<DTO>> => Referenceable(DTOClass, opts)(BaseServiceResolver);

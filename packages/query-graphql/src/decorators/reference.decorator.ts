@@ -40,7 +40,7 @@ function convertReferencesToOpts<DTO>(
 
 export function getReferences<DTO>(DTOClass: Class<DTO>, opts?: BaseResolverOptions): ReferencesOpts<DTO> {
   const referenceDescriptors = getReferenceDescriptors(DTOClass);
-  return convertReferencesToOpts(referenceDescriptors);
+  return convertReferencesToOpts(referenceDescriptors, opts);
 }
 
 export function Reference<DTO, Reference>(

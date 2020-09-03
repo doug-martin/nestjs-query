@@ -20,6 +20,7 @@ import { DeepPartial, Class } from '../common';
 export class NoOpQueryService<DTO> implements QueryService<DTO> {
   private static instance: QueryService<unknown> = new NoOpQueryService();
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   static getInstance<DTO>(): QueryService<DTO> {
     return this.instance as QueryService<DTO>;
   }

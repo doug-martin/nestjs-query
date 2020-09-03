@@ -78,7 +78,7 @@ export type ResolverRelation<Relation> = {
 
 export type RelationTypeMap<RT> = Record<string, RT>;
 
-export type RelationTypeOpts<RT> = {
+export type RelationsOpts = {
   /**
    * All relations that are a single record
    */
@@ -88,8 +88,6 @@ export type RelationTypeOpts<RT> = {
    */
   many?: RelationTypeMap<ResolverRelation<unknown>>;
 };
-
-export type RelationsOpts = RelationTypeOpts<ResolverRelation<unknown>>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ReferencesOpts<DTO> = RelationTypeMap<ResolverRelationReference<DTO, any>>;

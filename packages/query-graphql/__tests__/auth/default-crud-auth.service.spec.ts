@@ -20,7 +20,7 @@ describe('createDefaultAuthorizer', () => {
       return Promise.resolve({ authorizerOwnerId: { eq: context.user.id } });
     }
 
-    authorizeRelation(relationName: string, context: UserContext): Promise<Filter<unknown>> {
+    authorizeRelation(): Promise<Filter<unknown>> {
       return Promise.reject(new Error('should not have called'));
     }
   }

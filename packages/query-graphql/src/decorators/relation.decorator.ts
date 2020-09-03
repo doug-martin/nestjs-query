@@ -10,6 +10,7 @@ export const reflector = new ArrayReflector(RELATION_KEY);
 export type RelationDecoratorOpts<Relation> = Omit<ResolverRelation<Relation>, 'DTO'>;
 export type RelationTypeFunc<Relation> = () => Class<Relation> | Class<Relation>[];
 export type ConnectionTypeFunc<Relation> = () => Class<Relation>;
+export type RelationClassDecorator<DTO> = <Cls extends Class<DTO>>(DTOClass: Cls) => Cls | void;
 
 interface RelationDescriptor<Relation> {
   name: string;
@@ -54,7 +55,7 @@ export function Relation<DTO, Relation>(
   name: string,
   relationTypeFunc: RelationTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
-) {
+): RelationClassDecorator<DTO> {
   return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
     const isMany = Array.isArray(relationTypeFunc());
     const relationOpts = isMany ? { pagingStrategy: PagingStrategies.OFFSET, ...options } : options;
@@ -67,15 +68,15 @@ export function FilterableRelation<DTO, Relation>(
   name: string,
   relationTypeFunc: RelationTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
-) {
-  return Relation(name, relationTypeFunc, { ...options, allowFiltering: true });
+): RelationClassDecorator<DTO> {
+  return Relation<DTO, Relation>(name, relationTypeFunc, { ...options, allowFiltering: true });
 }
 
 export function Connection<DTO, Relation>(
   name: string,
   relationTypeFunc: ConnectionTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
-) {
+): RelationClassDecorator<DTO> {
   const relationOpts = { pagingStrategy: PagingStrategies.CURSOR, ...options };
   return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
     reflector.append(DTOClass, { name, isMany: true, relationOpts, relationTypeFunc });
@@ -87,6 +88,6 @@ export function FilterableConnection<DTO, Relation>(
   name: string,
   relationTypeFunc: ConnectionTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
-) {
-  return Connection(name, relationTypeFunc, { ...options, allowFiltering: true });
+): RelationClassDecorator<DTO> {
+  return Connection<DTO, Relation>(name, relationTypeFunc, { ...options, allowFiltering: true });
 }

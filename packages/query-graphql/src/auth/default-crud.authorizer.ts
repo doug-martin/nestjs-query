@@ -13,6 +13,7 @@ export interface AuthorizerOptions<DTO> {
 
 const createRelationAuthorizer = (opts: AuthorizerOptions<unknown>): Authorizer<unknown> => {
   return {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async authorize(context: any): Promise<Filter<unknown>> {
       return opts.authorize(context) ?? {};
     },
@@ -43,10 +44,12 @@ export function createDefaultAuthorizer<DTO>(
       });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async authorize(context: any): Promise<Filter<DTO>> {
       return this.authOptions?.authorize(context) ?? {};
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async authorizeRelation(relationName: string, context: any): Promise<Filter<unknown>> {
       return this.relationsAuthorizers.get(relationName)?.authorize(context) ?? {};
     }

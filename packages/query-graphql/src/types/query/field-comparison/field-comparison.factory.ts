@@ -54,7 +54,7 @@ const isNamed = (SomeType: any): SomeType is { name: string } => {
 };
 
 /** @internal */
-const getTypeName = <T>(SomeType: ReturnTypeFuncValue): string => {
+const getTypeName = (SomeType: ReturnTypeFuncValue): string => {
   if (knownTypes.has(SomeType) || isNamed(SomeType)) {
     const typeName = (SomeType as { name: string }).name;
     return upperCaseFirst(typeName);

@@ -355,15 +355,15 @@ export class RelationQueryBuilder<Entity, Relation> {
     return `${prefix}_${this.paramCount}`;
   }
 
-  get entityIndexColName() {
+  get entityIndexColName(): string {
     return '__nestjsQuery__entityIndex__';
   }
 
-  private get escapedEntityIndexColName() {
+  private get escapedEntityIndexColName(): string {
     return this.escapeName(this.entityIndexColName);
   }
 
-  private get unionAlias() {
+  private get unionAlias(): string {
     return 'unioned';
   }
 

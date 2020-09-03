@@ -17,6 +17,7 @@ const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN)_(.*)/;
  * Builds a WHERE clause from a Filter.
  */
 export class AggregateBuilder<Entity> {
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   static async asyncConvertToAggregateResponse<Entity>(
     responsePromise: Promise<Record<string, unknown>>,
   ): Promise<AggregateResponse<Entity>> {
@@ -24,6 +25,7 @@ export class AggregateBuilder<Entity> {
     return this.convertToAggregateResponse(aggResponse);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   static getAggregateAliases<Entity>(query: AggregateQuery<Entity>): string[] {
     const aggs: [AggregateFuncs, (keyof Entity)[] | undefined][] = [
       [AggregateFuncs.COUNT, query.count],
@@ -38,10 +40,12 @@ export class AggregateBuilder<Entity> {
     }, [] as string[]);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   static getAggregateAlias<Entity>(func: AggregateFuncs, field: keyof Entity): string {
     return `${func}_${field as string}`;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   static convertToAggregateResponse<Entity>(response: Record<string, unknown>): AggregateResponse<Entity> {
     return Object.keys(response).reduce((agg, resultField: string) => {
       const matchResult = AGG_REGEXP.exec(resultField);

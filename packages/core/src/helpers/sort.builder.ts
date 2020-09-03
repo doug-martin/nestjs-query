@@ -53,11 +53,7 @@ export class SortBuilder {
     return (dtos: DTO[]): DTO[] => [...dtos].sort(comparator);
   }
 
-  static buildComparator<DTO, Field extends keyof DTO>(
-    field: keyof DTO,
-    direction: SortDirection,
-    nulls?: SortNulls,
-  ): SortComparator<DTO> {
+  static buildComparator<DTO>(field: keyof DTO, direction: SortDirection, nulls?: SortNulls): SortComparator<DTO> {
     const nullSort = this.nullsComparator(direction, nulls);
     const fieldValueComparator = this.fieldValueComparator(field, direction);
     return (a, b): SortResult => {

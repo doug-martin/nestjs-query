@@ -6,7 +6,7 @@ const reflector = new ValueReflector(AUTHORIZER_KEY);
 export function Authorize<DTO>(
   optsOrAuthorizerOrClass: Class<Authorizer<DTO>> | Authorizer<DTO> | AuthorizerOptions<DTO>,
 ) {
-  return (DTOClass: Class<DTO>) => {
+  return (DTOClass: Class<DTO>): void => {
     if ('authorize' in optsOrAuthorizerOrClass) {
       if ('authorizeRelation' in optsOrAuthorizerOrClass) {
         return reflector.set(DTOClass, optsOrAuthorizerOrClass);
