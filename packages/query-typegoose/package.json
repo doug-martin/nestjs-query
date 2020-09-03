@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-typegoose",
-  "version": "0.18.1",
+  "version": "0.19.1",
   "description": "Typeorm adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.18.1",
+    "@nestjs-query/core": "0.19.0",
     "lodash.escaperegexp": "^4.1.2"
   },
   "peerDependencies": {
