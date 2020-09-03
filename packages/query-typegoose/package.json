@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@nestjs-query/core": "0.19.0",
-    "lodash.escaperegexp": "^4.1.2"
+    "lodash.escaperegexp": "^4.1.2",
+    "lodash.merge": "^4.6.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
@@ -33,6 +34,7 @@
     "@nestjs/testing": "7.4.2",
     "@typegoose/typegoose": "^7.3.3",
     "@types/lodash.escaperegexp": "^4.1.6",
+    "@types/lodash.merge": "^4.6.6",
     "@types/mongodb": "^3.5.26",
     "@types/mongoose": "^5.7.36",
     "class-transformer": "0.3.1",
