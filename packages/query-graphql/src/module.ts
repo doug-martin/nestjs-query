@@ -12,7 +12,7 @@ export interface NestjsQueryGraphqlModuleOpts {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assemblers?: Class<Assembler<any, any>>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  resolvers: AutoResolverOpts<any, any, unknown, unknown, ReadResolverOpts<unknown>, PagingStrategies>[];
+  resolvers: AutoResolverOpts<any, any, unknown, unknown, ReadResolverOpts<any>, PagingStrategies>[];
   pubSub?: Provider<GraphQLPubSub>;
 }
 
