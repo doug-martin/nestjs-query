@@ -9,7 +9,69 @@ on:
 env:
   CI: true
 jobs:
-  test:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Restore Dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{matrix.node-version}}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{matrix.node-version}}-
+      - run: npm ci
+      - run: npm run bootstrap
+      - run: npm run build
+      - name: Upload build result for ${{matrix.node-version}}
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-${{matrix.node-version}}
+          path: |
+            packages/*/dist
+            examples/dist
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Restore Dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{matrix.node-version}}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{matrix.node-version}}-
+      - run: npm ci
+      - run: npm run bootstrap
+      - name: Get Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-${{matrix.node-version}}
+      - run: npm run lint
+      - run: npm run jest:unit
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-${{ matrix.node-version }}-unit
+          parallel: true
+  e2e-test:
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -31,19 +93,21 @@ jobs:
             ${{ runner.os }}-node-${{matrix.node-version}}-
       - run: npm ci
       - run: npm run bootstrap
-      - run: npm run build
-      - run: npm test
+      - name: Get Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-${{matrix.node-version}}
+      - run: npm run jest:e2e
         env:
           NESTJS_QUERY_DB_TYPE: ${{ matrix.db-type }}
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.node-version }}-${{ matrix.db-type }}
+          flag-name: run-${{ matrix.node-version }}-${{ matrix.db-type }}-e2e
           parallel: true
-
   finish:
-    needs: test
+    needs: [unit-test, e2e-test]
     runs-on: ubuntu-latest
     steps:
       - name: Coveralls Finished
