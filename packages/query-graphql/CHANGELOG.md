@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.2](https://github.com/doug-martin/nestjs-query/compare/v0.19.1...v0.19.2) (2020-09-03)
+
+
+### Bug Fixes
+
+* **graphql, #505:** Less restrictive readResolverOpts for auto crud ([b4e6862](https://github.com/doug-martin/nestjs-query/commit/b4e68620a973caf4a6bc9ddc9947c0be7464fb11)), closes [#505](https://github.com/doug-martin/nestjs-query/issues/505)
+
+
+
+
+
 # [0.19.0](https://github.com/doug-martin/nestjs-query/compare/v0.18.1...v0.19.0) (2020-09-01)
 
 
