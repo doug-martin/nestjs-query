@@ -70,7 +70,11 @@ module.exports = {
     // needed so we can use class scoped generics in methods.
     'class-methods-use-this': 'off',
     // airbnb default this doesnt work when using parameter decorators.
-    '@typescript-eslint/no-useless-constructor': 'off'
+    '@typescript-eslint/no-useless-constructor': 'off',
+
+    // disable eslint no-shadow in favor of the typescript version
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': ['error'],
   },
   ignorePatterns: ['**/dist', '**/node_modules'],
   overrides: [

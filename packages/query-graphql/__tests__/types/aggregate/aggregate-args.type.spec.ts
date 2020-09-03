@@ -26,6 +26,7 @@ describe('AggregateArgsType', (): void => {
     @Resolver()
     class AggregateArgsTypeSpec {
       @Query(() => Int)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       aggregate(@Args() args: AggArgs): number {
         return 1;
       }

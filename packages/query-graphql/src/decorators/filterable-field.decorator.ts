@@ -51,7 +51,7 @@ export function FilterableField(
   returnTypeFunction?: ReturnTypeFunc,
   options?: FilterableFieldOptions,
 ): PropertyDecorator & MethodDecorator;
-export function FilterableField<T>(
+export function FilterableField(
   returnTypeFuncOrOptions?: ReturnTypeFunc | FilterableFieldOptions,
   maybeOptions?: FilterableFieldOptions,
 ): MethodDecorator | PropertyDecorator {

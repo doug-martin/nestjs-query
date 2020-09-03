@@ -9,14 +9,12 @@ import { getRelations } from '../../decorators';
 import { getReferences } from '../../decorators/reference.decorator';
 import { BaseResolverOptions } from '../../decorators/resolver-method.decorator';
 
-export interface RelatableOpts<DTO> extends BaseResolverOptions {
+export interface RelatableOpts extends BaseResolverOptions {
   enableTotalCount?: boolean;
   enableAggregate?: boolean;
 }
 
-export const Relatable = <DTO>(DTOClass: Class<DTO>, opts: RelatableOpts<DTO>) => <
-  B extends Class<ServiceResolver<DTO>>
->(
+export const Relatable = <DTO>(DTOClass: Class<DTO>, opts: RelatableOpts) => <B extends Class<ServiceResolver<DTO>>>(
   Base: B,
 ): B => {
   const { enableTotalCount, enableAggregate } = opts;

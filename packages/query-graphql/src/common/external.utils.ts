@@ -25,7 +25,7 @@ export function getGraphqlObjectName<DTO>(DTOClass: Class<DTO>, notFoundMsg: str
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export function getGraphqlEnumMetadata<T>(objType: object): EnumMetadata | undefined {
+export function getGraphqlEnumMetadata(objType: object): EnumMetadata | undefined {
   // hack to get enums loaded it may break in the future :(
   LazyMetadataStorage.load();
   return TypeMetadataStorage.getEnumsMetadata().find((o) => o.ref === objType);

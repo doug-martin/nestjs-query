@@ -6,7 +6,6 @@ export { ReferencesRelationsResolver } from './references-relation.resolver';
 export { AggregateRelationsResolver } from './aggregate-relations.resolver';
 export {
   RelationTypeMap,
-  RelationTypeOpts,
   ReferencesOpts,
   ResolverRelationReference,
   RelationsOpts,

@@ -18,6 +18,7 @@ const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN)_(.*)/;
  * Builds a WHERE clause from a Filter.
  */
 export class AggregateBuilder<Entity extends Model<Entity>> {
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   static convertToAggregateResponse<Entity>(response: Record<string, unknown>): AggregateResponse<Entity> {
     return Object.keys(response).reduce((agg, resultField: string) => {
       const matchResult = AGG_REGEXP.exec(resultField);
@@ -40,9 +41,7 @@ export class AggregateBuilder<Entity extends Model<Entity>> {
 
   /**
    * Builds a aggregate SELECT clause from a aggregate.
-   * @param qb - the `typeorm` SelectQueryBuilder
    * @param aggregate - the aggregates to select.
-   * @param alias - optional alias to use to qualify an identifier
    */
   build(aggregate: AggregateQuery<Entity>): Projectable {
     const selects = [

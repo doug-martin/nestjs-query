@@ -4,7 +4,7 @@ import { Aggregateable, AggregateResolverOpts } from './aggregate.resolver';
 import { Relatable } from './relations';
 import { Readable, ReadResolverFromOpts, ReadResolverOpts } from './read.resolver';
 import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver';
-import { Refereceable, ReferenceResolverOpts } from './reference.resolver';
+import { Referenceable, ReferenceResolverOpts } from './reference.resolver';
 import { MergePagingStrategyOpts, ResolverClass } from './resolver.interface';
 import { Updateable, UpdateResolver, UpdateResolverOpts } from './update.resolver';
 import { DeleteResolver, DeleteResolverOpts } from './delete.resolver';
@@ -35,7 +35,7 @@ export interface CRUDResolverOpts<
   read?: R;
   update?: UpdateResolverOpts<DTO, U>;
   delete?: DeleteResolverOpts<DTO>;
-  referenceBy?: ReferenceResolverOpts<DTO>;
+  referenceBy?: ReferenceResolverOpts;
   aggregate?: AggregateResolverOpts;
 }
 
@@ -44,7 +44,10 @@ export interface CRUDResolver<
   C extends DeepPartial<DTO>,
   U extends DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO>
-> extends CreateResolver<DTO, C>, ReadResolverFromOpts<DTO, R>, UpdateResolver<DTO, U>, DeleteResolver<DTO> {}
+> extends CreateResolver<DTO, C>,
+    ReadResolverFromOpts<DTO, R>,
+    UpdateResolver<DTO, U>,
+    DeleteResolver<DTO> {}
 
 /**
  * Factory to create a resolver that includes all CRUD methods from [[CreateResolver]], [[ReadResolver]],
@@ -91,10 +94,10 @@ export const CRUDResolver = <
     aggregate,
   } = opts;
 
-  const referencable = Refereceable(DTOClass, referenceBy);
+  const referencable = Referenceable(DTOClass, referenceBy);
   const relatable = Relatable(
     DTOClass,
-    mergeBaseResolverOpts({ enableTotalCount, enableAggregate } as RelatableOpts<DTO>, opts),
+    mergeBaseResolverOpts({ enableTotalCount, enableAggregate } as RelatableOpts, opts),
   );
   const aggregateable = Aggregateable(DTOClass, {
     enabled: enableAggregate,

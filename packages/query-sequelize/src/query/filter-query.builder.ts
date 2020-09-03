@@ -19,7 +19,7 @@ import { WhereBuilder } from './where.builder';
  *
  * Interface that for `sequelize` query builders that are sortable.
  */
-interface Sortable<Entity> {
+interface Sortable {
   order?: Order;
 }
 
@@ -28,7 +28,7 @@ interface Sortable<Entity> {
  *
  * Interface for `sequelize` query builders that are pageable.
  */
-interface Pageable<Entity> {
+interface Pageable {
   limit?: number;
   offset?: number;
 }
@@ -79,6 +79,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
    * Create a `sequelize` SelectQueryBuilder with `WHERE`, `ORDER BY` and `LIMIT/OFFSET` clauses.
    *
    * @param query - the query to apply.
+   * @param aggregate - the aggregate query
    */
   aggregateOptions(query: Query<Entity>, aggregate: AggregateQuery<Entity>): FindOptions {
     let opts: FindOptions = { raw: true };
@@ -131,7 +132,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
    * @param qb - the `sequelize` QueryBuilder
    * @param paging - the Paging options.
    */
-  applyPaging<P extends Pageable<Entity>>(qb: P, paging?: Paging): P {
+  applyPaging<P extends Pageable>(qb: P, paging?: Paging): P {
     if (!paging) {
       return qb;
     }
@@ -149,7 +150,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
   /**
    * Applies the filter from a Query to a `sequelize` QueryBuilder.
    *
-   * @param qb - the `sequelize` QueryBuilder.
+   * @param filterable - the `sequelize` QueryBuilder.
    * @param filter - the filter.
    */
   applyFilter<Where extends Filterable>(filterable: Where, filter?: Filter<Entity>): Where {
@@ -166,7 +167,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
    * @param qb - the `sequelize` QueryBuilder.
    * @param sorts - an array of SortFields to create the ORDER BY clause.
    */
-  applySorting<T extends Sortable<Entity>>(qb: T, sorts?: SortField<Entity>[]): T {
+  applySorting<T extends Sortable>(qb: T, sorts?: SortField<Entity>[]): T {
     if (!sorts) {
       return qb;
     }
