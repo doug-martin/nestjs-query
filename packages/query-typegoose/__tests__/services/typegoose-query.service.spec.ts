@@ -146,6 +146,26 @@ describe('TypegooseQueryService', () => {
       const found = await queryService.findById(new mongoose.Types.ObjectId().toString());
       expect(found).toBeUndefined();
     });
+
+    describe('with filter', () => {
+      it('should return an entity if all filters match', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const found = await queryService.findById(entity.id, {
+          filter: { stringType: { eq: entity.stringType } },
+        });
+        expect(found).toEqual(entity.getOutputData());
+      });
+
+      it('should return an undefined if an entity with the pk and filter is not found', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const found = await queryService.findById(entity.id, {
+          filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
+        });
+        expect(found).toBeUndefined();
+      });
+    });
   });
 
   describe('#getById', () => {
@@ -160,6 +180,27 @@ describe('TypegooseQueryService', () => {
       const badId = new mongoose.Types.ObjectId().toString();
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.getById(badId)).rejects.toThrow(`Unable to find TestEntity with id: ${badId}`);
+    });
+
+    describe('with filter', () => {
+      it('should return an entity if all filters match', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const found = await queryService.getById(entity.id, {
+          filter: { stringType: { eq: entity.stringType } },
+        });
+        expect(found).toEqual(entity.getOutputData());
+      });
+
+      it('should return an undefined if an entitity with the pk and filter is not found', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.getById(entity.id, {
+            filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
+          }),
+        ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.id}`);
+      });
     });
   });
 
@@ -233,6 +274,27 @@ describe('TypegooseQueryService', () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.deleteOne(badId)).rejects.toThrow(`Unable to find TestEntity with id: ${badId}`);
     });
+
+    describe('with filter', () => {
+      it('should delete the entity if all filters match', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const deleted = await queryService.deleteOne(entity.id, {
+          filter: { stringType: { eq: entity.stringType } },
+        });
+        expect(deleted).toEqual(TEST_ENTITIES[0].getOutputData());
+      });
+
+      it('should return throw an error if unable to find ', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.deleteOne(entity.id, {
+            filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
+          }),
+        ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.id}`);
+      });
+    });
   });
 
   describe('#updateMany', () => {
@@ -278,6 +340,31 @@ describe('TypegooseQueryService', () => {
         `Unable to find TestEntity with id: ${badId}`,
       );
     });
+
+    describe('with filter', () => {
+      it('should update the entity if all filters match', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        const updated = await queryService.updateOne(
+          entity.id,
+          { stringType: 'updated' },
+          { filter: { stringType: { eq: entity.stringType } } },
+        );
+        expect(updated).toEqual({ ...entity.getOutputData(), stringType: 'updated' });
+      });
+
+      it('should throw an error if unable to find the entity', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.updateOne(
+            entity.id,
+            { stringType: 'updated' },
+            { filter: { stringType: { eq: TEST_ENTITIES[1].stringType } } },
+          ),
+        ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.id}`);
+      });
+    });
   });
 
   describe('#findRelation', () => {
@@ -305,6 +392,21 @@ describe('TypegooseQueryService', () => {
       const queryResult = await queryService.findRelation(TestReference, 'badRelation', [entity]);
 
       expect(queryResult.values().next().value).toBeUndefined();
+    });
+
+    it('should apply the filter option', async () => {
+      const entity = TEST_ENTITIES[10];
+      const queryService = moduleRef.get(TestEntityService);
+
+      const queryResult1 = await queryService.findRelation(TestReference, 'testReference', [entity], {
+        filter: { name: { eq: TEST_REFERENCES[0].name } },
+      });
+      expect(queryResult1.values().next().value).toEqual(TEST_REFERENCES[0].getOutputData());
+
+      const queryResult2 = await queryService.findRelation(TestReference, 'testReference', [entity], {
+        filter: { name: { eq: TEST_REFERENCES[1].name } },
+      });
+      expect(queryResult2.values().next().value).toBeUndefined();
     });
   });
 
