@@ -55,7 +55,7 @@ describe('ReadResolver', () => {
     return expectResolverSDL(readDisabledResolverSDL, { disabled: true });
   });
 
-  describe('query many ', () => {
+  describe('query many', () => {
     it('should not create a new type if the QueryArgs is supplied', () => {
       @ArgsType()
       class CustomQueryArgs extends QueryArgsType(TestResolverDTO) {
@@ -341,7 +341,7 @@ describe('ReadResolver', () => {
     });
   });
 
-  it('should expose totalCount on connections if enableTotalCount is true ', () => {
+  it('should expose totalCount on connections if enableTotalCount is true', () => {
     @ObjectType('TotalCountDTO')
     class TotalCountDTO extends TestResolverDTO {}
     @Resolver(() => TotalCountDTO)

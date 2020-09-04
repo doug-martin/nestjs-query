@@ -1095,7 +1095,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
           });
         });
     });
-    it('should not allow setting a the todoItem that does not belong to the user on a subTask ', () => {
+    it('should not allow setting a the todoItem that does not belong to the user on a subTask', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .auth(jwtToken, { type: 'bearer' })
