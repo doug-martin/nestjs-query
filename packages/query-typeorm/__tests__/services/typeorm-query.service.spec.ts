@@ -1187,7 +1187,7 @@ describe('TypeOrmQueryService', (): void => {
         expect(deleted).toEqual({ ...TEST_ENTITIES[0], testEntityPk: undefined });
       });
 
-      it('should return throw an error if unable to find ', async () => {
+      it('should return throw an error if unable to find', async () => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         return expect(
@@ -1338,7 +1338,7 @@ describe('TypeOrmQueryService', (): void => {
           expect(foundEntity).toEqual({ ...entity, deletedAt: null });
         });
 
-        it('should return throw an error if unable to find ', async () => {
+        it('should return throw an error if unable to find', async () => {
           const queryService = moduleRef.get(TestSoftDeleteEntityService);
           const entity = TEST_SOFT_DELETE_ENTITIES[0];
           await queryService.deleteOne(entity.testEntityPk);

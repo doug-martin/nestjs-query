@@ -987,7 +987,7 @@ describe('SequelizeQueryService', (): void => {
         expect(deleted).toEqual(expect.objectContaining(PLAIN_TEST_ENTITIES[0]));
       });
 
-      it('should return throw an error if unable to find ', async () => {
+      it('should return throw an error if unable to find', async () => {
         const entity = PLAIN_TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         return expect(
