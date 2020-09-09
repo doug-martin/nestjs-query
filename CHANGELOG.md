@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.3](https://github.com/doug-martin/nestjs-query/compare/v0.19.2...v0.19.3) (2020-09-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.63 ([631e922](https://github.com/doug-martin/nestjs-query/commit/631e9225a3ac94f1f29158bc24285de31c0ad5d6))
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.63 ([aa95f40](https://github.com/doug-martin/nestjs-query/commit/aa95f4094952ccb5c63df7d8d1b4ccce571e1990))
+* **deps:** update dependency graphql-tools to v6.2.1 ([b1e0833](https://github.com/doug-martin/nestjs-query/commit/b1e083335df10efe76ceef88f752b45392a8a911))
+* **deps:** update dependency rxjs to v6.6.3 ([addf2e2](https://github.com/doug-martin/nestjs-query/commit/addf2e2b4b4f909a96d452850385ae6a72d0a087))
+* **examples:** Fix nest-cli.json to reference correct tsconfig ([a49d063](https://github.com/doug-martin/nestjs-query/commit/a49d0639a4699de4bfde6228744ea9e1e5b6ee16))
+* **graphql,hooks:** Allow getting hooks from parent classes ([59a0aeb](https://github.com/doug-martin/nestjs-query/commit/59a0aebc3dabd7d23ffde576a94bc588e768efbe))
+
+
+
+
+
 ## [0.19.2](https://github.com/doug-martin/nestjs-query/compare/v0.19.1...v0.19.2) (2020-09-03)
 
 

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.3](https://github.com/doug-martin/nestjs-query/compare/v0.19.2...v0.19.3) (2020-09-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency graphql-tools to v6.2.1 ([b1e0833](https://github.com/doug-martin/nestjs-query/commit/b1e083335df10efe76ceef88f752b45392a8a911))
+* **deps:** update dependency rxjs to v6.6.3 ([addf2e2](https://github.com/doug-martin/nestjs-query/commit/addf2e2b4b4f909a96d452850385ae6a72d0a087))
+* **examples:** Fix nest-cli.json to reference correct tsconfig ([a49d063](https://github.com/doug-martin/nestjs-query/commit/a49d0639a4699de4bfde6228744ea9e1e5b6ee16))
+
+
+
+
+
 ## [0.19.2](https://github.com/doug-martin/nestjs-query/compare/v0.19.1...v0.19.2) (2020-09-03)
 
 **Note:** Version bump only for package nestjs-query-examples

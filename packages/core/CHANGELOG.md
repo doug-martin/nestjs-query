@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.3](https://github.com/doug-martin/nestjs-query/compare/v0.19.2...v0.19.3) (2020-09-09)
+
+
+### Bug Fixes
+
+* **graphql,hooks:** Allow getting hooks from parent classes ([59a0aeb](https://github.com/doug-martin/nestjs-query/commit/59a0aebc3dabd7d23ffde576a94bc588e768efbe))
+
+
+
+
+
 ## [0.19.2](https://github.com/doug-martin/nestjs-query/compare/v0.19.1...v0.19.2) (2020-09-03)
 
 **Note:** Version bump only for package @nestjs-query/core
