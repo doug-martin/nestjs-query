@@ -10,7 +10,14 @@ export const classMetadataDecorator = <Data>(key: string): ClassDecoratorDataFun
   };
 };
 
-export function getClassMetadata<DTO, Data>(DTOClass: Class<DTO>, key: string): MetaValue<Data> {
+export function getClassMetadata<DTO, Data>(
+  DTOClass: Class<DTO>,
+  key: string,
+  includeParents: boolean,
+): MetaValue<Data> {
+  if (includeParents) {
+    return Reflect.getMetadata(key, DTOClass) as MetaValue<Data>;
+  }
   return Reflect.getOwnMetadata(key, DTOClass) as MetaValue<Data>;
 }
 
@@ -54,7 +61,7 @@ export class ValueReflector extends Reflector {
 
 export class ArrayReflector extends Reflector {
   append<DTO, Data>(DTOClass: Class<DTO>, data: Data): void {
-    const metadata = getClassMetadata<DTO, Data[]>(DTOClass, this.metaKey) ?? [];
+    const metadata = getClassMetadata<DTO, Data[]>(DTOClass, this.metaKey, false) ?? [];
     metadata.push(data);
     this.defineMetadata(metadata, DTOClass);
   }
@@ -66,7 +73,7 @@ export class ArrayReflector extends Reflector {
 
 export class MapReflector<K = string> extends Reflector {
   set<DTO, Data>(DTOClass: Class<DTO>, key: K, value: Data): void {
-    const metadata = getClassMetadata<DTO, Map<K, Data>>(DTOClass, this.metaKey) ?? new Map<K, Data>();
+    const metadata = getClassMetadata<DTO, Map<K, Data>>(DTOClass, this.metaKey, false) ?? new Map<K, Data>();
     metadata.set(key, value);
     this.defineMetadata(metadata, DTOClass);
   }
