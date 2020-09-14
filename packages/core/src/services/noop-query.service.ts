@@ -17,7 +17,7 @@ import {
 import { QueryService } from './query.service';
 import { DeepPartial, Class } from '../common';
 
-export class NoOpQueryService<DTO> implements QueryService<DTO> {
+export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> implements QueryService<DTO, C, U> {
   private static instance: QueryService<unknown> = new NoOpQueryService();
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -37,11 +37,11 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
     return Promise.reject(new NotImplementedException('addRelations is not implemented'));
   }
 
-  createMany<C extends DeepPartial<DTO>>(items: C[]): Promise<DTO[]> {
+  createMany(items: C[]): Promise<DTO[]> {
     return Promise.reject(new NotImplementedException('createMany is not implemented'));
   }
 
-  createOne<C extends DeepPartial<DTO>>(item: C): Promise<DTO> {
+  createOne(item: C): Promise<DTO> {
     return Promise.reject(new NotImplementedException('createOne is not implemented'));
   }
 
@@ -169,11 +169,11 @@ export class NoOpQueryService<DTO> implements QueryService<DTO> {
     return Promise.reject(new NotImplementedException('setRelation is not implemented'));
   }
 
-  updateMany<U extends DeepPartial<DTO>>(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {
+  updateMany(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {
     return Promise.reject(new NotImplementedException('updateMany is not implemented'));
   }
 
-  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO> {
+  updateOne(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO> {
     return Promise.reject(new NotImplementedException('updateOne is not implemented'));
   }
 

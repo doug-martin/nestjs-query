@@ -17,7 +17,8 @@ import {
 } from '../interfaces';
 import { QueryService } from './query.service';
 
-export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
+export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, U = DeepPartial<DTO>>
+  implements QueryService<DTO, C, U> {
   constructor(readonly assembler: Assembler<DTO, Entity>, readonly queryService: QueryService<Entity>) {}
 
   addRelations<Relation>(
@@ -31,13 +32,13 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     );
   }
 
-  createMany<C extends DeepPartial<DTO>>(items: C[]): Promise<DTO[]> {
+  createMany(items: C[]): Promise<DTO[]> {
     const { assembler } = this;
     const converted = items.map((c) => assembler.convertToEntity((c as unknown) as DTO));
     return this.assembler.convertAsyncToDTOs(this.queryService.createMany(converted));
   }
 
-  createOne<C extends DeepPartial<DTO>>(item: C): Promise<DTO> {
+  createOne(item: C): Promise<DTO> {
     const c = this.assembler.convertToEntity((item as unknown) as DTO);
     return this.assembler.convertAsyncToDTO(this.queryService.createOne(c));
   }
@@ -234,7 +235,7 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     );
   }
 
-  updateMany<U extends DeepPartial<DTO>>(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {
+  updateMany(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {
     return this.queryService.updateMany(
       this.assembler.convertToEntity((update as unknown) as DTO),
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -242,7 +243,7 @@ export class AssemblerQueryService<DTO, Entity> implements QueryService<DTO> {
     );
   }
 
-  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO> {
+  updateOne(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO> {
     return this.assembler.convertAsyncToDTO(
       this.queryService.updateOne(
         id,

@@ -20,7 +20,7 @@ import {
  *
  * @typeparam T - The record type that the query service will operate on.
  */
-export interface QueryService<DTO> {
+export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
   /**
    * Query for multiple records of type `T`.
    * @param query - the query used to filer, page or sort records.
@@ -217,7 +217,7 @@ export interface QueryService<DTO> {
    * @param item - the record to create.
    * @returns the created record.
    */
-  createOne<C extends DeepPartial<DTO>>(item: C): Promise<DTO>;
+  createOne(item: C): Promise<DTO>;
 
   /**
    * Creates a multiple record.
@@ -225,7 +225,7 @@ export interface QueryService<DTO> {
    * @param items - the records to create.
    * @returns a created records.
    */
-  createMany<C extends DeepPartial<DTO>>(items: C[]): Promise<DTO[]>;
+  createMany(items: C[]): Promise<DTO[]>;
 
   /**
    * Update one record.
@@ -234,14 +234,14 @@ export interface QueryService<DTO> {
    * @param opts - Additional opts to apply when updating one entity.
    * @returns the updated record.
    */
-  updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO>;
+  updateOne(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO>;
 
   /**
    * Updates multiple records using a filter.
    * @param update - the update to apply.
    * @param filter - the filter used to specify records to update
    */
-  updateMany<U extends DeepPartial<DTO>>(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse>;
+  updateMany(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse>;
 
   /**
    * Delete a single record by id.
