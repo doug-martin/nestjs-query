@@ -11,6 +11,7 @@ import { TodoItemService } from './todo-item.service';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      services: [TodoItemService],
       resolvers: [
         {
           DTOClass: TodoItemDTO,

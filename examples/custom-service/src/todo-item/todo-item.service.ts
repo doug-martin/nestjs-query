@@ -10,9 +10,10 @@ import {
 } from '@nestjs-query/core';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
 
 export class TodoItemService extends NoOpQueryService<TodoItemDTO, TodoItemInputDTO> {
-  constructor(@InjectQueryService(TodoItemDTO) private readonly queryService: QueryService<TodoItemDTO>) {
+  constructor(@InjectQueryService(TodoItemEntity) private readonly queryService: QueryService<TodoItemEntity>) {
     super();
   }
 

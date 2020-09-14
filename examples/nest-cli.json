@@ -29,6 +29,15 @@
         "tsConfigPath": "./tsconfig.json"
       }
     },
+    "custom-service": {
+      "type": "application",
+      "root": "custom-service",
+      "entryFile": "main",
+      "sourceRoot": "custom-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.json"
+      }
+    },
     "federation:gateway": {
       "type": "application",
       "root": "federation/gateway",
