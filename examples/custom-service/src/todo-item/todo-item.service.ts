@@ -1,0 +1,55 @@
+import {
+  DeepPartial,
+  DeleteManyResponse,
+  Filter,
+  InjectQueryService,
+  NoOpQueryService,
+  Query,
+  QueryService,
+  UpdateManyResponse,
+} from '@nestjs-query/core';
+import { TodoItemInputDTO } from './dto/todo-item-input.dto';
+import { TodoItemDTO } from './dto/todo-item.dto';
+
+export class TodoItemService extends NoOpQueryService<TodoItemDTO, TodoItemInputDTO> {
+  constructor(@InjectQueryService(TodoItemDTO) private readonly queryService: QueryService<TodoItemDTO>) {
+    super();
+  }
+
+  createOne({ name, ...item }: TodoItemInputDTO): Promise<TodoItemDTO> {
+    return this.queryService.createOne({ title: name, ...item });
+  }
+
+  createMany(items: TodoItemInputDTO[]): Promise<TodoItemDTO[]> {
+    const newItems = items.map(({ name: title, ...item }) => ({ title, ...item }));
+    return this.queryService.createMany(newItems);
+  }
+
+  query(query: Query<TodoItemDTO>): Promise<TodoItemDTO[]> {
+    return this.queryService.query(query);
+  }
+
+  findById(id: string | number): Promise<TodoItemDTO | undefined> {
+    return this.queryService.findById(id);
+  }
+
+  getById(id: string | number): Promise<TodoItemDTO> {
+    return this.queryService.getById(id);
+  }
+
+  updateMany(update: DeepPartial<TodoItemDTO>, filter: Filter<TodoItemDTO>): Promise<UpdateManyResponse> {
+    return this.queryService.updateMany(update, filter);
+  }
+
+  updateOne(id: string | number, update: DeepPartial<TodoItemDTO>): Promise<TodoItemDTO> {
+    return this.queryService.updateOne(id, update);
+  }
+
+  deleteMany(filter: Filter<TodoItemDTO>): Promise<DeleteManyResponse> {
+    return this.queryService.deleteMany(filter);
+  }
+
+  deleteOne(id: string | number): Promise<TodoItemDTO> {
+    return this.queryService.deleteOne(id);
+  }
+}
