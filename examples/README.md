@@ -31,6 +31,7 @@ To run an example execute `npm run start -- {example_name}` where example name i
 * [`typeorm`](./typeorm) - Example todo-item  GraphQL API using typeorm
 * [`typeorm-multidb`](./typeorm-multidb) - Example GraphQL API using typeorm with mutliple databases
 * [`typeorm-soft-delete`](./typeorm-soft-delete) -  - Example todo-item GraphQL API using typeorm with soft deletes.
+* [`custom-service`](./custom-service) -  - Example todo with a custom-implemented service class.
 
 For example to run the `basic` example
 
