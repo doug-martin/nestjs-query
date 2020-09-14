@@ -1,4 +1,4 @@
-import { Class } from '../common';
+import { Class, DeepPartial } from '../common';
 import { mergeQuery } from '../helpers';
 import { Filter, Query, AggregateQuery, AggregateResponse, FindRelationOptions } from '../interfaces';
 import { NoOpQueryService } from './noop-query.service';
@@ -10,7 +10,11 @@ export type QueryServiceRelation<DTO, Relation> = {
   query: (dto: DTO) => Query<Relation>;
 };
 
-export class RelationQueryService<DTO> extends ProxyQueryService<DTO> {
+export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> extends ProxyQueryService<
+  DTO,
+  C,
+  U
+> {
   readonly relations: Record<string, QueryServiceRelation<DTO, unknown>>;
 
   constructor(queryService: QueryService<DTO>, relations: Record<string, QueryServiceRelation<DTO, unknown>>);
