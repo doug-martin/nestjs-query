@@ -732,6 +732,8 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
 
 By default `nestjs-query` uses a `cursor` based paging strategy and returns a [connection](https://relay.dev/graphql/connections.htm) for all query many endpoints.
 
+For a more in-depth overview of paging check out the [paging docs](./paging.mdx)
+
 You can override the default `pagingStrategy` to one of the following alternatives
 
 * `OFFSET` - sets paging to allow `limit` and `offset` fields, and returns an `ArrayConnection`.
