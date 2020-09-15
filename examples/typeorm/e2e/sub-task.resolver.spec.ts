@@ -207,10 +207,10 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjEwfV19',
             hasNextPage: true,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
           });
           expect(totalCount).toBe(15);
           expect(edges).toHaveLength(10);
@@ -236,10 +236,10 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -265,10 +265,10 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjl9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
           });
           expect(totalCount).toBe(6);
           expect(edges).toHaveLength(6);
@@ -294,10 +294,10 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjZ9XX0=',
             hasNextPage: true,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjE1fV19',
           });
           expect(totalCount).toBe(15);
           expect(edges).toHaveLength(10);
@@ -324,10 +324,10 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           .then(({ body }) => {
             const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
             expect(pageInfo).toEqual({
-              endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
+              endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
             });
             expect(totalCount).toBe(15);
             expect(edges).toHaveLength(2);
@@ -342,7 +342,7 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
             operationName: null,
             variables: {},
             query: `{
-          subTasks(paging: {first: 2, after: "YXJyYXljb25uZWN0aW9uOjE="}) {
+          subTasks(paging: {first: 2, after: "eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=="}) {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
             totalCount
@@ -353,10 +353,10 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           .then(({ body }) => {
             const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
             expect(pageInfo).toEqual({
-              endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
+              endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             });
             expect(totalCount).toBe(15);
             expect(edges).toHaveLength(2);
