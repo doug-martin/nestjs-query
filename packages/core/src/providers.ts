@@ -1,6 +1,6 @@
 import { Provider } from '@nestjs/common';
 import { Assembler, getAssemblerClasses } from './assemblers';
-import { Class } from './common';
+import { Class, DeepPartial } from './common';
 import { getQueryServiceToken } from './decorators';
 import { getAssemblerQueryServiceToken } from './decorators/helpers';
 import { AssemblerQueryService, QueryService } from './services';
@@ -15,7 +15,10 @@ function createServiceProvider<DTO, Entity>(AssemblerClass: Class<Assembler<DTO,
   const { EntityClass } = classes;
   return {
     provide: getAssemblerQueryServiceToken(AssemblerClass),
-    useFactory(assembler: Assembler<DTO, Entity>, entityService: QueryService<Entity>) {
+    useFactory(
+      assembler: Assembler<DTO, Entity>,
+      entityService: QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>,
+    ) {
       return new AssemblerQueryService(assembler, entityService);
     },
     inject: [AssemblerClass, getQueryServiceToken(EntityClass)],
