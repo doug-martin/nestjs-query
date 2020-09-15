@@ -17,9 +17,16 @@ import {
 } from '../interfaces';
 import { QueryService } from './query.service';
 
-export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, U = DeepPartial<DTO>>
-  implements QueryService<DTO, C, U> {
-  constructor(readonly assembler: Assembler<DTO, Entity>, readonly queryService: QueryService<Entity>) {}
+export class AssemblerQueryService<
+  DTO,
+  Entity,
+  C extends DeepPartial<DTO> = DeepPartial<DTO>,
+  U extends DeepPartial<DTO> = DeepPartial<DTO>
+> implements QueryService<DTO, C, U> {
+  constructor(
+    readonly assembler: Assembler<DTO, Entity>,
+    readonly queryService: QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>,
+  ) {}
 
   addRelations<Relation>(
     relationName: string,

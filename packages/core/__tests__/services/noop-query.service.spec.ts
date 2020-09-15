@@ -1,12 +1,17 @@
 import { NoOpQueryService } from '../../src/services/noop-query.service';
 import { QueryService } from '../../src';
+import { DeepPartial } from '../../src/common';
 
 describe('NoOpQueryService', () => {
   class TestType {
     foo!: string;
   }
 
-  const instance: QueryService<TestType> = NoOpQueryService.getInstance<TestType>();
+  const instance: QueryService<TestType> = NoOpQueryService.getInstance<
+    TestType,
+    DeepPartial<TestType>,
+    DeepPartial<TestType>
+  >();
   it('should throw a NotImplementedException when calling addRelations', () => {
     return expect(instance.addRelations('test', 1, [1, 2, 3])).rejects.toThrow('addRelations is not implemented');
   });

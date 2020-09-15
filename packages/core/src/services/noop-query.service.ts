@@ -18,11 +18,11 @@ import { QueryService } from './query.service';
 import { DeepPartial, Class } from '../common';
 
 export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> implements QueryService<DTO, C, U> {
-  private static instance: QueryService<unknown> = new NoOpQueryService();
+  private static instance: QueryService<unknown, unknown, unknown> = new NoOpQueryService();
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  static getInstance<DTO>(): QueryService<DTO> {
-    return this.instance as QueryService<DTO>;
+  static getInstance<DTO, C, U>(): QueryService<DTO, C, U> {
+    return this.instance as QueryService<DTO, C, U>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

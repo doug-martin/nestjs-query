@@ -6,7 +6,7 @@ import { ProxyQueryService } from './proxy-query.service';
 import { QueryService } from './query.service';
 
 export type QueryServiceRelation<DTO, Relation> = {
-  service: QueryService<Relation>;
+  service: QueryService<Relation, unknown, unknown>;
   query: (dto: DTO) => Query<Relation>;
 };
 
@@ -17,16 +17,16 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
 > {
   readonly relations: Record<string, QueryServiceRelation<DTO, unknown>>;
 
-  constructor(queryService: QueryService<DTO>, relations: Record<string, QueryServiceRelation<DTO, unknown>>);
+  constructor(queryService: QueryService<DTO, C, U>, relations: Record<string, QueryServiceRelation<DTO, unknown>>);
 
   constructor(relations: Record<string, QueryServiceRelation<DTO, unknown>>);
 
   constructor(
-    queryService: QueryService<DTO> | Record<string, QueryServiceRelation<DTO, unknown>>,
+    queryService: QueryService<DTO, C, U> | Record<string, QueryServiceRelation<DTO, unknown>>,
     relations?: Record<string, QueryServiceRelation<DTO, unknown>>,
   ) {
     if (typeof queryService.query === 'function') {
-      super(queryService as QueryService<DTO>);
+      super(queryService as QueryService<DTO, C, U>);
       this.relations = relations as Record<string, QueryServiceRelation<DTO, unknown>>;
     } else {
       super(NoOpQueryService.getInstance());
