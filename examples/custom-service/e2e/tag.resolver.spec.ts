@@ -9,7 +9,7 @@ import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
 
-describe('TagResolver (basic - e2e)', () => {
+describe('TagResolver (custom-service - e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {

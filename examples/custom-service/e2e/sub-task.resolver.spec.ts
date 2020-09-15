@@ -8,7 +8,7 @@ import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, subTaskFields, todoItemFields } from './graphql-fragments';
 
-describe('SubTaskResolver (basic - e2e)', () => {
+describe('SubTaskResolver (custom-service - e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {

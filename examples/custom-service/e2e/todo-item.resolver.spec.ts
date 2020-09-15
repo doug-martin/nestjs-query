@@ -10,7 +10,7 @@ import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
 
-describe('TodoItemResolver (basic - e2e)', () => {
+describe('TodoItemResolver (custom-service - e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
