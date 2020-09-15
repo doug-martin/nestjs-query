@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-sequelize",
-  "version": "0.19.3",
+  "version": "0.19.4",
   "description": "Sequelize adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.19.3",
+    "@nestjs-query/core": "0.19.4",
     "lodash.pick": "4.4.0"
   },
   "peerDependencies": {
