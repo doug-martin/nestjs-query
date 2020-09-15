@@ -8,7 +8,7 @@ import { typeormOrmConfig } from '../../helpers';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(typeormOrmConfig('basic')),
+    TypeOrmModule.forRoot(typeormOrmConfig('custom_service')),
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
     }),
