@@ -31,6 +31,7 @@ export {
   BeforeFindOneHook,
   InjectAuthorizer,
   Authorize,
+  KeySet,
 } from './decorators';
 export * from './resolvers';
 export * from './federation';
