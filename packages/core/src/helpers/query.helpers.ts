@@ -1,5 +1,5 @@
 import merge from 'lodash.merge';
-import { Filter, Paging, Query, SortField } from '../interfaces';
+import { Filter, Paging, Query, SortDirection, SortField, SortNulls } from '../interfaces';
 import { FilterBuilder } from './filter.builder';
 import { SortBuilder } from './sort.builder';
 import { PageBuilder } from './page.builder';
@@ -53,7 +53,13 @@ export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFiel
 };
 
 export const mergeFilter = <T>(base: Filter<T>, source: Filter<T>): Filter<T> => {
-  return merge(base, source);
+  if (!Object.keys(base).length) {
+    return source;
+  }
+  if (!Object.keys(source).length) {
+    return base;
+  }
+  return { and: [source, base] } as Filter<T>;
 };
 
 export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
@@ -100,3 +106,16 @@ export const applyQuery = <DTO>(dtos: DTO[], query: Query<DTO>): DTO[] => {
   const sorted = applySort(filtered, query.sorting ?? []);
   return applyPaging(sorted, query.paging ?? {});
 };
+
+export function invertSort<DTO>(sortFields: SortField<DTO>[]): SortField<DTO>[] {
+  return sortFields.map((sf) => {
+    const direction = sf.direction === SortDirection.ASC ? SortDirection.DESC : SortDirection.ASC;
+    let nulls;
+    if (sf.nulls === SortNulls.NULLS_LAST) {
+      nulls = SortNulls.NULLS_FIRST;
+    } else if (sf.nulls === SortNulls.NULLS_FIRST) {
+      nulls = SortNulls.NULLS_LAST;
+    }
+    return { ...sf, direction, nulls };
+  });
+}

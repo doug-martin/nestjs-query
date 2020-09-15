@@ -23,6 +23,7 @@ export {
   applyQuery,
   mergeQuery,
   mergeFilter,
+  invertSort,
 } from './helpers';
 export {
   ClassTransformerAssembler,

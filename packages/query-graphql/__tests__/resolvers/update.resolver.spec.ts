@@ -185,7 +185,10 @@ describe('UpdateResolver', () => {
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
       when(mockAuthorizer.authorize(context)).thenResolve(authorizeFilter);
       when(
-        mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter)),
+        mockService.updateMany(
+          objectContaining(input.input.update),
+          objectContaining({ and: [authorizeFilter, input.input.filter] }),
+        ),
       ).thenResolve(output);
       const result = await resolver.updateMany(input, context);
       return expect(result).toEqual(output);

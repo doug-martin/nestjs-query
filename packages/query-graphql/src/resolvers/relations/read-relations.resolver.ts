@@ -69,7 +69,8 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   @ArgsType()
   class RelationQA extends QueryArgsType(relationDTO, relation) {}
 
-  const CT = ConnectionType(relationDTO, RelationQA, { ...relation, connectionName });
+  // disable keyset pagination for relations otherwise recursive paging will not work
+  const CT = ConnectionType(relationDTO, RelationQA, { ...relation, connectionName, disableKeySetPagination: true });
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadManyMixin extends Base {
     @ResolverField(

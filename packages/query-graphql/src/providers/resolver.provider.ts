@@ -55,11 +55,11 @@ export type FederatedAutoResolverOpts<DTO, Service> = {
   Service: Class<Service>;
 };
 
-export type AutoResolverOpts<DTO, EntityServiceOrAssemler, C, U, R, PS extends PagingStrategies> =
-  | EntityCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U, R, PS>
-  | AssemblerCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U, R, PS>
-  | ServiceCRUDAutoResolverOpts<DTO, EntityServiceOrAssemler, C, U, R, PS>
-  | FederatedAutoResolverOpts<DTO, EntityServiceOrAssemler>;
+export type AutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS extends PagingStrategies> =
+  | EntityCRUDAutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS>
+  | AssemblerCRUDAutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS>
+  | ServiceCRUDAutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS>
+  | FederatedAutoResolverOpts<DTO, EntityServiceOrAssembler>;
 
 export const isFederatedResolverOpts = <DTO, MaybeService, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeService, C, U, R, PS>,

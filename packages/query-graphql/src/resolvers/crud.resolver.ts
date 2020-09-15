@@ -11,6 +11,7 @@ import { DeleteResolver, DeleteResolverOpts } from './delete.resolver';
 import { BaseResolverOptions } from '../decorators/resolver-method.decorator';
 import { mergeBaseResolverOpts } from '../common';
 import { RelatableOpts } from './relations/relations.resolver';
+import { CursorConnectionOptions } from '../types/connection/cursor';
 
 export interface CRUDResolverOpts<
   DTO,
@@ -18,7 +19,8 @@ export interface CRUDResolverOpts<
   U extends DeepPartial<DTO> = DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
   PS extends PagingStrategies = PagingStrategies.CURSOR
-> extends BaseResolverOptions {
+> extends BaseResolverOptions,
+    Pick<CursorConnectionOptions, 'enableTotalCount'> {
   /**
    * The DTO that should be used as input for create endpoints.
    */
@@ -29,7 +31,6 @@ export interface CRUDResolverOpts<
   UpdateDTOClass?: Class<U>;
   enableSubscriptions?: boolean;
   pagingStrategy?: PS;
-  enableTotalCount?: boolean;
   enableAggregate?: boolean;
   create?: CreateResolverOpts<DTO, C>;
   read?: R;

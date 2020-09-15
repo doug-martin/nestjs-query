@@ -160,7 +160,7 @@ describe('DeleteResolver', () => {
       const context = {};
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
       when(mockAuthorizer.authorize(context)).thenResolve(authorizeFilter);
-      when(mockService.deleteMany(objectContaining({ ...input.filter, ...authorizeFilter }))).thenResolve(output);
+      when(mockService.deleteMany(objectContaining({ and: [authorizeFilter, input.filter] }))).thenResolve(output);
       const result = await resolver.deleteMany({ input }, context);
       return expect(result).toEqual(output);
     });

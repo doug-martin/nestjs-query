@@ -12,6 +12,7 @@ import { getGraphqlObjectName } from '../../../common';
 export type CursorConnectionOptions = {
   enableTotalCount?: boolean;
   connectionName?: string;
+  disableKeySetPagination?: boolean;
 };
 
 export type StaticCursorConnectionType<DTO> = StaticConnection<
@@ -45,7 +46,7 @@ export function CursorConnectionType<DTO>(
 ): StaticCursorConnectionType<DTO> {
   const connectionName = getOrCreateConnectionName(TItemClass, opts);
   return reflector.memoize(TItemClass, connectionName, () => {
-    const pager = createPager<DTO>();
+    const pager = createPager<DTO>(TItemClass, opts);
     const E = EdgeType(TItemClass);
     const PIT = PageInfoType();
     @ObjectType(connectionName)

@@ -10,5 +10,6 @@ export {
   applySort,
   applyPaging,
   applyQuery,
+  invertSort,
 } from './query.helpers';
 export { transformAggregateQuery, transformAggregateResponse } from './aggregate.helpers';
