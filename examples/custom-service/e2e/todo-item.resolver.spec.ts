@@ -314,7 +314,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
           query: `mutation {
             createOneTodoItem(
               input: {
-                todoItem: { title: "Test Todo", completed: false }
+                todoItem: { name: "Test Todo", completed: false }
               }
             ) {
               id
@@ -343,7 +343,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
           query: `mutation {
             createOneTodoItem(
               input: {
-                todoItem: { title: "Test Todo with a too long title!", completed: false }
+                todoItem: { name: "Test Todo with a too long title!", completed: false }
               }
             ) {
               id
@@ -371,8 +371,8 @@ describe('TodoItemResolver (basic - e2e)', () => {
             createManyTodoItems(
               input: {
                 todoItems: [
-                  { title: "Many Test Todo 1", completed: false },
-                  { title: "Many Test Todo 2", completed: true }
+                  { name: "Many Test Todo 1", completed: false },
+                  { name: "Many Test Todo 2", completed: true }
                 ]
               }
             ) {
@@ -401,7 +401,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
           query: `mutation {
             createManyTodoItems(
               input: {
-                todoItems: [{ title: "Test Todo With A Really Long Title", completed: false }]
+                todoItems: [{ name: "Test Todo With A Really Long Title", completed: false }]
               }
             ) {
               id
