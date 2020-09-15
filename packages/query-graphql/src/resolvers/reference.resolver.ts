@@ -14,7 +14,7 @@ export interface ReferenceResolverOpts {
  * Mixin to expose `resolveReference` for a DTO on the resolver.
  */
 export const Referenceable = <DTO>(DTOClass: Class<DTO>, opts: ReferenceResolverOpts) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   BaseClass: B,
 ): B => {
@@ -41,4 +41,5 @@ export const Referenceable = <DTO>(DTOClass: Class<DTO>, opts: ReferenceResolver
 export const ReferenceResolver = <DTO>(
   DTOClass: Class<DTO>,
   opts: ReferenceResolverOpts = {},
-): ResolverClass<DTO, ServiceResolver<DTO>> => Referenceable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, unknown, unknown, ServiceResolver<DTO, unknown, unknown>> =>
+  Referenceable(DTOClass, opts)(BaseServiceResolver);

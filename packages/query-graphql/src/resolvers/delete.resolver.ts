@@ -34,7 +34,7 @@ export interface DeleteResolverOpts<DTO> extends SubscriptionResolverOpts {
   DeleteManyInput?: Class<DeleteManyInputType<DTO>>;
 }
 
-export interface DeleteResolver<DTO> extends ServiceResolver<DTO> {
+export interface DeleteResolver<DTO> extends ServiceResolver<DTO, any, any> {
   deleteOne(input: MutationArgsType<DeleteOneInputType>, context?: unknown): Promise<Partial<DTO>>;
 
   deleteMany(input: MutationArgsType<DeleteManyInputType<DTO>>, context?: unknown): Promise<DeleteManyResponse>;
@@ -57,7 +57,7 @@ const defaultDeleteManyInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): 
  * Mixin to add `delete` graphql endpoints.
  */
 export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DTO>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, any, any>>
 >(
   BaseClass: B,
 ): Class<DeleteResolver<DTO>> & B => {
@@ -169,4 +169,4 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
 export const DeleteResolver = <DTO>(
   DTOClass: Class<DTO>,
   opts: DeleteResolverOpts<DTO> = {},
-): ResolverClass<DTO, DeleteResolver<DTO>> => Deletable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, any, any, DeleteResolver<DTO>> => Deletable(DTOClass, opts)(BaseServiceResolver);

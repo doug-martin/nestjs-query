@@ -9,7 +9,7 @@ import { flattenRelations, getModifyRelationOptions, removeRelationOpts } from '
 import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   Base: B,
 ): B => {
@@ -40,7 +40,7 @@ const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
 };
 
 const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   Base: B,
 ): B => {
@@ -71,7 +71,7 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
 };
 
 export const UpdateRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: RelationsOpts) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   Base: B,
 ): B => {
@@ -85,6 +85,6 @@ export const UpdateRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: Relat
 export const UpdateRelationsResolver = <DTO>(
   DTOClass: Class<DTO>,
   relations: RelationsOpts,
-): Class<ServiceResolver<DTO>> => {
+): Class<ServiceResolver<DTO, unknown, unknown>> => {
   return UpdateRelationsMixin(DTOClass, relations)(BaseServiceResolver);
 };

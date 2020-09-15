@@ -37,7 +37,7 @@ export type ReadResolverOpts<DTO> = {
   Pick<CursorConnectionOptions, 'enableTotalCount'>;
 
 export interface ReadResolver<DTO, QT extends QueryArgsType<DTO>, CT extends ConnectionType<DTO>>
-  extends ServiceResolver<DTO> {
+  extends ServiceResolver<DTO, any, any> {
   queryMany(query: QT, context?: unknown): Promise<CT>;
   findById(id: FindOneArgsType, context?: unknown): Promise<DTO | undefined>;
 }
@@ -47,7 +47,7 @@ export interface ReadResolver<DTO, QT extends QueryArgsType<DTO>, CT extends Con
  * Mixin to add `read` graphql endpoints.
  */
 export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: Class<DTO>, opts: ReadOpts) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, any, any>>
 >(
   BaseClass: B,
 ): Class<ReadResolverFromOpts<DTO, ReadOpts>> & B => {
@@ -95,4 +95,4 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: 
 export const ReadResolver = <DTO, ReadOpts extends ReadResolverOpts<DTO> = CursorQueryArgsTypeOpts<DTO>>(
   DTOClass: Class<DTO>,
   opts: ReadOpts = {} as ReadOpts,
-): ResolverClass<DTO, ReadResolverFromOpts<DTO, ReadOpts>> => Readable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, any, any, ReadResolverFromOpts<DTO, ReadOpts>> => Readable(DTOClass, opts)(BaseServiceResolver);
