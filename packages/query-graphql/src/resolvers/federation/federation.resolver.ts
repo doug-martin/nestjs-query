@@ -7,6 +7,6 @@ import { BaseResolverOptions } from '../../decorators/resolver-method.decorator'
 export const FederationResolver = <DTO>(
   DTOClass: Class<DTO>,
   opts: BaseResolverOptions = {},
-): Class<ServiceResolver<DTO>> => {
+): Class<ServiceResolver<DTO, unknown, unknown>> => {
   return ReadRelationsResolver(DTOClass, getRelations(DTOClass, opts));
 };

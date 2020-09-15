@@ -88,7 +88,7 @@ function createFederatedResolver<DTO, Service>(resolverOpts: FederatedAutoResolv
   @Resolver(() => DTOClass)
   class AutoResolver extends FederationResolver(DTOClass) {
     constructor(
-      @Inject(resolverOpts.Service) readonly service: QueryService<DTO>,
+      @Inject(resolverOpts.Service) readonly service: QueryService<DTO, unknown, unknown>,
       @InjectPubSub() readonly pubSub: PubSub,
       @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
@@ -106,7 +106,7 @@ function createEntityAutoResolver<DTO, Entity, C, U, R, PS extends PagingStrateg
 ): Provider {
   const { DTOClass, EntityClass } = resolverOpts;
   class Service extends AssemblerQueryService<DTO, Entity> {
-    constructor(service: QueryService<Entity>) {
+    constructor(service: QueryService<Entity, C, U>) {
       const assembler = AssemblerFactory.getAssembler(DTOClass, EntityClass);
       super(assembler, service);
     }
@@ -114,7 +114,7 @@ function createEntityAutoResolver<DTO, Entity, C, U, R, PS extends PagingStrateg
   @Resolver(() => DTOClass)
   class AutoResolver extends CRUDResolver(DTOClass, resolverOpts) {
     constructor(
-      @InjectQueryService(EntityClass) service: QueryService<Entity>,
+      @InjectQueryService(EntityClass) service: QueryService<Entity, C, U>,
       @InjectPubSub() readonly pubSub: PubSub,
       @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
@@ -134,7 +134,7 @@ function createAssemblerAutoResolver<DTO, Asmblr, C, U, R, PS extends PagingStra
   class AutoResolver extends CRUDResolver(DTOClass, resolverOpts) {
     constructor(
       @InjectAssemblerQueryService((AssemblerClass as unknown) as Class<Assembler<DTO, unknown>>)
-      service: QueryService<DTO>,
+      service: QueryService<DTO, C, U>,
       @InjectPubSub() readonly pubSub: PubSub,
       @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
@@ -153,7 +153,7 @@ function createServiceAutoResolver<DTO, Service, C, U, R, PS extends PagingStrat
   @Resolver(() => DTOClass)
   class AutoResolver extends CRUDResolver(DTOClass, resolverOpts) {
     constructor(
-      @Inject(ServiceClass) service: QueryService<DTO>,
+      @Inject(ServiceClass) service: QueryService<DTO, C, U>,
       @InjectPubSub() readonly pubSub: PubSub,
       @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {

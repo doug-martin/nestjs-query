@@ -14,7 +14,9 @@ export interface RelatableOpts extends BaseResolverOptions {
   enableAggregate?: boolean;
 }
 
-export const Relatable = <DTO>(DTOClass: Class<DTO>, opts: RelatableOpts) => <B extends Class<ServiceResolver<DTO>>>(
+export const Relatable = <DTO>(DTOClass: Class<DTO>, opts: RelatableOpts) => <
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+>(
   Base: B,
 ): B => {
   const { enableTotalCount, enableAggregate } = opts;

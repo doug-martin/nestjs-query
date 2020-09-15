@@ -15,7 +15,7 @@ export interface ReadRelationsResolverOpts extends RelationsOpts {
 }
 
 const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   Base: B,
 ): B => {
@@ -49,7 +49,7 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
 };
 
 const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   Base: B,
 ): B => {
@@ -106,7 +106,7 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
 };
 
 export const ReadRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: ReadRelationsResolverOpts) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   Base: B,
 ): B => {
@@ -123,6 +123,6 @@ export const ReadRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: ReadRel
 export const ReadRelationsResolver = <DTO>(
   DTOClass: Class<DTO>,
   relations: ReadRelationsResolverOpts,
-): Class<ServiceResolver<DTO>> => {
+): Class<ServiceResolver<DTO, unknown, unknown>> => {
   return ReadRelationsMixin(DTOClass, relations)(BaseServiceResolver);
 };

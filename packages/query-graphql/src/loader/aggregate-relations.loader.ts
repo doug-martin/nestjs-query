@@ -12,7 +12,7 @@ export class AggregateRelationsLoader<DTO, Relation>
   implements NestjsQueryDataloader<DTO, AggregateRelationsArgs<DTO, Relation>, AggregateResponse<Relation> | Error> {
   constructor(readonly RelationDTO: Class<Relation>, readonly relationName: string) {}
 
-  createLoader(service: QueryService<DTO>) {
+  createLoader(service: QueryService<DTO, unknown, unknown>) {
     return async (
       queryArgs: ReadonlyArray<AggregateRelationsArgs<DTO, Relation>>,
     ): Promise<(AggregateResponse<Relation> | Error)[]> => {
@@ -23,7 +23,7 @@ export class AggregateRelationsLoader<DTO, Relation>
   }
 
   private async loadResults(
-    service: QueryService<DTO>,
+    service: QueryService<DTO, unknown, unknown>,
     queryRelationsMap: AggregateRelationsMap<DTO, Relation>,
   ): Promise<AggregateResponse<Relation>[]> {
     const results: AggregateResponse<Relation>[] = [];

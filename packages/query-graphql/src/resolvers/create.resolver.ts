@@ -45,7 +45,7 @@ export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartia
   CreateManyInput?: Class<CreateManyInputType<C>>;
 }
 
-export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
+export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends ServiceResolver<DTO, C, any> {
   createOne(input: MutationArgsType<CreateOneInputType<C>>): Promise<DTO>;
 
   createMany(input: MutationArgsType<CreateManyInputType<C>>): Promise<DTO[]>;
@@ -98,7 +98,7 @@ const lookupCreateManyHook = <DTO, C extends DeepPartial<DTO>>(
  * Mixin to add `create` graphql endpoints.
  */
 export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>, opts: CreateResolverOpts<DTO, C>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, C, any>>
 >(
   BaseClass: B,
 ): Class<CreateResolver<DTO, C>> & B => {
@@ -204,4 +204,4 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
 export const CreateResolver = <DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
   opts: CreateResolverOpts<DTO, C> = {},
-): ResolverClass<DTO, CreateResolver<DTO, C>> => Creatable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, C, any, CreateResolver<DTO, C>> => Creatable(DTOClass, opts)(BaseServiceResolver);

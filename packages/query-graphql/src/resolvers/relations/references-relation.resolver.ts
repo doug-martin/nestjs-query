@@ -17,7 +17,7 @@ const pluckFields = <DTO, Relation>(dto: DTO, fieldMap: ReferencesKeys<DTO, Rela
 };
 
 const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: ResolverRelationReference<DTO, Relation>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   Base: B,
 ): B => {
@@ -42,7 +42,7 @@ const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: Resolve
 };
 
 export const ReferencesRelationMixin = <DTO>(DTOClass: Class<DTO>, references: ReferencesOpts<DTO>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, unknown, unknown>>
 >(
   Base: B,
 ): B => {
@@ -53,6 +53,6 @@ export const ReferencesRelationMixin = <DTO>(DTOClass: Class<DTO>, references: R
 export const ReferencesRelationsResolver = <DTO>(
   DTOClass: Class<DTO>,
   references: ReferencesOpts<DTO>,
-): Class<ServiceResolver<DTO>> => {
+): Class<ServiceResolver<DTO, unknown, unknown>> => {
   return ReferencesRelationMixin(DTOClass, references)(BaseServiceResolver);
 };

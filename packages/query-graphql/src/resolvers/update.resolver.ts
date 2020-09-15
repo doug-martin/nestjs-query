@@ -32,7 +32,7 @@ export interface UpdateResolverOpts<DTO, U extends DeepPartial<DTO> = DeepPartia
   UpdateManyInput?: Class<UpdateManyInputType<DTO, U>>;
 }
 
-export interface UpdateResolver<DTO, U extends DeepPartial<DTO>> extends ServiceResolver<DTO> {
+export interface UpdateResolver<DTO, U extends DeepPartial<DTO>> extends ServiceResolver<DTO, any, U> {
   updateOne(input: MutationArgsType<UpdateOneInputType<U>>, context?: unknown): Promise<DTO>;
 
   updateMany(input: MutationArgsType<UpdateManyInputType<DTO, U>>, context?: unknown): Promise<UpdateManyResponse>;
@@ -95,7 +95,7 @@ const lookupUpdateManyHook = <DTO, U extends DeepPartial<DTO>>(
  * Mixin to add `update` graphql endpoints.
  */
 export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>, opts: UpdateResolverOpts<DTO, U>) => <
-  B extends Class<ServiceResolver<DTO>>
+  B extends Class<ServiceResolver<DTO, any, U>>
 >(
   BaseClass: B,
 ): Class<UpdateResolver<DTO, U>> & B => {
@@ -214,4 +214,4 @@ export const Updateable = <DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>
 export const UpdateResolver = <DTO, U extends DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
   opts: UpdateResolverOpts<DTO, U> = {},
-): ResolverClass<DTO, UpdateResolver<DTO, U>> => Updateable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, any, U, UpdateResolver<DTO, U>> => Updateable(DTOClass, opts)(BaseServiceResolver);
