@@ -1,12 +1,15 @@
-import { Class } from '@nestjs-query/core';
+import { Class, QueryService } from '@nestjs-query/core';
 import { ReadRelationsResolver } from '../relations';
 import { ServiceResolver } from '../resolver.interface';
 import { getRelations } from '../../decorators';
 import { BaseResolverOptions } from '../../decorators/resolver-method.decorator';
 
-export const FederationResolver = <DTO>(
+export const FederationResolver = <
+  DTO,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   opts: BaseResolverOptions = {},
-): Class<ServiceResolver<DTO, unknown, unknown>> => {
+): Class<ServiceResolver<DTO, QS>> => {
   return ReadRelationsResolver(DTOClass, getRelations(DTOClass, opts));
 };

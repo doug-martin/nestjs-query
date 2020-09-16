@@ -8,7 +8,7 @@ export class CountRelationsLoader<DTO, Relation>
   implements NestjsQueryDataloader<DTO, CountRelationsArgs<DTO, Relation>, number | Error> {
   constructor(readonly RelationDTO: Class<Relation>, readonly relationName: string) {}
 
-  createLoader(service: QueryService<DTO>) {
+  createLoader(service: QueryService<DTO, unknown, unknown>) {
     return async (queryArgs: ReadonlyArray<CountRelationsArgs<DTO, Relation>>): Promise<(number | Error)[]> => {
       // group
       const queryMap = this.groupQueries(queryArgs);
@@ -17,7 +17,7 @@ export class CountRelationsLoader<DTO, Relation>
   }
 
   private async loadResults(
-    service: QueryService<DTO>,
+    service: QueryService<DTO, unknown, unknown>,
     countRelationsMap: CountRelationsMap<DTO, Relation>,
   ): Promise<number[]> {
     const results: number[] = [];

@@ -1,4 +1,4 @@
-import { Class, NoOpQueryService } from '@nestjs-query/core';
+import { Class, NoOpQueryService, QueryService } from '@nestjs-query/core';
 import { ObjectType } from '@nestjs/graphql';
 import { FilterableField } from '../src/decorators';
 import { createResolvers } from '../src/providers';
@@ -26,7 +26,7 @@ describe('createTypeOrmQueryServiceProviders', () => {
 
       const providers = createResolvers([{ type: 'federated', DTOClass: TestDTO, Service }]);
       expect(providers).toHaveLength(1);
-      const Provider = providers[0] as Class<ServiceResolver<TestDTO>>;
+      const Provider = providers[0] as Class<ServiceResolver<TestDTO, QueryService<TestDTO>>>;
       expect(Provider.name).toBe('TestDTOFederatedAutoResolver');
       expect(new Provider(NoOpQueryService.getInstance())).toBeInstanceOf(Provider);
     });

@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class, QueryService } from '@nestjs-query/core';
 import { ServiceResolver } from '../resolver.interface';
 import { AggregateRelationsMixin } from './aggregate-relations.resolver';
 import { ReadRelationsMixin } from './read-relations.resolver';
@@ -14,11 +14,10 @@ export interface RelatableOpts extends BaseResolverOptions {
   enableAggregate?: boolean;
 }
 
-export const Relatable = <DTO>(DTOClass: Class<DTO>, opts: RelatableOpts) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
->(
-  Base: B,
-): B => {
+export const Relatable = <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
+  DTOClass: Class<DTO>,
+  opts: RelatableOpts,
+) => <B extends Class<ServiceResolver<DTO, QS>>>(Base: B): B => {
   const { enableTotalCount, enableAggregate } = opts;
   const relations = getRelations(DTOClass, opts);
   const references = getReferences(DTOClass, opts);

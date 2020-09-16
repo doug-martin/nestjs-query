@@ -1,4 +1,4 @@
-import { AggregateQuery, AggregateResponse, Class, mergeFilter } from '@nestjs-query/core';
+import { AggregateQuery, AggregateResponse, Class, mergeFilter, QueryService } from '@nestjs-query/core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
@@ -22,7 +22,7 @@ type AggregateRelationOpts<Relation> = {
 } & ResolverRelation<Relation>;
 
 const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: AggregateRelationOpts<Relation>) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -69,7 +69,7 @@ const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: A
 };
 
 export const AggregateRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: AggregateRelationsResolverOpts) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -81,6 +81,6 @@ export const AggregateRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: Ag
 export const AggregateRelationsResolver = <DTO>(
   DTOClass: Class<DTO>,
   relations: AggregateRelationsResolverOpts,
-): Class<ServiceResolver<DTO, unknown, unknown>> => {
+): Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>> => {
   return AggregateRelationsMixin(DTOClass, relations)(BaseServiceResolver);
 };

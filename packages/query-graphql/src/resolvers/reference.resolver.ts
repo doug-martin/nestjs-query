@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class, QueryService } from '@nestjs-query/core';
 import { Resolver, ResolveReference } from '@nestjs/graphql';
 import { BadRequestException } from '@nestjs/common';
 import { getDTONames } from '../common';
@@ -13,11 +13,10 @@ export interface ReferenceResolverOpts {
  * @internal
  * Mixin to expose `resolveReference` for a DTO on the resolver.
  */
-export const Referenceable = <DTO>(DTOClass: Class<DTO>, opts: ReferenceResolverOpts) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
->(
-  BaseClass: B,
-): B => {
+export const Referenceable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
+  DTOClass: Class<DTO>,
+  opts: ReferenceResolverOpts,
+) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): B => {
   if (!('key' in opts) || opts.key === undefined) {
     return BaseClass;
   }
@@ -38,8 +37,10 @@ export const Referenceable = <DTO>(DTOClass: Class<DTO>, opts: ReferenceResolver
   return ResolveReferenceResolverBase;
 };
 
-export const ReferenceResolver = <DTO>(
+export const ReferenceResolver = <
+  DTO,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   opts: ReferenceResolverOpts = {},
-): ResolverClass<DTO, unknown, unknown, ServiceResolver<DTO, unknown, unknown>> =>
-  Referenceable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, QS, ServiceResolver<DTO, QS>> => Referenceable<DTO, QS>(DTOClass, opts)(BaseServiceResolver);

@@ -1,6 +1,6 @@
 import { Class, DeepPartial, QueryService } from '@nestjs-query/core';
 import { PagingStrategies } from '../types';
-import { Aggregateable, AggregateResolverOpts } from './aggregate.resolver';
+import { Aggregateable, AggregateResolverOpts, AggregateResolver } from './aggregate.resolver';
 import { Relatable } from './relations';
 import { Readable, ReadResolverFromOpts, ReadResolverOpts } from './read.resolver';
 import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver';
@@ -15,8 +15,8 @@ import { CursorConnectionOptions } from '../types/connection/cursor';
 
 export interface CRUDResolverOpts<
   DTO,
-  C extends DeepPartial<DTO> = DeepPartial<DTO>,
-  U extends DeepPartial<DTO> = DeepPartial<DTO>,
+  C = DeepPartial<DTO>,
+  U = DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
   PS extends PagingStrategies = PagingStrategies.CURSOR
 > extends BaseResolverOptions,
@@ -42,13 +42,15 @@ export interface CRUDResolverOpts<
 
 export interface CRUDResolver<
   DTO,
-  C extends DeepPartial<DTO>,
-  U extends DeepPartial<DTO>,
-  R extends ReadResolverOpts<DTO>
-> extends CreateResolver<DTO, C>,
-    ReadResolverFromOpts<DTO, R>,
-    UpdateResolver<DTO, U>,
-    DeleteResolver<DTO> {}
+  C,
+  U,
+  R extends ReadResolverOpts<DTO>,
+  QS extends QueryService<DTO, C, U> = QueryService<DTO, C, U>
+> extends CreateResolver<DTO, C, QS>,
+    ReadResolverFromOpts<DTO, R, QS>,
+    UpdateResolver<DTO, U, QS>,
+    DeleteResolver<DTO, QS>,
+    AggregateResolver<DTO, QS> {}
 
 /**
  * Factory to create a resolver that includes all CRUD methods from [[CreateResolver]], [[ReadResolver]],
@@ -72,14 +74,14 @@ export interface CRUDResolver<
  */
 export const CRUDResolver = <
   DTO,
-  C extends DeepPartial<DTO> = DeepPartial<DTO>,
-  U extends DeepPartial<DTO> = DeepPartial<DTO>,
+  C = DeepPartial<DTO>,
+  U = DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
   PS extends PagingStrategies = PagingStrategies.CURSOR
 >(
   DTOClass: Class<DTO>,
   opts: CRUDResolverOpts<DTO, C, U, R, PS> = {},
-): ResolverClass<DTO, CRUDResolver<DTO, C, U, MergePagingStrategyOpts<DTO, R, PS>>> => {
+): ResolverClass<DTO, QueryService<DTO, C, U>, CRUDResolver<DTO, C, U, MergePagingStrategyOpts<DTO, R, PS>>> => {
   const {
     CreateDTOClass,
     UpdateDTOClass,

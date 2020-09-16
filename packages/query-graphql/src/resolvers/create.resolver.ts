@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 // eslint-disable-next-line max-classes-per-file
-import { Class, DeepPartial } from '@nestjs-query/core';
+import { Class, DeepPartial, QueryService } from '@nestjs-query/core';
 import { Args, ArgsType, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { DTONames, getDTONames } from '../common';
@@ -29,8 +29,7 @@ import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolv
 
 export type CreatedEvent<DTO> = { [eventName: string]: DTO };
 
-export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>>
-  extends SubscriptionResolverOpts {
+export interface CreateResolverOpts<DTO, C = DeepPartial<DTO>> extends SubscriptionResolverOpts {
   /**
    * The Input DTO that should be used to create records.
    */
@@ -45,7 +44,7 @@ export interface CreateResolverOpts<DTO, C extends DeepPartial<DTO> = DeepPartia
   CreateManyInput?: Class<CreateManyInputType<C>>;
 }
 
-export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends ServiceResolver<DTO, C, any> {
+export interface CreateResolver<DTO, C, QS extends QueryService<DTO, C, unknown>> extends ServiceResolver<DTO, QS> {
   createOne(input: MutationArgsType<CreateOneInputType<C>>): Promise<DTO>;
 
   createMany(input: MutationArgsType<CreateManyInputType<C>>): Promise<DTO[]>;
@@ -54,7 +53,7 @@ export interface CreateResolver<DTO, C extends DeepPartial<DTO>> extends Service
 }
 
 /** @internal */
-const defaultCreateDTO = <DTO, C extends DeepPartial<DTO>>(dtoNames: DTONames, DTOClass: Class<DTO>): Class<C> => {
+const defaultCreateDTO = <DTO, C>(dtoNames: DTONames, DTOClass: Class<DTO>): Class<C> => {
   @InputType(`Create${dtoNames.baseName}`)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -79,14 +78,11 @@ const defaultCreateManyInput = <C>(dtoNames: DTONames, InputDTO: Class<C>): Clas
   return CM;
 };
 
-const lookupCreateOneHook = <DTO, C extends DeepPartial<DTO>>(
-  DTOClass: Class<DTO>,
-  CreateDTOClass: Class<C>,
-): CreateOneHook<C> | undefined => {
+const lookupCreateOneHook = <DTO, C>(DTOClass: Class<DTO>, CreateDTOClass: Class<C>): CreateOneHook<C> | undefined => {
   return (getCreateOneHook(CreateDTOClass) ?? getCreateOneHook(DTOClass)) as CreateOneHook<C> | undefined;
 };
 
-const lookupCreateManyHook = <DTO, C extends DeepPartial<DTO>>(
+const lookupCreateManyHook = <DTO, C>(
   DTOClass: Class<DTO>,
   CreateDTOClass: Class<C>,
 ): CreateManyHook<C> | undefined => {
@@ -97,11 +93,10 @@ const lookupCreateManyHook = <DTO, C extends DeepPartial<DTO>>(
  * @internal
  * Mixin to add `create` graphql endpoints.
  */
-export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>, opts: CreateResolverOpts<DTO, C>) => <
-  B extends Class<ServiceResolver<DTO, C, any>>
->(
-  BaseClass: B,
-): Class<CreateResolver<DTO, C>> & B => {
+export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
+  DTOClass: Class<DTO>,
+  opts: CreateResolverOpts<DTO, C>,
+) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<CreateResolver<DTO, C, QS>> & B => {
   const dtoNames = getDTONames(DTOClass, opts);
   const { baseName, pluralBaseName } = dtoNames;
   const enableSubscriptions = opts.enableSubscriptions === true;
@@ -201,7 +196,11 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
  * @typeparam DTO - The type of DTO that should be created.
  * @typeparam C - The create DTO type.
  */
-export const CreateResolver = <DTO, C extends DeepPartial<DTO> = DeepPartial<DTO>>(
+export const CreateResolver = <
+  DTO,
+  C = DeepPartial<DTO>,
+  QS extends QueryService<DTO, C, unknown> = QueryService<DTO, C, unknown>
+>(
   DTOClass: Class<DTO>,
   opts: CreateResolverOpts<DTO, C> = {},
-): ResolverClass<DTO, C, any, CreateResolver<DTO, C>> => Creatable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, QS, CreateResolver<DTO, C, QS>> => Creatable(DTOClass, opts)(BaseServiceResolver);
