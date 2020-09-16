@@ -41,7 +41,9 @@ export interface TypeOrmQueryServiceOpts<Entity> {
  * }
  * ```
  */
-export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> implements QueryService<Entity> {
+export class TypeOrmQueryService<Entity>
+  extends RelationQueryService<Entity>
+  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
   readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   readonly useSoftDelete: boolean;
@@ -127,7 +129,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    * @param record - The entity to create.
    */
-  async createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
+  async createOne(record: DeepPartial<Entity>): Promise<Entity> {
     const entity = await this.ensureIsEntityAndDoesNotExist(record);
     return this.repo.save(entity);
   }
@@ -144,7 +146,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    * @param records - The entities to create.
    */
-  async createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
+  async createMany(records: DeepPartial<Entity>[]): Promise<Entity[]> {
     const entities = await Promise.all(records.map((r) => this.ensureIsEntityAndDoesNotExist(r)));
     return this.repo.save(entities);
   }
@@ -160,11 +162,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param update - A `Partial` of the entity with fields to update.
    * @param opts - Additional options.
    */
-  async updateOne<U extends DeepPartial<Entity>>(
-    id: number | string,
-    update: U,
-    opts?: UpdateOneOptions<Entity>,
-  ): Promise<Entity> {
+  async updateOne(id: number | string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
     const entity = await this.getById(id, opts);
     return this.repo.save(this.repo.merge(entity, update));
@@ -183,7 +181,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * @param update - A `Partial` of entity with the fields to update
    * @param filter - A Filter used to find the records to update
    */
-  async updateMany<U extends DeepPartial<Entity>>(update: U, filter: Filter<Entity>): Promise<UpdateManyResponse> {
+  async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
     const updateResult = await this.filterQueryBuilder
       .update({ filter })
