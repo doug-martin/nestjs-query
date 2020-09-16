@@ -37,7 +37,7 @@ import { RelationQueryService } from './relation-query.service';
  */
 export class SequelizeQueryService<Entity extends Model<Entity>>
   extends RelationQueryService<Entity>
-  implements QueryService<Entity> {
+  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
   readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   constructor(readonly model: ModelCtor<Entity>) {
@@ -123,7 +123,7 @@ export class SequelizeQueryService<Entity extends Model<Entity>>
    * ```
    * @param record - The entity to create.
    */
-  async createOne<C extends DeepPartial<Entity>>(record: C): Promise<Entity> {
+  async createOne(record: DeepPartial<Entity>): Promise<Entity> {
     await this.ensureEntityDoesNotExist(record);
     return this.model.create<Entity>(this.getChangedValues(record));
   }
@@ -140,7 +140,7 @@ export class SequelizeQueryService<Entity extends Model<Entity>>
    * ```
    * @param records - The entities to create.
    */
-  async createMany<C extends DeepPartial<Entity>>(records: C[]): Promise<Entity[]> {
+  async createMany(records: DeepPartial<Entity>[]): Promise<Entity[]> {
     await Promise.all(records.map((r) => this.ensureEntityDoesNotExist(r)));
     return this.model.bulkCreate<Entity>(records.map((r) => this.getChangedValues(r)));
   }
@@ -156,11 +156,7 @@ export class SequelizeQueryService<Entity extends Model<Entity>>
    * @param update - A `Partial` of the entity with fields to update.
    * @param opts - Additional options.
    */
-  async updateOne<U extends DeepPartial<Entity>>(
-    id: number | string,
-    update: U,
-    opts?: UpdateOneOptions<Entity>,
-  ): Promise<Entity> {
+  async updateOne(id: number | string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
     const entity = await this.getById(id, opts);
     return entity.update(this.getChangedValues(update));
@@ -179,7 +175,7 @@ export class SequelizeQueryService<Entity extends Model<Entity>>
    * @param update - A `Partial` of entity with the fields to update
    * @param filter - A Filter used to find the records to update
    */
-  async updateMany<U extends DeepPartial<Entity>>(update: U, filter: Filter<Entity>): Promise<UpdateManyResponse> {
+  async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
     const [count] = await this.model.update(
       this.getChangedValues(update),
