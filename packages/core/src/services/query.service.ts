@@ -263,8 +263,8 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
  * @param DTOClass - the DTO class that the QueryService is used for.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function QueryService<DTO>(DTOClass: Class<DTO>) {
-  return <Cls extends Class<QueryService<DTO, unknown, unknown>>>(cls: Cls): Cls | void => {
+export function QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>>(DTOClass: Class<DTO>) {
+  return <Cls extends Class<QueryService<DTO, C, U>>>(cls: Cls): Cls | void => {
     return Injectable()(cls);
   };
 }

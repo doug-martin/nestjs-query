@@ -102,5 +102,5 @@ export function getAssembler<DTO, Entity>(
 export function getAssemblerClasses<DTO, Entity>(
   AssemblerClass: Class<Assembler<DTO, Entity>>,
 ): MetaValue<AssemblerClasses<DTO, Entity>> {
-  return assemblerReflector.get(AssemblerClass as Class<Assembler<unknown, unknown>>);
+  return assemblerReflector.get(AssemblerClass);
 }
