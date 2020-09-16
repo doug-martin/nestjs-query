@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class, QueryService } from '@nestjs-query/core';
 import { Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverField } from '../../decorators';
@@ -17,7 +17,7 @@ const pluckFields = <DTO, Relation>(dto: DTO, fieldMap: ReferencesKeys<DTO, Rela
 };
 
 const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: ResolverRelationReference<DTO, Relation>) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -42,7 +42,7 @@ const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: Resolve
 };
 
 export const ReferencesRelationMixin = <DTO>(DTOClass: Class<DTO>, references: ReferencesOpts<DTO>) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -50,9 +50,12 @@ export const ReferencesRelationMixin = <DTO>(DTOClass: Class<DTO>, references: R
   return flattened.reduce((RB, a) => ReferencesMixin(DTOClass, a)(RB), Base);
 };
 
-export const ReferencesRelationsResolver = <DTO>(
+export const ReferencesRelationsResolver = <
+  DTO,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   references: ReferencesOpts<DTO>,
-): Class<ServiceResolver<DTO, unknown, unknown>> => {
+): Class<ServiceResolver<DTO, QS>> => {
   return ReferencesRelationMixin(DTOClass, references)(BaseServiceResolver);
 };

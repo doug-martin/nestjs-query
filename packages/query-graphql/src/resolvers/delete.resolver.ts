@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { Class, DeleteManyResponse, mergeFilter } from '@nestjs-query/core';
+import { Class, DeleteManyResponse, mergeFilter, QueryService } from '@nestjs-query/core';
 import omit from 'lodash.omit';
 import { ObjectType, ArgsType, Resolver, Args, PartialType, InputType, Context } from '@nestjs/graphql';
 import { DTONames, getDTONames } from '../common';
@@ -34,7 +34,7 @@ export interface DeleteResolverOpts<DTO> extends SubscriptionResolverOpts {
   DeleteManyInput?: Class<DeleteManyInputType<DTO>>;
 }
 
-export interface DeleteResolver<DTO> extends ServiceResolver<DTO, any, any> {
+export interface DeleteResolver<DTO, QS extends QueryService<DTO, unknown, unknown>> extends ServiceResolver<DTO, QS> {
   deleteOne(input: MutationArgsType<DeleteOneInputType>, context?: unknown): Promise<Partial<DTO>>;
 
   deleteMany(input: MutationArgsType<DeleteManyInputType<DTO>>, context?: unknown): Promise<DeleteManyResponse>;
@@ -56,11 +56,10 @@ const defaultDeleteManyInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): 
  * @internal
  * Mixin to add `delete` graphql endpoints.
  */
-export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DTO>) => <
-  B extends Class<ServiceResolver<DTO, any, any>>
->(
-  BaseClass: B,
-): Class<DeleteResolver<DTO>> & B => {
+export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
+  DTOClass: Class<DTO>,
+  opts: DeleteResolverOpts<DTO>,
+) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<DeleteResolver<DTO, QS>> & B => {
   const dtoNames = getDTONames(DTOClass, opts);
   const { baseName, pluralBaseName } = dtoNames;
   const enableSubscriptions = opts.enableSubscriptions === true;
@@ -166,7 +165,10 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   return DeleteResolverBase;
 };
 
-export const DeleteResolver = <DTO>(
+export const DeleteResolver = <
+  DTO,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   opts: DeleteResolverOpts<DTO> = {},
-): ResolverClass<DTO, any, any, DeleteResolver<DTO>> => Deletable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, QS, DeleteResolver<DTO, QS>> => Deletable<DTO, QS>(DTOClass, opts)(BaseServiceResolver);

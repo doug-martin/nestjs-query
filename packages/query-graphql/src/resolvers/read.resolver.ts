@@ -1,4 +1,4 @@
-import { Class, mergeQuery, MetaValue } from '@nestjs-query/core';
+import { Class, mergeQuery, MetaValue, QueryService } from '@nestjs-query/core';
 import { ArgsType, Resolver, Context } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { getDTONames } from '../common';
@@ -23,11 +23,11 @@ import {
 } from './resolver.interface';
 import { getAuthFilter, transformAndValidate } from './helpers';
 
-export type ReadResolverFromOpts<DTO, Opts extends ReadResolverOpts<DTO>> = ReadResolver<
+export type ReadResolverFromOpts<
   DTO,
-  QueryArgsFromOpts<DTO, Opts>,
-  ConnectionTypeFromOpts<DTO, Opts>
->;
+  Opts extends ReadResolverOpts<DTO>,
+  QS extends QueryService<DTO, unknown, unknown>
+> = ReadResolver<DTO, QueryArgsFromOpts<DTO, Opts>, ConnectionTypeFromOpts<DTO, Opts>, QS>;
 
 export type ReadResolverOpts<DTO> = {
   QueryArgs?: StaticQueryArgsType<DTO>;
@@ -36,8 +36,12 @@ export type ReadResolverOpts<DTO> = {
   QueryArgsTypeOpts<DTO> &
   Pick<CursorConnectionOptions, 'enableTotalCount'>;
 
-export interface ReadResolver<DTO, QT extends QueryArgsType<DTO>, CT extends ConnectionType<DTO>>
-  extends ServiceResolver<DTO, any, any> {
+export interface ReadResolver<
+  DTO,
+  QT extends QueryArgsType<DTO>,
+  CT extends ConnectionType<DTO>,
+  QS extends QueryService<DTO, unknown, unknown>
+> extends ServiceResolver<DTO, QS> {
   queryMany(query: QT, context?: unknown): Promise<CT>;
   findById(id: FindOneArgsType, context?: unknown): Promise<DTO | undefined>;
 }
@@ -46,11 +50,10 @@ export interface ReadResolver<DTO, QT extends QueryArgsType<DTO>, CT extends Con
  * @internal
  * Mixin to add `read` graphql endpoints.
  */
-export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: Class<DTO>, opts: ReadOpts) => <
-  B extends Class<ServiceResolver<DTO, any, any>>
->(
-  BaseClass: B,
-): Class<ReadResolverFromOpts<DTO, ReadOpts>> & B => {
+export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends QueryService<DTO, unknown, unknown>>(
+  DTOClass: Class<DTO>,
+  opts: ReadOpts,
+) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<ReadResolverFromOpts<DTO, ReadOpts, QS>> & B => {
   const { baseNameLower, pluralBaseNameLower, baseName } = getDTONames(DTOClass, opts);
   const { QueryArgs = QueryArgsType(DTOClass, opts) } = opts;
   const {
@@ -89,10 +92,14 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>>(DTOClass: 
       );
     }
   }
-  return ReadResolverBase as Class<ReadResolverFromOpts<DTO, ReadOpts>> & B;
+  return ReadResolverBase as Class<ReadResolverFromOpts<DTO, ReadOpts, QS>> & B;
 };
 
-export const ReadResolver = <DTO, ReadOpts extends ReadResolverOpts<DTO> = CursorQueryArgsTypeOpts<DTO>>(
+export const ReadResolver = <
+  DTO,
+  ReadOpts extends ReadResolverOpts<DTO> = CursorQueryArgsTypeOpts<DTO>,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   opts: ReadOpts = {} as ReadOpts,
-): ResolverClass<DTO, any, any, ReadResolverFromOpts<DTO, ReadOpts>> => Readable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, QS, ReadResolverFromOpts<DTO, ReadOpts, QS>> => Readable(DTOClass, opts)(BaseServiceResolver);

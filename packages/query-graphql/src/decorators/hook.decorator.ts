@@ -1,4 +1,4 @@
-import { Class, DeepPartial, getClassMetadata, classMetadataDecorator, MetaValue, Query } from '@nestjs-query/core';
+import { Class, getClassMetadata, classMetadataDecorator, MetaValue, Query } from '@nestjs-query/core';
 import {
   CreateManyInputType,
   CreateOneInputType,
@@ -39,16 +39,14 @@ export function getCreateManyHook<DTO>(DTOClass: Class<DTO>): MetaValue<CreateMa
 export type UpdateOneHook<DTO> = HookFunc<UpdateOneInputType<DTO>>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const BeforeUpdateOne = classMetadataDecorator<UpdateOneHook<any>>(BEFORE_UPDATE_ONE_KEY);
-export function getUpdateOneHook<DTO, U extends DeepPartial<DTO>>(DTOClass: Class<DTO>): MetaValue<UpdateOneHook<U>> {
+export function getUpdateOneHook<DTO, U>(DTOClass: Class<DTO>): MetaValue<UpdateOneHook<U>> {
   return getClassMetadata(DTOClass, BEFORE_UPDATE_ONE_KEY, true);
 }
 
-export type UpdateManyHook<DTO, U extends DeepPartial<DTO>> = HookFunc<UpdateManyInputType<DTO, U>>;
+export type UpdateManyHook<DTO, U> = HookFunc<UpdateManyInputType<DTO, U>>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const BeforeUpdateMany = classMetadataDecorator<UpdateManyHook<any, any>>(BEFORE_UPDATE_MANY_KEY);
-export function getUpdateManyHook<DTO, U extends DeepPartial<DTO>>(
-  DTOClass: Class<DTO>,
-): MetaValue<UpdateManyHook<DTO, U>> {
+export function getUpdateManyHook<DTO, U>(DTOClass: Class<DTO>): MetaValue<UpdateManyHook<DTO, U>> {
   return getClassMetadata(DTOClass, BEFORE_UPDATE_MANY_KEY, true);
 }
 

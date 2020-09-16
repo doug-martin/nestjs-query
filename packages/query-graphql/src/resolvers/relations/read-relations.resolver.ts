@@ -1,4 +1,4 @@
-import { Class, mergeQuery } from '@nestjs-query/core';
+import { Class, mergeQuery, QueryService } from '@nestjs-query/core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
@@ -15,7 +15,7 @@ export interface ReadRelationsResolverOpts extends RelationsOpts {
 }
 
 const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -49,7 +49,7 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
 };
 
 const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -106,7 +106,7 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
 };
 
 export const ReadRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: ReadRelationsResolverOpts) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -120,9 +120,12 @@ export const ReadRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: ReadRel
   return oneRelations.reduce((RB, a) => ReadOneRelationMixin(DTOClass, a)(RB), WithMany);
 };
 
-export const ReadRelationsResolver = <DTO>(
+export const ReadRelationsResolver = <
+  DTO,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   relations: ReadRelationsResolverOpts,
-): Class<ServiceResolver<DTO, unknown, unknown>> => {
+): Class<ServiceResolver<DTO, QS>> => {
   return ReadRelationsMixin(DTOClass, relations)(BaseServiceResolver);
 };

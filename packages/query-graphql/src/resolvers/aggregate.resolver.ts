@@ -1,4 +1,4 @@
-import { AggregateQuery, AggregateResponse, Class, mergeFilter } from '@nestjs-query/core';
+import { AggregateQuery, AggregateResponse, Class, mergeFilter, QueryService } from '@nestjs-query/core';
 import { Args, ArgsType, Resolver, Context } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { getDTONames } from '../common';
@@ -11,7 +11,8 @@ export type AggregateResolverOpts = {
   enabled?: boolean;
 } & ResolverMethodOpts;
 
-export interface AggregateResolver<DTO> extends ServiceResolver<DTO> {
+export interface AggregateResolver<DTO, QS extends QueryService<DTO, unknown, unknown>>
+  extends ServiceResolver<DTO, QS> {
   aggregate(filter: AggregateArgsType<DTO>, aggregateQuery: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>>;
 }
 
@@ -19,11 +20,10 @@ export interface AggregateResolver<DTO> extends ServiceResolver<DTO> {
  * @internal
  * Mixin to add `read` graphql endpoints.
  */
-export const Aggregateable = <DTO>(DTOClass: Class<DTO>, opts?: AggregateResolverOpts) => <
-  B extends Class<ServiceResolver<DTO>>
->(
-  BaseClass: B,
-): Class<AggregateResolver<DTO>> & B => {
+export const Aggregateable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
+  DTOClass: Class<DTO>,
+  opts?: AggregateResolverOpts,
+) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<AggregateResolver<DTO, QS>> & B => {
   const { baseNameLower } = getDTONames(DTOClass);
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
   const queryName = `${baseNameLower}Aggregate`;
@@ -47,7 +47,10 @@ export const Aggregateable = <DTO>(DTOClass: Class<DTO>, opts?: AggregateResolve
   return AggregateResolverBase;
 };
 
-export const AggregateResolver = <DTO>(
+export const AggregateResolver = <
+  DTO,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   opts?: AggregateResolverOpts,
-): ResolverClass<DTO, AggregateResolver<DTO>> => Aggregateable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, QS, AggregateResolver<DTO, QS>> => Aggregateable(DTOClass, opts)(BaseServiceResolver);

@@ -8,7 +8,7 @@ export class QueryRelationsLoader<DTO, Relation>
   implements NestjsQueryDataloader<DTO, QueryRelationsArgs<DTO, Relation>, Relation[] | Error> {
   constructor(readonly RelationDTO: Class<Relation>, readonly relationName: string) {}
 
-  createLoader(service: QueryService<DTO>) {
+  createLoader(service: QueryService<DTO, unknown, unknown>) {
     return async (queryArgs: ReadonlyArray<QueryRelationsArgs<DTO, Relation>>): Promise<(Relation[] | Error)[]> => {
       // group
       const queryMap = this.groupQueries(queryArgs);
@@ -17,7 +17,7 @@ export class QueryRelationsLoader<DTO, Relation>
   }
 
   private async loadResults(
-    service: QueryService<DTO>,
+    service: QueryService<DTO, unknown, unknown>,
     queryRelationsMap: QueryRelationsMap<DTO, Relation>,
   ): Promise<Relation[][]> {
     const results: Relation[][] = [];

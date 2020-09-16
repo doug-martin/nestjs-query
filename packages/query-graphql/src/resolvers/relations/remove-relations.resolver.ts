@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class, QueryService } from '@nestjs-query/core';
 import { Resolver, ArgsType, Args, Context } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverMutation } from '../../decorators';
@@ -9,7 +9,7 @@ import { flattenRelations, getModifyRelationOptions, removeRelationOpts } from '
 import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -40,7 +40,7 @@ const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
 };
 
 const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -71,7 +71,7 @@ const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation:
 };
 
 export const RemoveRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: RelationsOpts) => <
-  B extends Class<ServiceResolver<DTO, unknown, unknown>>
+  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
   Base: B,
 ): B => {
@@ -82,9 +82,12 @@ export const RemoveRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: Relat
   return oneRelations.reduce((RB, a) => RemoveOneRelationMixin(DTOClass, a)(RB), WithMany);
 };
 
-export const RemoveRelationsResolver = <DTO>(
+export const RemoveRelationsResolver = <
+  DTO,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   relations: RelationsOpts,
-): Class<ServiceResolver<DTO, unknown, unknown>> => {
+): Class<ServiceResolver<DTO, QS>> => {
   return RemoveRelationsMixin(DTOClass, relations)(BaseServiceResolver);
 };
