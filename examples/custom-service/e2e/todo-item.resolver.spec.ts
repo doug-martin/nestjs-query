@@ -4,11 +4,9 @@ import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
-import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
-import { TagDTO } from '../src/tag/dto/tag.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
+import { edgeNodes, pageInfoField, todoItemFields } from './graphql-fragments';
 
 describe('TodoItemResolver (custom-service - e2e)', () => {
   let app: INestApplication;
@@ -74,66 +72,6 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
           data: {
             todoItem: null,
           },
-        });
-    });
-
-    it(`should return subTasks as a connection`, () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `{
-          todoItem(id: 1) {
-            subTasks(sorting: { field: id, direction: ASC }) {
-              ${pageInfoField}
-              ${edgeNodes(subTaskFields)}
-            }
-          }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
-          expect(edges).toHaveLength(3);
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
-        });
-    });
-
-    it(`should return tags as a connection`, () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `{
-          todoItem(id: 1) {
-            tags(sorting: [{ field: id, direction: ASC }]) {
-              ${pageInfoField}
-              ${edgeNodes(tagFields)}
-            }
-          }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.todoItem.tags;
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(edges).toHaveLength(2);
-
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
         });
     });
   });
@@ -355,7 +293,7 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
+          expect(JSON.stringify(body.errors[0])).toContain('name must be shorter than or equal to 20 characters');
         });
     });
   });
@@ -413,7 +351,7 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
+          expect(JSON.stringify(body.errors[0])).toContain('name must be shorter than or equal to 20 characters');
         });
     });
   });
@@ -701,123 +639,6 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
-  });
-
-  describe('addSubTasksToTodoItem', () => {
-    it('allow adding subTasks to a todoItem', () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `mutation {
-            addSubTasksToTodoItem(
-              input: {
-                id: 1,
-                relationIds: ["4", "5", "6"]
-              }
-            ) {
-              id
-              title
-              subTasks {
-                ${pageInfoField}
-                ${edgeNodes(subTaskFields)}
-              }
-            }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
-          expect(body.data.addSubTasksToTodoItem.id).toBe('1');
-          expect(edges).toHaveLength(6);
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
-        });
-    });
-  });
-
-  describe('addTagsToTodoItem', () => {
-    it('allow adding subTasks to a todoItem', () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `mutation {
-            addTagsToTodoItem(
-              input: {
-                id: 1,
-                relationIds: ["3", "4", "5"]
-              }
-            ) {
-              id
-              title
-              tags(sorting: [{ field: id, direction: ASC }]) {
-                ${pageInfoField}
-                ${edgeNodes(tagFields)}
-              }
-            }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
-          expect(body.data.addTagsToTodoItem.id).toBe('1');
-          expect(edges).toHaveLength(5);
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
-        });
-    });
-  });
-
-  describe('removeTagsFromTodoItem', () => {
-    it('allow adding subTasks to a todoItem', () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `mutation {
-            removeTagsFromTodoItem(
-              input: {
-                id: 1,
-                relationIds: ["3", "4", "5"]
-              }
-            ) {
-              id
-              title
-              tags(sorting: [{ field: id, direction: ASC }]) {
-                ${pageInfoField}
-                ${edgeNodes(tagFields)}
-              }
-            }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
-          expect(body.data.removeTagsFromTodoItem.id).toBe('1');
-          expect(edges).toHaveLength(2);
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
         });
     });
   });
