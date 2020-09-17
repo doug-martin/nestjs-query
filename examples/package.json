@@ -39,7 +39,7 @@
     "rxjs": "6.6.3",
     "sequelize": "5.22.3",
     "sequelize-typescript": "1.1.0",
-    "typeorm": "0.2.25",
+    "typeorm": "0.2.26",
     "typeorm-seeding": "1.6.1"
   },
   "devDependencies": {
