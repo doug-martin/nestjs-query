@@ -252,7 +252,7 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
           query: `mutation {
             createOneTodoItem(
               input: {
-                todoItem: { name: "Test Todo", completed: false }
+                todoItem: { name: "Test Todo", isCompleted: false }
               }
             ) {
               id
@@ -281,7 +281,7 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
           query: `mutation {
             createOneTodoItem(
               input: {
-                todoItem: { name: "Test Todo with a too long title!", completed: false }
+                todoItem: { name: "Test Todo with a too long title!", isCompleted: false }
               }
             ) {
               id
@@ -309,8 +309,8 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
             createManyTodoItems(
               input: {
                 todoItems: [
-                  { name: "Many Test Todo 1", completed: false },
-                  { name: "Many Test Todo 2", completed: true }
+                  { name: "Many Test Todo 1", isCompleted: false },
+                  { name: "Many Test Todo 2", isCompleted: true }
                 ]
               }
             ) {
@@ -339,7 +339,7 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
           query: `mutation {
             createManyTodoItems(
               input: {
-                todoItems: [{ name: "Test Todo With A Really Long Title", completed: false }]
+                todoItems: [{ name: "Test Todo With A Really Long Title", isCompleted: false }]
               }
             ) {
               id

@@ -4,6 +4,7 @@ import {
   AggregateQuery,
   AggregateResponse,
   AssemblerQueryService,
+  DeepPartial,
   Query,
   QueryService,
   transformAggregateQuery,
@@ -53,6 +54,14 @@ describe('AssemblerQueryService', () => {
       return transformAggregateResponse(aggregate, {
         bar: 'foo',
       });
+    }
+
+    convertToCreateEntity(create: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+      return { bar: create.foo };
+    }
+
+    convertToUpdateEntity(update: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+      return { bar: update.foo };
     }
   }
 

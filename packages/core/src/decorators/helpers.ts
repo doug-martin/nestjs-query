@@ -6,7 +6,7 @@ export function getQueryServiceToken<DTO>(DTOClass: Class<DTO>): string {
 }
 
 export function getAssemblerQueryServiceToken<DTO, Entity = unknown>(
-  AssemblerClass: Class<Assembler<DTO, Entity>>,
+  AssemblerClass: Class<Assembler<DTO, Entity, unknown, unknown, unknown, unknown>>,
 ): string {
   return `${AssemblerClass.name}QueryService`;
 }

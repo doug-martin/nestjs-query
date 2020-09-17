@@ -14,6 +14,7 @@ The only time you need to define an assembler is when the DTO and Entity are dif
 
 * Additional computed fields and you do not want to include the business logic in your DTO definition.
 * Different field names because of poorly named columns in the database or to make a DB change passive to the end user.
+* You need to transform the create or update DTO before being passed to your persistence QueryService
 
 ## Why?
 
@@ -42,7 +43,7 @@ The assembler provides a single, testable, place to provide a translation betwee
 
 The resolvers concern is translating graphql requests into the specified DTO.
 
-The services concern is accepting and returning a DTO based contract. when using an assembler to translate between the DTO and underlying entities.
+The services concern is accepting and returning a DTO based contract. Then using an assembler to translate between the DTO and underlying entities.
 
 If you follow this pattern you **could** use the same service with other transports (rest, microservices, etc) as long as the request can be translated into a DTO.
 
@@ -206,6 +207,20 @@ export class UserAssembler extends AbstractAssembler<UserDTO, UserEntity> {
       email: 'emailAddress'
     });
   }
+
+  convertToCreateEntity({firstName, lastName}: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+    return {
+      first: firstName,
+      last: lastName,
+    };
+  }
+
+  convertToUpdateEntity({firstName, lastName}: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+    return {
+      first: firstName,
+      last: lastName,
+    };
+  }
 }
 
 ```
@@ -307,6 +322,34 @@ convertAggregateResponse(aggregate: AggregateResponse<TestEntity>): AggregateRes
     last: 'lastName',
     email: 'emailAddress'
   });
+}
+```
+
+### Converting Create DTO
+
+The `convertToCreateEntity` is used to convert an incoming create DTO to the appropriate create entity, in this case
+partial.
+
+```ts
+convertToCreateEntity({firstName, lastName}: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+  return {
+    first: firstName,
+    last: lastName,
+  };
+}
+```
+
+### Converting Update DTO
+
+The `convertToUpdateEntity` is used to convert an incoming update DTO to the appropriate update entity, in this case a
+partial.
+
+```ts
+convertToUpdateEntity({firstName, lastName}: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+  return {
+    first: firstName,
+    last: lastName,
+  };
 }
 ```
 

@@ -10,5 +10,5 @@ export class TodoItemInputDTO {
 
   @IsBoolean()
   @Field()
-  completed!: boolean;
+  isCompleted!: boolean;
 }

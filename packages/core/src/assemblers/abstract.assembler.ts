@@ -1,4 +1,4 @@
-import { Class } from '../common';
+import { Class, DeepPartial } from '../common';
 import { AggregateQuery, Query, AggregateResponse } from '../interfaces';
 import { Assembler, getAssemblerClasses } from './assembler';
 
@@ -9,7 +9,8 @@ import { Assembler, getAssemblerClasses } from './assembler';
  * * convertQuery
  *
  */
-export abstract class AbstractAssembler<DTO, Entity> implements Assembler<DTO, Entity> {
+export abstract class AbstractAssembler<DTO, Entity, C = DeepPartial<DTO>, CE = DeepPartial<Entity>, U = C, UE = CE>
+  implements Assembler<DTO, Entity, C, CE, U, UE> {
   readonly DTOClass: Class<DTO>;
 
   readonly EntityClass: Class<Entity>;
@@ -19,7 +20,7 @@ export abstract class AbstractAssembler<DTO, Entity> implements Assembler<DTO, E
    * @param EntityClass - Optional class definition for the entity. If not provided it will be looked up from the \@Assembler annotation.
    */
   constructor(DTOClass?: Class<DTO>, EntityClass?: Class<Entity>) {
-    const classes = getAssemblerClasses(this.constructor as Class<Assembler<DTO, Entity>>);
+    const classes = getAssemblerClasses(this.constructor as Class<Assembler<DTO, Entity, C, CE, U, UE>>);
     const DTOClas = DTOClass ?? classes?.DTOClass;
     const EntityClas = EntityClass ?? classes?.EntityClass;
     if (!DTOClas || !EntityClas) {
@@ -42,12 +43,20 @@ export abstract class AbstractAssembler<DTO, Entity> implements Assembler<DTO, E
 
   abstract convertAggregateResponse(aggregate: AggregateResponse<Entity>): AggregateResponse<DTO>;
 
+  abstract convertToCreateEntity(create: C): CE;
+
+  abstract convertToUpdateEntity(update: U): UE;
+
   convertToDTOs(entities: Entity[]): DTO[] {
     return entities.map((e) => this.convertToDTO(e));
   }
 
   convertToEntities(dtos: DTO[]): Entity[] {
     return dtos.map((dto) => this.convertToEntity(dto));
+  }
+
+  convertToCreateEntities(createDtos: C[]): CE[] {
+    return createDtos.map((c) => this.convertToCreateEntity(c));
   }
 
   async convertAsyncToDTO(entity: Promise<Entity>): Promise<DTO> {

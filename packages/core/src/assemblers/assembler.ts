@@ -1,8 +1,15 @@
-import { Class, MapReflector, MetaValue, ValueReflector } from '../common';
+import { Class, DeepPartial, MapReflector, MetaValue, ValueReflector } from '../common';
 import { AggregateQuery, AggregateResponse, Query } from '../interfaces';
 import { ASSEMBLER_CLASSES_KEY, ASSEMBLER_KEY } from './constants';
 
-export interface Assembler<DTO, Entity> {
+export interface Assembler<
+  DTO,
+  Entity,
+  CreateDTO = DeepPartial<DTO>,
+  CreateEntity = DeepPartial<Entity>,
+  UpdateDTO = CreateDTO,
+  UpdateEntity = CreateEntity
+> {
   /**
    * Convert an entity to a DTO
    * @param entity - the entity to convert
@@ -32,6 +39,18 @@ export interface Assembler<DTO, Entity> {
    * @param aggregate - the aggregate query to convert.
    */
   convertAggregateResponse(aggregate: AggregateResponse<Entity>): AggregateResponse<DTO>;
+
+  /**
+   * Convert a create dto input to the equivalent create entity type
+   * @param createDTO
+   */
+  convertToCreateEntity(createDTO: CreateDTO): CreateEntity;
+
+  /**
+   * Convert a update dto input to the equivalent update entity type
+   * @param createDTO
+   */
+  convertToUpdateEntity(createDTO: UpdateDTO): UpdateEntity;
 
   /**
    * Convert an array of entities to a an of DTOs
@@ -66,6 +85,12 @@ export interface Assembler<DTO, Entity> {
    * @param dtos - the promise that should resolve with the dtos.
    */
   convertAsyncToEntities(dtos: Promise<DTO[]>): Promise<Entity[]>;
+
+  /**
+   * Convert an array of create DTOs to an array of create entities
+   * @param createDtos
+   */
+  convertToCreateEntities(createDtos: CreateDTO[]): CreateEntity[];
 }
 
 const assemblerReflector = new ValueReflector(ASSEMBLER_CLASSES_KEY);
@@ -81,8 +106,15 @@ export interface AssemblerClasses<DTO, Entity> {
  * @param DTOClass - the DTO class.
  * @param EntityClass - The entity class.
  */
-export function Assembler<DTO, Entity>(DTOClass: Class<DTO>, EntityClass: Class<Entity>) {
-  return <Cls extends Class<Assembler<DTO, Entity>>>(cls: Cls): Cls | void => {
+export function Assembler<
+  DTO,
+  Entity,
+  C = DeepPartial<DTO>,
+  CE = DeepPartial<Entity>,
+  U = DeepPartial<DTO>,
+  UE = DeepPartial<Entity>
+>(DTOClass: Class<DTO>, EntityClass: Class<Entity>) {
+  return <Cls extends Class<Assembler<DTO, Entity, C, CE, U, UE>>>(cls: Cls): Cls | void => {
     if (reflector.has(DTOClass, EntityClass)) {
       throw new Error(`Assembler already registered for ${DTOClass.name} ${EntityClass.name}`);
     }
@@ -92,15 +124,15 @@ export function Assembler<DTO, Entity>(DTOClass: Class<DTO>, EntityClass: Class<
   };
 }
 
-export function getAssembler<DTO, Entity>(
+export function getAssembler<DTO, Entity, C, CE, U, UE>(
   DTOClass: Class<DTO>,
   EntityClass: Class<Entity>,
-): MetaValue<Class<Assembler<DTO, Entity>>> {
+): MetaValue<Class<Assembler<DTO, Entity, C, CE, U, UE>>> {
   return reflector.get(DTOClass, EntityClass);
 }
 
-export function getAssemblerClasses<DTO, Entity>(
-  AssemblerClass: Class<Assembler<DTO, Entity>>,
+export function getAssemblerClasses<DTO, Entity, C, CE, U, UE>(
+  AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>,
 ): MetaValue<AssemblerClasses<DTO, Entity>> {
   return assemblerReflector.get(AssemblerClass);
 }
