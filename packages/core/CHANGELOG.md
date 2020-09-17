@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.20.0](https://github.com/doug-martin/nestjs-query/compare/v0.19.4...v0.20.0) (2020-09-17)
+
+
+### Features
+
+* **core:** Update assemblers to allow transforming create/update dtos ([5085d11](https://github.com/doug-martin/nestjs-query/commit/5085d1193a84396c9016821347c04f0e15eb04da))
+* **core:** Update query service decorator to have correct generics ([74dc618](https://github.com/doug-martin/nestjs-query/commit/74dc618b61d1ce5575843accf5ea01066020f073))
+
+
+
+
+
 ## [0.19.4](https://github.com/doug-martin/nestjs-query/compare/v0.19.3...v0.19.4) (2020-09-15)
 
 

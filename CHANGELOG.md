@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.20.0](https://github.com/doug-martin/nestjs-query/compare/v0.19.4...v0.20.0) (2020-09-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.64 ([ea0a202](https://github.com/doug-martin/nestjs-query/commit/ea0a202fa8834faf319471143188a1bc46d04a53))
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.64 ([3d3dd96](https://github.com/doug-martin/nestjs-query/commit/3d3dd965350669a6e38fe1a600c08ed0f858c6a7))
+
+
+### Features
+
+* **core:** Update assemblers to allow transforming create/update dtos ([5085d11](https://github.com/doug-martin/nestjs-query/commit/5085d1193a84396c9016821347c04f0e15eb04da))
+* **core:** Update query service decorator to have correct generics ([74dc618](https://github.com/doug-martin/nestjs-query/commit/74dc618b61d1ce5575843accf5ea01066020f073))
+
+
+
+
+
 ## [0.19.4](https://github.com/doug-martin/nestjs-query/compare/v0.19.3...v0.19.4) (2020-09-15)
 
 
