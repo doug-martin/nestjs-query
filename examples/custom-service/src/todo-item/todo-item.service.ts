@@ -17,12 +17,12 @@ export class TodoItemService extends NoOpQueryService<TodoItemDTO, TodoItemInput
     super();
   }
 
-  createOne({ name, ...item }: TodoItemInputDTO): Promise<TodoItemDTO> {
-    return this.queryService.createOne({ title: name, ...item });
+  createOne({ name: title, isCompleted: completed }: TodoItemInputDTO): Promise<TodoItemDTO> {
+    return this.queryService.createOne({ title, completed });
   }
 
   createMany(items: TodoItemInputDTO[]): Promise<TodoItemDTO[]> {
-    const newItems = items.map(({ name: title, ...item }) => ({ title, ...item }));
+    const newItems = items.map(({ name: title, isCompleted: completed }) => ({ title, completed }));
     return this.queryService.createMany(newItems);
   }
 

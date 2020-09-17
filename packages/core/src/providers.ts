@@ -1,11 +1,13 @@
 import { Provider } from '@nestjs/common';
 import { Assembler, getAssemblerClasses } from './assemblers';
-import { Class, DeepPartial } from './common';
+import { Class } from './common';
 import { getQueryServiceToken } from './decorators';
 import { getAssemblerQueryServiceToken } from './decorators/helpers';
 import { AssemblerQueryService, QueryService } from './services';
 
-function createServiceProvider<DTO, Entity>(AssemblerClass: Class<Assembler<DTO, Entity>>): Provider {
+function createServiceProvider<DTO, Entity, C, CE, U, UE>(
+  AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>,
+): Provider {
   const classes = getAssemblerClasses(AssemblerClass);
   if (!classes) {
     throw new Error(
@@ -15,16 +17,15 @@ function createServiceProvider<DTO, Entity>(AssemblerClass: Class<Assembler<DTO,
   const { EntityClass } = classes;
   return {
     provide: getAssemblerQueryServiceToken(AssemblerClass),
-    useFactory(
-      assembler: Assembler<DTO, Entity>,
-      entityService: QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>,
-    ) {
+    useFactory(assembler: Assembler<DTO, Entity, C, CE, U, UE>, entityService: QueryService<Entity, CE, UE>) {
       return new AssemblerQueryService(assembler, entityService);
     },
     inject: [AssemblerClass, getQueryServiceToken(EntityClass)],
   };
 }
 
-export const createServices = (opts: Class<Assembler<unknown, unknown>>[]): Provider[] => {
+export const createServices = (
+  opts: Class<Assembler<unknown, unknown, unknown, unknown, unknown, unknown>>[],
+): Provider[] => {
   return opts.map((opt) => createServiceProvider(opt));
 };

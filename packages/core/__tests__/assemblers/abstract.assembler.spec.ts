@@ -7,6 +7,7 @@ import {
   AggregateResponse,
   transformAggregateQuery,
   transformAggregateResponse,
+  DeepPartial,
 } from '../../src';
 
 describe('ClassTransformerAssembler', () => {
@@ -24,6 +25,20 @@ describe('ClassTransformerAssembler', () => {
 
   @Assembler(TestDTO, TestEntity)
   class TestAssembler extends AbstractAssembler<TestDTO, TestEntity> {
+    convertToCreateEntity(create: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+      return {
+        first: create.firstName,
+        last: create.lastName,
+      };
+    }
+
+    convertToUpdateEntity(update: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+      return {
+        first: update.firstName,
+        last: update.lastName,
+      };
+    }
+
     convertToDTO(entity: TestEntity): TestDTO {
       return {
         firstName: entity.first,

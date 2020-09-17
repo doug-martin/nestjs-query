@@ -12,13 +12,13 @@ The following methods are defined on the `QueryService`
   * find a record by its id.
 * `getById(id: string | number): Promise<DTO>`
   * get a record by its id or return a rejected promise with a NotFound error.
-* `createMany<C extends DeepPartial<DTO>>(items: C[]): Promise<DTO[]>`
+* `createMany(items: DeepPartial<DTO>[]): Promise<DTO[]>`
   * create multiple records.
-* `createOne<C extends DeepPartial<DTO>>(item: C): Promise<DTO>`
+* `createOne(item: DeepPartial<DTO>): Promise<DTO>`
   * create one record.
-* `updateMany<U extends DeepPartial<DTO>>(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse>`
+* `updateMany(update: DeepPartial<DTO>, filter: Filter<DTO>): Promise<UpdateManyResponse>`
   * update many records.
-* `updateOne<U extends DeepPartial<DTO>>(id: string | number, update: U): Promise<DTO>`
+* `updateOne(id: string | number, update: DeepPartial<DTO>): Promise<DTO>`
   * update a single record.
 * `deleteMany(filter: Filter<DTO>): Promise<DeleteManyResponse>`
   * delete multiple records.

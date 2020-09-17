@@ -17,15 +17,11 @@ import {
 } from '../interfaces';
 import { QueryService } from './query.service';
 
-export class AssemblerQueryService<
-  DTO,
-  Entity,
-  C extends DeepPartial<DTO> = DeepPartial<DTO>,
-  U extends DeepPartial<DTO> = DeepPartial<DTO>
-> implements QueryService<DTO, C, U> {
+export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepPartial<Entity>, U = C, UE = CE>
+  implements QueryService<DTO, C, U> {
   constructor(
-    readonly assembler: Assembler<DTO, Entity>,
-    readonly queryService: QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>,
+    readonly assembler: Assembler<DTO, Entity, C, CE, U, UE>,
+    readonly queryService: QueryService<Entity, CE, UE>,
   ) {}
 
   addRelations<Relation>(
@@ -41,12 +37,12 @@ export class AssemblerQueryService<
 
   createMany(items: C[]): Promise<DTO[]> {
     const { assembler } = this;
-    const converted = items.map((c) => assembler.convertToEntity((c as unknown) as DTO));
+    const converted = assembler.convertToCreateEntities(items);
     return this.assembler.convertAsyncToDTOs(this.queryService.createMany(converted));
   }
 
   createOne(item: C): Promise<DTO> {
-    const c = this.assembler.convertToEntity((item as unknown) as DTO);
+    const c = this.assembler.convertToCreateEntity(item);
     return this.assembler.convertAsyncToDTO(this.queryService.createOne(c));
   }
 
@@ -244,7 +240,7 @@ export class AssemblerQueryService<
 
   updateMany(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {
     return this.queryService.updateMany(
-      this.assembler.convertToEntity((update as unknown) as DTO),
+      this.assembler.convertToUpdateEntity(update),
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.assembler.convertQuery({ filter }).filter!,
     );
@@ -252,11 +248,7 @@ export class AssemblerQueryService<
 
   updateOne(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO> {
     return this.assembler.convertAsyncToDTO(
-      this.queryService.updateOne(
-        id,
-        this.assembler.convertToEntity((update as unknown) as DTO),
-        this.convertFilterable(opts),
-      ),
+      this.queryService.updateOne(id, this.assembler.convertToUpdateEntity(update), this.convertFilterable(opts)),
     );
   }
 
