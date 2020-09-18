@@ -12,6 +12,7 @@ export interface SubscriptionFilterInputType<DTO> {
  * Input abstract type for all subscription filters.
  * @param DTOClass - The DTO used to create a FilterType for the filter.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function SubscriptionFilterInputType<DTO>(DTOClass: Class<DTO>): Class<SubscriptionFilterInputType<DTO>> {
   const F = SubscriptionFilterType(DTOClass);
 

@@ -12,6 +12,7 @@ export interface StaticOffsetPagingType {
 }
 
 export type OffsetPagingType = Paging;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const OffsetPagingType = (): StaticOffsetPagingType => {
   if (graphQLPaging) {
     return graphQLPaging;

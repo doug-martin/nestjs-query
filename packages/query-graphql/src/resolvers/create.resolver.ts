@@ -196,6 +196,7 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
  * @typeparam DTO - The type of DTO that should be created.
  * @typeparam C - The create DTO type.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const CreateResolver = <
   DTO,
   C = DeepPartial<DTO>,

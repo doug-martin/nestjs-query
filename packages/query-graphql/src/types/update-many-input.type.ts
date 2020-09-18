@@ -14,6 +14,7 @@ export interface UpdateManyInputType<DTO, U> {
  * @param DTOClass - The DTO used to create a FilterType for the update.
  * @param UpdateType - The InputType to use for the update field.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function UpdateManyInputType<DTO, U>(
   DTOClass: Class<DTO>,
   UpdateType: Class<U>,

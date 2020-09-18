@@ -4,7 +4,7 @@ import { ASSEMBLER_DESERIALIZER_KEY } from './constants';
 const reflector = new ValueReflector(ASSEMBLER_DESERIALIZER_KEY);
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type AssemblerDeserializer<T> = (obj: object) => T;
-
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function AssemblerDeserializer<T>(deserializer: AssemblerDeserializer<T>) {
   return <Cls extends Class<T>>(cls: Cls): Cls | void => {
     if (reflector.isDefined(cls)) {

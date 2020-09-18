@@ -11,6 +11,7 @@ export type StaticArrayConnectionType<DTO> = StaticConnection<
 const reflector = new ValueReflector('nestjs-query:array-connection-type');
 
 export type ArrayConnectionType<DTO> = DTO[];
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function ArrayConnectionType<DTO>(TItemClass: Class<DTO>): StaticArrayConnectionType<DTO> {
   return reflector.memoize(TItemClass, () => {
     class AbstractConnection extends Array<DTO> {

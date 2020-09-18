@@ -164,7 +164,7 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
   }
   return DeleteResolverBase;
 };
-
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const DeleteResolver = <
   DTO,
   QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>

@@ -72,6 +72,7 @@ export interface CRUDResolver<
  * @param DTOClass - The DTO Class that the resolver is for. All methods will use types derived from this class.
  * @param opts - Options to customize the resolver.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const CRUDResolver = <
   DTO,
   C = DeepPartial<DTO>,

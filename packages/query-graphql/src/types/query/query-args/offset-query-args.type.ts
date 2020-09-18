@@ -11,6 +11,7 @@ import { SortType } from '../sorting.type';
 
 export type StaticOffsetQueryArgsType<DTO> = StaticQueryType<DTO, StaticOffsetPagingType>;
 export type OffsetQueryArgsType<DTO> = QueryType<DTO, OffsetPagingType>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function OffsetQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: QueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.OFFSET },

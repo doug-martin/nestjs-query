@@ -12,6 +12,7 @@ export interface DeleteManyInputType<T> {
  * The abstract input type or delete many endpoints.
  * @param DTOClass - The class the delete many input type is for. This will be used to create FilterType.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function DeleteManyInputType<DTO>(DTOClass: Class<DTO>): Class<DeleteManyInputType<DTO>> {
   const F = DeleteFilterType(DTOClass);
   @InputType({ isAbstract: true })

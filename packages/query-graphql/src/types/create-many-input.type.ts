@@ -12,6 +12,7 @@ export interface CreateManyInputType<C> {
  * @param fieldName - the name of field to be exposed in the graphql schema
  * @param InputClass - the InputType to be used.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function CreateManyInputType<C>(fieldName: string, InputClass: Class<C>): Class<CreateManyInputType<C>> {
   @InputType({ isAbstract: true })
   class CreateManyInput implements CreateManyInputType<C> {

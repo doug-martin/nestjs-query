@@ -26,6 +26,7 @@ export function ConnectionType<DTO>(
   DTOClass: Class<DTO>,
   opts?: CursorConnectionOptions,
 ): StaticCursorConnectionType<DTO>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function ConnectionType<DTO, QueryType extends StaticQueryArgsType<DTO>>(
   DTOClass: Class<DTO>,
   QueryArgsType?: QueryType | CursorConnectionOptions,

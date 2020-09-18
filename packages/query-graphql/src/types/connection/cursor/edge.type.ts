@@ -13,6 +13,7 @@ export interface EdgeType<DTO> {
 }
 
 const reflector = new ValueReflector('nestjs-query:edge-type');
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function EdgeType<DTO>(DTOClass: Class<DTO>): EdgeTypeConstructor<DTO> {
   return reflector.memoize(DTOClass, () => {
     const objName = getGraphqlObjectName(DTOClass, 'Unable to make EdgeType for class.');
