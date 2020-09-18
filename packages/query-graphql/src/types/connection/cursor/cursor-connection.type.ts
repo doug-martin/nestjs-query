@@ -40,6 +40,7 @@ function getOrCreateConnectionName<DTO>(DTOClass: Class<DTO>, opts: CursorConnec
   return `${objName}Connection`;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function CursorConnectionType<DTO>(
   TItemClass: Class<DTO>,
   opts: CursorConnectionOptions = {},

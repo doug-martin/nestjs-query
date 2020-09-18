@@ -12,6 +12,7 @@ let deleteOneInputType: Class<DeleteOneInputType> | null = null;
 /**
  * The input type for delete one endpoints.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function DeleteOneInputType(): Class<DeleteOneInputType> {
   if (deleteOneInputType) {
     return deleteOneInputType;

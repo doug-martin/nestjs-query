@@ -10,6 +10,7 @@ import { SortType } from '../sorting.type';
 
 export type StaticNoPagingQueryArgsType<DTO> = StaticQueryType<DTO, never>;
 export type NoPagingQueryArgsType<DTO> = QueryType<DTO, never>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function NoPagingQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: QueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.NONE },

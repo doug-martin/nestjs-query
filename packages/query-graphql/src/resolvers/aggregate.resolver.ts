@@ -46,7 +46,7 @@ export const Aggregateable = <DTO, QS extends QueryService<DTO, unknown, unknown
   }
   return AggregateResolverBase;
 };
-
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const AggregateResolver = <
   DTO,
   QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>

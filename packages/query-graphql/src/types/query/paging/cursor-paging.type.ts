@@ -19,7 +19,7 @@ export interface CursorPagingType extends Paging {
 
 /** @internal */
 let graphQLCursorPaging: StaticCursorPagingType | null = null;
-
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const CursorPagingType = (): StaticCursorPagingType => {
   if (graphQLCursorPaging) {
     return graphQLCursorPaging;

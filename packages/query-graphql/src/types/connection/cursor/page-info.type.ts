@@ -20,6 +20,7 @@ export interface PageInfoType {
 
 /** @internal */
 let pageInfoType: Class<PageInfoType> | null = null;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const PageInfoType = (): PageInfoTypeConstructor => {
   if (pageInfoType) {
     return pageInfoType;

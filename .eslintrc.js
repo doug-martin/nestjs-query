@@ -21,44 +21,6 @@ module.exports = {
   ],
   rules: {
     'prettier/prettier': 'error',
-    // todo remove this when upgrading airbnb-typescript
-    '@typescript-eslint/camelcase': 'off',
-    // todo remove this when upgrading airbnb-typescript
-    '@typescript-eslint/naming-convention': [
-      'error',
-      {
-        selector: 'default',
-        format: ['camelCase'],
-      },
-      {
-        selector: 'variable',
-        format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-      },
-      {
-        selector: 'enumMember',
-        format: ['UPPER_CASE'],
-      },
-      {
-        selector: 'parameter',
-        format: ['camelCase', 'PascalCase'],
-      },
-      {
-        selector: 'parameterProperty',
-        format: ['camelCase', 'PascalCase'],
-      },
-      {
-        selector: 'property',
-        format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-      },
-      {
-        selector: 'function',
-        format: ['camelCase', 'PascalCase'],
-      },
-      {
-        selector: 'typeLike',
-        format: ['PascalCase'],
-      },
-    ],
     // airbnb default is 1
     'max-classes-per-file': ['error', 5],
     // never allow default export
@@ -72,9 +34,9 @@ module.exports = {
     // airbnb default this doesnt work when using parameter decorators.
     '@typescript-eslint/no-useless-constructor': 'off',
 
-    // disable eslint no-shadow in favor of the typescript version
-    'no-shadow': 'off',
-    '@typescript-eslint/no-shadow': ['error'],
+    // override airbnb to allow class interface merging
+    "@typescript-eslint/no-redeclare": ["error", {ignoreDeclarationMerge: true}]
+
   },
   ignorePatterns: ['**/dist', '**/node_modules'],
   overrides: [

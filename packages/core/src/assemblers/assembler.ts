@@ -106,6 +106,7 @@ export interface AssemblerClasses<DTO, Entity> {
  * @param DTOClass - the DTO class.
  * @param EntityClass - The entity class.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function Assembler<
   DTO,
   Entity,

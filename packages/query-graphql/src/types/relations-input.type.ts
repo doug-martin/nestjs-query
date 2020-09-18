@@ -9,6 +9,7 @@ export interface RelationsInputType {
 
 /** @internal */
 let relationsInputType: Class<RelationsInputType> | null = null;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function RelationsInputType(): Class<RelationsInputType> {
   if (relationsInputType) {
     return relationsInputType;

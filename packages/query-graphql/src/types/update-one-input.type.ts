@@ -12,6 +12,7 @@ export interface UpdateOneInputType<U> {
  * The abstract input type for update one endpoints.
  * @param UpdateType - The InputType to use for the update field.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function UpdateOneInputType<U>(UpdateType: Class<U>): Class<UpdateOneInputType<U>> {
   @InputType({ isAbstract: true })
   class UpdateOneInput implements UpdateOneInputType<U> {

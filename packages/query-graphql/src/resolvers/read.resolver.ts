@@ -94,7 +94,7 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
   }
   return ReadResolverBase as Class<ReadResolverFromOpts<DTO, ReadOpts, QS>> & B;
 };
-
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const ReadResolver = <
   DTO,
   ReadOpts extends ReadResolverOpts<DTO> = CursorQueryArgsTypeOpts<DTO>,

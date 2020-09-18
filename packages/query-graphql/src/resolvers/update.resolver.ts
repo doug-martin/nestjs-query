@@ -212,7 +212,7 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
 
   return UpdateResolverBase;
 };
-
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const UpdateResolver = <
   DTO,
   U = DeepPartial<DTO>,

@@ -262,7 +262,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
  * QueryService decorator to register with nestjs-query
  * @param DTOClass - the DTO class that the QueryService is used for.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-redeclare,@typescript-eslint/no-unused-vars -- intentional
 export function QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>>(DTOClass: Class<DTO>) {
   return <Cls extends Class<QueryService<DTO, C, U>>>(cls: Cls): Cls | void => {
     return Injectable()(cls);

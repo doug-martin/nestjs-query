@@ -34,6 +34,7 @@ export function QueryArgsType<DTO>(
   opts: NoPagingQueryArgsTypeOpts<DTO>,
 ): StaticNoPagingQueryArgsType<DTO>;
 export function QueryArgsType<DTO>(DTOClass: Class<DTO>, opts?: QueryArgsTypeOpts<DTO>): StaticCursorQueryArgsType<DTO>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: QueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR },

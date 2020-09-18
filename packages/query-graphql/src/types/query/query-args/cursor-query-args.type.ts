@@ -11,6 +11,7 @@ import { SortType } from '../sorting.type';
 
 export type StaticCursorQueryArgsType<DTO> = StaticQueryType<DTO, StaticCursorPagingType>;
 export type CursorQueryArgsType<DTO> = QueryType<DTO, CursorPagingType>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function CursorQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: QueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR },
