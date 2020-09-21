@@ -30,7 +30,7 @@
     "graphql": "15.3.0",
     "graphql-query-complexity": "0.7.0",
     "graphql-tools": "6.2.3",
-    "mysql2": "2.2.2",
+    "mysql2": "2.2.3",
     "passport": "0.4.1",
     "passport-jwt": "4.0.0",
     "passport-local": "1.0.0",
