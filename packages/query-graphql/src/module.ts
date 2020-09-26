@@ -10,7 +10,7 @@ export interface NestjsQueryGraphqlModuleOpts {
   imports: Array<Class<any> | DynamicModule | Promise<DynamicModule> | ForwardReference>;
   services?: Provider[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  assemblers?: Class<Assembler<any, any>>[];
+  assemblers?: Class<Assembler<any, any, any, any, any, any>>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resolvers: AutoResolverOpts<any, any, unknown, unknown, ReadResolverOpts<any>, PagingStrategies>[];
   pubSub?: Provider<GraphQLPubSub>;
