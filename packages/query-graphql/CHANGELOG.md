@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.1](https://github.com/doug-martin/nestjs-query/compare/v0.20.0...v0.20.1) (2020-09-28)
+
+
+### Bug Fixes
+
+* **graphql:** Fix assemblers type for module passthrough ([713c41c](https://github.com/doug-martin/nestjs-query/commit/713c41cd770068f2242a380593e4a22601d6560b))
+
+
+
+
+
 # [0.20.0](https://github.com/doug-martin/nestjs-query/compare/v0.19.4...v0.20.0) (2020-09-17)
 
 

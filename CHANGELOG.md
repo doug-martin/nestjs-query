@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.1](https://github.com/doug-martin/nestjs-query/compare/v0.20.0...v0.20.1) (2020-09-28)
+
+
+### Bug Fixes
+
+* **deps:** update dependency apollo-server-express to v2.18.0 ([ca28fda](https://github.com/doug-martin/nestjs-query/commit/ca28fdaca52d8a16da917d2584665361726f8aa1))
+* **deps:** update dependency apollo-server-express to v2.18.1 ([b5f9378](https://github.com/doug-martin/nestjs-query/commit/b5f93780752aace1c70745c2750b6596715cca7a))
+* **deps:** update dependency apollo-server-plugin-base to v0.10.1 ([735032a](https://github.com/doug-martin/nestjs-query/commit/735032ab70f04840a9011d604db791fb0299767a))
+* **deps:** update dependency graphql-tools to v6.2.3 ([642c11f](https://github.com/doug-martin/nestjs-query/commit/642c11f8b5f720b60557def07d498132f2e55748))
+* **deps:** update dependency mysql2 to v2.2.1 ([5159077](https://github.com/doug-martin/nestjs-query/commit/5159077ad56d2f5ba3ca4d1f1d8190ee83be78a5))
+* **deps:** update dependency mysql2 to v2.2.2 ([f9235b2](https://github.com/doug-martin/nestjs-query/commit/f9235b249abb5155c3ebce0858173614b1415cad))
+* **deps:** update dependency mysql2 to v2.2.3 ([a2a5afc](https://github.com/doug-martin/nestjs-query/commit/a2a5afc6869de5767f2712b434f1babfadaee77f))
+* **deps:** update dependency mysql2 to v2.2.5 ([b66e6e6](https://github.com/doug-martin/nestjs-query/commit/b66e6e6f15cb8440b4e837b6f04523fc0d9ec340))
+* **graphql:** Fix assemblers type for module passthrough ([713c41c](https://github.com/doug-martin/nestjs-query/commit/713c41cd770068f2242a380593e4a22601d6560b))
+
+
+
+
+
 # [0.20.0](https://github.com/doug-martin/nestjs-query/compare/v0.19.4...v0.20.0) (2020-09-17)
 
 
