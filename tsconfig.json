@@ -6,7 +6,8 @@
             "@nestjs-query/core": ["packages/core/src"],
             "@nestjs-query/query-graphql": ["packages/query-graphql/src"],
             "@nestjs-query/query-typeorm": ["packages/query-typeorm/src"],
-            "@nestjs-query/query-sequelize": ["packages/query-sequelize/src"]
+            "@nestjs-query/query-sequelize": ["packages/query-sequelize/src"],
+            "@nestjs-query/query-mongoose": ["packages/query-mongoose/src"]
         }
     },
     "references": [
@@ -14,6 +15,7 @@
         {"path": "./packages/query-graphql"},
         {"path": "./packages/query-typeorm"},
         {"path": "./packages/query-sequelize"},
+        {"path": "./packages/query-mongoose-"},
         {"path": "./examples"}
     ],
     "files": []

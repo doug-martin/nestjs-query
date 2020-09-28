@@ -1,7 +1,7 @@
 import { Assembler } from '../assemblers';
 import { Class } from '../common';
 
-export function getQueryServiceToken<DTO>(DTOClass: Class<DTO>): string {
+export function getQueryServiceToken(DTOClass: { name: string }): string {
   return `${DTOClass.name}QueryService`;
 }
 
