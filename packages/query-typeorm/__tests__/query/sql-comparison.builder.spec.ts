@@ -1,9 +1,20 @@
 import { CommonFieldComparisonBetweenType } from '@nestjs-query/core';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { SQLComparisonBuilder } from '../../src/query';
+import { randomString } from '../../src/common';
+
+jest.mock('../../src/common/randomString', () => ({ randomString: jest.fn() }));
 
 describe('SQLComparisonBuilder', (): void => {
   const createSQLComparisonBuilder = () => new SQLComparisonBuilder<TestEntity>();
+
+  beforeEach(() => {
+    let index = -1;
+    (randomString as jest.Mock<any, any>).mockImplementation(() => {
+      index += 1;
+      return index.toString();
+    });
+  });
 
   it('should throw an error for an invalid comparison type', () => {
     // @ts-ignore

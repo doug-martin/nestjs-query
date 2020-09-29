@@ -1,6 +1,8 @@
 import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
 import { ObjectLiteral } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+
+import { randomString } from '../common';
+
 /**
  * @internal
  */
@@ -38,7 +40,7 @@ export class SQLComparisonBuilder<Entity> {
   constructor(readonly comparisonMap: Record<string, string> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
 
   private get paramName(): string {
-    const id = uuid().replace('-', '');
+    const id = randomString();
     const param = `param${id}`;
     return param;
   }
