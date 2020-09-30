@@ -77,11 +77,14 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     }
     const { query: qf, service } = serviceRelation;
     if (Array.isArray(dto)) {
-      return dto.reduce(async (mapPromise, d) => {
-        const map = await mapPromise;
-        const relations = await service.query(mergeQuery(query, qf(d)));
-        return map.set(d, relations);
-      }, Promise.resolve(new Map<DTO, Relation[]>()));
+      const map = new Map<DTO, Relation[]>();
+      await Promise.all(
+        dto.map(async (d) => {
+          const relations = await service.query(mergeQuery(query, qf(d)));
+          map.set(d, relations);
+        }),
+      );
+      return map;
     }
     return service.query(mergeQuery(query, qf(dto)));
   }
@@ -118,11 +121,14 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     }
     const { query: qf, service } = serviceRelation;
     if (Array.isArray(dto)) {
-      return dto.reduce(async (mapPromise, d) => {
-        const map = await mapPromise;
-        const relations = await service.aggregate(mergeQuery({ filter }, qf(d)).filter ?? {}, aggregate);
-        return map.set(d, relations);
-      }, Promise.resolve(new Map<DTO, AggregateResponse<Relation>>()));
+      const map = new Map<DTO, AggregateResponse<Relation>>();
+      await Promise.all(
+        dto.map(async (d) => {
+          const relations = await service.aggregate(mergeQuery({ filter }, qf(d)).filter ?? {}, aggregate);
+          map.set(d, relations);
+        }),
+      );
+      return map;
     }
     return service.aggregate(mergeQuery({ filter }, qf(dto)).filter ?? {}, aggregate);
   }
@@ -156,11 +162,14 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     }
     const { query: qf, service } = serviceRelation;
     if (Array.isArray(dto)) {
-      return dto.reduce(async (mapPromise, d) => {
-        const map = await mapPromise;
-        const relations = await service.count(mergeQuery({ filter }, qf(d)).filter || {});
-        return map.set(d, relations);
-      }, Promise.resolve(new Map<DTO, number>()));
+      const map = new Map<DTO, number>();
+      await Promise.all(
+        dto.map(async (d) => {
+          const count = await service.count(mergeQuery({ filter }, qf(d)).filter || {});
+          map.set(d, count);
+        }),
+      );
+      return map;
     }
     return service.count(mergeQuery({ filter }, qf(dto)).filter || {});
   }
@@ -208,11 +217,14 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     }
     const { query: qf, service } = serviceRelation;
     if (Array.isArray(dto)) {
-      return dto.reduce(async (mapPromise, d) => {
-        const map = await mapPromise;
-        const relation = await service.query(mergeQuery(qf(d), { paging: { limit: 1 }, filter: opts?.filter }));
-        return map.set(d, relation[0]);
-      }, Promise.resolve(new Map<DTO, Relation | undefined>()));
+      const map = new Map<DTO, Relation | undefined>();
+      await Promise.all(
+        dto.map(async (d) => {
+          const relation = await service.query(mergeQuery(qf(d), { paging: { limit: 1 }, filter: opts?.filter }));
+          map.set(d, relation[0]);
+        }),
+      );
+      return map;
     }
     return (await service.query(mergeQuery(qf(dto), { paging: { limit: 1 }, filter: opts?.filter })))[0];
   }
