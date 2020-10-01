@@ -74,6 +74,15 @@
         "tsConfigPath": "./tsconfig.json"
       }
     },
+    "mongoose": {
+      "type": "application",
+      "root": "mongoose",
+      "entryFile": "main",
+      "sourceRoot": "mongoose/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.json"
+      }
+    },
     "offset-paging": {
       "type": "application",
       "root": "offset-paging",

@@ -10,7 +10,7 @@ interface QueryExecutor {
   query(sql: string): Promise<unknown>;
 }
 
-const asyncLoop = async <T>(items: T[], fn: (t: T) => Promise<unknown>): Promise<void> => {
+export const asyncLoop = async <T>(items: T[], fn: (t: T) => Promise<unknown>): Promise<void> => {
   return items.reduce(async (prev, item) => {
     await prev;
     await fn(item);
