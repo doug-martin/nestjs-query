@@ -22,37 +22,7 @@ import {
 export abstract class ReferenceQueryService<Entity extends Document> {
   abstract readonly Model: MongooseModel<Entity>;
 
-  abstract getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity>;
-
-  abstract findById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity | undefined>;
-
-  async addRelations<Relation extends Document>(
-    relationName: string,
-    id: string,
-    relationIds: (string | number)[],
-    opts?: ModifyRelationOptions<Entity, Relation>,
-  ): Promise<Entity> {
-    this.checkForReference(relationName);
-    const referenceModel = this.getReferenceModel<Relation>(relationName);
-    const entity = await this.getById(id, opts);
-    const referenceQueryBuilder = this.getReferenceQueryBuilder<Relation>();
-    const refCount = await referenceModel.count(
-      referenceQueryBuilder.buildIdFilterQuery(relationIds, opts?.relationFilter),
-    );
-    if (relationIds.length !== refCount) {
-      throw new Error(`Unable to find all ${relationName} to add to ${this.Model.modelName}`);
-    }
-    if (this.isVirtualPath(relationName)) {
-      throw new Error(`AddRelations not supported for virtual relation ${relationName}`);
-    }
-    await entity
-      .updateOne({
-        $push: { [relationName]: { $each: relationIds } },
-      })
-      .exec();
-    // reload the document
-    return this.getById(id);
-  }
+  abstract getModelById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity>;
 
   aggregateRelations<Relation extends Document>(
     RelationClass: Class<Relation>,
@@ -77,7 +47,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     filter: Filter<Relation>,
     aggregateQuery: AggregateQuery<Relation>,
   ): Promise<AggregateResponse<Relation> | Map<Entity, AggregateResponse<Relation>>> {
-    this.checkForReference(relationName);
+    this.checkForReference('AggregateRelations', relationName);
     const relationModel = this.getReferenceModel(relationName);
     const referenceQueryBuilder = this.getReferenceQueryBuilder<Relation>();
     if (Array.isArray(dto)) {
@@ -118,7 +88,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     dto: Entity | Entity[],
     filter: Filter<Relation>,
   ): Promise<number | Map<Entity, number>> {
-    this.checkForReference(relationName);
+    this.checkForReference('CountRelations', relationName);
     if (Array.isArray(dto)) {
       return dto.reduce(async (mapPromise, entity) => {
         const map = await mapPromise;
@@ -153,7 +123,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     dto: Entity | Entity[],
     opts?: FindRelationOptions<Relation>,
   ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
-    this.checkForReference(relationName);
+    this.checkForReference('FindRelation', relationName);
     const referenceQueryBuilder = this.getReferenceQueryBuilder<Relation>();
     if (Array.isArray(dto)) {
       return dto.reduce(async (prev, curr) => {
@@ -162,19 +132,14 @@ export abstract class ReferenceQueryService<Entity extends Document> {
         return map.set(curr, ref);
       }, Promise.resolve(new Map<Entity, Relation | undefined>()));
     }
-    const foundEntity = await this.findById(dto._id ?? dto.id);
+    const foundEntity = await this.Model.findById(dto._id ?? dto.id);
     if (!foundEntity) {
       return undefined;
     }
     const filterQuery = referenceQueryBuilder.buildFilterQuery(opts?.filter);
-    const populated = await foundEntity
-      .populate({
-        path: relationName,
-        match: filterQuery,
-      })
-      .execPopulate();
+    const populated = await foundEntity.populate({ path: relationName, match: filterQuery }).execPopulate();
     const populatedRef: unknown = populated.get(relationName);
-    return populatedRef ? (populatedRef as Relation) : undefined;
+    return populatedRef ? this.convertRefToObject(populatedRef as Relation) : undefined;
   }
 
   queryRelations<Relation extends Document>(
@@ -195,7 +160,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     dto: Entity | Entity[],
     query: Query<Relation>,
   ): Promise<Relation[] | Map<Entity, Relation[]>> {
-    this.checkForReference(relationName);
+    this.checkForReference('QueryRelations', relationName);
     const referenceQueryBuilder = this.getReferenceQueryBuilder<Relation>();
     if (Array.isArray(dto)) {
       return dto.reduce(async (mapPromise, entity) => {
@@ -204,27 +169,30 @@ export abstract class ReferenceQueryService<Entity extends Document> {
         return map.set(entity, refs);
       }, Promise.resolve(new Map<Entity, Relation[]>()));
     }
-    const foundEntity = await this.findById(dto._id ?? dto.id);
+    const foundEntity = await this.Model.findById(dto._id ?? dto.id);
     if (!foundEntity) {
       return [];
     }
-    const { filterQuery, paging, sorting } = referenceQueryBuilder.buildQuery(query);
-    const populated = await foundEntity
-      .populate({
-        path: relationName,
-        match: filterQuery,
-        options: { limit: paging?.limit, skip: paging?.offset, sort: sorting },
-      })
-      .execPopulate();
-    return populated.get(relationName) as Relation[];
+    const { filterQuery, options } = referenceQueryBuilder.buildQuery(query);
+    const populated = await foundEntity.populate({ path: relationName, match: filterQuery, options }).execPopulate();
+    return this.convertRefsToObject(populated.get(relationName) as Relation[]);
   }
 
-  removeRelation(): Promise<Entity> {
-    throw new Error('Not implemented yet');
-  }
-
-  removeRelations(): Promise<Entity> {
-    throw new Error('Not implemented yet');
+  async addRelations<Relation extends Document>(
+    relationName: string,
+    id: string,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<Entity, Relation>,
+  ): Promise<Entity> {
+    this.checkForReference('AddRelations', relationName, false);
+    const entity = await this.getModelById(id, opts);
+    const refCount = await this.getRefCount(relationName, relationIds, opts?.relationFilter);
+    if (relationIds.length !== refCount) {
+      throw new Error(`Unable to find all ${relationName} to add to ${this.Model.modelName}`);
+    }
+    await entity.updateOne({ $push: { [relationName]: { $each: relationIds } } }).exec();
+    // reload the document
+    return this.getModelById(id);
   }
 
   async setRelation<Relation extends Document>(
@@ -233,33 +201,73 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationId: string | number,
     opts?: ModifyRelationOptions<Entity, Relation>,
   ): Promise<Entity> {
-    this.checkForReference(relationName);
-    const referenceModel = this.getReferenceModel<Relation>(relationName);
-    const entity = await this.getById(id, opts);
-    const referenceQueryBuilder = this.getReferenceQueryBuilder<Relation>();
-    const refCount = await referenceModel.count(
-      referenceQueryBuilder.buildIdFilterQuery([relationId], opts?.relationFilter),
-    );
+    this.checkForReference('SetRelation', relationName, false);
+    const entity = await this.getModelById(id, opts);
+    const refCount = await this.getRefCount(relationName, [relationId], opts?.relationFilter);
     if (refCount !== 1) {
       throw new Error(`Unable to find ${relationName} to set on ${this.Model.modelName}`);
     }
-    if (this.isVirtualPath(relationName)) {
-      throw new Error(`SetRelation not supported for virtual relation ${relationName}`);
+    await entity.updateOne({ [relationName]: relationId }).exec();
+    // reload the document
+    return this.getModelById(id);
+  }
+
+  async removeRelation<Relation extends Document>(
+    relationName: string,
+    id: string | number,
+    relationId: string | number,
+    opts?: ModifyRelationOptions<Entity, Relation>,
+  ): Promise<Entity> {
+    this.checkForReference('RemoveRelation', relationName, false);
+    const entity = await this.getModelById(id, opts);
+    const refCount = await this.getRefCount(relationName, [relationId], opts?.relationFilter);
+    if (refCount !== 1) {
+      throw new Error(`Unable to find ${relationName} to remove from ${this.Model.modelName}`);
     }
     await entity
       .updateOne({
-        [relationName]: relationId,
+        $unset: { [relationName]: relationId },
       })
       .exec();
     // reload the document
-    return this.getById(id);
+    return this.getModelById(id);
   }
 
-  private checkForReference(refName: string): void {
-    const found = this.isReferencePath(refName) || this.isVirtualPath(refName);
-    if (!found) {
-      throw new Error(`Unable to find reference ${refName} on ${this.Model.modelName}`);
+  async removeRelations<Relation extends Document>(
+    relationName: string,
+    id: string | number,
+    relationIds: string[] | number[],
+    opts?: ModifyRelationOptions<Entity, Relation>,
+  ): Promise<Entity> {
+    this.checkForReference('RemoveRelations', relationName, false);
+    const entity = await this.getModelById(id, opts);
+    const refCount = await this.getRefCount(relationName, relationIds, opts?.relationFilter);
+    if (relationIds.length !== refCount) {
+      throw new Error(`Unable to find all ${relationName} to remove from ${this.Model.modelName}`);
     }
+    if (this.isVirtualPath(relationName)) {
+      throw new Error(`RemoveRelations not supported for virtual relation ${relationName}`);
+    }
+    await entity
+      .updateOne({
+        $pullAll: { [relationName]: relationIds },
+      })
+      .exec();
+    // reload the document
+    return this.getModelById(id);
+  }
+
+  private checkForReference(operation: string, refName: string, allowVirtual = true): void {
+    if (this.isReferencePath(refName)) {
+      return;
+    }
+    if (this.isVirtualPath(refName)) {
+      if (allowVirtual) {
+        return;
+      }
+      throw new Error(`${operation} not supported for virtual relation ${refName}`);
+    }
+    throw new Error(`Unable to find reference ${refName} on ${this.Model.modelName}`);
   }
 
   private isReferencePath(refName: string): boolean {
@@ -334,5 +342,23 @@ export abstract class ReferenceQueryService<Entity extends Document> {
       [foreignField as keyof Ref]: { [isArray ? 'in' : 'eq']: refVal },
     } as unknown) as Filter<Ref>;
     return mergeFilter(filter ?? ({} as Filter<Ref>), lookupFilter);
+  }
+
+  private getRefCount<Relation extends Document>(
+    relationName: string,
+    relationIds: (string | number)[],
+    filter?: Filter<Relation>,
+  ): Promise<number> {
+    const referenceModel = this.getReferenceModel<Relation>(relationName);
+    const referenceQueryBuilder = this.getReferenceQueryBuilder<Relation>();
+    return referenceModel.count(referenceQueryBuilder.buildIdFilterQuery(relationIds, filter)).exec();
+  }
+
+  private convertRefToObject<Reference extends Document>(ref: Reference): Reference {
+    return ref.toObject({ virtuals: true }) as Reference;
+  }
+
+  private convertRefsToObject<Reference extends Document>(refs: Reference[]): Reference[] {
+    return refs.map((r) => this.convertRefToObject(r));
   }
 }

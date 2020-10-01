@@ -64,12 +64,6 @@ describe('MongooseQueryService', () => {
     };
   }
 
-  function expectEqualEntities(result: TestEntity[], expected: TestEntity[]) {
-    const cleansedResults = result.map(testEntityToObject);
-    const cleansedExpected = expected.map(testEntityToObject);
-    expect(cleansedResults).toEqual(expect.arrayContaining(cleansedExpected));
-  }
-
   function testEntityToCreate(te: TestEntity): Partial<TestEntity> {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { _id, ...insert } = testEntityToObject(te);
@@ -92,97 +86,91 @@ describe('MongooseQueryService', () => {
     it('call find and return the result', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({});
-      expectEqualEntities(queryResult, TEST_ENTITIES);
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES));
     });
 
     it('should support eq operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo1' } } });
-      expectEqualEntities(queryResult, [TEST_ENTITIES[0]]);
+      expect(queryResult).toEqual([TEST_ENTITIES[0]]);
     });
 
     it('should support neq operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { stringType: { neq: 'foo1' } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES.slice(1));
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.slice(1)));
     });
 
     it('should support gt operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { numberType: { gt: 5 } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES.slice(5));
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.slice(5)));
     });
 
     it('should support gte operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { numberType: { gte: 5 } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES.slice(4));
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.slice(4)));
     });
 
     it('should support lt operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { numberType: { lt: 5 } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES.slice(0, 4));
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.slice(0, 4)));
     });
 
     it('should support lte operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { numberType: { lte: 5 } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES.slice(0, 5));
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.slice(0, 5)));
     });
 
     it('should support in operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { numberType: { in: [1, 2, 3] } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES.slice(0, 3));
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.slice(0, 3)));
     });
 
     it('should support notIn operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { numberType: { notIn: [1, 2, 3] } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES.slice(4));
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.slice(4)));
     });
 
     it('should support is operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { boolType: { is: true } } });
-      expectEqualEntities(
-        queryResult,
-        TEST_ENTITIES.filter((e) => e.boolType),
-      );
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.filter((e) => e.boolType)));
     });
 
     it('should support isNot operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { boolType: { isNot: true } } });
-      expectEqualEntities(
-        queryResult,
-        TEST_ENTITIES.filter((e) => !e.boolType),
-      );
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES.filter((e) => !e.boolType)));
     });
 
     it('should support like operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { stringType: { like: 'foo%' } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES);
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES));
     });
 
     it('should support notLike operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { stringType: { notLike: 'foo%' } } });
-      expectEqualEntities(queryResult, []);
+      expect(queryResult).toEqual([]);
     });
 
     it('should support iLike operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { stringType: { iLike: 'FOO%' } } });
-      expectEqualEntities(queryResult, TEST_ENTITIES);
+      expect(queryResult).toEqual(expect.arrayContaining(TEST_ENTITIES));
     });
 
     it('should support notILike operator', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const queryResult = await queryService.query({ filter: { stringType: { notILike: 'FOO%' } } });
-      expectEqualEntities(queryResult, []);
+      expect(queryResult).toEqual([]);
     });
   });
 
@@ -276,7 +264,7 @@ describe('MongooseQueryService', () => {
       const entity = TEST_ENTITIES[0];
       const queryService = moduleRef.get(TestEntityService);
       const found = await queryService.findById(entity._id);
-      expectEqualEntities([found!], [entity]);
+      expect(found).toEqual(entity);
     });
 
     it('return undefined if not found', async () => {
@@ -292,7 +280,7 @@ describe('MongooseQueryService', () => {
         const found = await queryService.findById(entity._id, {
           filter: { stringType: { eq: entity.stringType } },
         });
-        expectEqualEntities([found!], [entity]);
+        expect(found).toEqual(entity);
       });
 
       it('should return an undefined if an entity with the pk and filter is not found', async () => {
@@ -311,7 +299,7 @@ describe('MongooseQueryService', () => {
       const entity = TEST_ENTITIES[0];
       const queryService = moduleRef.get(TestEntityService);
       const found = await queryService.getById(entity._id);
-      expectEqualEntities([found], [entity]);
+      expect(found).toEqual(entity);
     });
 
     it('return undefined if not found', () => {
@@ -327,7 +315,7 @@ describe('MongooseQueryService', () => {
         const found = await queryService.getById(entity._id, {
           filter: { stringType: { eq: entity.stringType } },
         });
-        expectEqualEntities([found], [entity]);
+        expect(found).toEqual(entity);
       });
 
       it('should return an undefined if an entity with the pk and filter is not found', async () => {
@@ -376,7 +364,7 @@ describe('MongooseQueryService', () => {
       const entity = new TestEntityModel(testEntityToCreate(TEST_ENTITIES[0]));
       const queryService = moduleRef.get(TestEntityService);
       const created = await queryService.createOne(entity);
-      expect(created).toEqual(expect.objectContaining(entity));
+      expect(created).toEqual(expect.objectContaining(entity.toObject({ virtuals: true })));
       // expectEqualCreate([created], [TEST_ENTITIES[0]]);
     });
 
@@ -406,7 +394,7 @@ describe('MongooseQueryService', () => {
     it('remove the entity', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const deleted = await queryService.deleteOne(TEST_ENTITIES[0]._id);
-      expectEqualEntities([deleted], [TEST_ENTITIES[0]]);
+      expect(deleted).toEqual(TEST_ENTITIES[0]);
     });
 
     it('call fail if the entity is not found', async () => {
@@ -422,7 +410,7 @@ describe('MongooseQueryService', () => {
         const deleted = await queryService.deleteOne(entity._id, {
           filter: { stringType: { eq: entity.stringType } },
         });
-        expectEqualEntities([deleted], [TEST_ENTITIES[0]]);
+        expect(deleted).toEqual(TEST_ENTITIES[0]);
       });
 
       it('should return throw an error if unable to find', async () => {
@@ -517,7 +505,7 @@ describe('MongooseQueryService', () => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestReference, 'testReference', entity);
 
-        expect(queryResult?.toObject()).toEqual(TEST_REFERENCES[0]);
+        expect(queryResult).toEqual(TEST_REFERENCES[0]);
       });
 
       it('apply the filter option', async () => {
@@ -526,12 +514,12 @@ describe('MongooseQueryService', () => {
         const queryResult1 = await queryService.findRelation(TestReference, 'testReference', entity, {
           filter: { referenceName: { eq: TEST_REFERENCES[0].referenceName } },
         });
-        expect(queryResult1?.toObject()).toEqual(TEST_REFERENCES[0]);
+        expect(queryResult1).toEqual(TEST_REFERENCES[0]);
 
         const queryResult2 = await queryService.findRelation(TestReference, 'testReference', entity, {
           filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
         });
-        expect(queryResult2?.toObject()).toBeUndefined();
+        expect(queryResult2).toBeUndefined();
       });
 
       it('should return undefined select if no results are found.', async () => {
@@ -556,7 +544,7 @@ describe('MongooseQueryService', () => {
           const queryService = moduleRef.get(TestReferenceService);
           const queryResult = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity);
 
-          expect(queryResult?.toObject()).toEqual(TEST_ENTITIES[0]);
+          expect(queryResult).toEqual(TEST_ENTITIES[0]);
         });
 
         it('apply the filter option', async () => {
@@ -565,12 +553,12 @@ describe('MongooseQueryService', () => {
           const queryResult1 = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity, {
             filter: { stringType: { eq: TEST_ENTITIES[0].stringType } },
           });
-          expect(queryResult1?.toObject()).toEqual(TEST_ENTITIES[0]);
+          expect(queryResult1).toEqual(TEST_ENTITIES[0]);
 
           const queryResult2 = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity, {
             filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
           });
-          expect(queryResult2?.toObject()).toBeUndefined();
+          expect(queryResult2).toBeUndefined();
         });
 
         it('should return undefined select if no results are found.', async () => {
@@ -578,7 +566,7 @@ describe('MongooseQueryService', () => {
           await TestReferenceModel.updateOne({ _id: entity._id }, { $set: { testEntity: undefined } });
           const queryService = moduleRef.get(TestReferenceService);
           const queryResult = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity);
-          expect(queryResult?.toObject()).toBeUndefined();
+          expect(queryResult).toBeUndefined();
         });
 
         it('throw an error if a relation with that name is not found.', async () => {
@@ -639,11 +627,6 @@ describe('MongooseQueryService', () => {
   });
 
   describe('#queryRelations', () => {
-    const referenceContaining = (refs: TestReference[]): unknown[] => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return refs.map((r) => expect.objectContaining(r));
-    };
-
     describe('with one entity', () => {
       it('call select and return the result', async () => {
         const queryService = moduleRef.get(TestEntityService);
@@ -651,7 +634,7 @@ describe('MongooseQueryService', () => {
           filter: { referenceName: { isNot: null } },
         });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return expect(queryResult.map((r) => r.toObject())).toEqual(referenceContaining(TEST_REFERENCES.slice(0, 3)));
+        return expect(queryResult).toEqual(TEST_REFERENCES.slice(0, 3));
       });
 
       it('should apply a filter', async () => {
@@ -659,7 +642,7 @@ describe('MongooseQueryService', () => {
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_ENTITIES[0], {
           filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
         });
-        expect(queryResult.map((r) => r.toObject())).toEqual(referenceContaining([TEST_REFERENCES[1]]));
+        expect(queryResult).toEqual([TEST_REFERENCES[1]]);
       });
 
       it('should apply paging', async () => {
@@ -668,7 +651,7 @@ describe('MongooseQueryService', () => {
           paging: { limit: 2, offset: 1 },
         });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        expect(queryResult.map((r) => r.toObject())).toEqual(referenceContaining(TEST_REFERENCES.slice(1, 3)));
+        expect(queryResult).toEqual(TEST_REFERENCES.slice(1, 3));
       });
     });
 
@@ -684,9 +667,7 @@ describe('MongooseQueryService', () => {
           },
         );
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return expect(queryResult.map((r) => r.toObject())).toEqual(
-          expect.arrayContaining(referenceContaining(TEST_REFERENCES.slice(0, 3))),
-        );
+        return expect(queryResult).toEqual(expect.arrayContaining(TEST_REFERENCES.slice(0, 3)));
       });
 
       it('should apply a filter', async () => {
@@ -699,7 +680,7 @@ describe('MongooseQueryService', () => {
             filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
           },
         );
-        expect(queryResult.map((r) => r.toObject())).toEqual(referenceContaining([TEST_REFERENCES[1]]));
+        expect(queryResult).toEqual([TEST_REFERENCES[1]]);
       });
 
       it('should apply paging', async () => {
@@ -713,8 +694,7 @@ describe('MongooseQueryService', () => {
             sorting: [{ field: 'referenceName', direction: SortDirection.ASC }],
           },
         );
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        expect(queryResult.map((r) => r.toObject())).toEqual(referenceContaining(TEST_REFERENCES.slice(1, 3)));
+        expect(queryResult).toEqual(TEST_REFERENCES.slice(1, 3));
       });
     });
 
@@ -726,15 +706,9 @@ describe('MongooseQueryService', () => {
           filter: { referenceName: { isNot: null } },
         });
         expect(queryResult.size).toBe(3);
-        expect(queryResult.get(entities[0])?.map((r) => r.toObject())).toEqual(
-          referenceContaining(TEST_REFERENCES.slice(0, 3)),
-        );
-        expect(queryResult.get(entities[1])?.map((r) => r.toObject())).toEqual(
-          referenceContaining(TEST_REFERENCES.slice(3, 6)),
-        );
-        expect(queryResult.get(entities[2])?.map((r) => r.toObject())).toEqual(
-          referenceContaining(TEST_REFERENCES.slice(6, 9)),
-        );
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES.slice(0, 3));
+        expect(queryResult.get(entities[1])).toEqual(TEST_REFERENCES.slice(3, 6));
+        expect(queryResult.get(entities[2])).toEqual(TEST_REFERENCES.slice(6, 9));
       });
 
       it('should apply a filter per entity', async () => {
@@ -745,9 +719,9 @@ describe('MongooseQueryService', () => {
           filter: { referenceName: { in: references.map((r) => r.referenceName) } },
         });
         expect(queryResult.size).toBe(3);
-        expect(queryResult.get(entities[0])?.map((r) => r.toObject())).toEqual(referenceContaining([references[0]]));
-        expect(queryResult.get(entities[1])?.map((r) => r.toObject())).toEqual(referenceContaining([references[1]]));
-        expect(queryResult.get(entities[2])?.map((r) => r.toObject())).toEqual(referenceContaining([references[2]]));
+        expect(queryResult.get(entities[0])).toEqual([references[0]]);
+        expect(queryResult.get(entities[1])).toEqual([references[1]]);
+        expect(queryResult.get(entities[2])).toEqual([references[2]]);
       });
 
       it('should apply paging per entity', async () => {
@@ -757,15 +731,9 @@ describe('MongooseQueryService', () => {
           paging: { limit: 2, offset: 1 },
         });
         expect(queryResult.size).toBe(3);
-        expect(queryResult.get(entities[0])?.map((r) => r.toObject())).toEqual(
-          referenceContaining(TEST_REFERENCES.slice(1, 3)),
-        );
-        expect(queryResult.get(entities[1])?.map((r) => r.toObject())).toEqual(
-          referenceContaining(TEST_REFERENCES.slice(4, 6)),
-        );
-        expect(queryResult.get(entities[2])?.map((r) => r.toObject())).toEqual(
-          referenceContaining(TEST_REFERENCES.slice(7, 9)),
-        );
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES.slice(1, 3));
+        expect(queryResult.get(entities[1])).toEqual(TEST_REFERENCES.slice(4, 6));
+        expect(queryResult.get(entities[2])).toEqual(TEST_REFERENCES.slice(7, 9));
       });
 
       it('should return an empty array if no results are found.', async () => {
@@ -775,9 +743,7 @@ describe('MongooseQueryService', () => {
           filter: { referenceName: { isNot: null } },
         });
         expect(queryResult.size).toBe(2);
-        expect(queryResult.get(entities[0])?.map((r) => r.toObject())).toEqual(
-          referenceContaining(TEST_REFERENCES.slice(0, 3)),
-        );
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES.slice(0, 3));
         expect(queryResult.get(entities[1])).toEqual([]);
       });
     });
@@ -1011,7 +977,7 @@ describe('MongooseQueryService', () => {
       const queryResult = await queryService.addRelations(
         'testReferences',
         entity._id,
-        TEST_REFERENCES.slice(3, 6).map((r) => r._id.toString()),
+        TEST_REFERENCES.slice(3, 6).map((r) => r._id),
       );
       expect(queryResult).toEqual(
         expect.objectContaining({
@@ -1032,9 +998,9 @@ describe('MongooseQueryService', () => {
           queryService.addRelations(
             'virtualTestReferences',
             entity._id,
-            TEST_REFERENCES.slice(3, 6).map((r) => r._id.toString()),
+            TEST_REFERENCES.slice(3, 6).map((r) => r._id),
           ),
-        ).rejects.toThrow('Mutations on virtual relation virtualTestReferences not supported');
+        ).rejects.toThrow('AddRelations not supported for virtual relation virtualTestReferences');
       });
     });
 
@@ -1046,7 +1012,7 @@ describe('MongooseQueryService', () => {
           queryService.addRelations(
             'testReferences',
             entity._id,
-            TEST_REFERENCES.slice(3, 6).map((r) => r._id.toString()),
+            TEST_REFERENCES.slice(3, 6).map((r) => r._id),
             {
               filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
             },
@@ -1061,12 +1027,163 @@ describe('MongooseQueryService', () => {
           queryService.addRelations<TestReference>(
             'testReferences',
             entity._id,
-            TEST_REFERENCES.slice(3, 6).map((r) => r._id.toString()),
+            TEST_REFERENCES.slice(3, 6).map((r) => r._id),
             {
               relationFilter: { referenceName: { like: '%-one' } },
             },
           ),
         ).rejects.toThrow('Unable to find all testReferences to add to TestEntity');
+      });
+    });
+  });
+
+  describe('#setRelation', () => {
+    it('call select and return the result', async () => {
+      const entity = TEST_REFERENCES[0];
+      const queryService = moduleRef.get(TestReferenceService);
+      const queryResult = await queryService.setRelation('testEntity', entity._id, TEST_ENTITIES[1]._id);
+      expect(queryResult).toEqual(expect.objectContaining({ ...entity, testEntity: TEST_ENTITIES[1]._id }));
+
+      const relation = await queryService.findRelation(TestEntity, 'testEntity', entity);
+      expect(relation!).toEqual(TEST_ENTITIES[1]);
+    });
+
+    it('should reject with a virtual reference', async () => {
+      const entity = TEST_REFERENCES[0];
+      const queryService = moduleRef.get(TestReferenceService);
+      return expect(queryService.setRelation('virtualTestEntity', entity._id, TEST_ENTITIES[1]._id)).rejects.toThrow(
+        'SetRelation not supported for virtual relation virtualTestEntity',
+      );
+    });
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_REFERENCES[0];
+        const queryService = moduleRef.get(TestReferenceService);
+        return expect(
+          queryService.setRelation('testEntity', entity._id, TEST_ENTITIES[1]._id, {
+            filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
+          }),
+        ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`);
+      });
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_REFERENCES[0];
+        const queryService = moduleRef.get(TestReferenceService);
+        return expect(
+          queryService.setRelation<TestEntity>('testEntity', entity._id, TEST_ENTITIES[1]._id, {
+            relationFilter: { stringType: { like: '%-one' } },
+          }),
+        ).rejects.toThrow('Unable to find testEntity to set on TestReference');
+      });
+    });
+  });
+
+  describe('#removeRelations', () => {
+    it('call select and return the result', async () => {
+      const entity = TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.removeRelations(
+        'testReferences',
+        entity._id,
+        TEST_REFERENCES.slice(0, 3).map((r) => r._id),
+      );
+      expect(queryResult.toObject()).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: [],
+        }),
+      );
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
+      expect(relations).toHaveLength(0);
+    });
+
+    describe('with virtual reference', () => {
+      it('should return a rejected promise', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.removeRelations(
+            'virtualTestReferences',
+            entity._id,
+            TEST_REFERENCES.slice(0, 3).map((r) => r._id),
+          ),
+        ).rejects.toThrow('RemoveRelations not supported for virtual relation virtualTestReferences');
+      });
+    });
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.removeRelations(
+            'testReferences',
+            entity._id,
+            TEST_REFERENCES.slice(0, 3).map((r) => r._id),
+            {
+              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
+            },
+          ),
+        ).rejects.toThrow(`Unable to find TestEntity with id: ${String(entity._id)}`);
+      });
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.removeRelations<TestReference>(
+            'testReferences',
+            entity._id,
+            TEST_REFERENCES.slice(0, 3).map((r) => r._id),
+            {
+              relationFilter: { referenceName: { like: '%-one' } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find all testReferences to remove from TestEntity');
+      });
+    });
+  });
+
+  describe('#removeRelation', () => {
+    it('call select and return the result', async () => {
+      const entity = TEST_REFERENCES[0];
+      const queryService = moduleRef.get(TestReferenceService);
+      const queryResult = await queryService.removeRelation('testEntity', entity._id, TEST_ENTITIES[1]._id);
+      expect(queryResult).toEqual(expect.objectContaining({ ...entity, testEntity: undefined }));
+
+      const relation = await queryService.findRelation(TestEntity, 'testEntity', entity);
+      expect(relation).toBeUndefined();
+    });
+
+    it('should reject with a virtual reference', async () => {
+      const entity = TEST_REFERENCES[0];
+      const queryService = moduleRef.get(TestReferenceService);
+      return expect(queryService.removeRelation('virtualTestEntity', entity._id, TEST_ENTITIES[1]._id)).rejects.toThrow(
+        'RemoveRelation not supported for virtual relation virtualTestEntity',
+      );
+    });
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_REFERENCES[0];
+        const queryService = moduleRef.get(TestReferenceService);
+        return expect(
+          queryService.removeRelation('testEntity', entity._id, TEST_ENTITIES[1]._id, {
+            filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
+          }),
+        ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`);
+      });
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_REFERENCES[0];
+        const queryService = moduleRef.get(TestReferenceService);
+        return expect(
+          queryService.removeRelation<TestEntity>('testEntity', entity._id, TEST_ENTITIES[1]._id, {
+            relationFilter: { stringType: { like: '%-one' } },
+          }),
+        ).rejects.toThrow('Unable to find testEntity to remove from TestReference');
       });
     });
   });

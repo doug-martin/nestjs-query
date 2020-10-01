@@ -55,7 +55,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
 
   // eslint-disable-next-line @typescript-eslint/ban-types
   toPlain(entityOrDto: Entity | DTO): object {
-    if (entityOrDto instanceof this.EntityClass) {
+    if (entityOrDto && entityOrDto instanceof this.EntityClass) {
       const serializer = getAssemblerSerializer(this.EntityClass);
       if (serializer) {
         return serializer(entityOrDto);

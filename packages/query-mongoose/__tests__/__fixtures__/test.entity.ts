@@ -1,6 +1,5 @@
 import { Document, Types, SchemaTypes } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { TestReference } from 'packages/query-mongoose/__tests__/__fixtures__/test-reference.entity';
 
 @Schema()
 export class TestEntity extends Document {
@@ -21,8 +20,6 @@ export class TestEntity extends Document {
 
   @Prop([{ type: SchemaTypes.ObjectId, ref: 'TestReference' }])
   testReferences?: Types.ObjectId[];
-
-  virtualTestReference?: TestReference;
 }
 
 export const TestEntitySchema = SchemaFactory.createForClass(TestEntity);

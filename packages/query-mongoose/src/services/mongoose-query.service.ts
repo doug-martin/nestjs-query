@@ -69,8 +69,9 @@ export class MongooseQueryService<Entity extends Document>
    * @param query - The Query used to filter, page, and sort rows.
    */
   async query(query: Query<Entity>): Promise<Entity[]> {
-    const { filterQuery, sorting, paging } = this.filterQueryBuilder.buildQuery(query);
-    return this.Model.find(filterQuery, {}, { limit: paging?.limit, skip: paging?.offset, sort: sorting }).exec();
+    const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query);
+    const models = await this.Model.find(filterQuery, {}, options).exec();
+    return this.convertToEntityInstances(models);
   }
 
   async aggregate(filter: Filter<Entity>, aggregateQuery: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
@@ -103,7 +104,7 @@ export class MongooseQueryService<Entity extends Document>
     if (!doc) {
       return undefined;
     }
-    return doc;
+    return this.convertToEntityInstance(doc);
   }
 
   /**
@@ -121,11 +122,8 @@ export class MongooseQueryService<Entity extends Document>
    * @param opts - Additional options
    */
   async getById(id: string, opts?: GetByIdOptions<Entity>): Promise<Entity> {
-    const entity = await this.findById(id, opts);
-    if (!entity) {
-      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
-    }
-    return entity;
+    const entity = await this.getModelById(id, opts);
+    return this.convertToEntityInstance(entity);
   }
 
   /**
@@ -139,7 +137,8 @@ export class MongooseQueryService<Entity extends Document>
    */
   async createOne(record: DeepPartial<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(record);
-    return this.Model.create(record as CreateQuery<Entity>);
+    const created = await this.Model.create(record as CreateQuery<Entity>);
+    return this.convertToEntityInstance(created);
   }
 
   /**
@@ -179,7 +178,7 @@ export class MongooseQueryService<Entity extends Document>
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
     }
-    return doc;
+    return this.convertToEntityInstance(doc);
   }
 
   /**
@@ -223,7 +222,7 @@ export class MongooseQueryService<Entity extends Document>
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
     }
-    return doc;
+    return this.convertToEntityInstance(doc);
   }
 
   /**
@@ -249,5 +248,22 @@ export class MongooseQueryService<Entity extends Document>
     if (Object.keys(e).find((f) => f === 'id' || f === '_id')) {
       throw new Error('Id cannot be specified when updating or creating');
     }
+  }
+
+  private convertToEntityInstance(model: Entity): Entity {
+    return model.toObject(this.documentToObjectOptions) as Entity;
+  }
+
+  private convertToEntityInstances(model: Entity[]): Entity[] {
+    return model.map((m) => this.convertToEntityInstance(m));
+  }
+
+  async getModelById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity> {
+    const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
+    const doc = await this.Model.findOne(filterQuery);
+    if (!doc) {
+      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
+    }
+    return doc;
   }
 }
