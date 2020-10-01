@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.2](https://github.com/doug-martin/nestjs-query/compare/v0.20.1...v0.20.2) (2020-10-01)
+
+
+### Features
+
+* **core:** parallelize queries within relation query service ([b339a2a](https://github.com/doug-martin/nestjs-query/commit/b339a2a9a3d1ad315d92eec67ab31af18617f6ca))
+
+
+
+
+
 ## [0.20.1](https://github.com/doug-martin/nestjs-query/compare/v0.20.0...v0.20.1) (2020-09-28)
 
 **Note:** Version bump only for package @nestjs-query/core

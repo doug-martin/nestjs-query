@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.2](https://github.com/doug-martin/nestjs-query/compare/v0.20.1...v0.20.2) (2020-10-01)
+
+
+### Bug Fixes
+
+* **filters:** Fix bug with incorect parameters in filter ([6ada4f4](https://github.com/doug-martin/nestjs-query/commit/6ada4f4a12633d41c60de9540dfc28ed0985ca62))
+* **filters:** Fix bug with incorect parameters in filters ([9f4e93b](https://github.com/doug-martin/nestjs-query/commit/9f4e93b7726d85cb4febe86d2caf941dc957463a))
+* **typeorm:** fix unit tests after fix filters bug ([5f50419](https://github.com/doug-martin/nestjs-query/commit/5f5041906694ae7c4aa799f52049d0981b97ccfc))
+
+
+
+
+
 ## [0.20.1](https://github.com/doug-martin/nestjs-query/compare/v0.20.0...v0.20.1) (2020-09-28)
 
 **Note:** Version bump only for package @nestjs-query/query-typeorm
