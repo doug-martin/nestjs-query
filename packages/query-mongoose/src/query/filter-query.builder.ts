@@ -1,4 +1,4 @@
-import { AggregateQuery, Filter, Paging, Query, SortDirection, SortField } from '@nestjs-query/core';
+import { AggregateQuery, Filter, Query, SortDirection, SortField } from '@nestjs-query/core';
 import { FilterQuery, Document } from 'mongoose';
 import { AggregateBuilder, MongooseAggregate } from './aggregate.builder';
 import { getSchemaKey } from './helpers';
@@ -8,8 +8,7 @@ type MongooseSort = Record<string, 'asc' | 'desc'>;
 
 type MongooseQuery<Entity extends Document> = {
   filterQuery: FilterQuery<Entity>;
-  paging?: Paging;
-  sorting?: MongooseSort[];
+  options: { limit?: number; skip?: number; sort?: MongooseSort[] };
 };
 
 type MongooseAggregateQuery<Entity extends Document> = {
@@ -27,19 +26,17 @@ export class FilterQueryBuilder<Entity extends Document> {
     readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(),
   ) {}
 
-  buildQuery(query: Query<Entity>): MongooseQuery<Entity> {
+  buildQuery({ filter, paging, sorting }: Query<Entity>): MongooseQuery<Entity> {
     return {
-      filterQuery: this.buildFilterQuery(query.filter),
-      paging: query.paging,
-      sorting: this.buildSorting(query.sorting),
+      filterQuery: this.buildFilterQuery(filter),
+      options: { limit: paging?.limit, skip: paging?.offset, sort: this.buildSorting(sorting) },
     };
   }
 
-  buildIdQuery(id: unknown | unknown[], query: Query<Entity>): MongooseQuery<Entity> {
+  buildIdQuery(id: unknown | unknown[], { filter, paging, sorting }: Query<Entity>): MongooseQuery<Entity> {
     return {
-      filterQuery: this.buildIdFilterQuery(id, query.filter),
-      paging: query.paging,
-      sorting: this.buildSorting(query.sorting),
+      filterQuery: this.buildIdFilterQuery(id, filter),
+      options: { limit: paging?.limit, skip: paging?.offset, sort: this.buildSorting(sorting) },
     };
   }
 

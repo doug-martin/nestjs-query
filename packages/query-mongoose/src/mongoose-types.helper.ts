@@ -6,7 +6,7 @@ export type ReferenceOptions = {
 };
 
 export function isReferenceOptions(options: unknown): options is ReferenceOptions {
-  return options && typeof options === 'object' && 'type' in options && 'ref' in options;
+  return options && typeof options === 'object' && 'type' in options && 'ref' in options && typeof (options as {ref: unknown}).ref === 'string';
 }
 
 export type SchemaTypeWithReferenceOptions = {

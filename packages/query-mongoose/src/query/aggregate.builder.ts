@@ -1,4 +1,5 @@
 import { AggregateQuery, AggregateResponse } from '@nestjs-query/core';
+import { BadRequestException } from '@nestjs/common';
 import { Document } from 'mongoose';
 import { getSchemaKey } from './helpers';
 
@@ -42,20 +43,22 @@ export class AggregateBuilder<Entity extends Document> {
     }, {} as AggregateResponse<Entity>);
   }
 
-  constructor() {}
-
   /**
    * Builds a aggregate SELECT clause from a aggregate.
    * @param aggregate - the aggregates to select.
    */
   build(aggregate: AggregateQuery<Entity>): MongooseAggregate {
-    return {
+    const query = {
       ...this.createAggSelect(AggregateFuncs.COUNT, aggregate.count),
       ...this.createAggSelect(AggregateFuncs.SUM, aggregate.sum),
       ...this.createAggSelect(AggregateFuncs.AVG, aggregate.avg),
       ...this.createAggSelect(AggregateFuncs.MAX, aggregate.max),
       ...this.createAggSelect(AggregateFuncs.MIN, aggregate.min),
     };
+    if (!Object.keys(query).length) {
+      throw new BadRequestException('No aggregate fields found.');
+    }
+    return query;
   }
 
   private createAggSelect(func: AggregateFuncs, fields?: (keyof Entity)[]): MongooseAggregate {
@@ -71,9 +74,9 @@ export class AggregateBuilder<Entity extends Document> {
           [aggAlias]: {
             $sum: {
               $cond: {
-                if: { $ne: [fieldAlias, null] },
-                then: 1,
-                else: 0,
+                if: { $in: [{$type: fieldAlias}, ['missing', 'null']] },
+                then: 0,
+                else: 1,
               },
             },
           },
