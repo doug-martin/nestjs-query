@@ -3,13 +3,15 @@ import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { getConnectionToken } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 import { AppModule } from '../src/app.module';
 import { config } from '../src/config';
 import { AUTH_HEADER_NAME, USER_HEADER_NAME } from '../src/constants';
 import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { TagDTO } from '../src/tag/dto/tag.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
-import { refresh } from './fixtures';
+import { refresh, TODO_ITEMS } from './fixtures';
 import {
   edgeNodes,
   pageInfoField,
@@ -21,8 +23,6 @@ import {
   subTaskAggregateFields,
 } from './graphql-fragments';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
-import { getConnectionToken } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
 
 describe('TodoItemResolver (mongoose - e2e)', () => {
   let app: INestApplication;
@@ -47,9 +47,10 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
     await refresh(app.get(getConnectionToken()));
   });
 
-  afterAll(() => refresh(app.get(getConnectionToken())));
+  afterEach(() => refresh(app.get(getConnectionToken())));
 
-  const todoItemId = '5f74af112fae2b251510e3ad'
+  const todoItemIds = TODO_ITEMS.map((td) => td.id);
+  const graphqlIds = todoItemIds.map((id) => `"${id}"`);
   describe('find one', () => {
     it(`should find a todo item by id`, () => {
       return request(app.getHttpServer())
@@ -58,7 +59,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItem(id: "${todoItemId}") {
+          todoItem(id: ${graphqlIds[0]}) {
             ${todoItemFields}
           }
         }`,
@@ -68,7 +69,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           expect(body).toEqual({
             data: {
               todoItem: {
-                id: todoItemId,
+                id: todoItemIds[0],
                 title: 'Create Nest App',
                 completed: true,
                 description: null,
@@ -105,7 +106,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItem(id: "${todoItemId}") {
+          todoItem(id: ${graphqlIds[0]}) {
             subTasks(sorting: { field: id, direction: ASC }) {
               ${pageInfoField}
               ${edgeNodes(subTaskFields)}
@@ -136,7 +137,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItem(id: "${todoItemId}") {
+          todoItem(id: ${graphqlIds[0]}) {
             subTasksAggregate {
               ${subTaskAggregateFields}
             }
@@ -161,7 +162,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItem(id: "${todoItemId}") {
+          todoItem(id: ${graphqlIds[0]}) {
             tags(sorting: [{ field: id, direction: ASC }]) {
               ${pageInfoField}
               ${edgeNodes(tagFields)}
@@ -192,7 +193,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItem(id: "${todoItemId}") {
+          todoItem(id: ${graphqlIds[0]}) {
             tagsAggregate {
               ${tagAggregateFields}
             }
@@ -230,20 +231,46 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
-            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjEifV19',
+            endCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjEifV19',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
+            startCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '5f74af112fae2b251510e3ad', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '5f74af112fae2b251510e3ae', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '5f74af112fae2b251510e3af', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
-            { id: '5f74af112fae2b251510e3b0', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
             {
-              id: '5f74af112fae2b251510e3b1',
+              id: todoItemIds[0],
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[1],
+              title: 'Create Entity',
+              completed: false,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[2],
+              title: 'Create Entity Service',
+              completed: false,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[3],
+              title: 'Add Todo Item Resolver',
+              completed: false,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[4],
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
@@ -260,7 +287,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItems(filter: { id: { in: ["5f74af112fae2b251510e3ad", "5f74af112fae2b251510e3ae", "5f74af112fae2b251510e3af"] } }) {
+          todoItems(filter: { id: { in: [${graphqlIds.slice(0, 3).join(',')}] } }) {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
             totalCount
@@ -271,20 +298,106 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
-            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWYifV19',
+            endCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWYifV19',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
+            startCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '5f74af112fae2b251510e3ad', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '5f74af112fae2b251510e3ae', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '5f74af112fae2b251510e3af', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
+            {
+              id: todoItemIds[0],
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[1],
+              title: 'Create Entity',
+              completed: false,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[2],
+              title: 'Create Entity Service',
+              completed: false,
+              description: null,
+              age: expect.any(Number),
+            },
           ]);
         });
     });
+
+    // it(`should allow querying on subTasks`, () => {
+    //   return request(app.getHttpServer())
+    //     .post('/graphql')
+    //     .send({
+    //       operationName: null,
+    //       variables: {},
+    //       query: `{
+    //       todoItems(filter: { subTasks: { title: { in: ["Create Nest App - Sub Task 1", "Create Entity - Sub Task 1"] } } }) {
+    //         ${pageInfoField}
+    //         ${edgeNodes(todoItemFields)}
+    //         totalCount
+    //       }
+    //     }`,
+    //     })
+    //     .expect(200)
+    //     .then(({ body }) => {
+    //       const { edges, totalCount, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+    //       expect(pageInfo).toEqual({
+    //         endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
+    //         hasNextPage: false,
+    //         hasPreviousPage: false,
+    //         startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+    //       });
+    //       expect(totalCount).toBe(2);
+    //       expect(edges).toHaveLength(2);
+    //
+    //       expect(edges.map((e) => e.node)).toEqual([
+    //         { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+    //         { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+    //       ]);
+    //     });
+    // });
+    //
+    // it(`should allow querying on tags`, () => {
+    //   return request(app.getHttpServer())
+    //     .post('/graphql')
+    //     .send({
+    //       operationName: null,
+    //       variables: {},
+    //       query: `{
+    //       todoItems(filter: { tags: { name: { eq: "Home" } } }, sorting: [{field: id, direction: ASC}]) {
+    //         ${pageInfoField}
+    //         ${edgeNodes(todoItemFields)}
+    //         totalCount
+    //       }
+    //     }`,
+    //     })
+    //     .expect(200)
+    //     .then(({ body }) => {
+    //       const { edges, totalCount, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+    //       expect(pageInfo).toEqual({
+    //         endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
+    //         hasNextPage: false,
+    //         hasPreviousPage: false,
+    //         startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+    //       });
+    //       expect(totalCount).toBe(2);
+    //       expect(edges).toHaveLength(2);
+    //
+    //       expect(edges.map((e) => e.node)).toEqual([
+    //         { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+    //         { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
+    //       ]);
+    //     });
+    // });
 
     it(`should allow sorting`, () => {
       return request(app.getHttpServer())
@@ -304,25 +417,51 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
           expect(pageInfo).toEqual({
-            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
+            endCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjEifV19',
+            startCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjEifV19',
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual([
             {
-              id: '5f74af112fae2b251510e3b1',
+              id: todoItemIds[4],
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
               age: expect.any(Number),
             },
-            { id: '5f74af112fae2b251510e3b0', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
-            { id: '5f74af112fae2b251510e3af', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
-            { id: '5f74af112fae2b251510e3ae', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '5f74af112fae2b251510e3ad', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+            {
+              id: todoItemIds[3],
+              title: 'Add Todo Item Resolver',
+              completed: false,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[2],
+              title: 'Create Entity Service',
+              completed: false,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[1],
+              title: 'Create Entity',
+              completed: false,
+              description: null,
+              age: expect.any(Number),
+            },
+            {
+              id: todoItemIds[0],
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              age: expect.any(Number),
+            },
           ]);
         });
     });
@@ -346,16 +485,30 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           .then(({ body }) => {
             const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
-              endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWUifV19',
+              endCursor:
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWUifV19',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
+              startCursor:
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
-              { id: '5f74af112fae2b251510e3ad', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-              { id: '5f74af112fae2b251510e3ae', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+              {
+                id: todoItemIds[0],
+                title: 'Create Nest App',
+                completed: true,
+                description: null,
+                age: expect.any(Number),
+              },
+              {
+                id: todoItemIds[1],
+                title: 'Create Entity',
+                completed: false,
+                description: null,
+                age: expect.any(Number),
+              },
             ]);
           });
       });
@@ -378,17 +531,25 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           .then(({ body }) => {
             const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
             expect(pageInfo).toEqual({
-              endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjAifV19',
+              endCursor:
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjAifV19',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWYifV19',
+              startCursor:
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWYifV19',
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
-              { id: '5f74af112fae2b251510e3af', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
               {
-                id: '5f74af112fae2b251510e3b0',
+                id: todoItemIds[2],
+                title: 'Create Entity Service',
+                completed: false,
+                description: null,
+                age: expect.any(Number),
+              },
+              {
+                id: todoItemIds[3],
                 title: 'Add Todo Item Resolver',
                 completed: false,
                 description: null,
@@ -436,11 +597,9 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const res: AggregateResponse<TodoItemDTO> = body.data.todoItemAggregate;
           expect(res).toEqual({
-            avg: { id: 3 },
-            count: { completed: 5, created: 5, description: 0, id: 5, title: 5, updated: 5 },
-            max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
-            min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
-            sum: { id: 15 },
+            count: { completed: 5, createdAt: 5, description: 0, id: 5, title: 5, updatedAt: 5 },
+            max: { description: null, id: todoItemIds[4], title: 'How to create item With Sub Tasks' },
+            min: { description: null, id: todoItemIds[0], title: 'Add Todo Item Resolver' },
           });
         });
     });
@@ -462,11 +621,9 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const res: AggregateResponse<TodoItemDTO> = body.data.todoItemAggregate;
           expect(res).toEqual({
-            count: { id: 4, title: 4, description: 0, completed: 4, created: 4, updated: 4 },
-            sum: { id: 14 },
-            avg: { id: 3.5 },
-            min: { id: '2', title: 'Add Todo Item Resolver', description: null },
-            max: { id: '5', title: 'How to create item With Sub Tasks', description: null },
+            count: { id: 4, title: 4, description: 0, completed: 4, createdAt: 4, updatedAt: 4 },
+            min: { id: todoItemIds[1], title: 'Add Todo Item Resolver', description: null },
+            max: { id: todoItemIds[4], title: 'How to create item With Sub Tasks', description: null },
           });
         });
     });
@@ -515,14 +672,17 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            createOneTodoItem: {
-              id: '6',
-              title: 'Test Todo',
-              completed: false,
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              createOneTodoItem: {
+                id: expect.any(String),
+                title: 'Test Todo',
+                completed: false,
+              },
             },
-          },
+          });
         });
     });
 
@@ -549,15 +709,18 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            createOneTodoItem: {
-              id: '7',
-              title: 'Create One Hook Todo',
-              completed: false,
-              createdBy: 'E2E Test',
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              createOneTodoItem: {
+                id: expect.any(String),
+                title: 'Create One Hook Todo',
+                completed: false,
+                createdBy: 'E2E Test',
+              },
             },
-          },
+          });
         });
     });
 
@@ -636,13 +799,16 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            createManyTodoItems: [
-              { id: '8', title: 'Many Test Todo 1', completed: false },
-              { id: '9', title: 'Many Test Todo 2', completed: true },
-            ],
-          },
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              createManyTodoItems: [
+                { id: expect.any(String), title: 'Many Test Todo 1', completed: false },
+                { id: expect.any(String), title: 'Many Test Todo 2', completed: true },
+              ],
+            },
+          });
         });
     });
 
@@ -672,13 +838,16 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            createManyTodoItems: [
-              { id: '10', title: 'Many Create Hook 1', completed: false, createdBy: 'E2E Test' },
-              { id: '11', title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' },
-            ],
-          },
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              createManyTodoItems: [
+                { id: expect.any(String), title: 'Many Create Hook 1', completed: false, createdBy: 'E2E Test' },
+                { id: expect.any(String), title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' },
+              ],
+            },
+          });
         });
     });
 
@@ -744,7 +913,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateOneTodoItem(
               input: {
-                id: "6",
+                id: ${graphqlIds[0]},
                 update: { title: "Update Test Todo", completed: true }
               }
             ) {
@@ -757,7 +926,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .expect(200, {
           data: {
             updateOneTodoItem: {
-              id: '6',
+              id: todoItemIds[0],
               title: 'Update Test Todo',
               completed: true,
             },
@@ -778,7 +947,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateOneTodoItem(
               input: {
-                id: "7",
+                id: ${graphqlIds[0]},
                 update: { title: "Update One Hook Todo", completed: true }
               }
             ) {
@@ -792,7 +961,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .expect(200, {
           data: {
             updateOneTodoItem: {
-              id: '7',
+              id: todoItemIds[0],
               title: 'Update One Hook Todo',
               completed: true,
               updatedBy: 'E2E Test',
@@ -839,7 +1008,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateOneTodoItem(
               input: {
-                id: "6",
+                id: ${graphqlIds[0]},
                 update: { title: "Update Test Todo With A Really Long Title" }
               }
             ) {
@@ -867,7 +1036,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateManyTodoItems(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: { id: { in: [${graphqlIds.slice(0, 2).join(',')}] } },
                 update: { title: "Update Test Todo", completed: true }
               }
             ) {
@@ -890,7 +1059,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateManyTodoItems(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: [${graphqlIds.slice(0, 2).join(',')}] } },
                 update: { title: "Update Many Test", completed: true }
               }
             ) {
@@ -920,7 +1089,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateManyTodoItems(
               input: {
-                filter: {id: { in: ["10", "11"]} },
+                filter: {id: { in: [${graphqlIds.slice(0, 2).join(',')}] } },
                 update: { title: "Update Many Hook", completed: true }
               }
             ) {
@@ -937,7 +1106,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         })
         .then(async () => {
           const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
-          const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } });
+          const todoItems = await queryService.query({ filter: { id: { in: todoItemIds.slice(0, 2) } } });
           expect(
             todoItems.map((ti) => {
               return {
@@ -948,8 +1117,8 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               };
             }),
           ).toEqual([
-            { id: 10, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
-            { id: 11, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
+            { id: todoItemIds[0], title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
+            { id: todoItemIds[1], title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
           ]);
         });
     });
@@ -1015,7 +1184,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           variables: {},
           query: `mutation {
             deleteOneTodoItem(
-              input: { id: "6" }
+              input: { id: ${graphqlIds[0]} }
             ) {
               id
               title
@@ -1037,7 +1206,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           variables: {},
           query: `mutation {
             deleteOneTodoItem(
-              input: { id: "6" }
+              input: { id: ${graphqlIds[0]} }
             ) {
               id
               title
@@ -1048,8 +1217,8 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .expect(200, {
           data: {
             deleteOneTodoItem: {
-              id: null,
-              title: 'Update Test Todo',
+              id: todoItemIds[0],
+              title: 'Create Nest App',
               completed: true,
             },
           },
@@ -1091,7 +1260,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             deleteManyTodoItems(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: [${graphqlIds.slice(0, 2).join(',')}]} },
               }
             ) {
               deletedCount
@@ -1103,7 +1272,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
         });
     });
-    it('should allow updating a todoItem', () => {
+    it('should allow deleting multiple todoItems', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
@@ -1113,7 +1282,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             deleteManyTodoItems(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: [${graphqlIds.slice(0, 2).join(',')}]} },
               }
             ) {
               deletedCount
@@ -1179,7 +1348,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
   });
 
   describe('addTagsToTodoItem', () => {
-    it('allow adding subTasks to a todoItem', () => {
+    it('allow adding tags to a todoItem', () => {
       return request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
@@ -1189,7 +1358,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             addTagsToTodoItem(
               input: {
-                id: "${todoItemId}",
+                id: ${graphqlIds[0]},
                 relationIds: ["5f74ed2686b2bae7bf4b4aad", "5f74ed2686b2bae7bf4b4aae", "5f74ed2686b2bae7bf4b4aaf"]
               }
             ) {
@@ -1206,7 +1375,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
-          expect(body.data.addTagsToTodoItem.id).toBe('1');
+          expect(body.data.addTagsToTodoItem.id).toBe(todoItemIds[0]);
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
@@ -1231,7 +1400,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           query: `mutation {
             removeTagsFromTodoItem(
               input: {
-                id: "${todoItemId}",
+                id: ${graphqlIds[0]},
                 relationIds: ["5f74ed2686b2bae7bf4b4aad", "5f74ed2686b2bae7bf4b4aae", "5f74ed2686b2bae7bf4b4aaf"]
               }
             ) {
@@ -1248,7 +1417,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
-          expect(body.data.removeTagsFromTodoItem.id).toBe('1');
+          expect(body.data.removeTagsFromTodoItem.id).toBe(todoItemIds[0]);
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,

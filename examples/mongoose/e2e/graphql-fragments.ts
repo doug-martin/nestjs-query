@@ -44,14 +44,8 @@ count {
   title
   description
   completed
-  created
-  updated
-}
-sum {
-  id
-}
-avg {
-  id
+  createdAt
+  updatedAt
 }
 min {
   id
