@@ -1,12 +1,16 @@
-import { AssemblerDeserializer, Class, getQueryServiceToken } from '@nestjs-query/core';
+import { AssemblerDeserializer, AssemblerSerializer, Class, getQueryServiceToken } from '@nestjs-query/core';
 import { FactoryProvider } from '@nestjs/common';
-import { ModelDefinition } from '@nestjs/mongoose';
+import { getModelToken, ModelDefinition } from '@nestjs/mongoose';
 import { Model, Document } from 'mongoose';
 import { MongooseQueryService } from './services';
 
 export type NestjsQueryModelDefinition<Entity extends Document> = {
   document: Class<Entity>;
 } & ModelDefinition;
+
+// initialize default serializer for documents, this is the type that mongoose returns from queries
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+AssemblerSerializer((obj: Document) => obj.toObject({ virtuals: true }))(Document);
 
 function createMongooseQueryServiceProvider<Entity extends Document>(
   model: NestjsQueryModelDefinition<Entity>,
@@ -18,7 +22,7 @@ function createMongooseQueryServiceProvider<Entity extends Document>(
       // eslint-disable-next-line @typescript-eslint/ban-types
       return new MongooseQueryService<Entity>(ModelClass);
     },
-    inject: [`${model.name}Model`],
+    inject: [getModelToken(model.name)],
   };
 }
 

@@ -74,7 +74,7 @@ export class AggregateBuilder<Entity extends Document> {
           [aggAlias]: {
             $sum: {
               $cond: {
-                if: { $in: [{$type: fieldAlias}, ['missing', 'null']] },
+                if: { $in: [{ $type: fieldAlias }, ['missing', 'null']] },
                 then: 0,
                 else: 1,
               },

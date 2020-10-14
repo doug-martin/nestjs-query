@@ -12,9 +12,8 @@ export class WhereBuilder<Entity extends Document> {
   /**
    * Builds a WHERE clause from a Filter.
    * @param filter - the filter to build the WHERE clause from.
-   * @param associations - map of associations that are included in the query.
    */
-  build(filter: Filter<Entity>, alias?: string): FilterQuery<Entity> {
+  build(filter: Filter<Entity>): FilterQuery<Entity> {
     const { and, or } = filter;
     let ands: FilterQuery<Entity>[] = [];
     let ors: FilterQuery<Entity>[] = [];

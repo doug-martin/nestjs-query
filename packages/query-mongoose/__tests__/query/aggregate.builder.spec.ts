@@ -26,8 +26,10 @@ describe('AggregateBuilder', (): void => {
       },
       {
         avg_numberType: { $avg: '$numberType' },
-        count_id: { $sum: { $cond: { if: { $ne: ['$_id', null] }, then: 1, else: 0 } } },
-        count_stringType: { $sum: { $cond: { if: { $ne: ['$stringType', null] }, then: 1, else: 0 } } },
+        count_id: { $sum: { $cond: { else: 1, if: { $in: [{ $type: '$_id' }, ['missing', 'null']] }, then: 0 } } },
+        count_stringType: {
+          $sum: { $cond: { else: 1, if: { $in: [{ $type: '$stringType' }, ['missing', 'null']] }, then: 0 } },
+        },
         max_dateType: { $max: '$dateType' },
         max_numberType: { $max: '$numberType' },
         max_stringType: { $max: '$stringType' },
