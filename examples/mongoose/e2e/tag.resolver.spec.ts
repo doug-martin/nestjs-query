@@ -3,24 +3,20 @@ import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'mongoose';
+import { getConnectionToken } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 import { AppModule } from '../src/app.module';
 import { TagDTO } from '../src/tag/dto/tag.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
-import { refresh } from './fixtures';
-import {
-  edgeNodes,
-  pageInfoField,
-  tagFields,
-  todoItemFields,
-  tagAggregateFields,
-  todoItemAggregateFields,
-} from './graphql-fragments';
+import { refresh, TAGS, TODO_ITEMS } from './fixtures';
+import { edgeNodes, pageInfoField, tagFields, tagAggregateFields, todoItemAggregateFields } from './graphql-fragments';
 import { USER_HEADER_NAME } from '../src/constants';
 import { TagEntity } from '../src/tag/tag.entity';
 
 describe('TagResolver (mongoose - e2e)', () => {
   let app: INestApplication;
+
+  const USER_NAME = 'E2E Test';
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -39,18 +35,10 @@ describe('TagResolver (mongoose - e2e)', () => {
     );
 
     await app.init();
-    await refresh(app.get(Connection));
+    await refresh(app.get(getConnectionToken()));
   });
 
-  afterAll(() => refresh(app.get(Connection)));
-
-  const tags = [
-    { id: '1', name: 'Urgent' },
-    { id: '2', name: 'Home' },
-    { id: '3', name: 'Work' },
-    { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
-  ];
+  afterEach(() => refresh(app.get(getConnectionToken())));
 
   describe('find one', () => {
     it(`should find a tag by id`, () => {
@@ -60,12 +48,12 @@ describe('TagResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          tag(id: 1) {
+          tag(id: "${TAGS[0].id}") {
             ${tagFields}
           }
         }`,
         })
-        .expect(200, { data: { tag: tags[0] } });
+        .expect(200, { data: { tag: TAGS[0] } });
     });
 
     it(`should return null if the tag is not found`, () => {
@@ -75,7 +63,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          tag(id: 100) {
+          tag(id: "${new Types.ObjectId().toString()}") {
             ${tagFields}
           }
         }`,
@@ -94,7 +82,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          tag(id: 1) {
+          tag(id: "${TAGS[0].id}") {
             todoItems(sorting: [{ field: id, direction: ASC }]) {
               ${pageInfoField}
               ${edgeNodes('id')}
@@ -114,7 +102,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
+          expect(edges.map((e) => e.node.id)).toEqual(TODO_ITEMS.slice(0, 2).map((td) => td.id));
         });
     });
 
@@ -125,7 +113,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          tag(id: 1) {
+          tag(id: "${TAGS[0].id}") {
             todoItemsAggregate {
               ${todoItemAggregateFields}
             }
@@ -136,11 +124,9 @@ describe('TagResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const agg: AggregateResponse<TodoItemDTO> = body.data.tag.todoItemsAggregate;
           expect(agg).toEqual({
-            avg: { id: 1.5 },
-            count: { completed: 2, created: 2, description: 0, id: 2, title: 2, updated: 2 },
-            max: { description: null, id: '2', title: 'Create Nest App' },
-            min: { description: null, id: '1', title: 'Create Entity' },
-            sum: { id: 3 },
+            count: { completed: 2, createdAt: 2, description: 0, id: 2, title: 2, updatedAt: 2 },
+            max: { description: null, id: TODO_ITEMS[1].id, title: 'Create Nest App' },
+            min: { description: null, id: TODO_ITEMS[0].id, title: 'Create Entity' },
           });
         });
     });
@@ -165,14 +151,16 @@ describe('TagResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
-            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
+            endCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWYifV19',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWIifV19',
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node)).toEqual(tags);
+          expect(edges.map((e) => e.node)).toEqual(TAGS);
         });
     });
 
@@ -183,7 +171,9 @@ describe('TagResolver (mongoose - e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          tags(filter: { id: { in: [1, 2, 3] } }) {
+          tags(filter: { id: { in: [${TAGS.slice(0, 3)
+            .map((t) => `"${t.id}"`)
+            .join(',')}] } }) {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
             totalCount
@@ -194,45 +184,47 @@ describe('TagResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
-            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
+            endCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWQifV19',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWIifV19',
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
-          expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
+          expect(edges.map((e) => e.node)).toEqual(TAGS.slice(0, 3));
         });
     });
 
-    it(`should allow querying on todoItems`, () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `{
-          tags(filter: { todoItems: { title: { like: "Create Entity%" } } }, sorting: [{field: id, direction: ASC}]) {
-            ${pageInfoField}
-            ${edgeNodes(tagFields)}
-            totalCount
-          }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
-          expect(pageInfo).toEqual({
-            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
-          });
-          expect(totalCount).toBe(3);
-          expect(edges).toHaveLength(3);
-          expect(edges.map((e) => e.node)).toEqual([tags[0], tags[2], tags[4]]);
-        });
-    });
+    // it(`should allow querying on todoItems`, () => {
+    //   return request(app.getHttpServer())
+    //     .post('/graphql')
+    //     .send({
+    //       operationName: null,
+    //       variables: {},
+    //       query: `{
+    //       tags(filter: { todoItems: { title: { like: "Create Entity%" } } }, sorting: [{field: id, direction: ASC}]) {
+    //         ${pageInfoField}
+    //         ${edgeNodes(tagFields)}
+    //         totalCount
+    //       }
+    //     }`,
+    //     })
+    //     .expect(200)
+    //     .then(({ body }) => {
+    //       const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
+    //       expect(pageInfo).toEqual({
+    //         endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
+    //         hasNextPage: false,
+    //         hasPreviousPage: false,
+    //         startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+    //       });
+    //       expect(totalCount).toBe(3);
+    //       expect(edges).toHaveLength(3);
+    //       expect(edges.map((e) => e.node)).toEqual([TAGS[0], TAGS[2], TAGS[4]]);
+    //     });
+    // });
 
     it(`should allow sorting`, () => {
       return request(app.getHttpServer())
@@ -252,14 +244,16 @@ describe('TagResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
           expect(pageInfo).toEqual({
-            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            endCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWIifV19',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
+            startCursor:
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWYifV19',
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
+          expect(edges.map((e) => e.node)).toEqual(TAGS.slice().reverse());
         });
     });
 
@@ -282,14 +276,16 @@ describe('TagResolver (mongoose - e2e)', () => {
           .then(({ body }) => {
             const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
             expect(pageInfo).toEqual({
-              endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
+              endCursor:
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWMifV19',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+              startCursor:
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWIifV19',
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
-            expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
+            expect(edges.map((e) => e.node)).toEqual(TAGS.slice(0, 2));
           });
       });
 
@@ -300,7 +296,7 @@ describe('TagResolver (mongoose - e2e)', () => {
             operationName: null,
             variables: {},
             query: `{
-          tags(paging: {first: 2, after: "eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0="}) {
+          tags(paging: {first: 2, after: "eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWMifV19"}) {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
             totalCount
@@ -311,14 +307,16 @@ describe('TagResolver (mongoose - e2e)', () => {
           .then(({ body }) => {
             const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
             expect(pageInfo).toEqual({
-              endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
+              endCursor:
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWUifV19',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
+              startCursor:
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0ZWQyNjg2YjJiYWU3YmY0YjRhYWQifV19',
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
-            expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
+            expect(edges.map((e) => e.node)).toEqual(TAGS.slice(2, 4));
           });
       });
     });
@@ -341,11 +339,9 @@ describe('TagResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const res: AggregateResponse<TodoItemDTO> = body.data.tagAggregate;
           expect(res).toEqual({
-            count: { id: 5, name: 5, created: 5, updated: 5 },
-            sum: { id: 15 },
-            avg: { id: 3 },
-            min: { id: '1', name: 'Blocked' },
-            max: { id: '5', name: 'Work' },
+            count: { id: 5, name: 5, createdAt: 5, updatedAt: 5 },
+            min: { id: TAGS[0].id, name: 'Blocked' },
+            max: { id: TAGS[4].id, name: 'Work' },
           });
         });
     });
@@ -366,11 +362,9 @@ describe('TagResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           const res: AggregateResponse<TodoItemDTO> = body.data.tagAggregate;
           expect(res).toEqual({
-            count: { id: 3, name: 3, created: 3, updated: 3 },
-            sum: { id: 9 },
-            avg: { id: 3 },
-            min: { id: '1', name: 'Blocked' },
-            max: { id: '5', name: 'Work' },
+            count: { id: 3, name: 3, createdAt: 3, updatedAt: 3 },
+            min: { id: '5f74ed2686b2bae7bf4b4aab', name: 'Blocked' },
+            max: { id: '5f74ed2686b2bae7bf4b4aaf', name: 'Work' },
           });
         });
     });
@@ -393,20 +387,23 @@ describe('TagResolver (mongoose - e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            createOneTag: {
-              id: '6',
-              name: 'Test Tag',
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              createOneTag: {
+                id: expect.any(String),
+                name: 'Test Tag',
+              },
             },
-          },
+          });
         });
     });
 
     it('should call beforeCreateOne hook when creating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(USER_HEADER_NAME, 'E2E Test')
+        .set(USER_HEADER_NAME, USER_NAME)
         .send({
           operationName: null,
           variables: {},
@@ -421,14 +418,16 @@ describe('TagResolver (mongoose - e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            createOneTag: {
-              id: '7',
-              name: 'Before Create One Tag',
-              createdBy: 'E2E Test',
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              createOneTag: {
+                id: expect.any(String),
+                name: 'Before Create One Tag',
+                createdBy: USER_NAME,
+              },
             },
-          },
+          });
         });
     });
 
@@ -476,20 +475,23 @@ describe('TagResolver (mongoose - e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            createManyTags: [
-              { id: '8', name: 'Create Many Tag - 1' },
-              { id: '9', name: 'Create Many Tag - 2' },
-            ],
-          },
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              createManyTags: [
+                { id: expect.any(String), name: 'Create Many Tag - 1' },
+                { id: expect.any(String), name: 'Create Many Tag - 2' },
+              ],
+            },
+          });
         });
     });
 
-    it('should call beforeCreateMany hook when creating multiple tags', () => {
+    it('should call beforeCreateMany hook when creating multiple TAGS', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(USER_HEADER_NAME, 'E2E Test')
+        .set(USER_HEADER_NAME, USER_NAME)
         .send({
           operationName: null,
           variables: {},
@@ -507,13 +509,16 @@ describe('TagResolver (mongoose - e2e)', () => {
             }
         }`,
         })
-        .expect(200, {
-          data: {
-            createManyTags: [
-              { id: '10', name: 'Before Create Many Tag - 1', createdBy: 'E2E Test' },
-              { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'E2E Test' },
-            ],
-          },
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              createManyTags: [
+                { id: expect.any(String), name: 'Before Create Many Tag - 1', createdBy: USER_NAME },
+                { id: expect.any(String), name: 'Before Create Many Tag - 2', createdBy: USER_NAME },
+              ],
+            },
+          });
         });
     });
 
@@ -551,7 +556,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateOneTag(
               input: {
-                id: "6",
+                id: "${TAGS[0].id}",
                 update: { name: "Update Test Tag" }
               }
             ) {
@@ -562,7 +567,7 @@ describe('TagResolver (mongoose - e2e)', () => {
         .expect(200, {
           data: {
             updateOneTag: {
-              id: '6',
+              id: TAGS[0].id,
               name: 'Update Test Tag',
             },
           },
@@ -572,14 +577,14 @@ describe('TagResolver (mongoose - e2e)', () => {
     it('should call beforeUpdateOne hook when updating a tag', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(USER_HEADER_NAME, 'E2E Test')
+        .set(USER_HEADER_NAME, USER_NAME)
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             updateOneTag(
               input: {
-                id: "7",
+                id: "${TAGS[0].id}",
                 update: { name: "Before Update One Test Tag" }
               }
             ) {
@@ -591,9 +596,9 @@ describe('TagResolver (mongoose - e2e)', () => {
         .expect(200, {
           data: {
             updateOneTag: {
-              id: '7',
+              id: TAGS[0].id,
               name: 'Before Update One Test Tag',
-              updatedBy: 'E2E Test',
+              updatedBy: USER_NAME,
             },
           },
         });
@@ -631,7 +636,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateOneTag(
               input: {
-                id: "6",
+                id: "${TAGS[0].id}",
                 update: { name: "" }
               }
             ) {
@@ -657,7 +662,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           query: `mutation {
             updateManyTags(
               input: {
-                filter: {id: { in: ["8", "9"]} },
+                filter: { id: { in: ["${TAGS[0].id}", "${TAGS[1].id}"]} },
                 update: { name: "Update Many Tag" }
               }
             ) {
@@ -674,17 +679,17 @@ describe('TagResolver (mongoose - e2e)', () => {
         });
     });
 
-    it('should call beforeUpdateMany hook when updating multiple tags', () => {
+    it('should call beforeUpdateMany hook when updating multiple TAGS', () => {
       return request(app.getHttpServer())
         .post('/graphql')
-        .set(USER_HEADER_NAME, 'E2E Test')
+        .set(USER_HEADER_NAME, USER_NAME)
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
             updateManyTags(
               input: {
-                filter: {id: { in: ["10", "11"]} },
+                filter: { id: { in: ["${TAGS[0].id}", "${TAGS[1].id}"]} },
                 update: { name: "Before Update Many Tag" }
               }
             ) {
@@ -701,7 +706,7 @@ describe('TagResolver (mongoose - e2e)', () => {
         })
         .then(async () => {
           const queryService = app.get<QueryService<TagEntity>>(getQueryServiceToken(TagEntity));
-          const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } });
+          const todoItems = await queryService.query({ filter: { id: { in: [TAGS[0].id, TAGS[1].id] } } });
           expect(
             todoItems.map((ti) => {
               return {
@@ -711,8 +716,8 @@ describe('TagResolver (mongoose - e2e)', () => {
               };
             }),
           ).toEqual([
-            { id: 10, name: 'Before Update Many Tag', updatedBy: 'E2E Test' },
-            { id: 11, name: 'Before Update Many Tag', updatedBy: 'E2E Test' },
+            { id: TAGS[0].id, name: 'Before Update Many Tag', updatedBy: USER_NAME },
+            { id: TAGS[1].id, name: 'Before Update Many Tag', updatedBy: USER_NAME },
           ]);
         });
     });
@@ -776,7 +781,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           variables: {},
           query: `mutation {
             deleteOneTag(
-              input: { id: "6" }
+              input: { id: "${TAGS[0].id}" }
             ) {
               ${tagFields}
             }
@@ -785,8 +790,8 @@ describe('TagResolver (mongoose - e2e)', () => {
         .expect(200, {
           data: {
             deleteOneTag: {
-              id: null,
-              name: 'Update Test Tag',
+              id: TAGS[0].id,
+              name: TAGS[0].name,
             },
           },
         });
@@ -824,7 +829,7 @@ describe('TagResolver (mongoose - e2e)', () => {
           query: `mutation {
             deleteManyTags(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: ["${TAGS[0].id}", "${TAGS[1].id}"]} },
               }
             ) {
               deletedCount
@@ -883,100 +888,6 @@ describe('TagResolver (mongoose - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
-  });
-
-  describe('addTodoItemsToTag', () => {
-    it('allow adding subTasks to a tag', () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `mutation {
-            addTodoItemsToTag(
-              input: {
-                id: 1,
-                relationIds: ["3", "4", "5"]
-              }
-            ) {
-              ${tagFields}
-              todoItems {
-                ${pageInfoField}
-                ${edgeNodes(todoItemFields)}
-                totalCount
-              }
-            }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const {
-            edges,
-            pageInfo,
-            totalCount,
-          }: CursorConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems;
-          expect(body.data.addTodoItemsToTag.id).toBe('1');
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node.title).sort()).toEqual([
-            'Add Todo Item Resolver',
-            'Create Entity',
-            'Create Entity Service',
-            'Create Nest App',
-            'How to create item With Sub Tasks',
-          ]);
-        });
-    });
-  });
-
-  describe('removeTodoItemsFromTag', () => {
-    it('allow removing todoItems from a tag', () => {
-      return request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `mutation {
-            removeTodoItemsFromTag(
-              input: {
-                id: 1,
-                relationIds: ["3", "4", "5"]
-              }
-            ) {
-              ${tagFields}
-              todoItems {
-                ${pageInfoField}
-                ${edgeNodes(todoItemFields)}
-                totalCount
-              }
-            }
-        }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const {
-            edges,
-            pageInfo,
-            totalCount,
-          }: CursorConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems;
-          expect(body.data.removeTodoItemsFromTag.id).toBe('1');
-          expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
         });
     });
   });
