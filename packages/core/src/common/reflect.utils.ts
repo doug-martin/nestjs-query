@@ -82,8 +82,22 @@ export class MapReflector<K = string> extends Reflector {
     this.defineMetadata(metadata, DTOClass);
   }
 
-  get<DTO, Data>(DTOClass: Class<DTO>, key: K, includeParents = false): MetaValue<Data> {
-    return this.getMetadata<Map<K, Data>>(DTOClass, includeParents)?.get(key);
+  get<DTO, Data>(DTOClass: Class<DTO>, includeParents?: boolean): MetaValue<Map<K, Data>>;
+  get<DTO, Data>(DTOClass: Class<DTO>, key: K, includeParents?: boolean): MetaValue<Data>;
+  get<DTO, Data>(
+    DTOClass: Class<DTO>,
+    key: K | boolean | undefined,
+    includeParents?: boolean,
+  ): MetaValue<Data | Map<K, Data>> {
+    if (typeof key === 'boolean' || typeof key === 'undefined') {
+      return this.getMetadata<Map<K, Data>>(DTOClass, includeParents ?? false);
+    }
+    return this.getMetadata<Map<K, Data>>(DTOClass, includeParents ?? false)?.get(key);
+  }
+
+  getValues<DTO, Data>(DTOClass: Class<DTO>, includeParents = false): MetaValue<Data[]> {
+    const values = this.getMetadata<Map<K, Data>>(DTOClass, includeParents)?.values();
+    return values ? [...values] : undefined;
   }
 
   has<DTO>(DTOClass: Class<DTO>, key: K): boolean {
