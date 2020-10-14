@@ -33,13 +33,6 @@ export class FilterQueryBuilder<Entity extends Document> {
     };
   }
 
-  buildIdQuery(id: unknown | unknown[], { filter, paging, sorting }: Query<Entity>): MongooseQuery<Entity> {
-    return {
-      filterQuery: this.buildIdFilterQuery(id, filter),
-      options: { limit: paging?.limit, skip: paging?.offset, sort: this.buildSorting(sorting) },
-    };
-  }
-
   buildAggregateQuery(aggregate: AggregateQuery<Entity>, filter?: Filter<Entity>): MongooseAggregateQuery<Entity> {
     return {
       filterQuery: this.buildFilterQuery(filter),
@@ -68,9 +61,7 @@ export class FilterQueryBuilder<Entity extends Document> {
   /**
    * Applies the filter from a Query to a `typeorm` QueryBuilder.
    *
-   * @param qb - the `typeorm` QueryBuilder.
    * @param filter - the filter.
-   * @param alias - optional alias to use to qualify an identifier
    */
   buildFilterQuery(filter?: Filter<Entity>): FilterQuery<Entity> {
     if (!filter) {
@@ -81,11 +72,9 @@ export class FilterQueryBuilder<Entity extends Document> {
 
   /**
    * Applies the ORDER BY clause to a `typeorm` QueryBuilder.
-   * @param qb - the `typeorm` QueryBuilder.
    * @param sorts - an array of SortFields to create the ORDER BY clause.
-   * @param alias - optional alias to use to qualify an identifier
    */
-  buildSorting(sorts?: SortField<Entity>[], alias?: string): MongooseSort[] {
+  buildSorting(sorts?: SortField<Entity>[]): MongooseSort[] {
     return (sorts || []).map((sort) => ({
       [getSchemaKey(sort.field.toString())]: sort.direction === SortDirection.ASC ? 'asc' : 'desc',
     }));

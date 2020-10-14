@@ -70,8 +70,7 @@ export class MongooseQueryService<Entity extends Document>
    */
   async query(query: Query<Entity>): Promise<Entity[]> {
     const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query);
-    const models = await this.Model.find(filterQuery, {}, options).exec();
-    return this.convertToEntityInstances(models);
+    return this.Model.find(filterQuery, {}, options).exec();
   }
 
   async aggregate(filter: Filter<Entity>, aggregateQuery: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
@@ -104,7 +103,7 @@ export class MongooseQueryService<Entity extends Document>
     if (!doc) {
       return undefined;
     }
-    return this.convertToEntityInstance(doc);
+    return doc;
   }
 
   /**
@@ -122,8 +121,11 @@ export class MongooseQueryService<Entity extends Document>
    * @param opts - Additional options
    */
   async getById(id: string, opts?: GetByIdOptions<Entity>): Promise<Entity> {
-    const entity = await this.getModelById(id, opts);
-    return this.convertToEntityInstance(entity);
+    const doc = await this.findById(id, opts);
+    if (!doc) {
+      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
+    }
+    return doc;
   }
 
   /**
@@ -137,8 +139,7 @@ export class MongooseQueryService<Entity extends Document>
    */
   async createOne(record: DeepPartial<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(record);
-    const created = await this.Model.create(record as CreateQuery<Entity>);
-    return this.convertToEntityInstance(created);
+    return this.Model.create(record as CreateQuery<Entity>);
   }
 
   /**
@@ -172,13 +173,13 @@ export class MongooseQueryService<Entity extends Document>
   async updateOne(id: string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
-    const doc = await this.Model.findOneAndUpdate(filterQuery, update as UpdateQuery<Entity>, {
+    const doc = await this.Model.findOneAndUpdate(filterQuery, this.getUpdateQuery(update), {
       new: true,
     });
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
     }
-    return this.convertToEntityInstance(doc);
+    return doc;
   }
 
   /**
@@ -197,10 +198,7 @@ export class MongooseQueryService<Entity extends Document>
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    const res = (await this.Model.updateMany(
-      filterQuery,
-      update as UpdateQuery<Entity>,
-    ).exec()) as MongoDBUpdatedOutput;
+    const res = (await this.Model.updateMany(filterQuery, this.getUpdateQuery(update)).exec()) as MongoDBUpdatedOutput;
     return { updatedCount: res.nModified || 0 };
   }
 
@@ -222,7 +220,7 @@ export class MongooseQueryService<Entity extends Document>
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
     }
-    return this.convertToEntityInstance(doc);
+    return doc;
   }
 
   /**
@@ -250,20 +248,13 @@ export class MongooseQueryService<Entity extends Document>
     }
   }
 
-  private convertToEntityInstance(model: Entity): Entity {
-    return model.toObject(this.documentToObjectOptions) as Entity;
-  }
-
-  private convertToEntityInstances(model: Entity[]): Entity[] {
-    return model.map((m) => this.convertToEntityInstance(m));
-  }
-
-  async getModelById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity> {
-    const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
-    const doc = await this.Model.findOne(filterQuery);
-    if (!doc) {
-      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
+  private getUpdateQuery(entity: DeepPartial<Entity>): UpdateQuery<Entity> {
+    if (entity instanceof this.Model) {
+      return entity.modifiedPaths().reduce((update: UpdateQuery<Entity>, k) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        return { ...update, [k]: entity.get(k) };
+      }, {});
     }
-    return doc;
+    return entity as UpdateQuery<Entity>;
   }
 }
