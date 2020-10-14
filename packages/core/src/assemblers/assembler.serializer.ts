@@ -16,5 +16,5 @@ export function AssemblerSerializer<T>(serializer: AssemblerSerializer<T>) {
 }
 
 export function getAssemblerSerializer<DTO>(DTOClass: Class<DTO>): MetaValue<AssemblerSerializer<DTO>> {
-  return reflector.get(DTOClass);
+  return reflector.get(DTOClass, true);
 }

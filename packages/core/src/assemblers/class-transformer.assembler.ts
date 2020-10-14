@@ -65,6 +65,12 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
       if (serializer) {
         return serializer(entityOrDto);
       }
+    } else if ('constructor' in entityOrDto) {
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      const serializer = getAssemblerSerializer((entityOrDto as object).constructor as Class<unknown>);
+      if (serializer) {
+        return serializer(entityOrDto);
+      }
     }
     // eslint-disable-next-line @typescript-eslint/ban-types
     return (entityOrDto as unknown) as object;
