@@ -125,13 +125,6 @@ export function Assembler<
   };
 }
 
-export function getAssembler<DTO, Entity, C, CE, U, UE>(
-  DTOClass: Class<DTO>,
-  EntityClass: Class<Entity>,
-): MetaValue<Class<Assembler<DTO, Entity, C, CE, U, UE>>> {
-  return reflector.get(DTOClass, EntityClass);
-}
-
 export function getAssemblers<DTO>(
   DTOClass: Class<DTO>,
 ): MetaValue<Map<Class<unknown>, Class<Assembler<DTO, unknown, unknown, unknown, unknown, unknown>>>> {
