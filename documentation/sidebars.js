@@ -15,11 +15,21 @@ module.exports = {
       {
         type: 'category',
         label: 'Advanced',
-        items: ['concepts/assemblers'],
+        items: ['concepts/advanced/assemblers'],
       },
     ],
     Persistence: [
       'persistence/services',
+      {
+        type: 'category',
+        label: 'TypeOrm',
+        items: [
+          'persistence/typeorm/getting-started',
+          'persistence/typeorm/custom-service',
+          'persistence/typeorm/multiple-databases',
+          'persistence/typeorm/soft-delete',
+        ],
+      },
       {
         type: 'category',
         label: 'Sequelize',
@@ -31,12 +41,12 @@ module.exports = {
       },
       {
         type: 'category',
-        label: 'TypeOrm',
+        label: 'Mongoose',
         items: [
-          'persistence/typeorm/getting-started',
-          'persistence/typeorm/custom-service',
-          'persistence/typeorm/multiple-databases',
-          'persistence/typeorm/soft-delete',
+          'persistence/mongoose/getting-started',
+          'persistence/mongoose/relations',
+          'persistence/mongoose/custom-service',
+          'persistence/mongoose/serialization',
         ],
       },
     ],

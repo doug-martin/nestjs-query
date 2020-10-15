@@ -54,6 +54,7 @@ Add the following to `src/todo-item/todo-item.entity.ts`.
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
+    { label: 'Mongoose', value: 'mongoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -119,6 +120,32 @@ export class TodoItemEntity extends Model<TodoItemEntity> {
   @UpdatedAt
   updated!: Date;
 }
+
+```
+
+</TabItem>
+<TabItem value="mongoose">
+
+```ts title="todo-item/todo-item.entity.ts"
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+@Schema({ timestamps: { createdAt: 'created', updatedAt: 'updated' } })
+export class TodoItemEntity extends Document {
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop({ required: true })
+  completed!: boolean;
+
+  @Prop({ default: Date.now })
+  createdAt!: Date;
+
+  @Prop({ default: Date.now })
+  updatedAt!: Date;
+}
+
+export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity);
 
 ```
 
@@ -199,6 +226,7 @@ The `NestjsQueryGraphQLModule` will automatically create a Resolver that will ex
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
+    { label: 'Mongoose', value: 'mongoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -237,9 +265,37 @@ import { TodoItemEntity } from './todo-item.entity';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      // import the NestjsQueryTypeOrmModule to register the entity with typeorm
+      // import the NestjsQuerySequelizeModule to register the entity with sequelize
       // and provide a QueryService
       imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
+      // describe the resolvers you want to expose
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
+<TabItem value="mongoose">
+
+```ts {9-19}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryMongooseModule } from '@nestjs-query/query-mongoose';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      // import the NestjsQueryMongooseModule to register the entity with mongoose
+      // and provide a QueryService
+      imports: [
+        NestjsQueryMongooseModule.forFeature([
+          { document: TodoItemEntity, name: TodoItemEntity.name, schema: TodoItemEntitySchema },
+        ]),
+      ],
       // describe the resolvers you want to expose
       resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
     }),
@@ -260,6 +316,7 @@ Next update `app.module` to set up your db connection and the `graphql` nest mod
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
+    { label: 'Mongoose', value: 'mongoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -330,6 +387,34 @@ export class AppModule {}
 ```
 
 </TabItem>
+<TabItem value="mongoose">
+
+```ts
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TodoItemModule } from './todo-item/todo-item.module';
+
+@Module({
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost/nest', options),
+    GraphQLModule.forRoot({
+      // set to true to automatically generate schema
+      autoSchemaFile: true,
+    }),
+    TodoItemModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+
+```
+
+</TabItem>
 </Tabs>
 
 Create a `docker-compose.yml` file in the root of the project
@@ -347,6 +432,18 @@ services:
       - "5432"
     ports:
       - "5432:5432"
+  # only needed if using mongoose
+  mongo:
+    image: "mongo:4.4"
+    restart: always
+    ports:
+      - "27017:27017"
+  mongo-express:
+    image: "mongo-express:latest"
+    restart: always
+    ports:
+      - 8081:8081
+
 
 ```
 

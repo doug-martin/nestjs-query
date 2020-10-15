@@ -10,6 +10,7 @@ The following ORMs are supported out of the box.
 
 * [TypeOrm](./typeorm/getting-started.md)
 * [Sequelize](./sequelize/getting-started.md)
+* [Mongoose](./mongoose/getting-started.md)
 
 
 All examples assume the following entity.
@@ -20,6 +21,7 @@ All examples assume the following entity.
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
+    { label: 'Mongoose', value: 'mongoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -87,6 +89,34 @@ export class TodoItemEntity extends Model<TodoItemEntity> {
 ```
 
 </TabItem>
+<TabItem value="mongoose">
+
+```ts title="todo-item.entity.ts"
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+@Schema({ timestamps: { createdAt: 'created', updatedAt: 'updated' } })
+export class TodoItemEntity extends Document {
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop()
+  description?: string;
+
+  @Prop({ required: true })
+  completed!: boolean;
+
+  @Prop({ default: Date.now })
+  created!: Date;
+
+  @Prop({ default: Date.now })
+  updated!: Date;
+}
+
+export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity);
+```
+
+</TabItem>
 </Tabs>
 
 
@@ -94,7 +124,8 @@ export class TodoItemEntity extends Model<TodoItemEntity> {
 
 ### Module
 
-The `nestjs-query` `typeorm` and `sequelize` packages provide a module that will add providers to inject auto-created `QueryServices` using the `@InjectQueryService` decorator.
+The `nestjs-query` `typeorm`, `sequelize`, and `mongoose` packages provide a module that will add providers to inject
+auto-created `QueryServices` using the `@InjectQueryService` decorator.
 
 In order to use the decorator you will need to use the module that comes with the `nestjs-query` orm module providing it your entities that you want the services created for.
 
@@ -104,6 +135,7 @@ In order to use the decorator you will need to use the module that comes with th
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
+    { label: 'Mongoose', value: 'mongoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -134,6 +166,26 @@ import { TodoItemResolver } from './todo-item.resolver';
 @Module({
   providers: [TodoItemResolver],
   imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
+<TabItem value="mongoose">
+
+```ts title="todo-item.module.ts" {9-11}
+import { NestjsQueryMongooseModule } from '@nestjs-query/query-mongoose';
+import { Module } from '@nestjs/common';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemResolver } from './todo-item.resolver';
+
+@Module({
+  providers: [TodoItemResolver],
+  imports: [
+    NestjsQueryMongooseModule.forFeature([
+      { document: TodoItemEntity, name: TodoItemEntity.name, schema: TodoItemEntitySchema },
+    ]),
+  ],
 })
 export class TodoItemModule {}
 ```
@@ -393,6 +445,10 @@ It is a common use case to include a foreign key from your entity in your DTO.
 
 To do this you should add the foreign key to your entity as well as your DTO.
 
+:::note
+This section only applies when using typeorm and sequelize with relations
+:::
+
 ### Example
 
 Assume TodoItems can have SubTasks we would set up our SubTaskEntity using the following
@@ -543,7 +599,7 @@ export class SubTaskDTO {
 ## Relations
 
 :::note
-This section only applies when you combine your DTO and entity
+This section only applies when you combine your DTO and entity and are using Typeorm or Sequelize
 :::
 
 When your DTO and entity are the same class and you have relations defined, you should not decorate your the relations in the DTO with `@Field` or `@FilterableField`.

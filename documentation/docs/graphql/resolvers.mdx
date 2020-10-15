@@ -18,6 +18,7 @@ The easiest way to get started is to use the `@NestjsQueryGraphQLModule`. The `N
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
+    { label: 'Mongoose', value: 'mongoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -54,6 +55,31 @@ import { TodoItemEntity } from './todo-item.entity';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
+<TabItem value="mongoose">
+
+```ts title="todo-item.module.ts"
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryMongooseModule } from '@nestjs-query/query-mongoose';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [
+        NestjsQueryMongooseModule.forFeature([
+          { document: TodoItemEntity, name: TodoItemEntity.name, schema: TodoItemEntitySchema },
+        ]),
+      ],
       resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
     }),
   ],

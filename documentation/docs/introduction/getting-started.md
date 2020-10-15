@@ -11,7 +11,7 @@ While working on projects in nestjs it was very easy to get up and running with 
 ## Features
 
 * Built on top of [nestjs](https://nestjs.com/)
-* Out of the box [CRUD for GraphQL](../graphql/resolvers.mdx) using [TypeORM](https://typeorm.io/) or [Sequelize](https://sequelize.org/)
+* Out of the box [CRUD for GraphQL](../graphql/resolvers.mdx) using [TypeORM](https://typeorm.io/), [Sequelize](https://sequelize.org/) or [Mongoose](https://mongoosejs.com/)
 * [Aggregate Queries](../graphql/aggregations.mdx) on objects and their relations.
 * Out of the box [subscriptions](../graphql/subscriptions.mdx) on all `CRUD` operations.
 * Support for one to one, one to many, many to one and many to many [relations](../graphql/relations.mdx).
@@ -30,6 +30,7 @@ Nestjs-query is composed of multiple packages
 * [`@nestjs-query/query-graphql`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-graphql) - Package that provides the graphql resolver and decorators for crud endpoints.
 * [`@nestjs-query/query-typeorm`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-typeorm) - Package that implements a Typeorm service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
 * [`@nestjs-query/query-sequelize`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-sequelize) - Package that implements a Sequelize service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
+* [`@nestjs-query/query-sequelize`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-mongoose) - Package that implements a Mongoose service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
 
 ## Migration Guides
 
