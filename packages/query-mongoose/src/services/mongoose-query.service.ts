@@ -45,14 +45,10 @@ export interface MongooseQueryServiceOpts {
 export class MongooseQueryService<Entity extends Document>
   extends ReferenceQueryService<Entity>
   implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
-  protected readonly documentToObjectOptions: DocumentToObjectOptions;
+  readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder();
 
-  readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
-
-  constructor(readonly Model: MongooseModel<Entity>, opts?: MongooseQueryServiceOpts) {
+  constructor(readonly Model: MongooseModel<Entity>) {
     super();
-    this.documentToObjectOptions = opts?.documentToObjectOptions || { virtuals: true };
-    this.filterQueryBuilder = new FilterQueryBuilder();
   }
 
   /**
