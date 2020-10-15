@@ -109,6 +109,7 @@ But you inherited a DB schema that has names that are not as user friendly.
   values={[
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
+    { label: 'Mongoose', value: 'mongoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -146,6 +147,29 @@ export class UserEntity extends Model<UserEntity> {
    @Column
    email!: string;
 }
+
+```
+
+</TabItem>
+<TabItem value="mongoose">
+
+```ts title="user.entity.ts"
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+@Schema()
+export class UserEntity extends Document {
+  @Prop({ required: true })
+  first!: string;
+
+  @Prop({ required: true })
+  last!: string;
+
+  @Prop({ required: true })
+  email!: string;
+}
+
+export const UserEntityEntitySchema = SchemaFactory.createForClass(UserEntity);
 
 ```
 

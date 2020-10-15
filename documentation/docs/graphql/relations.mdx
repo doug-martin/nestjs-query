@@ -14,6 +14,10 @@ When using the `nestjs-query` you can specify relations that should be exposed f
 * `@FilterableRelation` - Same as the `@RelationDecorator` but also enables filtering on the relation.
 * `@FilterableConnection` - Same as `@Connection` but also enables filtering on the relation.
 
+:::warning
+Filterable relations and connections are not supported by mongoose!
+:::
+
 :::note
 When loading relations a [dataloader](https://github.com/graphql/dataloader) that is scoped to the request will be used. This prevents the n+1 problem.
 :::
@@ -327,7 +331,9 @@ If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodo
 The `@FilterableRelation` extends the `@Relation` decorator exposing the ability to filter the `DTO` that defines the relation by relation properties.
 
 :::warning
-The `@FilterableRelation` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`, `sequelize`). If your relations are federated you cannot use the `@FilterableRelation` decorator.
+The `@FilterableRelation` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`,
+`sequelize`). If your relations are federated or you are using `mongoose` you cannot use the `@FilterableRelation`
+decorator.
 :::
 
 ### Example
@@ -567,7 +573,9 @@ type TodoItemSubTasksConnection {
 The `@FilterableConnection` extends the `@Connection` decorator exposing the ability to filter the `DTO` that defines the relation by relation properties.
 
 :::warning
-The `@FilterableConnection` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`, `sequelize`). If your relations are federated you cannot use the `@FilterableConnection` decorator.
+The `@FilterableConnection` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`,
+`sequelize`). If your relations are federated or you are using `mongoose` you cannot use the `@FilterableConnection`
+decorator.
 :::
 
 ### Example
