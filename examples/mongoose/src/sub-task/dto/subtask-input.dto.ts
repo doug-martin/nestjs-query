@@ -40,5 +40,5 @@ export class CreateSubTaskDTO {
 
   @Field(() => ID)
   @IsNotEmpty()
-  todoItemId!: string;
+  todoItem!: string;
 }

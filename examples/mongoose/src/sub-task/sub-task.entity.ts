@@ -12,7 +12,7 @@ export class SubTaskEntity extends Document {
   @Prop({ required: true })
   completed!: boolean;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'TodoItemEntity' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'TodoItemEntity', required: true })
   todoItem!: Types.ObjectId;
 
   @Prop()

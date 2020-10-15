@@ -390,7 +390,7 @@ describe('SubTaskResolver (mongoose - e2e)', () => {
           query: `mutation {
             createOneSubTask(
               input: {
-                subTask: { title: "Test SubTask", completed: false, todoItemId: "${TODO_ITEMS[0].id}" }
+                subTask: { title: "Test SubTask", completed: false, todoItem: "${TODO_ITEMS[0].id}" }
               }
             ) {
               ${subTaskFields}
@@ -421,7 +421,7 @@ describe('SubTaskResolver (mongoose - e2e)', () => {
           query: `mutation {
             createOneSubTask(
               input: {
-                subTask: { title: "", completed: false, todoItemId: "${TODO_ITEMS[0].id}" }
+                subTask: { title: "", completed: false, todoItem: "${TODO_ITEMS[0].id}" }
               }
             ) {
               ${subTaskFields}
@@ -447,8 +447,8 @@ describe('SubTaskResolver (mongoose - e2e)', () => {
             createManySubTasks(
               input: {
                 subTasks: [
-                  { title: "Test Create Many SubTask - 1", completed: false, todoItemId: "${TODO_ITEMS[0].id}" },
-                  { title: "Test Create Many SubTask - 2", completed: true, todoItemId: "${TODO_ITEMS[0].id}" },
+                  { title: "Test Create Many SubTask - 1", completed: false, todoItem: "${TODO_ITEMS[0].id}" },
+                  { title: "Test Create Many SubTask - 2", completed: true, todoItem: "${TODO_ITEMS[0].id}" },
                 ]
               }
             ) {
@@ -488,7 +488,7 @@ describe('SubTaskResolver (mongoose - e2e)', () => {
           query: `mutation {
             createManySubTasks(
               input: {
-                subTasks: [{ title: "", completed: false, todoItemId: "2" }]
+                subTasks: [{ title: "", completed: false, todoItem: "2" }]
               }
             ) {
               ${subTaskFields}

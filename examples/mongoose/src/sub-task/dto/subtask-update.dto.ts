@@ -42,5 +42,5 @@ export class SubTaskUpdateDTO {
   @Field({ nullable: true })
   @IsOptional()
   @IsNotEmpty()
-  todoItemId?: string;
+  todoItem?: string;
 }
