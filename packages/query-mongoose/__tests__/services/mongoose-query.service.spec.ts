@@ -26,14 +26,14 @@ describe('MongooseQueryService', () => {
 
   class TestEntityService extends MongooseQueryService<TestEntity> {
     constructor(@InjectModel(TestEntity.name) readonly model: Model<TestEntity>) {
-      super(model, { documentToObjectOptions: { virtuals: true } });
+      super(model);
       TestEntityModel = model;
     }
   }
 
   class TestReferenceService extends MongooseQueryService<TestReference> {
     constructor(@InjectModel(TestReference.name) readonly model: Model<TestReference>) {
-      super(model, { documentToObjectOptions: { virtuals: true } });
+      super(model);
       TestReferenceModel = model;
     }
   }

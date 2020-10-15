@@ -25,7 +25,6 @@
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/mongoose": "^7.0.0",
-    "class-transformer": "^0.2.3 || ^0.3.0",
     "mongoose": "^5.10.0",
     "mongodb": "^3.6.0"
   },
