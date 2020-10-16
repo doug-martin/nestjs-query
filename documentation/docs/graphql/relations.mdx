@@ -663,6 +663,154 @@ In this example we'll find all `todoItems` that have `subTasks` that are complet
 }
 ```
 
+## Virtual Relations
+
+You may run into a case where you have a `virtual` relation that does not exist in the database. `nestjs-query`
+supports this through the `RelationQueryService`.
+
+The `RelationQueryService` allows you to create `virtual` relations on a DTO by wrapping the original `QueryService`
+and specifying relations. When a relation look up is called it will:
+* First check if the relation is a virtual relation, if true it will call the `query` option and pass that to the
+provided relation `queryService` to look up the relations.
+* If the relation is not a `virtual` relation it will proxy to the original query service to query for the relation.
+
+For example we could wrap the `TodoItem` query service and add a `completedSubTasks` relation.
+
+```ts title="todo-item/todo-item.service.ts"
+import { InjectQueryService, QueryService, RelationQueryService } from '@nestjs-query/core';
+import { TodoItemEntity } from './todo-item.entity';
+import { SubTaskEntity } from '../sub-task/sub-task.entity';
+
+export class TodoItemService extends RelationQueryService<TodoItemEntity> {
+  constructor(
+    @InjectQueryService(TodoItemEntity) queryService: QueryService<TodoItemEntity>,
+    @InjectQueryService(SubTaskEntity) subTaskQueryService: QueryService<SubTaskEntity>,
+  ) {
+    // provide the original query service so all relations defined in the ORM work
+    super(queryService, {
+      // specify the virtual relations
+      completedSubTasks: {
+        // provide the service that will be used to query the relation
+        service: subTaskQueryService,
+        // the query method accepts a todoItem that can be used to filter the relations
+        query(todoItem) {
+          // filter for all relations that belong to the todoItem and are completed
+          return { filter: { todoItemId: { eq: todoItem.id }, completed: { is: true } } };
+        },
+      },
+    });
+  }
+}
+```
+
+Once the `relation` is defined in the query service we can add it to our `DTO`
+
+```ts title="todo-item/todo-item.dto.ts"
+import { FilterableField, FilterableConnection, KeySet } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
+
+@ObjectType('TodoItem')
+@KeySet(['id'])
+@FilterableConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
+@FilterableConnection('completedSubTasks', () => SubTaskDTO, {
+  // disable remove and update because it is a virtual relation
+  disableRemove: true,
+  disableUpdate: true,
+})
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+Next we need to export the `SubTask` query service from the `SubTaskModule` so we can resolve it in the
+`TodoItemService`.
+
+```ts title='sub-task/sub-task.module.ts'
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { SubTaskDTO } from './dto/sub-task.dto';
+import { SubTaskEntity } from './sub-task.entity';
+
+// define the persistence module so it can be exported
+const nestjsQueryTypeOrmModule = NestjsQueryTypeOrmModule.forFeature([SubTaskEntity]);
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      // import it in the graphql module
+      imports: [nestjsQueryTypeOrmModule],
+      resolvers: [
+        {
+          DTOClass: SubTaskDTO,
+          EntityClass: SubTaskEntity,
+        },
+      ],
+    }),
+    // import it into the subTaskModule so it can be exported
+    nestjsQueryTypeOrmModule,
+  ],
+  // export the persistence module so it can be used by the TodoItemService
+  exports: [nestjsQueryTypeOrmModule],
+})
+export class SubTaskModule {}
+```
+
+Now we can import the `SubTaskModule` into the `TodoItemModule` so the `SubTask` query service can be injected into
+the `TodoItemService`.
+
+```ts title="todo-item/todo-item.module.ts"
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemAssembler } from './todo-item.assembler';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemResolver } from './todo-item.resolver';
+import { TodoItemService } from './todo-item.service';
+import { SubTaskModule } from '../sub-task/sub-task.module';
+
+@Module({
+  providers: [TodoItemResolver],
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      // import the persistence module for the TodoItemEntity and the SubTaskModule
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity]), SubTaskModule],
+      services: [TodoItemService],
+      assemblers: [TodoItemAssembler],
+      resolvers: [
+        {
+          DTOClass: TodoItemDTO,
+          ServiceClass: TodoItemService,
+        },
+      ],
+    }),
+  ],
+})
+export class TodoItemModule {}
+
+```
+
+The `completedSubTasks` relation is now available in your graphql schema.
+
 
 ## Options
 
