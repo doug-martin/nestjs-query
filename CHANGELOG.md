@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.21.0](https://github.com/doug-martin/nestjs-query/compare/v0.20.2...v0.21.0) (2020-10-16)
+
+
+### Bug Fixes
+
+* **core:** Look up the proper assembler with inheritance ([8bd22c5](https://github.com/doug-martin/nestjs-query/commit/8bd22c5a40974c9011d0b472dc1ebe1328ba83f6))
+* **deps:** update dependency apollo-server-express to v2.18.2 ([cb9d708](https://github.com/doug-martin/nestjs-query/commit/cb9d70873e957bfc0c806f1bf7ec9aa4259b3c4b))
+* **deps:** update dependency pg to v8.4.0 ([d8a76bd](https://github.com/doug-martin/nestjs-query/commit/d8a76bd671cd91aeedcc24d990b80ef1d3e8f6f8))
+* **deps:** update dependency pg to v8.4.1 ([d04537b](https://github.com/doug-martin/nestjs-query/commit/d04537be3fc48c59bb78fc374d3f2390d6499372))
+* **eslint:** Fix eslint to recognize sub packages ([13fdd2b](https://github.com/doug-martin/nestjs-query/commit/13fdd2b31289dbc80316cbdb5aa32edbe596bad4))
+* **mongodb:** Delete unsupported MongoDB soft deletion ([22decdf](https://github.com/doug-martin/nestjs-query/commit/22decdfadad7a79ff77f33ab022bb6e7a5f52e73))
+
+
+### Features
+
+* **mongodb:** Add basic support for MongoDB ([ce4c5e9](https://github.com/doug-martin/nestjs-query/commit/ce4c5e95e02fe36a89302ce97fbb7d2b0ef86717))
+* **mongodb:** Add support for all filter operators ([9420036](https://github.com/doug-martin/nestjs-query/commit/9420036d8d24e825c08b60bd9773404e26968ea5))
+* **mongodb:** Add support for find relations with MongoDB ([f4190e6](https://github.com/doug-martin/nestjs-query/commit/f4190e65a4379fd53018dc9809b017dccd0152c4))
+* **mongodb:** Add support for list of references ([bc926a4](https://github.com/doug-martin/nestjs-query/commit/bc926a4f089fd790b8bc37ee126bfcc2f70fc145))
+* **mongodb:** Allow to customize mongoose document options ([46db24a](https://github.com/doug-martin/nestjs-query/commit/46db24ac2b424b9379d380792328ee670fb281e3))
+* **mongodb:** Allow to override filter operators ([24e7c0a](https://github.com/doug-martin/nestjs-query/commit/24e7c0a6146ca37598b73577bd772e0e79dea823))
+* **mongodb:** Include virtuals on document responses ([bc407a0](https://github.com/doug-martin/nestjs-query/commit/bc407a0f7100a741d8a4084227e3767fcf36dd4a))
+* **mongodb:** Use new filter on typegoose query service ([de34e92](https://github.com/doug-martin/nestjs-query/commit/de34e9240055b0f1cfbb360b66c37f216f115ddb))
+* **mongodb:** Use typegoose for MongoDB support ([702dc83](https://github.com/doug-martin/nestjs-query/commit/702dc839638afd6b781dbb0f75f725d7286eb580))
+* **mongoose:** Add mongo support ([ba21ed4](https://github.com/doug-martin/nestjs-query/commit/ba21ed4dee5202781a7a42ca0609b22a0c0afbdd))
+* **mongoose:** Hardening reference support ([107bba0](https://github.com/doug-martin/nestjs-query/commit/107bba040a2b1d423deb4f1e428a43cecab48e79))
+* **mongoose:** Remove unused code ([7715ce7](https://github.com/doug-martin/nestjs-query/commit/7715ce70982078db2bbc7fbfe0cdf89c4591d04a))
+* **mongoose:** Switch to native mongoose support ([5cdfa39](https://github.com/doug-martin/nestjs-query/commit/5cdfa39b7d91cf0f8438ef3387a89aac850f4452))
+
+
+
+
+
 ## [0.20.2](https://github.com/doug-martin/nestjs-query/compare/v0.20.1...v0.20.2) (2020-10-01)
 
 

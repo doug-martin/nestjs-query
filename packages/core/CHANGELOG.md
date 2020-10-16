@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.21.0](https://github.com/doug-martin/nestjs-query/compare/v0.20.2...v0.21.0) (2020-10-16)
+
+
+### Bug Fixes
+
+* **core:** Look up the proper assembler with inheritance ([8bd22c5](https://github.com/doug-martin/nestjs-query/commit/8bd22c5a40974c9011d0b472dc1ebe1328ba83f6))
+* **eslint:** Fix eslint to recognize sub packages ([13fdd2b](https://github.com/doug-martin/nestjs-query/commit/13fdd2b31289dbc80316cbdb5aa32edbe596bad4))
+
+
+### Features
+
+* **mongoose:** Hardening reference support ([107bba0](https://github.com/doug-martin/nestjs-query/commit/107bba040a2b1d423deb4f1e428a43cecab48e79))
+* **mongoose:** Switch to native mongoose support ([5cdfa39](https://github.com/doug-martin/nestjs-query/commit/5cdfa39b7d91cf0f8438ef3387a89aac850f4452))
+
+
+
+
+
 ## [0.20.2](https://github.com/doug-martin/nestjs-query/compare/v0.20.1...v0.20.2) (2020-10-01)
 
 
