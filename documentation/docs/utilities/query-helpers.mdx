@@ -175,7 +175,7 @@ The resulting array of dtos would be.
 ## transformFilter
 
 The transformFilter is used to remap fields in a `Filter`. This method is commonly used when defining a custom
-[Assembler](../concepts/assemblers.mdx).
+[Assembler](../concepts/advanced/assemblers.mdx).
 
 ### Arguments
 
@@ -219,7 +219,7 @@ The new filter would be
 ## transformSort
 
 The `transformSort` is used to remap fields in an array of  `SortField<DTO>[]`. This method is commonly used when
-defining a custom [Assembler](../concepts/assemblers.mdx).
+defining a custom [Assembler](../concepts/advanced/assemblers.mdx).
 
 ### Arguments
 
@@ -259,7 +259,7 @@ const transformed =  transformSort(dtoSort, fieldMap);
 ## transformQuery
 
 The `transformQuery` method uses the `transformFilter` and `transformSort` methods to remap a `Query`. This method is
- commonly used when defining a custom [Assembler](../concepts/assemblers.mdx).
+ commonly used when defining a custom [Assembler](../concepts/advanced/assemblers.mdx).
 
 ### Arguments
 

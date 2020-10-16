@@ -888,7 +888,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## v0.2.0
 
-* Add `Assemblers` to convert DTOs and Entities that are a different shape. See https://doug-martin.github.io/nestjs-query/docs/concepts/assemblers
+* Add `Assemblers` to convert DTOs and Entities that are a different shape. See https://doug-martin.github.io/nestjs-query/docs/concepts/advanced/assemblers
 
 ## v0.1.0
 
