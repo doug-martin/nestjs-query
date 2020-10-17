@@ -20,7 +20,9 @@ import {
   readBasicResolverSDL,
   readConnectionWithTotalCountSDL,
   readCustomConnectionResolverSDL,
+  readCustomManyQueryResolverSDL,
   readCustomNameResolverSDL,
+  readCustomOneQueryResolverSDL,
   readCustomQueryResolverSDL,
   readDisabledResolverSDL,
   readManyDisabledResolverSDL,
@@ -49,6 +51,14 @@ describe('ReadResolver', () => {
 
   it('should use the dtoName if provided', () => {
     return expectResolverSDL(readCustomNameResolverSDL, { dtoName: 'Test' });
+  });
+
+  it('should use the one.name option for the findById if provided', () => {
+    return expectResolverSDL(readCustomOneQueryResolverSDL, { one: { name: 'read_one_test' } });
+  });
+
+  it('should use the many.name option for the queryMany if provided', () => {
+    return expectResolverSDL(readCustomManyQueryResolverSDL, { many: { name: 'read_many_test' } });
   });
 
   it('should not expose read methods if disabled', () => {

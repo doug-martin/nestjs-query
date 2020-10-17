@@ -42,6 +42,9 @@ export interface CreateResolverOpts<DTO, C = DeepPartial<DTO>> extends Subscript
    * The class to be used for `createMany` input.
    */
   CreateManyInput?: Class<CreateManyInputType<C>>;
+
+  createOneMutationName?: string;
+  createManyMutationName?: string;
 }
 
 export interface CreateResolver<DTO, C, QS extends QueryService<DTO, C, unknown>> extends ServiceResolver<DTO, QS> {
@@ -110,6 +113,8 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
   } = opts;
   const createOneHook = lookupCreateOneHook(DTOClass, CreateDTOClass);
   const createManyHook = lookupCreateManyHook(DTOClass, CreateDTOClass);
+  const createOneMutationName = opts.one?.name ?? `createOne${baseName}`;
+  const createManyMutationName = opts.many?.name ?? `createMany${pluralBaseName}`;
   const commonResolverOpts = omit(
     opts,
     'dtoName',
@@ -137,7 +142,7 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class CreateResolverBase extends BaseClass {
-    @ResolverMutation(() => DTOClass, { name: `createOne${baseName}` }, commonResolverOpts, opts.one ?? {})
+    @ResolverMutation(() => DTOClass, { name: createOneMutationName }, commonResolverOpts, opts.one ?? {})
     async createOne(@MutationArgs(CO, createOneHook) input: CO): Promise<DTO> {
       const created = await this.service.createOne(input.input.input);
       if (enableOneSubscriptions) {
@@ -146,7 +151,7 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       return created;
     }
 
-    @ResolverMutation(() => [DTOClass], { name: `createMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
+    @ResolverMutation(() => [DTOClass], { name: createManyMutationName }, commonResolverOpts, opts.many ?? {})
     async createMany(@MutationArgs(CM, createManyHook) input: CM): Promise<DTO[]> {
       const created = await this.service.createMany(input.input.input);
       if (enableManySubscriptions) {

@@ -67,6 +67,12 @@ export const deleteOneSubscriptionResolverSDL = readGraphql(
 export const deleteManySubscriptionResolverSDL = readGraphql(
   resolve(__dirname, 'delete', 'delete-many-subscription.resolver.graphql'),
 );
+export const deleteCustomOneMutationResolverSDL = readGraphql(
+  resolve(__dirname, 'delete', 'delete-custom-one-mutation.resolver.graphql'),
+);
+export const deleteCustomManyMutationResolverSDL = readGraphql(
+  resolve(__dirname, 'delete', 'delete-custom-many-mutation.resolver.graphql'),
+);
 
 export const createBasicResolverSDL = readGraphql(resolve(__dirname, 'create', 'create-basic.resolver.graphql'));
 export const createDisabledResolverSDL = readGraphql(resolve(__dirname, 'create', 'create-disabled.resolver.graphql'));
@@ -91,6 +97,12 @@ export const createCustomManyInputResolverSDL = readGraphql(
 export const createSubscriptionResolverSDL = readGraphql(
   resolve(__dirname, 'create', 'create-subscription.resolver.graphql'),
 );
+export const createCustomOneMutationResolverSDL = readGraphql(
+  resolve(__dirname, 'create', 'create-custom-one-mutation.resolver.graphql'),
+);
+export const createCustomManyMutationResolverSDL = readGraphql(
+  resolve(__dirname, 'create', 'create-custom-many-mutation.resolver.graphql'),
+);
 
 export const readBasicResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-basic.resolver.graphql'));
 export const readDisabledResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-disabled.resolver.graphql'));
@@ -106,6 +118,12 @@ export const readCustomQueryResolverSDL = readGraphql(resolve(__dirname, 'read',
 export const readOffsetQueryResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-offset-query.resolver.graphql'));
 export const readConnectionWithTotalCountSDL = readGraphql(
   resolve(__dirname, 'read', 'read-connection-with-total-count.resolver.graphql'),
+);
+export const readCustomOneQueryResolverSDL = readGraphql(
+  resolve(__dirname, 'read', 'read-custom-one-query.resolver.graphql'),
+);
+export const readCustomManyQueryResolverSDL = readGraphql(
+  resolve(__dirname, 'read', 'read-custom-many-query.resolver.graphql'),
 );
 
 export const updateBasicResolverSDL = readGraphql(resolve(__dirname, 'update', 'update-basic.resolver.graphql'));
@@ -136,6 +154,12 @@ export const updateOneSubscriptionResolverSDL = readGraphql(
 );
 export const updateManySubscriptionResolverSDL = readGraphql(
   resolve(__dirname, 'update', 'update-many-subscription.resolver.graphql'),
+);
+export const updateCustomOneMutationResolverSDL = readGraphql(
+  resolve(__dirname, 'update', 'update-custom-one-mutation.resolver.graphql'),
+);
+export const updateCustomManyMutationResolverSDL = readGraphql(
+  resolve(__dirname, 'update', 'update-custom-many-mutation.resolver.graphql'),
 );
 
 export const referenceBasicResolverSDL = readGraphql(

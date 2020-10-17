@@ -18,8 +18,10 @@ import {
   createResolverFromNest,
   deleteBasicResolverSDL,
   deleteCustomManyInputResolverSDL,
+  deleteCustomManyMutationResolverSDL,
   deleteCustomNameResolverSDL,
   deleteCustomOneInputResolverSDL,
+  deleteCustomOneMutationResolverSDL,
   deleteDisabledResolverSDL,
   deleteManyDisabledResolverSDL,
   deleteManySubscriptionResolverSDL,
@@ -63,6 +65,14 @@ describe('DeleteResolver', () => {
 
   it('should use the dtoName if provided', () => {
     return expectResolverSDL(deleteCustomNameResolverSDL, { dtoName: 'Test' });
+  });
+
+  it('should use the one.name option for the deleteOne if provided', () => {
+    return expectResolverSDL(deleteCustomOneMutationResolverSDL, { one: { name: 'delete_one_test' } });
+  });
+
+  it('should use the many.name option for the deleteMany if provided', () => {
+    return expectResolverSDL(deleteCustomManyMutationResolverSDL, { many: { name: 'delete_many_test' } });
   });
 
   it('should not expose delete methods if disabled', () => {

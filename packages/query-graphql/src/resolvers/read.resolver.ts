@@ -55,6 +55,8 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
   opts: ReadOpts,
 ) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<ReadResolverFromOpts<DTO, ReadOpts, QS>> & B => {
   const { baseNameLower, pluralBaseNameLower, baseName } = getDTONames(DTOClass, opts);
+  const readOneQueryName = opts.one?.name ?? baseNameLower;
+  const readManyQueryName = opts.many?.name ?? pluralBaseNameLower;
   const { QueryArgs = QueryArgsType(DTOClass, opts) } = opts;
   const {
     Connection = ConnectionType(DTOClass, QueryArgs, { ...opts, connectionName: `${baseName}Connection` }),
@@ -72,13 +74,13 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadResolverBase extends BaseClass {
-    @ResolverQuery(() => DTOClass, { nullable: true, name: baseNameLower }, commonResolverOpts, opts.one ?? {})
+    @ResolverQuery(() => DTOClass, { nullable: true, name: readOneQueryName }, commonResolverOpts, opts.one ?? {})
     async findById(@HookArgs(FO, findOneHook) input: FO, @Context() context?: unknown): Promise<DTO | undefined> {
       const authorizeFilter = await getAuthFilter(this.authorizer, context);
       return this.service.findById(input.id, { filter: authorizeFilter });
     }
 
-    @ResolverQuery(() => Connection.resolveType, { name: pluralBaseNameLower }, commonResolverOpts, opts.many ?? {})
+    @ResolverQuery(() => Connection.resolveType, { name: readManyQueryName }, commonResolverOpts, opts.many ?? {})
     async queryMany(
       @HookArgs(QA, queryManyHook) query: QA,
       @Context() context?: unknown,

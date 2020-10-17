@@ -116,6 +116,8 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
   } = opts;
   const updateOneHook = lookupUpdateOneHook(DTOClass, UpdateDTOClass);
   const updateManyHook = lookupUpdateManyHook(DTOClass, UpdateDTOClass);
+  const updateOneMutationName = opts.one?.name ?? `updateOne${baseName}`;
+  const updateManyMutationName = opts.many?.name ?? `updateMany${pluralBaseName}`;
 
   const commonResolverOpts = omit(
     opts,
@@ -143,7 +145,7 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateResolverBase extends BaseClass {
-    @ResolverMutation(() => DTOClass, { name: `updateOne${baseName}` }, commonResolverOpts, opts.one ?? {})
+    @ResolverMutation(() => DTOClass, { name: updateOneMutationName }, commonResolverOpts, opts.one ?? {})
     async updateOne(@MutationArgs(UO, updateOneHook) input: UO, @Context() context?: unknown): Promise<DTO> {
       const updateOne = await transformAndValidate(UO, input);
       const authorizeFilter = await getAuthFilter(this.authorizer, context);
@@ -155,7 +157,7 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
       return updateResult;
     }
 
-    @ResolverMutation(() => UMR, { name: `updateMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
+    @ResolverMutation(() => UMR, { name: updateManyMutationName }, commonResolverOpts, opts.many ?? {})
     async updateMany(
       @MutationArgs(UM, updateManyHook) input: UM,
       @Context() context?: unknown,
