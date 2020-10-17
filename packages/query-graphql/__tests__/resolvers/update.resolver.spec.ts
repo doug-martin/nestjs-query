@@ -31,6 +31,8 @@ import {
   updateManySubscriptionResolverSDL,
   updateOneSubscriptionResolverSDL,
   updateSubscriptionResolverSDL,
+  updateCustomOneMutationResolverSDL,
+  updateCustomManyMutationResolverSDL,
 } from './__fixtures__';
 
 describe('UpdateResolver', () => {
@@ -66,6 +68,14 @@ describe('UpdateResolver', () => {
 
   it('should use the dtoName if provided', () => {
     return expectResolverSDL(updateCustomNameResolverSDL, { dtoName: 'Test' });
+  });
+
+  it('should use the one.name option for the updateOne if provided', () => {
+    return expectResolverSDL(updateCustomOneMutationResolverSDL, { one: { name: 'update_one_test' } });
+  });
+
+  it('should use the many.name option for the updateMany if provided', () => {
+    return expectResolverSDL(updateCustomManyMutationResolverSDL, { many: { name: 'update_many_test' } });
   });
 
   it('should use the UpdateDTOClass if provided', () => {

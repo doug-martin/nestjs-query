@@ -70,6 +70,8 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
   const { DeleteOneInput = DeleteOneInputType(), DeleteManyInput = defaultDeleteManyInput(dtoNames, DTOClass) } = opts;
   const deleteOneHook = getDeleteOneHook(DTOClass);
   const deleteManyHook = getDeleteManyHook(DTOClass);
+  const deleteOneMutationName = opts.one?.name ?? `deleteOne${baseName}`;
+  const deleteManyMutationName = opts.many?.name ?? `deleteMany${pluralBaseName}`;
   const DMR = DeleteManyResponseType();
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput');
@@ -96,7 +98,7 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class DeleteResolverBase extends BaseClass {
-    @ResolverMutation(() => DeleteOneResponse, { name: `deleteOne${baseName}` }, commonResolverOpts, opts.one ?? {})
+    @ResolverMutation(() => DeleteOneResponse, { name: deleteOneMutationName }, commonResolverOpts, opts.one ?? {})
     async deleteOne(@MutationArgs(DO, deleteOneHook) input: DO, @Context() context?: unknown): Promise<Partial<DTO>> {
       const deleteOne = await transformAndValidate(DO, input);
       const authorizeFilter = await getAuthFilter(this.authorizer, context);
@@ -107,7 +109,7 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
       return deletedResponse;
     }
 
-    @ResolverMutation(() => DMR, { name: `deleteMany${pluralBaseName}` }, commonResolverOpts, opts.many ?? {})
+    @ResolverMutation(() => DMR, { name: deleteManyMutationName }, commonResolverOpts, opts.many ?? {})
     async deleteMany(
       @MutationArgs(DM, deleteManyHook) input: DM,
       @Context() context?: unknown,

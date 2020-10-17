@@ -13,20 +13,25 @@ import {
 } from '../types/query/query-args';
 import { Authorizer } from '../auth';
 
+type NameedEndpoint = {
+  /** Specify to override the name of the graphql query or mutation * */
+  name?: string;
+};
+
 export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
   /**
    * Options for single record graphql endpoints
    */
-  one?: ResolverMethodOpts;
+  one?: ResolverMethodOpts & NameedEndpoint;
   /**
    * Options for multiple record graphql endpoints
    */
-  many?: ResolverMethodOpts;
+  many?: ResolverMethodOpts & NameedEndpoint;
 }
 
 export interface SubscriptionResolverOpts extends SubscriptionResolverMethodOpts, DTONamesOpts {
-  one?: SubscriptionResolverMethodOpts;
-  many?: SubscriptionResolverMethodOpts;
+  one?: SubscriptionResolverMethodOpts & NameedEndpoint;
+  many?: SubscriptionResolverMethodOpts & NameedEndpoint;
 }
 
 /** @internal */

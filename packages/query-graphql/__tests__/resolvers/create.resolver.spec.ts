@@ -11,8 +11,10 @@ import {
   createBasicResolverSDL,
   createCustomDTOResolverSDL,
   createCustomManyInputResolverSDL,
+  createCustomManyMutationResolverSDL,
   createCustomNameResolverSDL,
   createCustomOneInputResolverSDL,
+  createCustomOneMutationResolverSDL,
   createDisabledResolverSDL,
   createManyDisabledResolverSDL,
   createOneDisabledResolverSDL,
@@ -53,6 +55,14 @@ describe('CreateResolver', () => {
 
   it('should use the dtoName if provided', () => {
     return expectResolverSDL(createCustomNameResolverSDL, { dtoName: 'Test' });
+  });
+
+  it('should use the one.name option for the createOne if provided', () => {
+    return expectResolverSDL(createCustomOneMutationResolverSDL, { one: { name: 'create_one_test' } });
+  });
+
+  it('should use the many.name option for the createMany if provided', () => {
+    return expectResolverSDL(createCustomManyMutationResolverSDL, { many: { name: 'create_many_test' } });
   });
 
   it('should use the CreateDTOClass if provided', () => {
