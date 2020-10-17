@@ -198,6 +198,7 @@ The `create`, `read`, `update`, and `delete` options above all accept the follow
 * `decorators=[]` - An array of custom `PropertyDecorator` or `MethodDecorators` to add to the endpoint.
 * `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions.mdx).
 * `one`, `many` - Both the `one` and `many` accept the following options:
+    * `name?` - Override the endpoint name.
     * `disabled=false` - Set to true to disable the endpoint.
     * `enableSubscriptions?` - Set to `true` to enable graphql subscriptions. See [Subscriptions](./subscriptions.mdx).
     * `guards=[]` - An array of [guards](https://docs.nestjs.com/guards) to add to the endpoint.
@@ -1105,6 +1106,72 @@ import { TodoItemEntity } from './todo-item.entity';
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
   read: { defaultSort: [{ field: 'title', direction: SortDirection.ASC }] },
+}) {
+  constructor(
+      @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+  ) {
+    super(service);
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+### Override Enpoint Name
+
+If you find yourself in a situation where you want to override an endpoint name you can use the `one.name` or `many.name` options to override
+
+:::note
+These options are available for the `create`, `read`, `update`, and 'delete' endpoints.
+:::
+
+In this example we'll change the `todoItem` query to `findTodoItem` and the `todoItems` endpoint to `queryForTodoItems`.
+
+<Tabs
+  defaultValue="module"
+  values={[
+    { label: 'NestjsQueryGraphQLModule', value: 'module', },
+    { label: 'CRUDResolver', value: 'resolver', },
+  ]
+}>
+<TabItem value="module">
+
+```ts title="todo-item.module.ts"
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [{
+        DTOClass: TodoItemDTO,
+        EntityClass: TodoItemEntity,
+        read: { one: { name: 'findTodoItem' }, many: { name: 'queryForTodoItems' } },
+      }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
+<TabItem value="resolver">
+
+```ts title="todo-item.resolver.ts"
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Resolver()
+export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
+  read: { one: { name: 'findTodoItem' }, many: { name: 'queryForTodoItems' } },
 }) {
   constructor(
       @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
