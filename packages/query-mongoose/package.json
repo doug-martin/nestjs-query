@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-mongoose",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "Mongoose adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",

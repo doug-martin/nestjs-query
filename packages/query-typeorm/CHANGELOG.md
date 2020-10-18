@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.21.1](https://github.com/doug-martin/nestjs-query/compare/v0.21.0...v0.21.1) (2020-10-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency uuid to v8.3.1 ([a2b7555](https://github.com/doug-martin/nestjs-query/commit/a2b7555c1186e48999d44aa8af9b792f32b18b7e))
+
+
+
+
+
 # [0.21.0](https://github.com/doug-martin/nestjs-query/compare/v0.20.2...v0.21.0) (2020-10-16)
 
 

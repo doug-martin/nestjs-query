@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.21.1](https://github.com/doug-martin/nestjs-query/compare/v0.21.0...v0.21.1) (2020-10-18)
+
+
+### Features
+
+* **graphql, #586:** Allow overriding endpoint name ([1634e71](https://github.com/doug-martin/nestjs-query/commit/1634e71e7d8eca5b3a2422b7514fea8c2f72220e)), closes [#586](https://github.com/doug-martin/nestjs-query/issues/586)
+
+
+
+
+
 # [0.21.0](https://github.com/doug-martin/nestjs-query/compare/v0.20.2...v0.21.0) (2020-10-16)
 
 
