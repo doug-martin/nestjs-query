@@ -21,7 +21,10 @@ export class DataLoaderFactory {
     const nestjsQueryLoaders = this.initializeContext(context);
     if (!nestjsQueryLoaders[name]) {
       // eslint-disable-next-line no-param-reassign
-      nestjsQueryLoaders[name] = new Dataloader(handler, { cacheKeyFn: (key) => JSON.stringify(key) });
+      nestjsQueryLoaders[name] = new Dataloader(handler, {
+        cacheKeyFn: (key) =>
+          JSON.stringify(key, (_, v) => (typeof v === 'bigint' ? v.toString() : v)),
+      });
     }
     return nestjsQueryLoaders[name] as Dataloader<K, V>;
   }
