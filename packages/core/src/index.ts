@@ -24,6 +24,8 @@ export {
   mergeQuery,
   mergeFilter,
   invertSort,
+  getFilterComparisons,
+  getFilterOmitting,
 } from './helpers';
 export {
   ClassTransformerAssembler,

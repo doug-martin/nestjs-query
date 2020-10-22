@@ -1,6 +1,7 @@
 import { Filter, FilterComparisons, FilterFieldComparison } from '../interfaces';
-import { ComparisonBuilder, isComparison } from './comparison.builder';
+import { ComparisonBuilder } from './comparison.builder';
 import { ComparisonField, FilterFn } from './types';
+import { getFilterFieldComparison, isComparison } from './filter.helpers';
 
 export class FilterBuilder {
   static build<DTO>(filter: Filter<DTO>): FilterFn<DTO> {
@@ -36,13 +37,6 @@ export class FilterBuilder {
     );
   }
 
-  private static getField<DTO, K extends keyof FilterComparisons<DTO>>(
-    obj: FilterComparisons<DTO>,
-    field: K,
-  ): FilterFieldComparison<DTO[K]> & Filter<DTO[K]> {
-    return obj[field] as FilterFieldComparison<DTO[K]> & Filter<DTO[K]>;
-  }
-
   private static withFilterComparison<DTO, T extends keyof DTO>(
     field: T,
     cmp: FilterFieldComparison<DTO[T]>,
@@ -56,7 +50,7 @@ export class FilterBuilder {
   }
 
   private static withComparison<DTO>(filter: FilterComparisons<DTO>, fieldOrNested: keyof DTO): FilterFn<DTO> {
-    const value = this.getField(filter, fieldOrNested);
+    const value = getFilterFieldComparison(filter, fieldOrNested);
     if (isComparison(value)) {
       return this.withFilterComparison(fieldOrNested, value);
     }
