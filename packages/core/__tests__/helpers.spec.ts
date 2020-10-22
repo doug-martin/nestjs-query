@@ -16,8 +16,11 @@ import {
   transformFilter,
   transformQuery,
   transformSort,
+  getFilterOmitting,
+  getFilterFields,
+  getFilterComparisons,
+  mergeFilter,
 } from '../src';
-import { getFilterFields } from '../src/helpers/query.helpers';
 import { AggregateQuery } from '../src/interfaces/aggregate-query.interface';
 
 class TestDTO {
@@ -1515,5 +1518,101 @@ describe('applyQuery', () => {
     it(`should ${description}`, () => {
       expect(applyQuery(input, query)).toEqual(expected);
     });
+  });
+});
+
+describe('getFilterComparisons', () => {
+  type Foo = {
+    bar: number;
+    baz: number;
+  };
+
+  it('should get list of comparisons from a filter given a key', () => {
+    const f0: Filter<Foo> = {};
+    const f1: Filter<Foo> = {
+      bar: { gt: 0 },
+      baz: { gt: 1 },
+    };
+    const f2: Filter<Foo> = {
+      bar: { gt: 0 },
+      baz: { gt: 1 },
+      and: [{ baz: { lt: 2 }, bar: { lt: 3 } }],
+    };
+    const f3: Filter<Foo> = {
+      bar: { gt: 0 },
+      baz: { gt: 1 },
+      or: [{ baz: { lt: 4 }, bar: { lt: 5 } }],
+    };
+    const f4: Filter<Foo> = {
+      bar: { gt: 0 },
+      baz: { gt: 1 },
+      and: [{ baz: { lt: 2 }, bar: { lt: 3 } }],
+      or: [{ baz: { lt: 4 }, bar: { lt: 5 } }],
+    };
+    expect(getFilterComparisons(f0, 'bar')).toEqual(expect.arrayContaining([]));
+    expect(getFilterComparisons(f1, 'bar')).toEqual(expect.arrayContaining([{ gt: 0 }]));
+    expect(getFilterComparisons(f2, 'bar')).toEqual(expect.arrayContaining([{ gt: 0 }, { lt: 3 }]));
+    expect(getFilterComparisons(f3, 'bar')).toEqual(expect.arrayContaining([{ gt: 0 }, { lt: 5 }]));
+    expect(getFilterComparisons(f4, 'bar')).toEqual(expect.arrayContaining([{ gt: 0 }, { lt: 3 }, { lt: 5 }]));
+  });
+});
+
+describe('getFilterOmitting', () => {
+  type Foo = {
+    bar: number;
+    baz: number;
+  };
+
+  it('should omit a key from a filter', () => {
+    const filter: Filter<Foo> = {
+      bar: { gt: 0 },
+      baz: { gt: 0 },
+      and: [{ baz: { lt: 100 }, bar: { lt: 100 } }],
+      or: [{ baz: { lt: 100 }, bar: { lt: 100 } }],
+    };
+    expect(getFilterOmitting(filter, 'baz')).toEqual({
+      bar: { gt: 0 },
+      and: [{ bar: { lt: 100 } }],
+      or: [{ bar: { lt: 100 } }],
+    });
+  });
+
+  it('should delete and and or properties if they are empty after omitting', () => {
+    const filter: Filter<Foo> = {
+      bar: { gt: 0 },
+      baz: { gt: 0 },
+      and: [{ baz: { lt: 100 } }],
+      or: [{ baz: { lt: 100 } }],
+    };
+    expect(getFilterOmitting(filter, 'baz')).toEqual({
+      bar: { gt: 0 },
+    });
+  });
+});
+
+describe('mergeFilter', () => {
+  type Foo = {
+    bar: number;
+    baz: number;
+  };
+
+  it('should merge two filters', () => {
+    const f1: Filter<Foo> = {
+      bar: { gt: 0 },
+    };
+    const f2: Filter<Foo> = {
+      baz: { gt: 0 },
+    };
+    expect(mergeFilter(f1, f2)).toEqual({
+      and: expect.arrayContaining([f1, f2]),
+    });
+  });
+
+  it('should noop if one of the filters is empty', () => {
+    const filter: Filter<Foo> = {
+      bar: { gt: 0 },
+    };
+    expect(mergeFilter(filter, {})).toEqual(filter);
+    expect(mergeFilter({}, filter)).toEqual(filter);
   });
 });

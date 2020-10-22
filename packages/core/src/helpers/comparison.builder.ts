@@ -1,59 +1,20 @@
-import {
-  CommonFieldComparisonBetweenType,
-  FilterComparisonOperators,
-  Filter,
-  FilterFieldComparison,
-} from '../interfaces';
+import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '../interfaces';
 import { ComparisonField, FilterFn } from './types';
-
-type LikeComparisonOperators = 'like' | 'notLike' | 'iLike' | 'notILike';
-type InComparisonOperators = 'in' | 'notIn';
-type BetweenComparisonOperators = 'between' | 'notBetween';
-type RangeComparisonOperators = 'gt' | 'gte' | 'lt' | 'lte';
-type BooleanComparisonOperators = 'eq' | 'neq' | 'is' | 'isNot';
+import {
+  isBooleanComparisonOperators,
+  isRangeComparisonOperators,
+  isInComparisonOperators,
+  isLikeComparisonOperator,
+  isBetweenComparisonOperators,
+  BooleanComparisonOperators,
+  RangeComparisonOperators,
+  LikeComparisonOperators,
+  InComparisonOperators,
+  BetweenComparisonOperators,
+} from './filter.helpers';
 
 const compare = <DTO>(filter: (dto: DTO) => boolean, fallback: boolean): FilterFn<DTO> => {
   return (dto?: DTO) => (dto ? filter(dto) : fallback);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isLikeComparisonOperator = (op: any): op is LikeComparisonOperators => {
-  return op === 'like' || op === 'notLike' || op === 'iLike' || op === 'notILike';
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isInComparisonOperators = (op: any): op is InComparisonOperators => {
-  return op === 'in' || op === 'notIn';
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isBetweenComparisonOperators = (op: any): op is BetweenComparisonOperators => {
-  return op === 'between' || op === 'notBetween';
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isRangeComparisonOperators = (op: any): op is RangeComparisonOperators => {
-  return op === 'gt' || op === 'gte' || op === 'lt' || op === 'lte';
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isBooleanComparisonOperators = (op: any): op is BooleanComparisonOperators => {
-  return op === 'eq' || op === 'neq' || op === 'is' || op === 'isNot';
-};
-
-export const isComparison = <DTO, K extends keyof DTO>(
-  maybeComparison: FilterFieldComparison<DTO[K]> | Filter<DTO[K]>,
-): maybeComparison is FilterFieldComparison<DTO[K]> => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return Object.keys(maybeComparison as Record<string, any>).every((op) => {
-    return (
-      isLikeComparisonOperator(op) ||
-      isInComparisonOperators(op) ||
-      isBetweenComparisonOperators(op) ||
-      isRangeComparisonOperators(op) ||
-      isBooleanComparisonOperators(op)
-    );
-  });
 };
 
 export class ComparisonBuilder {

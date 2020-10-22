@@ -5,7 +5,7 @@ title: Query Helpers
 The `@nestjs-query/core` package provides a number of helper functions to transform or apply queries to a list of items.
 
 An example use case for these helpers would be to write a `QueryService` that wraps a store that does not support the
- query options natively (e.g. An in memory collection of objects such as a static array of objects).
+query options natively (e.g. An in memory collection of objects such as a static array of objects).
 
 All examples will be based on the following DTO definition.
 
@@ -23,19 +23,18 @@ interface TestDTO {
 }
 ```
 
-
 ## applyFilter
 
 The `applyFilter` helper applies a `Filter` to a single object or an array of objects.
 
 ### Arguments
 
-* `dto: DTO|DTO[]`
-  * If a single object a function that will test the dto against the filter, returning `true` when if it matches the
- filter.
-  * If an array of objects is provided the array will be filtered returning a new array with all elements that match
- the filter.
-* `filter: Filter<DTO>` - The filter to check the object[s] against. See [`Filtering`](../concepts/queries.mdx#filtering)
+- `dto: DTO|DTO[]`
+  - If a single object a function that will test the dto against the filter, returning `true` when if it matches the
+    filter.
+  - If an array of objects is provided the array will be filtered returning a new array with all elements that match
+    the filter.
+- `filter: Filter<DTO>` - The filter to check the object[s] against. See [`Filtering`](../concepts/queries.mdx#filtering)
 
 ### Example
 
@@ -63,7 +62,7 @@ The `applySort` will sort an array of dtos.
 
 :::info
 Because `applySort` uses the native `Array#sort` method it may not exactly match the ordering you would expect from a
- database.
+database.
 :::
 
 :::warning
@@ -72,8 +71,9 @@ represented as strings the applySort method may not work as expected.
 :::
 
 ### Arguments
-* `dto: DTO[]` - The array of DTOs to sort.
-* `sortFields: SortField<DTO>[]` - The sorting criteria. See [`Sorting`](../concepts/queries.mdx#sorting)
+
+- `dto: DTO[]` - The array of DTOs to sort.
+- `sortFields: SortField<DTO>[]` - The sorting criteria. See [`Sorting`](../concepts/queries.mdx#sorting)
 
 ### Example
 
@@ -111,8 +111,9 @@ The resulting sorted array would be.
 The `applyPaging` method will apply a `limit` and/or `offset` to an array of dtos.
 
 ### Arguments
-* `dto: DTO[]` - The array of DTOs to page.
-* `paging: Paging` - The paging arguments to apply. See [`Paging`](../concepts/queries.mdx#paging)
+
+- `dto: DTO[]` - The array of DTOs to page.
+- `paging: Paging` - The paging arguments to apply. See [`Paging`](../concepts/queries.mdx#paging)
 
 ### Example
 
@@ -142,8 +143,9 @@ The `applyQuery` uses the `applyFilter`, `applySorting`, and `applyPaging` metho
 DTOs.
 
 ### Arguments
-* `dto: DTO[]` - The array of DTOs to page.
-* `query: Query<DTO>` - The query to apply to the array of dtos. See [`Queries`](../concepts/queries.mdx)
+
+- `dto: DTO[]` - The array of DTOs to page.
+- `query: Query<DTO>` - The query to apply to the array of dtos. See [`Queries`](../concepts/queries.mdx)
 
 ### Example
 
@@ -179,9 +181,9 @@ The transformFilter is used to remap fields in a `Filter`. This method is common
 
 ### Arguments
 
-* `filter: Filter<From>` - The filter you want to transform.
-* `fieldMap: QueryFieldMap<From, To>` - A map of fields where the key is a key in the From type, and the value is a
-key in the to type.
+- `filter: Filter<From>` - The filter you want to transform.
+- `fieldMap: QueryFieldMap<From, To>` - A map of fields where the key is a key in the From type, and the value is a
+  key in the to type.
 
 ### Example
 
@@ -218,13 +220,13 @@ The new filter would be
 
 ## transformSort
 
-The `transformSort` is used to remap fields in an array of  `SortField<DTO>[]`. This method is commonly used when
+The `transformSort` is used to remap fields in an array of `SortField<DTO>[]`. This method is commonly used when
 defining a custom [Assembler](../concepts/advanced/assemblers.mdx).
 
 ### Arguments
 
-* `sortFields: SortField<From>[]` - The array of sorting criteria to transform.
-* `fieldMap: QueryFieldMap<From, To>` - A map of fields where the key is a key in the From type, and the value is a key in the to type.
+- `sortFields: SortField<From>[]` - The array of sorting criteria to transform.
+- `fieldMap: QueryFieldMap<From, To>` - A map of fields where the key is a key in the From type, and the value is a key in the to type.
 
 ### Example
 
@@ -246,25 +248,25 @@ const dtoSort: SortField<TestDTO>[] = [
   { field: 'last', direction: SortDirection.ASC },
 ];
 
-const transformed =  transformSort(dtoSort, fieldMap);
+const transformed = transformSort(dtoSort, fieldMap);
 ```
 
 ```ts
 [
   { field: 'firstName', direction: SortDirection.DESC },
   { field: 'lastName', direction: SortDirection.ASC },
-]
+];
 ```
 
 ## transformQuery
 
 The `transformQuery` method uses the `transformFilter` and `transformSort` methods to remap a `Query`. This method is
- commonly used when defining a custom [Assembler](../concepts/advanced/assemblers.mdx).
+commonly used when defining a custom [Assembler](../concepts/advanced/assemblers.mdx).
 
 ### Arguments
 
-* `sortFields: Query<From>` - The query to transform.
-* `fieldMap: QueryFieldMap<From, To>` - A map of fields where the key is a key in the From type, and the value is a key in the to type.
+- `sortFields: Query<From>` - The query to transform.
+- `fieldMap: QueryFieldMap<From, To>` - A map of fields where the key is a key in the From type, and the value is a key in the to type.
 
 ### Example
 
@@ -291,6 +293,7 @@ const dtoQuery: Query<TestDTO> = {
 
 const transformed =  transformQuery(dtoQuery, fieldMap);
 ```
+
 The resulting query would be.
 
 ```ts
@@ -300,5 +303,75 @@ The resulting query would be.
     { field: 'firstName', direction: SortDirection.DESC },
     { field: 'lastName', direction: SortDirection.ASC },
   ]
+}
+```
+
+## getFilterComparisons
+
+Used to search a filter get a list of comparison objects for a given key.
+
+### Arguments
+
+- `filter: Filter<DTO>` - The filter to search.
+- `key: keyof DTO` - The key in the DTO object to search for in the filter object.
+
+### Example
+
+```ts
+import { Filter, getFilterComparisons } from `@nestjs-query/core`;
+
+class TestDTO {
+  age!: number;
+
+  title!: string;
+}
+
+const filter: Filter<TestDTO> = {
+  age: { gte: 10 },
+  or: [{ title: { like: '%bar' } }, { title: { eq: 'foobar' } }],
+};
+
+const comparisons = getFilterComparisons(filter, 'title');
+```
+
+The resulting array would be
+
+```ts
+[{ like: '%bar' }, { eq: 'foobar' }];
+```
+
+## getFilterOmitting
+
+Used to get a filter with a given key removed.
+
+### Arguments
+
+- `filter: Filter<DTO>` - The filter containing the unwanted key.
+- `key: keyof DTO` - The key in the DTO object to remove in the filter object.
+
+### Example
+
+```ts
+import { Filter, getFilterOmitting } from `@nestjs-query/core`;
+
+class TestDTO {
+  age!: number;
+
+  title!: string;
+}
+
+const filter: Filter<TestDTO> = {
+  age: { gte: 10 },
+  or: [{ title: { like: '%bar' } }, { title: { eq: 'foobar' } }],
+};
+
+const filterWithoutTitle = getFilterOmitting(filter, 'title');
+```
+
+The resulting filter would be
+
+```ts
+{
+  age: { gte: 10 },
 }
 ```
