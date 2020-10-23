@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.21.2](https://github.com/doug-martin/nestjs-query/compare/v0.21.1...v0.21.2) (2020-10-23)
+
+
+### Bug Fixes
+
+* dataloader cacheKeyFn bigint problem ([92171dc](https://github.com/doug-martin/nestjs-query/commit/92171dcc76563c563e2586809aec6f12f00aadfa))
+
+
+
+
+
 ## [0.21.1](https://github.com/doug-martin/nestjs-query/compare/v0.21.0...v0.21.1) (2020-10-18)
 
 

@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.21.2](https://github.com/doug-martin/nestjs-query/compare/v0.21.1...v0.21.2) (2020-10-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @docusaurus/preset-classic to v2.0.0-alpha.66 ([0f323ec](https://github.com/doug-martin/nestjs-query/commit/0f323ec6085465437fd83d437a0d9ba2bdbc3526))
+* **deps:** update dependency graphql-tools to v6.2.5 ([4b491b2](https://github.com/doug-martin/nestjs-query/commit/4b491b226dc5e85bbc4c446556fe66dc622905c0))
+* dataloader cacheKeyFn bigint problem ([92171dc](https://github.com/doug-martin/nestjs-query/commit/92171dcc76563c563e2586809aec6f12f00aadfa))
+* **codeql:** Use language auto-detect ([63e4632](https://github.com/doug-martin/nestjs-query/commit/63e463266238042a797a1322ec6c21bffae9c098))
+* **deps:** update dependency @docusaurus/core to v2.0.0-alpha.66 ([5546a6c](https://github.com/doug-martin/nestjs-query/commit/5546a6cf288b55d3600b41b5008e558e71f139c7))
+
+
+### Features
+
+* **core:** added two new filter helpers ([031012e](https://github.com/doug-martin/nestjs-query/commit/031012e96bf99e1eb08c155059fd5106b38e9faf))
+
+
+
+
+
 ## [0.21.1](https://github.com/doug-martin/nestjs-query/compare/v0.21.0...v0.21.1) (2020-10-18)
 
 

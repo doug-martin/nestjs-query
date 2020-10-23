@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.21.2](https://github.com/doug-martin/nestjs-query/compare/v0.21.1...v0.21.2) (2020-10-23)
+
+
+### Features
+
+* **core:** added two new filter helpers ([031012e](https://github.com/doug-martin/nestjs-query/commit/031012e96bf99e1eb08c155059fd5106b38e9faf))
+
+
+
+
+
 # [0.21.0](https://github.com/doug-martin/nestjs-query/compare/v0.20.2...v0.21.0) (2020-10-16)
 
 
