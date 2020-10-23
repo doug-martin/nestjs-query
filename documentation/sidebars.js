@@ -28,6 +28,7 @@ module.exports = {
           'persistence/typeorm/custom-service',
           'persistence/typeorm/multiple-databases',
           'persistence/typeorm/soft-delete',
+          'persistence/typeorm/testing-services',
         ],
       },
       {
