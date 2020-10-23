@@ -1306,8 +1306,6 @@ Lets create a new query endpoint that only returns completed `TodoItems`.
 
 First create a file named `types.ts`. And add the following.
 
-**NOTE** IN the case of `CRUDResolver` the DTO (`TodoItemDTO`) must be placed in file on its own and cannot be placed together with the module definition.
-
 ```ts title="types.ts"
 import { ConnectionType, QueryArgsType } from '@nestjs-query/query-graphql';
 import { ArgsType } from '@nestjs/graphql';
@@ -1407,17 +1405,13 @@ The last step is to add the resolver to the module.
 import { Module } from '@nestjs/common';
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { TodoItemEntity } from './todo-item.entity';
-import { TodoItemsService } from './todo-items.service';
-import { TodoItemsController } from './todo-items.controller';
 import { TodoItemsResolver } from './todo-items.resolver';
 
 @Module({
-  providers: [TodoItemsService, TodoItemsResolver],
+  providers: [TodoItemResolver],
   imports: [
     NestjsQueryTypeOrmModule.forFeature([TodoItemEntity]),
   ],
-  exports: [TodoItemsService],
-  controllers: [TodoItemsController],
 })
 export class TodoItemsModule {}
 ```
