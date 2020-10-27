@@ -10,6 +10,10 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+### Have you read the [Contributing Guidelines](https://github.com/doug-martin/nestjs-query/blob/master/CONTRIBUTING.md)?
+
+(Write your answer here.)
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Step 1

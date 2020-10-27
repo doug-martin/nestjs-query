@@ -16,6 +16,7 @@ module.exports = {
       items: [
         { to: 'docs/introduction/getting-started', label: 'Docs', position: 'left' },
         { to: 'docs/faq', label: 'FAQ', position: 'left' },
+        { to: 'docs/contributing', label: 'Contributing', position: 'left' },
         { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/doug-martin/nestjs-query',
