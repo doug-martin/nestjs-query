@@ -10,6 +10,10 @@ assignees: ''
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
+### Have you read the [Contributing Guidelines](https://github.com/doug-martin/nestjs-query/blob/master/CONTRIBUTING.md)?
+
+(Write your answer here.)
+
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
 
