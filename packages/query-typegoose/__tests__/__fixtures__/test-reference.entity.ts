@@ -1,24 +1,29 @@
-import { prop, Ref } from '@typegoose/typegoose';
+import { modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { TestEntity } from './test.entity';
 
+@modelOptions({
+  schemaOptions: {
+    toObject: { virtuals: true },
+  },
+})
 export class TestReference extends Base {
   @prop({ required: true })
   referenceName!: string;
 
-  @prop({ ref: TestReference, required: false })
+  @prop({ ref: () => TestEntity, required: false })
   testEntity?: Ref<TestEntity>;
 
-  public get id() {
-    return this._id.toHexString();
-  }
+  @prop({
+    ref: 'TestEntity',
+    localField: 'testEntity',
+    foreignField: '_id',
+    justOne: true,
+  })
+  virtualTestEntity?: Ref<TestEntity>;
 
-  public get virtualTestEntity() {
-    return {
-      ref: 'TestEntity',
-      localField: 'testEntity',
-      foreignField: '_id',
-      justOne: true,
-    };
+  public get id(): string {
+    // eslint-disable-next-line no-underscore-dangle
+    return this._id.toHexString();
   }
 }

@@ -10,12 +10,14 @@ import {
   DeleteOneOptions,
   UpdateManyResponse,
   UpdateOneOptions,
+  QueryService,
 } from '@nestjs-query/core';
 import { CreateQuery, DocumentToObjectOptions, UpdateQuery } from 'mongoose';
-import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { ReturnModelType, DocumentType } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
+import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { ReferenceQueryService } from './reference-query.service';
+import { AggregateBuilder, FilterQueryBuilder } from '../query';
 
 type MongoDBUpdatedOutput = {
   nModified: number;
@@ -25,13 +27,13 @@ export interface TypegooseQueryServiceOpts {
   documentToObjectOptions?: DocumentToObjectOptions;
 }
 
-export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity> {
-  protected readonly documentToObjectOptions: DocumentToObjectOptions;
+export class TypegooseQueryService<Entity extends Base>
+  extends ReferenceQueryService<Entity>
+  implements QueryService<Entity> {
   readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder();
 
   constructor(readonly Model: ReturnModelType<new () => Entity>, opts?: TypegooseQueryServiceOpts) {
-    super();
-    this.documentToObjectOptions = opts?.documentToObjectOptions || { virtuals: true };
+    super(Model, opts);
   }
 
   /**
@@ -47,10 +49,10 @@ export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity>
    * ```
    * @param query - The Query used to filter, page, and sort rows.
    */
-  async query(query: Query<Entity>): Promise<Entity[]> {
+  async query(query: Query<Entity>): Promise<DocumentType<Entity>[]> {
     const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query);
     const entities = await this.Model.find(filterQuery, {}, options).exec();
-    return entities.map((doc) => doc.toObject(this.documentToObjectOptions) as Entity);
+    return entities;
   }
 
   async aggregate(filter: Filter<Entity>, aggregateQuery: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
@@ -77,13 +79,13 @@ export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity>
    * @param id - The id of the record to find.
    * @param opts - Additional options
    */
-  async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
+  async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<DocumentType<Entity> | undefined> {
     const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
     const doc = await this.Model.findOne(filterQuery);
     if (!doc) {
       return undefined;
     }
-    return doc.toObject(this.documentToObjectOptions) as Entity;
+    return doc;
   }
 
   /**
@@ -100,7 +102,7 @@ export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity>
    * @param id - The id of the record to find.
    * @param opts - Additional options
    */
-  async getById(id: string, opts?: GetByIdOptions<Entity>): Promise<Entity> {
+  async getById(id: string, opts?: GetByIdOptions<Entity>): Promise<DocumentType<Entity>> {
     const doc = await this.findById(id, opts);
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
@@ -117,9 +119,10 @@ export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity>
    * ```
    * @param record - The entity to create.
    */
-  async createOne(record: DeepPartial<Entity>): Promise<Entity> {
+  async createOne(record: DeepPartial<Entity>): Promise<DocumentType<Entity>> {
     this.ensureIdIsNotPresent(record);
-    return await this.Model.create(record as CreateQuery<Entity>);
+    const doc = await this.Model.create(record as CreateQuery<Entity>);
+    return doc;
   }
 
   /**
@@ -134,10 +137,10 @@ export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity>
    * ```
    * @param records - The entities to create.
    */
-  async createMany(records: DeepPartial<Entity>[]): Promise<Entity[]> {
+  async createMany(records: DeepPartial<Entity>[]): Promise<DocumentType<Entity>[]> {
     records.forEach((r) => this.ensureIdIsNotPresent(r));
     const entities = await this.Model.create(records as CreateQuery<Entity>[]);
-    return entities.map((entity) => entity.toObject(this.documentToObjectOptions) as Entity);
+    return entities;
   }
 
   /**
@@ -151,7 +154,11 @@ export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity>
    * @param update - A `Partial` of the entity with fields to update.
    * @param opts - Additional options
    */
-  async updateOne(id: string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
+  async updateOne(
+    id: string,
+    update: DeepPartial<Entity>,
+    opts?: UpdateOneOptions<Entity>,
+  ): Promise<DocumentType<Entity>> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
     const doc = await this.Model.findOneAndUpdate(filterQuery, this.getUpdateQuery(update as DocumentType<Entity>), {
@@ -198,13 +205,13 @@ export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity>
    * @param id - The `id` of the entity to delete.
    * @param opts - Additional filter to use when finding the entity to delete.
    */
-  async deleteOne(id: string, opts?: DeleteOneOptions<Entity>): Promise<Entity> {
+  async deleteOne(id: string, opts?: DeleteOneOptions<Entity>): Promise<DocumentType<Entity>> {
     const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
     const doc = await this.Model.findOneAndDelete(filterQuery);
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
     }
-    return doc.toObject(this.documentToObjectOptions) as Entity;
+    return doc;
   }
 
   /**

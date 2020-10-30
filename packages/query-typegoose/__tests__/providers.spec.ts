@@ -1,8 +1,8 @@
-import { createTypegooseQueryServiceProviders } from './../src/providers';
 import { getQueryServiceToken } from '@nestjs-query/core';
 import { instance } from 'ts-mockito';
 import { Document } from 'mongoose';
 import { TypegooseQueryService } from '../src/services';
+import { createTypegooseQueryServiceProviders } from '../src/providers';
 
 describe('createTypegooseQueryServiceProviders', () => {
   it('should create a provider for the entity', () => {

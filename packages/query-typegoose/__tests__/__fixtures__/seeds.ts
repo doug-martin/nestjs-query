@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
 import { Connection } from 'mongoose';
+import { getModelForClass, DocumentType } from '@typegoose/typegoose';
 import { TestEntity } from './test.entity';
 import { TestReference } from './test-reference.entity';
-import { getModelForClass, DocumentType } from '@typegoose/typegoose';
 
 export const TEST_ENTITIES: DocumentType<TestEntity>[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
   return {

@@ -1,9 +1,9 @@
 import { AggregateQuery, Filter, Query, SortDirection, SortField } from '@nestjs-query/core';
 import { FilterQuery } from 'mongoose';
+import { DocumentType } from '@typegoose/typegoose';
 import { AggregateBuilder, TypegooseAggregate } from './aggregate.builder';
 import { getSchemaKey } from './helpers';
 import { WhereBuilder } from './where.builder';
-import { DocumentType } from '@typegoose/typegoose';
 
 type TypegooseSort = Record<string, 'asc' | 'desc'>;
 

@@ -1,7 +1,7 @@
 import { AggregateQuery, AggregateResponse } from '@nestjs-query/core';
 import { BadRequestException } from '@nestjs/common';
-import { getSchemaKey } from './helpers';
 import { DocumentType } from '@typegoose/typegoose';
+import { getSchemaKey } from './helpers';
 
 enum AggregateFuncs {
   AVG = 'avg',
