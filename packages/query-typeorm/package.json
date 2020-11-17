@@ -32,7 +32,7 @@
   "devDependencies": {
     "@nestjs/common": "7.5.2",
     "@nestjs/testing": "7.5.2",
-    "@nestjs/typeorm": "7.1.4",
+    "@nestjs/typeorm": "7.1.5",
     "@types/lodash.filter": "4.6.6",
     "@types/lodash.omit": "4.5.6",
     "@types/uuid": "8.3.0",
