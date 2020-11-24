@@ -13,11 +13,12 @@ import {
   QueryService,
 } from '@nestjs-query/core';
 import { CreateQuery, DocumentToObjectOptions, UpdateQuery } from 'mongoose';
-import { ReturnModelType, DocumentType } from '@typegoose/typegoose';
+import { ReturnModelType, DocumentType, mongoose } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { ReferenceQueryService } from './reference-query.service';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
+import { UpdateArrayQuery } from '../typegoose-types.helper';
 
 type MongoDBUpdatedOutput = {
   nModified: number;
@@ -240,6 +241,8 @@ export class TypegooseQueryService<Entity extends Base>
   }
 
   private getUpdateQuery(entity: DocumentType<Entity>): UpdateQuery<DocumentType<Entity>> {
+    const arrayUpdateQuery: any = this.buildArrayUpdateQuery(entity as DeepPartial<Entity>);
+
     if (entity instanceof this.Model) {
       return entity.modifiedPaths().reduce((update: UpdateQuery<DocumentType<Entity>>, k) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -247,6 +250,52 @@ export class TypegooseQueryService<Entity extends Base>
       }, {});
     }
 
-    return entity as UpdateQuery<DocumentType<Entity>>;
+    return { ...entity, ...arrayUpdateQuery } as UpdateQuery<DocumentType<Entity>>;
+  }
+
+  private buildArrayUpdateQuery(entity: DeepPartial<Entity>) {
+    // eslint-disable-next-line prefer-const
+    let query = {
+      $addToSet: {},
+      $pull: {},
+    } as UpdateArrayQuery<Entity>;
+
+    Object.keys(entity).forEach((key) => {
+      if (
+        this.Model.schema.path(key) instanceof mongoose.Schema.Types.Array &&
+        typeof entity[key as keyof Entity] === 'object'
+      ) {
+        // Converting the type of the object as it has the custom array input type.
+        const convert = (entity[key as keyof Entity] as unknown) as { push: Entity[]; pull: Entity[] };
+
+        if (Object.prototype.hasOwnProperty.call(convert, 'push')) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          query.$addToSet[key] = { $each: convert.push };
+        }
+
+        if (Object.prototype.hasOwnProperty.call(convert, 'pull')) {
+          query.$pull[key] = {};
+          convert.pull.forEach((item, index) => {
+            Object.keys(item).forEach((innerKey) => {
+              if (query.$pull[key][innerKey] !== undefined) {
+                query.$pull[key][innerKey].$in.push(convert.pull[index][innerKey as keyof Entity]);
+              } else {
+                query.$pull[key][innerKey] = { $in: [convert.pull[index][innerKey as keyof Entity]] };
+              }
+            });
+          });
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(entity[key as keyof Entity], 'push') ||
+          Object.prototype.hasOwnProperty.call(entity[key as keyof Entity], 'pull')
+        ) {
+          // eslint-disable-next-line no-param-reassign
+          delete entity[key as keyof Entity];
+        }
+      }
+    });
+
+    return query;
   }
 }

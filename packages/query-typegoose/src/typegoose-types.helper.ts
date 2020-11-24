@@ -5,6 +5,23 @@ export type ReferenceOptions = {
   ref: string;
 };
 
+export type UpdateArrayQuery<T> = {
+  $addToSet: {
+    [key: string]: {
+      $each: T[];
+    };
+  };
+
+  $pull: {
+    [key: string]: {
+      [key: string]: {
+        $in: T[keyof T][];
+      };
+    };
+  };
+};
+
+
 export function isReferenceOptions(options: unknown): options is ReferenceOptions {
   return (
     options &&
