@@ -40,6 +40,6 @@
     "prettier": "2.2.1",
     "ts-jest": "26.4.4",
     "tsconfig-extends": "1.0.1",
-    "typescript": "4.1.2"
+    "typescript": "4.1.3"
   }
 }
