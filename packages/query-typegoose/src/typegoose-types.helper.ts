@@ -21,7 +21,6 @@ export type UpdateArrayQuery<T> = {
   };
 };
 
-
 export function isReferenceOptions(options: unknown): options is ReferenceOptions {
   return (
     options &&

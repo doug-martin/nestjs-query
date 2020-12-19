@@ -119,6 +119,15 @@
         "tsConfigPath": "./tsconfig.json"
       }
     },
+    "typegoose": {
+      "type": "application",
+      "root": "typegoose",
+      "entryFile": "main",
+      "sourceRoot": "typegoose/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.json"
+      }
+    },
     "typeorm": {
       "type": "application",
       "root": "typeorm",
