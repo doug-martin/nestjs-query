@@ -1,5 +1,5 @@
-import { getModelForClass, DocumentType } from '@typegoose/typegoose';
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
+import { getModelForClass, DocumentType } from '@typegoose/typegoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ObjectId } from 'mongodb';
 import { ReturnModelType } from '@typegoose/typegoose/lib/types';

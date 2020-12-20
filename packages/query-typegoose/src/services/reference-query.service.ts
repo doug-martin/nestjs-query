@@ -13,7 +13,7 @@ import {
   Query,
   UpdateOneOptions,
 } from '@nestjs-query/core';
-import { ReturnModelType, DocumentType, getModelWithString } from '@typegoose/typegoose';
+import { ReturnModelType, DocumentType, getModelWithString, getClassForDocument } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { NotFoundException } from '@nestjs/common';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
@@ -55,7 +55,9 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     relationName: string,
     dto: DocumentType<Entity> | DocumentType<Entity>[],
     opts?: FindRelationOptions<Relation>,
-  ): Promise<(DocumentType<Relation> | undefined) | Map<DocumentType<Entity>, DocumentType<Relation> | undefined>> {
+  ): Promise<
+    (DocumentType<Relation> | undefined) | Map<DocumentType<Entity> | Relation, DocumentType<Relation> | undefined>
+  > {
     this.checkForReference('FindRelation', relationName);
     const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
     if (Array.isArray(dto)) {
@@ -76,12 +78,15 @@ export abstract class ReferenceQueryService<Entity extends Base> {
       return undefined;
     }
 
-    const assembler = AssemblerFactory.getAssembler(RelationClass, Document);
+    const ReferenceModel = this.getReferenceModel(relationName);
+    const referenceDoc = new ReferenceModel();
+    const ReferenceEntity: any = getClassForDocument(referenceDoc);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, ReferenceEntity);
     const filterQuery = referenceQueryBuilder.buildFilterQuery(assembler.convertQuery({ filter: opts?.filter }).filter);
     const populated = await foundEntity.populate({ path: relationName, match: filterQuery }).execPopulate();
     const populatedRef: DocumentType<Relation> = populated.get(relationName) as DocumentType<Relation>;
-
-    return populatedRef || undefined;
+    const convertedRef = assembler.convertToDTO(populatedRef) as DocumentType<Relation>;
+    return convertedRef || undefined;
   }
 
   queryRelations<Relation>(
@@ -365,6 +370,13 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     }
     throw new Error(`Unable to lookup reference type for ${refName}`);
   }
+
+  /* private getEntity(relationName: string) {        
+    const ReferenceModel = this.getReferenceModel(relationName)
+    const referenceDoc = new ReferenceModel()
+    console.log(referenceDoc)
+    return getClassForDocument(referenceDoc)
+  } */
 
   private getRefCount<Relation extends Document>(
     relationName: string,

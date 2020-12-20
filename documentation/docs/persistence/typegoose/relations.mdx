@@ -8,18 +8,18 @@ import TabItem from '@theme/TabItem';
 Relations work a little differently in `typegoose` when compared to other relational ORMs such as `sequelize` or `typescript`. You can read more about relations (references) in `typegoose` [here](https://mongoosejs.com/docs/populate.html)
 
 :::note
-There are multiple ways to set of references in `typegoose` there are intended as starting point.
+There are multiple ways to set of references in Typegoose. These are intended as a starting point.
 :::
 
 :::warning
-Filtering on references is not supported by typegoose.
+Filtering on references is not supported by Typegoose.
 :::
 
 ## One to Many/Many To One Example
 
-To set up a one to many/many to one relationship in typegoose you will store a reference in your document
+To set up a one to many/many to one relationship in Typegoose, you will store a reference in your document.
 
-For example lets add sub tasks to our todo items by storing a `todoItem` ref on our `subTask`
+For example, lets add sub tasks to our todo items by storing a `todoItem` ref on our `subTask` and an array of sub-tasks on our `todoItem` entity.
 
 <Tabs
   defaultValue="todoitem"
@@ -31,7 +31,7 @@ For example lets add sub tasks to our todo items by storing a `todoItem` ref on 
 <TabItem value="todoitem">
 
 
-```ts title="todo-item/todo-item.entity.ts" {32-36}
+```ts title="todo-item/todo-item.entity.ts" {24-25}
 import { Prop, modelOptions } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
@@ -71,7 +71,7 @@ export class TodoItemEntity extends Base {
 
 
 ```ts title="sub-task/sub-task.entity.ts" {15-16}
-import { Prop, modelOptions, mongoose } from '@typegoose/typegoose';
+import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
 @modelOptions({ schemaOptions: { timestamps: true } })
@@ -85,7 +85,7 @@ export class SubTaskEntity extends Base {
   @Prop({ required: true })
   completed!: boolean;
 
-  @Prop({ type: mongoose.Types.ObjectId, ref: TodoItemEntity, required: true })
+  @Prop({ ref: () => TodoItemEntity, required: true })
   todoItem!: Ref<TodoItemEntity>;
 
   @Prop()
@@ -106,7 +106,7 @@ export class SubTaskEntity extends Base {
 </Tabs>
 
 
-Now that we have the relationship defined we can add the `@Relation` and `@Connection` to our DTOs
+Now that we have the relationships defined, we can add the `@Relation` and `@Connection` to our DTOs
 
 <Tabs
   defaultValue="todoitem"
@@ -206,7 +206,7 @@ export class SubTaskDTO {
 
 ## Many To Many Example
 
-In this example we'll add `tags` to `todoItems` by storing an array of `tag` references on the `todoItems`.
+In this example, we'll add `tags` to `todoItems` by storing an array of `tag` references on the `todoItems`.
 
 <Tabs
   defaultValue="todoitem"
@@ -219,7 +219,7 @@ In this example we'll add `tags` to `todoItems` by storing an array of `tag` ref
 
 
 ```ts title="todo-item/todo-item.entity.ts" {21-23}
-import { Prop, modelOptions } from '@typegoose/typegoose';
+import { Prop, modelOption, Ref } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
 @modelOptions({ schemaOptions: { timestamps: true } })
@@ -239,8 +239,7 @@ export class TodoItemEntity extends Base {
   @Prop({ default: Date.now })
   updatedAt!: Date;
 
-  // notice the brackets around the prop options
-  @Prop([{ type: mongoose.Types.ObjectId, ref: TagEntity }])
+  @Prop({ ref: () => TagEntity })
   tags!: Ref<TagEntity>[];
 
   @Prop({ default: 0 })
@@ -251,9 +250,13 @@ export class TodoItemEntity extends Base {
 
   @Prop()
   updatedBy?: string;
+
+  public get id(): string {
+    // eslint-disable-next-line no-underscore-dangle
+    return this._id.toHexString();
+  }
 }
 
-export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity);
 ```
 
 </TabItem>
@@ -261,11 +264,11 @@ export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity)
 
 
 ```ts title="tag/tag.entity.ts" {23-27}
-import { Prop, modelOptions } from '@typegoose/typegoose';
+import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-export class TagEntity extends Document {
+export class TagEntity extends Base {
   @Prop({ required: true })
   name!: string;
 
@@ -288,13 +291,49 @@ export class TagEntity extends Document {
   @Prop()
   updatedBy?: string;
 }
+
+
+import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Prop, modelOptions, Ref} from '@typegoose/typegoose';
+import { TodoItemEntity } from '../todo-item/todo-item.entity';
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'tags',
+    toObject: { virtuals: true }
+  }
+})
+export class TagEntity extends Base {
+
+  @Prop({ required: true })
+  name!: string;
+
+  @Prop()
+  createdAt!: Date;
+
+  @Prop()
+  updatedAt!: Date;
+
+  @Prop({
+    ref: 'TodoItemEntity',
+    localField: '_id',
+    foreignField: 'tags',
+  })
+  todoItems?: Ref<TodoItemEntity>[];
+
+  public get id(): string {
+    // eslint-disable-next-line no-underscore-dangle
+    return this._id.toHexString();
+  }
+}
 ```
 
 </TabItem>
 </Tabs>
 
 
-Now that we have the relationship defined we can add the `@Connection` to our DTOS
+Now that we have the relationship defined, we can add the `@Connection` to our DTOS
 
 <Tabs
   defaultValue="todoitem"
