@@ -85,7 +85,7 @@ The `@nestjs-query/query-graphql` package includes a `@Authorize` decorator that
 criteria to authorize an incoming request.
 
 The `@Authorize` decorator accepts the following types.
-* A `object` that has an `authorize` method that returns a Filter for the DTO.
+* An `object` that has an `authorize` method that returns a Filter for the DTO.
 * An instance of an `Authorizer` that implements the `authorize` and `authorizeRelation` methods.
 * An `Authorizer` class reference that implements the `Authorizer` interface. The `Authorizer` class will be
 instantiated using the `nestjs`'s dependency injection.
