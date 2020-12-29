@@ -67,7 +67,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
   findByIdOptions(pk: string | number | (string | number)[], query: Query<Entity>): FindOptions {
     let opts: FindOptions = this.applyAssociationIncludes({ subQuery: false }, query.filter);
     opts = this.applyFilter(opts, {
-      ...query.filter,
+      ...(query.filter ?? ({} as Filter<Entity>)),
       [this.model.primaryKeyAttribute]: { [Array.isArray(pk) ? 'in' : 'eq']: pk },
     });
     opts = this.applySorting(opts, query.sorting);

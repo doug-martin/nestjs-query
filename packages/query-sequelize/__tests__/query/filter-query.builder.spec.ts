@@ -35,13 +35,13 @@ describe('FilterQueryBuilder', (): void => {
   describe('#select', () => {
     describe('with filter', () => {
       it('should not call whereBuilder#build', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions({}, instance(mockWhereBuilder), {});
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should call whereBuilder#build if there is a filter', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
           return { [Op.and]: { stringType: 'foo' } };
@@ -54,13 +54,13 @@ describe('FilterQueryBuilder', (): void => {
 
     describe('with paging', () => {
       it('should apply empty paging args', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions({}, instance(mockWhereBuilder), {});
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
 
       it('should apply paging args going forward', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             paging: {
@@ -75,7 +75,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply paging args going backward', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             paging: {
@@ -90,7 +90,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply paging with just a limit', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             paging: {
@@ -104,7 +104,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply paging with just an offset', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             paging: {
@@ -120,7 +120,7 @@ describe('FilterQueryBuilder', (): void => {
 
     describe('with sorting', () => {
       it('should apply ASC sorting', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC }],
@@ -132,7 +132,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply ASC NULLS_FIRST sorting', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }],
@@ -144,7 +144,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply ASC NULLS_LAST sorting', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
@@ -156,7 +156,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply DESC sorting', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC }],
@@ -168,7 +168,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply DESC NULLS_FIRST sorting', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }],
@@ -179,7 +179,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply DESC NULLS_LAST sorting', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }],
@@ -191,7 +191,7 @@ describe('FilterQueryBuilder', (): void => {
       });
 
       it('should apply multiple sorts', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertFindOptions(
           {
             sorting: [
@@ -219,7 +219,7 @@ describe('FilterQueryBuilder', (): void => {
   describe('#update', () => {
     describe('with filter', () => {
       it('should call whereBuilder#build if there is a filter', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
           return { [Op.and]: { stringType: 'foo' } };
@@ -231,7 +231,7 @@ describe('FilterQueryBuilder', (): void => {
     });
     describe('with paging', () => {
       it('should ignore paging args', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertUpdateOptions(
           {
             paging: {
@@ -249,7 +249,7 @@ describe('FilterQueryBuilder', (): void => {
   describe('#delete', () => {
     describe('with filter', () => {
       it('should call whereBuilder#build if there is a filter', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
           return { [Op.and]: { stringType: 'foo' } };
@@ -261,7 +261,7 @@ describe('FilterQueryBuilder', (): void => {
     });
     describe('with paging', () => {
       it('should include limit', () => {
-        const mockWhereBuilder: WhereBuilder<TestEntity> = mock(WhereBuilder);
+        const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         assertDestroyOptions(
           {
             paging: {

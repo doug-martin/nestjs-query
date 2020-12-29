@@ -5,9 +5,10 @@ export type ReferenceOptions = {
   ref: string;
 };
 
-export function isReferenceOptions(options: unknown): options is ReferenceOptions {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isReferenceOptions(options: any): options is ReferenceOptions {
   return (
-    options &&
+    !!options &&
     typeof options === 'object' &&
     'type' in options &&
     'ref' in options &&
@@ -45,9 +46,10 @@ export type VirtualReferenceOptions = {
   foreignField: string;
 };
 
-export function isVirtualReferenceOptions(options: unknown): options is VirtualReferenceOptions {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isVirtualReferenceOptions(options: any): options is VirtualReferenceOptions {
   return (
-    options && typeof options === 'object' && 'ref' in options && 'localField' in options && 'foreignField' in options
+    !!options && typeof options === 'object' && 'ref' in options && 'localField' in options && 'foreignField' in options
   );
 }
 
