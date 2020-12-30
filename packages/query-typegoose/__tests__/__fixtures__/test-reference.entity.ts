@@ -20,8 +20,4 @@ export class TestReference extends Base {
   })
   virtualTestEntity?: Ref<TestEntity>
 
-  // public get id(): string {
-  //   // eslint-disable-next-line no-underscore-dangle
-  //   return this._id.toHexString()
-  // }
 }
