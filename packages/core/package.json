@@ -39,8 +39,8 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@nestjs/common": "7.6.4",
-    "@nestjs/testing": "7.6.4",
+    "@nestjs/common": "7.6.5",
+    "@nestjs/testing": "7.6.5",
     "@types/lodash.merge": "4.6.6",
     "class-transformer": "0.3.1",
     "ts-mockito": "2.6.1",
