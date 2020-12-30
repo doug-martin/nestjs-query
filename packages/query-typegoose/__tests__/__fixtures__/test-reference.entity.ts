@@ -1,18 +1,16 @@
-import { modelOptions, prop, Ref } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { TestEntity } from './test.entity';
+import { prop, Ref } from '@typegoose/typegoose'
+import { Base } from '@typegoose/typegoose/lib/defaultClasses'
+import { TestEntity } from './test.entity'
 
-@modelOptions({
-  schemaOptions: {
-    toObject: { virtuals: true },
-  },
-})
 export class TestReference extends Base {
+
+  id!: string
+
   @prop({ required: true })
-  referenceName!: string;
+  referenceName!: string
 
   @prop({ ref: () => TestEntity, required: false })
-  testEntity?: Ref<TestEntity>;
+  testEntity?: Ref<TestEntity>
 
   @prop({
     ref: 'TestEntity',
@@ -20,10 +18,10 @@ export class TestReference extends Base {
     foreignField: '_id',
     justOne: true,
   })
-  virtualTestEntity?: Ref<TestEntity>;
+  virtualTestEntity?: Ref<TestEntity>
 
-  public get id(): string {
-    // eslint-disable-next-line no-underscore-dangle
-    return this._id.toHexString();
-  }
+  // public get id(): string {
+  //   // eslint-disable-next-line no-underscore-dangle
+  //   return this._id.toHexString()
+  // }
 }
