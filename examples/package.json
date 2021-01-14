@@ -26,7 +26,7 @@
     "@nestjs/platform-express": "7.6.5",
     "@nestjs/sequelize": "0.1.1",
     "@nestjs/typeorm": "7.1.5",
-    "apollo-server-express": "2.19.1",
+    "apollo-server-express": "2.19.2",
     "apollo-server-plugin-base": "0.10.3",
     "class-validator": "0.12.2",
     "graphql": "15.4.0",
