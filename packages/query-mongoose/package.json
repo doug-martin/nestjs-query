@@ -37,7 +37,7 @@
     "@types/mongodb": "3.6.3",
     "@types/mongoose": "5.10.1",
     "class-transformer": "0.3.2",
-    "mongodb": "3.6.3",
+    "mongodb": "3.6.4",
     "mongodb-memory-server": "6.9.3",
     "mongoose": "5.10.19",
     "ts-mockito": "2.6.1",
