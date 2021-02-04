@@ -1,10 +1,10 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
+import { getModelForClass, DocumentType } from '@typegoose/typegoose'
 import { Test, TestingModule } from '@nestjs/testing'
-import { InjectModel, MongooseModule } from '@nestjs/mongoose'
 import { ObjectId } from 'mongodb'
-import { Model, Document } from 'mongoose'
-import { SortDirection } from '@nestjs-query/core'
-import { MongooseQueryService } from '../../src/services'
+import { ReturnModelType } from '@typegoose/typegoose/lib/types'
+import { InjectModel, TypegooseModule } from 'nestjs-typegoose'
+import { FindRelationOptions, SortDirection } from '@nestjs-query/core'
 import {
   TestReference,
   TestEntity,
@@ -14,25 +14,23 @@ import {
   prepareDb,
   closeDbConnection,
   dropDatabase,
-  TestEntitySchema,
-  TestReferenceSchema,
 } from '../__fixtures__'
-import { NestjsQueryMongooseModule } from '../../src'
+import { NestjsQueryTypegooseModule } from '../../src'
+import { TypegooseQueryService } from '../../src/services'
 
-describe('MongooseQueryService', () => {
+describe('TypegooseQueryService', () => {
   let moduleRef: TestingModule
-  let TestEntityModel: Model<TestEntity>
-  let TestReferenceModel: Model<TestReference>
-
-  class TestEntityService extends MongooseQueryService<TestEntity> {
-    constructor(@InjectModel(TestEntity.name) readonly model: Model<TestEntity>) {
+  let TestEntityModel: ReturnModelType<typeof TestEntity>
+  let TestReferenceModel: ReturnModelType<typeof TestReference>
+  class TestEntityService extends TypegooseQueryService<TestEntity> {
+    constructor(@InjectModel(TestEntity) readonly model: ReturnModelType<typeof TestEntity>) {
       super(model)
       TestEntityModel = model
     }
   }
 
-  class TestReferenceService extends MongooseQueryService<TestReference> {
-    constructor(@InjectModel(TestReference.name) readonly model: Model<TestReference>) {
+  class TestReferenceService extends TypegooseQueryService<TestReference> {
+    constructor(@InjectModel(TestReference) readonly model: ReturnModelType<typeof TestReference>) {
       super(model)
       TestReferenceModel = model
     }
@@ -41,25 +39,22 @@ describe('MongooseQueryService', () => {
   beforeAll(async () => {
     moduleRef = await Test.createTestingModule({
       imports: [
-        MongooseModule.forRoot(await getConnectionUri(), {
+        TypegooseModule.forRoot(await getConnectionUri(), {
           useFindAndModify: false,
           useNewUrlParser: true,
           useUnifiedTopology: true,
         }),
-        NestjsQueryMongooseModule.forFeature([
-          { name: TestReference.name, document: TestReference, schema: TestReferenceSchema },
-          { name: TestEntity.name, document: TestEntity, schema: TestEntitySchema },
-        ]),
+        NestjsQueryTypegooseModule.forFeature([TestEntity, TestReference]),
       ],
       providers: [TestReferenceService, TestEntityService],
     }).compile()
   })
 
-  function convertDocument<Doc extends Document>(doc: Doc): Doc {
+  function convertDocument<Doc>(doc: DocumentType<Doc>): Doc {
     return doc.toObject({ virtuals: true })
   }
 
-  function convertDocuments<Doc extends Document>(docs: Doc[]): Doc[] {
+  function convertDocuments<Doc>(docs: DocumentType<Doc>[]): Doc[] {
     return docs.map((doc) => convertDocument(doc))
   }
 
@@ -95,6 +90,7 @@ describe('MongooseQueryService', () => {
     it('call find and return the result', async () => {
       const queryService = moduleRef.get(TestEntityService)
       const queryResult = await queryService.query({})
+
       expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_ENTITIES))
     })
 
@@ -272,7 +268,7 @@ describe('MongooseQueryService', () => {
     it('return the entity if found', async () => {
       const entity = TEST_ENTITIES[0]
       const queryService = moduleRef.get(TestEntityService)
-      const found = await queryService.findById(entity._id)
+      const found = await queryService.findById(entity._id.toHexString())
       expect(convertDocument(found!)).toEqual(entity)
     })
 
@@ -286,7 +282,7 @@ describe('MongooseQueryService', () => {
       it('should return an entity if all filters match', async () => {
         const entity = TEST_ENTITIES[0]
         const queryService = moduleRef.get(TestEntityService)
-        const found = await queryService.findById(entity._id, {
+        const found = await queryService.findById(entity._id.toHexString(), {
           filter: { stringType: { eq: entity.stringType } },
         })
         expect(convertDocument(found!)).toEqual(entity)
@@ -295,7 +291,7 @@ describe('MongooseQueryService', () => {
       it('should return an undefined if an entity with the pk and filter is not found', async () => {
         const entity = TEST_ENTITIES[0]
         const queryService = moduleRef.get(TestEntityService)
-        const found = await queryService.findById(entity._id, {
+        const found = await queryService.findById(entity._id.toHexString(), {
           filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
         })
         expect(found).toBeUndefined()
@@ -307,7 +303,7 @@ describe('MongooseQueryService', () => {
     it('return the entity if found', async () => {
       const entity = TEST_ENTITIES[0]
       const queryService = moduleRef.get(TestEntityService)
-      const found = await queryService.getById(entity._id)
+      const found = await queryService.getById(entity._id.toHexString())
       expect(convertDocument(found)).toEqual(entity)
     })
 
@@ -321,7 +317,7 @@ describe('MongooseQueryService', () => {
       it('should return an entity if all filters match', async () => {
         const entity = TEST_ENTITIES[0]
         const queryService = moduleRef.get(TestEntityService)
-        const found = await queryService.getById(entity._id, {
+        const found = await queryService.getById(entity._id.toHexString(), {
           filter: { stringType: { eq: entity.stringType } },
         })
         expect(convertDocument(found)).toEqual(entity)
@@ -331,7 +327,7 @@ describe('MongooseQueryService', () => {
         const entity = TEST_ENTITIES[0]
         const queryService = moduleRef.get(TestEntityService)
         return expect(
-          queryService.getById(entity._id, {
+          queryService.getById(entity._id.toHexString(), {
             filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
           }),
         ).rejects.toThrow(`Unable to find TestEntity with id: ${String(entity._id)}`)
@@ -347,7 +343,7 @@ describe('MongooseQueryService', () => {
     })
 
     it('call save on the repo with instances of entities when passed instances', async () => {
-      const instances = TEST_ENTITIES.map((e) => new TestEntityModel(testEntityToCreate(e)))
+      const instances = TEST_ENTITIES.map((e) => testEntityToCreate(e))
       const queryService = moduleRef.get(TestEntityService)
       const created = await queryService.createMany(instances)
       expectEqualCreate(created, TEST_ENTITIES)
@@ -370,10 +366,12 @@ describe('MongooseQueryService', () => {
     })
 
     it('call save on the repo with an instance of the entity when passed an instance', async () => {
-      const entity = new TestEntityModel(testEntityToCreate(TEST_ENTITIES[0]))
+      const Model = getModelForClass(TestEntity)
+      const entity = new Model(testEntityToCreate(TEST_ENTITIES[0]))
+      const outcome = testEntityToObject(entity)
       const queryService = moduleRef.get(TestEntityService)
       const created = await queryService.createOne(entity)
-      expect(convertDocument(created)).toEqual(expect.objectContaining(entity.toObject({ virtuals: true })))
+      expect(convertDocument(created)).toEqual(expect.objectContaining(outcome))
     })
 
     it('should reject if the entity contains an id', async () => {
@@ -401,7 +399,7 @@ describe('MongooseQueryService', () => {
   describe('#deleteOne', () => {
     it('remove the entity', async () => {
       const queryService = moduleRef.get(TestEntityService)
-      const deleted = await queryService.deleteOne(TEST_ENTITIES[0]._id)
+      const deleted = await queryService.deleteOne(TEST_ENTITIES[0]._id.toHexString())
       expect(convertDocument(deleted)).toEqual(TEST_ENTITIES[0])
     })
 
@@ -415,7 +413,7 @@ describe('MongooseQueryService', () => {
       it('should delete the entity if all filters match', async () => {
         const entity = TEST_ENTITIES[0]
         const queryService = moduleRef.get(TestEntityService)
-        const deleted = await queryService.deleteOne(entity._id, {
+        const deleted = await queryService.deleteOne(entity._id.toHexString(), {
           filter: { stringType: { eq: entity.stringType } },
         })
         expect(convertDocument(deleted)).toEqual(TEST_ENTITIES[0])
@@ -425,7 +423,7 @@ describe('MongooseQueryService', () => {
         const entity = TEST_ENTITIES[0]
         const queryService = moduleRef.get(TestEntityService)
         return expect(
-          queryService.deleteOne(entity._id, {
+          queryService.deleteOne(entity._id.toHexString(), {
             filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
           }),
         ).rejects.toThrow(`Unable to find TestEntity with id: ${String(entity._id)}`)
@@ -457,7 +455,7 @@ describe('MongooseQueryService', () => {
       const queryService = moduleRef.get(TestEntityService)
       const entity = TEST_ENTITIES[0]
       const update = { stringType: 'updated' }
-      const updated = await queryService.updateOne(entity._id, update)
+      const updated = await queryService.updateOne(entity._id.toHexString(), update)
       expect(updated).toEqual(
         expect.objectContaining({
           _id: entity._id,
@@ -469,8 +467,9 @@ describe('MongooseQueryService', () => {
     it('update the entity with an instance of the entity', async () => {
       const queryService = moduleRef.get(TestEntityService)
       const entity = TEST_ENTITIES[0]
-      const update = new TestEntityModel({ stringType: 'updated' })
-      const updated = await queryService.updateOne(entity._id, update)
+      const Model = getModelForClass(TestEntity)
+      const update = new Model({ stringType: 'updated' })
+      const updated = await queryService.updateOne(entity._id.toHexString(), update)
       expect(updated).toEqual(
         expect.objectContaining({
           _id: entity._id,
@@ -481,9 +480,9 @@ describe('MongooseQueryService', () => {
 
     it('should reject if the update contains the ID', async () => {
       const queryService = moduleRef.get(TestEntityService)
-      return expect(queryService.updateOne(TEST_ENTITIES[0]._id, { id: new ObjectId().toHexString() })).rejects.toThrow(
-        'Id cannot be specified when updating',
-      )
+      return expect(
+        queryService.updateOne(TEST_ENTITIES[0]._id.toHexString(), { id: new ObjectId().toHexString() }),
+      ).rejects.toThrow('Id cannot be specified when updating')
     })
 
     it('call fail if the entity is not found', async () => {
@@ -499,7 +498,7 @@ describe('MongooseQueryService', () => {
         const entity = TEST_ENTITIES[0]
         const queryService = moduleRef.get(TestEntityService)
         const update = { stringType: 'updated' }
-        const updated = await queryService.updateOne(entity._id, update, {
+        const updated = await queryService.updateOne(entity._id.toHexString(), update, {
           filter: { stringType: { eq: entity.stringType } },
         })
         expect(updated).toEqual(expect.objectContaining({ _id: entity._id, ...update }))
@@ -510,7 +509,7 @@ describe('MongooseQueryService', () => {
         const queryService = moduleRef.get(TestEntityService)
         return expect(
           queryService.updateOne(
-            entity._id,
+            entity._id.toHexString(),
             { stringType: 'updated' },
             { filter: { stringType: { eq: TEST_ENTITIES[1].stringType } } },
           ),
@@ -525,8 +524,7 @@ describe('MongooseQueryService', () => {
         const entity = TEST_ENTITIES[0]
         const queryService = moduleRef.get(TestEntityService)
         const queryResult = await queryService.findRelation(TestReference, 'testReference', entity)
-        console.log(convertDocument(queryResult!), TEST_REFERENCES[0])
-        expect(convertDocument(queryResult!)).toEqual(TEST_REFERENCES[0])
+        expect(queryResult).toEqual(TEST_REFERENCES[0])
       })
 
       it('apply the filter option', async () => {
@@ -535,7 +533,7 @@ describe('MongooseQueryService', () => {
         const queryResult1 = await queryService.findRelation(TestReference, 'testReference', entity, {
           filter: { referenceName: { eq: TEST_REFERENCES[0].referenceName } },
         })
-        expect(convertDocument(queryResult1!)).toEqual(TEST_REFERENCES[0])
+        expect(queryResult1).toEqual(TEST_REFERENCES[0])
 
         const queryResult2 = await queryService.findRelation(TestReference, 'testReference', entity, {
           filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
@@ -565,7 +563,7 @@ describe('MongooseQueryService', () => {
           const queryService = moduleRef.get(TestReferenceService)
           const queryResult = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity)
 
-          expect(convertDocument(queryResult!)).toEqual(TEST_ENTITIES[0])
+          expect(queryResult).toEqual(TEST_ENTITIES[0])
         })
 
         it('apply the filter option', async () => {
@@ -574,7 +572,7 @@ describe('MongooseQueryService', () => {
           const queryResult1 = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity, {
             filter: { stringType: { eq: TEST_ENTITIES[0].stringType } },
           })
-          expect(convertDocument(queryResult1!)).toEqual(TEST_ENTITIES[0])
+          expect(queryResult1).toEqual(TEST_ENTITIES[0])
 
           const queryResult2 = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity, {
             filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
@@ -604,7 +602,7 @@ describe('MongooseQueryService', () => {
       it('call select and return the result', async () => {
         const entities = TEST_ENTITIES.slice(0, 3)
         const queryService = moduleRef.get(TestEntityService)
-        const queryResult = await queryService.findRelation(TestReference, 'testReference', entities)
+        const queryResult = await queryService.findRelation(TestReference, 'testReference', entities, {})
 
         expect(queryResult).toEqual(
           new Map([
@@ -618,11 +616,12 @@ describe('MongooseQueryService', () => {
       it('should apply the filter option', async () => {
         const entities = TEST_ENTITIES.slice(0, 3)
         const queryService = moduleRef.get(TestEntityService)
-        const queryResult = await queryService.findRelation(TestReference, 'testReference', entities, {
+        const options: FindRelationOptions<TestReference> = {
           filter: {
-            id: { in: [TEST_REFERENCES[0]._id, TEST_REFERENCES[6]._id] },
+            id: { in: [TEST_REFERENCES[0]._id.toHexString(), TEST_REFERENCES[6]._id.toHexString()] },
           },
-        })
+        }
+        const queryResult = await queryService.findRelation(TestReference, 'testReference', entities, options)
         expect(queryResult).toEqual(
           new Map([
             [entities[0], expect.objectContaining(TEST_REFERENCES[0])],
@@ -633,7 +632,10 @@ describe('MongooseQueryService', () => {
       })
 
       it('should return undefined select if no results are found.', async () => {
-        const entities: TestEntity[] = [TEST_ENTITIES[0], { _id: new ObjectId() } as TestEntity]
+        const entities: DocumentType<TestEntity>[] = [
+          TEST_ENTITIES[0],
+          { _id: new ObjectId() } as DocumentType<TestEntity>,
+        ]
         const queryService = moduleRef.get(TestEntityService)
         const queryResult = await queryService.findRelation(TestReference, 'testReference', entities)
 
@@ -654,7 +656,6 @@ describe('MongooseQueryService', () => {
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_ENTITIES[0], {
           filter: { referenceName: { isNot: null } },
         })
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return expect(convertDocuments(queryResult)).toEqual(TEST_REFERENCES.slice(0, 3))
       })
 
@@ -671,7 +672,6 @@ describe('MongooseQueryService', () => {
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_ENTITIES[0], {
           paging: { limit: 2, offset: 1 },
         })
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         expect(convertDocuments(queryResult)).toEqual(TEST_REFERENCES.slice(1, 3))
       })
     })
@@ -687,7 +687,6 @@ describe('MongooseQueryService', () => {
             filter: { referenceName: { isNot: null } },
           },
         )
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_REFERENCES.slice(0, 3)))
       })
 
@@ -758,7 +757,10 @@ describe('MongooseQueryService', () => {
       })
 
       it('should return an empty array if no results are found.', async () => {
-        const entities: TestEntity[] = [TEST_ENTITIES[0], { id: new ObjectId() } as TestEntity]
+        const entities: DocumentType<TestEntity>[] = [
+          TEST_ENTITIES[0],
+          { _id: new ObjectId() } as DocumentType<TestEntity>,
+        ]
         const queryService = moduleRef.get(TestEntityService)
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
           filter: { referenceName: { isNot: null } },
@@ -891,7 +893,10 @@ describe('MongooseQueryService', () => {
       })
 
       it('should return an empty array if no results are found.', async () => {
-        const entities: TestEntity[] = [TEST_ENTITIES[0], { _id: new ObjectId() } as TestEntity]
+        const entities: DocumentType<TestEntity>[] = [
+          TEST_ENTITIES[0],
+          { _id: new ObjectId() } as DocumentType<TestEntity>,
+        ]
         const queryService = moduleRef.get(TestEntityService)
         const queryResult = await queryService.aggregateRelations(
           TestReference,
@@ -1007,8 +1012,8 @@ describe('MongooseQueryService', () => {
       const queryService = moduleRef.get(TestEntityService)
       const queryResult = await queryService.addRelations(
         'testReferences',
-        entity._id,
-        TEST_REFERENCES.slice(3, 6).map((r) => r._id),
+        entity._id.toHexString(),
+        TEST_REFERENCES.slice(3, 6).map((r) => r._id.toHexString()),
       )
       expect(queryResult).toEqual(
         expect.objectContaining({
@@ -1028,8 +1033,8 @@ describe('MongooseQueryService', () => {
         return expect(
           queryService.addRelations(
             'virtualTestReferences',
-            entity._id,
-            TEST_REFERENCES.slice(3, 6).map((r) => r._id),
+            entity._id.toHexString(),
+            TEST_REFERENCES.slice(3, 6).map((r) => r._id.toHexString()),
           ),
         ).rejects.toThrow('AddRelations not supported for virtual relation virtualTestReferences')
       })
@@ -1042,8 +1047,8 @@ describe('MongooseQueryService', () => {
         return expect(
           queryService.addRelations(
             'testReferences',
-            entity._id,
-            TEST_REFERENCES.slice(3, 6).map((r) => r._id),
+            entity._id.toHexString(),
+            TEST_REFERENCES.slice(3, 6).map((r) => r._id.toHexString()),
             {
               filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
             },
@@ -1057,8 +1062,8 @@ describe('MongooseQueryService', () => {
         return expect(
           queryService.addRelations<TestReference>(
             'testReferences',
-            entity._id,
-            TEST_REFERENCES.slice(3, 6).map((r) => r._id),
+            entity._id.toHexString(),
+            TEST_REFERENCES.slice(3, 6).map((r) => r._id.toHexString()),
             {
               relationFilter: { referenceName: { like: '%-one' } },
             },
@@ -1072,19 +1077,23 @@ describe('MongooseQueryService', () => {
     it('call select and return the result', async () => {
       const entity = TEST_REFERENCES[0]
       const queryService = moduleRef.get(TestReferenceService)
-      const queryResult = await queryService.setRelation('testEntity', entity._id, TEST_ENTITIES[1]._id)
+      const queryResult = await queryService.setRelation(
+        'testEntity',
+        entity._id.toHexString(),
+        TEST_ENTITIES[1]._id.toHexString(),
+      )
       expect(queryResult).toEqual(expect.objectContaining({ ...entity, testEntity: TEST_ENTITIES[1]._id }))
 
       const relation = await queryService.findRelation(TestEntity, 'testEntity', entity)
-      expect(convertDocument(relation!)).toEqual(TEST_ENTITIES[1])
+      expect(relation).toEqual(TEST_ENTITIES[1])
     })
 
     it('should reject with a virtual reference', async () => {
       const entity = TEST_REFERENCES[0]
       const queryService = moduleRef.get(TestReferenceService)
-      return expect(queryService.setRelation('virtualTestEntity', entity._id, TEST_ENTITIES[1]._id)).rejects.toThrow(
-        'SetRelation not supported for virtual relation virtualTestEntity',
-      )
+      return expect(
+        queryService.setRelation('virtualTestEntity', entity._id.toHexString(), TEST_ENTITIES[1]._id.toHexString()),
+      ).rejects.toThrow('SetRelation not supported for virtual relation virtualTestEntity')
     })
 
     describe('with modify options', () => {
@@ -1092,7 +1101,7 @@ describe('MongooseQueryService', () => {
         const entity = TEST_REFERENCES[0]
         const queryService = moduleRef.get(TestReferenceService)
         return expect(
-          queryService.setRelation('testEntity', entity._id, TEST_ENTITIES[1]._id, {
+          queryService.setRelation('testEntity', entity._id.toHexString(), TEST_ENTITIES[1]._id.toHexString(), {
             filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
           }),
         ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`)
@@ -1102,10 +1111,67 @@ describe('MongooseQueryService', () => {
         const entity = TEST_REFERENCES[0]
         const queryService = moduleRef.get(TestReferenceService)
         return expect(
-          queryService.setRelation<TestEntity>('testEntity', entity._id, TEST_ENTITIES[1]._id, {
-            relationFilter: { stringType: { like: '%-one' } },
-          }),
+          queryService.setRelation<TestEntity>(
+            'testEntity',
+            entity._id.toHexString(),
+            TEST_ENTITIES[1]._id.toHexString(),
+            {
+              relationFilter: { stringType: { like: '%-one' } },
+            },
+          ),
         ).rejects.toThrow('Unable to find testEntity to set on TestReference')
+      })
+    })
+  })
+
+  describe('#removeRelation', () => {
+    it('call select and return the result', async () => {
+      const entity = TEST_REFERENCES[0]
+      const queryService = moduleRef.get(TestReferenceService)
+      const queryResult = await queryService.removeRelation(
+        'testEntity',
+        entity._id.toHexString(),
+        TEST_ENTITIES[1]._id.toHexString(),
+      )
+      const { testEntity, ...expected } = entity
+      expect(queryResult).toEqual(expect.objectContaining(expected))
+
+      const relation = await queryService.findRelation(TestEntity, 'testEntity', entity)
+      expect(relation).toBeUndefined()
+    })
+
+    it('should reject with a virtual reference', async () => {
+      const entity = TEST_REFERENCES[0]
+      const queryService = moduleRef.get(TestReferenceService)
+      return expect(
+        queryService.removeRelation('virtualTestEntity', entity._id.toHexString(), TEST_ENTITIES[1]._id.toHexString()),
+      ).rejects.toThrow('RemoveRelation not supported for virtual relation virtualTestEntity')
+    })
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_REFERENCES[0]
+        const queryService = moduleRef.get(TestReferenceService)
+        return expect(
+          queryService.removeRelation('testEntity', entity._id.toHexString(), TEST_ENTITIES[1]._id.toHexString(), {
+            filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
+          }),
+        ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`)
+      })
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_REFERENCES[0]
+        const queryService = moduleRef.get(TestReferenceService)
+        return expect(
+          queryService.removeRelation<TestEntity>(
+            'testEntity',
+            entity._id.toHexString(),
+            TEST_ENTITIES[1]._id.toHexString(),
+            {
+              relationFilter: { stringType: { like: '%-one' } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find testEntity to remove from TestReference')
       })
     })
   })
@@ -1116,8 +1182,8 @@ describe('MongooseQueryService', () => {
       const queryService = moduleRef.get(TestEntityService)
       const queryResult = await queryService.removeRelations(
         'testReferences',
-        entity._id,
-        TEST_REFERENCES.slice(0, 3).map((r) => r._id),
+        entity._id.toHexString(),
+        TEST_REFERENCES.slice(0, 3).map((r) => r._id.toHexString()),
       )
       expect(queryResult.toObject()).toEqual(
         expect.objectContaining({
@@ -1137,8 +1203,8 @@ describe('MongooseQueryService', () => {
         return expect(
           queryService.removeRelations(
             'virtualTestReferences',
-            entity._id,
-            TEST_REFERENCES.slice(0, 3).map((r) => r._id),
+            entity._id.toHexString(),
+            TEST_REFERENCES.slice(0, 3).map((r) => r._id.toHexString()),
           ),
         ).rejects.toThrow('RemoveRelations not supported for virtual relation virtualTestReferences')
       })
@@ -1151,8 +1217,8 @@ describe('MongooseQueryService', () => {
         return expect(
           queryService.removeRelations(
             'testReferences',
-            entity._id,
-            TEST_REFERENCES.slice(0, 3).map((r) => r._id),
+            entity._id.toHexString(),
+            TEST_REFERENCES.slice(0, 3).map((r) => r._id.toHexString()),
             {
               filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
             },
@@ -1166,55 +1232,13 @@ describe('MongooseQueryService', () => {
         return expect(
           queryService.removeRelations<TestReference>(
             'testReferences',
-            entity._id,
-            TEST_REFERENCES.slice(0, 3).map((r) => r._id),
+            entity._id.toHexString(),
+            TEST_REFERENCES.slice(0, 3).map((r) => r._id.toHexString()),
             {
               relationFilter: { referenceName: { like: '%-one' } },
             },
           ),
         ).rejects.toThrow('Unable to find all testReferences to remove from TestEntity')
-      })
-    })
-  })
-
-  describe('#removeRelation', () => {
-    it('call select and return the result', async () => {
-      const entity = TEST_REFERENCES[0]
-      const queryService = moduleRef.get(TestReferenceService)
-      const queryResult = await queryService.removeRelation('testEntity', entity._id, TEST_ENTITIES[1]._id)
-      expect(queryResult).toEqual(expect.objectContaining({ ...entity, testEntity: undefined }))
-
-      const relation = await queryService.findRelation(TestEntity, 'testEntity', entity)
-      expect(relation).toBeUndefined()
-    })
-
-    it('should reject with a virtual reference', async () => {
-      const entity = TEST_REFERENCES[0]
-      const queryService = moduleRef.get(TestReferenceService)
-      return expect(queryService.removeRelation('virtualTestEntity', entity._id, TEST_ENTITIES[1]._id)).rejects.toThrow(
-        'RemoveRelation not supported for virtual relation virtualTestEntity',
-      )
-    })
-
-    describe('with modify options', () => {
-      it('should throw an error if the entity is not found with the id and provided filter', async () => {
-        const entity = TEST_REFERENCES[0]
-        const queryService = moduleRef.get(TestReferenceService)
-        return expect(
-          queryService.removeRelation('testEntity', entity._id, TEST_ENTITIES[1]._id, {
-            filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
-          }),
-        ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`)
-      })
-
-      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
-        const entity = TEST_REFERENCES[0]
-        const queryService = moduleRef.get(TestReferenceService)
-        return expect(
-          queryService.removeRelation<TestEntity>('testEntity', entity._id, TEST_ENTITIES[1]._id, {
-            relationFilter: { stringType: { like: '%-one' } },
-          }),
-        ).rejects.toThrow('Unable to find testEntity to remove from TestReference')
       })
     })
   })

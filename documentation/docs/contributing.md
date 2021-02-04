@@ -198,7 +198,7 @@ Running the documentation locally is the easiest way to view your changes to ens
 To run the docs locally do the following:
 ```
 cd ./documentation
-npm run install # first time only
+npm install # first time only
 npm run start
 ```
 
