@@ -25,13 +25,9 @@ describe('AggregateResolver', () => {
     return expectSDL([TestSDLResolver], sdl);
   };
 
-  it('should create a AggregateResolver for the DTO', () => {
-    return expectResolverSDL(aggregateResolverSDL, { enabled: true });
-  });
+  it('should create a AggregateResolver for the DTO', () => expectResolverSDL(aggregateResolverSDL, { enabled: true }));
 
-  it('should not expose read methods if not enabled', () => {
-    return expectResolverSDL(aggregateDisabledResolverSDL);
-  });
+  it('should not expose read methods if not enabled', () => expectResolverSDL(aggregateDisabledResolverSDL));
 
   describe('#aggregate', () => {
     @Resolver(() => TestResolverDTO)

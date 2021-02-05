@@ -362,9 +362,7 @@ export abstract class RelationQueryService<Entity> {
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const convertedQuery = assembler.convertQuery({ filter });
     const entityRelations = await Promise.all(
-      entities.map((e) => {
-        return relationQueryBuilder.select(e, convertedQuery).getCount();
-      }),
+      entities.map((e) => relationQueryBuilder.select(e, convertedQuery).getCount()),
     );
     return entityRelations.reduce((results, relationCount, index) => {
       const e = entities[index];
@@ -424,10 +422,12 @@ export abstract class RelationQueryService<Entity> {
     relations: Relation[],
   ): Relation[] {
     const pks = relationBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName();
-    const filter = pks.reduce((keys, key) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      return { ...keys, [key.propertyName]: rawResult[key.columnName] };
-    }, {} as Partial<Entity>);
+    const filter = pks.reduce(
+      (keys, key) =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        ({ ...keys, [key.propertyName]: rawResult[key.columnName] }),
+      {} as Partial<Entity>,
+    );
     return lodashFilter(relations, filter) as Relation[];
   }
 

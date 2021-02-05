@@ -11,17 +11,15 @@ export interface AuthorizerOptions<DTO> {
   authorize: (context: any) => Filter<DTO> | Promise<Filter<DTO>>;
 }
 
-const createRelationAuthorizer = (opts: AuthorizerOptions<unknown>): Authorizer<unknown> => {
-  return {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async authorize(context: any): Promise<Filter<unknown>> {
-      return opts.authorize(context) ?? {};
-    },
-    authorizeRelation(): Promise<Filter<unknown>> {
-      return Promise.reject(new Error('Not implemented'));
-    },
-  };
-};
+const createRelationAuthorizer = (opts: AuthorizerOptions<unknown>): Authorizer<unknown> => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async authorize(context: any): Promise<Filter<unknown>> {
+    return opts.authorize(context) ?? {};
+  },
+  authorizeRelation(): Promise<Filter<unknown>> {
+    return Promise.reject(new Error('Not implemented'));
+  },
+});
 
 export function createDefaultAuthorizer<DTO>(
   DTOClass: Class<DTO>,

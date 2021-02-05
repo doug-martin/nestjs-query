@@ -63,21 +63,16 @@ export type AutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS extends 
 
 export const isFederatedResolverOpts = <DTO, MaybeService, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeService, C, U, R, PS>,
-): opts is FederatedAutoResolverOpts<DTO, MaybeService> => {
-  return 'type' in opts && opts.type === 'federated';
-};
+): opts is FederatedAutoResolverOpts<DTO, MaybeService> => 'type' in opts && opts.type === 'federated';
 
 export const isAssemblerCRUDAutoResolverOpts = <DTO, MaybeAssembler, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS>,
-): opts is AssemblerCRUDAutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS> => {
-  return 'DTOClass' in opts && 'AssemblerClass' in opts;
-};
+): opts is AssemblerCRUDAutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS> =>
+  'DTOClass' in opts && 'AssemblerClass' in opts;
 
 export const isServiceCRUDAutoResolverOpts = <DTO, MaybeService, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeService, C, U, R, PS>,
-): opts is ServiceCRUDAutoResolverOpts<DTO, MaybeService, C, U, R, PS> => {
-  return 'DTOClass' in opts && 'ServiceClass' in opts;
-};
+): opts is ServiceCRUDAutoResolverOpts<DTO, MaybeService, C, U, R, PS> => 'DTOClass' in opts && 'ServiceClass' in opts;
 
 const getResolverToken = <DTO>(DTOClass: Class<DTO>): string => `${DTOClass.name}AutoResolver`;
 const getFederatedResolverToken = <DTO>(DTOClass: Class<DTO>): string => `${DTOClass.name}FederatedAutoResolver`;
@@ -184,6 +179,4 @@ function createResolver<DTO, EntityServiceOrAssembler, C, U, R, PS extends Pagin
 
 export const createResolvers = (
   opts: AutoResolverOpts<unknown, unknown, unknown, unknown, unknown, PagingStrategies>[],
-): Provider[] => {
-  return opts.map((opt) => createResolver(opt));
-};
+): Provider[] => opts.map((opt) => createResolver(opt));

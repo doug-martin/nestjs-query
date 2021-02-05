@@ -81,6 +81,5 @@ export const AggregateRelationsMixin = <DTO>(DTOClass: Class<DTO>, relations: Ag
 export const AggregateRelationsResolver = <DTO>(
   DTOClass: Class<DTO>,
   relations: AggregateRelationsResolverOpts,
-): Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>> => {
-  return AggregateRelationsMixin(DTOClass, relations)(BaseServiceResolver);
-};
+): Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>> =>
+  AggregateRelationsMixin(DTOClass, relations)(BaseServiceResolver);

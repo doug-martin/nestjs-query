@@ -64,9 +64,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
   }
 
   private get defaultSort(): SortField<DTO>[] {
-    return this.pageFields.map((field) => {
-      return { field, direction: SortDirection.ASC };
-    });
+    return this.pageFields.map((field) => ({ field, direction: SortDirection.ASC }));
   }
 
   private encodeCursor(fields: KeySetCursorPayload<DTO>): string {
@@ -79,13 +77,12 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
       if (payload.type !== 'keyset') {
         throw new BadRequestException('Invalid cursor');
       }
-      const partial: Partial<DTO> = payload.fields.reduce((dtoPartial: Partial<DTO>, { field, value }) => {
-        return { ...dtoPartial, [field]: value };
-      }, {});
+      const partial: Partial<DTO> = payload.fields.reduce(
+        (dtoPartial: Partial<DTO>, { field, value }) => ({ ...dtoPartial, [field]: value }),
+        {},
+      );
       const transformed = plainToClass(this.DTOClass, partial);
-      const typesafeFields = payload.fields.map(({ field }) => {
-        return { field, value: transformed[field] };
-      });
+      const typesafeFields = payload.fields.map(({ field }) => ({ field, value: transformed[field] }));
       return { ...payload, fields: typesafeFields };
     } catch (e) {
       throw new BadRequestException('Invalid cursor');

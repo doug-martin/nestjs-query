@@ -82,16 +82,14 @@ const defaultUpdateManyInput = <DTO, U>(
   return UM;
 };
 
-const lookupUpdateOneHook = <DTO, U>(DTOClass: Class<DTO>, UpdateDTOClass: Class<U>): UpdateOneHook<U> | undefined => {
-  return getUpdateOneHook(UpdateDTOClass) ?? getUpdateOneHook(DTOClass);
-};
+const lookupUpdateOneHook = <DTO, U>(DTOClass: Class<DTO>, UpdateDTOClass: Class<U>): UpdateOneHook<U> | undefined =>
+  getUpdateOneHook(UpdateDTOClass) ?? getUpdateOneHook(DTOClass);
 
 const lookupUpdateManyHook = <DTO, U>(
   DTOClass: Class<DTO>,
   UpdateDTOClass: Class<U>,
-): UpdateManyHook<DTO, U> | undefined => {
-  return (getUpdateManyHook(UpdateDTOClass) ?? getUpdateManyHook(DTOClass)) as UpdateManyHook<DTO, U> | undefined;
-};
+): UpdateManyHook<DTO, U> | undefined =>
+  (getUpdateManyHook(UpdateDTOClass) ?? getUpdateManyHook(DTOClass)) as UpdateManyHook<DTO, U> | undefined;
 
 /**
  * @internal

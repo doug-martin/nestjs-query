@@ -25,29 +25,25 @@ describe('AggregateRelationsResolver', () => {
     return expectSDL([TestSDLResolver], sdl);
   };
 
-  it('should not add read methods if one and many are empty', () => {
-    return expectResolverSDL(aggregateRelationEmptyResolverSDL);
-  });
+  it('should not add read methods if one and many are empty', () =>
+    expectResolverSDL(aggregateRelationEmptyResolverSDL));
   describe('aggregate', () => {
-    it('should use the object type name', () => {
-      return expectResolverSDL(aggregateRelationResolverSDL, {
+    it('should use the object type name', () =>
+      expectResolverSDL(aggregateRelationResolverSDL, {
         enableAggregate: true,
         many: { relations: { DTO: TestRelationDTO } },
-      });
-    });
+      }));
 
-    it('should use the dtoName if provided', () => {
-      return expectResolverSDL(aggregateRelationCustomNameSDL, {
+    it('should use the dtoName if provided', () =>
+      expectResolverSDL(aggregateRelationCustomNameSDL, {
         enableAggregate: true,
         many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      });
-    });
+      }));
 
-    it('should not add read methods if enableAggregate is not true', () => {
-      return expectResolverSDL(aggregateRelationDisabledSDL, {
+    it('should not add read methods if enableAggregate is not true', () =>
+      expectResolverSDL(aggregateRelationDisabledSDL, {
         many: { relations: { DTO: TestRelationDTO, disableRead: true } },
-      });
-    });
+      }));
 
     describe('aggregate query', () => {
       it('should call the service aggregateRelations with the provided dto', async () => {

@@ -106,8 +106,8 @@ describe('SubTaskResolver (complexity - e2e)', () => {
   ];
 
   describe('find one', () => {
-    it(`should a sub task by id`, () => {
-      return request(app.getHttpServer())
+    it(`should a sub task by id`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -131,11 +131,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               },
             },
           });
-        });
-    });
+        }));
 
-    it(`should return null if the sub task is not found`, () => {
-      return request(app.getHttpServer())
+    it(`should return null if the sub task is not found`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -150,11 +149,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
           data: {
             subTask: null,
           },
-        });
-    });
+        }));
 
-    it(`should return a todo item`, () => {
-      return request(app.getHttpServer())
+    it(`should return a todo item`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -176,13 +174,12 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               },
             },
           });
-        });
-    });
+        }));
   });
 
   describe('query', () => {
-    it(`should return a connection`, () => {
-      return request(app.getHttpServer())
+    it(`should return a connection`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -205,11 +202,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
           });
           expect(edges).toHaveLength(10);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 10));
-        });
-    });
+        }));
 
-    it(`should allow querying`, () => {
-      return request(app.getHttpServer())
+    it(`should allow querying`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -232,11 +228,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 3));
-        });
-    });
+        }));
 
-    it(`should fail if the query complexity is too high`, () => {
-      return request(app.getHttpServer())
+    it(`should fail if the query complexity is too high`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -267,11 +262,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               },
             ],
           });
-        });
-    });
+        }));
 
-    it(`should allow sorting`, () => {
-      return request(app.getHttpServer())
+    it(`should allow sorting`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -294,12 +288,11 @@ describe('SubTaskResolver (complexity - e2e)', () => {
           });
           expect(edges).toHaveLength(10);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice().reverse().slice(0, 10));
-        });
-    });
+        }));
 
     describe('paging', () => {
-      it(`should allow paging with the 'first' field`, () => {
-        return request(app.getHttpServer())
+      it(`should allow paging with the 'first' field`, () =>
+        request(app.getHttpServer())
           .post('/graphql')
           .send({
             operationName: null,
@@ -322,11 +315,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 2));
-          });
-      });
+          }));
 
-      it(`should allow paging with the 'first' field and 'after'`, () => {
-        return request(app.getHttpServer())
+      it(`should allow paging with the 'first' field and 'after'`, () =>
+        request(app.getHttpServer())
           .post('/graphql')
           .send({
             operationName: null,
@@ -349,14 +341,13 @@ describe('SubTaskResolver (complexity - e2e)', () => {
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(subTasks.slice(2, 4));
-          });
-      });
+          }));
     });
   });
 
   describe('create one', () => {
-    it('should allow creating a subTask', () => {
-      return request(app.getHttpServer())
+    it('should allow creating a subTask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -381,11 +372,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               todoItemId: '1',
             },
           },
-        });
-    });
+        }));
 
-    it('should validate a subTask', () => {
-      return request(app.getHttpServer())
+    it('should validate a subTask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -404,13 +394,12 @@ describe('SubTaskResolver (complexity - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
-        });
-    });
+        }));
   });
 
   describe('create many', () => {
-    it('should allow creating a subTask', () => {
-      return request(app.getHttpServer())
+    it('should allow creating a subTask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -435,11 +424,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               { id: '18', title: 'Test Create Many SubTask - 2', description: null, completed: true, todoItemId: '2' },
             ],
           },
-        });
-    });
+        }));
 
-    it('should validate a subTask', () => {
-      return request(app.getHttpServer())
+    it('should validate a subTask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -458,13 +446,12 @@ describe('SubTaskResolver (complexity - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
-        });
-    });
+        }));
   });
 
   describe('update one', () => {
-    it('should allow updating a subTask', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a subTask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -490,11 +477,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               todoItemId: '1',
             },
           },
-        });
-    });
+        }));
 
-    it('should require an id', () => {
-      return request(app.getHttpServer())
+    it('should require an id', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -517,11 +503,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "UpdateOneSubTaskInput.id" of required type "ID!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should validate an update', () => {
-      return request(app.getHttpServer())
+    it('should validate an update', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -543,13 +528,12 @@ describe('SubTaskResolver (complexity - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
-        });
-    });
+        }));
   });
 
   describe('update many', () => {
-    it('should allow updating a subTask', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a subTask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -571,11 +555,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               updatedCount: 2,
             },
           },
-        });
-    });
+        }));
 
-    it('should require a filter', () => {
-      return request(app.getHttpServer())
+    it('should require a filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -596,11 +579,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should require a non-empty filter', () => {
-      return request(app.getHttpServer())
+    it('should require a non-empty filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -620,13 +602,12 @@ describe('SubTaskResolver (complexity - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
+        }));
   });
 
   describe('delete one', () => {
-    it('should allow deleting a subTask', () => {
-      return request(app.getHttpServer())
+    it('should allow deleting a subTask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -649,11 +630,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               todoItemId: '1',
             },
           },
-        });
-    });
+        }));
 
-    it('should require an id', () => {
-      return request(app.getHttpServer())
+    it('should require an id', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -670,13 +650,12 @@ describe('SubTaskResolver (complexity - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
-        });
-    });
+        }));
   });
 
   describe('delete many', () => {
-    it('should allow updating a subTask', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a subTask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -697,11 +676,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               deletedCount: 2,
             },
           },
-        });
-    });
+        }));
 
-    it('should require a filter', () => {
-      return request(app.getHttpServer())
+    it('should require a filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -720,11 +698,10 @@ describe('SubTaskResolver (complexity - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should require a non-empty filter', () => {
-      return request(app.getHttpServer())
+    it('should require a non-empty filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -743,13 +720,12 @@ describe('SubTaskResolver (complexity - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
+        }));
   });
 
   describe('setTodoItemOnSubTask', () => {
-    it('should set a the todoItem on a subtask', () => {
-      return request(app.getHttpServer())
+    it('should set a the todoItem on a subtask', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -775,8 +751,7 @@ describe('SubTaskResolver (complexity - e2e)', () => {
               },
             },
           });
-        });
-    });
+        }));
   });
 
   afterAll(async () => {

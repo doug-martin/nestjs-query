@@ -17,6 +17,4 @@ export function Authorize<DTO>(
   };
 }
 
-export const getAuthorizer = <DTO>(DTOClass: Class<DTO>): MetaValue<Class<Authorizer<DTO>>> => {
-  return reflector.get(DTOClass);
-};
+export const getAuthorizer = <DTO>(DTOClass: Class<DTO>): MetaValue<Class<Authorizer<DTO>>> => reflector.get(DTOClass);

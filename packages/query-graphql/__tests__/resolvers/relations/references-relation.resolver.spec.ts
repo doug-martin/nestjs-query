@@ -29,21 +29,17 @@ describe('ReferencesRelationMixin', () => {
     }
     return expectSDL([TestSDLResolver], sdl);
   };
-  it('should not add reference methods if references empty', () => {
-    return expectResolverSDL(referenceRelationEmptySDL);
-  });
+  it('should not add reference methods if references empty', () => expectResolverSDL(referenceRelationEmptySDL));
 
-  it('should use the add the reference if provided', () => {
-    return expectResolverSDL(referenceRelationSDL, {
+  it('should use the add the reference if provided', () =>
+    expectResolverSDL(referenceRelationSDL, {
       reference: { DTO: TestRelationDTO, keys: { id: 'stringField' }, dtoName: 'Test' },
-    });
-  });
+    }));
 
-  it('should set the field to nullable if set to true', () => {
-    return expectResolverSDL(referenceRelationNullableSDL, {
+  it('should set the field to nullable if set to true', () =>
+    expectResolverSDL(referenceRelationNullableSDL, {
       reference: { DTO: TestRelationDTO, keys: { id: 'stringField' }, nullable: true },
-    });
-  });
+    }));
 
   it('should return a references type from the passed in dto', async () => {
     const { resolver } = await createResolverFromNest(TestResolver);

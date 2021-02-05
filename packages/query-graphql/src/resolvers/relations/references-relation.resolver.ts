@@ -56,6 +56,4 @@ export const ReferencesRelationsResolver = <
 >(
   DTOClass: Class<DTO>,
   references: ReferencesOpts<DTO>,
-): Class<ServiceResolver<DTO, QS>> => {
-  return ReferencesRelationMixin(DTOClass, references)(BaseServiceResolver);
-};
+): Class<ServiceResolver<DTO, QS>> => ReferencesRelationMixin(DTOClass, references)(BaseServiceResolver);

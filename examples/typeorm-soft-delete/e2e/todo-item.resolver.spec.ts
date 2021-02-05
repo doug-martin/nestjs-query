@@ -34,8 +34,8 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
   afterAll(() => refresh(app.get(Connection)));
 
   describe('find one', () => {
-    it(`should find a todo item by id`, () => {
-      return request(app.getHttpServer())
+    it(`should find a todo item by id`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -53,11 +53,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               todoItem: { id: '1', title: 'Create Nest App', completed: true, description: null },
             },
           });
-        });
-    });
+        }));
 
-    it(`should return null if the todo item is not found`, () => {
-      return request(app.getHttpServer())
+    it(`should return null if the todo item is not found`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -72,13 +71,12 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
           data: {
             todoItem: null,
           },
-        });
-    });
+        }));
   });
 
   describe('query', () => {
-    it(`should return a connection`, () => {
-      return request(app.getHttpServer())
+    it(`should return a connection`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -107,11 +105,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
             { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
             { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null },
           ]);
-        });
-    });
+        }));
 
-    it(`should allow querying`, () => {
-      return request(app.getHttpServer())
+    it(`should allow querying`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -138,11 +135,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
             { id: '2', title: 'Create Entity', completed: false, description: null },
             { id: '3', title: 'Create Entity Service', completed: false, description: null },
           ]);
-        });
-    });
+        }));
 
-    it(`should allow sorting`, () => {
-      return request(app.getHttpServer())
+    it(`should allow sorting`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -171,12 +167,11 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
             { id: '2', title: 'Create Entity', completed: false, description: null },
             { id: '1', title: 'Create Nest App', completed: true, description: null },
           ]);
-        });
-    });
+        }));
 
     describe('paging', () => {
-      it(`should allow paging with the 'first' field`, () => {
-        return request(app.getHttpServer())
+      it(`should allow paging with the 'first' field`, () =>
+        request(app.getHttpServer())
           .post('/graphql')
           .send({
             operationName: null,
@@ -202,11 +197,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               { id: '1', title: 'Create Nest App', completed: true, description: null },
               { id: '2', title: 'Create Entity', completed: false, description: null },
             ]);
-          });
-      });
+          }));
 
-      it(`should allow paging with the 'first' field and 'after'`, () => {
-        return request(app.getHttpServer())
+      it(`should allow paging with the 'first' field and 'after'`, () =>
+        request(app.getHttpServer())
           .post('/graphql')
           .send({
             operationName: null,
@@ -232,14 +226,13 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               { id: '3', title: 'Create Entity Service', completed: false, description: null },
               { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
             ]);
-          });
-      });
+          }));
     });
   });
 
   describe('create one', () => {
-    it('should allow creating a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should allow creating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -264,11 +257,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               completed: false,
             },
           },
-        });
-    });
+        }));
 
-    it('should validate a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should validate a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -289,13 +281,12 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        });
-    });
+        }));
   });
 
   describe('create many', () => {
-    it('should allow creating a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should allow creating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -322,11 +313,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               { id: '8', title: 'Many Test Todo 2', completed: true },
             ],
           },
-        });
-    });
+        }));
 
-    it('should validate a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should validate a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -347,13 +337,12 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        });
-    });
+        }));
   });
 
   describe('update one', () => {
-    it('should allow updating a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -379,11 +368,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               completed: true,
             },
           },
-        });
-    });
+        }));
 
-    it('should require an id', () => {
-      return request(app.getHttpServer())
+    it('should require an id', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -406,11 +394,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should validate an update', () => {
-      return request(app.getHttpServer())
+    it('should validate an update', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -432,13 +419,12 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        });
-    });
+        }));
   });
 
   describe('update many', () => {
-    it('should allow updating a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -460,11 +446,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               updatedCount: 2,
             },
           },
-        });
-    });
+        }));
 
-    it('should require a filter', () => {
-      return request(app.getHttpServer())
+    it('should require a filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -485,11 +470,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should require a non-empty filter', () => {
-      return request(app.getHttpServer())
+    it('should require a non-empty filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -509,13 +493,12 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
+        }));
   });
 
   describe('delete one', () => {
-    it('should allow deleting a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should allow deleting a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -538,11 +521,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               completed: true,
             },
           },
-        });
-    });
+        }));
 
-    it('should require an id', () => {
-      return request(app.getHttpServer())
+    it('should require an id', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -561,13 +543,12 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
-        });
-    });
+        }));
   });
 
   describe('delete many', () => {
-    it('should allow updating a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -591,11 +572,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
               },
             },
           });
-        });
-    });
+        }));
 
-    it('should require a filter', () => {
-      return request(app.getHttpServer())
+    it('should require a filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -614,11 +594,10 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should require a non-empty filter', () => {
-      return request(app.getHttpServer())
+    it('should require a non-empty filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -637,8 +616,7 @@ describe('SoftDelete - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
+        }));
   });
 
   afterAll(async () => {

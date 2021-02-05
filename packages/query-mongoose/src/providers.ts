@@ -28,6 +28,4 @@ function createMongooseQueryServiceProvider<Entity extends Document>(
 
 export const createMongooseQueryServiceProviders = (
   models: NestjsQueryModelDefinition<Document>[],
-): FactoryProvider[] => {
-  return models.map((model) => createMongooseQueryServiceProvider(model));
-};
+): FactoryProvider[] => models.map((model) => createMongooseQueryServiceProvider(model));

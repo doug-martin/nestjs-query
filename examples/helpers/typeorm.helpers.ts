@@ -5,8 +5,8 @@ export const typeormMysqlOptions = (
   username: string,
   database: string,
   overrides?: Partial<TypeOrmModuleOptions>,
-): TypeOrmModuleOptions => {
-  return {
+): TypeOrmModuleOptions =>
+  ({
     type: 'mysql',
     port: 3306,
     host: 'localhost',
@@ -15,15 +15,14 @@ export const typeormMysqlOptions = (
     autoLoadEntities: true,
     synchronize: true,
     ...overrides,
-  } as TypeOrmModuleOptions;
-};
+  } as TypeOrmModuleOptions);
 
 export const typeormPostgresOptions = (
   username: string,
   database: string,
   overrides?: Partial<TypeOrmModuleOptions>,
-): TypeOrmModuleOptions => {
-  return {
+): TypeOrmModuleOptions =>
+  ({
     type: 'postgres',
     port: 5436,
     host: 'localhost',
@@ -32,8 +31,7 @@ export const typeormPostgresOptions = (
     autoLoadEntities: true,
     synchronize: true,
     ...overrides,
-  } as TypeOrmModuleOptions;
-};
+  } as TypeOrmModuleOptions);
 
 export const typeormOrmConfig = (
   username: string,

@@ -88,6 +88,4 @@ export const UpdateRelationsResolver = <
 >(
   DTOClass: Class<DTO>,
   relations: RelationsOpts,
-): Class<ServiceResolver<DTO, QS>> => {
-  return UpdateRelationsMixin(DTOClass, relations)(BaseServiceResolver);
-};
+): Class<ServiceResolver<DTO, QS>> => UpdateRelationsMixin(DTOClass, relations)(BaseServiceResolver);

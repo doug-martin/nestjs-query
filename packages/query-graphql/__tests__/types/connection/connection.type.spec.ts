@@ -25,13 +25,13 @@ describe('ConnectionType', (): void => {
     stringField!: string;
   }
 
-  const createPage = (paging: CursorPagingType): CursorPagingType => {
-    return plainToClass(CursorPagingType(), paging);
-  };
+  const createPage = (paging: CursorPagingType): CursorPagingType => plainToClass(CursorPagingType(), paging);
 
-  const createTestDTO = (index: number): TestDto => {
-    return { stringField: `foo${index}`, numberField: index, boolField: index % 2 === 0 };
-  };
+  const createTestDTO = (index: number): TestDto => ({
+    stringField: `foo${index}`,
+    numberField: index,
+    boolField: index % 2 === 0,
+  });
 
   it('should create the connection SDL', async () => {
     const TestConnection = ConnectionType(TestDto);

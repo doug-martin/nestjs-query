@@ -81,16 +81,11 @@ const defaultCreateManyInput = <C>(dtoNames: DTONames, InputDTO: Class<C>): Clas
   return CM;
 };
 
-const lookupCreateOneHook = <DTO, C>(DTOClass: Class<DTO>, CreateDTOClass: Class<C>): CreateOneHook<C> | undefined => {
-  return (getCreateOneHook(CreateDTOClass) ?? getCreateOneHook(DTOClass)) as CreateOneHook<C> | undefined;
-};
+const lookupCreateOneHook = <DTO, C>(DTOClass: Class<DTO>, CreateDTOClass: Class<C>): CreateOneHook<C> | undefined =>
+  (getCreateOneHook(CreateDTOClass) ?? getCreateOneHook(DTOClass)) as CreateOneHook<C> | undefined;
 
-const lookupCreateManyHook = <DTO, C>(
-  DTOClass: Class<DTO>,
-  CreateDTOClass: Class<C>,
-): CreateManyHook<C> | undefined => {
-  return (getCreateManyHook(CreateDTOClass) ?? getCreateManyHook(DTOClass)) as CreateManyHook<C> | undefined;
-};
+const lookupCreateManyHook = <DTO, C>(DTOClass: Class<DTO>, CreateDTOClass: Class<C>): CreateManyHook<C> | undefined =>
+  (getCreateManyHook(CreateDTOClass) ?? getCreateManyHook(DTOClass)) as CreateManyHook<C> | undefined;
 
 /**
  * @internal

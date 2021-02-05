@@ -10,12 +10,11 @@ interface QueryExecutor {
   query(sql: string): Promise<unknown>;
 }
 
-export const asyncLoop = async <T>(items: T[], fn: (t: T) => Promise<unknown>): Promise<void> => {
-  return items.reduce(async (prev, item) => {
+export const asyncLoop = async <T>(items: T[], fn: (t: T) => Promise<unknown>): Promise<void> =>
+  items.reduce(async (prev, item) => {
     await prev;
     await fn(item);
   }, Promise.resolve());
-};
 
 export const executeTruncate = (exec: QueryExecutor, table: string | string[]): Promise<void> => {
   if (Array.isArray(table)) {

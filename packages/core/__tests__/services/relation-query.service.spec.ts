@@ -22,9 +22,8 @@ describe('RelationQueryService', () => {
 
   const queryService: QueryService<TestType> = new RelationQueryService(instance(mockQueryService), relations);
 
-  it('should set the underlying service to a NoOpQueryService if called without a query service', () => {
-    return expect(new RelationQueryService(relations).query({})).rejects.toThrow('query is not implemented');
-  });
+  it('should set the underlying service to a NoOpQueryService if called without a query service', () =>
+    expect(new RelationQueryService(relations).query({})).rejects.toThrow('query is not implemented'));
 
   describe('#addRelations', () => {
     it('should proxy to the underlying service when calling addRelations', () => {

@@ -15,9 +15,7 @@ describe('ResolverMethod decorator', (): void => {
   describe('decorators option', () => {
     it('should call the decorator', () => {
       // eslint-disable-next-line @typescript-eslint/ban-types
-      const propDecorator = jest.fn((target: Object, propertyKey: string | symbol) => {
-        return undefined;
-      });
+      const propDecorator = jest.fn((target: Object, propertyKey: string | symbol) => undefined);
       const opts = [{ decorators: [propDecorator] }];
       createTestResolver(...opts);
       expect(propDecorator).toHaveBeenCalledWith({}, 'method', expect.any(Object));
@@ -25,9 +23,7 @@ describe('ResolverMethod decorator', (): void => {
 
     it('should call the decorator once', () => {
       // eslint-disable-next-line @typescript-eslint/ban-types
-      const propDecorator = jest.fn((target: Object, propertyKey: string | symbol) => {
-        return undefined;
-      });
+      const propDecorator = jest.fn((target: Object, propertyKey: string | symbol) => undefined);
       const opts = [{ decorators: [propDecorator] }, { decorators: [propDecorator] }];
       createTestResolver(...opts);
       expect(propDecorator).toHaveBeenCalledTimes(1);

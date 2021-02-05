@@ -11,9 +11,7 @@ const getOrCreateSchemaFactory = async (): Promise<GraphQLSchemaFactory> => {
   return moduleRef.get(GraphQLSchemaFactory);
 };
 
-export const readGraphql = (filePath: string): string => {
-  return readFileSync(filePath).toString();
-};
+export const readGraphql = (filePath: string): string => readFileSync(filePath).toString();
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const expectSDL = async (resolvers: Function[], sdl: string): Promise<void> => {

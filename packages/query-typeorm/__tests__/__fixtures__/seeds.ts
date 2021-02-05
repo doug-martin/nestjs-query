@@ -22,8 +22,8 @@ export const TEST_SOFT_DELETE_ENTITIES: TestSoftDeleteEntity[] = [1, 2, 3, 4, 5,
   };
 });
 
-export const TEST_RELATIONS: TestRelation[] = TEST_ENTITIES.reduce((relations, te) => {
-  return [
+export const TEST_RELATIONS: TestRelation[] = TEST_ENTITIES.reduce(
+  (relations, te) => [
     ...relations,
     {
       testRelationPk: `test-relations-${te.testEntityPk}-1`,
@@ -43,8 +43,9 @@ export const TEST_RELATIONS: TestRelation[] = TEST_ENTITIES.reduce((relations, t
       testEntityId: te.testEntityPk,
       uniDirectionalTestEntityId: te.testEntityPk,
     },
-  ];
-}, [] as TestRelation[]);
+  ],
+  [] as TestRelation[],
+);
 
 export const seed = async (connection: Connection = getConnection()): Promise<void> => {
   const testEntityRepo = connection.getRepository(TestEntity);

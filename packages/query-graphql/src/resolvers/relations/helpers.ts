@@ -7,25 +7,12 @@ import { getAuthFilter, getRelationAuthFilter } from '../helpers';
 
 export const flattenRelations = <RT extends ResolverRelation<unknown> | ResolverRelationReference<unknown, unknown>>(
   relationOptions: RelationTypeMap<RT>,
-): RT[] => {
-  return Object.keys(relationOptions).map((name) => ({ dtoName: name, ...relationOptions[name] }));
-};
+): RT[] => Object.keys(relationOptions).map((name) => ({ dtoName: name, ...relationOptions[name] }));
 
 export const removeRelationOpts = <Relation>(
   opts: ResolverRelation<Relation> | ResolverRelationReference<unknown, Relation>,
-): ResolverMethodOpts => {
-  return omit(
-    opts,
-    'DTO',
-    'keys',
-    'nullable',
-    'dtoName',
-    'relationName',
-    'disableRead',
-    'disableUpdate',
-    'disableRemove',
-  );
-};
+): ResolverMethodOpts =>
+  omit(opts, 'DTO', 'keys', 'nullable', 'dtoName', 'relationName', 'disableRead', 'disableUpdate', 'disableRemove');
 
 export const getModifyRelationOptions = async <DTO, Relation>(
   relationName: string,

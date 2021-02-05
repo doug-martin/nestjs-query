@@ -26,6 +26,4 @@ function createServiceProvider<DTO, Entity, C, CE, U, UE>(
 
 export const createServices = (
   opts: Class<Assembler<unknown, unknown, unknown, unknown, unknown, unknown>>[],
-): Provider[] => {
-  return opts.map((opt) => createServiceProvider(opt));
-};
+): Provider[] => opts.map((opt) => createServiceProvider(opt));

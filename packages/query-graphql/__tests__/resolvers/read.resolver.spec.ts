@@ -45,25 +45,18 @@ describe('ReadResolver', () => {
     return expectSDL([TestSDLResolver], sdl);
   };
 
-  it('should create a ReadResolver for the DTO', () => {
-    return expectResolverSDL(readBasicResolverSDL);
-  });
+  it('should create a ReadResolver for the DTO', () => expectResolverSDL(readBasicResolverSDL));
 
-  it('should use the dtoName if provided', () => {
-    return expectResolverSDL(readCustomNameResolverSDL, { dtoName: 'Test' });
-  });
+  it('should use the dtoName if provided', () => expectResolverSDL(readCustomNameResolverSDL, { dtoName: 'Test' }));
 
-  it('should use the one.name option for the findById if provided', () => {
-    return expectResolverSDL(readCustomOneQueryResolverSDL, { one: { name: 'read_one_test' } });
-  });
+  it('should use the one.name option for the findById if provided', () =>
+    expectResolverSDL(readCustomOneQueryResolverSDL, { one: { name: 'read_one_test' } }));
 
-  it('should use the many.name option for the queryMany if provided', () => {
-    return expectResolverSDL(readCustomManyQueryResolverSDL, { many: { name: 'read_many_test' } });
-  });
+  it('should use the many.name option for the queryMany if provided', () =>
+    expectResolverSDL(readCustomManyQueryResolverSDL, { many: { name: 'read_many_test' } }));
 
-  it('should not expose read methods if disabled', () => {
-    return expectResolverSDL(readDisabledResolverSDL, { disabled: true });
-  });
+  it('should not expose read methods if disabled', () =>
+    expectResolverSDL(readDisabledResolverSDL, { disabled: true }));
 
   describe('query many', () => {
     it('should not create a new type if the QueryArgs is supplied', () => {
@@ -83,9 +76,8 @@ describe('ReadResolver', () => {
       return expectResolverSDL(readBasicResolverSDL, { QueryArgs: CustomQueryArgs });
     });
 
-    it('should not use a connection if pagingStrategy is OFFSET', () => {
-      return expectResolverSDL(readOffsetQueryResolverSDL, { pagingStrategy: PagingStrategies.OFFSET });
-    });
+    it('should not use a connection if pagingStrategy is OFFSET', () =>
+      expectResolverSDL(readOffsetQueryResolverSDL, { pagingStrategy: PagingStrategies.OFFSET }));
 
     it('should not use a connection if custom QueryArgs is a limit offset', () => {
       @ArgsType()
@@ -94,9 +86,8 @@ describe('ReadResolver', () => {
       return expectResolverSDL(readOffsetQueryResolverSDL, { QueryArgs: CustomQueryArgs });
     });
 
-    it('should not expose query method if disabled', () => {
-      return expectResolverSDL(readManyDisabledResolverSDL, { many: { disabled: true } });
-    });
+    it('should not expose query method if disabled', () =>
+      expectResolverSDL(readManyDisabledResolverSDL, { many: { disabled: true } }));
 
     it('should not create a new type if the Connection is supplied', () => {
       @ObjectType()
@@ -317,9 +308,8 @@ describe('ReadResolver', () => {
       }
     }
 
-    it('should not expose findById method if disabled', () => {
-      return expectResolverSDL(readOneDisabledResolverSDL, { one: { disabled: true } });
-    });
+    it('should not expose findById method if disabled', () =>
+      expectResolverSDL(readOneDisabledResolverSDL, { one: { disabled: true } }));
 
     it('should call the service findById with the provided input', async () => {
       const { resolver, mockService, mockAuthorizer } = await createResolverFromNest(TestResolver);

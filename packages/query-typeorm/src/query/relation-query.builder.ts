@@ -128,12 +128,10 @@ export class RelationQueryBuilder<Entity, Relation> {
       return subQuery.addSelect(`${index}`, this.entityIndexColName);
     });
     const unionSqls = subQueries.reduce(
-      ({ unions, parameters }: UnionQueries, sq) => {
-        return {
-          unions: [...unions, sq.getQuery()],
-          parameters: { ...parameters, ...sq.getParameters() },
-        };
-      },
+      ({ unions, parameters }: UnionQueries, sq) => ({
+        unions: [...unions, sq.getQuery()],
+        parameters: { ...parameters, ...sq.getParameters() },
+      }),
       { unions: [], parameters: {} },
     );
 
@@ -152,12 +150,10 @@ export class RelationQueryBuilder<Entity, Relation> {
         .addSelect(`${index}`, this.entityIndexColName);
     });
     const unionSqls = subQueries.reduce(
-      ({ unions, parameters }: UnionQueries, sq) => {
-        return {
-          unions: [...unions, sq.getQuery()],
-          parameters: { ...parameters, ...sq.getParameters() },
-        };
-      },
+      ({ unions, parameters }: UnionQueries, sq) => ({
+        unions: [...unions, sq.getQuery()],
+        parameters: { ...parameters, ...sq.getParameters() },
+      }),
       { unions: [], parameters: {} },
     );
 

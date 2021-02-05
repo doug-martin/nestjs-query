@@ -49,8 +49,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
   afterAll(() => refresh(app.get(Connection)));
 
   describe('find one', () => {
-    it(`should find a todo item by id`, () => {
-      return request(app.getHttpServer())
+    it(`should find a todo item by id`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -74,11 +74,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               },
             },
           });
-        });
-    });
+        }));
 
-    it(`should return null if the todo item is not found`, () => {
-      return request(app.getHttpServer())
+    it(`should return null if the todo item is not found`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -93,11 +92,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           data: {
             todoItem: null,
           },
-        });
-    });
+        }));
 
-    it(`should return subTasks as a connection`, () => {
-      return request(app.getHttpServer())
+    it(`should return subTasks as a connection`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -124,11 +122,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
-        });
-    });
+        }));
 
-    it(`should return subTasksAggregate`, () => {
-      return request(app.getHttpServer())
+    it(`should return subTasksAggregate`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -151,11 +148,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             min: { description: null, id: '1', title: 'Create Nest App - Sub Task 1', todoItemId: '1' },
             sum: { id: 6 },
           });
-        });
-    });
+        }));
 
-    it(`should return tags as a connection`, () => {
-      return request(app.getHttpServer())
+    it(`should return tags as a connection`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -182,11 +178,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        });
-    });
+        }));
 
-    it(`should return tagsAggregate`, () => {
-      return request(app.getHttpServer())
+    it(`should return tagsAggregate`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -209,13 +204,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             min: { id: '1', name: 'Home' },
             sum: { id: 3 },
           });
-        });
-    });
+        }));
   });
 
   describe('query', () => {
-    it(`should return a connection`, () => {
-      return request(app.getHttpServer())
+    it(`should return a connection`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -252,11 +246,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               age: expect.any(Number),
             },
           ]);
-        });
-    });
+        }));
 
-    it(`should allow querying`, () => {
-      return request(app.getHttpServer())
+    it(`should allow querying`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -285,11 +278,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
             { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
           ]);
-        });
-    });
+        }));
 
-    it(`should allow querying on subTasks`, () => {
-      return request(app.getHttpServer())
+    it(`should allow querying on subTasks`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -318,11 +310,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
           ]);
-        });
-    });
+        }));
 
-    it(`should allow querying on tags`, () => {
-      return request(app.getHttpServer())
+    it(`should allow querying on tags`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -351,11 +342,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
           ]);
-        });
-    });
+        }));
 
-    it(`should allow sorting`, () => {
-      return request(app.getHttpServer())
+    it(`should allow sorting`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -392,12 +382,11 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
           ]);
-        });
-    });
+        }));
 
     describe('paging', () => {
-      it(`should allow paging with the 'first' field`, () => {
-        return request(app.getHttpServer())
+      it(`should allow paging with the 'first' field`, () =>
+        request(app.getHttpServer())
           .post('/graphql')
           .send({
             operationName: null,
@@ -425,11 +414,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
               { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
             ]);
-          });
-      });
+          }));
 
-      it(`should allow paging with the 'first' field and 'after'`, () => {
-        return request(app.getHttpServer())
+      it(`should allow paging with the 'first' field and 'after'`, () =>
+        request(app.getHttpServer())
           .post('/graphql')
           .send({
             operationName: null,
@@ -463,14 +451,13 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 age: expect.any(Number),
               },
             ]);
-          });
-      });
+          }));
     });
   });
 
   describe('aggregate', () => {
-    it('should require a header secret', () => {
-      return request(app.getHttpServer())
+    it('should require a header secret', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -484,11 +471,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        });
-    });
+        }));
 
-    it(`should return a aggregate response`, () => {
-      return request(app.getHttpServer())
+    it(`should return a aggregate response`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -510,11 +496,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
             sum: { id: 15 },
           });
-        });
-    });
+        }));
 
-    it(`should allow filtering`, () => {
-      return request(app.getHttpServer())
+    it(`should allow filtering`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -536,13 +521,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             min: { id: '2', title: 'Add Todo Item Resolver', description: null },
             max: { id: '5', title: 'How to create item With Sub Tasks', description: null },
           });
-        });
-    });
+        }));
   });
 
   describe('create one', () => {
-    it('should require a header secret', () => {
-      return request(app.getHttpServer())
+    it('should require a header secret', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -562,10 +546,9 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        });
-    });
-    it('should allow creating a todoItem', () => {
-      return request(app.getHttpServer())
+        }));
+    it('should allow creating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -591,11 +574,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               completed: false,
             },
           },
-        });
-    });
+        }));
 
-    it('should call the beforeCreateOne hook', () => {
-      return request(app.getHttpServer())
+    it('should call the beforeCreateOne hook', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
@@ -626,11 +608,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               createdBy: 'E2E Test',
             },
           },
-        });
-    });
+        }));
 
-    it('should validate a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should validate a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -652,13 +633,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        });
-    });
+        }));
   });
 
   describe('create many', () => {
-    it('should require a header secret', () => {
-      return request(app.getHttpServer())
+    it('should require a header secret', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -679,11 +659,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        });
-    });
+        }));
 
-    it('should allow creating multiple todoItems', () => {
-      return request(app.getHttpServer())
+    it('should allow creating multiple todoItems', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -711,11 +690,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               { id: '9', title: 'Many Test Todo 2', completed: true },
             ],
           },
-        });
-    });
+        }));
 
-    it('should call the beforeCreateMany hook when creating multiple todoItems', () => {
-      return request(app.getHttpServer())
+    it('should call the beforeCreateMany hook when creating multiple todoItems', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
@@ -747,11 +725,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               { id: '11', title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' },
             ],
           },
-        });
-    });
+        }));
 
-    it('should validate a todoItem', () => {
-      return request(app.getHttpServer())
+    it('should validate a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -773,13 +750,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        });
-    });
+        }));
   });
 
   describe('update one', () => {
-    it('should require a header secret', () => {
-      return request(app.getHttpServer())
+    it('should require a header secret', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -800,10 +776,9 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        });
-    });
-    it('should allow updating a todoItem', () => {
-      return request(app.getHttpServer())
+        }));
+    it('should allow updating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -830,11 +805,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               completed: true,
             },
           },
-        });
-    });
+        }));
 
-    it('should call the beforeUpdateOne hook', () => {
-      return request(app.getHttpServer())
+    it('should call the beforeUpdateOne hook', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
@@ -866,11 +840,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               updatedBy: 'E2E Test',
             },
           },
-        });
-    });
+        }));
 
-    it('should require an id', () => {
-      return request(app.getHttpServer())
+    it('should require an id', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -894,11 +867,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should validate an update', () => {
-      return request(app.getHttpServer())
+    it('should validate an update', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -921,13 +893,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        });
-    });
+        }));
   });
 
   describe('update many', () => {
-    it('should require a header secret', () => {
-      return request(app.getHttpServer())
+    it('should require a header secret', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -946,10 +917,9 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        });
-    });
-    it('should allow updating a todoItem', () => {
-      return request(app.getHttpServer())
+        }));
+    it('should allow updating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -972,11 +942,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               updatedCount: 2,
             },
           },
-        });
-    });
+        }));
 
-    it('should call the beforeUpdateMany hook when updating todoItem', () => {
-      return request(app.getHttpServer())
+    it('should call the beforeUpdateMany hook when updating todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
@@ -1007,23 +976,20 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
           const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } });
           expect(
-            todoItems.map((ti) => {
-              return {
-                id: ti.id,
-                title: ti.title,
-                completed: ti.completed,
-                updatedBy: ti.updatedBy,
-              };
-            }),
+            todoItems.map((ti) => ({
+              id: ti.id,
+              title: ti.title,
+              completed: ti.completed,
+              updatedBy: ti.updatedBy,
+            })),
           ).toEqual([
             { id: 10, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
             { id: 11, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
           ]);
-        });
-    });
+        }));
 
-    it('should require a filter', () => {
-      return request(app.getHttpServer())
+    it('should require a filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1045,11 +1011,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should require a non-empty filter', () => {
-      return request(app.getHttpServer())
+    it('should require a non-empty filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1070,13 +1035,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
+        }));
   });
 
   describe('delete one', () => {
-    it('should require a header secret', () => {
-      return request(app.getHttpServer())
+    it('should require a header secret', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -1094,10 +1058,9 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        });
-    });
-    it('should allow deleting a todoItem', () => {
-      return request(app.getHttpServer())
+        }));
+    it('should allow deleting a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1121,11 +1084,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               completed: true,
             },
           },
-        });
-    });
+        }));
 
-    it('should require an id', () => {
-      return request(app.getHttpServer())
+    it('should require an id', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1145,13 +1107,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
-        });
-    });
+        }));
   });
 
   describe('delete many', () => {
-    it('should require a header secret', () => {
-      return request(app.getHttpServer())
+    it('should require a header secret', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -1169,10 +1130,9 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        });
-    });
-    it('should allow updating a todoItem', () => {
-      return request(app.getHttpServer())
+        }));
+    it('should allow updating a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1194,11 +1154,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               deletedCount: 2,
             },
           },
-        });
-    });
+        }));
 
-    it('should require a filter', () => {
-      return request(app.getHttpServer())
+    it('should require a filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1218,11 +1177,10 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should require a non-empty filter', () => {
-      return request(app.getHttpServer())
+    it('should require a non-empty filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1242,13 +1200,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
+        }));
   });
 
   describe('addSubTasksToTodoItem', () => {
-    it('allow adding subTasks to a todoItem', () => {
-      return request(app.getHttpServer())
+    it('allow adding subTasks to a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1288,13 +1245,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(6);
           expect(edges).toHaveLength(6);
           edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
-        });
-    });
+        }));
   });
 
   describe('addTagsToTodoItem', () => {
-    it('allow adding subTasks to a todoItem', () => {
-      return request(app.getHttpServer())
+    it('allow adding subTasks to a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1330,13 +1286,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
-        });
-    });
+        }));
   });
 
   describe('removeTagsFromTodoItem', () => {
-    it('allow adding subTasks to a todoItem', () => {
-      return request(app.getHttpServer())
+    it('allow adding subTasks to a todoItem', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(AUTH_HEADER_NAME, config.auth.header)
         .send({
@@ -1372,8 +1327,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        });
-    });
+        }));
   });
 
   afterAll(async () => {

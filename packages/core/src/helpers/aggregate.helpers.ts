@@ -52,25 +52,21 @@ const convertAggregateFields = <From, To>(
 export const transformAggregateQuery = <From, To>(
   query: AggregateQuery<From>,
   fieldMap: QueryFieldMap<From, To>,
-): AggregateQuery<To> => {
-  return {
-    count: convertAggregateQueryFields(fieldMap, query.count),
-    sum: convertAggregateQueryFields(fieldMap, query.sum),
-    avg: convertAggregateQueryFields(fieldMap, query.avg),
-    max: convertAggregateQueryFields(fieldMap, query.max),
-    min: convertAggregateQueryFields(fieldMap, query.min),
-  };
-};
+): AggregateQuery<To> => ({
+  count: convertAggregateQueryFields(fieldMap, query.count),
+  sum: convertAggregateQueryFields(fieldMap, query.sum),
+  avg: convertAggregateQueryFields(fieldMap, query.avg),
+  max: convertAggregateQueryFields(fieldMap, query.max),
+  min: convertAggregateQueryFields(fieldMap, query.min),
+});
 
 export const transformAggregateResponse = <From, To>(
   response: AggregateResponse<From>,
   fieldMap: QueryFieldMap<From, To>,
-): AggregateResponse<To> => {
-  return {
-    count: convertAggregateNumberFields(fieldMap, response.count),
-    sum: convertAggregateNumberFields(fieldMap, response.sum),
-    avg: convertAggregateNumberFields(fieldMap, response.avg),
-    max: convertAggregateFields(fieldMap, response.max),
-    min: convertAggregateFields(fieldMap, response.min),
-  };
-};
+): AggregateResponse<To> => ({
+  count: convertAggregateNumberFields(fieldMap, response.count),
+  sum: convertAggregateNumberFields(fieldMap, response.sum),
+  avg: convertAggregateNumberFields(fieldMap, response.avg),
+  max: convertAggregateFields(fieldMap, response.max),
+  min: convertAggregateFields(fieldMap, response.min),
+});

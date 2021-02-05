@@ -127,6 +127,4 @@ export const ReadRelationsResolver = <
 >(
   DTOClass: Class<DTO>,
   relations: ReadRelationsResolverOpts,
-): Class<ServiceResolver<DTO, QS>> => {
-  return ReadRelationsMixin(DTOClass, relations)(BaseServiceResolver);
-};
+): Class<ServiceResolver<DTO, QS>> => ReadRelationsMixin(DTOClass, relations)(BaseServiceResolver);
