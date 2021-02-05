@@ -11,7 +11,7 @@ import {
   Query,
   AssemblerFactory,
 } from '@nestjs-query/core';
-import { Document, Model as MongooseModel } from 'mongoose';
+import { Document, Model as MongooseModel, UpdateQuery } from 'mongoose';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import {
   isEmbeddedSchemaTypeOptions,
@@ -198,7 +198,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     if (relationIds.length !== refCount) {
       throw new Error(`Unable to find all ${relationName} to add to ${this.Model.modelName}`);
     }
-    await entity.updateOne({ $push: { [relationName]: { $each: relationIds } } }).exec();
+    await entity.updateOne({ $push: { [relationName]: { $each: relationIds } } } as UpdateQuery<Entity>).exec();
     // reload the document
     return this.getById(id);
   }
@@ -215,7 +215,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     if (refCount !== 1) {
       throw new Error(`Unable to find ${relationName} to set on ${this.Model.modelName}`);
     }
-    await entity.updateOne({ [relationName]: relationId }).exec();
+    await entity.updateOne({ [relationName]: relationId } as UpdateQuery<Entity>).exec();
     // reload the document
     return this.getById(id);
   }
@@ -235,7 +235,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     await entity
       .updateOne({
         $unset: { [relationName]: relationId },
-      })
+      } as UpdateQuery<Entity>)
       .exec();
     // reload the document
     return this.getById(id);
@@ -259,7 +259,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     await entity
       .updateOne({
         $pullAll: { [relationName]: relationIds },
-      })
+      } as UpdateQuery<Entity>)
       .exec();
     // reload the document
     return this.getById(id);
@@ -291,18 +291,19 @@ export abstract class ReferenceQueryService<Entity extends Document> {
   }
 
   private getReferenceModel<Ref extends Document>(refName: string): MongooseModel<Ref> {
+    const { db } = this.Model;
     if (this.isReferencePath(refName)) {
       const schemaType = this.Model.schema.path(refName);
       if (isEmbeddedSchemaTypeOptions(schemaType)) {
-        return this.Model.model<Ref>(schemaType.$embeddedSchemaType.options.ref);
+        return db.model<Ref>(schemaType.$embeddedSchemaType.options.ref);
       }
       if (isSchemaTypeWithReferenceOptions(schemaType)) {
-        return this.Model.model<Ref>(schemaType.options.ref);
+        return db.model<Ref>(schemaType.options.ref);
       }
     } else if (this.isVirtualPath(refName)) {
       const schemaType = this.Model.schema.virtualpath(refName);
       if (isVirtualTypeWithReferenceOptions(schemaType)) {
-        return this.Model.model<Ref>(schemaType.options.ref);
+        return db.model<Ref>(schemaType.options.ref);
       }
     }
     throw new Error(`Unable to lookup reference type for ${refName}`);

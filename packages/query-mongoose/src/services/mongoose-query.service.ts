@@ -14,7 +14,7 @@ import {
   UpdateOneOptions,
 } from '@nestjs-query/core';
 import { NotFoundException } from '@nestjs/common';
-import { CreateQuery, Document, DocumentToObjectOptions, Model as MongooseModel, UpdateQuery } from 'mongoose';
+import { Document, Model as MongooseModel, UpdateQuery } from 'mongoose';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { ReferenceQueryService } from './reference-query.service';
 
@@ -22,10 +22,9 @@ type MongoDBUpdatedOutput = {
   nModified: number;
 };
 
-export interface MongooseQueryServiceOpts {
-  documentToObjectOptions?: DocumentToObjectOptions;
-}
-
+type MongoDBDeletedOutput = {
+  deletedCount: number;
+};
 /**
  * Base class for all query services that use Typegoose.
  *
@@ -135,7 +134,7 @@ export class MongooseQueryService<Entity extends Document>
    */
   async createOne(record: DeepPartial<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(record);
-    return this.Model.create(record as CreateQuery<Entity>);
+    return this.Model.create(record);
   }
 
   /**
@@ -152,7 +151,7 @@ export class MongooseQueryService<Entity extends Document>
    */
   async createMany(records: DeepPartial<Entity>[]): Promise<Entity[]> {
     records.forEach((r) => this.ensureIdIsNotPresent(r));
-    return this.Model.create(records as CreateQuery<Entity>[]);
+    return this.Model.create(records);
   }
 
   /**
@@ -234,7 +233,7 @@ export class MongooseQueryService<Entity extends Document>
    */
   async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
     const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    const res = await this.Model.deleteMany(filterQuery).exec();
+    const res = (await this.Model.deleteMany(filterQuery).exec()) as MongoDBDeletedOutput;
     return { deletedCount: res.deletedCount || 0 };
   }
 
