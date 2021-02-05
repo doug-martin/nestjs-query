@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@nestjs/common": "7.6.11",
-    "@nestjs/mongoose": "7.1.2",
+    "@nestjs/mongoose": "7.2.3",
     "@nestjs/testing": "7.6.11",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
