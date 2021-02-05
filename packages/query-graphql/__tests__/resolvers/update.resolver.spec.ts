@@ -62,29 +62,21 @@ describe('UpdateResolver', () => {
     return createResolverFromNest(TestResolver);
   };
 
-  it('should create a UpdateResolver for the DTO', () => {
-    return expectResolverSDL(updateBasicResolverSDL);
-  });
+  it('should create a UpdateResolver for the DTO', () => expectResolverSDL(updateBasicResolverSDL));
 
-  it('should use the dtoName if provided', () => {
-    return expectResolverSDL(updateCustomNameResolverSDL, { dtoName: 'Test' });
-  });
+  it('should use the dtoName if provided', () => expectResolverSDL(updateCustomNameResolverSDL, { dtoName: 'Test' }));
 
-  it('should use the one.name option for the updateOne if provided', () => {
-    return expectResolverSDL(updateCustomOneMutationResolverSDL, { one: { name: 'update_one_test' } });
-  });
+  it('should use the one.name option for the updateOne if provided', () =>
+    expectResolverSDL(updateCustomOneMutationResolverSDL, { one: { name: 'update_one_test' } }));
 
-  it('should use the many.name option for the updateMany if provided', () => {
-    return expectResolverSDL(updateCustomManyMutationResolverSDL, { many: { name: 'update_many_test' } });
-  });
+  it('should use the many.name option for the updateMany if provided', () =>
+    expectResolverSDL(updateCustomManyMutationResolverSDL, { many: { name: 'update_many_test' } }));
 
-  it('should use the UpdateDTOClass if provided', () => {
-    return expectResolverSDL(updateCustomDTOResolverSDL, { UpdateDTOClass: TestResolverInputDTO });
-  });
+  it('should use the UpdateDTOClass if provided', () =>
+    expectResolverSDL(updateCustomDTOResolverSDL, { UpdateDTOClass: TestResolverInputDTO }));
 
-  it('should not expose update methods if disabled', () => {
-    return expectResolverSDL(updateDisabledResolverSDL, { disabled: true });
-  });
+  it('should not expose update methods if disabled', () =>
+    expectResolverSDL(updateDisabledResolverSDL, { disabled: true }));
 
   describe('#updateOne', () => {
     it('should use the provided UpdateOneInput type', () => {
@@ -98,9 +90,8 @@ describe('UpdateResolver', () => {
       });
     });
 
-    it('should not expose update one method if disabled', () => {
-      return expectResolverSDL(updateOneDisabledResolverSDL, { one: { disabled: true } });
-    });
+    it('should not expose update one method if disabled', () =>
+      expectResolverSDL(updateOneDisabledResolverSDL, { one: { disabled: true } }));
 
     it('should call the service updateOne with the provided input', async () => {
       const { resolver, mockService, mockAuthorizer } = await createTestResolver();
@@ -158,9 +149,8 @@ describe('UpdateResolver', () => {
       });
     });
 
-    it('should not expose update many method if disabled', () => {
-      return expectResolverSDL(updateManyDisabledResolverSDL, { many: { disabled: true } });
-    });
+    it('should not expose update many method if disabled', () =>
+      expectResolverSDL(updateManyDisabledResolverSDL, { many: { disabled: true } }));
 
     it('should call the service updateMany with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -206,31 +196,27 @@ describe('UpdateResolver', () => {
   });
 
   describe('updated subscription', () => {
-    it('should add subscription types if enableSubscriptions is true', () => {
-      return expectResolverSDL(updateSubscriptionResolverSDL, {
+    it('should add subscription types if enableSubscriptions is true', () =>
+      expectResolverSDL(updateSubscriptionResolverSDL, {
         enableSubscriptions: true,
-      });
-    });
+      }));
 
-    it('should add subscription types if one.enableSubscriptions is true', () => {
-      return expectResolverSDL(updateOneSubscriptionResolverSDL, {
+    it('should add subscription types if one.enableSubscriptions is true', () =>
+      expectResolverSDL(updateOneSubscriptionResolverSDL, {
         one: {
           enableSubscriptions: true,
         },
-      });
-    });
+      }));
 
-    it('should add subscription types if many.enableSubscriptions is true', () => {
-      return expectResolverSDL(updateManySubscriptionResolverSDL, {
+    it('should add subscription types if many.enableSubscriptions is true', () =>
+      expectResolverSDL(updateManySubscriptionResolverSDL, {
         many: {
           enableSubscriptions: true,
         },
-      });
-    });
+      }));
 
-    it('should not expose subscriptions if enableSubscriptions is false', () => {
-      return expectResolverSDL(updateBasicResolverSDL, { enableSubscriptions: false });
-    });
+    it('should not expose subscriptions if enableSubscriptions is false', () =>
+      expectResolverSDL(updateBasicResolverSDL, { enableSubscriptions: false }));
 
     describe('update one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {

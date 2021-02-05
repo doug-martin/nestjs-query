@@ -53,8 +53,8 @@ describe('TagResolver (typeorm - e2e)', () => {
   ];
 
   describe('find one', () => {
-    it(`should find a tag by id`, () => {
-      return request(app.getHttpServer())
+    it(`should find a tag by id`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -65,11 +65,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           }
         }`,
         })
-        .expect(200, { data: { tag: tags[0] } });
-    });
+        .expect(200, { data: { tag: tags[0] } }));
 
-    it(`should return null if the tag is not found`, () => {
-      return request(app.getHttpServer())
+    it(`should return null if the tag is not found`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -84,11 +83,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           data: {
             tag: null,
           },
-        });
-    });
+        }));
 
-    it(`should return todoItems as a connection`, () => {
-      return request(app.getHttpServer())
+    it(`should return todoItems as a connection`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -115,11 +113,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
-        });
-    });
+        }));
 
-    it(`should return todoItems aggregate`, () => {
-      return request(app.getHttpServer())
+    it(`should return todoItems aggregate`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -142,13 +139,12 @@ describe('TagResolver (typeorm - e2e)', () => {
             min: { description: null, id: '1', title: 'Create Entity' },
             sum: { id: 3 },
           });
-        });
-    });
+        }));
   });
 
   describe('query', () => {
-    it(`should return a connection`, () => {
-      return request(app.getHttpServer())
+    it(`should return a connection`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -173,11 +169,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags);
-        });
-    });
+        }));
 
-    it(`should allow querying`, () => {
-      return request(app.getHttpServer())
+    it(`should allow querying`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -202,11 +197,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
-        });
-    });
+        }));
 
-    it(`should allow querying on todoItems`, () => {
-      return request(app.getHttpServer())
+    it(`should allow querying on todoItems`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -231,11 +225,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([tags[0], tags[2], tags[4]]);
-        });
-    });
+        }));
 
-    it(`should allow sorting`, () => {
-      return request(app.getHttpServer())
+    it(`should allow sorting`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -260,12 +253,11 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
-        });
-    });
+        }));
 
     describe('paging', () => {
-      it(`should allow paging with the 'first' field`, () => {
-        return request(app.getHttpServer())
+      it(`should allow paging with the 'first' field`, () =>
+        request(app.getHttpServer())
           .post('/graphql')
           .send({
             operationName: null,
@@ -290,11 +282,10 @@ describe('TagResolver (typeorm - e2e)', () => {
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
-          });
-      });
+          }));
 
-      it(`should allow paging with the 'first' field and 'after'`, () => {
-        return request(app.getHttpServer())
+      it(`should allow paging with the 'first' field and 'after'`, () =>
+        request(app.getHttpServer())
           .post('/graphql')
           .send({
             operationName: null,
@@ -319,14 +310,13 @@ describe('TagResolver (typeorm - e2e)', () => {
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
-          });
-      });
+          }));
     });
   });
 
   describe('aggregate', () => {
-    it(`should return a aggregate response`, () => {
-      return request(app.getHttpServer())
+    it(`should return a aggregate response`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -347,11 +337,10 @@ describe('TagResolver (typeorm - e2e)', () => {
             min: { id: '1', name: 'Blocked' },
             max: { id: '5', name: 'Work' },
           });
-        });
-    });
+        }));
 
-    it(`should allow filtering`, () => {
-      return request(app.getHttpServer())
+    it(`should allow filtering`, () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -372,13 +361,12 @@ describe('TagResolver (typeorm - e2e)', () => {
             min: { id: '1', name: 'Blocked' },
             max: { id: '5', name: 'Work' },
           });
-        });
-    });
+        }));
   });
 
   describe('create one', () => {
-    it('should allow creating a tag', () => {
-      return request(app.getHttpServer())
+    it('should allow creating a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -400,11 +388,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               name: 'Test Tag',
             },
           },
-        });
-    });
+        }));
 
-    it('should call beforeCreateOne hook when creating a tag', () => {
-      return request(app.getHttpServer())
+    it('should call beforeCreateOne hook when creating a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(USER_HEADER_NAME, 'E2E Test')
         .send({
@@ -429,11 +416,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               createdBy: 'E2E Test',
             },
           },
-        });
-    });
+        }));
 
-    it('should validate a tag', () => {
-      return request(app.getHttpServer())
+    it('should validate a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -452,13 +438,12 @@ describe('TagResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        });
-    });
+        }));
   });
 
   describe('create many', () => {
-    it('should allow creating a tag', () => {
-      return request(app.getHttpServer())
+    it('should allow creating a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -483,11 +468,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               { id: '9', name: 'Create Many Tag - 2' },
             ],
           },
-        });
-    });
+        }));
 
-    it('should call beforeCreateMany hook when creating multiple tags', () => {
-      return request(app.getHttpServer())
+    it('should call beforeCreateMany hook when creating multiple tags', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(USER_HEADER_NAME, 'E2E Test')
         .send({
@@ -514,11 +498,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'E2E Test' },
             ],
           },
-        });
-    });
+        }));
 
-    it('should validate a tag', () => {
-      return request(app.getHttpServer())
+    it('should validate a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -537,13 +520,12 @@ describe('TagResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        });
-    });
+        }));
   });
 
   describe('update one', () => {
-    it('should allow updating a tag', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -566,11 +548,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               name: 'Update Test Tag',
             },
           },
-        });
-    });
+        }));
 
-    it('should call beforeUpdateOne hook when updating a tag', () => {
-      return request(app.getHttpServer())
+    it('should call beforeUpdateOne hook when updating a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(USER_HEADER_NAME, 'E2E Test')
         .send({
@@ -596,11 +577,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               updatedBy: 'E2E Test',
             },
           },
-        });
-    });
+        }));
 
-    it('should require an id', () => {
-      return request(app.getHttpServer())
+    it('should require an id', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -619,11 +599,10 @@ describe('TagResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "ID!" was not provided.');
-        });
-    });
+        }));
 
-    it('should validate an update', () => {
-      return request(app.getHttpServer())
+    it('should validate an update', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -643,13 +622,12 @@ describe('TagResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        });
-    });
+        }));
   });
 
   describe('update many', () => {
-    it('should allow updating a tag', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -671,11 +649,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               updatedCount: 2,
             },
           },
-        });
-    });
+        }));
 
-    it('should call beforeUpdateMany hook when updating multiple tags', () => {
-      return request(app.getHttpServer())
+    it('should call beforeUpdateMany hook when updating multiple tags', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .set(USER_HEADER_NAME, 'E2E Test')
         .send({
@@ -703,22 +680,19 @@ describe('TagResolver (typeorm - e2e)', () => {
           const queryService = app.get<QueryService<TagEntity>>(getQueryServiceToken(TagEntity));
           const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } });
           expect(
-            todoItems.map((ti) => {
-              return {
-                id: ti.id,
-                name: ti.name,
-                updatedBy: ti.updatedBy,
-              };
-            }),
+            todoItems.map((ti) => ({
+              id: ti.id,
+              name: ti.name,
+              updatedBy: ti.updatedBy,
+            })),
           ).toEqual([
             { id: 10, name: 'Before Update Many Tag', updatedBy: 'E2E Test' },
             { id: 11, name: 'Before Update Many Tag', updatedBy: 'E2E Test' },
           ]);
-        });
-    });
+        }));
 
-    it('should require a filter', () => {
-      return request(app.getHttpServer())
+    it('should require a filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -739,11 +713,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should require a non-empty filter', () => {
-      return request(app.getHttpServer())
+    it('should require a non-empty filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -763,13 +736,12 @@ describe('TagResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
+        }));
   });
 
   describe('delete one', () => {
-    it('should allow deleting a tag', () => {
-      return request(app.getHttpServer())
+    it('should allow deleting a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -789,11 +761,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               name: 'Update Test Tag',
             },
           },
-        });
-    });
+        }));
 
-    it('should require an id', () => {
-      return request(app.getHttpServer())
+    it('should require an id', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -810,13 +781,12 @@ describe('TagResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
-        });
-    });
+        }));
   });
 
   describe('delete many', () => {
-    it('should allow updating a tag', () => {
-      return request(app.getHttpServer())
+    it('should allow updating a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -837,11 +807,10 @@ describe('TagResolver (typeorm - e2e)', () => {
               deletedCount: 2,
             },
           },
-        });
-    });
+        }));
 
-    it('should require a filter', () => {
-      return request(app.getHttpServer())
+    it('should require a filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -860,11 +829,10 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
           );
-        });
-    });
+        }));
 
-    it('should require a non-empty filter', () => {
-      return request(app.getHttpServer())
+    it('should require a non-empty filter', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -883,13 +851,12 @@ describe('TagResolver (typeorm - e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        });
-    });
+        }));
   });
 
   describe('addTodoItemsToTag', () => {
-    it('allow adding subTasks to a tag', () => {
-      return request(app.getHttpServer())
+    it('allow adding subTasks to a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -933,13 +900,12 @@ describe('TagResolver (typeorm - e2e)', () => {
             'Create Nest App',
             'How to create item With Sub Tasks',
           ]);
-        });
-    });
+        }));
   });
 
   describe('removeTodoItemsFromTag', () => {
-    it('allow removing todoItems from a tag', () => {
-      return request(app.getHttpServer())
+    it('allow removing todoItems from a tag', () =>
+      request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
@@ -977,8 +943,7 @@ describe('TagResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
-        });
-    });
+        }));
   });
 
   afterAll(async () => {

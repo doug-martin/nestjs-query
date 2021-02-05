@@ -27,8 +27,7 @@ pageInfo{
 }
 `;
 
-export const edgeNodes = (fields: string): string => {
-  return `
+export const edgeNodes = (fields: string): string => `
   edges {
     node{
       ${fields}    
@@ -36,7 +35,6 @@ export const edgeNodes = (fields: string): string => {
     cursor
   }  
   `;
-};
 
 export const todoItemAggregateFields = `
 count {

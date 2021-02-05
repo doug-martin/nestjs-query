@@ -6,23 +6,8 @@ type TestRelationDTO {
 type TestFederated {
   id: ID!
   stringField: String!
-  relationConnections(
-    """Limit or page results."""
-    paging: CursorPaging = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: TestRelationDTOFilter = {}
-
-    """Specify to sort results."""
-    sorting: [TestRelationDTOSort!] = []
-  ): TestFederatedRelationConnectionsConnection!
-  relationsNoPagings(
-    """Specify to filter the records returned."""
-    filter: TestRelationDTOFilter = {}
-
-    """Specify to sort results."""
-    sorting: [TestRelationDTOSort!] = []
-  ): [TestRelationDTO!]!
+  relation: TestRelationDTO!
+  custom: TestRelationDTO!
   relations(
     """Limit or page results."""
     paging: OffsetPaging = {limit: 10}
@@ -33,26 +18,32 @@ type TestFederated {
     """Specify to sort results."""
     sorting: [TestRelationDTOSort!] = []
   ): [TestRelationDTO!]!
-  custom: TestRelationDTO!
-  relation: TestRelationDTO!
+  relationsNoPagings(
+    """Specify to filter the records returned."""
+    filter: TestRelationDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestRelationDTOSort!] = []
+  ): [TestRelationDTO!]!
+  relationConnections(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestRelationDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestRelationDTOSort!] = []
+  ): TestFederatedRelationConnectionsConnection!
 }
 
-input CursorPaging {
-  """Paginate before opaque cursor"""
-  before: ConnectionCursor
+input OffsetPaging {
+  """Limit the number of records returned"""
+  limit: Int
 
-  """Paginate after opaque cursor"""
-  after: ConnectionCursor
-
-  """Paginate first"""
-  first: Int
-
-  """Paginate last"""
-  last: Int
+  """Offset to start returning records from"""
+  offset: Int
 }
-
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
 
 input TestRelationDTOFilter {
   and: [TestRelationDTOFilter!]
@@ -118,13 +109,22 @@ enum SortNulls {
   NULLS_LAST
 }
 
-input OffsetPaging {
-  """Limit the number of records returned"""
-  limit: Int
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
 
-  """Offset to start returning records from"""
-  offset: Int
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
 }
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
 
 type TestRelationDTOEdge {
   """The node containing the TestRelationDTO"""

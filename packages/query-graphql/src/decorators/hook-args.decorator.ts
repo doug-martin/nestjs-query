@@ -8,8 +8,8 @@ import { transformAndValidate } from '../resolvers/helpers';
 export const HookArgs = <HookType>(
   HookArgsClass: Class<HookType>,
   ...hooks: MetaValue<HookFunc<HookType>>[]
-): ParameterDecorator => {
-  return composeDecorators(
+): ParameterDecorator =>
+  composeDecorators(
     Args(),
     createParamDecorator(async (data: unknown, ctx: ExecutionContext) => {
       const gqlContext = GqlExecutionContext.create(ctx);
@@ -24,4 +24,3 @@ export const HookArgs = <HookType>(
       return args;
     })(),
   );
-};

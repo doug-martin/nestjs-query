@@ -170,9 +170,7 @@ export class FilterQueryBuilder<Entity> {
       return qb;
     }
     const referencedRelations = this.getReferencedRelations(filter);
-    return referencedRelations.reduce((rqb, relation) => {
-      return rqb.leftJoin(`${rqb.alias}.${relation}`, relation);
-    }, qb);
+    return referencedRelations.reduce((rqb, relation) => rqb.leftJoin(`${rqb.alias}.${relation}`, relation), qb);
   }
 
   private getReferencedRelations(filter: Filter<Entity>): string[] {

@@ -34,13 +34,14 @@ export const refresh = async (connection: Connection): Promise<void> => {
   ]);
 
   await subTaskRepo.save(
-    todoItems.reduce((subTasks, todo) => {
-      return [
+    todoItems.reduce(
+      (subTasks, todo) => [
         ...subTasks,
         { completed: true, title: `${todo.title} - Sub Task 1`, todoItem: todo },
         { completed: false, title: `${todo.title} - Sub Task 2`, todoItem: todo },
         { completed: false, title: `${todo.title} - Sub Task 3`, todoItem: todo },
-      ];
-    }, [] as Partial<SubTaskEntity>[]),
+      ],
+      [] as Partial<SubTaskEntity>[],
+    ),
   );
 };

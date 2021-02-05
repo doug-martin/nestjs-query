@@ -36,26 +36,21 @@ describe('RemoveRelationsResolver', () => {
     }
     return expectSDL([TestSDLResolver], sdl);
   };
-  it('should not add remove methods if one and many are empty', () => {
-    return expectResolverSDL(removeRelationEmptySDL);
-  });
+  it('should not add remove methods if one and many are empty', () => expectResolverSDL(removeRelationEmptySDL));
 
   describe('one', () => {
-    it('should use the object type name', () => {
-      return expectResolverSDL(removeRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } });
-    });
+    it('should use the object type name', () =>
+      expectResolverSDL(removeRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } }));
 
-    it('should use the dtoName if provided', () => {
-      return expectResolverSDL(removeRelationOneCustomNameSDL, {
+    it('should use the dtoName if provided', () =>
+      expectResolverSDL(removeRelationOneCustomNameSDL, {
         one: { relation: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      });
-    });
+      }));
 
-    it('should not add remove methods if disableRemove is true', () => {
-      return expectResolverSDL(removeRelationOneDisabledSDL, {
+    it('should not add remove methods if disableRemove is true', () =>
+      expectResolverSDL(removeRelationOneDisabledSDL, {
         one: { relation: { DTO: TestRelationDTO, disableRemove: true } },
-      });
-    });
+      }));
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
@@ -93,21 +88,18 @@ describe('RemoveRelationsResolver', () => {
   });
 
   describe('many', () => {
-    it('should use the object type name', () => {
-      return expectResolverSDL(removeRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } });
-    });
+    it('should use the object type name', () =>
+      expectResolverSDL(removeRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } }));
 
-    it('should use the dtoName if provided', () => {
-      return expectResolverSDL(removeRelationManyCustomNameSDL, {
+    it('should use the dtoName if provided', () =>
+      expectResolverSDL(removeRelationManyCustomNameSDL, {
         many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      });
-    });
+      }));
 
-    it('should not add remove many methods if disableRemove is true', () => {
-      return expectResolverSDL(removeRelationManyDisabledSDL, {
+    it('should not add remove many methods if disableRemove is true', () =>
+      expectResolverSDL(removeRelationManyDisabledSDL, {
         many: { relations: { DTO: TestRelationDTO, disableRemove: true } },
-      });
-    });
+      }));
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);

@@ -5,37 +5,33 @@ export const sequelizeMysqlOptions = (
   username: string,
   database: string,
   overrides?: Partial<SequelizeModuleOptions>,
-): SequelizeModuleOptions => {
-  return {
-    dialect: 'mysql',
-    port: 3306,
-    host: 'localhost',
-    username,
-    database,
-    autoLoadModels: true,
-    synchronize: true,
-    logging: false,
-    ...overrides,
-  };
-};
+): SequelizeModuleOptions => ({
+  dialect: 'mysql',
+  port: 3306,
+  host: 'localhost',
+  username,
+  database,
+  autoLoadModels: true,
+  synchronize: true,
+  logging: false,
+  ...overrides,
+});
 
 export const sequelizePostgresOptions = (
   username: string,
   database: string,
   overrides?: Partial<SequelizeModuleOptions>,
-): SequelizeModuleOptions => {
-  return {
-    dialect: 'postgres',
-    port: 5436,
-    host: 'localhost',
-    username,
-    database,
-    autoLoadModels: true,
-    synchronize: true,
-    logging: false,
-    ...overrides,
-  };
-};
+): SequelizeModuleOptions => ({
+  dialect: 'postgres',
+  port: 5436,
+  host: 'localhost',
+  username,
+  database,
+  autoLoadModels: true,
+  synchronize: true,
+  logging: false,
+  ...overrides,
+});
 
 export const sequelizeOrmConfig = (
   username: string,

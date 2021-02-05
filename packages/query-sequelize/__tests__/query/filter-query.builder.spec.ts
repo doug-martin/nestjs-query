@@ -43,9 +43,9 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
-          return { [Op.and]: { stringType: 'foo' } };
-        });
+        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => ({
+          [Op.and]: { stringType: 'foo' },
+        }));
         assertFindOptions(query, instance(mockWhereBuilder), {
           where: { [Op.and]: { stringType: 'foo' } },
         });
@@ -221,9 +221,9 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
-          return { [Op.and]: { stringType: 'foo' } };
-        });
+        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => ({
+          [Op.and]: { stringType: 'foo' },
+        }));
         assertUpdateOptions(query, instance(mockWhereBuilder), {
           where: { [Op.and]: { stringType: 'foo' } },
         });
@@ -251,9 +251,9 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => {
-          return { [Op.and]: { stringType: 'foo' } };
-        });
+        when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => ({
+          [Op.and]: { stringType: 'foo' },
+        }));
         assertDestroyOptions(query, instance(mockWhereBuilder), {
           where: { [Op.and]: { stringType: 'foo' } },
         });

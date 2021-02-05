@@ -11,7 +11,7 @@ export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Pro
     return partial;
   }
   const transformed = plainToClass(TClass, partial);
-  const validationErrors = await validate(transformed, {});
+  const validationErrors = await validate((transformed as unknown) as Record<keyof never, unknown>);
   if (validationErrors.length) {
     throw new BadRequestException(validationErrors);
   }
@@ -22,9 +22,9 @@ export const createSubscriptionFilter = <DTO, Input extends SubscriptionFilterIn
   InputClass: Class<Input>,
   payloadKey: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): ((payload: any, variables: SubscriptionArgsType<Input>, context: any) => boolean | Promise<boolean>) => {
+): ((payload: any, variables: SubscriptionArgsType<Input>, context: any) => boolean | Promise<boolean>) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return async (payload: any, variables: SubscriptionArgsType<Input>): Promise<boolean> => {
+  async (payload: any, variables: SubscriptionArgsType<Input>): Promise<boolean> => {
     const { input } = variables;
     if (input) {
       const args = await transformAndValidate(InputClass, input);
@@ -34,7 +34,6 @@ export const createSubscriptionFilter = <DTO, Input extends SubscriptionFilterIn
     }
     return true;
   };
-};
 
 export const getAuthFilter = async <DTO>(
   authorizer?: Authorizer<DTO>,

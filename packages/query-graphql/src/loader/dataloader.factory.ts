@@ -1,11 +1,9 @@
 import { ExecutionContext } from '@nestjs/common';
 import Dataloader from 'dataloader';
 
-const cacheKeyFn = <K>(key: K): string => {
+const cacheKeyFn = <K>(key: K): string =>
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return JSON.stringify(key, (_, v) => (typeof v === 'bigint' ? v.toString() : v));
-};
-
+  JSON.stringify(key, (_, v) => (typeof v === 'bigint' ? v.toString() : v));
 export interface NestjsQueryExecutionContext extends ExecutionContext {
   nestjsQueryLoaders?: Record<string, Dataloader<unknown, unknown>>;
 }

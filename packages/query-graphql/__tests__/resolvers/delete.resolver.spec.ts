@@ -59,25 +59,18 @@ describe('DeleteResolver', () => {
     return createResolverFromNest(TestResolver);
   };
 
-  it('should create a DeleteResolver for the DTO', () => {
-    return expectResolverSDL(deleteBasicResolverSDL);
-  });
+  it('should create a DeleteResolver for the DTO', () => expectResolverSDL(deleteBasicResolverSDL));
 
-  it('should use the dtoName if provided', () => {
-    return expectResolverSDL(deleteCustomNameResolverSDL, { dtoName: 'Test' });
-  });
+  it('should use the dtoName if provided', () => expectResolverSDL(deleteCustomNameResolverSDL, { dtoName: 'Test' }));
 
-  it('should use the one.name option for the deleteOne if provided', () => {
-    return expectResolverSDL(deleteCustomOneMutationResolverSDL, { one: { name: 'delete_one_test' } });
-  });
+  it('should use the one.name option for the deleteOne if provided', () =>
+    expectResolverSDL(deleteCustomOneMutationResolverSDL, { one: { name: 'delete_one_test' } }));
 
-  it('should use the many.name option for the deleteMany if provided', () => {
-    return expectResolverSDL(deleteCustomManyMutationResolverSDL, { many: { name: 'delete_many_test' } });
-  });
+  it('should use the many.name option for the deleteMany if provided', () =>
+    expectResolverSDL(deleteCustomManyMutationResolverSDL, { many: { name: 'delete_many_test' } }));
 
-  it('should not expose delete methods if disabled', () => {
-    return expectResolverSDL(deleteDisabledResolverSDL, { disabled: true });
-  });
+  it('should not expose delete methods if disabled', () =>
+    expectResolverSDL(deleteDisabledResolverSDL, { disabled: true }));
 
   describe('#deleteOne', () => {
     it('should use the provided DeleteOneInput type', () => {
@@ -94,9 +87,8 @@ describe('DeleteResolver', () => {
       });
     });
 
-    it('should not expose delete one method if disabled', () => {
-      return expectResolverSDL(deleteOneDisabledResolverSDL, { one: { disabled: true } });
-    });
+    it('should not expose delete one method if disabled', () =>
+      expectResolverSDL(deleteOneDisabledResolverSDL, { one: { disabled: true } }));
 
     it('should call the service deleteOne with the provided input', async () => {
       const { resolver, mockService, mockAuthorizer } = await createTestResolver();
@@ -144,9 +136,8 @@ describe('DeleteResolver', () => {
       });
     });
 
-    it('should not expose delete many method if disabled', () => {
-      return expectResolverSDL(deleteManyDisabledResolverSDL, { many: { disabled: true } });
-    });
+    it('should not expose delete many method if disabled', () =>
+      expectResolverSDL(deleteManyDisabledResolverSDL, { many: { disabled: true } }));
 
     it('should call the service deleteMany with the provided input', async () => {
       const { resolver, mockService, mockAuthorizer } = await createTestResolver();
@@ -177,31 +168,27 @@ describe('DeleteResolver', () => {
   });
 
   describe('deleted subscription', () => {
-    it('should add subscription types if enableSubscriptions is true', () => {
-      return expectResolverSDL(deleteSubscriptionResolverSDL, {
+    it('should add subscription types if enableSubscriptions is true', () =>
+      expectResolverSDL(deleteSubscriptionResolverSDL, {
         enableSubscriptions: true,
-      });
-    });
+      }));
 
-    it('should add subscription types if one.enableSubscriptions is true', () => {
-      return expectResolverSDL(deleteOneSubscriptionResolverSDL, {
+    it('should add subscription types if one.enableSubscriptions is true', () =>
+      expectResolverSDL(deleteOneSubscriptionResolverSDL, {
         one: {
           enableSubscriptions: true,
         },
-      });
-    });
+      }));
 
-    it('should add subscription types if many.enableSubscriptions is true', () => {
-      return expectResolverSDL(deleteManySubscriptionResolverSDL, {
+    it('should add subscription types if many.enableSubscriptions is true', () =>
+      expectResolverSDL(deleteManySubscriptionResolverSDL, {
         many: {
           enableSubscriptions: true,
         },
-      });
-    });
+      }));
 
-    it('should not expose subscriptions if enableSubscriptions is false', () => {
-      return expectResolverSDL(deleteBasicResolverSDL, { enableSubscriptions: false });
-    });
+    it('should not expose subscriptions if enableSubscriptions is false', () =>
+      expectResolverSDL(deleteBasicResolverSDL, { enableSubscriptions: false }));
 
     describe('delete one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {

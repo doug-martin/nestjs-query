@@ -19,9 +19,8 @@ export type StaticQueryArgsType<DTO> =
   | StaticOffsetQueryArgsType<DTO>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
-export const isStaticQueryArgsType = <DTO>(obj: any): obj is StaticQueryArgsType<DTO> => {
-  return typeof obj === 'function' && ('PageType' in obj || 'SortType' in obj || 'FilterType' in obj);
-};
+export const isStaticQueryArgsType = <DTO>(obj: any): obj is StaticQueryArgsType<DTO> =>
+  typeof obj === 'function' && ('PageType' in obj || 'SortType' in obj || 'FilterType' in obj);
 
 export type QueryArgsType<DTO> = NoPagingQueryArgsType<DTO> | CursorQueryArgsType<DTO> | OffsetQueryArgsType<DTO>;
 

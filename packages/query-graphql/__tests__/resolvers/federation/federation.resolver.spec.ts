@@ -47,13 +47,10 @@ describe('FederationResolver', () => {
     }
   }
 
-  it('should not add federation methods if one and many are empty', () => {
-    return expectResolverSDL(federationRelationEmptySDL, TestResolverDTO);
-  });
+  it('should not add federation methods if one and many are empty', () =>
+    expectResolverSDL(federationRelationEmptySDL, TestResolverDTO));
 
-  it('use the defined relations', () => {
-    return expectResolverSDL(federationRelationSDL, TestFederatedDTO);
-  });
+  it('use the defined relations', () => expectResolverSDL(federationRelationSDL, TestFederatedDTO));
 
   describe('one', () => {
     describe('one relation', () => {

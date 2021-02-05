@@ -37,26 +37,21 @@ describe('UpdateRelationsResolver', () => {
     return expectSDL([TestSDLResolver], sdl);
   };
 
-  it('should not add update methods if one and many are empty', () => {
-    return expectResolverSDL(updateRelationEmptySDL);
-  });
+  it('should not add update methods if one and many are empty', () => expectResolverSDL(updateRelationEmptySDL));
 
   describe('one', () => {
-    it('should use the object type name', () => {
-      return expectResolverSDL(updateRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } });
-    });
+    it('should use the object type name', () =>
+      expectResolverSDL(updateRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } }));
 
-    it('should use the dtoName if provided', () => {
-      return expectResolverSDL(updateRelationOneCustomNameSDL, {
+    it('should use the dtoName if provided', () =>
+      expectResolverSDL(updateRelationOneCustomNameSDL, {
         one: { relation: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      });
-    });
+      }));
 
-    it('should not add update one methods if disableRead is true', () => {
-      return expectResolverSDL(updateRelationOneDisabledSDL, {
+    it('should not add update one methods if disableRead is true', () =>
+      expectResolverSDL(updateRelationOneDisabledSDL, {
         one: { relation: { DTO: TestRelationDTO, disableUpdate: true } },
-      });
-    });
+      }));
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
@@ -94,21 +89,18 @@ describe('UpdateRelationsResolver', () => {
   });
 
   describe('many', () => {
-    it('should use the object type name', () => {
-      return expectResolverSDL(updateRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } });
-    });
+    it('should use the object type name', () =>
+      expectResolverSDL(updateRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } }));
 
-    it('should use the dtoName if provided', () => {
-      return expectResolverSDL(updateRelationManyCustomNameSDL, {
+    it('should use the dtoName if provided', () =>
+      expectResolverSDL(updateRelationManyCustomNameSDL, {
         many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      });
-    });
+      }));
 
-    it('should not add update many methods if disableUpdate is true', () => {
-      return expectResolverSDL(updateRelationManyDisabledSDL, {
+    it('should not add update many methods if disableUpdate is true', () =>
+      expectResolverSDL(updateRelationManyDisabledSDL, {
         many: { relations: { DTO: TestRelationDTO, disableUpdate: true } },
-      });
-    });
+      }));
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);

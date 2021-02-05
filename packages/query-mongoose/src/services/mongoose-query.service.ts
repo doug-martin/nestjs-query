@@ -246,10 +246,12 @@ export class MongooseQueryService<Entity extends Document>
 
   private getUpdateQuery(entity: DeepPartial<Entity>): UpdateQuery<Entity> {
     if (entity instanceof this.Model) {
-      return entity.modifiedPaths().reduce((update: UpdateQuery<Entity>, k) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        return { ...update, [k]: entity.get(k) };
-      }, {});
+      return entity.modifiedPaths().reduce(
+        (update: UpdateQuery<Entity>, k) =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          ({ ...update, [k]: entity.get(k) }),
+        {},
+      );
     }
     return entity as UpdateQuery<Entity>;
   }
