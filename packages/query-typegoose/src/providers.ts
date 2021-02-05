@@ -1,11 +1,11 @@
-import { AssemblerSerializer, getQueryServiceToken } from '@nestjs-query/core';
+import { AssemblerSerializer, Class, getQueryServiceToken } from '@nestjs-query/core';
 import { FactoryProvider } from '@nestjs/common';
 import { ReturnModelType, DocumentType } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { TypegooseClass } from 'nestjs-typegoose/dist/typegoose-class.interface';
-import { TypegooseQueryService } from './services/typegoose-query-service';
+import { getModelToken } from 'nestjs-typegoose';
+import { TypegooseQueryService } from './services';
 
-function createTypegooseQueryServiceProvider<Entity extends Base>(model: TypegooseClass): FactoryProvider {
+function createTypegooseQueryServiceProvider<Entity extends Base>(model: Class<unknown>): FactoryProvider {
   return {
     provide: getQueryServiceToken(model),
     useFactory(ModelClass: ReturnModelType<new () => Entity>) {
@@ -15,10 +15,10 @@ function createTypegooseQueryServiceProvider<Entity extends Base>(model: Typegoo
 
       return new TypegooseQueryService(ModelClass);
     },
-    inject: [`${model.name}Model`],
+    inject: [getModelToken(model.name)],
   };
 }
 
-export const createTypegooseQueryServiceProviders = (models: TypegooseClass[]): FactoryProvider[] => {
+export const createTypegooseQueryServiceProviders = (models: Class<unknown>[]): FactoryProvider[] => {
   return models.map((model) => createTypegooseQueryServiceProvider(model));
 };
