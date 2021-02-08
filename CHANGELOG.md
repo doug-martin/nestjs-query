@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.22.0](https://github.com/doug-martin/nestjs-query/compare/v0.21.2...v0.22.0) (2021-02-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @nestjs/jwt to v7.2.0 ([a8845c2](https://github.com/doug-martin/nestjs-query/commit/a8845c2f1473792f11828d99c7c6b0dd697189b6))
+* **deps:** update dependency @nestjs/passport to v7.1.1 ([2be7848](https://github.com/doug-martin/nestjs-query/commit/2be78489b6c73652de998f2c5364b63a6a937f2f))
+* **deps:** update dependency @nestjs/passport to v7.1.2 ([4a38d0c](https://github.com/doug-martin/nestjs-query/commit/4a38d0c25032bd24131378e861e205fdc50c8615))
+* **deps:** update dependency @nestjs/passport to v7.1.3 ([a74b544](https://github.com/doug-martin/nestjs-query/commit/a74b544a067c5a678479f8b9aaa091fb6c6a3aeb))
+* **deps:** update dependency @nestjs/passport to v7.1.4 ([84471a4](https://github.com/doug-martin/nestjs-query/commit/84471a4210a104d6b344f26d3bd87b83405a1b44))
+* **deps:** update dependency @nestjs/passport to v7.1.5 ([2bc9164](https://github.com/doug-martin/nestjs-query/commit/2bc91644004df4cda83c968f95e9ff45d8de328c))
+* **deps:** update dependency apollo-server-express to v2.19.0 ([1624f4e](https://github.com/doug-martin/nestjs-query/commit/1624f4e99a64258ff381972e5ad5cce1aec146a5))
+* **deps:** update dependency apollo-server-express to v2.19.1 ([63cc89f](https://github.com/doug-martin/nestjs-query/commit/63cc89f0b98d1164a9bf201489d996b74700444f))
+* **deps:** update dependency apollo-server-express to v2.19.2 ([6035bdd](https://github.com/doug-martin/nestjs-query/commit/6035bdd0f76f743a43facf658ea4f7baed13e15d))
+* **deps:** update dependency apollo-server-plugin-base to v0.10.2 ([b39da69](https://github.com/doug-martin/nestjs-query/commit/b39da690428eaabe39ac184bdc654b54565130e1))
+* **deps:** update dependency apollo-server-plugin-base to v0.10.3 ([12093ae](https://github.com/doug-martin/nestjs-query/commit/12093ae5dd579ab94f42ab0209e199d5afcad32a))
+* **deps:** update dependency apollo-server-plugin-base to v0.10.4 ([7c0e391](https://github.com/doug-martin/nestjs-query/commit/7c0e3917e24081cf5bfcb596840038adef61b7e9))
+* **deps:** update dependency graphql-query-complexity to v0.7.1 ([8bd196d](https://github.com/doug-martin/nestjs-query/commit/8bd196d017ab7452ce3b7f1ca1f3ef2f0d1e6325))
+* **deps:** update dependency graphql-query-complexity to v0.7.2 ([905f0f5](https://github.com/doug-martin/nestjs-query/commit/905f0f51a9db801f76e9f4581fc95eadd6e39841))
+* **deps:** update dependency graphql-tools to v6.2.6 ([c1bba6d](https://github.com/doug-martin/nestjs-query/commit/c1bba6d4011085929ec5f733a4d6ac640428ee88))
+* **deps:** update dependency graphql-tools to v7.0.2 ([6b204dc](https://github.com/doug-martin/nestjs-query/commit/6b204dc83988ad8be730fe83df0cf3c707895664))
+* **deps:** update dependency pg to v8.4.2 ([be2dd88](https://github.com/doug-martin/nestjs-query/commit/be2dd884377b3eaff21a8adaf8f05f08b2ef505f))
+* **deps:** update dependency pg to v8.5.0 ([52e4258](https://github.com/doug-martin/nestjs-query/commit/52e4258bd5912b4ef5eff53943d291269dc89101))
+* **deps:** update dependency pg to v8.5.1 ([b435a7f](https://github.com/doug-martin/nestjs-query/commit/b435a7fc04f29f5433374e24dff6c67771c2d819))
+* **deps:** update dependency uuid to v8.3.2 ([289f1ed](https://github.com/doug-martin/nestjs-query/commit/289f1ed5610781792d3c1efa5492376095084ac0))
+* **deps:** update docusaurus monorepo to v2.0.0-alpha.68 ([31ec621](https://github.com/doug-martin/nestjs-query/commit/31ec6216d2896d3afac42af6711558ec4bd447d1))
+* **deps:** update docusaurus monorepo to v2.0.0-alpha.69 ([6430d84](https://github.com/doug-martin/nestjs-query/commit/6430d840d5185a34a95fefd2d3fce33f847f6d28))
+* **deps:** update docusaurus monorepo to v2.0.0-alpha.fd17476c3 ([c34ebf2](https://github.com/doug-martin/nestjs-query/commit/c34ebf229d3d8681a4015b0817773fd396a76998))
+* **deps:** Update mongoose and @nestjs/mongoose to latest versions ([ca575cf](https://github.com/doug-martin/nestjs-query/commit/ca575cfce5634233dfefa93c6c9347db91086b39))
+* **deps:** update react monorepo to v17 ([b9a6339](https://github.com/doug-martin/nestjs-query/commit/b9a6339fd1656ebeb3eeafaa93a08ab6664935f8))
+
+
+
+
+
 ## [0.21.2](https://github.com/doug-martin/nestjs-query/compare/v0.21.1...v0.21.2) (2020-10-23)
 
 

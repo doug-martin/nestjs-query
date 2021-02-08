@@ -1,6 +1,6 @@
 {
   "name": "nestjs-query-examples",
-  "version": "0.21.2",
+  "version": "0.22.0",
   "description": "",
   "author": "",
   "private": true,
@@ -12,11 +12,11 @@
     "start": "nest start --watch"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.21.2",
-    "@nestjs-query/query-graphql": "0.21.2",
-    "@nestjs-query/query-mongoose": "0.21.2",
-    "@nestjs-query/query-sequelize": "0.21.2",
-    "@nestjs-query/query-typeorm": "0.21.2",
+    "@nestjs-query/core": "0.22.0",
+    "@nestjs-query/query-graphql": "0.22.0",
+    "@nestjs-query/query-mongoose": "0.22.0",
+    "@nestjs-query/query-sequelize": "0.22.0",
+    "@nestjs-query/query-typeorm": "0.22.0",
     "@nestjs/common": "7.6.11",
     "@nestjs/core": "7.6.11",
     "@nestjs/graphql": "7.9.8",
