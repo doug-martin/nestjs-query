@@ -31,7 +31,7 @@
     "class-validator": "0.13.1",
     "graphql": "15.5.0",
     "graphql-query-complexity": "0.7.2",
-    "graphql-tools": "7.0.2",
+    "graphql-tools": "7.0.3",
     "mongoose": "5.11.15",
     "mysql2": "2.2.5",
     "passport": "0.4.1",
