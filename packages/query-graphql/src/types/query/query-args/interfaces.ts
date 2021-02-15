@@ -40,11 +40,11 @@ export type QueryArgsTypeOpts<DTO> =
   | OffsetQueryArgsTypeOpts<DTO>
   | NoPagingQueryArgsTypeOpts<DTO>;
 
-export interface StaticQueryType<DTO, PagingType extends StaticPagingTypes> {
+export interface StaticQueryType<DTO, PagingType extends StaticPagingTypes>
+  extends Class<QueryType<DTO, InstanceType<PagingType>>> {
   SortType: Class<SortField<DTO>>;
   PageType?: PagingType;
   FilterType: Class<Filter<DTO>>;
-  new (): QueryType<DTO, InstanceType<PagingType>>;
 }
 
 export interface QueryType<DTO, PagingType extends PagingTypes> extends Query<DTO> {

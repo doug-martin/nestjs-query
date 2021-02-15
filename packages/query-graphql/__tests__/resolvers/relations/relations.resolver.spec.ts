@@ -1,7 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Field, ObjectType } from '@nestjs/graphql';
-import { PagingStrategies, Relatable, FilterableField } from '../../../src';
-import { Connection, Reference, Relation } from '../../../src/decorators';
+import { PagingStrategies, Relatable, FilterableField, CursorConnection, Reference, Relation } from '../../../src';
 import * as readRelations from '../../../src/resolvers/relations/read-relations.resolver';
 import * as referenceRelation from '../../../src/resolvers/relations/references-relation.resolver';
 import * as removeRelations from '../../../src/resolvers/relations/remove-relations.resolver';
@@ -25,14 +24,14 @@ describe('Relatable', () => {
   it('should call the mixins with the relations derived from decorators', () => {
     @ObjectType()
     @Relation('testRelation', () => TestRelation)
-    @Connection('testConnection', () => TestRelation)
+    @CursorConnection('testConnection', () => TestRelation)
     class Test {}
 
     Relatable(Test, {})(BaseServiceResolver);
 
     const relations = {
-      one: { testRelation: { DTO: TestRelation } },
-      many: { testConnection: { DTO: TestRelation, pagingStrategy: PagingStrategies.CURSOR } },
+      one: { testRelation: { DTO: TestRelation, allowFiltering: false } },
+      many: { testConnection: { DTO: TestRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR } },
     };
     expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
     expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);

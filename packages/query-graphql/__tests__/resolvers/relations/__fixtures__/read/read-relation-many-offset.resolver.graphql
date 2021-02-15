@@ -10,7 +10,7 @@ type TestResolverDTO {
 
     """Specify to sort results."""
     sorting: [TestRelationDTOSort!] = []
-  ): [TestRelationDTO!]
+  ): TestResolverDTORelationsConnection
 }
 
 input OffsetPaging {
@@ -113,6 +113,22 @@ type PageInfo {
 
   """The cursor of the last returned record."""
   endCursor: ConnectionCursor
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type TestResolverDTORelationsConnection {
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Array of nodes."""
+  nodes: [TestRelationDTO!]!
 }
 
 type Query {

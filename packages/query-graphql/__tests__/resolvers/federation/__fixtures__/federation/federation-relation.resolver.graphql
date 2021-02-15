@@ -17,7 +17,7 @@ type TestFederated {
 
     """Specify to sort results."""
     sorting: [TestRelationDTOSort!] = []
-  ): [TestRelationDTO!]!
+  ): TestFederatedRelationsConnection!
   relationsNoPagings(
     """Specify to filter the records returned."""
     filter: TestRelationDTOFilter = {}
@@ -154,6 +154,22 @@ type TestFederatedRelationConnectionsConnection {
 
   """Array of edges."""
   edges: [TestRelationDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type TestFederatedRelationsConnection {
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Array of nodes."""
+  nodes: [TestRelationDTO!]!
 }
 
 type Query {
