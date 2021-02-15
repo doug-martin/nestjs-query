@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import {
   FilterableField,
-  FilterableConnection,
+  FilterableCursorConnection,
   BeforeCreateOne,
   CreateOneInputType,
   BeforeCreateMany,
@@ -19,7 +19,7 @@ import { getUserName } from '../../helpers';
 
 @ObjectType('Tag')
 @KeySet(['id'])
-@FilterableConnection('todoItems', () => TodoItemDTO)
+@FilterableCursorConnection('todoItems', () => TodoItemDTO)
 @BeforeCreateOne((input: CreateOneInputType<TagDTO>, context: GqlContext) => {
   input.input.createdBy = getUserName(context);
   return input;

@@ -2,11 +2,12 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
+import { OffsetConnectionType } from '@nestjs-query/query-graphql';
 import { AppModule } from '../src/app.module';
 import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { TagDTO } from '../src/tag/dto/tag.dto';
 import { refresh } from './fixtures';
-import { subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
+import { offsetConnection, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
 
 describe('TodoItemResolver (limitOffset - e2e)', () => {
   let app: INestApplication;
@@ -83,7 +84,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           query: `{
           todoItem(id: 1) {
             subTasks(sorting: { field: id, direction: ASC }) {
-              ${subTaskFields}
+              ${offsetConnection(subTaskFields)}
             }
           }
         }`,
@@ -91,23 +92,35 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         .expect(200, {
           data: {
             todoItem: {
-              subTasks: [
-                { completed: true, description: null, id: '1', title: 'Create Nest App - Sub Task 1', todoItemId: '1' },
-                {
-                  completed: false,
-                  description: null,
-                  id: '2',
-                  title: 'Create Nest App - Sub Task 2',
-                  todoItemId: '1',
+              subTasks: {
+                nodes: [
+                  {
+                    completed: true,
+                    description: null,
+                    id: '1',
+                    title: 'Create Nest App - Sub Task 1',
+                    todoItemId: '1',
+                  },
+                  {
+                    completed: false,
+                    description: null,
+                    id: '2',
+                    title: 'Create Nest App - Sub Task 2',
+                    todoItemId: '1',
+                  },
+                  {
+                    completed: false,
+                    description: null,
+                    id: '3',
+                    title: 'Create Nest App - Sub Task 3',
+                    todoItemId: '1',
+                  },
+                ],
+                pageInfo: {
+                  hasNextPage: false,
+                  hasPreviousPage: false,
                 },
-                {
-                  completed: false,
-                  description: null,
-                  id: '3',
-                  title: 'Create Nest App - Sub Task 3',
-                  todoItemId: '1',
-                },
-              ],
+              },
             },
           },
         }));
@@ -121,7 +134,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           query: `{
           todoItem(id: 1) {
             tags(sorting: [{ field: id, direction: ASC }]) {
-              ${tagFields}
+              ${offsetConnection(tagFields)}
             }
           }
         }`,
@@ -129,10 +142,13 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         .expect(200, {
           data: {
             todoItem: {
-              tags: [
-                { id: '1', name: 'Urgent' },
-                { id: '2', name: 'Home' },
-              ],
+              tags: {
+                nodes: [
+                  { id: '1', name: 'Urgent' },
+                  { id: '2', name: 'Home' },
+                ],
+                pageInfo: { hasNextPage: false, hasPreviousPage: false },
+              },
             },
           },
         }));
@@ -147,11 +163,13 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           variables: {},
           query: `{
           todoItems {
-            ${todoItemFields}
+            ${offsetConnection(todoItemFields)}
           }
         }`,
         })
-        .expect(200, { data: { todoItems } }));
+        .expect(200, {
+          data: { todoItems: { nodes: todoItems, pageInfo: { hasNextPage: false, hasPreviousPage: false } } },
+        }));
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -161,11 +179,15 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           variables: {},
           query: `{
           todoItems(filter: { id: { in: [1, 2, 3] } }) {
-            ${todoItemFields}
+            ${offsetConnection(todoItemFields)}
           }
         }`,
         })
-        .expect(200, { data: { todoItems: todoItems.slice(0, 3) } }));
+        .expect(200, {
+          data: {
+            todoItems: { nodes: todoItems.slice(0, 3), pageInfo: { hasNextPage: false, hasPreviousPage: false } },
+          },
+        }));
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -175,11 +197,15 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           variables: {},
           query: `{
           todoItems(sorting: [{field: id, direction: DESC}]) {
-            ${todoItemFields}
+            ${offsetConnection(todoItemFields)}
           }
         }`,
         })
-        .expect(200, { data: { todoItems: todoItems.slice().reverse() } }));
+        .expect(200, {
+          data: {
+            todoItems: { nodes: todoItems.slice().reverse(), pageInfo: { hasNextPage: false, hasPreviousPage: false } },
+          },
+        }));
 
     describe('paging', () => {
       it(`should allow paging with the 'limit' field`, () =>
@@ -190,13 +216,17 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             variables: {},
             query: `{
           todoItems(paging: {limit: 2}) {
-            ${todoItemFields}
+            ${offsetConnection(todoItemFields)}
           }
         }`,
           })
-          .expect(200, { data: { todoItems: todoItems.slice(0, 2) } }));
+          .expect(200, {
+            data: {
+              todoItems: { nodes: todoItems.slice(0, 2), pageInfo: { hasNextPage: true, hasPreviousPage: false } },
+            },
+          }));
 
-      it(`should allow paging with the 'first' field and 'after'`, () =>
+      it(`should allow paging with the 'limit' field and 'offset'`, () =>
         request(app.getHttpServer())
           .post('/graphql')
           .send({
@@ -204,12 +234,15 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             variables: {},
             query: `{
           todoItems(paging: {limit: 2, offset: 2}) {
-            ${todoItemFields}
+            ${offsetConnection(todoItemFields)}
           }
         }`,
           })
-          .expect(200)
-          .expect({ data: { todoItems: todoItems.slice(2, 4) } }));
+          .expect(200, {
+            data: {
+              todoItems: { nodes: todoItems.slice(2, 4), pageInfo: { hasNextPage: true, hasPreviousPage: true } },
+            },
+          }));
     });
   });
 
@@ -616,17 +649,20 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               id
               title
               subTasks {
-                ${subTaskFields}
+                ${offsetConnection(subTaskFields)}
               }
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { id, subTasks }: { id: string; subTasks: SubTaskDTO[] } = body.data.addSubTasksToTodoItem;
+          const {
+            id,
+            subTasks,
+          }: { id: string; subTasks: OffsetConnectionType<SubTaskDTO> } = body.data.addSubTasksToTodoItem;
           expect(id).toBe('1');
-          expect(subTasks).toHaveLength(6);
-          subTasks.forEach((e) => expect(e.todoItemId).toBe('1'));
+          expect(subTasks.nodes).toHaveLength(6);
+          subTasks.nodes.forEach((e) => expect(e.todoItemId).toBe('1'));
         }));
   });
 
@@ -647,17 +683,17 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               id
               title
               tags(sorting: [{ field: id, direction: ASC }]) {
-                ${tagFields}
+                ${offsetConnection(tagFields)}
               }
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { id, tags }: { id: string; tags: TagDTO[] } = body.data.addTagsToTodoItem;
+          const { id, tags }: { id: string; tags: OffsetConnectionType<TagDTO> } = body.data.addTagsToTodoItem;
           expect(id).toBe('1');
-          expect(tags).toHaveLength(5);
-          expect(tags.map((e) => e.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
+          expect(tags.nodes).toHaveLength(5);
+          expect(tags.nodes.map((e) => e.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
         }));
   });
 
@@ -678,17 +714,17 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               id
               title
               tags(sorting: [{ field: id, direction: ASC }]) {
-                ${tagFields}
+                ${offsetConnection(tagFields)}
               }
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { id, tags }: { id: string; tags: TagDTO[] } = body.data.removeTagsFromTodoItem;
+          const { id, tags }: { id: string; tags: OffsetConnectionType<TagDTO> } = body.data.removeTagsFromTodoItem;
           expect(id).toBe('1');
-          expect(tags).toHaveLength(2);
-          expect(tags.map((e) => e.name)).toEqual(['Urgent', 'Home']);
+          expect(tags.nodes).toHaveLength(2);
+          expect(tags.nodes.map((e) => e.name)).toEqual(['Urgent', 'Home']);
         }));
   });
 
