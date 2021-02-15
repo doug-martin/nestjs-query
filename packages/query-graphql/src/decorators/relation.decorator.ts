@@ -69,8 +69,8 @@ const relationDecorator = (isMany: boolean, allowFiltering: boolean, pagingStrat
 export const Relation = relationDecorator(false, false);
 export const FilterableRelation = relationDecorator(false, true);
 
-export const UnPagedRelation = relationDecorator(true, false, PagingStrategies.NONE);
-export const FilterableUnPagedRelation = relationDecorator(true, true, PagingStrategies.NONE);
+export const AllRelations = relationDecorator(true, false, PagingStrategies.NONE);
+export const FilterableAllRelations = relationDecorator(true, true, PagingStrategies.NONE);
 
 export const OffsetConnection = relationDecorator(true, false, PagingStrategies.OFFSET);
 export const FilterableOffsetConnection = relationDecorator(true, true, PagingStrategies.OFFSET);

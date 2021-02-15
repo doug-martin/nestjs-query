@@ -9,7 +9,7 @@ import {
   OffsetConnection,
   OffsetQueryArgsType,
   Relation,
-  UnPagedRelation,
+  AllRelations,
 } from '../../../src';
 import { expectSDL } from '../../__fixtures__';
 import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
@@ -30,9 +30,9 @@ describe('FederationResolver', () => {
   @ObjectType('TestFederated')
   @Relation('relation', () => TestRelationDTO)
   @Relation('custom', () => TestRelationDTO, { relationName: 'other' })
-  @OffsetConnection('relations', () => TestRelationDTO)
-  @UnPagedRelation('relationsNoPaging', () => TestRelationDTO)
-  @CursorConnection('relationConnection', () => TestRelationDTO)
+  @AllRelations('allRelations', () => TestRelationDTO)
+  @OffsetConnection('relationOffsetConnection', () => TestRelationDTO)
+  @CursorConnection('relationCursorConnection', () => TestRelationDTO)
   class TestFederatedDTO extends TestResolverDTO {
     @FilterableField(() => ID)
     id!: string;
@@ -116,14 +116,14 @@ describe('FederationResolver', () => {
         when(
           mockService.queryRelations(
             TestRelationDTO,
-            'relationConnections',
+            'relationCursorConnections',
             deepEqual([dto]),
             objectContaining({ ...query, paging: { limit: 2, offset: 0 } }),
           ),
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const result = await resolver.queryRelationConnections(dto, query, {});
+        const result = await resolver.queryRelationCursorConnections(dto, query, {});
         return expect(result).toEqual({
           edges: [
             {
@@ -166,14 +166,14 @@ describe('FederationResolver', () => {
       when(
         mockService.queryRelations(
           TestRelationDTO,
-          'relations',
+          'relationOffsetConnections',
           deepEqual([dto]),
           objectContaining({ ...query, paging: { limit: 2 } }),
         ),
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const result = await resolver.queryRelations(dto, query, {});
+      const result = await resolver.queryRelationOffsetConnections(dto, query, {});
       return expect(result).toEqual({
         nodes: output,
         pageInfo: { hasNextPage: false, hasPreviousPage: false },
@@ -202,14 +202,14 @@ describe('FederationResolver', () => {
       when(
         mockService.queryRelations(
           TestRelationDTO,
-          'relationsNoPagings',
+          'allRelations',
           deepEqual([dto]),
           objectContaining({ filter: query.filter }),
         ),
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const result = await resolver.queryRelationsNoPagings(dto, query, {});
+      const result = await resolver.queryAllRelations(dto, query, {});
       return expect(result).toEqual(output);
     });
   });

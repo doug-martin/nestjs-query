@@ -1,11 +1,11 @@
-import { FilterableField, UnPagedRelation } from '@nestjs-query/query-graphql';
+import { FilterableField, AllRelations } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 import { TagDTO } from '../../tag/dto/tag.dto';
 
 @ObjectType('TodoItem')
-@UnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
-@UnPagedRelation('tags', () => TagDTO)
+@AllRelations('subTasks', () => SubTaskDTO, { disableRemove: true })
+@AllRelations('tags', () => TagDTO)
 export class TodoItemDTO {
   @FilterableField(() => ID)
   id!: number;

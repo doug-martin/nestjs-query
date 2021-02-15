@@ -8,7 +8,14 @@ type TestFederated {
   stringField: String!
   relation: TestRelationDTO!
   custom: TestRelationDTO!
-  relations(
+  allRelations(
+    """Specify to filter the records returned."""
+    filter: TestRelationDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestRelationDTOSort!] = []
+  ): [TestRelationDTO!]!
+  relationOffsetConnections(
     """Limit or page results."""
     paging: OffsetPaging = {limit: 10}
 
@@ -17,15 +24,8 @@ type TestFederated {
 
     """Specify to sort results."""
     sorting: [TestRelationDTOSort!] = []
-  ): TestFederatedRelationsConnection!
-  relationsNoPagings(
-    """Specify to filter the records returned."""
-    filter: TestRelationDTOFilter = {}
-
-    """Specify to sort results."""
-    sorting: [TestRelationDTOSort!] = []
-  ): [TestRelationDTO!]!
-  relationConnections(
+  ): TestFederatedRelationOffsetConnectionsConnection!
+  relationCursorConnections(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}
 
@@ -34,15 +34,7 @@ type TestFederated {
 
     """Specify to sort results."""
     sorting: [TestRelationDTOSort!] = []
-  ): TestFederatedRelationConnectionsConnection!
-}
-
-input OffsetPaging {
-  """Limit the number of records returned"""
-  limit: Int
-
-  """Offset to start returning records from"""
-  offset: Int
+  ): TestFederatedRelationCursorConnectionsConnection!
 }
 
 input TestRelationDTOFilter {
@@ -109,6 +101,14 @@ enum SortNulls {
   NULLS_LAST
 }
 
+input OffsetPaging {
+  """Limit the number of records returned"""
+  limit: Int
+
+  """Offset to start returning records from"""
+  offset: Int
+}
+
 input CursorPaging {
   """Paginate before opaque cursor"""
   before: ConnectionCursor
@@ -148,7 +148,7 @@ type PageInfo {
   endCursor: ConnectionCursor
 }
 
-type TestFederatedRelationConnectionsConnection {
+type TestFederatedRelationCursorConnectionsConnection {
   """Paging information"""
   pageInfo: PageInfo!
 
@@ -164,7 +164,7 @@ type OffsetPageInfo {
   hasPreviousPage: Boolean
 }
 
-type TestFederatedRelationsConnection {
+type TestFederatedRelationOffsetConnectionsConnection {
   """Paging information"""
   pageInfo: OffsetPageInfo!
 

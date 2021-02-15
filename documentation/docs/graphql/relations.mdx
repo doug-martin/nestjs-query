@@ -9,8 +9,8 @@ When using the `nestjs-query` you can specify relations that should be exposed f
 
 * `@Relation` - A relation that is a single value (one-to-one, many-to-one)
 * `@FilterableRelation` - A `@Relation` that enables filtering the parent by fields of the relation `DTO`.
-* `@UnPagedRelation` - An array of relations (e.g, many-to-many, one-to-many) that do not have pagination enabled.
-* `@FilterableUnPagedRelation` - An `@UnPagedRelation` that enables filtering the parent by fields of the relation
+* `@AllRelations` - An array of relations (e.g, many-to-many, one-to-many) that returns all of the related records.
+* `@FilterableAllRelations` - An `@AllRelations` that enables filtering the parent by fields of the relation
 `DTO`.
 * `@OffsetConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `offset`
  based pagination.
@@ -22,7 +22,8 @@ When using the `nestjs-query` you can specify relations that should be exposed f
  connection `DTO`.
 
 :::warning
-`@FilterableUnPagedRelation`, `@FilterableOffsetConnection`, and `@FilterableCursorConnection` are not supported by mongoose!
+`@FilterableAllRelations`, `@FilterableOffsetConnection`, and `@FilterableCursorConnection` are not supported by
+mongoose!
 :::
 
 :::note
@@ -294,22 +295,22 @@ In this example we'll find all subTasks that are related to a `todoItem` with a 
 
 ```
 
-## @UnPagedRelation
+## @AllRelations
 
-You can also use the `@UnPagedRelation` decorator to define a relation that does not use paging and returns an array
- of values.
+You can also use the `@AllRelations` decorator to define a relation that does not use paging and returns an array
+ of all the related records.
 
 ### Example
 
 Based on the entity definition above we can define a `TodoItemDTO` with a `subTasks` relation.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, UnPagedRelation } from '@nestjs-query/query-graphql';
+import { FilterableField, AllRelations } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
-@UnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
+@AllRelations('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
   @FilterableField(() => ID)
   id!: string;
@@ -393,13 +394,14 @@ input RelationsInput {
 If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodoItem` mutation would also be exposed with the same arguments as `addSubTasksToTodoItem`.
 :::
 
-## @FilterableUnPagedRelation
+## @FilterableAllRelations
 
-The `@FilterableUnPagedRelation` extends the `@UnPagedRelation` decorator exposing the ability to filter the `DTO` that defines the relation by relation properties.
+The `@FilterableAllRelations` extends the `@AllRelations` decorator exposing the ability to filter the `DTO` that
+defines the relation by relation properties.
 
 :::warning
-The `@FilterableUnPagedRelation` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`,
-`sequelize`). If your relations are federated or you are using `mongoose` you cannot use the `@FilterableUnPagedRelation`
+The `@FilterableAllRelations` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`,
+`sequelize`). If your relations are federated or you are using `mongoose` you cannot use the `@FilterableAllRelations`
 decorator.
 :::
 
@@ -409,12 +411,12 @@ In this example we'll use the same Entities defined above to create a graphql en
  by `SubTasks`.
 
 ```ts title="sub-task/sub-task.dto.ts" {6}
-import { FilterableField, FilterableUnPagedRelation } from '@nestjs-query/query-graphql';
+import { FilterableField, FilterableAllRelations } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
-@FilterableUnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
+@FilterableAllRelations('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
   @FilterableField(() => ID)
   id!: string;
@@ -432,8 +434,8 @@ export class TodoItemDTO {
   updated!: Date;
 }
 ```
-Notice the use of `@FilterableUnPagedRelation` instead of `@UnPagedRelation`, by using the
-`@FilterableUnPagedRelation` version `nestjs-query` will allow filtering on the `subTasks` relation.
+Notice the use of `@FilterableAllRelations` instead of `@AllRelations`, by using the
+`@FilterableAllRelations` version `nestjs-query` will allow filtering on the `subTasks` relation.
 
 The  module definition remains the same.
 
@@ -1039,7 +1041,7 @@ Sometimes you may want to expose a relation that has a different name when persi
     { label: 'Relation', value: 'relation', },
     { label: 'CursorConnection', value: 'cursor-connection', },
     { label: 'OffsetConnection', value: 'offset-connection', },
-    { label: 'UnPagedRelation', value: 'un-paged-relation', },
+    { label: 'AllRelations', value: 'all-relations', },
   ]
 }>
 <TabItem value="relation">
@@ -1066,11 +1068,11 @@ Sometimes you may want to expose a relation that has a different name when persi
 ```
 
 </TabItem>
-<TabItem value="un-paged-relation">
+<TabItem value="all-relations">
 
 ```ts
 // expose subTasks as subTaskConnection in graphql
-@UnPagedRelation('subTasks', () => SubTaskDTO, { relationName: 'subTasks' })
+@AllRelations('subTasks', () => SubTaskDTO, { relationName: 'subTasks' })
 ```
 
 </TabItem>
@@ -1087,7 +1089,7 @@ To disable the `read` `queries` you can set the `disableRead` option to `true`.
     { label: 'Relation', value: 'relation', },
     { label: 'CursorConnection', value: 'cursor-connection', },
     { label: 'OffsetConnection', value: 'offset-connection', },
-    { label: 'UnPagedRelation', value: 'un-paged-relation', },
+    { label: 'AllRelations', value: 'all-relations', },
   ]
 }>
 <TabItem value="relation">
@@ -1114,11 +1116,11 @@ To disable the `read` `queries` you can set the `disableRead` option to `true`.
 ```
 
 </TabItem>
-<TabItem value="un-paged-relation">
+<TabItem value="all-relations">
 
 ```ts
 // disable reading the relation
-@UnPagedRelation('subTaskConnection', () => SubTaskDTO, { disableRead: true })
+@AllRelations('subTaskConnection', () => SubTaskDTO, { disableRead: true })
 ```
 
 </TabItem>
@@ -1135,7 +1137,7 @@ To disable the `update` `mutations` you can set the `disableUpdate` option to `t
     { label: 'Relation', value: 'relation', },
     { label: 'CursorConnection', value: 'cursor-connection', },
     { label: 'OffsetConnection', value: 'offset-connection', },
-    { label: 'UnPagedRelation', value: 'un-paged-relation', },
+    { label: 'AllRelations', value: 'all-relations', },
   ]
 }>
 <TabItem value="relation">
@@ -1162,11 +1164,11 @@ To disable the `update` `mutations` you can set the `disableUpdate` option to `t
 ```
 
 </TabItem>
-<TabItem value="un-paged-relation">
+<TabItem value="all-relations">
 
 ```ts
 // disable updating subTasks
-@UnPagedRelation('subTasks', () => SubTaskDTO, { disableUpdate: true })
+@AllRelations('subTasks', () => SubTaskDTO, { disableUpdate: true })
 ```
 
 </TabItem>
@@ -1183,7 +1185,7 @@ To disable the `remove` `mutations` you can set the `disableRemove` option to `t
     { label: 'Relation', value: 'relation', },
     { label: 'CursorConnection', value: 'cursor-connection', },
     { label: 'OffsetConnection', value: 'offset-connection', },
-    { label: 'UnPagedRelation', value: 'un-paged-relation', },
+    { label: 'AllRelations', value: 'all-relations', },
   ]
 }>
 <TabItem value="relation">
@@ -1210,11 +1212,11 @@ To disable the `remove` `mutations` you can set the `disableRemove` option to `t
 ```
 
 </TabItem>
-<TabItem value="un-paged-relation">
+<TabItem value="all-relations">
 
 ```ts
 // disable removing subTasks from the relations
-@UnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
+@AllRelations('subTasks', () => SubTaskDTO, { disableRemove: true })
 ```
 
 </TabItem>
@@ -1268,7 +1270,7 @@ We can then add it to our relations
     { label: 'Relation', value: 'relation', },
     { label: 'CursorConnection', value: 'cursor-connection', },
     { label: 'OffsetConnection', value: 'offset-connection', },
-    { label: 'UnPagedRelation', value: 'un-paged-relation', },
+    { label: 'AllRelations', value: 'all-relations', },
   ]
 }>
 <TabItem value="relation">
@@ -1295,11 +1297,11 @@ We can then add it to our relations
 ```
 
 </TabItem>
-<TabItem value="un-paged-relation">
+<TabItem value="all-relations">
 
 ```ts
 // Add the AuthGuard using the guards option
-@UnPagedRelation('subTasks', () => SubTaskDTO, { guards: [AuthGuard] })
+@AllRelations('subTasks', () => SubTaskDTO, { guards: [AuthGuard] })
 ```
 
 </TabItem>
