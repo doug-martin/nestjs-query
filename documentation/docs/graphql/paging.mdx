@@ -36,13 +36,46 @@ export class TodoItemDTO {
 
 ## Cursor Based Paging
 
-By default `nestjs-query` will expose all query many endpoints as [`connections`](https://relay.dev/graphql/connections.htm) that you can use to page through results.
+By default `nestjs-query` will expose all query many endpoints as cursor based [`connections`](https://relay
+.dev/graphql/connections.htm) that you can use to page through results.
 
 :::note
 When using cursor based connections you are not tied to any particular implementation described below, because of the opaque
 nature of cursors you can start out with the default and switch to key set based cursors later on without changing
 your clients.
 :::
+
+All cursor connections, regardless of paging strategy, expose the following schema
+
+```graphql
+scalar ConnectionCursor
+
+type PageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor: ConnectionCursor
+  endCursor: ConnectionCursor
+}
+
+type TodoItemConnection {
+  pageInfo: PageInfo!
+  edges: [TodoItemEdge!]!
+}
+
+type TodoItemEdge {
+  node: TodoItem!
+  cursor: ConnectionCursor!
+}
+
+type TodoItem {
+  id: ID!
+  title: String!
+  description: String
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+}
+```
 
 ### Offset Based Cursor
 
@@ -432,7 +465,29 @@ previous example and set `last` to 2.
 
 ## Offset Based Paging
 
-An alternative to cursor based querying is to use the `OFFSET` `pagingStrategy`. When using the strategy queries that return multiple records will return an `ArrayConnection` instead of a `CursorConnection`.
+An alternative to cursor based querying is to use the `OFFSET` `pagingStrategy`. When using the `OFFSET` strategy
+queries that return multiple records will return an `OffsetConnection` that looks like the following.
+
+```graphql
+type OffsetPageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+type TodoItemConnection {
+  pageInfo: OffsetPageInfo!
+  nodes: [TodoItem!]!
+}
+
+type TodoItem {
+  id: ID!
+  title: String!
+  description: String
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+}
+```
 
 |Pros|Cons|
 |----|----|
@@ -477,15 +532,20 @@ In this example we'll fetch the first 2 records.
 
 ```graphql
 {
-  todoItems(paging: {limit: 2}) {
-    id
-    title
-    completed
-    created
-    updated
+  todoItems(paging: { limit: 2 }) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    nodes {
+      id
+      title
+      completed
+      created
+      updated
+    }
   }
 }
-
 ```
 
 </TabItem>
@@ -494,22 +554,28 @@ In this example we'll fetch the first 2 records.
 ```json
 {
   "data": {
-    "todoItems": [
-      {
-        "id": "1",
-        "title": "Create Nest App",
-        "completed": true,
-        "created": "2020-06-12T08:44:43.555Z",
-        "updated": "2020-06-12T08:44:43.555Z"
+    "todoItems": {
+      "pageInfo": {
+        "hasNextPage": true,
+        "hasPreviousPage": false
       },
-      {
-        "id": "2",
-        "title": "Create Entity",
-        "completed": false,
-        "created": "2020-06-12T08:44:43.555Z",
-        "updated": "2020-06-12T08:44:43.555Z"
-      }
-    ]
+      "nodes": [
+        {
+          "id": "1",
+          "title": "Create Nest App",
+          "completed": true,
+          "created": "2021-02-14T12:56:01.106Z",
+          "updated": "2021-02-14T12:56:01.106Z"
+        },
+        {
+          "id": "2",
+          "title": "Create Entity",
+          "completed": false,
+          "created": "2021-02-14T12:56:01.106Z",
+          "updated": "2021-02-14T12:56:01.106Z"
+        }
+      ]
+    }
   }
 }
 ```
@@ -530,14 +596,21 @@ In this example we'll also pass in an offset to fetch the next 2 records.
 
 ```graphql
 {
-  todoItems(paging: {limit: 2, offset: 2}) {
-    id
-    title
-    completed
-    created
-    updated
+  todoItems(paging: { limit: 2, offset: 2 }) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    nodes {
+      id
+      title
+      completed
+      created
+      updated
+    }
   }
 }
+
 
 ```
 
@@ -547,22 +620,28 @@ In this example we'll also pass in an offset to fetch the next 2 records.
 ```json
 {
   "data": {
-    "todoItems": [
-      {
-        "id": "3",
-        "title": "Create Entity Service",
-        "completed": false,
-        "created": "2020-06-12T08:44:43.555Z",
-        "updated": "2020-06-12T08:44:43.555Z"
+    "todoItems": {
+      "pageInfo": {
+        "hasNextPage": true,
+        "hasPreviousPage": true
       },
-      {
-        "id": "4",
-        "title": "Add Todo Item Resolver",
-        "completed": false,
-        "created": "2020-06-12T08:44:43.555Z",
-        "updated": "2020-06-12T08:44:43.555Z"
-      }
-    ]
+      "nodes": [
+        {
+          "id": "3",
+          "title": "Create Entity Service",
+          "completed": false,
+          "created": "2021-02-14T12:56:01.106Z",
+          "updated": "2021-02-14T12:56:01.106Z"
+        },
+        {
+          "id": "4",
+          "title": "Add Todo Item Resolver",
+          "completed": false,
+          "created": "2021-02-14T12:56:01.106Z",
+          "updated": "2021-02-14T12:56:01.106Z"
+        }
+      ]
+    }
   }
 }
 ```

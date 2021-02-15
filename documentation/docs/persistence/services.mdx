@@ -609,7 +609,7 @@ This section only applies when you combine your DTO and entity and are using Typ
 
 When your DTO and entity are the same class and you have relations defined, you should not decorate your the relations in the DTO with `@Field` or `@FilterableField`.
 
-Instead decorate the class with `@Connection` or `@Relation`.
+Instead decorate the class with `@CursorConnection`, `@OffsetConnection`, '@UpPagedRelation' or `@Relation`.
 
 ### Example
 
