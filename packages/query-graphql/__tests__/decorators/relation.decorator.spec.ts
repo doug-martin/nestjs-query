@@ -1,12 +1,12 @@
 // eslint-disable-next-line max-classes-per-file
 import { ObjectType } from '@nestjs/graphql';
-import { Relation, PagingStrategies, UnPagedRelation, OffsetConnection, FilterableRelation } from '../../src';
+import { Relation, PagingStrategies, AllRelations, OffsetConnection, FilterableRelation } from '../../src';
 import {
   CursorConnection,
   FilterableCursorConnection,
   FilterableOffsetConnection,
   getRelations,
-  FilterableUnPagedRelation,
+  FilterableAllRelations,
 } from '../../src/decorators';
 
 @ObjectType()
@@ -38,12 +38,12 @@ describe('@FilterableRelation', () => {
   });
 });
 
-describe('@UnPagedConnection', () => {
+describe('@AllRelations', () => {
   it('should set the isMany flag if the relationFn returns an array', () => {
     const relationFn = () => TestRelation;
     const relationOpts = { disableRead: true };
     @ObjectType()
-    @UnPagedRelation('tests', relationFn, relationOpts)
+    @AllRelations('tests', relationFn, relationOpts)
     class TestDTO {}
 
     const relations = getRelations(TestDTO);
@@ -55,12 +55,12 @@ describe('@UnPagedConnection', () => {
   });
 });
 
-describe('@FilterableUnPagedRelation', () => {
+describe('@FilterableAllRelations', () => {
   it('should add the relation metadata to the metadata storage', () => {
     const relationFn = () => TestRelation;
     const relationOpts = { disableRead: true };
     @ObjectType()
-    @FilterableUnPagedRelation('test', relationFn, relationOpts)
+    @FilterableAllRelations('test', relationFn, relationOpts)
     class TestDTO {}
 
     const relations = getRelations(TestDTO);
@@ -146,21 +146,21 @@ describe('getRelations', () => {
 
   @ObjectType({ isAbstract: true })
   @Relation('test', () => SomeRelation)
-  @UnPagedRelation('unPagedTests', () => SomeRelation)
+  @AllRelations('allTests', () => SomeRelation)
   @OffsetConnection('offsetTests', () => SomeRelation)
   @CursorConnection('cursorTests', () => SomeRelation)
   class BaseType {}
 
   @ObjectType()
   @Relation('implementedRelation', () => SomeRelation)
-  @UnPagedRelation('implementedUnPagedRelations', () => SomeRelation)
+  @AllRelations('implementedAllRelations', () => SomeRelation)
   @OffsetConnection('implementedOffsetConnection', () => SomeRelation)
   @CursorConnection('implementedCursorConnection', () => SomeRelation)
   class ImplementingClass extends BaseType {}
 
   @ObjectType()
   @Relation('implementedRelation', () => SomeRelation, { relationName: 'test' })
-  @UnPagedRelation('implementedUnPagedRelations', () => SomeRelation, { relationName: 'tests' })
+  @AllRelations('implementedAllRelations', () => SomeRelation, { relationName: 'tests' })
   @OffsetConnection('implementedOffsetConnection', () => SomeRelation, { relationName: 'tests' })
   @CursorConnection('implementedCursorConnection', () => SomeRelation, { relationName: 'testConnection' })
   class DuplicateImplementor extends ImplementingClass {}
@@ -171,7 +171,7 @@ describe('getRelations', () => {
         test: { DTO: SomeRelation, allowFiltering: false },
       },
       many: {
-        unPagedTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
+        allTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
         offsetTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
         cursorTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
       },
@@ -185,10 +185,10 @@ describe('getRelations', () => {
         implementedRelation: { DTO: SomeRelation, allowFiltering: false },
       },
       many: {
-        unPagedTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
+        allTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
         offsetTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
         cursorTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
-        implementedUnPagedRelations: {
+        implementedAllRelations: {
           DTO: SomeRelation,
           allowFiltering: false,
           pagingStrategy: PagingStrategies.NONE,
@@ -214,10 +214,10 @@ describe('getRelations', () => {
         implementedRelation: { DTO: SomeRelation, allowFiltering: false, relationName: 'test' },
       },
       many: {
-        unPagedTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
+        allTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
         offsetTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
         cursorTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
-        implementedUnPagedRelations: {
+        implementedAllRelations: {
           DTO: SomeRelation,
           allowFiltering: false,
           pagingStrategy: PagingStrategies.NONE,

@@ -65,7 +65,7 @@ Yes!
 
 The `@FilterableField` decorator accepts the same arguments as the `@Field` decorator from `@nestjs/graphql`
 
-The `@Relation` `@FilterableRelation`, `@UnPagedRelation`, `@FilterableUnPagedRelation`, `@OffsetConnection`, `@FilterableOffsetConnection`, `@CursorConnection`, and `@FilterableCursorConnection` decorators also accept a complexity option.
+The `@Relation` `@FilterableRelation`, `@AllRelations`, `@FilterableAllRelations`, `@OffsetConnection`, `@FilterableOffsetConnection`, `@CursorConnection`, and `@FilterableCursorConnection` decorators also accept a complexity option.
 
 To read more about complexity [see the nestjs docs](https://docs.nestjs.com/graphql/complexity)
 

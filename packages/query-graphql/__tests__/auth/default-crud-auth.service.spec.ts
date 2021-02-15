@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Filter } from '@nestjs-query/core';
 import { Injectable } from '@nestjs/common';
-import { Authorizer, Relation, Authorize, UnPagedRelation } from '../../src';
+import { Authorizer, Relation, Authorize, AllRelations } from '../../src';
 import { getAuthorizerToken } from '../../src/auth';
 import { createAuthorizerProviders } from '../../src/providers';
 
@@ -39,7 +39,7 @@ describe('createDefaultAuthorizer', () => {
   @Relation('relations', () => TestRelation, {
     auth: { authorize: (ctx: UserContext) => ({ relationOwnerId: { eq: ctx.user.id } }) },
   })
-  @UnPagedRelation('decoratorRelations', () => TestDecoratorRelation)
+  @AllRelations('allDecoratorRelations', () => TestDecoratorRelation)
   @Relation('authorizerRelation', () => RelationWithAuthorizer)
   class TestDTO {
     ownerId!: number;
@@ -79,7 +79,7 @@ describe('createDefaultAuthorizer', () => {
 
   it('should create an auth filter for relations using the default auth decorator', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation('decoratorRelations', { user: { id: 2 } });
+    const filter = await authorizer.authorizeRelation('allDecoratorRelations', { user: { id: 2 } });
     expect(filter).toEqual({ decoratorOwnerId: { eq: 2 } });
   });
 
