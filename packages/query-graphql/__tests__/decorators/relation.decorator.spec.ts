@@ -1,7 +1,13 @@
 // eslint-disable-next-line max-classes-per-file
 import { ObjectType } from '@nestjs/graphql';
-import { Relation, Connection, PagingStrategies, FilterableRelation, FilterableConnection } from '../../src';
-import { getRelations } from '../../src/decorators';
+import { Relation, PagingStrategies, UnPagedRelation, OffsetConnection, FilterableRelation } from '../../src';
+import {
+  CursorConnection,
+  FilterableCursorConnection,
+  FilterableOffsetConnection,
+  getRelations,
+  FilterableUnPagedRelation,
+} from '../../src/decorators';
 
 @ObjectType()
 class TestRelation {}
@@ -15,20 +21,7 @@ describe('@Relation', () => {
     class TestDTO {}
 
     const relations = getRelations(TestDTO);
-    expect(relations).toEqual({ one: { test: { DTO: TestRelation, ...relationOpts } } });
-  });
-
-  it('should set the isMany flag if the relationFn returns an array', () => {
-    const relationFn = () => [TestRelation];
-    const relationOpts = { disableRead: true };
-    @ObjectType()
-    @Relation('tests', relationFn, relationOpts)
-    class TestDTO {}
-
-    const relations = getRelations(TestDTO);
-    expect(relations).toEqual({
-      many: { tests: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.OFFSET } },
-    });
+    expect(relations).toEqual({ one: { test: { DTO: TestRelation, allowFiltering: false, ...relationOpts } } });
   });
 });
 
@@ -43,44 +36,99 @@ describe('@FilterableRelation', () => {
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({ one: { test: { DTO: TestRelation, ...relationOpts, allowFiltering: true } } });
   });
+});
 
+describe('@UnPagedConnection', () => {
   it('should set the isMany flag if the relationFn returns an array', () => {
-    const relationFn = () => [TestRelation];
+    const relationFn = () => TestRelation;
     const relationOpts = { disableRead: true };
     @ObjectType()
-    @FilterableRelation('tests', relationFn, relationOpts)
+    @UnPagedRelation('tests', relationFn, relationOpts)
     class TestDTO {}
 
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({
       many: {
-        tests: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.OFFSET, allowFiltering: true },
+        tests: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
       },
     });
   });
 });
 
-describe('@Connection', () => {
+describe('@FilterableUnPagedRelation', () => {
   it('should add the relation metadata to the metadata storage', () => {
     const relationFn = () => TestRelation;
     const relationOpts = { disableRead: true };
     @ObjectType()
-    @Connection('test', relationFn, relationOpts)
+    @FilterableUnPagedRelation('test', relationFn, relationOpts)
     class TestDTO {}
 
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({
-      many: { test: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.CURSOR } },
+      many: {
+        test: { DTO: TestRelation, pagingStrategy: PagingStrategies.NONE, ...relationOpts, allowFiltering: true },
+      },
     });
   });
 });
 
-describe('@FilterableConnection', () => {
+describe('@OffsetConnection', () => {
   it('should add the relation metadata to the metadata storage', () => {
     const relationFn = () => TestRelation;
     const relationOpts = { disableRead: true };
     @ObjectType()
-    @FilterableConnection('test', relationFn, relationOpts)
+    @OffsetConnection('test', relationFn, relationOpts)
+    class TestDTO {}
+
+    const relations = getRelations(TestDTO);
+    expect(relations).toEqual({
+      many: {
+        test: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
+      },
+    });
+  });
+});
+
+describe('@FilterableOffsetConnection', () => {
+  it('should add the relation metadata to the metadata storage', () => {
+    const relationFn = () => TestRelation;
+    const relationOpts = { disableRead: true };
+    @ObjectType()
+    @FilterableOffsetConnection('test', relationFn, relationOpts)
+    class TestDTO {}
+
+    const relations = getRelations(TestDTO);
+    expect(relations).toEqual({
+      many: {
+        test: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.OFFSET, allowFiltering: true },
+      },
+    });
+  });
+});
+
+describe('@CursorConnection', () => {
+  it('should add the relation metadata to the metadata storage', () => {
+    const relationFn = () => TestRelation;
+    const relationOpts = { disableRead: true };
+    @ObjectType()
+    @CursorConnection('test', relationFn, relationOpts)
+    class TestDTO {}
+
+    const relations = getRelations(TestDTO);
+    expect(relations).toEqual({
+      many: {
+        test: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
+      },
+    });
+  });
+});
+
+describe('@FilterableCursorConnection', () => {
+  it('should add the relation metadata to the metadata storage', () => {
+    const relationFn = () => TestRelation;
+    const relationOpts = { disableRead: true };
+    @ObjectType()
+    @FilterableCursorConnection('test', relationFn, relationOpts)
     class TestDTO {}
 
     const relations = getRelations(TestDTO);
@@ -98,30 +146,34 @@ describe('getRelations', () => {
 
   @ObjectType({ isAbstract: true })
   @Relation('test', () => SomeRelation)
-  @Relation('tests', () => [SomeRelation])
-  @Connection('testConnection', () => SomeRelation)
+  @UnPagedRelation('unPagedTests', () => SomeRelation)
+  @OffsetConnection('offsetTests', () => SomeRelation)
+  @CursorConnection('cursorTests', () => SomeRelation)
   class BaseType {}
 
   @ObjectType()
   @Relation('implementedRelation', () => SomeRelation)
-  @Relation('implementedRelations', () => [SomeRelation])
-  @Connection('implementedConnection', () => SomeRelation)
+  @UnPagedRelation('implementedUnPagedRelations', () => SomeRelation)
+  @OffsetConnection('implementedOffsetConnection', () => SomeRelation)
+  @CursorConnection('implementedCursorConnection', () => SomeRelation)
   class ImplementingClass extends BaseType {}
 
   @ObjectType()
   @Relation('implementedRelation', () => SomeRelation, { relationName: 'test' })
-  @Relation('implementedRelations', () => [SomeRelation], { relationName: 'tests' })
-  @Connection('implementedConnection', () => SomeRelation, { relationName: 'testConnection' })
+  @UnPagedRelation('implementedUnPagedRelations', () => SomeRelation, { relationName: 'tests' })
+  @OffsetConnection('implementedOffsetConnection', () => SomeRelation, { relationName: 'tests' })
+  @CursorConnection('implementedCursorConnection', () => SomeRelation, { relationName: 'testConnection' })
   class DuplicateImplementor extends ImplementingClass {}
 
   it('should return relations for a type', () => {
     expect(getRelations(BaseType)).toEqual({
       one: {
-        test: { DTO: SomeRelation },
+        test: { DTO: SomeRelation, allowFiltering: false },
       },
       many: {
-        tests: { DTO: SomeRelation, pagingStrategy: 'offset' },
-        testConnection: { DTO: SomeRelation, pagingStrategy: 'cursor' },
+        unPagedTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
+        offsetTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
+        cursorTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
       },
     });
   });
@@ -129,14 +181,28 @@ describe('getRelations', () => {
   it('should return inherited relations fields for a type', () => {
     expect(getRelations(ImplementingClass)).toEqual({
       one: {
-        test: { DTO: SomeRelation },
-        implementedRelation: { DTO: SomeRelation },
+        test: { DTO: SomeRelation, allowFiltering: false },
+        implementedRelation: { DTO: SomeRelation, allowFiltering: false },
       },
       many: {
-        tests: { DTO: SomeRelation, pagingStrategy: PagingStrategies.OFFSET },
-        testConnection: { DTO: SomeRelation, pagingStrategy: PagingStrategies.CURSOR },
-        implementedRelations: { DTO: SomeRelation, pagingStrategy: PagingStrategies.OFFSET },
-        implementedConnection: { DTO: SomeRelation, pagingStrategy: PagingStrategies.CURSOR },
+        unPagedTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
+        offsetTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
+        cursorTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
+        implementedUnPagedRelations: {
+          DTO: SomeRelation,
+          allowFiltering: false,
+          pagingStrategy: PagingStrategies.NONE,
+        },
+        implementedOffsetConnection: {
+          DTO: SomeRelation,
+          allowFiltering: false,
+          pagingStrategy: PagingStrategies.OFFSET,
+        },
+        implementedCursorConnection: {
+          DTO: SomeRelation,
+          allowFiltering: false,
+          pagingStrategy: PagingStrategies.CURSOR,
+        },
       },
     });
   });
@@ -144,15 +210,28 @@ describe('getRelations', () => {
   it('should exclude duplicate inherited relations fields for a type', () => {
     expect(getRelations(DuplicateImplementor)).toEqual({
       one: {
-        test: { DTO: SomeRelation },
-        implementedRelation: { DTO: SomeRelation, relationName: 'test' },
+        test: { DTO: SomeRelation, allowFiltering: false },
+        implementedRelation: { DTO: SomeRelation, allowFiltering: false, relationName: 'test' },
       },
       many: {
-        tests: { DTO: SomeRelation, pagingStrategy: PagingStrategies.OFFSET },
-        testConnection: { DTO: SomeRelation, pagingStrategy: PagingStrategies.CURSOR },
-        implementedRelations: { DTO: SomeRelation, pagingStrategy: PagingStrategies.OFFSET, relationName: 'tests' },
-        implementedConnection: {
+        unPagedTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
+        offsetTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
+        cursorTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
+        implementedUnPagedRelations: {
           DTO: SomeRelation,
+          allowFiltering: false,
+          pagingStrategy: PagingStrategies.NONE,
+          relationName: 'tests',
+        },
+        implementedOffsetConnection: {
+          DTO: SomeRelation,
+          allowFiltering: false,
+          pagingStrategy: PagingStrategies.OFFSET,
+          relationName: 'tests',
+        },
+        implementedCursorConnection: {
+          DTO: SomeRelation,
+          allowFiltering: false,
           pagingStrategy: PagingStrategies.CURSOR,
           relationName: 'testConnection',
         },

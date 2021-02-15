@@ -2,13 +2,14 @@ import { Class } from '@nestjs-query/core';
 import { ObjectType, Query, Resolver, ID } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when } from 'ts-mockito';
 import {
-  Connection,
+  CursorConnection,
   CursorQueryArgsType,
   FederationResolver,
   FilterableField,
+  OffsetConnection,
   OffsetQueryArgsType,
-  PagingStrategies,
   Relation,
+  UnPagedRelation,
 } from '../../../src';
 import { expectSDL } from '../../__fixtures__';
 import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
@@ -29,9 +30,9 @@ describe('FederationResolver', () => {
   @ObjectType('TestFederated')
   @Relation('relation', () => TestRelationDTO)
   @Relation('custom', () => TestRelationDTO, { relationName: 'other' })
-  @Relation('relations', () => [TestRelationDTO])
-  @Relation('relationsNoPaging', () => [TestRelationDTO], { pagingStrategy: PagingStrategies.NONE })
-  @Connection('relationConnection', () => TestRelationDTO)
+  @OffsetConnection('relations', () => TestRelationDTO)
+  @UnPagedRelation('relationsNoPaging', () => TestRelationDTO)
+  @CursorConnection('relationConnection', () => TestRelationDTO)
   class TestFederatedDTO extends TestResolverDTO {
     @FilterableField(() => ID)
     id!: string;
@@ -163,12 +164,21 @@ describe('FederationResolver', () => {
         },
       ];
       when(
-        mockService.queryRelations(TestRelationDTO, 'relations', deepEqual([dto]), objectContaining(query)),
+        mockService.queryRelations(
+          TestRelationDTO,
+          'relations',
+          deepEqual([dto]),
+          objectContaining({ ...query, paging: { limit: 2 } }),
+        ),
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.queryRelations(dto, query, {});
-      return expect(result).toEqual(output);
+      return expect(result).toEqual({
+        nodes: output,
+        pageInfo: { hasNextPage: false, hasPreviousPage: false },
+        totalCountFn: expect.any(Function),
+      });
     });
   });
 
@@ -190,7 +200,12 @@ describe('FederationResolver', () => {
         },
       ];
       when(
-        mockService.queryRelations(TestRelationDTO, 'relationsNoPagings', deepEqual([dto]), objectContaining(query)),
+        mockService.queryRelations(
+          TestRelationDTO,
+          'relationsNoPagings',
+          deepEqual([dto]),
+          objectContaining({ filter: query.filter }),
+        ),
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call

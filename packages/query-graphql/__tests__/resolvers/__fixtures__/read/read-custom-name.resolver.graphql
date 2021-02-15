@@ -28,6 +28,14 @@ type PageInfo {
   endCursor: ConnectionCursor
 }
 
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
 type TestConnection {
   """Paging information"""
   pageInfo: PageInfo!

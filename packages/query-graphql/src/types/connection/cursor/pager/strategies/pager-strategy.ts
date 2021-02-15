@@ -28,12 +28,12 @@ export interface KeySetPagingOpts<DTO> {
   hasBefore: boolean;
 }
 
-export type PagingOpts<DTO> = OffsetPagingOpts | KeySetPagingOpts<DTO>;
+export type CursorPagingOpts<DTO> = OffsetPagingOpts | KeySetPagingOpts<DTO>;
 
 export interface PagerStrategy<DTO> {
-  toCursor(dto: DTO, index: number, opts: PagingOpts<DTO>, query: Query<DTO>): string;
-  fromCursorArgs(cursor: CursorPagingType): PagingOpts<DTO>;
-  isEmptyCursor(opts: PagingOpts<DTO>): boolean;
-  createQuery(query: Query<DTO>, opts: PagingOpts<DTO>, includeExtraNode: boolean): Query<DTO>;
-  checkForExtraNode(nodes: DTO[], opts: PagingOpts<DTO>): DTO[];
+  toCursor(dto: DTO, index: number, opts: CursorPagingOpts<DTO>, query: Query<DTO>): string;
+  fromCursorArgs(cursor: CursorPagingType): CursorPagingOpts<DTO>;
+  isEmptyCursor(opts: CursorPagingOpts<DTO>): boolean;
+  createQuery(query: Query<DTO>, opts: CursorPagingOpts<DTO>, includeExtraNode: boolean): Query<DTO>;
+  checkForExtraNode(nodes: DTO[], opts: CursorPagingOpts<DTO>): DTO[];
 }

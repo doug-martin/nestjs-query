@@ -116,8 +116,11 @@ export const readCustomConnectionResolverSDL = readGraphql(
 );
 export const readCustomQueryResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-custom-query.resolver.graphql'));
 export const readOffsetQueryResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-offset-query.resolver.graphql'));
-export const readConnectionWithTotalCountSDL = readGraphql(
-  resolve(__dirname, 'read', 'read-connection-with-total-count.resolver.graphql'),
+export const readCursorConnectionWithTotalCountSDL = readGraphql(
+  resolve(__dirname, 'read', 'read-cursor-connection-with-total-count.resolver.graphql'),
+);
+export const readOffsetConnectionWithTotalCountSDL = readGraphql(
+  resolve(__dirname, 'read', 'read-offset-connection-with-total-count.resolver.graphql'),
 );
 export const readCustomOneQueryResolverSDL = readGraphql(
   resolve(__dirname, 'read', 'read-custom-one-query.resolver.graphql'),
