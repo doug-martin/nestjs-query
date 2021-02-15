@@ -4,7 +4,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import { refresh } from './fixtures';
-import { subTaskFields, todoItemFields } from './graphql-fragments';
+import { offsetConnection, subTaskFields, todoItemFields } from './graphql-fragments';
 
 describe('SubTaskResolver (limitOffset - e2e)', () => {
   let app: INestApplication;
@@ -180,12 +180,13 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
           variables: {},
           query: `{
           subTasks {
-           ${subTaskFields}
+           ${offsetConnection(subTaskFields)}
           }
         }`,
         })
-        .expect(200)
-        .expect({ data: { subTasks: subTasks.slice(0, 10) } }));
+        .expect(200, {
+          data: { subTasks: { nodes: subTasks.slice(0, 10), pageInfo: { hasNextPage: true, hasPreviousPage: false } } },
+        }));
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -195,12 +196,13 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
           variables: {},
           query: `{
           subTasks(filter: { id: { in: [1, 2, 3] } }) {
-            ${subTaskFields}
+            ${offsetConnection(subTaskFields)}
           }
         }`,
         })
-        .expect(200)
-        .expect({ data: { subTasks: subTasks.slice(0, 3) } }));
+        .expect(200, {
+          data: { subTasks: { nodes: subTasks.slice(0, 3), pageInfo: { hasNextPage: false, hasPreviousPage: false } } },
+        }));
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -210,12 +212,18 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
           variables: {},
           query: `{
           subTasks(sorting: [{field: id, direction: DESC}]) {
-           ${subTaskFields}
+           ${offsetConnection(subTaskFields)}
           }
         }`,
         })
-        .expect(200)
-        .expect({ data: { subTasks: subTasks.slice().reverse().slice(0, 10) } }));
+        .expect(200, {
+          data: {
+            subTasks: {
+              nodes: subTasks.slice().reverse().slice(0, 10),
+              pageInfo: { hasNextPage: true, hasPreviousPage: false },
+            },
+          },
+        }));
 
     describe('paging', () => {
       it(`should allow paging with the 'limit' field`, () =>
@@ -226,12 +234,15 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
             variables: {},
             query: `{
           subTasks(paging: {limit: 2}) {
-            ${subTaskFields}
+            ${offsetConnection(subTaskFields)}
           }
         }`,
           })
-          .expect(200)
-          .expect({ data: { subTasks: subTasks.slice(0, 2) } }));
+          .expect(200, {
+            data: {
+              subTasks: { nodes: subTasks.slice(0, 2), pageInfo: { hasNextPage: true, hasPreviousPage: false } },
+            },
+          }));
 
       it(`should allow paging with the 'limit' field and 'offset'`, () =>
         request(app.getHttpServer())
@@ -241,12 +252,13 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
             variables: {},
             query: `{
           subTasks(paging: {limit: 2, offset: 2}) {
-            ${subTaskFields}
+            ${offsetConnection(subTaskFields)}
           }
         }`,
           })
-          .expect(200)
-          .expect({ data: { subTasks: subTasks.slice(2, 4) } }));
+          .expect(200, {
+            data: { subTasks: { nodes: subTasks.slice(2, 4), pageInfo: { hasNextPage: true, hasPreviousPage: true } } },
+          }));
     });
   });
 

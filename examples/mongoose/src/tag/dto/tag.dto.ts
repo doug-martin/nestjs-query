@@ -10,7 +10,7 @@ import {
   BeforeUpdateMany,
   UpdateManyInputType,
   KeySet,
-  Connection,
+  CursorConnection,
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
@@ -19,7 +19,7 @@ import { getUserName } from '../../helpers';
 
 @ObjectType('Tag')
 @KeySet(['id'])
-@Connection('todoItems', () => TodoItemDTO, { disableUpdate: true, disableRemove: true })
+@CursorConnection('todoItems', () => TodoItemDTO, { disableUpdate: true, disableRemove: true })
 @BeforeCreateOne((input: CreateOneInputType<TagDTO>, context: GqlContext) => {
   input.input.createdBy = getUserName(context);
   return input;
