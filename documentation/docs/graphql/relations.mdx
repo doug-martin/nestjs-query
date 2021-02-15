@@ -7,15 +7,22 @@ import TabItem from '@theme/TabItem';
 
 When using the `nestjs-query` you can specify relations that should be exposed for the DTO using the following decorators.
 
-* `@Relation` - A relation that is:
-    * a single value (one-to-one, many-to-one)
-    * an array of values that should use `OFFSET` or `NONE` paging.
-* `@Connection` - A connection that represents a collection that should use `cursor` based pagination. (e.g, many-to-many, one-to-many)
-* `@FilterableRelation` - Same as the `@Relation` Decorator but also enables filtering on the relation.
-* `@FilterableConnection` - Same as `@Connection` but also enables filtering on the relation.
+* `@Relation` - A relation that is a single value (one-to-one, many-to-one)
+* `@FilterableRelation` - A `@Relation` that enables filtering the parent by fields of the relation `DTO`.
+* `@UnPagedRelation` - An array of relations (e.g, many-to-many, one-to-many) that do not have pagination enabled.
+* `@FilterableUnPagedRelation` - An `@UnPagedRelation` that enables filtering the parent by fields of the relation
+`DTO`.
+* `@OffsetConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `offset`
+ based pagination.
+* `@FilterableOffsetConnection` - An `@OffsetConnection` that enables filtering the parent by fields of the connection
+ `DTO`.
+* `@CursorConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `cursor`
+ based pagination.
+* `@FilterableCursorConnection` - A `@CursorConnection` that enables filtering the parent by fields of the
+ connection `DTO`.
 
 :::warning
-Filterable relations and connections are not supported by mongoose!
+`@FilterableUnPagedRelation`, `@FilterableOffsetConnection`, and `@FilterableCursorConnection` are not supported by mongoose!
 :::
 
 :::note
@@ -112,11 +119,11 @@ export class SubTaskEntity {
 </TabItem>
 </Tabs>
 
-## @Relation Decorator
+## @Relation
 
-### Single Relation
+A relation that is a single value (one-to-one, many-to-one)
 
-#### DTO Definition
+### Example
 
 Based on the entities defined above we can add a `todoItem` relation to the `SubTask` by creating the following `SubTaskDTO` with a `@Relation` decorator.
 
@@ -159,8 +166,6 @@ The `@Relation` decorator lets `nestjs-query` know to expose the following endpo
 :::note
 In this example we `disableRemove`, because `todoItem` is not nullable, by specifying the `disableRemove` option.
 :::
-
-#### Resolver
 
 To set up the resolver you can use the `NestjsQueryGraphQLModule`.
 
@@ -213,120 +218,7 @@ input RelationInput {
 If `disableRemove` was set to `false` or not specified a `removeTodoItemFromSubTask` mutation would also be exposed with the same arguments as `setTodoItemOnSubTask`.
 :::
 
-### Many Relation
-
-You can also use the `@Relation` decorator to define a relation that returns an array of values.
-
-:::note
-The preferred method for adding a relation that represents multiple records is to use the [@Connection decorator](#connection-decorator)
-:::
-
-Based on the entity definition above we can define a `TodoItemDTO` with a `subTasks` relation.
-
-```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, Connection } from '@nestjs-query/query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
-import { SubTaskDTO } from '../sub-task/sub-task.dto'
-
-@ObjectType('TodoItem')
-@Relation('subTasks', () => [SubTaskDTO], { disableRemove: true })
-export class TodoItemDTO {
-  @FilterableField(() => ID)
-  id!: string;
-
-  @FilterableField()
-  title!: string;
-
-  @FilterableField()
-  completed!: boolean;
-
-  @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
-
-  @FilterableField(() => GraphQLISODateTime)
-  updated!: Date;
-}
-
-```
-
-Notice how the relation is defined as `[SubTaskDTO]` this lets `nestjs-query` know that it should return an array of `subTasks`
-
-When specifying a many relation a couple of endpoints will automatically be generated. In this example the following are generated.
-
-* `todoItem.subTasks` - A `query` to retrieve a `TodoItems` `SubTasks`.
-    * The `subTasks` property will accept a [query](../concepts/queries.mdx) to allow you to filter, page and sort results.
-    * The `subTasks` will be returned as an array of results.
-* `addSubTasksToTodoItem` - A `mutation` to add `SubTasks` to a `TodoItem`.
-
-:::note
-You can disable paging by setting the `pagingStrategy` option to `PagingStrategies.NONE`.
-```ts
-@Relation('subTasks', () => [SubTaskDTO], { pagingStrategy: PagingStrategies.NONE, disableRemove: true })
-```
-:::
-
-
-:::note
-In this example we `disableRemove` because `SubTasks` cannot exist without a `TodoItem`.
-:::
-
-#### Resolver
-
-To set up the resolver you can use the `NestjsQueryGraphQLModule`.
-
-```ts title="todo-item/todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
-import { Module } from '@nestjs/common';
-import { TodoItemDTO } from './todo-item.dto';
-import { TodoItemEntity } from './todo-item.entity';
-
-@Module({
-  imports: [
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
-      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
-    }),
-  ],
-})
-export class TodoItemModule {}
-```
-
-The generated schema will contain a `TodoItem` type like the following.
-
-```graphql
-type TodoItem {
-  id: ID!
-  title: String!
-  completed: Boolean!
-  created: DateTime!
-  updated: DateTime!
-  subTasks(
-    paging: LimitOffsetPaging = { limit: 10 }
-    filter: SubTaskFilter = {}
-    sorting: [SubTaskSort!] = []
-  ): [SubTask!]!
-}
-```
-
-The following mutations will also be automatically exposed.
-
-```graphql
-type Mutation {
-   addSubTasksToTodoItem(input: RelationsInput!): TodoItem!
-}
-
-input RelationsInput {
-  id: ID!
-  relationIds: [ID!]!
-}
-```
-
-:::note
-If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodoItem` mutation would also be exposed with the same arguments as `addSubTasksToTodoItem`.
-:::
-
-## @FilterableRelation Decorator
+## @FilterableRelation
 
 The `@FilterableRelation` extends the `@Relation` decorator exposing the ability to filter the `DTO` that defines the relation by relation properties.
 
@@ -402,20 +294,22 @@ In this example we'll find all subTasks that are related to a `todoItem` with a 
 
 ```
 
+## @UnPagedRelation
 
-## @Connection Decorator
+You can also use the `@UnPagedRelation` decorator to define a relation that does not use paging and returns an array
+ of values.
 
-### DTO Definition
+### Example
 
-Based on the entity definitions above we can create a `TodoItemDTO` with a connection to the `subTasks`.
+Based on the entity definition above we can define a `TodoItemDTO` with a `subTasks` relation.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, UnPagedRelation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
-@Connection('subTasks', () => SubTaskDTO, { disableRemove: true })
+@UnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
   @FilterableField(() => ID)
   id!: string;
@@ -435,18 +329,463 @@ export class TodoItemDTO {
 
 ```
 
-When specifying a connection relation a couple of endpoints will automatically be generated. In this example the following are generated.
+When specifying a many relation a couple of endpoints will automatically be generated. In this example the following are generated.
 
-* `todoItem.subTasks` - A `query` to retrieve a `TodoItems` `SubTasks`.
-    * The `subTasks` property will accept a [query](../concepts/queries.mdx) to allow you to filter, page and sort results.
-    * The `subTasks` property will return a [connection](./types.mdx#connectiontype) to page through results.
+* `todoItem.subTasks` - A `query` endpoint to retrieve a `TodoItems` `SubTasks`.
+    * The `subTasks` property will accept a [query](../concepts/queries.mdx) to allow you to filter, and sort results.
+    * The `subTasks` will be returned as an array of results.
 * `addSubTasksToTodoItem` - A `mutation` to add `SubTasks` to a `TodoItem`.
 
 :::note
 In this example we `disableRemove` because `SubTasks` cannot exist without a `TodoItem`.
 :::
 
-### Resolver
+To set up the resolver you can use the `NestjsQueryGraphQLModule`.
+
+```ts title="todo-item/todo-item.module.ts"
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+The generated schema will contain a `TodoItem` type like the following.
+
+```graphql
+type TodoItem {
+  id: ID!
+  title: String!
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  subTasks(
+    filter: SubTaskFilter = {}
+    sorting: [SubTaskSort!] = []
+  ): [SubTask!]!
+}
+```
+
+The following mutations will also be automatically exposed.
+
+```graphql
+type Mutation {
+   addSubTasksToTodoItem(input: RelationsInput!): TodoItem!
+}
+
+input RelationsInput {
+  id: ID!
+  relationIds: [ID!]!
+}
+```
+
+:::note
+If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodoItem` mutation would also be exposed with the same arguments as `addSubTasksToTodoItem`.
+:::
+
+## @FilterableUnPagedRelation
+
+The `@FilterableUnPagedRelation` extends the `@UnPagedRelation` decorator exposing the ability to filter the `DTO` that defines the relation by relation properties.
+
+:::warning
+The `@FilterableUnPagedRelation` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`,
+`sequelize`). If your relations are federated or you are using `mongoose` you cannot use the `@FilterableUnPagedRelation`
+decorator.
+:::
+
+### Example
+
+In this example we'll use the same Entities defined above to create a graphql endpoint that allows filtering `TodoItems`
+ by `SubTasks`.
+
+```ts title="sub-task/sub-task.dto.ts" {6}
+import { FilterableField, FilterableUnPagedRelation } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/sub-task.dto'
+
+@ObjectType('TodoItem')
+@FilterableUnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+```
+Notice the use of `@FilterableUnPagedRelation` instead of `@UnPagedRelation`, by using the
+`@FilterableUnPagedRelation` version `nestjs-query` will allow filtering on the `subTasks` relation.
+
+The  module definition remains the same.
+
+```ts title="sub-task/sub-task.module.ts"
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+When querying for `TodoItems` you can now also filter on `subTasks` properties.
+
+In this example we'll find all `todoItems` that are related to a `subTasks` that are completed.
+```graphql
+{
+  todoItems(filter: { subTasks: { completed: { is: true } } }) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges {
+      node {
+        id
+        title
+        description
+        completed
+        subTasks {
+          title
+          description
+          completed
+        }
+      }
+      cursor
+    }
+  }
+}
+```
+
+## @OffsetConnection
+
+### Example
+
+Based on the entity definitions above we can create a `TodoItemDTO` with a connection to the `subTasks`.
+
+```ts title="todo-item/todo-item.dto.ts" {6}
+import { FilterableField, OffsetConnection } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/sub-task.dto'
+
+@ObjectType('TodoItem')
+@OffsetConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+When specifying a `@OffsetConnection` relation a couple of endpoints will automatically be generated. In this example
+ the following are generated.
+
+* `todoItem.subTasks` - A `query` to retrieve a `TodoItems` `SubTasks`.
+    * The `subTasks` property will accept a [query](../concepts/queries.mdx) to allow you to filter, page and sort results.
+    * The `subTasks` property will return a offset based [connection](./types.mdx#connectiontype) to page through
+    results.
+* `addSubTasksToTodoItem` - A `mutation` to add `SubTasks` to a `TodoItem`.
+
+:::note
+In this example we `disableRemove` because `SubTasks` cannot exist without a `TodoItem`.
+:::
+
+To set up the resolver you can use the `NestjsQueryGraphQLModule`.
+
+```ts title="todo-item/todo-item.module.ts"
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+The generated schema will contain a `TodoItem` type like the following.
+
+```graphql
+type TodoItem {
+  id: ID!
+  title: String!
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  subTasks(
+    paging: OffsetPaging = { limit: 10 }
+
+    filter: SubTaskFilter = {}
+
+    sorting: [SubTaskSort!] = []
+  ): TodoItemSubTasksConnection!
+}
+```
+
+The following mutations will also be automatically exposed.
+
+```graphql
+type Mutation {
+   addSubTasksToTodoItem(input: RelationsInput!): TodoItem!
+}
+
+input RelationsInput {
+  id: ID!
+  relationIds: [ID!]!
+}
+```
+
+:::note
+If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodoItem` mutation would also be exposed with the same arguments as `addSubTasksToTodoItem`.
+:::
+
+### Total Count Example
+
+:::warning
+Enabling `totalCount` can be expensive. If your table is large the `totalCount` query may be expensive, use with caution.
+:::
+:::info
+The `totalCount` field is not eagerly fetched. It will only be executed if the field is queried from the client.
+:::
+
+When using the `@OffsetConnection` decorator you can enable the `totalCount` field. The `totalCount` field will return the total number of records included in the connection.
+
+```ts title="todo-item/todo-item.dto.ts" {6}
+import { FilterableField, OffsetConnection } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/sub-task.dto'
+
+@ObjectType('TodoItem')
+@OffsetConnection('subTasks', () => SubTaskDTO, { disableRemove: true, enableTotalCount: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+The generated graphql will include a `TodoItemSubTasksConnection` with a `totalCount` field.
+
+```graphql {19}
+type TodoItem {
+  id: ID!
+  title: String!
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  subTasks(
+    paging: OffsetPaging = { limit: 10 }
+
+    filter: SubTaskFilter = {}
+
+    sorting: [SubTaskSort!] = []
+  ): TodoItemSubTasksConnection!
+}
+
+type TodoItemSubTasksConnection {
+  pageInfo: OffsetPageInfo!
+  nodes: [SubTask!]!
+  totalCount: Int!
+}
+
+```
+
+
+## @FilterableOffsetConnection
+
+The `@FilterableOffsetConnection` extends the `@OffsetConnection` decorator exposing the ability to filter the `DTO`
+that defines the relation by relation properties.
+
+:::warning
+The `@FilterableOffsetConnection` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`,
+`sequelize`). If your relations are federated or you are using `mongoose` you cannot use the `@FilterableConnection`
+decorator.
+:::
+
+### Example
+
+In this example we'll use the same Entities defined above to create a graphql endpoint that allows filtering `TodoItems` by `subTasks`.
+
+```ts title="todo-item/todo-item.dto.ts" {6}
+import { FilterableField, FilterableOffsetConnection } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/sub-task.dto'
+
+@ObjectType('TodoItem')
+@FilterableOffsetConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+Notice the use of `@FilterableOffsetConnection` instead of `@OffsetConnection`, by using the
+`@FilterableOffsetConnection` version `nestjs-query` will allow filtering on the `subTasks` relation.
+
+The  module definition remains the same.
+
+```ts title="todo-item/todo-item.module.ts"
+import { PagingStrategies } from '@nestjs-query/core';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { Module } from '@nestjs/common';
+import { TodoItemDTO } from './todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity, pagingStrategy: PagingStrategies.OFFSET }],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+When querying for `TodoItems` you can now also filter on `subTasks` properties.
+
+In this example we'll find all `todoItems` that have `subTasks` that are completed.
+```graphql
+{
+  todoItems(filter: { subTasks: { completed: { is: true } } }) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    nodes {
+      id
+      title
+      description
+      completed
+      subTasks {
+        nodes {
+          title
+          description
+          completed
+        }
+      }
+    }
+  }
+}
+```
+
+## @CursorConnection
+
+### Example
+
+Based on the entity definitions above we can create a `TodoItemDTO` with a connection to the `subTasks`.
+
+```ts title="todo-item/todo-item.dto.ts" {6}
+import { FilterableField, CursorConnection } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { SubTaskDTO } from '../sub-task/sub-task.dto'
+
+@ObjectType('TodoItem')
+@CursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+When specifying a `@CursorConnection` relation a couple of endpoints will automatically be generated. In this example
+ the
+following are generated.
+
+* `todoItem.subTasks` - A `query` to retrieve a `TodoItems` `SubTasks`.
+    * The `subTasks` property will accept a [query](../concepts/queries.mdx) to allow you to filter, page and sort results.
+    * The `subTasks` property will return a cursor based [connection](./types.mdx#connectiontype) to page through
+    results.
+* `addSubTasksToTodoItem` - A `mutation` to add `SubTasks` to a `TodoItem`.
+
+:::note
+In this example we `disableRemove` because `SubTasks` cannot exist without a `TodoItem`.
+:::
 
 To set up the resolver you can use the `NestjsQueryGraphQLModule`.
 
@@ -504,7 +843,7 @@ input RelationsInput {
 If `disableRemove` was set to `false` or not specified a `removeSubTasksFromTodoItem` mutation would also be exposed with the same arguments as `addSubTasksToTodoItem`.
 :::
 
-### Total Count
+### Total Count Example
 
 :::warning
 Enabling `totalCount` can be expensive. If your table is large the `totalCount` query may be expensive, use with caution.
@@ -513,7 +852,7 @@ Enabling `totalCount` can be expensive. If your table is large the `totalCount` 
 The `totalCount` field is not eagerly fetched. It will only be executed if the field is queried from the client.
 :::
 
-When using the `@Connection` decorator you can enable the `totalCount` field. The `totalCount` field will return the total number of records included in the connection.
+When using the `@CursorConnection` decorator you can enable the `totalCount` field. The `totalCount` field will return the total number of records included in the connection.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
 import { FilterableField, Connection } from '@nestjs-query/query-graphql';
@@ -521,7 +860,7 @@ import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
-@Connection('subTasks', () => SubTaskDTO, { disableRemove: true, enableTotalCount: true })
+@CursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true, enableTotalCount: true })
 export class TodoItemDTO {
   @FilterableField(() => ID)
   id!: string;
@@ -568,12 +907,12 @@ type TodoItemSubTasksConnection {
 ```
 
 
-## @FilterableConnection Decorator
+## @FilterableCursorConnection
 
-The `@FilterableConnection` extends the `@Connection` decorator exposing the ability to filter the `DTO` that defines the relation by relation properties.
+The `@FilterableCursorConnection` extends the `@CursorConnection` decorator exposing the ability to filter the `DTO` that defines the relation by relation properties.
 
 :::warning
-The `@FilterableConnection` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`,
+The `@FilterableCursorConnection` decorator will **only** work with relations defined by the orm used (e.g. `typeorm`,
 `sequelize`). If your relations are federated or you are using `mongoose` you cannot use the `@FilterableConnection`
 decorator.
 :::
@@ -583,12 +922,12 @@ decorator.
 In this example we'll use the same Entities defined above to create a graphql endpoint that allows filtering `TodoItems` by `subTasks`.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, FilterableConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, FilterableCursorConnection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
-@FilterableConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
+@FilterableCursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
   @FilterableField(() => ID)
   id!: string;
@@ -607,7 +946,7 @@ export class TodoItemDTO {
 }
 
 ```
-Notice the use of `@FilterableConnection` instead of `@Connection`, by using the `@FilterableConnection` version `nestjs-query` will allow filtering on the `subTasks` relation.
+Notice the use of `@FilterableCursorConnection` instead of `@CursorConnection`, by using the `@FilterableCursorConnection` version `nestjs-query` will allow filtering on the `subTasks` relation.
 
 The  module definition remains the same.
 
@@ -670,7 +1009,8 @@ supports this through the [RelationQueryService](../concepts/services.md#relatio
 
 ## Options
 
-The following options can be passed to the `@Relation` or `@Connection` decorators, to customize functionality.
+The following options can be passed to all relation/connection decorators, to customize
+functionality.
 
 * `relationName` - The name of the relation to use when looking up the relation from the `QueryService`
 * `nullable` - Set to `true` if the relation is nullable.
@@ -694,9 +1034,12 @@ Sometimes you may want to expose a relation that has a different name when persi
 
 <Tabs
   defaultValue="relation"
+  groupId="relation-type"
   values={[
     { label: 'Relation', value: 'relation', },
-    { label: 'Connection', value: 'connection', },
+    { label: 'CursorConnection', value: 'cursor-connection', },
+    { label: 'OffsetConnection', value: 'offset-connection', },
+    { label: 'UnPagedRelation', value: 'un-paged-relation', },
   ]
 }>
 <TabItem value="relation">
@@ -707,11 +1050,27 @@ Sometimes you may want to expose a relation that has a different name when persi
 ```
 
 </TabItem>
-<TabItem value="connection">
+<TabItem value="cursor-connection">
 
 ```ts
 // expose subTasks as subTaskConnection in graphql
-@Connection('subTaskConnection', () => SubTaskDTO, { relationName: 'subTasks' })
+@CursorConnection('subTaskConnection', () => SubTaskDTO, { relationName: 'subTasks' })
+```
+
+</TabItem>
+<TabItem value="offset-connection">
+
+```ts
+// expose subTasks as subTaskConnection in graphql
+@OffsetConnection('subTaskConnection', () => SubTaskDTO, { relationName: 'subTasks' })
+```
+
+</TabItem>
+<TabItem value="un-paged-relation">
+
+```ts
+// expose subTasks as subTaskConnection in graphql
+@UnPagedRelation('subTasks', () => SubTaskDTO, { relationName: 'subTasks' })
 ```
 
 </TabItem>
@@ -723,9 +1082,12 @@ To disable the `read` `queries` you can set the `disableRead` option to `true`.
 
 <Tabs
   defaultValue="relation"
+  groupId="relation-type"
   values={[
     { label: 'Relation', value: 'relation', },
-    { label: 'Connection', value: 'connection', },
+    { label: 'CursorConnection', value: 'cursor-connection', },
+    { label: 'OffsetConnection', value: 'offset-connection', },
+    { label: 'UnPagedRelation', value: 'un-paged-relation', },
   ]
 }>
 <TabItem value="relation">
@@ -736,11 +1098,27 @@ To disable the `read` `queries` you can set the `disableRead` option to `true`.
 ```
 
 </TabItem>
-<TabItem value="connection">
+<TabItem value="cursor-connection">
 
 ```ts
 // disable reading the connection
-@Connection('subTasks', () => SubTaskDTO, { relationName: true })
+@CursorConnection('subTasks', () => SubTaskDTO, { disableRead: true })
+```
+
+</TabItem>
+<TabItem value="offset-connection">
+
+```ts
+// disable reading the relation
+@OffsetConnection('subTaskConnection', () => SubTaskDTO, { disableRead: true })
+```
+
+</TabItem>
+<TabItem value="un-paged-relation">
+
+```ts
+// disable reading the relation
+@UnPagedRelation('subTaskConnection', () => SubTaskDTO, { disableRead: true })
 ```
 
 </TabItem>
@@ -752,9 +1130,12 @@ To disable the `update` `mutations` you can set the `disableUpdate` option to `t
 
 <Tabs
   defaultValue="relation"
+  groupId="relation-type"
   values={[
     { label: 'Relation', value: 'relation', },
-    { label: 'Connection', value: 'connection', },
+    { label: 'CursorConnection', value: 'cursor-connection', },
+    { label: 'OffsetConnection', value: 'offset-connection', },
+    { label: 'UnPagedRelation', value: 'un-paged-relation', },
   ]
 }>
 <TabItem value="relation">
@@ -765,11 +1146,27 @@ To disable the `update` `mutations` you can set the `disableUpdate` option to `t
 ```
 
 </TabItem>
-<TabItem value="connection">
+<TabItem value="cursor-connection">
 
 ```ts
-// disable adding subTasks to the connection
-@Connection('subTasks', () => SubTaskDTO, { disableUpdate: true })
+// disable updating subTasks
+@CursorConnection('subTasks', () => SubTaskDTO, { disableUpdate: true })
+```
+
+</TabItem>
+<TabItem value="offset-connection">
+
+```ts
+// disable updating subTasks
+@OffsetConnection('subTasks', () => SubTaskDTO, { disableUpdate: true })
+```
+
+</TabItem>
+<TabItem value="un-paged-relation">
+
+```ts
+// disable updating subTasks
+@UnPagedRelation('subTasks', () => SubTaskDTO, { disableUpdate: true })
 ```
 
 </TabItem>
@@ -781,9 +1178,12 @@ To disable the `remove` `mutations` you can set the `disableRemove` option to `t
 
 <Tabs
   defaultValue="relation"
+  groupId="relation-type"
   values={[
     { label: 'Relation', value: 'relation', },
-    { label: 'Connection', value: 'connection', },
+    { label: 'CursorConnection', value: 'cursor-connection', },
+    { label: 'OffsetConnection', value: 'offset-connection', },
+    { label: 'UnPagedRelation', value: 'un-paged-relation', },
   ]
 }>
 <TabItem value="relation">
@@ -794,11 +1194,27 @@ To disable the `remove` `mutations` you can set the `disableRemove` option to `t
 ```
 
 </TabItem>
-<TabItem value="connection">
+<TabItem value="cursor-connection">
 
 ```ts
 // disable removing subTasks from the connection
-@Connection('subTasks', () => SubTaskDTO, { disableRemove: true })
+@CursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
+```
+
+</TabItem>
+<TabItem value="offset-connection">
+
+```ts
+// disable removing subTasks from the connection
+@OffsetConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
+```
+
+</TabItem>
+<TabItem value="un-paged-relation">
+
+```ts
+// disable removing subTasks from the relations
+@UnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
 ```
 
 </TabItem>
@@ -847,24 +1263,43 @@ We can then add it to our relations
 
 <Tabs
   defaultValue="relation"
+  groupId="relation-type"
   values={[
     { label: 'Relation', value: 'relation', },
-    { label: 'Connection', value: 'connection', },
+    { label: 'CursorConnection', value: 'cursor-connection', },
+    { label: 'OffsetConnection', value: 'offset-connection', },
+    { label: 'UnPagedRelation', value: 'un-paged-relation', },
   ]
 }>
 <TabItem value="relation">
 
 ```ts
-// disable removing the relation
+// Add the AuthGuard using the guards option
 @Relation('todoItem', () => TodoItemDTO, { guards: [AuthGuard] })
 ```
 
 </TabItem>
-<TabItem value="connection">
+<TabItem value="cursor-connection">
 
 ```ts
-// disable removing subTasks from the connection
-@Connection('subTasks', () => SubTaskDTO, { guards: [AuthGuard] })
+// Add the AuthGuard using the guards option
+@CursorConnection('subTasks', () => SubTaskDTO, { guards: [AuthGuard] })
+```
+
+</TabItem>
+<TabItem value="offset-connection">
+
+```ts
+// Add the AuthGuard using the guards option
+@OffsetConnection('subTasks', () => SubTaskDTO, { guards: [AuthGuard] })
+```
+
+</TabItem>
+<TabItem value="un-paged-relation">
+
+```ts
+// Add the AuthGuard using the guards option
+@UnPagedRelation('subTasks', () => SubTaskDTO, { guards: [AuthGuard] })
 ```
 
 </TabItem>

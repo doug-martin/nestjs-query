@@ -68,12 +68,13 @@ module.exports = {
     ],
     Utilities: ['utilities/query-helpers'],
     'Migration Guides': [
-      'migration-guides/v0.5.x-to-v0.6.x',
-      'migration-guides/v0.10.x-to-v0.11.x',
-      'migration-guides/v0.12.x-to-v0.13.x',
-      'migration-guides/v0.13.x-to-v0.14.x',
-      'migration-guides/v0.14.x-to-v0.15.x',
+      'migration-guides/v0.22.x-to-v0.23.x',
       'migration-guides/v0.15.x-to-v0.16.x',
+      'migration-guides/v0.14.x-to-v0.15.x',
+      'migration-guides/v0.13.x-to-v0.14.x',
+      'migration-guides/v0.12.x-to-v0.13.x',
+      'migration-guides/v0.10.x-to-v0.11.x',
+      'migration-guides/v0.5.x-to-v0.6.x',
     ],
   },
 };

@@ -325,7 +325,7 @@ import { SubTaskDTO } from './sub-task.dto';
 @ObjectType('TodoItem')
 @Directive('@extends')
 @Directive('@key(fields: "id")')
-@Connection('subTasks', () => SubTaskDTO)
+@CursorConnection('subTasks', () => SubTaskDTO)
 export class TodoItemReferenceDTO {
   @Field(() => ID)
   @Directive('@external')
