@@ -151,9 +151,8 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
 
 * `pagingStrategy?` - Specify to use an alternate paging strategy (`CURSOR`, `OFFSET`, 'NONE'). See [Paging Strategy](#paging-strategy).
 
-* `enableTotalCount?` - When using `CURSOR` based paging set to true to expose a `totalCount` field on all connection from this resolver.
-
-* `enableTotalCount?` - When using `CURSOR` based paging set to true to expose a `totalCount` field on all connection from this resolver.
+* `enableTotalCount?` - When using `CURSOR` or `OFFSET` based paging set to true to expose a `totalCount` field on all
+connection from this resolver.
 
 * `enableAggregate?` - When set to true an aggregate query will be enabled on the type and all relations (unless the explicitly disable it). See [Aggregation](./aggregations.mdx)
 
@@ -166,7 +165,8 @@ When using `NestjsQueryGraphQLModule` or `CRUDResolver` you can define a number 
     * `QueryArgs` - The `ArgsType` to use to filter records in `queryMany` endpoint.
     * `Connection` - The `ObjectType` to return from the `queryMany` endpoint.
     * `pagingStrategy?` - Specify to use an alternate paging strategy (`CURSOR`, `OFFSET`, 'NONE'). See [Paging Strategy](#paging-strategy).
-    * `enableTotalCount?` - When using `CURSOR` based paging set to true to expose a `totalCount` field on the connection.
+    * `enableTotalCount?` - When using `CURSOR` or `OFFSET` based paging set to true to expose a `totalCount` field on
+    the connection.
     * `defaultResultSize=10` - The default number of results to return
     * `maxResultsSize=50` - The maximum number of results an end user can specify to return from a query.
     * `defaultSort=[]` - The default sort to use when querying for records.
@@ -898,7 +898,8 @@ Enabling `totalCount` can be expensive. If your table is large the `totalCount` 
 The `totalCount` field is not eagerly fetched. It will only be executed if the field is queried from the client.
 :::
 
-When using the `CURSOR` paging strategy (the default) you have the option to expose a `totalCount` field to allow clients to fetch a total count of records in a connection.
+When using the `CURSOR` (the default) or OFFSET paging strategy  you have the option to expose a `totalCount` field to
+allow clients to fetch a total count of records in a connection.
 
 To enable the `totalCount` field for connections (including relations) in a resolver set the `enableTotalCount` option to `true`.
 
@@ -958,7 +959,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO, {
 </TabItem>
 </Tabs>
 
-When setting `enableTotalCount` to `true` you will be able to query for `totalCount` on `cursor` connections
+When setting `enableTotalCount` to `true` you will be able to query for `totalCount` on `cursor` or offset connections
 
 <Tabs
   defaultValue="graphql"
