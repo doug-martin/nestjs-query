@@ -74,8 +74,8 @@ In `v0.23.0` the decorators have been renamed to be more explicit.
 
 * `@Relation` - A relation that is a single value (one-to-one, many-to-one)
 * `@FilterableRelation` - A `@Relation` that enables filtering the parent by fields of the relation `DTO`.
-* `@UnPagedRelation` - An array of relations (e.g, many-to-many, one-to-many) that do not have pagination enabled.
-* `@FilterableUnPagedRelation` - An `@UnPagedRelation` that enables filtering the parent by fields of the relation
+* `@AllRelations` - An array of relations (e.g, many-to-many, one-to-many) that returns all the related records.
+* `@FilterableAllRelations` - An `@AllRelations` that enables filtering the parent by fields of the relation
 `DTO`.
 * `@OffsetConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `offset`
  based pagination.
@@ -111,14 +111,14 @@ In previous versions the `OFFSET` paging strategy returned an array of relations
 //old
 @Relation('subTasks', () => [TodoItem], {pagingStrategy: PagingStrategies.NONE})
 //new
-@UnPagedRelation('subTasks', () => TodoItem)
+@AllRelations('subTasks', () => TodoItem)
 ```
 
 ```ts
 //old
 @FilterableRelation('subTasks', () => [TodoItem], {pagingStrategy: PagingStrategies.NONE})
 //new
-@FilterableUnPagedRelation('subTasks', () => TodoItem)
+@FilterableAllRelations('subTasks', () => TodoItem)
 ```
 
 ```ts

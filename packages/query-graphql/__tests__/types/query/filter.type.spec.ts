@@ -25,8 +25,8 @@ import {
   CursorConnection,
   FilterableCursorConnection,
   FilterableOffsetConnection,
-  UnPagedRelation,
-  FilterableUnPagedRelation,
+  AllRelations,
+  FilterableAllRelations,
 } from '../../../src';
 import {
   expectSDL,
@@ -79,8 +79,8 @@ describe('filter types', (): void => {
   @ObjectType('TestFilterDto')
   @Relation('unFilterableRelation', () => TestRelation)
   @FilterableRelation('filterableRelation', () => TestRelation)
-  @UnPagedRelation('unFilterableUnPagedRelations', () => TestRelation)
-  @FilterableUnPagedRelation('filterableUnPagedRelations', () => TestRelation)
+  @AllRelations('allRelations', () => TestRelation)
+  @FilterableAllRelations('filterableAllRelations', () => TestRelation)
   @OffsetConnection('unFilterableOffsetConnection', () => TestRelation)
   @FilterableOffsetConnection('filterableOffsetConnection', () => TestRelation)
   @CursorConnection('unFilterableCursorConnection', () => TestRelation)
