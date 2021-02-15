@@ -1,0 +1,136 @@
+---
+title: v0.22.x to v0.23.x
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Offset Paging Strategy [BREAKING CHANGE]
+
+In previous versions of `nestjs-query` the `OFFSET` paging strategy returned an array of nodes, this proved to not be
+extensible, especially when wanting to expose other attributes such as `totalCount`, or paging meta such has
+`hasNextPage` or `hasPreviousPage`.
+
+In `v0.23.0` the graphql response now returns an `OffsetConnection` that looks like the following
+
+```graphql
+type OffsetPageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+type TodoItemConnection {
+  pageInfo: OffsetPageInfo!
+  nodes: [TodoItem!]!
+}
+
+type TodoItem {
+  id: ID!
+  title: String!
+  description: String
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+}
+```
+
+## Total Count with OFFSET Strategy
+
+In previous versions of the nestjs-query the `enableTotalCount` option only worked with the `CURSOR` paging strategy.
+ In `v0.23.0` the `enableTotalCount` option now also works with the `OFFSET` paging strategy.
+
+ When `enableTotalCount` is set to true the following graphql schema will be generated
+
+
+```graphql
+type OffsetPageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+type TodoItemConnection {
+  totalCount: Int!
+  pageInfo: OffsetPageInfo!
+  nodes: [TodoItem!]!
+}
+
+type TodoItem {
+  id: ID!
+  title: String!
+  description: String
+  completed: Boolean!
+  created: DateTime!
+  updated: DateTime!
+}
+```
+
+## Relation Decorator Changes [BREAKING CHANGE]
+
+In previous versions of `nestjs-query` there were four relation decorators `@Relation`, `@FilterableRelation`,
+`@Connection`, and `@FilterableConnection` all four of the decorators have been changed to be more explicit in naming
+ to be clear in what they are doing.
+
+In `v0.23.0` the decorators have been renamed to be more explicit.
+
+* `@Relation` - A relation that is a single value (one-to-one, many-to-one)
+* `@FilterableRelation` - A `@Relation` that enables filtering the parent by fields of the relation `DTO`.
+* `@UnPagedRelation` - An array of relations (e.g, many-to-many, one-to-many) that do not have pagination enabled.
+* `@FilterableUnPagedRelation` - An `@UnPagedRelation` that enables filtering the parent by fields of the relation
+`DTO`.
+* `@OffsetConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `offset`
+ based pagination.
+* `@FilterableOffsetConnection` - An `@OffsetConnection` that enables filtering the parent by fields of the connection
+ `DTO`.
+* `@CursorConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `cursor`
+ based pagination.
+* `@FilterableCursorConnection` - A `@CursorConnection` that enables filtering the parent by fields of the
+ connection `DTO`.
+
+Below is a mapping of the old definition to the new one
+
+:::warning
+In previous versions the `OFFSET` paging strategy returned an array of relations, the new version returns an
+`OffsetConnection`
+:::
+
+```ts
+//old
+@Relation('subTasks', () => [TodoItem])
+//new
+@OffsetConnection('subTasks', () => TodoItem)
+```
+
+```ts
+//old
+@FilterableRelation('subTasks', () => [TodoItem])
+//new
+@FilterableOffsetConnection('subTasks', () => TodoItem)
+```
+
+```ts
+//old
+@Relation('subTasks', () => [TodoItem], {pagingStrategy: PagingStrategies.NONE})
+//new
+@UnPagedRelation('subTasks', () => TodoItem)
+```
+
+```ts
+//old
+@FilterableRelation('subTasks', () => [TodoItem], {pagingStrategy: PagingStrategies.NONE})
+//new
+@FilterableUnPagedRelation('subTasks', () => TodoItem)
+```
+
+```ts
+//old
+@Connection('subTasks', () => TodoItem)
+//new
+@CursorConnection('subTasks', () => TodoItem)
+```
+
+```ts
+//old
+@FilterableConnection('subTasks', () => TodoItem)
+//new
+@FilterableCursorConnection('subTasks', () => TodoItem)
+```
