@@ -151,7 +151,7 @@ describe('OffsetConnectionType', (): void => {
         });
       });
 
-      describe('with last', () => {
+      describe('with offset', () => {
         it('should return hasPreviousPage false if offset == 0', async () => {
           const queryMany = jest.fn();
           const dtos = [createTestDTO(1)];

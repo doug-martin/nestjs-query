@@ -18,7 +18,7 @@ input TestDtoFilter {
   filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
   filterableCursorConnection: TestFilterDtoFilterTestRelationDtoFilter
   filterableOffsetConnection: TestFilterDtoFilterTestRelationDtoFilter
-  filterableUnPagedRelations: TestFilterDtoFilterTestRelationDtoFilter
+  filterableAllRelations: TestFilterDtoFilterTestRelationDtoFilter
 }
 
 input TestFilterDtoFilter {
@@ -37,7 +37,7 @@ input TestFilterDtoFilter {
   filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
   filterableCursorConnection: TestFilterDtoFilterTestRelationDtoFilter
   filterableOffsetConnection: TestFilterDtoFilterTestRelationDtoFilter
-  filterableUnPagedRelations: TestFilterDtoFilterTestRelationDtoFilter
+  filterableAllRelations: TestFilterDtoFilterTestRelationDtoFilter
 }
 
 input NumberFieldComparison {
