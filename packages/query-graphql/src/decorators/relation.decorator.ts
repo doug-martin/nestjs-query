@@ -8,13 +8,12 @@ import { mergeBaseResolverOpts } from '../common';
 export const reflector = new ArrayReflector(RELATION_KEY);
 
 export type RelationDecoratorOpts<Relation> = Omit<ResolverRelation<Relation>, 'DTO'>;
-export type RelationTypeFunc<Relation> = () => Class<Relation> | Class<Relation>[];
-export type ConnectionTypeFunc<Relation> = () => Class<Relation>;
+export type RelationTypeFunc<Relation> = () => Class<Relation>;
 export type RelationClassDecorator<DTO> = <Cls extends Class<DTO>>(DTOClass: Cls) => Cls | void;
 
 interface RelationDescriptor<Relation> {
   name: string;
-  relationTypeFunc: () => Class<Relation> | Class<Relation>[];
+  relationTypeFunc: RelationTypeFunc<Relation>;
   isMany: boolean;
   relationOpts?: Omit<ResolverRelation<Relation>, 'DTO'>;
 }
@@ -34,8 +33,7 @@ function convertRelationsToOpts(
 ): RelationsOpts {
   const relationOpts: RelationsOpts = {};
   relations.forEach((r) => {
-    const relationType = r.relationTypeFunc();
-    const DTO = Array.isArray(relationType) ? relationType[0] : relationType;
+    const DTO = r.relationTypeFunc();
     const opts = mergeBaseResolverOpts({ ...r.relationOpts, DTO }, baseOpts ?? {});
     if (r.isMany) {
       relationOpts.many = { ...relationOpts.many, [r.name]: opts };
@@ -51,43 +49,31 @@ export function getRelations<DTO>(DTOClass: Class<DTO>, opts?: BaseResolverOptio
   return convertRelationsToOpts(relationDescriptors, opts);
 }
 
-export function Relation<DTO, Relation>(
+const relationDecorator = (isMany: boolean, allowFiltering: boolean, pagingStrategy?: PagingStrategies) => <
+  DTO,
+  Relation
+>(
   name: string,
   relationTypeFunc: RelationTypeFunc<Relation>,
   options?: RelationDecoratorOpts<Relation>,
-): RelationClassDecorator<DTO> {
-  return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-    const isMany = Array.isArray(relationTypeFunc());
-    const relationOpts = isMany ? { pagingStrategy: PagingStrategies.OFFSET, ...options } : options;
-    reflector.append(DTOClass, { name, isMany, relationOpts, relationTypeFunc });
-    return DTOClass;
-  };
-}
+): RelationClassDecorator<DTO> => <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
+  reflector.append(DTOClass, {
+    name,
+    isMany,
+    relationOpts: { pagingStrategy, allowFiltering, ...options },
+    relationTypeFunc,
+  });
+  return DTOClass;
+};
 
-export function FilterableRelation<DTO, Relation>(
-  name: string,
-  relationTypeFunc: RelationTypeFunc<Relation>,
-  options?: RelationDecoratorOpts<Relation>,
-): RelationClassDecorator<DTO> {
-  return Relation<DTO, Relation>(name, relationTypeFunc, { ...options, allowFiltering: true });
-}
+export const Relation = relationDecorator(false, false);
+export const FilterableRelation = relationDecorator(false, true);
 
-export function Connection<DTO, Relation>(
-  name: string,
-  relationTypeFunc: ConnectionTypeFunc<Relation>,
-  options?: RelationDecoratorOpts<Relation>,
-): RelationClassDecorator<DTO> {
-  const relationOpts = { pagingStrategy: PagingStrategies.CURSOR, ...options };
-  return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-    reflector.append(DTOClass, { name, isMany: true, relationOpts, relationTypeFunc });
-    return DTOClass;
-  };
-}
+export const UnPagedRelation = relationDecorator(true, false, PagingStrategies.NONE);
+export const FilterableUnPagedRelation = relationDecorator(true, true, PagingStrategies.NONE);
 
-export function FilterableConnection<DTO, Relation>(
-  name: string,
-  relationTypeFunc: ConnectionTypeFunc<Relation>,
-  options?: RelationDecoratorOpts<Relation>,
-): RelationClassDecorator<DTO> {
-  return Connection<DTO, Relation>(name, relationTypeFunc, { ...options, allowFiltering: true });
-}
+export const OffsetConnection = relationDecorator(true, false, PagingStrategies.OFFSET);
+export const FilterableOffsetConnection = relationDecorator(true, true, PagingStrategies.OFFSET);
+
+export const CursorConnection = relationDecorator(true, false, PagingStrategies.CURSOR);
+export const FilterableCursorConnection = relationDecorator(true, true, PagingStrategies.CURSOR);

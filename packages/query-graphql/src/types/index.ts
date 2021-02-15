@@ -1,9 +1,11 @@
 export {
   PageInfoType,
   EdgeType,
+  OffsetPageInfoType,
   ConnectionType,
   CursorConnectionType,
   ArrayConnectionType,
+  OffsetConnectionType,
   StaticConnectionType,
 } from './connection';
 export { MutationArgsType } from './mutation-args.type';

@@ -1,46 +1,38 @@
 import { Class } from '@nestjs-query/core';
-import {
-  PagingStrategies,
-  StaticNoPagingQueryArgsType,
-  StaticOffsetQueryArgsType,
-  StaticQueryArgsType,
-} from '../query';
-import { ArrayConnectionType, StaticArrayConnectionType } from './array-connection.type';
-import { StaticCursorConnectionType, CursorConnectionType, CursorConnectionOptions } from './cursor';
+import { PagingStrategies } from '../query';
+import { ArrayConnectionOptions, ArrayConnectionType, StaticArrayConnectionType } from './array-connection.type';
+import { CursorConnectionOptions, CursorConnectionType, StaticCursorConnectionType } from './cursor';
 import { Connection } from './interfaces';
-import { isStaticQueryArgsType } from '../query/query-args.type';
+import { OffsetConnectionOptions, OffsetConnectionType, StaticOffsetConnectionType } from './offset';
 
-export type StaticConnectionType<DTO> = StaticArrayConnectionType<DTO> | StaticCursorConnectionType<DTO>;
+export type StaticConnectionType<DTO> =
+  | StaticArrayConnectionType<DTO>
+  | StaticCursorConnectionType<DTO>
+  | StaticOffsetConnectionType<DTO>;
 export type ConnectionType<DTO> = Connection<DTO>;
+export type ConnectionOptions = CursorConnectionOptions | OffsetConnectionOptions | ArrayConnectionOptions;
 
 export function ConnectionType<DTO>(
   DTOClass: Class<DTO>,
-  QueryArgsType: StaticOffsetQueryArgsType<DTO> | StaticNoPagingQueryArgsType<DTO>,
-): StaticArrayConnectionType<DTO>;
-export function ConnectionType<DTO>(
-  DTOClass: Class<DTO>,
-  QueryArgsType: StaticQueryArgsType<DTO>,
-  opts?: CursorConnectionOptions,
-): StaticCursorConnectionType<DTO>;
+  opts: OffsetConnectionOptions,
+): StaticOffsetConnectionType<DTO>;
+export function ConnectionType<DTO>(DTOClass: Class<DTO>, opts: ArrayConnectionOptions): StaticArrayConnectionType<DTO>;
 export function ConnectionType<DTO>(
   DTOClass: Class<DTO>,
   opts?: CursorConnectionOptions,
 ): StaticCursorConnectionType<DTO>;
+export function ConnectionType<DTO>(DTOClass: Class<DTO>, opts?: ConnectionOptions): StaticConnectionType<DTO>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export function ConnectionType<DTO, QueryType extends StaticQueryArgsType<DTO>>(
+export function ConnectionType<DTO>(
   DTOClass: Class<DTO>,
-  QueryArgsType?: QueryType | CursorConnectionOptions,
-  opts?: CursorConnectionOptions,
+  maybeOpts: ConnectionOptions = { pagingStrategy: PagingStrategies.CURSOR },
 ): StaticConnectionType<DTO> {
-  if (isStaticQueryArgsType(QueryArgsType)) {
-    const { PageType } = QueryArgsType;
-    if (!PageType || PageType.strategy === PagingStrategies.OFFSET) {
-      return ArrayConnectionType(DTOClass);
-    }
+  const opts = maybeOpts ?? { pagingStrategy: PagingStrategies.CURSOR };
+  if (opts.pagingStrategy === PagingStrategies.OFFSET) {
+    return OffsetConnectionType(DTOClass, opts);
   }
-  let cursorOpts: CursorConnectionOptions | undefined = opts;
-  if (!cursorOpts && !isStaticQueryArgsType(QueryArgsType)) {
-    cursorOpts = QueryArgsType as CursorConnectionOptions;
+  if (opts.pagingStrategy === PagingStrategies.NONE) {
+    return ArrayConnectionType(DTOClass);
   }
-  return CursorConnectionType(DTOClass, cursorOpts);
+  return CursorConnectionType(DTOClass, opts);
 }

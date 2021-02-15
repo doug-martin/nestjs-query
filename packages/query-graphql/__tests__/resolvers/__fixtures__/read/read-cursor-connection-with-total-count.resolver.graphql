@@ -28,46 +28,38 @@ type PageInfo {
   endCursor: ConnectionCursor
 }
 
-type TotalCountDTO {
-  id: ID!
-  stringField: String!
-}
-
-type TotalCountDTOEdge {
-  """The node containing the TotalCountDTO"""
-  node: TotalCountDTO!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type TotalCountDTOConnection {
+type TestResolverDTOConnection {
   """Paging information"""
   pageInfo: PageInfo!
 
   """Array of edges."""
-  edges: [TotalCountDTOEdge!]!
+  edges: [TestResolverDTOEdge!]!
+}
 
-  """Fetch total count of records"""
-  totalCount: Int!
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
 }
 
 type Query {
-  totalCountDTO(
+  testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TotalCountDTO
-  totalCountDTOS(
+  ): TestResolverDTO
+  testResolverDTOS(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}
 
     """Specify to filter the records returned."""
-    filter: TotalCountDTOFilter = {}
+    filter: TestResolverDTOFilter = {}
 
     """Specify to sort results."""
-    sorting: [TotalCountDTOSort!] = []
-  ): TotalCountDTOConnection!
-  test: TotalCountDTO!
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
 }
 
 input CursorPaging {
@@ -84,9 +76,9 @@ input CursorPaging {
   last: Int
 }
 
-input TotalCountDTOFilter {
-  and: [TotalCountDTOFilter!]
-  or: [TotalCountDTOFilter!]
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
   id: IDFilterComparison
   stringField: StringFieldComparison
 }
@@ -125,13 +117,13 @@ input StringFieldComparison {
   notIn: [String!]
 }
 
-input TotalCountDTOSort {
-  field: TotalCountDTOSortFields!
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
   direction: SortDirection!
   nulls: SortNulls
 }
 
-enum TotalCountDTOSortFields {
+enum TestResolverDTOSortFields {
   id
   stringField
 }

@@ -111,7 +111,7 @@ describe('ReadRelationsResolver', () => {
         many: { relations: { DTO: TestRelationDTO, nullable: true } },
       }));
 
-    it('should not use connections if pagingStrategy is offset', () =>
+    it('should use an offset connection if pagingStrategy is offset', () =>
       expectResolverSDL(readRelationManyOffset, {
         many: { relations: { DTO: TestRelationDTO, nullable: true, pagingStrategy: PagingStrategies.OFFSET } },
       }));
@@ -291,12 +291,24 @@ describe('ReadRelationsResolver', () => {
           },
         ];
         when(
-          mockService.queryRelations(TestRelationDTO, 'relations', deepEqual([dto]), objectContaining({ ...query })),
+          mockService.queryRelations(
+            TestRelationDTO,
+            'relations',
+            deepEqual([dto]),
+            objectContaining({ ...query, paging: { limit: 2 } }),
+          ),
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.queryRelations(dto, query, {});
-        return expect(result).toEqual(output);
+        return expect(result).toEqual({
+          nodes: output,
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+          totalCountFn: expect.any(Function),
+        });
       });
 
       it('should call the service findRelation with the provided dto and correct relation name', async () => {
@@ -316,12 +328,24 @@ describe('ReadRelationsResolver', () => {
           },
         ];
         when(
-          mockService.queryRelations(TestRelationDTO, 'others', deepEqual([dto]), objectContaining(query)),
+          mockService.queryRelations(
+            TestRelationDTO,
+            'others',
+            deepEqual([dto]),
+            objectContaining({ ...query, paging: { limit: 2 } }),
+          ),
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.queryCustoms(dto, query, {});
-        return expect(result).toEqual(output);
+        return expect(result).toEqual({
+          nodes: output,
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+          totalCountFn: expect.any(Function),
+        });
       });
     });
 
