@@ -1,4 +1,4 @@
-import { FilterableField, FilterableConnection, Authorize, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, Authorize, Relation, FilterableCursorConnection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 import { TagDTO } from '../../tag/dto/tag.dto';
@@ -8,8 +8,8 @@ import { UserContext } from '../../auth/auth.interfaces';
 @ObjectType('TodoItem')
 @Authorize({ authorize: (context: UserContext) => ({ ownerId: { eq: context.req.user.id } }) })
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
-@FilterableConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
-@FilterableConnection('tags', () => TagDTO)
+@FilterableCursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
+@FilterableCursorConnection('tags', () => TagDTO)
 export class TodoItemDTO {
   @FilterableField(() => ID)
   id!: number;
