@@ -1,10 +1,10 @@
 // eslint-disable-next-line max-classes-per-file
 import { ArgsType, Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
-import { objectContaining, when, deepEqual } from 'ts-mockito';
+import { deepEqual, objectContaining, when } from 'ts-mockito';
 import { Filter } from '@nestjs-query/core';
 import {
-  ConnectionType,
   Authorizer,
+  ConnectionType,
   CursorQueryArgsType,
   InjectAuthorizer,
   NoPagingQueryArgsType,
@@ -18,7 +18,8 @@ import { expectSDL } from '../__fixtures__';
 import {
   createResolverFromNest,
   readBasicResolverSDL,
-  readConnectionWithTotalCountSDL,
+  readCursorConnectionWithTotalCountSDL,
+  readOffsetConnectionWithTotalCountSDL,
   readCustomConnectionResolverSDL,
   readCustomManyQueryResolverSDL,
   readCustomNameResolverSDL,
@@ -263,9 +264,13 @@ describe('ReadResolver', () => {
             stringField: 'foo',
           },
         ];
-        when(mockService.query(objectContaining(input))).thenResolve(output);
+        when(mockService.query(objectContaining({ ...input, paging: { limit: 2 } }))).thenResolve(output);
         const result = await resolver.queryMany(input);
-        return expect(result).toEqual(output);
+        return expect(result).toEqual({
+          nodes: output,
+          pageInfo: { hasNextPage: false, hasPreviousPage: false },
+          totalCountFn: expect.any(Function),
+        });
       });
     });
 
@@ -341,17 +346,30 @@ describe('ReadResolver', () => {
     });
   });
 
-  it('should expose totalCount on connections if enableTotalCount is true', () => {
-    @ObjectType('TotalCountDTO')
-    class TotalCountDTO extends TestResolverDTO {}
-    @Resolver(() => TotalCountDTO)
-    class TestTotalCountSDLResolver extends ReadResolver(TotalCountDTO, { enableTotalCount: true }) {
-      @Query(() => TotalCountDTO)
-      test(): TotalCountDTO {
+  it('should expose totalCount on cursor connections if enableTotalCount is true', () => {
+    @Resolver(() => TestResolverDTO)
+    class TestTotalCountSDLResolver extends ReadResolver(TestResolverDTO, { enableTotalCount: true }) {
+      @Query(() => TestResolverDTO)
+      test(): TestResolverDTO {
         return { id: '1', stringField: 'foo' };
       }
     }
 
-    return expectSDL([TestTotalCountSDLResolver], readConnectionWithTotalCountSDL);
+    return expectSDL([TestTotalCountSDLResolver], readCursorConnectionWithTotalCountSDL);
+  });
+
+  it('should expose totalCount on offset connections if enableTotalCount is true', () => {
+    @Resolver(() => TestResolverDTO)
+    class TestTotalCountSDLResolver extends ReadResolver(TestResolverDTO, {
+      pagingStrategy: PagingStrategies.OFFSET,
+      enableTotalCount: true,
+    }) {
+      @Query(() => TestResolverDTO)
+      test(): TestResolverDTO {
+        return { id: '1', stringField: 'foo' };
+      }
+    }
+
+    return expectSDL([TestTotalCountSDLResolver], readOffsetConnectionWithTotalCountSDL);
   });
 });

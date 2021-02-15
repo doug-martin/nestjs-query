@@ -1,11 +1,11 @@
 import { Query } from '@nestjs-query/core';
-import { OffsetPagingOpts, PagerStrategy, PagingOpts } from './strategies';
-import { Count, QueryMany } from '../../interfaces';
+import { CursorPagingOpts, OffsetPagingOpts, PagerStrategy } from './strategies';
+import { Count, Pager, QueryMany } from '../../interfaces';
 import { EdgeType } from '../edge.type';
 import { CursorQueryArgsType } from '../../../query';
-import { Pager, PagerResult, PagingMeta, QueryResults } from './interfaces';
+import { CursorPagerResult, PagingMeta, QueryResults } from './interfaces';
 
-const EMPTY_PAGING_RESULTS = <DTO>(): PagerResult<DTO> => ({
+const EMPTY_PAGING_RESULTS = <DTO>(): CursorPagerResult<DTO> => ({
   edges: [],
   pageInfo: { hasNextPage: false, hasPreviousPage: false },
   totalCount: () => Promise.resolve(0),
@@ -16,10 +16,14 @@ const DEFAULT_PAGING_META = <DTO>(query: Query<DTO>): PagingMeta<DTO, OffsetPagi
   query,
 });
 
-export class CursorPager<DTO> implements Pager<DTO> {
+export class CursorPager<DTO> implements Pager<DTO, CursorPagerResult<DTO>> {
   constructor(readonly strategy: PagerStrategy<DTO>) {}
 
-  async page(queryMany: QueryMany<DTO>, query: CursorQueryArgsType<DTO>, count: Count<DTO>): Promise<PagerResult<DTO>> {
+  async page(
+    queryMany: QueryMany<DTO>,
+    query: CursorQueryArgsType<DTO>,
+    count: Count<DTO>,
+  ): Promise<CursorPagerResult<DTO>> {
     const pagingMeta = this.getPageMeta(query);
     if (!this.isValidPaging(pagingMeta)) {
       return EMPTY_PAGING_RESULTS();
@@ -31,17 +35,17 @@ export class CursorPager<DTO> implements Pager<DTO> {
     return this.createPagingResult(results, pagingMeta, () => count(query.filter ?? {}));
   }
 
-  private isValidPaging(pagingMeta: PagingMeta<DTO, PagingOpts<DTO>>): boolean {
+  private isValidPaging(pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>): boolean {
     if ('offset' in pagingMeta.opts) {
       return pagingMeta.opts.offset > 0 || pagingMeta.opts.limit > 0;
     }
     return pagingMeta.opts.limit > 0;
   }
 
-  async runQuery(
+  private async runQuery(
     queryMany: QueryMany<DTO>,
     query: Query<DTO>,
-    pagingMeta: PagingMeta<DTO, PagingOpts<DTO>>,
+    pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>,
   ): Promise<QueryResults<DTO>> {
     const { opts } = pagingMeta;
     const windowedQuery = this.strategy.createQuery(query, opts, true);
@@ -51,7 +55,7 @@ export class CursorPager<DTO> implements Pager<DTO> {
     return { nodes: returnNodes, hasExtraNode };
   }
 
-  getPageMeta(query: CursorQueryArgsType<DTO>): PagingMeta<DTO, PagingOpts<DTO>> {
+  private getPageMeta(query: CursorQueryArgsType<DTO>): PagingMeta<DTO, CursorPagingOpts<DTO>> {
     const { paging } = query;
     if (!paging) {
       return DEFAULT_PAGING_META(query);
@@ -59,11 +63,11 @@ export class CursorPager<DTO> implements Pager<DTO> {
     return { opts: this.strategy.fromCursorArgs(paging), query };
   }
 
-  createPagingResult(
+  private createPagingResult(
     results: QueryResults<DTO>,
-    pagingMeta: PagingMeta<DTO, PagingOpts<DTO>>,
+    pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>,
     totalCount: () => Promise<number>,
-  ): PagerResult<DTO> {
+  ): CursorPagerResult<DTO> {
     const { nodes, hasExtraNode } = results;
     const { isForward, hasBefore } = pagingMeta.opts;
     const edges: EdgeType<DTO>[] = nodes.map((node, i) => ({
@@ -82,13 +86,13 @@ export class CursorPager<DTO> implements Pager<DTO> {
     return { edges, pageInfo, totalCount };
   }
 
-  private hasPreviousPage(results: QueryResults<DTO>, pagingMeta: PagingMeta<DTO, PagingOpts<DTO>>): boolean {
+  private hasPreviousPage(results: QueryResults<DTO>, pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>): boolean {
     const { hasExtraNode } = results;
     const { opts } = pagingMeta;
     return opts.isBackward ? hasExtraNode : !this.strategy.isEmptyCursor(opts);
   }
 
-  isEmptyPage(results: QueryResults<DTO>, pagingMeta: PagingMeta<DTO, PagingOpts<DTO>>): boolean {
+  private isEmptyPage(results: QueryResults<DTO>, pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>): boolean {
     // it is an empty page if
     // 1. we dont have an extra node
     // 2. there were no nodes returned

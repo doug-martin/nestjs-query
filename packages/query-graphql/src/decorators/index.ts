@@ -6,12 +6,16 @@ export {
 } from './filterable-field.decorator';
 export { ResolverMethodOpts } from './resolver-method.decorator';
 export {
-  Connection,
+  CursorConnection,
+  FilterableCursorConnection,
+  OffsetConnection,
+  FilterableOffsetConnection,
+  UnPagedRelation,
+  FilterableUnPagedRelation,
   Relation,
+  FilterableRelation,
   RelationDecoratorOpts,
   RelationTypeFunc,
-  FilterableConnection,
-  FilterableRelation,
   getRelations,
 } from './relation.decorator';
 export * from './resolver-mutation.decorator';

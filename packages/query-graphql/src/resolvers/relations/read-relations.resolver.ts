@@ -5,7 +5,7 @@ import { getDTONames } from '../../common';
 import { ResolverField } from '../../decorators';
 import { CountRelationsLoader, DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
 import { ConnectionType, QueryArgsType } from '../../types';
-import { getRelationAuthFilter, transformAndValidate } from '../helpers';
+import { extractConnectionOptsFromQueryArgs, getRelationAuthFilter, transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
@@ -70,7 +70,14 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   class RelationQA extends QueryArgsType(relationDTO, relation) {}
 
   // disable keyset pagination for relations otherwise recursive paging will not work
-  const CT = ConnectionType(relationDTO, RelationQA, { ...relation, connectionName, disableKeySetPagination: true });
+  const CT = ConnectionType(
+    relationDTO,
+    extractConnectionOptsFromQueryArgs(RelationQA, {
+      ...relation,
+      connectionName,
+      disableKeySetPagination: true,
+    }),
+  );
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadManyMixin extends Base {
     @ResolverField(

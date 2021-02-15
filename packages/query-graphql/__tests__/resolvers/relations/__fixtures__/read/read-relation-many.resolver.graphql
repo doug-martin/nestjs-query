@@ -129,6 +129,14 @@ type TestResolverDTORelationsConnection {
   edges: [TestRelationDTOEdge!]!
 }
 
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
 type Query {
   test: TestResolverDTO!
 }

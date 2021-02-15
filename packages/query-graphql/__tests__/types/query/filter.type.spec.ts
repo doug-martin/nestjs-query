@@ -17,12 +17,16 @@ import {
   FilterableField,
   FilterType,
   Relation,
-  FilterableRelation,
-  Connection,
-  FilterableConnection,
   UpdateFilterType,
   DeleteFilterType,
   SubscriptionFilterType,
+  FilterableRelation,
+  OffsetConnection,
+  CursorConnection,
+  FilterableCursorConnection,
+  FilterableOffsetConnection,
+  UnPagedRelation,
+  FilterableUnPagedRelation,
 } from '../../../src';
 import {
   expectSDL,
@@ -73,11 +77,14 @@ describe('filter types', (): void => {
   }
 
   @ObjectType('TestFilterDto')
-  @Relation('unfilterableRelation', () => TestRelation)
+  @Relation('unFilterableRelation', () => TestRelation)
   @FilterableRelation('filterableRelation', () => TestRelation)
-  @FilterableRelation('filterableRelations', () => [TestRelation])
-  @Connection('unfilterableConnection', () => TestRelation)
-  @FilterableConnection('filterableConnection', () => TestRelation)
+  @UnPagedRelation('unFilterableUnPagedRelations', () => TestRelation)
+  @FilterableUnPagedRelation('filterableUnPagedRelations', () => TestRelation)
+  @OffsetConnection('unFilterableOffsetConnection', () => TestRelation)
+  @FilterableOffsetConnection('filterableOffsetConnection', () => TestRelation)
+  @CursorConnection('unFilterableCursorConnection', () => TestRelation)
+  @FilterableCursorConnection('filterableCursorConnection', () => TestRelation)
   class TestDto extends BaseType {
     @FilterableField()
     boolField!: boolean;

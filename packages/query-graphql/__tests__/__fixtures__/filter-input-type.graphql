@@ -16,8 +16,9 @@ input TestDtoFilter {
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
   filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
-  filterableConnection: TestFilterDtoFilterTestRelationDtoFilter
-  filterableRelations: TestFilterDtoFilterTestRelationDtoFilter
+  filterableCursorConnection: TestFilterDtoFilterTestRelationDtoFilter
+  filterableOffsetConnection: TestFilterDtoFilterTestRelationDtoFilter
+  filterableUnPagedRelations: TestFilterDtoFilterTestRelationDtoFilter
 }
 
 input TestFilterDtoFilter {
@@ -34,8 +35,9 @@ input TestFilterDtoFilter {
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
   filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
-  filterableConnection: TestFilterDtoFilterTestRelationDtoFilter
-  filterableRelations: TestFilterDtoFilterTestRelationDtoFilter
+  filterableCursorConnection: TestFilterDtoFilterTestRelationDtoFilter
+  filterableOffsetConnection: TestFilterDtoFilterTestRelationDtoFilter
+  filterableUnPagedRelations: TestFilterDtoFilterTestRelationDtoFilter
 }
 
 input NumberFieldComparison {
