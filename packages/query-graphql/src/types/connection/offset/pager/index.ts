@@ -4,9 +4,5 @@ import { OffsetPager } from './pager';
 
 export { OffsetPagerResult } from './interfaces';
 
-export type PagerOpts = {
-  disableKeySetPagination?: boolean;
-};
-
 // default pager factory to plug in addition paging strategies later on.
 export const createPager = <DTO>(): Pager<DTO, OffsetPagerResult<DTO>> => new OffsetPager<DTO>();
