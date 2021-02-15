@@ -2,8 +2,9 @@ import { applyFilter, Class, Filter } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
-import { SubscriptionArgsType, SubscriptionFilterInputType } from '../types';
+import { PagingStrategies, StaticQueryArgsType, SubscriptionArgsType, SubscriptionFilterInputType } from '../types';
 import { Authorizer } from '../auth';
+import { ConnectionOptions } from '../types/connection';
 
 /** @internal */
 export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Promise<T> => {
@@ -55,3 +56,11 @@ export const getRelationAuthFilter = async <DTO, Relation>(
   }
   return authorizer.authorizeRelation(relationName, context);
 };
+
+export const extractConnectionOptsFromQueryArgs = <DTO>(
+  args: StaticQueryArgsType<DTO>,
+  rest: ConnectionOptions,
+): ConnectionOptions => ({
+  ...rest,
+  pagingStrategy: args.PageType?.strategy ?? PagingStrategies.NONE,
+});

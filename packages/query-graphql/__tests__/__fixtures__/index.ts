@@ -63,8 +63,13 @@ export const noPagingQueryArgsTypeSDL = readGraphql(resolve(__dirname, './no-pag
 export const noPagingQueryArgsFilterRequiredTypeSDL = readGraphql(
   resolve(__dirname, './no-paging-query-args-required-filter-type.graphql'),
 );
-export const connectionObjectTypeSDL = readGraphql(resolve(__dirname, './connection-object-type.graphql'));
-export const connectionObjectTypeWithTotalCountSDL = readGraphql(
-  resolve(__dirname, './connection-object-type-with-total-count.graphql'),
+export const cursorConnectionObjectTypeSDL = readGraphql(resolve(__dirname, './cursor-connection-object-type.graphql'));
+export const cursorConnectionObjectTypeWithTotalCountSDL = readGraphql(
+  resolve(__dirname, './cursor-connection-object-type-with-total-count.graphql'),
 );
 export const edgeObjectTypeSDL = readGraphql(resolve(__dirname, './edge-object-type.graphql'));
+
+export const offsetConnectionObjectTypeSDL = readGraphql(resolve(__dirname, './offset-connection-object-type.graphql'));
+export const offsetConnectionObjectTypeWithTotalCountSDL = readGraphql(
+  resolve(__dirname, './offset-connection-object-type-with-total-count.graphql'),
+);

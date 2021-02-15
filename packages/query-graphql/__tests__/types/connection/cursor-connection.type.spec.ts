@@ -3,10 +3,14 @@ import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { SortDirection } from '@nestjs-query/core';
 import { ConnectionType, CursorPagingType, StaticConnectionType } from '../../../src';
-import { connectionObjectTypeSDL, connectionObjectTypeWithTotalCountSDL, expectSDL } from '../../__fixtures__';
+import {
+  cursorConnectionObjectTypeSDL,
+  cursorConnectionObjectTypeWithTotalCountSDL,
+  expectSDL,
+} from '../../__fixtures__';
 import { KeySet } from '../../../src/decorators';
 
-describe('ConnectionType', (): void => {
+describe('CursorConnectionType', (): void => {
   @ObjectType('Test')
   class TestDto {
     @Field()
@@ -43,7 +47,7 @@ describe('ConnectionType', (): void => {
       }
     }
 
-    return expectSDL([TestConnectionTypeResolver], connectionObjectTypeSDL);
+    return expectSDL([TestConnectionTypeResolver], cursorConnectionObjectTypeSDL);
   });
 
   it('should create the connection SDL with totalCount if enabled', async () => {
@@ -51,12 +55,12 @@ describe('ConnectionType', (): void => {
     @Resolver()
     class TestConnectionTypeResolver {
       @Query(() => TestConnectionWithTotalCount)
-      test(): ConnectionType<TestDto> | undefined {
+      test(): ConnectionType<TestTotalCountDto> | undefined {
         return undefined;
       }
     }
 
-    return expectSDL([TestConnectionTypeResolver], connectionObjectTypeWithTotalCountSDL);
+    return expectSDL([TestConnectionTypeResolver], cursorConnectionObjectTypeWithTotalCountSDL);
   });
 
   it('should throw an error if the object is not registered with @nestjs/graphql', () => {
@@ -70,7 +74,7 @@ describe('ConnectionType', (): void => {
     );
   });
 
-  describe('limit offset offset connection', () => {
+  describe('limit offset offset cursor connection', () => {
     const TestConnection = ConnectionType(TestDto);
 
     it('should create an empty connection when created with new', () => {
