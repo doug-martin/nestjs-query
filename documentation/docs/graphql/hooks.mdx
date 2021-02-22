@@ -13,14 +13,12 @@ title: Hooks
 * `@BeforeDeleteOne` - invoked before any `deleteOne` mutation.
 * `@BeforeDeleteMany` - invoked before any `deleteMany` mutation.
 
-Each hook is low touch implementation intended to allow modifying incoming requests. They are not
-intended to replace `pipes`, `guards` or `interceptors`.
-
-## Usage
-
 In order to use a hook you only need to decorate your DTO with the corresponding decorator.
 
-Each hook expects a function that accepts two arguments the corresponding input and the graphql context.
+Each hook decorator can be provided one of the following:
+ * A hook function
+ * A class that extends `Hook`, when using a class you can use DI to access other services just like `guards`,
+ `interceptors` or `pipes`.
 
 :::warning
 The graphql context by default only contains the incoming request!
@@ -42,10 +40,13 @@ export type GqlContext = { req: { headers: Record<string, string> } };
 ```
 :::
 
-### @BeforeCreateOne
+## @BeforeCreateOne
 
 The `@BeforeCreateOne` decorator can be used to modify incoming `createOne` mutations with information from the graphql
 context.
+
+
+### Hook Function
 
 In this example we set the createdBy field based on the context.
 
@@ -75,10 +76,64 @@ export class TodoItemDTO {
 
 ```
 
-### @BeforeCreateMany
+### Hook Class
+
+You can also provide a custom `Hook` class that can leverage `nestjs` dependency injection.
+
+In this example we create a simple Hook that works with any type that has a `createdBy` property.
+```ts
+import { Injectable } from '@nestjs/common';
+import { BeforeCreateOneHook, CreateOneInputType,} from '@nestjs-query/query-graphql';
+import { GqlContext } from './auth/auth.guard';
+import { AuthService } from './auth/auth.service';
+
+interface CreatedBy {
+  createdBy: string;
+}
+
+@Injectable()
+export class CreatedByHook<T extends CreatedBy> implements BeforeCreateOneHook<T, GqlContext> {
+  constructor(readonly authService: AuthService) {}
+
+  async run(instance: CreateOneInputType<T>, context: GqlContext): Promise<CreateOneInputType<T>> {
+    const createdBy = await this.authService.getUserEmail(context.userId);
+    instance.input.createdBy = createdBy;
+    return instance;
+  }
+}
+```
+
+Now we just provide the hook to the `BeforeCreateOne` decorator.
+
+```ts {6}
+import { FilterableField, BeforeCreateOne } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+import { CreatedByHook } from '../../hooks';
+
+@ObjectType('TodoItem')
+@BeforeCreateOne(CreatedByHook)
+export class TodoItemDTO {
+
+ /**
+ Other fields
+ **/
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
+}
+
+```
+
+## @BeforeCreateMany
 
 The `@BeforeCreateMany` decorator can be used to modify incoming `createMany` mutations with information from the
 graphql context.
+
+
+### Hook Function
 
 In this example we set the createdBy field on each record based on the context.
 
@@ -109,10 +164,64 @@ export class TodoItemDTO {
 
 ```
 
-### @BeforeUpdateOne
+### Hook Class
+
+You can also provide a custom `Hook` class that can leverage `nestjs` dependency injection.
+
+In this example we create a simple Hook that works with any type that has a `createdBy` property.
+```ts
+import { Injectable } from '@nestjs/common';
+import { BeforeCreateManyHook, CreateManyInputType,} from '@nestjs-query/query-graphql';
+import { GqlContext } from './auth/auth.guard';
+import { AuthService } from './auth/auth.service';
+
+interface CreatedBy {
+  createdBy: string;
+}
+
+@Injectable()
+export class CreatedByHook<T extends CreatedBy> implements BeforeCreateManyHook<T, GqlContext> {
+  constructor(readonly authService: AuthService) {}
+
+  async run(instance: CreateManyInputType<T>, context: GqlContext): Promise<CreateManyInputType<T>> {
+    const createdBy = await this.authService.getUserEmail(context.userId);
+    instance.input = instance.input.map((c) => ({ ...c, createdBy }));
+    return instance;
+  }
+}
+```
+
+Now we just provide the hook to the `BeforeCreateMany` decorator.
+
+```ts {6}
+import { FilterableField, BeforeCreateMany } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+import { CreatedByHook } from '../../hooks';
+
+@ObjectType('TodoItem')
+@BeforeCreateMany(CreatedByHook)
+export class TodoItemDTO {
+
+ /**
+ Other fields
+ **/
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
+}
+
+```
+
+## @BeforeUpdateOne
 
 The `@BeforeUpdateOne` decorator can be used to modify incoming `updateOne` mutations with information from the graphql
 context.
+
+
+### Hook Fnction
 
 In this example we set the updatedBy field in the update.
 
@@ -142,10 +251,63 @@ export class TodoItemDTO {
 
 ```
 
-### @BeforeUpdateMany
+### Hook Class
+
+You can also provide a custom `Hook` class that can leverage `nestjs` dependency injection.
+
+In this example we create a simple Hook that works with any type that has a `createdBy` property.
+```ts
+import { BeforeUpdateOneHook, UpdateOneInputType } from '@nestjs-query/query-graphql';
+import { Injectable } from '@nestjs/common';
+import { GqlContext } from './auth/auth.guard';
+import { AuthService } from './auth/auth.service';
+
+interface UpdatedBy {
+  updatedBy: string;
+}
+
+@Injectable()
+export class UpdatedByHook<T extends UpdatedBy> implements BeforeUpdateOneHook<T, GqlContext> {
+  constructor(readonly authService: AuthService) {}
+
+  async run(instance: UpdateOneInputType<T>, context: GqlContext): Promise<UpdateOneInputType<T>> {
+    // eslint-disable-next-line no-param-reassign
+    instance.update.updatedBy = await this.authService.getUserEmail(context.userId);
+    return instance;
+  }
+}
+```
+
+Now we just provide the hook to the `BeforeUpdateOne` decorator.
+
+```ts {6}
+import { FilterableField, BeforeUpdateOne } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+import { CreatedByHook } from '../../hooks';
+
+@ObjectType('TodoItem')
+@BeforeUpdateOne(UpdatedByHook)
+export class TodoItemDTO {
+
+ /**
+ Other fields
+ **/
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
+}
+
+```
+
+## @BeforeUpdateMany
 
 The `@BeforeUpdateMany` decorator can be used to modify incoming `updateMany` mutations with information from the
 graphql context.
+
+### Hook Function
 
 In this example we set the updatedBy field in the update.
 
@@ -175,4 +337,53 @@ export class TodoItemDTO {
 
 ```
 
+### Hook Class
 
+You can also provide a custom `Hook` class that can leverage `nestjs` dependency injection.
+
+In this example we create a simple Hook that works with any type that has a `createdBy` property.
+```ts
+import { BeforeUpdateManyHook, UpdateManyInputType } from '@nestjs-query/query-graphql';
+import { Injectable } from '@nestjs/common';
+import { GqlContext } from './auth/auth.guard';
+import { AuthService } from './auth/auth.service';
+
+interface UpdatedBy {
+  updatedBy: string;
+}
+
+@Injectable()
+export class UpdatedByHook<T extends UpdatedBy> implements BeforeUpdateManyHook<T, GqlContext> {
+  constructor(readonly authService: AuthService) {}
+
+  async run(instance: UpdateManyInputType<T, T>, context: GqlContext): Promise<UpdateManyInputType<T, T>> {
+    // eslint-disable-next-line no-param-reassign
+    instance.update.updatedBy = await this.authService.getUserEmail(context.userId);
+    return instance;
+  }
+}
+```
+
+Now we just provide the hook to the `BeforeUpdateMany` decorator.
+
+```ts {6}
+import { FilterableField, BeforeUpdateMany } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+import { CreatedByHook } from '../../hooks';
+
+@ObjectType('TodoItem')
+@BeforeUpdateMany(UpdatedByHook)
+export class TodoItemDTO {
+
+ /**
+ Other fields
+ **/
+
+  @FilterableField({ nullable: true })
+  createdBy?: string;
+
+  @FilterableField({ nullable: true })
+  updatedBy?: string;
+}
+
+```
