@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import {
   FilterableField,
-  FilterableConnection,
+  FilterableCursorConnection,
   BeforeCreateOne,
   BeforeCreateMany,
   BeforeUpdateOne,
@@ -14,7 +14,7 @@ import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
 @ObjectType('Tag')
 @KeySet(['id'])
-@FilterableConnection('todoItems', () => TodoItemDTO)
+@FilterableCursorConnection('todoItems', () => TodoItemDTO)
 @BeforeCreateOne(CreatedByHook)
 @BeforeCreateMany(CreatedByHook)
 @BeforeUpdateOne(UpdatedByHook)

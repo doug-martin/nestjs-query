@@ -9,7 +9,7 @@ import {
   OffsetConnection,
   OffsetQueryArgsType,
   Relation,
-  AllRelations,
+  UnPagedRelation,
 } from '../../../src';
 import { expectSDL } from '../../__fixtures__';
 import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
@@ -30,7 +30,7 @@ describe('FederationResolver', () => {
   @ObjectType('TestFederated')
   @Relation('relation', () => TestRelationDTO)
   @Relation('custom', () => TestRelationDTO, { relationName: 'other' })
-  @AllRelations('allRelations', () => TestRelationDTO)
+  @UnPagedRelation('unPagedRelations', () => TestRelationDTO)
   @OffsetConnection('relationOffsetConnection', () => TestRelationDTO)
   @CursorConnection('relationCursorConnection', () => TestRelationDTO)
   class TestFederatedDTO extends TestResolverDTO {
@@ -202,14 +202,14 @@ describe('FederationResolver', () => {
       when(
         mockService.queryRelations(
           TestRelationDTO,
-          'allRelations',
+          'unPagedRelations',
           deepEqual([dto]),
           objectContaining({ filter: query.filter }),
         ),
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const result = await resolver.queryAllRelations(dto, query, {});
+      const result = await resolver.queryUnPagedRelations(dto, query, {});
       return expect(result).toEqual(output);
     });
   });
