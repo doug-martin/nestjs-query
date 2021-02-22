@@ -1,8 +1,8 @@
-import { Class, mergeQuery, MetaValue, QueryService } from '@nestjs-query/core';
-import { ArgsType, Resolver, Context } from '@nestjs/graphql';
+import { Class, mergeQuery, QueryService } from '@nestjs-query/core';
+import { ArgsType, Context, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { getDTONames } from '../common';
-import { getQueryManyHook, HookArgs, ResolverQuery, HookFunc, getFindOneHook } from '../decorators';
+import { HookArgs, ResolverQuery } from '../decorators';
 import {
   ConnectionType,
   FindOneArgsType,
@@ -21,7 +21,9 @@ import {
   ResolverOpts,
   ServiceResolver,
 } from './resolver.interface';
-import { getAuthFilter, transformAndValidate } from './helpers';
+import { getAuthFilter } from './helpers';
+import { HookInterceptor } from '../interceptors';
+import { HookTypes } from '../hooks';
 
 export type ReadResolverFromOpts<
   DTO,
@@ -69,24 +71,30 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
   @ArgsType()
   class FO extends FindOneArgsType() {}
 
-  const queryManyHook = getQueryManyHook(DTOClass) as MetaValue<HookFunc<QA>>;
-  const findOneHook = getFindOneHook(DTOClass) as MetaValue<HookFunc<QA>>;
-
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadResolverBase extends BaseClass {
-    @ResolverQuery(() => DTOClass, { nullable: true, name: readOneQueryName }, commonResolverOpts, opts.one ?? {})
-    async findById(@HookArgs(FO, findOneHook) input: FO, @Context() context?: unknown): Promise<DTO | undefined> {
+    @ResolverQuery(
+      () => DTOClass,
+      { nullable: true, name: readOneQueryName },
+      commonResolverOpts,
+      { interceptors: [HookInterceptor(HookTypes.BEFORE_FIND_ONE, DTOClass)] },
+      opts.one ?? {},
+    )
+    async findById(@HookArgs() input: FO, @Context() context?: unknown): Promise<DTO | undefined> {
       const authorizeFilter = await getAuthFilter(this.authorizer, context);
       return this.service.findById(input.id, { filter: authorizeFilter });
     }
 
-    @ResolverQuery(() => Connection.resolveType, { name: readManyQueryName }, commonResolverOpts, opts.many ?? {})
-    async queryMany(
-      @HookArgs(QA, queryManyHook) query: QA,
-      @Context() context?: unknown,
-    ): Promise<ConnectionType<DTO>> {
+    @ResolverQuery(
+      () => Connection.resolveType,
+      { name: readManyQueryName },
+      commonResolverOpts,
+      { interceptors: [HookInterceptor(HookTypes.BEFORE_QUERY_MANY, DTOClass)] },
+      opts.many ?? {},
+    )
+    async queryMany(@HookArgs() query: QA, @Context() context?: unknown): Promise<ConnectionType<DTO>> {
       const authorizeFilter = await getAuthFilter(this.authorizer, context);
-      const qa = await transformAndValidate(QA, mergeQuery(query, { filter: authorizeFilter }));
+      const qa = mergeQuery(query, { filter: authorizeFilter });
       return Connection.createFromPromise(
         (q) => this.service.query(q),
         qa,

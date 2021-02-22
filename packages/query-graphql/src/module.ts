@@ -1,6 +1,6 @@
 import { Assembler, NestjsQueryCoreModule, Class } from '@nestjs-query/core';
 import { DynamicModule, ForwardReference, Provider } from '@nestjs/common';
-import { AutoResolverOpts, createAuthorizerProviders, createResolvers } from './providers';
+import { AutoResolverOpts, createAuthorizerProviders, createHookProviders, createResolvers } from './providers';
 import { ReadResolverOpts } from './resolvers';
 import { defaultPubSub, pubSubToken, GraphQLPubSub } from './subscription';
 import { PagingStrategies } from './types/query/paging';
@@ -25,7 +25,11 @@ export class NestjsQueryGraphQLModule {
     const pubSubProvider = opts.pubSub ?? this.defaultPubSubProvider();
     const DTOClasses = opts.resolvers.map((r) => r.DTOClass);
     const resolverProviders = createResolvers(opts.resolvers);
-    const providers = [...(opts.services || []), ...createAuthorizerProviders(DTOClasses)];
+    const providers = [
+      ...(opts.services || []),
+      ...createAuthorizerProviders(DTOClasses),
+      ...createHookProviders(opts.resolvers),
+    ];
     return {
       module: NestjsQueryGraphQLModule,
       imports: [...opts.imports, coreModule],

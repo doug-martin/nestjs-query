@@ -23,7 +23,6 @@ export { InjectPubSub } from './inject-pub-sub.decorator';
 export * from './skip-if.decorator';
 export * from './aggregate-query-param.decorator';
 export * from './hook.decorator';
-export * from './mutation-args.decorator';
 export * from './decorator.utils';
 export * from './hook-args.decorator';
 export * from './authorizer.decorator';
