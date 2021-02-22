@@ -14,21 +14,13 @@ export {
   ReferenceDecoratorOpts,
   InjectPubSub,
   BeforeCreateOne,
-  CreateOneHook,
   BeforeCreateMany,
-  CreateManyHook,
   BeforeUpdateOne,
-  UpdateOneHook,
   BeforeUpdateMany,
-  UpdateManyHook,
   BeforeDeleteOne,
-  DeleteOneHook,
   BeforeDeleteMany,
-  DeleteManyHook,
   BeforeQueryMany,
-  BeforeQueryManyHook,
   BeforeFindOne,
-  BeforeFindOneHook,
   InjectAuthorizer,
   Authorize,
   KeySet,
@@ -40,3 +32,14 @@ export { NestjsQueryGraphQLModule } from './module';
 export { AutoResolverOpts } from './providers';
 export { pubSubToken, GraphQLPubSub } from './subscription';
 export { Authorizer, AuthorizerOptions } from './auth';
+export {
+  Hook,
+  BeforeCreateOneHook,
+  BeforeCreateManyHook,
+  BeforeUpdateOneHook,
+  BeforeUpdateManyHook,
+  BeforeDeleteOneHook,
+  BeforeDeleteManyHook,
+  BeforeQueryManyHook,
+  BeforeFindOneHook,
+} from './hooks';
