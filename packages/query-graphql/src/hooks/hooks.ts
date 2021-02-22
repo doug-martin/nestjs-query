@@ -16,7 +16,7 @@ export interface Hook<T, Context = any> {
 }
 
 export function isHookClass<T, Context>(hook: unknown): hook is Class<Hook<T, Context>> {
-  return typeof hook === 'function' && 'run' in hook.prototype;
+  return typeof hook === 'function' && 'prototype' in hook && 'run' in hook.prototype;
 }
 
 export type BeforeCreateOneHook<DTO, Context = any> = Hook<CreateOneInputType<DTO>, Context>;
