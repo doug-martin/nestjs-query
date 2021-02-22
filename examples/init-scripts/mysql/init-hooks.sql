@@ -1,0 +1,3 @@
+CREATE USER hooks;
+CREATE DATABASE hooks;
+GRANT ALL PRIVILEGES ON hooks.* TO hooks;
