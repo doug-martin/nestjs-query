@@ -1,78 +1,48 @@
-import { Class, getClassMetadata, classMetadataDecorator, MetaValue, Query } from '@nestjs-query/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Class, getClassMetadata, MetaValue } from '@nestjs-query/core';
 import {
-  CreateManyInputType,
-  CreateOneInputType,
-  DeleteManyInputType,
-  DeleteOneInputType,
-  FindOneArgsType,
-  UpdateManyInputType,
-  UpdateOneInputType,
-} from '../types';
-import {
-  BEFORE_CREATE_MANY_KEY,
-  BEFORE_CREATE_ONE_KEY,
-  BEFORE_DELETE_MANY_KEY,
-  BEFORE_DELETE_ONE_KEY,
-  BEFORE_FIND_ONE_KEY,
-  BEFORE_QUERY_MANY_KEY,
-  BEFORE_UPDATE_MANY_KEY,
-  BEFORE_UPDATE_ONE_KEY,
-} from './constants';
+  BeforeCreateManyHook,
+  BeforeCreateOneHook,
+  BeforeDeleteManyHook,
+  BeforeDeleteOneHook,
+  BeforeFindOneHook,
+  BeforeQueryManyHook,
+  BeforeUpdateManyHook,
+  BeforeUpdateOneHook,
+  createDefaultHook,
+  Hook,
+  HookTypes,
+  isHookClass,
+} from '../hooks';
 
+export type HookMetaValue<H extends Hook<unknown>> = MetaValue<Class<H>>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type HookFunc<T, Context = any> = (instance: T, context: Context) => T | Promise<T>;
+export type HookDecoratorArg<H extends Hook<unknown>> = Class<H> | H['run'];
 
-export type CreateOneHook<DTO> = HookFunc<CreateOneInputType<DTO>>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BeforeCreateOne = classMetadataDecorator<CreateOneHook<any>>(BEFORE_CREATE_ONE_KEY);
-export function getCreateOneHook<DTO>(DTOClass: Class<DTO>): MetaValue<CreateOneHook<DTO>> {
-  return getClassMetadata(DTOClass, BEFORE_CREATE_ONE_KEY, true);
-}
+const hookMetaDataKey = (hookType: HookTypes): string => `nestjs-query:${hookType}`;
 
-export type CreateManyHook<DTO> = HookFunc<CreateManyInputType<DTO>>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BeforeCreateMany = classMetadataDecorator<CreateManyHook<any>>(BEFORE_CREATE_MANY_KEY);
-export function getCreateManyHook<DTO>(DTOClass: Class<DTO>): MetaValue<CreateManyHook<DTO>> {
-  return getClassMetadata(DTOClass, BEFORE_CREATE_MANY_KEY, true);
-}
+const hookDecorator = <H extends Hook<unknown>>(hookType: HookTypes) => {
+  const key = hookMetaDataKey(hookType);
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  return (data: HookDecoratorArg<H>) => (target: Function): void => {
+    if (isHookClass(data)) {
+      return Reflect.defineMetadata(key, data, target);
+    }
+    const hook = createDefaultHook(data);
+    return Reflect.defineMetadata(key, hook, target);
+  };
+};
 
-export type UpdateOneHook<DTO> = HookFunc<UpdateOneInputType<DTO>>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BeforeUpdateOne = classMetadataDecorator<UpdateOneHook<any>>(BEFORE_UPDATE_ONE_KEY);
-export function getUpdateOneHook<DTO, U>(DTOClass: Class<DTO>): MetaValue<UpdateOneHook<U>> {
-  return getClassMetadata(DTOClass, BEFORE_UPDATE_ONE_KEY, true);
-}
+export const BeforeCreateOne = hookDecorator<BeforeCreateOneHook<any>>(HookTypes.BEFORE_CREATE_ONE);
+export const BeforeCreateMany = hookDecorator<BeforeCreateManyHook<any>>(HookTypes.BEFORE_CREATE_MANY);
+export const BeforeUpdateOne = hookDecorator<BeforeUpdateOneHook<any>>(HookTypes.BEFORE_UPDATE_ONE);
+export const BeforeUpdateMany = hookDecorator<BeforeUpdateManyHook<any, any>>(HookTypes.BEFORE_UPDATE_MANY);
+export const BeforeDeleteOne = hookDecorator<BeforeDeleteOneHook>(HookTypes.BEFORE_DELETE_ONE);
+export const BeforeDeleteMany = hookDecorator<BeforeDeleteManyHook<any>>(HookTypes.BEFORE_DELETE_MANY);
+export const BeforeQueryMany = hookDecorator<BeforeQueryManyHook<any>>(HookTypes.BEFORE_QUERY_MANY);
+export const BeforeFindOne = hookDecorator<BeforeFindOneHook>(HookTypes.BEFORE_FIND_ONE);
 
-export type UpdateManyHook<DTO, U> = HookFunc<UpdateManyInputType<DTO, U>>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BeforeUpdateMany = classMetadataDecorator<UpdateManyHook<any, any>>(BEFORE_UPDATE_MANY_KEY);
-export function getUpdateManyHook<DTO, U>(DTOClass: Class<DTO>): MetaValue<UpdateManyHook<DTO, U>> {
-  return getClassMetadata(DTOClass, BEFORE_UPDATE_MANY_KEY, true);
-}
-
-export type DeleteOneHook = HookFunc<DeleteOneInputType>;
-export const BeforeDeleteOne = classMetadataDecorator<DeleteOneHook>(BEFORE_DELETE_ONE_KEY);
-export function getDeleteOneHook<DTO>(DTOClass: Class<DTO>): MetaValue<DeleteOneHook> {
-  return getClassMetadata(DTOClass, BEFORE_DELETE_ONE_KEY, true);
-}
-
-export type DeleteManyHook<DTO> = HookFunc<DeleteManyInputType<DTO>>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BeforeDeleteMany = classMetadataDecorator<DeleteManyHook<any>>(BEFORE_DELETE_MANY_KEY);
-export function getDeleteManyHook<DTO>(DTOClass: Class<DTO>): MetaValue<DeleteManyHook<DTO>> {
-  return getClassMetadata(DTOClass, BEFORE_DELETE_MANY_KEY, true);
-}
-
-export type BeforeQueryManyHook<DTO> = HookFunc<Query<DTO>>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BeforeQueryMany = classMetadataDecorator<BeforeQueryManyHook<any>>(BEFORE_QUERY_MANY_KEY);
-export function getQueryManyHook<DTO>(DTOClass: Class<DTO>): MetaValue<BeforeQueryManyHook<DTO>> {
-  return getClassMetadata(DTOClass, BEFORE_QUERY_MANY_KEY, true);
-}
-
-export type BeforeFindOneHook = HookFunc<FindOneArgsType>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BeforeFindOne = classMetadataDecorator<BeforeFindOneHook>(BEFORE_FIND_ONE_KEY);
-export function getFindOneHook<DTO>(DTOClass: Class<DTO>): MetaValue<BeforeFindOneHook> {
-  return getClassMetadata(DTOClass, BEFORE_FIND_ONE_KEY, true);
-}
+export const getHookForType = <DTO, H extends Hook<unknown>>(
+  hookType: HookTypes,
+  DTOClass: Class<unknown>,
+): HookMetaValue<H> => getClassMetadata(DTOClass, hookMetaDataKey(hookType), true);

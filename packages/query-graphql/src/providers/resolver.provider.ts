@@ -15,7 +15,7 @@ import { CRUDResolver, CRUDResolverOpts, FederationResolver } from '../resolvers
 import { PagingStrategies } from '../types/query/paging';
 import { Authorizer } from '../auth';
 
-type CRUDAutoResolverOpts<DTO, C, U, R, PS extends PagingStrategies> = CRUDResolverOpts<DTO, C, U, R, PS> & {
+export type CRUDAutoResolverOpts<DTO, C, U, R, PS extends PagingStrategies> = CRUDResolverOpts<DTO, C, U, R, PS> & {
   DTOClass: Class<DTO>;
 };
 

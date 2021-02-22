@@ -7,8 +7,9 @@ import {
   QueryService,
   UpdateManyResponse,
 } from '@nestjs-query/core';
-import { ArgsType, InputType, Resolver, Args, PartialType, Context } from '@nestjs/graphql';
+import { Args, ArgsType, Context, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
+import { HookTypes } from '../hooks';
 import { DTONames, getDTONames } from '../common';
 import { EventType, getDTOEventName } from '../subscription';
 import {
@@ -20,16 +21,9 @@ import {
   UpdateOneInputType,
 } from '../types';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
-import {
-  ResolverMutation,
-  ResolverSubscription,
-  getUpdateOneHook,
-  getUpdateManyHook,
-  MutationArgs,
-  UpdateOneHook,
-  UpdateManyHook,
-} from '../decorators';
+import { MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
 import { createSubscriptionFilter, getAuthFilter, transformAndValidate } from './helpers';
+import { HookInterceptor } from '../interceptors';
 
 export type UpdatedEvent<DTO> = { [eventName: string]: DTO };
 export interface UpdateResolverOpts<DTO, U = DeepPartial<DTO>> extends SubscriptionResolverOpts {
@@ -82,15 +76,6 @@ const defaultUpdateManyInput = <DTO, U>(
   return UM;
 };
 
-const lookupUpdateOneHook = <DTO, U>(DTOClass: Class<DTO>, UpdateDTOClass: Class<U>): UpdateOneHook<U> | undefined =>
-  getUpdateOneHook(UpdateDTOClass) ?? getUpdateOneHook(DTOClass);
-
-const lookupUpdateManyHook = <DTO, U>(
-  DTOClass: Class<DTO>,
-  UpdateDTOClass: Class<U>,
-): UpdateManyHook<DTO, U> | undefined =>
-  (getUpdateManyHook(UpdateDTOClass) ?? getUpdateManyHook(DTOClass)) as UpdateManyHook<DTO, U> | undefined;
-
 /**
  * @internal
  * Mixin to add `update` graphql endpoints.
@@ -112,8 +97,6 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
     UpdateOneInput = defaultUpdateOneInput(dtoNames, UpdateDTOClass),
     UpdateManyInput = defaultUpdateManyInput(dtoNames, DTOClass, UpdateDTOClass),
   } = opts;
-  const updateOneHook = lookupUpdateOneHook(DTOClass, UpdateDTOClass);
-  const updateManyHook = lookupUpdateManyHook(DTOClass, UpdateDTOClass);
   const updateOneMutationName = opts.one?.name ?? `updateOne${baseName}`;
   const updateManyMutationName = opts.many?.name ?? `updateMany${pluralBaseName}`;
 
@@ -143,8 +126,14 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateResolverBase extends BaseClass {
-    @ResolverMutation(() => DTOClass, { name: updateOneMutationName }, commonResolverOpts, opts.one ?? {})
-    async updateOne(@MutationArgs(UO, updateOneHook) input: UO, @Context() context?: unknown): Promise<DTO> {
+    @ResolverMutation(
+      () => DTOClass,
+      { name: updateOneMutationName },
+      { interceptors: [HookInterceptor(HookTypes.BEFORE_UPDATE_ONE, UpdateDTOClass, DTOClass)] },
+      commonResolverOpts,
+      opts.one ?? {},
+    )
+    async updateOne(@MutationHookArgs() input: UO, @Context() context?: unknown): Promise<DTO> {
       const updateOne = await transformAndValidate(UO, input);
       const authorizeFilter = await getAuthFilter(this.authorizer, context);
       const { id, update } = updateOne.input;
@@ -155,11 +144,14 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
       return updateResult;
     }
 
-    @ResolverMutation(() => UMR, { name: updateManyMutationName }, commonResolverOpts, opts.many ?? {})
-    async updateMany(
-      @MutationArgs(UM, updateManyHook) input: UM,
-      @Context() context?: unknown,
-    ): Promise<UpdateManyResponse> {
+    @ResolverMutation(
+      () => UMR,
+      { name: updateManyMutationName },
+      { interceptors: [HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, UpdateDTOClass, DTOClass)] },
+      commonResolverOpts,
+      opts.many ?? {},
+    )
+    async updateMany(@MutationHookArgs() input: UM, @Context() context?: unknown): Promise<UpdateManyResponse> {
       const updateMany = await transformAndValidate(UM, input);
       const authorizeFilter = await getAuthFilter(this.authorizer, context);
       const { update, filter } = updateMany.input;
