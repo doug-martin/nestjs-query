@@ -26,7 +26,6 @@ import { extractConnectionOptsFromQueryArgs, getAuthFilter } from './helpers';
 import { HookInterceptor } from '../interceptors';
 import { HookTypes } from '../hooks';
 
-
 export type ReadResolverFromOpts<
   DTO,
   Opts extends ReadResolverOpts<DTO>,
