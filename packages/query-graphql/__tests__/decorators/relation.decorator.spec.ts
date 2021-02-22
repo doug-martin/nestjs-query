@@ -1,12 +1,18 @@
 // eslint-disable-next-line max-classes-per-file
 import { ObjectType } from '@nestjs/graphql';
-import { Relation, PagingStrategies, AllRelations, OffsetConnection, FilterableRelation } from '../../src';
+import {
+  Relation,
+  PagingStrategies,
+  UnPagedRelation,
+  FilterableUnPagedRelation,
+  OffsetConnection,
+  FilterableRelation,
+} from '../../src';
 import {
   CursorConnection,
   FilterableCursorConnection,
   FilterableOffsetConnection,
   getRelations,
-  FilterableAllRelations,
 } from '../../src/decorators';
 
 @ObjectType()
@@ -38,12 +44,12 @@ describe('@FilterableRelation', () => {
   });
 });
 
-describe('@AllRelations', () => {
+describe('@UnPagedRelation', () => {
   it('should set the isMany flag if the relationFn returns an array', () => {
     const relationFn = () => TestRelation;
     const relationOpts = { disableRead: true };
     @ObjectType()
-    @AllRelations('tests', relationFn, relationOpts)
+    @UnPagedRelation('tests', relationFn, relationOpts)
     class TestDTO {}
 
     const relations = getRelations(TestDTO);
@@ -55,12 +61,12 @@ describe('@AllRelations', () => {
   });
 });
 
-describe('@FilterableAllRelations', () => {
+describe('@FilterableUnPagedRelation', () => {
   it('should add the relation metadata to the metadata storage', () => {
     const relationFn = () => TestRelation;
     const relationOpts = { disableRead: true };
     @ObjectType()
-    @FilterableAllRelations('test', relationFn, relationOpts)
+    @FilterableUnPagedRelation('test', relationFn, relationOpts)
     class TestDTO {}
 
     const relations = getRelations(TestDTO);
@@ -146,21 +152,21 @@ describe('getRelations', () => {
 
   @ObjectType({ isAbstract: true })
   @Relation('test', () => SomeRelation)
-  @AllRelations('allTests', () => SomeRelation)
+  @UnPagedRelation('allTests', () => SomeRelation)
   @OffsetConnection('offsetTests', () => SomeRelation)
   @CursorConnection('cursorTests', () => SomeRelation)
   class BaseType {}
 
   @ObjectType()
   @Relation('implementedRelation', () => SomeRelation)
-  @AllRelations('implementedAllRelations', () => SomeRelation)
+  @UnPagedRelation('implementedAllRelations', () => SomeRelation)
   @OffsetConnection('implementedOffsetConnection', () => SomeRelation)
   @CursorConnection('implementedCursorConnection', () => SomeRelation)
   class ImplementingClass extends BaseType {}
 
   @ObjectType()
   @Relation('implementedRelation', () => SomeRelation, { relationName: 'test' })
-  @AllRelations('implementedAllRelations', () => SomeRelation, { relationName: 'tests' })
+  @UnPagedRelation('implementedAllRelations', () => SomeRelation, { relationName: 'tests' })
   @OffsetConnection('implementedOffsetConnection', () => SomeRelation, { relationName: 'tests' })
   @CursorConnection('implementedCursorConnection', () => SomeRelation, { relationName: 'testConnection' })
   class DuplicateImplementor extends ImplementingClass {}

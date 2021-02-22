@@ -8,7 +8,7 @@ type TestFederated {
   stringField: String!
   relation: TestRelationDTO!
   custom: TestRelationDTO!
-  allRelations(
+  unPagedRelations(
     """Specify to filter the records returned."""
     filter: TestRelationDTOFilter = {}
 
