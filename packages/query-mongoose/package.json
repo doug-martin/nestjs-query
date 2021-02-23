@@ -38,7 +38,7 @@
     "class-transformer": "0.3.2",
     "mongodb": "3.6.4",
     "mongodb-memory-server": "6.9.3",
-    "mongoose": "5.11.17",
+    "mongoose": "5.11.18",
     "ts-mockito": "2.6.1",
     "typescript": "4.1.5"
   },

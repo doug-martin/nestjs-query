@@ -32,7 +32,7 @@
     "graphql": "15.5.0",
     "graphql-query-complexity": "0.7.2",
     "graphql-tools": "7.0.4",
-    "mongoose": "5.11.17",
+    "mongoose": "5.11.18",
     "mysql2": "2.2.5",
     "passport": "0.4.1",
     "passport-jwt": "4.0.0",
