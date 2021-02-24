@@ -56,7 +56,7 @@ describe('FederationResolver', () => {
   describe('one', () => {
     describe('one relation', () => {
       it('should call the service findRelation with the provided dto', async () => {
-        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
         const dto: TestResolverDTO = {
           id: 'id-1',
           stringField: 'foo',
@@ -75,7 +75,7 @@ describe('FederationResolver', () => {
       });
 
       it('should call the service findRelation with the provided dto and correct relation name', async () => {
-        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
         const dto: TestResolverDTO = {
           id: 'id-1',
           stringField: 'foo',
@@ -98,7 +98,7 @@ describe('FederationResolver', () => {
   describe('many - connection', () => {
     describe('with cursor paging strategy', () => {
       it('should call the service findRelation with the provided dto', async () => {
-        const { resolver, mockService } = await createResolverFromNest(TestResolver);
+        const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
         const dto: TestResolverDTO = {
           id: 'id-1',
           stringField: 'foo',
@@ -148,7 +148,7 @@ describe('FederationResolver', () => {
 
   describe('with offset paging strategy', () => {
     it('should call the service findRelation with the provided dto', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
+      const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
       const dto: TestResolverDTO = {
         id: 'id-1',
         stringField: 'foo',
@@ -184,7 +184,7 @@ describe('FederationResolver', () => {
 
   describe('with no paging strategy', () => {
     it('should call the service findRelation with the provided dto', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
+      const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
       const dto: TestResolverDTO = {
         id: 'id-1',
         stringField: 'foo',

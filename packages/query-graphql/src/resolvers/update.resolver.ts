@@ -3,11 +3,12 @@ import {
   Class,
   DeepPartial,
   DeleteManyResponse,
+  Filter,
   mergeFilter,
   QueryService,
   UpdateManyResponse,
 } from '@nestjs-query/core';
-import { Args, ArgsType, Context, InputType, PartialType, Resolver } from '@nestjs/graphql';
+import { Args, ArgsType, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { HookTypes } from '../hooks';
 import { DTONames, getDTONames } from '../common';
@@ -21,9 +22,9 @@ import {
   UpdateOneInputType,
 } from '../types';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
-import { MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
-import { createSubscriptionFilter, getAuthFilter, transformAndValidate } from './helpers';
-import { HookInterceptor } from '../interceptors';
+import { AuthorizerFilter, MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
+import { createSubscriptionFilter } from './helpers';
+import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
 
 export type UpdatedEvent<DTO> = { [eventName: string]: DTO };
 export interface UpdateResolverOpts<DTO, U = DeepPartial<DTO>> extends SubscriptionResolverOpts {
@@ -33,9 +34,12 @@ export interface UpdateResolverOpts<DTO, U = DeepPartial<DTO>> extends Subscript
 }
 
 export interface UpdateResolver<DTO, U, QS extends QueryService<DTO, unknown, U>> extends ServiceResolver<DTO, QS> {
-  updateOne(input: MutationArgsType<UpdateOneInputType<U>>, context?: unknown): Promise<DTO>;
+  updateOne(input: MutationArgsType<UpdateOneInputType<U>>, authFilter?: Filter<DTO>): Promise<DTO>;
 
-  updateMany(input: MutationArgsType<UpdateManyInputType<DTO, U>>, context?: unknown): Promise<UpdateManyResponse>;
+  updateMany(
+    input: MutationArgsType<UpdateManyInputType<DTO, U>>,
+    authFilter?: Filter<DTO>,
+  ): Promise<UpdateManyResponse>;
 
   updatedOneSubscription(input?: SubscriptionArgsType<DTO>): AsyncIterator<UpdatedEvent<DTO>>;
 
@@ -129,15 +133,18 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
     @ResolverMutation(
       () => DTOClass,
       { name: updateOneMutationName },
-      { interceptors: [HookInterceptor(HookTypes.BEFORE_UPDATE_ONE, UpdateDTOClass, DTOClass)] },
+      {
+        interceptors: [
+          HookInterceptor(HookTypes.BEFORE_UPDATE_ONE, UpdateDTOClass, DTOClass),
+          AuthorizerInterceptor(DTOClass),
+        ],
+      },
       commonResolverOpts,
       opts.one ?? {},
     )
-    async updateOne(@MutationHookArgs() input: UO, @Context() context?: unknown): Promise<DTO> {
-      const updateOne = await transformAndValidate(UO, input);
-      const authorizeFilter = await getAuthFilter(this.authorizer, context);
-      const { id, update } = updateOne.input;
-      const updateResult = await this.service.updateOne(id, update, { filter: authorizeFilter });
+    async updateOne(@MutationHookArgs() input: UO, @AuthorizerFilter() authorizeFilter?: Filter<DTO>): Promise<DTO> {
+      const { id, update } = input.input;
+      const updateResult = await this.service.updateOne(id, update, { filter: authorizeFilter ?? {} });
       if (enableOneSubscriptions) {
         await this.publishUpdatedOneEvent(updateResult);
       }
@@ -147,14 +154,20 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
     @ResolverMutation(
       () => UMR,
       { name: updateManyMutationName },
-      { interceptors: [HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, UpdateDTOClass, DTOClass)] },
+      {
+        interceptors: [
+          HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, UpdateDTOClass, DTOClass),
+          AuthorizerInterceptor(DTOClass),
+        ],
+      },
       commonResolverOpts,
       opts.many ?? {},
     )
-    async updateMany(@MutationHookArgs() input: UM, @Context() context?: unknown): Promise<UpdateManyResponse> {
-      const updateMany = await transformAndValidate(UM, input);
-      const authorizeFilter = await getAuthFilter(this.authorizer, context);
-      const { update, filter } = updateMany.input;
+    async updateMany(
+      @MutationHookArgs() input: UM,
+      @AuthorizerFilter() authorizeFilter?: Filter<DTO>,
+    ): Promise<UpdateManyResponse> {
+      const { update, filter } = input.input;
       const updateManyResponse = await this.service.updateMany(update, mergeFilter(filter, authorizeFilter ?? {}));
       if (enableManySubscriptions) {
         await this.publishUpdatedManyEvent(updateManyResponse);

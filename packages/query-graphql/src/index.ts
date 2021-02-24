@@ -27,6 +27,8 @@ export {
   BeforeFindOne,
   InjectAuthorizer,
   Authorize,
+  AuthorizerFilter,
+  RelationAuthorizerFilter,
   KeySet,
 } from './decorators';
 export * from './resolvers';
@@ -47,3 +49,4 @@ export {
   BeforeQueryManyHook,
   BeforeFindOneHook,
 } from './hooks';
+export { AuthorizerInterceptor, AuthorizerContext } from './interceptors';
