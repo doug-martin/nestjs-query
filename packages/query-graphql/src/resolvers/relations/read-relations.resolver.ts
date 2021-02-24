@@ -1,11 +1,12 @@
-import { Class, mergeQuery, QueryService } from '@nestjs-query/core';
+import { Class, Filter, mergeQuery, QueryService } from '@nestjs-query/core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
-import { ResolverField } from '../../decorators';
+import { RelationAuthorizerFilter, ResolverField } from '../../decorators';
+import { AuthorizerInterceptor } from '../../interceptors';
 import { CountRelationsLoader, DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
 import { ConnectionType, QueryArgsType } from '../../types';
-import { extractConnectionOptsFromQueryArgs, getRelationAuthFilter, transformAndValidate } from '../helpers';
+import { extractConnectionOptsFromQueryArgs, transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
@@ -36,12 +37,16 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
       () => relationDTO,
       { nullable: relation.nullable, complexity: relation.complexity },
       commonResolverOpts,
+      { interceptors: [AuthorizerInterceptor(DTOClass)] },
     )
-    async [`find${baseName}`](@Parent() dto: DTO, @Context() context: ExecutionContext): Promise<Relation | undefined> {
-      const relationFilter = await getRelationAuthFilter<DTO, Relation>(baseNameLower, this.authorizer, context);
+    async [`find${baseName}`](
+      @Parent() dto: DTO,
+      @Context() context: ExecutionContext,
+      @RelationAuthorizerFilter(baseNameLower) authFilter?: Filter<Relation>,
+    ): Promise<Relation | undefined> {
       return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load({
         dto,
-        filter: relationFilter,
+        filter: authFilter,
       });
     }
   }
@@ -85,11 +90,13 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
       () => CT.resolveType,
       { nullable: relation.nullable, complexity: relation.complexity },
       commonResolverOpts,
+      { interceptors: [AuthorizerInterceptor(DTOClass)] },
     )
     async [`query${pluralBaseName}`](
       @Parent() dto: DTO,
       @Args() q: RelationQA,
       @Context() context: ExecutionContext,
+      @RelationAuthorizerFilter(pluralBaseNameLower) relationFilter?: Filter<Relation>,
     ): Promise<ConnectionType<Relation>> {
       const qa = await transformAndValidate(RelationQA, q);
       const relationLoader = DataLoaderFactory.getOrCreateLoader(
@@ -102,7 +109,6 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
         countRelationLoaderName,
         countLoader.createLoader(this.service),
       );
-      const relationFilter = await getRelationAuthFilter<DTO, Relation>(pluralBaseNameLower, this.authorizer, context);
       return CT.createFromPromise(
         (query) => relationLoader.load({ dto, query }),
         mergeQuery(qa, { filter: relationFilter }),

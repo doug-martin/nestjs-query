@@ -1,11 +1,12 @@
-import { AggregateQuery, AggregateResponse, Class, mergeFilter, QueryService } from '@nestjs-query/core';
+import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@nestjs-query/core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
-import { AggregateQueryParam, ResolverField } from '../../decorators';
+import { AggregateQueryParam, RelationAuthorizerFilter, ResolverField } from '../../decorators';
+import { AuthorizerInterceptor } from '../../interceptors';
 import { AggregateRelationsLoader, DataLoaderFactory } from '../../loader';
 import { AggregateArgsType, AggregateResponseType } from '../../types';
-import { getRelationAuthFilter, transformAndValidate } from '../helpers';
+import { transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
@@ -44,12 +45,15 @@ const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: A
   const AR = AggregateResponseType(relationDTO, { prefix: `${dtoName}${pluralBaseName}` });
   @Resolver(() => DTOClass, { isAbstract: true })
   class AggregateMixin extends Base {
-    @ResolverField(`${pluralBaseNameLower}Aggregate`, () => AR, {}, commonResolverOpts)
+    @ResolverField(`${pluralBaseNameLower}Aggregate`, () => AR, {}, commonResolverOpts, {
+      interceptors: [AuthorizerInterceptor(DTOClass)],
+    })
     async [`aggregate${pluralBaseName}`](
       @Parent() dto: DTO,
       @Args() q: RelationQA,
       @AggregateQueryParam() aggregateQuery: AggregateQuery<Relation>,
       @Context() context: ExecutionContext,
+      @RelationAuthorizerFilter(baseNameLower) relationFilter?: Filter<Relation>,
     ): Promise<AggregateResponse<Relation>> {
       const qa = await transformAndValidate(RelationQA, q);
       const loader = DataLoaderFactory.getOrCreateLoader(
@@ -57,7 +61,6 @@ const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: A
         aggregateRelationLoaderName,
         aggregateLoader.createLoader(this.service),
       );
-      const relationFilter = await getRelationAuthFilter<DTO, Relation>(baseNameLower, this.authorizer, context);
       return loader.load({
         dto,
         filter: mergeFilter(qa.filter ?? {}, relationFilter ?? {}),
