@@ -1,11 +1,12 @@
-import { Class, QueryService } from '@nestjs-query/core';
-import { Resolver, ArgsType, Args, Context } from '@nestjs/graphql';
+import { Class, ModifyRelationOptions, QueryService } from '@nestjs-query/core';
+import { Resolver, ArgsType, Args } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
-import { ResolverMutation } from '../../decorators';
+import { ModifyRelationAuthorizerFilter, ResolverMutation } from '../../decorators';
+import { AuthorizerInterceptor } from '../../interceptors';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
 import { transformAndValidate } from '../helpers';
 import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
-import { flattenRelations, getModifyRelationOptions, removeRelationOpts } from './helpers';
+import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
@@ -26,14 +27,13 @@ const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class RemoveOneMixin extends Base {
-    @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
+    @ResolverMutation(() => DTOClass, {}, commonResolverOpts, { interceptors: [AuthorizerInterceptor(DTOClass)] })
     async [`remove${baseName}From${dtoNames.baseName}`](
       @Args() setArgs: SetArgs,
-      @Context() context?: unknown,
+      @ModifyRelationAuthorizerFilter(baseNameLower) modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
-      const opts = await getModifyRelationOptions(baseNameLower, this.authorizer, context);
-      return this.service.removeRelation(relationName, input.id, input.relationId, opts);
+      return this.service.removeRelation(relationName, input.id, input.relationId, modifyRelationsFilter);
     }
   }
   return RemoveOneMixin;
@@ -57,14 +57,13 @@ const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation:
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class Mixin extends Base {
-    @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
+    @ResolverMutation(() => DTOClass, {}, commonResolverOpts, { interceptors: [AuthorizerInterceptor(DTOClass)] })
     async [`remove${pluralBaseName}From${dtoNames.baseName}`](
       @Args() addArgs: AddArgs,
-      @Context() context?: unknown,
+      @ModifyRelationAuthorizerFilter(pluralBaseNameLower) modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(AddArgs, addArgs);
-      const opts = await getModifyRelationOptions(pluralBaseNameLower, this.authorizer, context);
-      return this.service.removeRelations(relationName, input.id, input.relationIds, opts);
+      return this.service.removeRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
     }
   }
   return Mixin;

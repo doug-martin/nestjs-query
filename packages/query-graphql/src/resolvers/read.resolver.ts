@@ -1,9 +1,9 @@
-import { Class, mergeQuery, QueryService } from '@nestjs-query/core';
-import { ArgsType, Context, Resolver } from '@nestjs/graphql';
+import { Class, Filter, mergeQuery, QueryService } from '@nestjs-query/core';
+import { ArgsType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { OffsetConnectionOptions } from '../types/connection/offset';
 import { getDTONames } from '../common';
-import { HookArgs, ResolverQuery } from '../decorators';
+import { AuthorizerFilter, HookArgs, ResolverQuery } from '../decorators';
 import {
   ConnectionType,
   FindOneArgsType,
@@ -22,8 +22,8 @@ import {
   ResolverOpts,
   ServiceResolver,
 } from './resolver.interface';
-import { extractConnectionOptsFromQueryArgs, getAuthFilter } from './helpers';
-import { HookInterceptor } from '../interceptors';
+import { extractConnectionOptsFromQueryArgs } from './helpers';
+import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
 import { HookTypes } from '../hooks';
 
 export type ReadResolverFromOpts<
@@ -45,8 +45,8 @@ export interface ReadResolver<
   CT extends ConnectionType<DTO>,
   QS extends QueryService<DTO, unknown, unknown>
 > extends ServiceResolver<DTO, QS> {
-  queryMany(query: QT, context?: unknown): Promise<CT>;
-  findById(id: FindOneArgsType, context?: unknown): Promise<DTO | undefined>;
+  queryMany(query: QT, authorizeFilter?: Filter<DTO>): Promise<CT>;
+  findById(id: FindOneArgsType, authorizeFilter?: Filter<DTO>): Promise<DTO | undefined>;
 }
 
 /**
@@ -81,11 +81,10 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
       () => DTOClass,
       { nullable: true, name: readOneQueryName },
       commonResolverOpts,
-      { interceptors: [HookInterceptor(HookTypes.BEFORE_FIND_ONE, DTOClass)] },
+      { interceptors: [HookInterceptor(HookTypes.BEFORE_FIND_ONE, DTOClass), AuthorizerInterceptor(DTOClass)] },
       opts.one ?? {},
     )
-    async findById(@HookArgs() input: FO, @Context() context?: unknown): Promise<DTO | undefined> {
-      const authorizeFilter = await getAuthFilter(this.authorizer, context);
+    async findById(@HookArgs() input: FO, @AuthorizerFilter() authorizeFilter?: Filter<DTO>): Promise<DTO | undefined> {
       return this.service.findById(input.id, { filter: authorizeFilter });
     }
 
@@ -93,15 +92,16 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
       () => Connection.resolveType,
       { name: readManyQueryName },
       commonResolverOpts,
-      { interceptors: [HookInterceptor(HookTypes.BEFORE_QUERY_MANY, DTOClass)] },
+      { interceptors: [HookInterceptor(HookTypes.BEFORE_QUERY_MANY, DTOClass), AuthorizerInterceptor(DTOClass)] },
       opts.many ?? {},
     )
-    async queryMany(@HookArgs() query: QA, @Context() context?: unknown): Promise<ConnectionType<DTO>> {
-      const authorizeFilter = await getAuthFilter(this.authorizer, context);
-      const qa = mergeQuery(query, { filter: authorizeFilter });
+    async queryMany(
+      @HookArgs() query: QA,
+      @AuthorizerFilter() authorizeFilter?: Filter<DTO>,
+    ): Promise<ConnectionType<DTO>> {
       return Connection.createFromPromise(
         (q) => this.service.query(q),
-        qa,
+        mergeQuery(query, { filter: authorizeFilter }),
         (filter) => this.service.count(filter),
       );
     }
