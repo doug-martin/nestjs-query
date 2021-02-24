@@ -1,9 +1,8 @@
-import { applyFilter, Class, Filter } from '@nestjs-query/core';
+import { applyFilter, Class } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
 import { PagingStrategies, StaticQueryArgsType, SubscriptionArgsType, SubscriptionFilterInputType } from '../types';
-import { Authorizer } from '../auth';
 import { ConnectionOptions } from '../types/connection';
 
 /** @internal */
@@ -35,27 +34,6 @@ export const createSubscriptionFilter = <DTO, Input extends SubscriptionFilterIn
     }
     return true;
   };
-
-export const getAuthFilter = async <DTO>(
-  authorizer?: Authorizer<DTO>,
-  context?: unknown,
-): Promise<Filter<DTO> | undefined> => {
-  if (!context || !authorizer) {
-    return undefined;
-  }
-  return authorizer.authorize(context);
-};
-
-export const getRelationAuthFilter = async <DTO, Relation>(
-  relationName: string,
-  authorizer?: Authorizer<DTO>,
-  context?: unknown,
-): Promise<Filter<Relation> | undefined> => {
-  if (!context || !authorizer) {
-    return undefined;
-  }
-  return authorizer.authorizeRelation(relationName, context);
-};
 
 export const extractConnectionOptsFromQueryArgs = <DTO>(
   args: StaticQueryArgsType<DTO>,

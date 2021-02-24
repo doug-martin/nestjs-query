@@ -21,7 +21,10 @@ interface ResolverMock<T> {
   mockAuthorizer: Authorizer<TestResolverDTO>;
 }
 
-export const createResolverFromNest = async <T>(ResolverClass: Class<T>): Promise<ResolverMock<T>> => {
+export const createResolverFromNest = async <T>(
+  ResolverClass: Class<T>,
+  DTOClass: Class<unknown> = TestResolverDTO,
+): Promise<ResolverMock<T>> => {
   const mockService = mock(TestService);
   const mockPubSub = mock(PubSub);
   const mockAuthorizer = mock(TestResolverAuthorizer);
@@ -29,14 +32,12 @@ export const createResolverFromNest = async <T>(ResolverClass: Class<T>): Promis
     providers: [
       ResolverClass,
       TestService,
-      { provide: getAuthorizerToken(TestResolverDTO), useClass: TestResolverAuthorizer },
+      { provide: getAuthorizerToken(DTOClass), useValue: instance(mockAuthorizer) },
       { provide: pubSubToken(), useValue: instance(mockPubSub) },
     ],
   })
     .overrideProvider(TestService)
     .useValue(instance(mockService))
-    .overrideProvider(getAuthorizerToken(TestResolverDTO))
-    .useValue(instance(mockAuthorizer))
     .compile();
   return { resolver: moduleRef.get(ResolverClass), mockService, mockPubSub, mockAuthorizer };
 };

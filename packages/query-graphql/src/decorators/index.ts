@@ -32,3 +32,4 @@ export * from './hook-args.decorator';
 export * from './authorizer.decorator';
 export * from './inject-authorizer.decorator';
 export * from './key-set.decorator';
+export * from './authorize-filter.decorator';
