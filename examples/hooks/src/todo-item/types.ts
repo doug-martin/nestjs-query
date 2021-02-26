@@ -1,8 +1,10 @@
-import { ConnectionType, QueryArgsType } from '@nestjs-query/query-graphql';
-import { ArgsType } from '@nestjs/graphql';
+import { MutationArgsType, UpdateManyInputType } from '@nestjs-query/query-graphql';
+import { ArgsType, InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
 
-export const TodoItemConnection = ConnectionType(TodoItemDTO, { enableTotalCount: true });
+@InputType()
+class UpdateManyTodoItemsInput extends UpdateManyInputType(TodoItemDTO, TodoItemUpdateDTO) {}
 
 @ArgsType()
-export class TodoItemQuery extends QueryArgsType(TodoItemDTO, { defaultResultSize: 2 }) {}
+export class UpdateManyTodoItemsArgs extends MutationArgsType(UpdateManyTodoItemsInput) {}
