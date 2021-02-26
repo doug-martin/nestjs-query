@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.23.1](https://github.com/doug-martin/nestjs-query/compare/v0.23.0...v0.23.1) (2021-02-26)
+
+
+### Bug Fixes
+
+* **typeorm,#895:** Wrap all OR and AND expressions in brackets ([838ab16](https://github.com/doug-martin/nestjs-query/commit/838ab16befe7a53f5fb11e84624c3b30811f61c6)), closes [#895](https://github.com/doug-martin/nestjs-query/issues/895)
+
+
+
+
+
 # [0.23.0](https://github.com/doug-martin/nestjs-query/compare/v0.22.0...v0.23.0) (2021-02-26)
 
 **Note:** Version bump only for package @nestjs-query/query-typeorm
