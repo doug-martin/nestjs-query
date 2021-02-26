@@ -388,6 +388,10 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 
 ```
 
+:::important
+If you are extending the `CRUDResolver` directly be sure to [register your DTOs with the `NestjsQueryGraphQLModule`](./resolvers.mdx#crudresolver)
+:::
+
 ## Complete Example
 
 You can find a complete example in [`examples/auth`](https://github.com/doug-martin/nestjs-query/tree/master/examples/auth)
