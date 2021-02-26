@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://doug-martin.github.io/blog</id>
+    <title>Nestjs-query Blog</title>
+    <updated>2020-05-13T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://doug-martin.github.io/blog"/>
+    <subtitle>Nestjs-query Blog</subtitle>
+    <icon>https://doug-martin.github.io/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[v0.11.2]]></title>
+        <id>v0.11.2</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/05/13/v0.11.2"/>
+        <updated>2020-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[@InjectAssemblerQueryService]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.11.0]]></title>
+        <id>v0.11.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/05/07/v0.11.0"/>
+        <updated>2020-05-07T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[@InjectQueryService]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.8.6]]></title>
+        <id>v0.8.6</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/22/v0.8.6"/>
+        <updated>2020-04-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* chore(renovate): Renovate to include examples]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.8.5]]></title>
+        <id>v0.8.5</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/21/v0.8.5"/>
+        <updated>2020-04-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* feat(graphql): basic federation support.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.8.4]]></title>
+        <id>v0.8.4</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/16/v0.8.4"/>
+        <updated>2020-04-16T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* docs(typeorm): Call out foreign keys in entity and DTO #84]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.8.2]]></title>
+        <id>v0.8.2</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/15/v0.8.2"/>
+        <updated>2020-04-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* [TESTS] Updated graphql types tests to check schema rather than spies.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.8.3]]></title>
+        <id>v0.8.3</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/15/v0.8.3"/>
+        <updated>2020-04-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* FIXED]  Add support for extending abstract object types [#82]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.8.1]]></title>
+        <id>v0.8.1</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/08/v0.8.1"/>
+        <updated>2020-04-08T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* FIXED] Mysql error "LIMIT in subquery" [#77]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.8.0]]></title>
+        <id>v0.8.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/07/v0.8.0"/>
+        <updated>2020-04-07T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* FIXED] Defining additional UpdateDtos breaks Schema. [#72]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.7.5]]></title>
+        <id>v0.7.5</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/03/v0.7.5"/>
+        <updated>2020-04-03T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* [FIXED] Tables with composite primary keys are not quoted properly.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.7.4]]></title>
+        <id>v0.7.4</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/02/v0.7.4"/>
+        <updated>2020-04-02T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* [FIXED] code formatting]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.7.3]]></title>
+        <id>v0.7.3</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/03/28/v0.7.3"/>
+        <updated>2020-03-28T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* DOCS] Update docs to include a complete example of custom methods [#64]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.7.2]]></title>
+        <id>v0.7.2</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/03/27/v0.7.2"/>
+        <updated>2020-03-27T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* [FIXED] Issue where update input DTO was not automatically created]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.7.1]]></title>
+        <id>v0.7.1</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/03/25/v0.7.1"/>
+        <updated>2020-03-25T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* [FIXED] Issue where update input DTO was not automatically created]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.7.0]]></title>
+        <id>v0.7.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/03/18/v0.7.0"/>
+        <updated>2020-03-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Updated to @nestjs/graphql v7.x.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.6.0]]></title>
+        <id>v0.6.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/03/08/v0.6.0"/>
+        <updated>2020-03-08T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* FIXED] Get Underlying Entity Object [#41]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.5.1]]></title>
+        <id>v0.5.1</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/03/02/v0.5.1"/>
+        <updated>2020-03-02T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* DOCS] Added clarification around individual resolvers and relations with examples [#42]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.5.0]]></title>
+        <id>v0.5.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/25/v0.5.0"/>
+        <updated>2020-02-25T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Added decorators option to resolver options to allow providing custom decorators to endpoints #36]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.4.0]]></title>
+        <id>v0.4.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/25/v0.4.0"/>
+        <updated>2020-02-25T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Updated all mutations to take a single input argument with custom fields.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.5]]></title>
+        <id>v0.3.5</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/23/v0.3.5"/>
+        <updated>2020-02-23T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* FIXED] Validate Input for Create & Update [#19]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.4]]></title>
+        <id>v0.3.4</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/23/v0.3.4"/>
+        <updated>2020-02-23T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* FIXED] Can't remove on Many-To-Many relations [#31]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.2]]></title>
+        <id>v0.3.2</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/22/v0.3.2"/>
+        <updated>2020-02-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Switched to github actions]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.3]]></title>
+        <id>v0.3.3</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/22/v0.3.3"/>
+        <updated>2020-02-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Update typescript to 3.8.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.0]]></title>
+        <id>v0.3.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0"/>
+        <updated>2020-02-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Added dataloader support!]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.1]]></title>
+        <id>v0.3.1</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1"/>
+        <updated>2020-02-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Hardened TypeORM querying]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.2.1]]></title>
+        <id>v0.2.1</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/18/v0.2.1"/>
+        <updated>2020-02-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Fixed case where @FilterableField decorator was not passing arguments correctly to @Field decorator #20]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.2.0]]></title>
+        <id>v0.2.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/12/v0.2.0"/>
+        <updated>2020-02-12T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[In v0.2.0 the concept of Assemblers was introduced. Assemblers allow for converting to and from a DTO/entity that have different fields or computed values.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.1.0]]></title>
+        <id>v0.1.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/05/v0.1.0"/>
+        <updated>2020-02-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[As of v0.1.0 you can specify relations in your graphql resolvers.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.0.6]]></title>
+        <id>v0.0.6</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/28/v0.0.6"/>
+        <updated>2020-01-28T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Dont allow empty filters with updateMany or deleteMany operations.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.0.5]]></title>
+        <id>v0.0.5</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/28/v0.0.5"/>
+        <updated>2020-01-28T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Add ability to specify query defaults.]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.0.2]]></title>
+        <id>v0.0.2</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.2"/>
+        <updated>2020-01-27T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Add MIT license]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.0.4]]></title>
+        <id>v0.0.4</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.4"/>
+        <updated>2020-01-27T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Add files field to @nestjs-query/core package.json]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.0.3]]></title>
+        <id>v0.0.3</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.3"/>
+        <updated>2020-01-27T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Fix package READMEs]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Initial Release]]></title>
+        <id>Initial Release</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/26/Initial Release"/>
+        <updated>2020-01-26T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Initial Release of nestjs-query.]]></summary>
+    </entry>
+</feed>
