@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@nestjs-query/core": "0.23.0",
-    "@nestjs-query/query-graphql": "0.23.0",
+    "@nestjs-query/query-graphql": "0.22.0",
     "@nestjs-query/query-mongoose": "0.23.0",
     "@nestjs-query/query-sequelize": "0.23.0",
     "@nestjs-query/query-typeorm": "0.23.0",
