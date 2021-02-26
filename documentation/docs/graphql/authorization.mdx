@@ -329,18 +329,17 @@ In this example there are two important additions:
 2. The `AuthorizerFilter` param decorator uses the authorizer added by the interceptor to create an authorizer filter.
 
 ```ts title="todo-item/todo-item.resolver.ts" {10,18}
-import { Filter, InjectAssemblerQueryService, mergeFilter, mergeQuery, QueryService } from '@nestjs-query/core';
+import { Filter, InjectQueryService, mergeFilter, mergeQuery, QueryService } from '@nestjs-query/core';
 import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@nestjs-query/query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemAssembler } from './todo-item.assembler';
 import { TodoItemConnection, TodoItemQuery } from './types';
 
 @Resolver(() => TodoItemDTO)
 @UseInterceptors(AuthorizerInterceptor(TodoItemDTO))
 export class TodoItemResolver {
-  constructor(@InjectAssemblerQueryService(TodoItemAssembler) readonly service: QueryService<TodoItemDTO>) {}
+  constructor(@InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>) {}
 
   // Set the return type to the TodoItemConnection
   @Query(() => TodoItemConnection)
