@@ -387,3 +387,91 @@ export class TodoItemDTO {
 }
 
 ```
+
+## Using Hooks In Custom Endpoints
+
+You can also use hooks in custom endpoints by using the `HookInterceptor` along with
+* `HookArgs` - Used to apply hooks to any query endpoint.
+* `MutationHookArgs` - Used to apply hooks to any `mutation` that uses `MutationArgsType`
+
+### Example
+
+In this example we'll create an endpoint that marks all todo items that are currently not completed as completed.
+
+To start we'll create our input types.
+
+There are two types that are created
+* The `UpdateManyTodoItemsInput` which extends the `UpdateManyInputType` this exposes an `update` and `filter` field just like the `updateMany` endpoints that are auto generated.
+* The `UpdateManyTodoItemsArgs` which extends `MutationArgsType`, this provides a uniform interface for all mutations
+ ensuring that the argument provided to the mutation is named `input`.
+
+```ts title="todo-item/types.ts"
+import { MutationArgsType, UpdateManyInputType } from '@nestjs-query/query-graphql';
+import { ArgsType, InputType } from '@nestjs/graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
+
+// create the base input type
+@InputType()
+export class UpdateManyTodoItemsInput extends UpdateManyInputType(TodoItemDTO, TodoItemUpdateDTO) {}
+
+// Wrap the input in the MutationArgsType to provide a uniform format for all mutations
+// The `MutationArgsType` is a thin wrapper that names the args as input
+@ArgsType()
+export class UpdateManyTodoItemsArgs extends MutationArgsType(UpdateManyTodoItemsInput) {}
+```
+Now we can use our new types in the resolver.
+
+```ts title="todo-item/todo-item.resolver.ts" {14,15}
+import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@nestjs-query/core';
+import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@nestjs-query/query-graphql';
+import { UseInterceptors } from '@nestjs/common';
+import { Mutation, Resolver } from '@nestjs/graphql';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+import { UpdateManyTodoItemsArgs } from './types';
+
+@Resolver(() => TodoItemDTO)
+export class TodoItemResolver {
+  constructor(@InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemDTO>) {}
+
+  @Mutation(() => UpdateManyResponseType())
+  @UseInterceptors(HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, TodoItemDTO))
+  markTodoItemsAsCompleted(@MutationHookArgs() { input }: UpdateManyTodoItemsArgs): Promise<UpdateManyResponse> {
+    return this.service.updateMany(
+      { ...input.update, completed: false },
+      mergeFilter(input.filter, { completed: { is: false } }),
+    );
+  }
+}
+```
+The first thing to notice is the
+
+```ts
+@UseInterceptors(HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, TodoItemDTO))
+```
+
+This interceptor adds the correct hook to the `context` to be used by the param decorator.
+
+:::note
+In this example we bind the `BEFORE_UPDATE_MANY` hook, you can use any of the hooks available to bind to the correct
+one when `creating`, `updating`, or `deleting` records.
+:::
+
+The next piece is the
+
+```ts
+@MutationHookArgs() { input }: UpdateManyTodoItemsArgs
+```
+By using the `MutationHookArgs` decorator we ensure that the hook is applied to the arguments adding any additional
+fields to the update.
+
+Finally we invoke the service `updateMany` with a filter that ensures we only update `TodoItems` that are completed,
+and add an setting `completed` to true to the update
+
+```ts
+return this.service.updateMany(
+  { ...input.update, completed: false },
+  mergeFilter(input.filter, { completed: { is: false } }),
+);
+```

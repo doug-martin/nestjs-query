@@ -29,6 +29,8 @@ export {
   Authorize,
   AuthorizerFilter,
   RelationAuthorizerFilter,
+  HookArgs,
+  MutationHookArgs,
   KeySet,
 } from './decorators';
 export * from './resolvers';
@@ -40,6 +42,7 @@ export { pubSubToken, GraphQLPubSub } from './subscription';
 export { Authorizer, AuthorizerOptions } from './auth';
 export {
   Hook,
+  HookTypes,
   BeforeCreateOneHook,
   BeforeCreateManyHook,
   BeforeUpdateOneHook,
@@ -49,4 +52,4 @@ export {
   BeforeQueryManyHook,
   BeforeFindOneHook,
 } from './hooks';
-export { AuthorizerInterceptor, AuthorizerContext } from './interceptors';
+export { AuthorizerInterceptor, AuthorizerContext, HookInterceptor, HookContext } from './interceptors';
