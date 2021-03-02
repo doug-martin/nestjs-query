@@ -350,7 +350,7 @@ import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver'
 
 @Module({
-  providers: [TodoItemResolver]
+  providers: [TodoItemResolver],
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
