@@ -14,7 +14,6 @@ import {
   UpdateOneOptions,
 } from '@nestjs-query/core';
 import { ReturnModelType, DocumentType, getModelWithString, getClassForDocument } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { NotFoundException } from '@nestjs/common';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { TypegooseQueryServiceOpts } from './typegoose-query-service';
@@ -25,7 +24,7 @@ import {
   VirtualTypeWithOptions,
 } from '../typegoose-types.helper';
 
-export abstract class ReferenceQueryService<Entity extends Base> {
+export abstract class ReferenceQueryService<Entity> {
   protected readonly documentToObjectOptions: DocumentToObjectOptions;
 
   abstract readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
@@ -70,21 +69,29 @@ export abstract class ReferenceQueryService<Entity extends Base> {
         return map.set(curr, ref);
       }, Promise.resolve(new Map<DocumentType<Entity>, DocumentType<Relation> | undefined>()));
     }
-    // eslint-disable-next-line no-underscore-dangle
+
     const foundEntity = await this.Model.findById(dto._id);
     if (!foundEntity) {
       return undefined;
     }
 
-    const ReferenceModel = this.getReferenceModel(relationName);
-    const referenceDoc = new ReferenceModel();
-    const ReferenceEntity: any = getClassForDocument(referenceDoc);
-    // console.log('referenceEntity: ', ReferenceEntity.toString())
-    const assembler = AssemblerFactory.getAssembler(RelationClass, ReferenceEntity);
+    // const ReferenceModel = this.getReferenceModel(relationName);
+    // const referenceDoc = new ReferenceModel();
+    // const ReferenceEntity = getClassForDocument(referenceDoc) as Class<unknown>;
+    // console.log('referenceEntity: ', ReferenceEntity);
+    // const assembler = AssemblerFactory.getAssembler(RelationClass, ReferenceEntity);
+    // const filterQuery = referenceQueryBuilder.buildFilterQuery(assembler.convertQuery({ filter: opts?.filter }).filter);
+    // const populated = await foundEntity.populate({path: relationName, match: filterQuery}).execPopulate();
+    // console.log()
+    // const populatedRef: DocumentType<typeof ReferenceEntity> = populated.get(relationName);
+    // return populatedRef ? assembler.convertToDTO(populatedRef as DocumentType<Relation>) : undefined;
+  
+    const assembler = AssemblerFactory.getAssembler(RelationClass, Document);
     const filterQuery = referenceQueryBuilder.buildFilterQuery(assembler.convertQuery({ filter: opts?.filter }).filter);
-    const populated = await foundEntity.populate({ path: relationName, match: filterQuery }).execPopulate();
-    const populatedRef: DocumentType<typeof ReferenceEntity> = populated.get(relationName);
-    return populatedRef ? assembler.convertToDTO(populatedRef as DocumentType<Relation>) : undefined;
+    const populated = await foundEntity.populate({path: relationName, match: filterQuery}).execPopulate();
+    const populatedRef: unknown = populated.get(relationName);
+    return populatedRef ? assembler.convertToDTO(populatedRef as Document) : undefined;
+  
   }
 
   queryRelations<Relation>(

@@ -26,7 +26,7 @@
     "@nestjs/common": "^7.0.0",
     "@nestjs/mongoose": "^7.0.0",
     "nestjs-typegoose": "^7.1.38",
-    "@typegoose/typegoose": "^7.4.1",
+    "@typegoose/typegoose": "git+https://github.com/typegoose/typegoose.git#update_mongoose5.11_2",
     "mongoose": "5.10.18",
     "mongodb": "3.6.3"
   },
@@ -43,7 +43,7 @@
     "class-transformer": "0.3.2",
     "mongodb": "3.6.4",
     "mongodb-memory-server": "6.9.3",
-    "mongoose": "5.10.18",
+    "mongoose": "^5.11.18",
     "ts-mockito": "2.6.1",
     "typescript": "4.1.3"
   },

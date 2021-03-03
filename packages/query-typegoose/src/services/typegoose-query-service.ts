@@ -15,7 +15,6 @@ import {
 import { CreateQuery, DocumentToObjectOptions, UpdateQuery } from 'mongoose';
 import { ReturnModelType, DocumentType, mongoose } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { ReferenceQueryService } from './reference-query.service';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { UpdateArrayQuery } from '../typegoose-types.helper';
@@ -28,9 +27,7 @@ export interface TypegooseQueryServiceOpts {
   documentToObjectOptions?: DocumentToObjectOptions;
 }
 
-export class TypegooseQueryService<Entity extends Base>
-  extends ReferenceQueryService<Entity>
-  implements QueryService<Entity> {
+export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity> implements QueryService<Entity> {
   readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder();
 
   constructor(readonly Model: ReturnModelType<new () => Entity>, opts?: TypegooseQueryServiceOpts) {

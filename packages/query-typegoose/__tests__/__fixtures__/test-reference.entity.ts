@@ -1,8 +1,10 @@
+import { Types } from 'mongoose';
 import { prop, Ref } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { TestEntity } from './test.entity';
 
-export class TestReference extends Base {
+export class TestReference {
+  _id!: Types.ObjectId;
+
   id!: string;
 
   @prop({ required: true })
