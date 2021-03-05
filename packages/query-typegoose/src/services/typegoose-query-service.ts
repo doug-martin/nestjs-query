@@ -12,7 +12,8 @@ import {
   UpdateOneOptions,
   QueryService,
 } from '@nestjs-query/core';
-import { CreateQuery, DocumentToObjectOptions, UpdateQuery } from 'mongoose';
+import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Query as CreateQuery, ToObjectOptions, UpdateQuery } from 'mongoose';
 import { ReturnModelType, DocumentType, mongoose } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
 import { ReferenceQueryService } from './reference-query.service';
@@ -24,10 +25,12 @@ type MongoDBUpdatedOutput = {
 };
 
 export interface TypegooseQueryServiceOpts {
-  documentToObjectOptions?: DocumentToObjectOptions;
+  toObjectOptions?: ToObjectOptions;
 }
 
-export class TypegooseQueryService<Entity> extends ReferenceQueryService<Entity> implements QueryService<Entity> {
+export class TypegooseQueryService<Entity extends Base>
+  extends ReferenceQueryService<Entity>
+  implements QueryService<Entity> {
   readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder();
 
   constructor(readonly Model: ReturnModelType<new () => Entity>, opts?: TypegooseQueryServiceOpts) {
