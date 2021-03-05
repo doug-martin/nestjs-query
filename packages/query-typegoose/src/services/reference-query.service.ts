@@ -25,7 +25,7 @@ import {
   VirtualTypeWithOptions,
 } from '../typegoose-types.helper';
 
-export abstract class ReferenceQueryService<Entity> {
+export abstract class ReferenceQueryService<Entity extends Base> {
   abstract readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   public readonly toObjectOptions: ToObjectOptions;
@@ -71,6 +71,7 @@ export abstract class ReferenceQueryService<Entity> {
       }, Promise.resolve(new Map<DocumentType<Entity>, DocumentType<Relation> | undefined>()));
     }
 
+    // eslint-disable-next-line no-underscore-dangle
     const foundEntity = await this.Model.findById(dto._id);
     if (!foundEntity) {
       return undefined;
