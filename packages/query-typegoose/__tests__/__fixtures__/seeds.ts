@@ -41,12 +41,12 @@ export const seed = async (connection: Connection): Promise<void> => {
       const references = testReferences.filter((tr: TestReference) => tr.referenceName.includes(`${te.stringType}-`));
       TEST_ENTITIES[index].testReference = references[0]._id;
       TEST_ENTITIES[index].testReferences = references.map((r) => r._id);
-      await te.update({ $set: { testReferences: references.map((r) => r._id), testReference: references[0]._id } });
+      await te.updateOne({ $set: { testReferences: references.map((r) => r._id), testReference: references[0]._id } });
       await Promise.all(
         references.map((r) => {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           TEST_REFERENCES.find((tr) => tr._id.toString() === r._id.toString())!.testEntity = te._id;
-          return r.update({ $set: { testEntity: te._id } });
+          return r.updateOne({ $set: { testEntity: te._id } });
         }),
       );
     }),

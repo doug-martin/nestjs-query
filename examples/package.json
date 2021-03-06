@@ -27,7 +27,7 @@
     "@nestjs/platform-express": "7.6.11",
     "@nestjs/sequelize": "0.1.1",
     "@nestjs/typeorm": "7.1.5",
-    "@typegoose/typegoose": "link:~/tmp/typegoose",
+    "@typegoose/typegoose": "^8.0.0-beta.2",
     "apollo-server-express": "2.19.2",
     "apollo-server-plugin-base": "0.10.4",
     "class-validator": "0.12.2",

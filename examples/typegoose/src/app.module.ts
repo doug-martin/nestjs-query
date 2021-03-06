@@ -8,6 +8,7 @@ import { SubTaskModule } from './sub-task/sub-task.module';
 import { mongooseConfig } from '../../helpers';
 
 const { uri, ...options } = mongooseConfig('typegoose', {
+  useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
   useFindAndModify: false,
