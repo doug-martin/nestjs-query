@@ -1,0 +1,521 @@
+---
+title: DTOs
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `query-graphql` package leverages most decorators from [`@nestjs/graphql`](https://docs.nestjs.com/graphql/quick-start) and [TypeGraphQL](https://typegraphql.ml), with the exception of `FilterableField`.
+
+## `@FilterableField`
+
+The `FilterableField` is very similar to the [`Field`](https://typegraphql.ml/docs/types-and-fields.html) from
+TypeGraphQL, however it allows you to specify the fields that should be filterable when querying.
+
+:::note
+If you use the @nestjs/graphql `Field` decorator it will not be exposed in the query type for the DTO.
+:::
+
+### Options
+
+In addition to the normal field options you can also specify the following options
+* `allowedComparisons` - An array of allowed comparisons. You can use this option to allow a subset of filter comparisons when querying through graphql.
+  * This option is useful if the field is expensive to query on for certain operators, or your data source supports a limited set of comparisons.
+* `filterRequired` - When set to `true` the field will be required whenever a `filter` is used. The `filter` requirement applies to all `read`, `update`, and `delete` endpoints that use a `filter`.
+  * The `filterRequired` option is useful when your entity has an index that requires a subset of fields to be used to provide certain level of query performance.
+  * **NOTE**: When a field is a required in a filter the default `filter` option is ignored.
+
+### Example
+
+In the following example we allow `id`, `title`, and `completed` to be used in queries.
+
+```ts title="todo-item.dto.ts"
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+### Example - allowedComparisons
+
+In the following example the `allowedComparisons` option is demonstrated by restricting the comparisons that are allowed when filtering on certain fields.
+
+For the `id` field only `eq`, `neq`, `in`, and `notIn` comparisons will be exposed in the schema.
+
+The `title` field will only allow `eq`, `like`, and `notLike`.
+
+```ts title="todo-item.dto.ts" {6,9}
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID, { allowedComparisons: ['eq', 'neq', 'in', 'notIn'] })
+  id!: string;
+
+  @FilterableField({ allowedComparisons: ['eq', 'like', 'notLike'] })
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+### Example - filterRequired
+
+In the following example the `filterRequired` option is applied to the `completed` field, ensuring that all endpoints that use a filter will require a comparison on the `completed` field.
+
+```ts title="todo-item.dto.ts" {12}
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ filterRequired: true })
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+## `@QueryOptions`
+
+The `@QueryOptions` decorator can be used to override any defaults for querying functionality such as sorting,
+filtering, paging strategy, etc.
+
+### Setting a default Filter
+
+When querying the default `filter` is empty. You can specify a default filter by using the `QueryOptions` decorator on
+your DTO option.
+
+:::note
+The default filter is only used when a filter is not provided in a query.
+:::
+
+In this example we specify the default filter to be `completed IS TRUE`.
+
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ defaultFilter: { completed: { is: true } } })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+---
+
+### Result Page Size
+
+By default all results will be limited to 10 records.
+
+To override the default you can override the default page size by setting the `defaultResultSize` option.
+
+In this example we specify the `defaultResultSize` to 5 which means if a page size is not specified 5 results will be
+ returned.
+
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ defaultResultSize: 5 })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+### Limiting Results Size
+
+By default the max number records that can be returned is `50`.
+
+To override the default you can override the following options specifying the `maxResultSize` option.
+
+In this example we specify limit the max number of records an end user can request to 20.
+
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ maxResultsSize: 20 })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+---
+
+### Paging Strategy
+
+By default `nestjs-query` uses a `cursor` based paging strategy and returns a [connection](https://relay.dev/graphql/connections.htm) for all query many endpoints.
+
+For a more in-depth overview of paging check out the [paging docs](./paging.mdx)
+
+You can override the default `pagingStrategy` to one of the following alternatives
+
+* `OFFSET` - sets paging to allow `limit` and `offset` fields, and returns an `OffsetConnection`.
+* `NONE` - turn off all paging and always return an `ArrayConnection`.
+
+When using the `OFFSET` strategy your the paging arguments for a many query will accept a `limit` and/or `offset`. This will also change the return type from a `CursorConnection` to an `ArrayConnection`.
+
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ pagingStrategy: PagingStrategies.OFFSET })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+To disable paging entirely you can use the `NONE` `pagingStrategy`. When using `NONE` an `ArrayConnection` will be returned.
+
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ pagingStrategy: PagingStrategies.NONE })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+### Paging with Total Count
+
+:::note
+This section **ONLY** applies to `CURSOR` or `OFFSET` connections.
+:::
+:::warning
+Enabling `totalCount` can be expensive. If your table is large the `totalCount` query may be expensive, use with caution.
+:::
+:::info
+The `totalCount` field is not eagerly fetched. It will only be executed if the field is queried from the client.
+:::
+
+When using the `CURSOR` (the default) or OFFSET paging strategy  you have the option to expose a `totalCount` field to
+allow clients to fetch a total count of records in a connection.
+
+To enable the `totalCount` field for connections set the `enableTotalCount` option to `true` using the
+`@QueryOptions` decorator.
+
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ enableTotalCount: true })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+When setting `enableTotalCount` to `true` you will be able to query for `totalCount` on `cursor` or offset connections
+
+<Tabs
+defaultValue="graphql"
+values={[
+{ label: 'GraphQL', value: 'graphql', },
+{ label: 'Response', value: 'response', },
+]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItems {
+    totalCount
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges {
+      node {
+        id
+        title
+        description
+      }
+    }
+  }
+}
+
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItems": {
+      "totalCount": 5,
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+        "endCursor": "YXJyYXljb25uZWN0aW9uOjQ="
+      },
+      "edges": [
+        {
+          "node": {
+            "id": "1",
+            "title": "Create Nest App",
+            "description": null
+          }
+        },
+        {
+          "node": {
+            "id": "2",
+            "title": "Create Entity",
+            "description": null
+          }
+        },
+        {
+          "node": {
+            "id": "3",
+            "title": "Create Entity Service",
+            "description": null
+          }
+        },
+        {
+          "node": {
+            "id": "4",
+            "title": "Add Todo Item Resolver",
+            "description": null
+          }
+        },
+        {
+          "node": {
+            "id": "5",
+            "title": "How to create item With Sub Tasks",
+            "description": null
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### Default Sort
+
+When querying the default sort is based on the persistence layer. You can override the default by providing the `defaultSort` option.
+
+In this example we specify the default sort to be by `title`.
+
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ defaultSort: [{ field: 'title', direction: SortDirection.ASC }] })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+### Allowed Boolean Expressions
+
+When filtering you can provide `and` and `or` expressions to provide advanced filtering. You can turn off either by
+using the `allowedBooleanExpressions` option.
+
+In this example we will only allow `and` expressions.
+
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ allowedBooleanExpressions: ['and'] })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
+
+To turn off all boolean expressions you can set `allowedBooleanExpressions` to an empty array. This is useful if you
+only allow filtering on certain fields and you want to disable all complex filtering.
+
+In this example we will only allow `eq` comparisons on the id field and disable all `and`/`or` boolean expressions.
+
+```ts title="todo-item.dto.ts" {5,7}
+import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ allowedBooleanExpressions: ['and'] })
+export class TodoItemDTO {
+  @FilterableField(() => ID, { allowedComparisons: ['eq'] })
+  id!: string;
+
+  @Field()
+  title!: string;
+
+  @Field()
+  completed!: boolean;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
+```
