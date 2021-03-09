@@ -18,7 +18,7 @@ import { expectSDL, noPagingQueryArgsOptionsTypeSDL } from '../../__fixtures__';
 describe('QueryArgsType with decorator options', (): void => {
   afterEach(() => jest.clearAllMocks());
 
-  @ObjectType('TestQuery')
+  @ObjectType('NoPagingQueryOptionsDTO')
   @QueryOptions({
     pagingStrategy: PagingStrategies.NONE,
     defaultResultSize: 2,
