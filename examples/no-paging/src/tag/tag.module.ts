@@ -1,4 +1,4 @@
-import { NestjsQueryGraphQLModule, PagingStrategies } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { Module } from '@nestjs/common';
 import { TagInputDTO } from './dto/tag-input.dto';
@@ -15,7 +15,6 @@ import { TagEntity } from './tag.entity';
           EntityClass: TagEntity,
           CreateDTOClass: TagInputDTO,
           UpdateDTOClass: TagInputDTO,
-          pagingStrategy: PagingStrategies.NONE,
         },
       ],
     }),

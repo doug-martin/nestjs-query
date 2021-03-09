@@ -1,10 +1,11 @@
-import { FilterableField, FilterableRelation, Authorize, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, FilterableRelation, Authorize, Relation, QueryOptions } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 import { SubTaskAuthorizer } from '../sub-task.authorizer';
 import { UserDTO } from '../../user/user.dto';
 
 @ObjectType('SubTask')
+@QueryOptions({ enableTotalCount: true })
 @Authorize(SubTaskAuthorizer)
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableRelation('todoItem', () => TodoItemDTO, { disableRemove: true })

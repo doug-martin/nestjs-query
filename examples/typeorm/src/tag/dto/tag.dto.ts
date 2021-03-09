@@ -11,6 +11,7 @@ import {
   BeforeUpdateMany,
   UpdateManyInputType,
   KeySet,
+  QueryOptions,
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
@@ -19,6 +20,7 @@ import { getUserName } from '../../helpers';
 
 @ObjectType('Tag')
 @KeySet(['id'])
+@QueryOptions({ enableTotalCount: true })
 @FilterableCursorConnection('todoItems', () => TodoItemDTO)
 @BeforeCreateOne((input: CreateOneInputType<TagDTO>, context: GqlContext) => {
   input.input.createdBy = getUserName(context);

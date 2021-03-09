@@ -1,8 +1,9 @@
-import { FilterableField, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, QueryOptions, Relation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
 @ObjectType('SubTask')
+@QueryOptions({ enableTotalCount: true })
 @Relation('todoItem', () => TodoItemDTO, { disableRemove: true, complexity: 5 })
 export class SubTaskDTO {
   @FilterableField(() => ID, { complexity: 1 })
