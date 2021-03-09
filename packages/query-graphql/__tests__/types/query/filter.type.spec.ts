@@ -27,6 +27,7 @@ import {
   FilterableOffsetConnection,
   UnPagedRelation,
   FilterableUnPagedRelation,
+  QueryOptions,
 } from '../../../src';
 import {
   expectSDL,
@@ -36,6 +37,9 @@ import {
   subscriptionFilterInputTypeSDL,
   filterAllowedComparisonsInputTypeSDL,
   filterRequiredFieldInputTypeSDL,
+  filterAllowedBooleanExpressionsOnlyAndTypeSDL,
+  filterNoBooleanExpressionsTypeSDL,
+  filterAllowedBooleanExpressionsOnlyOrTypeSDL,
 } from '../../__fixtures__';
 
 describe('filter types', (): void => {
@@ -216,6 +220,83 @@ describe('filter types', (): void => {
           }
         }
         return expectSDL([FilterTypeSpec], filterAllowedComparisonsInputTypeSDL);
+      });
+    });
+
+    describe('allowedBooleanExpressions option', () => {
+      describe('only and boolean expressions', () => {
+        @ObjectType('TestAllowedComparisons')
+        @QueryOptions({ allowedBooleanExpressions: ['and'] })
+        class TestOnlyAndBooleanExpressionsDto extends BaseType {
+          @FilterableField()
+          numberField!: number;
+        }
+
+        const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestOnlyAndBooleanExpressionsDto);
+        @InputType()
+        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
+
+        it('should only expose allowed comparisons', () => {
+          @Resolver()
+          class FilterTypeSpec {
+            @Query(() => Int)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            test(@Args('input') input: TestComparisonDtoFilter): number {
+              return 1;
+            }
+          }
+          return expectSDL([FilterTypeSpec], filterAllowedBooleanExpressionsOnlyAndTypeSDL);
+        });
+      });
+
+      describe('only or boolean expressions', () => {
+        @ObjectType('TestAllowedComparisons')
+        @QueryOptions({ allowedBooleanExpressions: ['or'] })
+        class TestOnlyOrBooleanExpressionsDto extends BaseType {
+          @FilterableField()
+          numberField!: number;
+        }
+
+        const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestOnlyOrBooleanExpressionsDto);
+        @InputType()
+        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
+
+        it('should only expose allowed comparisons', () => {
+          @Resolver()
+          class FilterTypeSpec {
+            @Query(() => Int)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            test(@Args('input') input: TestComparisonDtoFilter): number {
+              return 1;
+            }
+          }
+          return expectSDL([FilterTypeSpec], filterAllowedBooleanExpressionsOnlyOrTypeSDL);
+        });
+      });
+
+      describe('no boolean expressions', () => {
+        @ObjectType('TestAllowedComparisons')
+        @QueryOptions({ allowedBooleanExpressions: [] })
+        class TestNoBooleanExpressionsDto extends BaseType {
+          @FilterableField()
+          numberField!: number;
+        }
+
+        const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestNoBooleanExpressionsDto);
+        @InputType()
+        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
+
+        it('should only expose allowed comparisons', () => {
+          @Resolver()
+          class FilterTypeSpec {
+            @Query(() => Int)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            test(@Args('input') input: TestComparisonDtoFilter): number {
+              return 1;
+            }
+          }
+          return expectSDL([FilterTypeSpec], filterNoBooleanExpressionsTypeSDL);
+        });
       });
     });
 

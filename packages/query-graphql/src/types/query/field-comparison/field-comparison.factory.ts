@@ -23,6 +23,7 @@ import { getOrCreateDateFieldComparison } from './date-field-comparison.type';
 import { getOrCreateTimestampFieldComparison } from './timestamp-field-comparison.type';
 import { SkipIf } from '../../../decorators';
 import { getGraphqlEnumMetadata } from '../../../common';
+import { isInAllowedList } from '../helpers';
 
 /** @internal */
 const filterComparisonMap = new Map<string, () => Class<FilterFieldComparison<unknown>>>();
@@ -75,12 +76,6 @@ const getComparisonTypeName = <T>(fieldType: ReturnTypeFuncValue, options: Filte
   return `${getTypeName(fieldType)}FilterComparison`;
 };
 
-const isNotAllowedChecker = (options: FilterComparisonOptions<unknown>) => {
-  const { allowedComparisons } = options;
-  return (cmp: FilterComparisonOperators<unknown>) => () =>
-    allowedComparisons ? !allowedComparisons.includes(cmp) : false;
-};
-
 type FilterComparisonOptions<T> = {
   FieldType: Class<T>;
   fieldName: string;
@@ -97,7 +92,8 @@ export function createFilterComparisonType<T>(options: FilterComparisonOptions<T
   if (generator) {
     return generator() as Class<FilterFieldComparison<T>>;
   }
-  const isNotAllowed = isNotAllowedChecker(options as FilterComparisonOptions<unknown>);
+  const isNotAllowed = (val: FilterComparisonOperators<unknown>) => () =>
+    !isInAllowedList(options.allowedComparisons, val as unknown);
   @InputType(inputName)
   class Fc {
     @SkipIf(isNotAllowed('is'), Field(() => Boolean, { nullable: true }))

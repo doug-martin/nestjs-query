@@ -43,6 +43,15 @@ export const filterAllowedComparisonsInputTypeSDL = readGraphql(
 export const filterRequiredFieldInputTypeSDL = readGraphql(
   resolve(__dirname, './filter-required-field-input-type.graphql'),
 );
+export const filterAllowedBooleanExpressionsOnlyAndTypeSDL = readGraphql(
+  resolve(__dirname, './filter-allow-boolean-expression-only-and-type.graphql'),
+);
+export const filterAllowedBooleanExpressionsOnlyOrTypeSDL = readGraphql(
+  resolve(__dirname, './filter-allow-boolean-expression-only-or-type.graphql'),
+);
+export const filterNoBooleanExpressionsTypeSDL = readGraphql(
+  resolve(__dirname, './filter-no-boolean-expression-type.graphql'),
+);
 export const updateFilterInputTypeSDL = readGraphql(resolve(__dirname, './update-filter-input-type.graphql'));
 export const deleteFilterInputTypeSDL = readGraphql(resolve(__dirname, './delete-filter-input-type.graphql'));
 export const subscriptionFilterInputTypeSDL = readGraphql(
@@ -55,13 +64,31 @@ export const cursorQueryArgsTypeSDL = readGraphql(resolve(__dirname, './cursor-q
 export const cursorQueryArgsFilterRequiredTypeSDL = readGraphql(
   resolve(__dirname, './cursor-query-args-required-filter-type.graphql'),
 );
+export const cursorQueryArgsOptionsTypeSDL = readGraphql(
+  resolve(__dirname, './cursor-query-args-options-type.graphql'),
+);
+export const cursorQueryArgsDecoratorTypeSDL = readGraphql(
+  resolve(__dirname, './cursor-query-args-decorator-type.graphql'),
+);
 export const offsetQueryArgsTypeSDL = readGraphql(resolve(__dirname, './offset-query-args-type.graphql'));
 export const offsetQueryArgsFilterRequiredTypeSDL = readGraphql(
   resolve(__dirname, './offset-query-args-required-filter-type.graphql'),
 );
+export const offsetQueryArgsOptionsTypeSDL = readGraphql(
+  resolve(__dirname, './offset-query-args-options-type.graphql'),
+);
+export const offsetQueryArgsDecoratorTypeSDL = readGraphql(
+  resolve(__dirname, './offset-query-args-decorator-type.graphql'),
+);
 export const noPagingQueryArgsTypeSDL = readGraphql(resolve(__dirname, './no-paging-query-args-type.graphql'));
 export const noPagingQueryArgsFilterRequiredTypeSDL = readGraphql(
   resolve(__dirname, './no-paging-query-args-required-filter-type.graphql'),
+);
+export const noPagingQueryArgsOptionsTypeSDL = readGraphql(
+  resolve(__dirname, './no-paging-query-args-options-type.graphql'),
+);
+export const queryArgsDecoratorAllStrategiesTypeSDL = readGraphql(
+  resolve(__dirname, './query-args-decorator-all-strategies-type.graphql'),
 );
 export const cursorConnectionObjectTypeSDL = readGraphql(resolve(__dirname, './cursor-connection-object-type.graphql'));
 export const cursorConnectionObjectTypeWithTotalCountSDL = readGraphql(

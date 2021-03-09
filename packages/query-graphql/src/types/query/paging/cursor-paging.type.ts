@@ -1,26 +1,15 @@
 import { Min, Validate, IsPositive } from 'class-validator';
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { Paging } from '@nestjs-query/core';
+import { Class } from '@nestjs-query/core';
 import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
 import { CannotUseWith, CannotUseWithout, IsUndefined } from '../../validators';
 import { PagingStrategies } from './constants';
-
-export interface StaticCursorPagingType {
-  strategy: PagingStrategies.CURSOR;
-  new (): CursorPagingType;
-}
-
-export interface CursorPagingType extends Paging {
-  before?: ConnectionCursorType;
-  after?: ConnectionCursorType;
-  first?: number;
-  last?: number;
-}
+import { CursorPagingType } from './interfaces';
 
 /** @internal */
-let graphQLCursorPaging: StaticCursorPagingType | null = null;
+let graphQLCursorPaging: Class<CursorPagingType> | null = null;
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export const CursorPagingType = (): StaticCursorPagingType => {
+export const getOrCreateCursorPagingType = (): Class<CursorPagingType> => {
   if (graphQLCursorPaging) {
     return graphQLCursorPaging;
   }

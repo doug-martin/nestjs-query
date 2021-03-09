@@ -1,28 +1,24 @@
 import { Class, Filter, mergeQuery, QueryService } from '@nestjs-query/core';
 import { ArgsType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
-import { OffsetConnectionOptions } from '../types/connection/offset';
 import { getDTONames } from '../common';
 import { AuthorizerFilter, HookArgs, ResolverQuery } from '../decorators';
 import {
-  ConnectionType,
   FindOneArgsType,
-  QueryArgsType,
+  PagingStrategies,
   QueryArgsTypeOpts,
-  StaticConnectionType,
-  StaticQueryArgsType,
+  QueryArgsType,
+  ConnectionOptions,
+  InferConnectionTypeFromStrategy,
 } from '../types';
-import { CursorConnectionOptions } from '../types/connection/cursor';
-import { CursorQueryArgsTypeOpts } from '../types/query/query-args';
+import { CursorQueryArgsTypeOpts, QueryType, StaticQueryType } from '../types/query/query-args';
 import {
   BaseServiceResolver,
-  ConnectionTypeFromOpts,
-  QueryArgsFromOpts,
+  ExtractPagingStrategy,
   ResolverClass,
   ResolverOpts,
   ServiceResolver,
 } from './resolver.interface';
-import { extractConnectionOptsFromQueryArgs } from './helpers';
 import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
 import { HookTypes } from '../hooks';
 
@@ -30,22 +26,20 @@ export type ReadResolverFromOpts<
   DTO,
   Opts extends ReadResolverOpts<DTO>,
   QS extends QueryService<DTO, unknown, unknown>
-> = ReadResolver<DTO, QueryArgsFromOpts<DTO, Opts>, ConnectionTypeFromOpts<DTO, Opts>, QS>;
+> = ReadResolver<DTO, ExtractPagingStrategy<DTO, Opts>, QS>;
 
 export type ReadResolverOpts<DTO> = {
-  QueryArgs?: StaticQueryArgsType<DTO>;
-  Connection?: StaticConnectionType<DTO>;
+  QueryArgs?: StaticQueryType<DTO, PagingStrategies>;
 } & ResolverOpts &
   QueryArgsTypeOpts<DTO> &
-  Pick<CursorConnectionOptions | OffsetConnectionOptions, 'enableTotalCount'>;
+  Pick<ConnectionOptions, 'enableTotalCount'>;
 
-export interface ReadResolver<
-  DTO,
-  QT extends QueryArgsType<DTO>,
-  CT extends ConnectionType<DTO>,
-  QS extends QueryService<DTO, unknown, unknown>
-> extends ServiceResolver<DTO, QS> {
-  queryMany(query: QT, authorizeFilter?: Filter<DTO>): Promise<CT>;
+export interface ReadResolver<DTO, PS extends PagingStrategies, QS extends QueryService<DTO, unknown, unknown>>
+  extends ServiceResolver<DTO, QS> {
+  queryMany(
+    query: QueryType<DTO, PagingStrategies>,
+    authorizeFilter?: Filter<DTO>,
+  ): Promise<InferConnectionTypeFromStrategy<DTO, PS>>;
   findById(id: FindOneArgsType, authorizeFilter?: Filter<DTO>): Promise<DTO | undefined>;
 }
 
@@ -60,13 +54,8 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
   const { baseNameLower, pluralBaseNameLower, baseName } = getDTONames(DTOClass, opts);
   const readOneQueryName = opts.one?.name ?? baseNameLower;
   const readManyQueryName = opts.many?.name ?? pluralBaseNameLower;
-  const { QueryArgs = QueryArgsType(DTOClass, opts) } = opts;
-  const {
-    Connection = ConnectionType(
-      DTOClass,
-      extractConnectionOptsFromQueryArgs(QueryArgs, { ...opts, connectionName: `${baseName}Connection` }),
-    ),
-  } = opts;
+  const { QueryArgs = QueryArgsType(DTOClass, { ...opts, connectionName: `${baseName}Connection` }) } = opts;
+  const { ConnectionType } = QueryArgs;
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
   @ArgsType()
@@ -89,7 +78,7 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
     }
 
     @ResolverQuery(
-      () => Connection.resolveType,
+      () => QueryArgs.ConnectionType.resolveType,
       { name: readManyQueryName },
       commonResolverOpts,
       { interceptors: [HookInterceptor(HookTypes.BEFORE_QUERY_MANY, DTOClass), AuthorizerInterceptor(DTOClass)] },
@@ -98,8 +87,8 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
     async queryMany(
       @HookArgs() query: QA,
       @AuthorizerFilter() authorizeFilter?: Filter<DTO>,
-    ): Promise<ConnectionType<DTO>> {
-      return Connection.createFromPromise(
+    ): Promise<InstanceType<typeof ConnectionType>> {
+      return ConnectionType.createFromPromise(
         (q) => this.service.query(q),
         mergeQuery(query, { filter: authorizeFilter }),
         (filter) => this.service.count(filter),

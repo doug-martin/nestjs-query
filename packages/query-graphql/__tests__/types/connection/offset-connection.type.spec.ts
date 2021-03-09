@@ -1,12 +1,14 @@
 // eslint-disable-next-line max-classes-per-file
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
-import { ConnectionType, OffsetPagingType, PagingStrategies } from '../../../src';
+import { OffsetConnectionType, OffsetPagingType, PagingStrategies } from '../../../src';
 import {
   offsetConnectionObjectTypeSDL,
   offsetConnectionObjectTypeWithTotalCountSDL,
   expectSDL,
 } from '../../__fixtures__';
+import { getOrCreateOffsetConnectionType } from '../../../src/types/connection';
+import { getOrCreateOffsetPagingType } from '../../../src/types/query/paging';
 
 describe('OffsetConnectionType', (): void => {
   @ObjectType('Test')
@@ -27,7 +29,8 @@ describe('OffsetConnectionType', (): void => {
     stringField!: string;
   }
 
-  const createPage = (paging: OffsetPagingType): OffsetPagingType => plainToClass(OffsetPagingType(), paging);
+  const createPage = (paging: OffsetPagingType): OffsetPagingType =>
+    plainToClass(getOrCreateOffsetPagingType(), paging);
 
   const createTestDTO = (index: number): TestDto => ({
     stringField: `foo${index}`,
@@ -36,11 +39,11 @@ describe('OffsetConnectionType', (): void => {
   });
 
   it('should create the connection SDL', async () => {
-    const TestConnection = ConnectionType(TestDto, { pagingStrategy: PagingStrategies.OFFSET });
+    const TestConnection = getOrCreateOffsetConnectionType(TestDto, { pagingStrategy: PagingStrategies.OFFSET });
     @Resolver()
     class TestConnectionTypeResolver {
       @Query(() => TestConnection)
-      test(): ConnectionType<TestDto> | undefined {
+      test(): OffsetConnectionType<TestDto> | undefined {
         return undefined;
       }
     }
@@ -49,14 +52,14 @@ describe('OffsetConnectionType', (): void => {
   });
 
   it('should create the connection SDL with totalCount if enabled', async () => {
-    const TestConnectionWithTotalCount = ConnectionType(TestTotalCountDto, {
+    const TestConnectionWithTotalCount = getOrCreateOffsetConnectionType(TestTotalCountDto, {
       pagingStrategy: PagingStrategies.OFFSET,
       enableTotalCount: true,
     });
     @Resolver()
     class TestConnectionTypeResolver {
       @Query(() => TestConnectionWithTotalCount)
-      test(): ConnectionType<TestDto> | undefined {
+      test(): OffsetConnectionType<TestDto> | undefined {
         return undefined;
       }
     }
@@ -70,13 +73,13 @@ describe('OffsetConnectionType', (): void => {
       stringField!: string;
     }
 
-    expect(() => ConnectionType(TestBadDto, { pagingStrategy: PagingStrategies.OFFSET })).toThrow(
+    expect(() => getOrCreateOffsetConnectionType(TestBadDto, { pagingStrategy: PagingStrategies.OFFSET })).toThrow(
       'Unable to make OffsetConnectionType. Ensure TestBadDto is annotated with @nestjs/graphql @ObjectType',
     );
   });
 
   describe('limit offset offset connection', () => {
-    const TestConnection = ConnectionType(TestDto, { pagingStrategy: PagingStrategies.OFFSET });
+    const TestConnection = getOrCreateOffsetConnectionType(TestDto, { pagingStrategy: PagingStrategies.OFFSET });
 
     it('should create an empty connection when created with new', () => {
       expect(new TestConnection()).toEqual({

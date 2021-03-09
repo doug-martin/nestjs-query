@@ -1,6 +1,5 @@
 import { Paging, Query } from '@nestjs-query/core';
-import { PagerResult } from '../../interfaces';
-import { OffsetConnectionType } from '../offset-connection.type';
+import { OffsetConnectionType, PagerResult } from '../../interfaces';
 
 export type OffsetPagingOpts = Required<Paging>;
 
