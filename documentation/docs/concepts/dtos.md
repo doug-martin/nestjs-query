@@ -9,7 +9,7 @@ In the `nestjs-query` packages there are two types of DTOs referenced.
 1. Read DTO - The DTO returned from queries and certain mutations, the read DTO does not typically define validation and is used as the basis for querying and filtering.
 2. Input DTOs - The DTO used when creating or updating records. The input DTO typically defines user input validation, and a subset of fields from the read DTO that the end user can modify.
 
-To read more about DTOs in graphql check out the [DTO docs in the graphql section](../graphql/dtos.md).
+To read more about DTOs in graphql check out the [DTO docs in the graphql section](../graphql/dtos.mdx).
 
 ## Why are DTOs separate from the database entity definition?
 
