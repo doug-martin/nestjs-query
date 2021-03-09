@@ -1,8 +1,9 @@
-import { FilterableField, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, PagingStrategies, QueryOptions, Relation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
 @ObjectType('SubTask')
+@QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @Relation('todoItem', () => TodoItemDTO, { disableRemove: true })
 export class SubTaskDTO {
   @FilterableField(() => ID)
