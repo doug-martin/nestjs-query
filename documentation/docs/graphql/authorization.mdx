@@ -328,7 +328,7 @@ In this example there are two important additions:
  authorizer to the context so it can be used down stream
 2. The `AuthorizerFilter` param decorator uses the authorizer added by the interceptor to create an authorizer filter.
 
-```ts title="todo-item/todo-item.resolver.ts" {10,18}
+```ts title="todo-item/todo-item.resolver.ts" {9,17}
 import { Filter, InjectQueryService, mergeFilter, mergeQuery, QueryService } from '@nestjs-query/core';
 import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@nestjs-query/query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';

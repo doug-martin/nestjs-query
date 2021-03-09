@@ -496,28 +496,34 @@ type TodoItem {
 ||Queries grow more inefficient as you go through more pages|
 ||State must be maintained in the client to know last limit and offset in order to page|
 
-To enable OFFSET based paging.
+To enable OFFSET based paging all you need to do is set the `pagingStrategy` option using the `@QueryOptions` decorator.
 
-```ts title="todo-item.module.ts" {14}
-import { NestjsQueryGraphQLModule, PagingStrategies } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
-import { Module } from '@nestjs/common';
-import { TodoItemDTO } from './todo-item.dto';
-import { TodoItemEntity } from './todo-item.entity';
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
-@Module({
-  imports: [
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
-      resolvers: [{
-        DTOClass: TodoItemDTO,
-        EntityClass: TodoItemEntity,
-        pagingStrategy: PagingStrategies.OFFSET,
-      }],
-    }),
-  ],
-})
-export class TodoItemModule {}
+@ObjectType('TodoItem')
+@QueryOptions({ pagingStrategy: PagingStrategies.OFFSET })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
 ```
 
 In this example we'll fetch the first 2 records.
@@ -663,26 +669,35 @@ When using the `NONE` paging strategy the `paging` argument is removed and all m
 |----|----|
 |All data is returned at once|Not suitable for large datasets|
 
-```ts title="todo-item.module.ts" {14}
-import { NestjsQueryGraphQLModule, PagingStrategies } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
-import { Module } from '@nestjs/common';
-import { TodoItemDTO } from './todo-item.dto';
-import { TodoItemEntity } from './todo-item.entity';
+To disable paging all you can set the `pagingStrategy` option using the `@QueryOptions` decorator to
+`PagingStrategies.NONE`.
 
-@Module({
-  imports: [
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
-      resolvers: [{
-        DTOClass: TodoItemDTO,
-        EntityClass: TodoItemEntity,
-        pagingStrategy: PagingStrategies.NONE,
-      }],
-    }),
-  ],
-})
-export class TodoItemModule {}
+```ts title="todo-item.dto.ts" {5}
+import { FilterableField, QueryOptions } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@QueryOptions({ pagingStrategy: PagingStrategies.NONE })
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: number;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField({ nullable: true })
+  description?: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField(() => GraphQLISODateTime)
+  created!: Date;
+
+  @FilterableField(() => GraphQLISODateTime)
+  updated!: Date;
+}
+
 ```
 
 When using the strategy queries that return multiple records will return an array instead of a connection.

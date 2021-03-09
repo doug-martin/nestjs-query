@@ -34,10 +34,10 @@ When combining your entity and DTO you should **NOT** decorate your relationship
 
 ## Can I use OFFSET paging instead of a cursor with connections?
 
-Yes! You can specify a `pagingStrategy` option to customize how paging is handled at the resolver or relation level. 
+Yes! You can specify a `pagingStrategy` option to customize how paging is handled at the DTO or relation level. 
 
 For more information and examples check out the following docs
-* [Resolver Paging Strategy](./graphql/resolvers.mdx#paging-strategy)
+* [DTO Paging Strategy](./graphql/dtos.mdx#paging-strategy)
 * [Relations](./graphql/relations.mdx#many-relation)
 
 ## Can I use turn off paging?
@@ -45,7 +45,7 @@ For more information and examples check out the following docs
 Yes! You can specify a `pagingStrategy` option to customize how paging is handled at the resolver or relation level. 
 
 For more information and examples check out the following docs
-* [Resolver Paging Strategy](./graphql/resolvers.mdx#paging-strategy)
+* [DTO Paging Strategy](./graphql/dtos.mdx#paging-strategy)
 * [Relations](./graphql/relations.mdx#many-relation)
 
 
