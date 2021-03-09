@@ -1,12 +1,15 @@
-export { QueryArgsType, StaticQueryArgsType } from './query-args.type';
+export { QueryArgsType } from './query-args.type';
 export {
   CursorQueryArgsType,
   OffsetQueryArgsType,
-  NoPagingQueryArgsType,
+  NonePagingQueryArgsType,
   QueryArgsTypeOpts,
-  StaticNoPagingQueryArgsType,
-  StaticOffsetQueryArgsType,
-  StaticCursorQueryArgsType,
+  StaticNonePagingQueryArgs,
+  NonePagingQueryArgsTypeOpts,
+  OffsetQueryArgsTypeOpts,
+  CursorQueryArgsTypeOpts,
+  StaticQueryType,
+  QueryType,
 } from './query-args';
 export {
   FilterType,
@@ -15,13 +18,4 @@ export {
   SubscriptionFilterType,
   AggregateFilterType,
 } from './filter.type';
-export {
-  CursorPagingType,
-  OffsetPagingType,
-  StaticCursorPagingType,
-  StaticOffsetPagingType,
-  PagingTypes,
-  StaticPagingTypes,
-  PagingStrategies,
-} from './paging';
-export { SortType } from './sorting.type';
+export { CursorPagingType, OffsetPagingType, NonePagingType, PagingTypes, PagingStrategies } from './paging';

@@ -4,21 +4,21 @@ import { ValidateNested, Validate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PropertyMax } from '../../validators/property-max.validator';
 import { DEFAULT_QUERY_OPTS } from './constants';
-import { QueryArgsTypeOpts, QueryType, StaticQueryType } from './interfaces';
-import { StaticCursorPagingType, CursorPagingType, PagingStrategies } from '../paging';
+import { CursorQueryArgsTypeOpts, QueryType, StaticQueryType } from './interfaces';
+import { PagingStrategies, getOrCreateCursorPagingType, CursorPagingType } from '../paging';
 import { FilterType } from '../filter.type';
-import { SortType } from '../sorting.type';
+import { getOrCreateSortType } from '../sorting.type';
+import { getOrCreateCursorConnectionType } from '../../connection';
 
-export type StaticCursorQueryArgsType<DTO> = StaticQueryType<DTO, StaticCursorPagingType>;
-export type CursorQueryArgsType<DTO> = QueryType<DTO, CursorPagingType>;
-// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export function CursorQueryArgsType<DTO>(
+export type CursorQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.CURSOR>;
+export function createCursorQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: QueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR },
-): StaticCursorQueryArgsType<DTO> {
+  opts: CursorQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR },
+): StaticQueryType<DTO, PagingStrategies.CURSOR> {
   const F = FilterType(DTOClass);
-  const S = SortType(DTOClass);
-  const P = CursorPagingType();
+  const S = getOrCreateSortType(DTOClass);
+  const P = getOrCreateCursorPagingType();
+  const C = getOrCreateCursorConnectionType(DTOClass, opts);
 
   @ArgsType()
   class QueryArgs implements Query<DTO> {
@@ -27,6 +27,8 @@ export function CursorQueryArgsType<DTO>(
     static FilterType = F;
 
     static PageType = P;
+
+    static ConnectionType = C;
 
     @Field(() => P, {
       defaultValue: { first: opts.defaultResultSize ?? DEFAULT_QUERY_OPTS.defaultResultSize },

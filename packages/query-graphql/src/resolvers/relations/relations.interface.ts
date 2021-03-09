@@ -2,8 +2,8 @@ import { Class } from '@nestjs-query/core';
 import { Complexity } from '@nestjs/graphql';
 import { DTONamesOpts } from '../../common';
 import { ResolverMethodOpts } from '../../decorators';
-import { QueryArgsTypeOpts } from '../../types';
-import { CursorConnectionOptions } from '../../types/connection/cursor';
+import { QueryArgsTypeOpts, ConnectionOptions } from '../../types';
+
 import { AuthorizerOptions } from '../../auth';
 
 export type ReferencesKeys<DTO, Reference> = {
@@ -74,7 +74,7 @@ export type ResolverRelation<Relation> = {
 } & DTONamesOpts &
   ResolverMethodOpts &
   QueryArgsTypeOpts<Relation> &
-  Pick<CursorConnectionOptions, 'enableTotalCount'>;
+  Pick<ConnectionOptions, 'enableTotalCount'>;
 
 export type RelationTypeMap<RT> = Record<string, RT>;
 

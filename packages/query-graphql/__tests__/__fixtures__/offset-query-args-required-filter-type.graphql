@@ -1,3 +1,63 @@
+type TestQuery {
+  idField: ID!
+  idFieldOption: ID
+  stringField: String!
+  stringFieldOptional: String
+  booleanField: Boolean!
+  booleanFieldOptional: Boolean
+  numberField: Float!
+  numberFieldOptional: Float
+  floatField: Float!
+  floatFieldOptional: Float
+  intField: Int!
+  intFieldOptional: Int
+  timestampField: Timestamp!
+  timestampFieldOptional: Timestamp
+  date: DateTime!
+  dateOptional: DateTime
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type TestFilterRequiredDto {
+  requiredFilterableField: String!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type OffsetQueryOptionsDTO {
+  idField: ID!
+  idFieldOption: ID
+  stringField: String!
+  stringFieldOptional: String
+  booleanField: Boolean!
+  booleanFieldOptional: Boolean
+  numberField: Float!
+  numberFieldOptional: Float
+  floatField: Float!
+  floatFieldOptional: Float
+  intField: Int!
+  intFieldOptional: Int
+  timestampField: Timestamp!
+  timestampFieldOptional: Timestamp
+  date: DateTime!
+  dateOptional: DateTime
+}
+
 type Query {
   test(
     """Limit or page results."""
