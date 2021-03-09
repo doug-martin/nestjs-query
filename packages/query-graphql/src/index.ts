@@ -32,6 +32,7 @@ export {
   HookArgs,
   MutationHookArgs,
   KeySet,
+  QueryOptions,
 } from './decorators';
 export * from './resolvers';
 export * from './federation';

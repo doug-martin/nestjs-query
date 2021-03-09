@@ -1,49 +1,61 @@
 import { Class } from '@nestjs-query/core';
 import { PagingStrategies } from './paging';
 import {
-  CursorQueryArgsType,
   DEFAULT_QUERY_OPTS,
-  NoPagingQueryArgsType,
-  OffsetQueryArgsType,
-  StaticCursorQueryArgsType,
-  StaticNoPagingQueryArgsType,
-  StaticOffsetQueryArgsType,
+  CursorQueryArgsTypeOpts,
   OffsetQueryArgsTypeOpts,
-  NoPagingQueryArgsTypeOpts,
+  NonePagingQueryArgsTypeOpts,
   QueryArgsTypeOpts,
+  StaticQueryType,
+  createOffsetQueryArgs,
+  createNonePagingQueryArgsType,
+  createCursorQueryArgsType,
 } from './query-args';
+import { getQueryOptions } from '../../decorators';
+import { removeUndefinedValues } from '../../common';
 
-export type StaticQueryArgsType<DTO> =
-  | StaticNoPagingQueryArgsType<DTO>
-  | StaticCursorQueryArgsType<DTO>
-  | StaticOffsetQueryArgsType<DTO>;
+const getMergedQueryOpts = <DTO>(DTOClass: Class<DTO>, opts?: QueryArgsTypeOpts<DTO>): QueryArgsTypeOpts<DTO> => {
+  const decoratorOpts = getQueryOptions(DTOClass);
+  return {
+    ...DEFAULT_QUERY_OPTS,
+    pagingStrategy: PagingStrategies.CURSOR,
+    ...removeUndefinedValues(decoratorOpts ?? {}),
+    ...removeUndefinedValues(opts ?? {}),
+  };
+};
 
 // tests if the object is a QueryArgs Class
 // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
-export const isStaticQueryArgsType = <DTO>(obj: any): obj is StaticQueryArgsType<DTO> =>
-  typeof obj === 'function' && ('PageType' in obj || 'SortType' in obj || 'FilterType' in obj);
-
-export type QueryArgsType<DTO> = NoPagingQueryArgsType<DTO> | CursorQueryArgsType<DTO> | OffsetQueryArgsType<DTO>;
+export const isStaticQueryArgsType = <DTO>(obj: any): obj is StaticQueryType<DTO, PagingStrategies> =>
+  typeof obj === 'function' && 'PageType' in obj && 'SortType' in obj && 'FilterType' in obj;
 
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: OffsetQueryArgsTypeOpts<DTO>,
-): StaticOffsetQueryArgsType<DTO>;
+): StaticQueryType<DTO, PagingStrategies.OFFSET>;
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: NoPagingQueryArgsTypeOpts<DTO>,
-): StaticNoPagingQueryArgsType<DTO>;
-export function QueryArgsType<DTO>(DTOClass: Class<DTO>, opts?: QueryArgsTypeOpts<DTO>): StaticCursorQueryArgsType<DTO>;
-// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
+  opts: NonePagingQueryArgsTypeOpts<DTO>,
+): StaticQueryType<DTO, PagingStrategies.NONE>;
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: QueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR },
-): StaticQueryArgsType<DTO> {
-  if (opts.pagingStrategy === PagingStrategies.OFFSET) {
-    return OffsetQueryArgsType(DTOClass, opts);
+  opts: CursorQueryArgsTypeOpts<DTO>,
+): StaticQueryType<DTO, PagingStrategies.CURSOR>;
+export function QueryArgsType<DTO>(
+  DTOClass: Class<DTO>,
+  opts?: QueryArgsTypeOpts<DTO>,
+): StaticQueryType<DTO, PagingStrategies>;
+export function QueryArgsType<DTO>(
+  DTOClass: Class<DTO>,
+  opts?: QueryArgsTypeOpts<DTO>,
+): StaticQueryType<DTO, PagingStrategies> {
+  // override any options from the DTO with the options passed in
+  const mergedOpts = getMergedQueryOpts(DTOClass, opts);
+  if (mergedOpts.pagingStrategy === PagingStrategies.OFFSET) {
+    return createOffsetQueryArgs(DTOClass, mergedOpts);
   }
-  if (opts.pagingStrategy === PagingStrategies.NONE) {
-    return NoPagingQueryArgsType(DTOClass, opts);
+  if (mergedOpts.pagingStrategy === PagingStrategies.NONE) {
+    return createNonePagingQueryArgsType(DTOClass, mergedOpts);
   }
-  return CursorQueryArgsType(DTOClass, opts);
+  return createCursorQueryArgsType(DTOClass, mergedOpts);
 }

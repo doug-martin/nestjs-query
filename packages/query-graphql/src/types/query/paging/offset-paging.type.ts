@@ -1,24 +1,18 @@
-import { Paging } from '@nestjs-query/core';
+import { Class } from '@nestjs-query/core';
 import { IsInt } from 'class-validator';
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsUndefined } from '../../validators';
 import { PagingStrategies } from './constants';
+import { OffsetPagingType } from './interfaces';
 
-let graphQLPaging: StaticOffsetPagingType | null = null;
-
-export interface StaticOffsetPagingType {
-  strategy: PagingStrategies.OFFSET;
-  new (): OffsetPagingType;
-}
-
-export type OffsetPagingType = Paging;
+let graphQLPaging: Class<OffsetPagingType> | null = null;
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export const OffsetPagingType = (): StaticOffsetPagingType => {
+export const getOrCreateOffsetPagingType = (): Class<OffsetPagingType> => {
   if (graphQLPaging) {
     return graphQLPaging;
   }
   @InputType('OffsetPaging')
-  class GraphQLPagingImpl implements Paging {
+  class GraphQLPagingImpl implements OffsetPagingType {
     static strategy: PagingStrategies.OFFSET = PagingStrategies.OFFSET;
 
     @Field(() => Int, {

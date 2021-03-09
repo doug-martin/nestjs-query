@@ -27,6 +27,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type TestFilterRequiredDto {
+  requiredFilterableField: String!
+}
+
 type OffsetPageInfo {
   """true if paging forward and there are more records."""
   hasNextPage: Boolean
@@ -57,13 +61,13 @@ type OffsetQueryOptionsDTO {
 type Query {
   test(
     """Limit or page results."""
-    paging: OffsetPaging = {limit: 10}
+    paging: OffsetPaging = {limit: 2}
 
     """Specify to filter the records returned."""
-    filter: TestQueryFilter = {}
+    filter: OffsetQueryOptionsDTOFilter = {booleanField: {is: true}}
 
     """Specify to sort results."""
-    sorting: [TestQuerySort!] = []
+    sorting: [OffsetQueryOptionsDTOSort!] = [{field: booleanField, direction: DESC}]
   ): String!
 }
 
@@ -75,9 +79,9 @@ input OffsetPaging {
   offset: Int
 }
 
-input TestQueryFilter {
-  and: [TestQueryFilter!]
-  or: [TestQueryFilter!]
+input OffsetQueryOptionsDTOFilter {
+  and: [OffsetQueryOptionsDTOFilter!]
+  or: [OffsetQueryOptionsDTOFilter!]
   idField: IDFilterComparison
   idFieldOption: IDFilterComparison
   stringField: StringFieldComparison
@@ -235,13 +239,13 @@ input DateFieldComparisonBetween {
   upper: DateTime!
 }
 
-input TestQuerySort {
-  field: TestQuerySortFields!
+input OffsetQueryOptionsDTOSort {
+  field: OffsetQueryOptionsDTOSortFields!
   direction: SortDirection!
   nulls: SortNulls
 }
 
-enum TestQuerySortFields {
+enum OffsetQueryOptionsDTOSortFields {
   idField
   idFieldOption
   stringField

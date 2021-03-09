@@ -5,8 +5,8 @@ import { getDTONames } from '../../common';
 import { RelationAuthorizerFilter, ResolverField } from '../../decorators';
 import { AuthorizerInterceptor } from '../../interceptors';
 import { CountRelationsLoader, DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
-import { ConnectionType, QueryArgsType } from '../../types';
-import { extractConnectionOptsFromQueryArgs, transformAndValidate } from '../helpers';
+import { QueryArgsType } from '../../types';
+import { transformAndValidate } from '../helpers';
 import { BaseServiceResolver, ServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
@@ -72,17 +72,10 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
   const countLoader = new CountRelationsLoader<DTO, Relation>(relationDTO, relationName);
   const connectionName = `${dtoName}${pluralBaseName}Connection`;
   @ArgsType()
-  class RelationQA extends QueryArgsType(relationDTO, relation) {}
+  class RelationQA extends QueryArgsType(relationDTO, { ...relation, connectionName, disableKeySetPagination: true }) {}
 
   // disable keyset pagination for relations otherwise recursive paging will not work
-  const CT = ConnectionType(
-    relationDTO,
-    extractConnectionOptsFromQueryArgs(RelationQA, {
-      ...relation,
-      connectionName,
-      disableKeySetPagination: true,
-    }),
-  );
+  const { ConnectionType: CT } = RelationQA;
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadManyMixin extends Base {
     @ResolverField(
@@ -97,7 +90,7 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
       @Args() q: RelationQA,
       @Context() context: ExecutionContext,
       @RelationAuthorizerFilter(pluralBaseNameLower) relationFilter?: Filter<Relation>,
-    ): Promise<ConnectionType<Relation>> {
+    ): Promise<InstanceType<typeof CT>> {
       const qa = await transformAndValidate(RelationQA, q);
       const relationLoader = DataLoaderFactory.getOrCreateLoader(
         context,

@@ -1,7 +1,6 @@
 import { Query } from '@nestjs-query/core';
 import { CursorPagingOpts, OffsetPagingOpts, PagerStrategy } from './strategies';
-import { Count, Pager, QueryMany } from '../../interfaces';
-import { EdgeType } from '../edge.type';
+import { Count, EdgeType, Pager, QueryMany } from '../../interfaces';
 import { CursorQueryArgsType } from '../../../query';
 import { CursorPagerResult, PagingMeta, QueryResults } from './interfaces';
 
