@@ -1,4 +1,4 @@
-import { FilterableField, FilterableCursorConnection, KeySet } from '@nestjs-query/query-graphql';
+import { FilterableField, FilterableCursorConnection, KeySet, QueryOptions } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { AuthGuard } from '../../auth.guard';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
@@ -6,6 +6,7 @@ import { TagDTO } from '../../tag/dto/tag.dto';
 
 @ObjectType('TodoItem')
 @KeySet(['id'])
+@QueryOptions({ enableTotalCount: true })
 @FilterableCursorConnection('subTasks', () => SubTaskDTO, { guards: [AuthGuard] })
 @FilterableCursorConnection('tags', () => TagDTO, { guards: [AuthGuard] })
 export class TodoItemDTO {

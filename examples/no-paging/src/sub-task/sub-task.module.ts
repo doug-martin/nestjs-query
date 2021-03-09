@@ -1,4 +1,4 @@
-import { NestjsQueryGraphQLModule, PagingStrategies } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { Module } from '@nestjs/common';
 import { SubTaskDTO } from './dto/sub-task.dto';
@@ -16,7 +16,6 @@ import { SubTaskEntity } from './sub-task.entity';
           EntityClass: SubTaskEntity,
           CreateDTOClass: CreateSubTaskDTO,
           UpdateDTOClass: SubTaskUpdateDTO,
-          pagingStrategy: PagingStrategies.NONE,
         },
       ],
     }),
