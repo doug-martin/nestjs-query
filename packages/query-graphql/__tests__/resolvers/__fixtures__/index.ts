@@ -112,9 +112,6 @@ export const readManyDisabledResolverSDL = readGraphql(
   resolve(__dirname, 'read', 'read-many-disabled.resolver.graphql'),
 );
 export const readCustomNameResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-custom-name.resolver.graphql'));
-export const readCustomConnectionResolverSDL = readGraphql(
-  resolve(__dirname, 'read', 'read-custom-connection.resolver.graphql'),
-);
 export const readCustomQueryResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-custom-query.resolver.graphql'));
 export const readOffsetQueryResolverSDL = readGraphql(resolve(__dirname, 'read', 'read-offset-query.resolver.graphql'));
 export const readCursorConnectionWithTotalCountSDL = readGraphql(

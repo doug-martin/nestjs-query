@@ -6,10 +6,14 @@ import { upperCaseFirst } from 'upper-case-first';
 import { ResolverRelation } from '../../resolvers/relations';
 import { createFilterComparisonType } from './field-comparison';
 import { getDTONames, getGraphqlObjectName } from '../../common';
-import { getFilterableFields, getRelations } from '../../decorators';
+import { getFilterableFields, getQueryOptions, getRelations, SkipIf } from '../../decorators';
+import { isInAllowedList } from './helpers';
 
 const reflector = new MapReflector('nestjs-query:filter-type');
 
+export type FilterTypeOptions = {
+  allowedBooleanExpressions?: ('and' | 'or')[];
+};
 export type FilterableRelations = Record<string, Class<unknown>>;
 export interface FilterConstructor<T> {
   hasRequiredFilters: boolean;
@@ -26,23 +30,25 @@ function getOrCreateFilterType<T>(
   filterableRelations: FilterableRelations = {},
 ): FilterConstructor<T> {
   return reflector.memoize(TClass, name, () => {
+    const { allowedBooleanExpressions }: FilterTypeOptions = getQueryOptions(TClass) ?? {};
     const fields = getFilterableFields(TClass);
     if (!fields.length) {
       throw new Error(`No fields found to create GraphQLFilter for ${TClass.name}`);
     }
     const hasRequiredFilters = fields.some((f) => f.advancedOptions?.filterRequired === true);
+    const isNotAllowedComparison = (val: 'and' | 'or') => !isInAllowedList(allowedBooleanExpressions, val);
 
     @InputType(name)
     class GraphQLFilter {
       static hasRequiredFilters: boolean = hasRequiredFilters;
 
       @ValidateNested()
-      @Field(() => [GraphQLFilter], { nullable: true })
+      @SkipIf(() => isNotAllowedComparison('and'), Field(() => [GraphQLFilter], { nullable: true }))
       @Type(() => GraphQLFilter)
       and?: Filter<T>[];
 
       @ValidateNested()
-      @Field(() => [GraphQLFilter], { nullable: true })
+      @SkipIf(() => isNotAllowedComparison('or'), Field(() => [GraphQLFilter], { nullable: true }))
       @Type(() => GraphQLFilter)
       or?: Filter<T>[];
     }

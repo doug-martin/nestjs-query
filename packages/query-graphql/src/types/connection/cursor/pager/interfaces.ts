@@ -1,7 +1,6 @@
 import { Query } from '@nestjs-query/core';
 import { CursorPagingOpts } from './strategies';
-import { CursorConnectionType } from '../cursor-connection.type';
-import { PagerResult } from '../../interfaces';
+import { CursorConnectionType, PagerResult } from '../../interfaces';
 
 export interface PagingMeta<DTO, Opts extends CursorPagingOpts<DTO>> {
   opts: Opts;

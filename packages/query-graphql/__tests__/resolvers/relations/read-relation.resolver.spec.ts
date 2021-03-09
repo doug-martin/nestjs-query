@@ -1,6 +1,6 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when } from 'ts-mockito';
-import { CursorQueryArgsType, NoPagingQueryArgsType, OffsetQueryArgsType, PagingStrategies } from '../../../src';
+import { CursorQueryArgsType, NonePagingQueryArgsType, OffsetQueryArgsType, PagingStrategies } from '../../../src';
 import { ReadRelationsResolver, RelationsOpts } from '../../../src/resolvers/relations';
 import { expectSDL } from '../../__fixtures__';
 import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
@@ -369,7 +369,7 @@ describe('ReadRelationsResolver', () => {
           id: 'id-1',
           stringField: 'foo',
         };
-        const query: NoPagingQueryArgsType<TestRelationDTO> = {
+        const query: NonePagingQueryArgsType<TestRelationDTO> = {
           filter: { id: { eq: 'id-2' } },
         };
         const output: TestRelationDTO[] = [

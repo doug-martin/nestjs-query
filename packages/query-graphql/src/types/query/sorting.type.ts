@@ -17,7 +17,7 @@ registerEnumType(SortNulls, {
 
 const reflector = new ValueReflector('nestjs-query:sort-type');
 
-export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
+export function getOrCreateSortType<T>(TClass: Class<T>): Class<SortField<T>> {
   return reflector.memoize(TClass, () => {
     const prefix = getGraphqlObjectName(TClass, 'Unable to make SortType.');
     const fields = getFilterableFields(TClass);

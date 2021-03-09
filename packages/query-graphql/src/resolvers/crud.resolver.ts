@@ -1,5 +1,5 @@
 import { Class, DeepPartial, QueryService } from '@nestjs-query/core';
-import { PagingStrategies } from '../types';
+import { ConnectionOptions, PagingStrategies } from '../types';
 import { Aggregateable, AggregateResolverOpts, AggregateResolver } from './aggregate.resolver';
 import { Relatable } from './relations';
 import { Readable, ReadResolverFromOpts, ReadResolverOpts } from './read.resolver';
@@ -11,7 +11,6 @@ import { DeleteResolver, DeleteResolverOpts } from './delete.resolver';
 import { BaseResolverOptions } from '../decorators/resolver-method.decorator';
 import { mergeBaseResolverOpts } from '../common';
 import { RelatableOpts } from './relations/relations.resolver';
-import { CursorConnectionOptions } from '../types/connection/cursor';
 
 export interface CRUDResolverOpts<
   DTO,
@@ -20,7 +19,7 @@ export interface CRUDResolverOpts<
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
   PS extends PagingStrategies = PagingStrategies.CURSOR
 > extends BaseResolverOptions,
-    Pick<CursorConnectionOptions, 'enableTotalCount'> {
+    Pick<ConnectionOptions, 'enableTotalCount'> {
   /**
    * The DTO that should be used as input for create endpoints.
    */

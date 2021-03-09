@@ -4,22 +4,19 @@ import { NotImplementedException } from '@nestjs/common';
 import { SkipIf } from '../../../decorators';
 import { PagingStrategies } from '../../query';
 import { createPager } from './pager';
-import { BaseConnectionOptions, Count, CountFn, QueryMany, StaticConnection } from '../interfaces';
-import { EdgeType } from './edge.type';
-import { PageInfoType } from './page-info.type';
+import {
+  Count,
+  CountFn,
+  CursorConnectionOptions,
+  CursorConnectionType,
+  EdgeType,
+  PageInfoType,
+  QueryMany,
+  StaticConnectionType,
+} from '../interfaces';
+import { getOrCreateEdgeType } from './edge.type';
+import { getOrCreatePageInfoType } from './page-info.type';
 import { getGraphqlObjectName } from '../../../common';
-
-export interface CursorConnectionOptions extends BaseConnectionOptions {
-  pagingStrategy?: PagingStrategies.CURSOR;
-}
-
-export type StaticCursorConnectionType<DTO> = StaticConnection<DTO, CursorConnectionType<DTO>>;
-
-export type CursorConnectionType<DTO> = {
-  pageInfo: PageInfoType;
-  edges: EdgeType<DTO>[];
-  totalCount?: Promise<number>;
-};
 
 const DEFAULT_COUNT = () => Promise.reject(new NotImplementedException('totalCount not implemented'));
 
@@ -34,17 +31,16 @@ function getOrCreateConnectionName<DTO>(DTOClass: Class<DTO>, opts: CursorConnec
   return `${objName}Connection`;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export function CursorConnectionType<DTO>(
+export function getOrCreateCursorConnectionType<DTO>(
   TItemClass: Class<DTO>,
   maybeOpts?: CursorConnectionOptions,
-): StaticCursorConnectionType<DTO> {
+): StaticConnectionType<DTO, PagingStrategies.CURSOR> {
   const opts = maybeOpts ?? { pagingStrategy: PagingStrategies.CURSOR };
   const connectionName = getOrCreateConnectionName(TItemClass, opts);
   return reflector.memoize(TItemClass, connectionName, () => {
     const pager = createPager<DTO>(TItemClass, opts);
-    const E = EdgeType(TItemClass);
-    const PIT = PageInfoType();
+    const E = getOrCreateEdgeType(TItemClass);
+    const PIT = getOrCreatePageInfoType();
     @ObjectType(connectionName)
     class AbstractConnection implements CursorConnectionType<DTO> {
       static get resolveType() {

@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Class } from '@nestjs-query/core';
 import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
+import { PageInfoType } from '../interfaces';
 
 export interface PageInfoTypeConstructor {
   new (
@@ -11,17 +12,10 @@ export interface PageInfoTypeConstructor {
   ): PageInfoType;
 }
 
-export interface PageInfoType {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor?: ConnectionCursorType | undefined;
-  endCursor?: ConnectionCursorType | undefined;
-}
-
 /** @internal */
 let pageInfoType: Class<PageInfoType> | null = null;
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export const PageInfoType = (): PageInfoTypeConstructor => {
+export const getOrCreatePageInfoType = (): PageInfoTypeConstructor => {
   if (pageInfoType) {
     return pageInfoType;
   }

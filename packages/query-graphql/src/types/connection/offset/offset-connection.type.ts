@@ -1,24 +1,20 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Class, MapReflector, Query } from '@nestjs-query/core';
 import { NotImplementedException } from '@nestjs/common';
-import { SkipIf } from '../../../decorators';
 import { PagingStrategies } from '../../query';
-import { BaseConnectionOptions, Count, CountFn, QueryMany, StaticConnection } from '../interfaces';
-import { OffsetPageInfoType } from './offset-page-info.type';
+import { SkipIf } from '../../../decorators';
+import {
+  Count,
+  CountFn,
+  OffsetConnectionOptions,
+  OffsetConnectionType,
+  OffsetPageInfoType,
+  QueryMany,
+  StaticConnectionType,
+} from '../interfaces';
 import { getGraphqlObjectName } from '../../../common';
 import { createPager } from './pager';
-
-export interface OffsetConnectionOptions extends BaseConnectionOptions {
-  pagingStrategy: PagingStrategies.OFFSET;
-}
-
-export type StaticOffsetConnectionType<DTO> = StaticConnection<DTO, OffsetConnectionType<DTO>>;
-
-export type OffsetConnectionType<DTO> = {
-  pageInfo: OffsetPageInfoType;
-  totalCount?: Promise<number>;
-  nodes: DTO[];
-};
+import { getOrCreateOffsetPageInfoType } from './offset-page-info.type';
 
 const DEFAULT_COUNT = () => Promise.reject(new NotImplementedException('totalCount not implemented'));
 
@@ -33,15 +29,14 @@ function getOrCreateConnectionName<DTO>(DTOClass: Class<DTO>, opts: OffsetConnec
   return `${objName}OffsetConnection`;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export function OffsetConnectionType<DTO>(
+export function getOrCreateOffsetConnectionType<DTO>(
   TItemClass: Class<DTO>,
   opts: OffsetConnectionOptions,
-): StaticOffsetConnectionType<DTO> {
+): StaticConnectionType<DTO, PagingStrategies.OFFSET> {
   const connectionName = getOrCreateConnectionName(TItemClass, opts);
   return reflector.memoize(TItemClass, connectionName, () => {
     const pager = createPager<DTO>();
-    const PIT = OffsetPageInfoType();
+    const PIT = getOrCreateOffsetPageInfoType();
     @ObjectType(connectionName)
     class AbstractConnection implements OffsetConnectionType<DTO> {
       static get resolveType() {
