@@ -667,12 +667,13 @@ decorator.
 
 In this example we'll use the same Entities defined above to create a graphql endpoint that allows filtering `TodoItems` by `subTasks`.
 
-```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, FilterableOffsetConnection } from '@nestjs-query/query-graphql';
+```ts title="todo-item/todo-item.dto.ts" {7}
+import { FilterableField, FilterableOffsetConnection, QueryOptions } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
+@QueryOptions({ pagingStrategy: PagingStrategies.OFFSET })
 @FilterableOffsetConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
   @FilterableField(() => ID)
@@ -709,7 +710,7 @@ import { TodoItemEntity } from './todo-item.entity';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
-      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity, pagingStrategy: PagingStrategies.OFFSET }],
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
     }),
   ],
 })
