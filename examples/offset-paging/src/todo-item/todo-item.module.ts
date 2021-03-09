@@ -1,4 +1,4 @@
-import { NestjsQueryGraphQLModule, PagingStrategies } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';
@@ -16,8 +16,6 @@ import { TodoItemEntity } from './todo-item.entity';
           EntityClass: TodoItemEntity,
           CreateDTOClass: TodoItemInputDTO,
           UpdateDTOClass: TodoItemUpdateDTO,
-          enableTotalCount: true,
-          pagingStrategy: PagingStrategies.OFFSET,
         },
       ],
     }),

@@ -16,7 +16,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
           EntityClass: TagEntity,
           CreateDTOClass: TagInputDTO,
           UpdateDTOClass: TagInputDTO,
-          enableTotalCount: true,
           enableAggregate: true,
           guards: [JwtAuthGuard],
         },

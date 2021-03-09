@@ -1,9 +1,10 @@
-import { FilterableField, CursorConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, CursorConnection, QueryOptions } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 import { TagDTO } from '../../tag/dto/tag.dto';
 
 @ObjectType('TodoItem')
+@QueryOptions({ enableTotalCount: true })
 @CursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true, complexity: 5 })
 @CursorConnection('tags', () => TagDTO, { complexity: 10 })
 export class TodoItemDTO {

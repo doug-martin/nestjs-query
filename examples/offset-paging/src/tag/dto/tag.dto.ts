@@ -1,8 +1,9 @@
-import { FilterableField, OffsetConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, OffsetConnection, PagingStrategies, QueryOptions } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
 @ObjectType('Tag')
+@QueryOptions({ pagingStrategy: PagingStrategies.OFFSET, enableTotalCount: true })
 @OffsetConnection('todoItems', () => TodoItemDTO)
 export class TagDTO {
   @FilterableField(() => ID)
