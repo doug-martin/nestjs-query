@@ -4,7 +4,6 @@ export {
   OffsetQueryArgsType,
   NonePagingQueryArgsType,
   QueryArgsTypeOpts,
-  StaticNonePagingQueryArgs,
   NonePagingQueryArgsTypeOpts,
   OffsetQueryArgsTypeOpts,
   CursorQueryArgsTypeOpts,
