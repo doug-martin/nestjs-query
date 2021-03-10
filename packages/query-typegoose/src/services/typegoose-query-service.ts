@@ -12,20 +12,16 @@ import {
   UpdateOneOptions,
   QueryService,
 } from '@nestjs-query/core';
-import { CreateQuery, DocumentToObjectOptions, UpdateQuery } from 'mongoose';
+import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { ToObjectOptions, UpdateQuery } from 'mongoose';
 import { ReturnModelType, DocumentType, mongoose } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { ReferenceQueryService } from './reference-query.service';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { UpdateArrayQuery } from '../typegoose-types.helper';
 
-type MongoDBUpdatedOutput = {
-  nModified: number;
-};
-
 export interface TypegooseQueryServiceOpts {
-  documentToObjectOptions?: DocumentToObjectOptions;
+  toObjectOptions?: ToObjectOptions;
 }
 
 export class TypegooseQueryService<Entity extends Base>
@@ -67,7 +63,7 @@ export class TypegooseQueryService<Entity extends Base>
 
   count(filter: Filter<Entity>): Promise<number> {
     const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    return this.Model.count(filterQuery).exec();
+    return this.Model.countDocuments(filterQuery).exec();
   }
 
   /**
@@ -122,7 +118,7 @@ export class TypegooseQueryService<Entity extends Base>
    */
   async createOne(record: DeepPartial<Entity>): Promise<DocumentType<Entity>> {
     this.ensureIdIsNotPresent(record);
-    const doc = await this.Model.create(record as CreateQuery<Entity>);
+    const doc = await this.Model.create(record);
     return doc;
   }
 
@@ -140,7 +136,7 @@ export class TypegooseQueryService<Entity extends Base>
    */
   async createMany(records: DeepPartial<Entity>[]): Promise<DocumentType<Entity>[]> {
     records.forEach((r) => this.ensureIdIsNotPresent(r));
-    const entities = await this.Model.create(records as CreateQuery<Entity>[]);
+    const entities = await this.Model.create(records);
     return entities;
   }
 
@@ -187,10 +183,7 @@ export class TypegooseQueryService<Entity extends Base>
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    const res = (await this.Model.updateMany(
-      filterQuery,
-      this.getUpdateQuery(update as DocumentType<Entity>),
-    ).exec()) as MongoDBUpdatedOutput;
+    const res = await this.Model.updateMany(filterQuery, this.getUpdateQuery(update as DocumentType<Entity>)).exec();
     return { updatedCount: res.nModified || 0 };
   }
 

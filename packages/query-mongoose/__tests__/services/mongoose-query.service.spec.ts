@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { InjectModel, MongooseModule } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { Model, Document } from 'mongoose';
+import { Model, Document, LeanDocument } from 'mongoose';
 import { SortDirection } from '@nestjs-query/core';
 import { MongooseQueryService } from '../../src/services';
 import {
@@ -55,11 +55,12 @@ describe('MongooseQueryService', () => {
     }).compile();
   });
 
-  function convertDocument<Doc extends Document>(doc: Doc) {
-    return doc.toObject({ virtuals: true });
+  function convertDocument<Doc extends Document>(doc: Doc): LeanDocument<Doc> {
+    const docObject = doc.toObject({ virtuals: true });
+    return docObject;
   }
 
-  function convertDocuments<Doc extends Document>(docs: Doc[]) {
+  function convertDocuments<Doc extends Document>(docs: Doc[]): LeanDocument<Doc>[] {
     return docs.map((doc) => convertDocument(doc));
   }
 

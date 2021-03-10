@@ -2,6 +2,7 @@ import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
 import { TagEntity } from '../tag/tag.entity';
+import { Types } from 'mongoose';
 
 @modelOptions({
   schemaOptions: {
@@ -10,7 +11,12 @@ import { TagEntity } from '../tag/tag.entity';
     toObject: { virtuals: true },
   },
 })
-export class TodoItemEntity extends Base {
+export class TodoItemEntity implements Base {
+
+  _id!: Types.ObjectId
+
+  id!: string;
+
   @Prop({ required: true })
   title!: string;
 
@@ -45,8 +51,4 @@ export class TodoItemEntity extends Base {
   })
   subTasks?: Ref<SubTaskEntity>[];
 
-  public get id(): string {
-    // eslint-disable-next-line no-underscore-dangle
-    return this._id.toHexString();
-  }
 }

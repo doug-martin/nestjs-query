@@ -51,7 +51,7 @@ describe('TypegooseQueryService', () => {
   });
 
   function convertDocument<Doc>(doc: DocumentType<Doc>): Doc {
-    return doc.toObject({ virtuals: true });
+    return doc.toObject({ virtuals: true }) as Doc;
   }
 
   function convertDocuments<Doc>(docs: DocumentType<Doc>[]): Doc[] {
@@ -481,7 +481,7 @@ describe('TypegooseQueryService', () => {
     it('should reject if the update contains the ID', async () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(
-        queryService.updateOne(TEST_ENTITIES[0]._id.toHexString(), { id: new ObjectId().toHexString() }),
+        queryService.updateOne(TEST_ENTITIES[0]._id.toHexString(), { _id: new ObjectId() }),
       ).rejects.toThrow('Id cannot be specified when updating');
     });
 
@@ -618,7 +618,7 @@ describe('TypegooseQueryService', () => {
         const queryService = moduleRef.get(TestEntityService);
         const options: FindRelationOptions<TestReference> = {
           filter: {
-            id: { in: [TEST_REFERENCES[0]._id.toHexString(), TEST_REFERENCES[6]._id.toHexString()] },
+            _id: { in: [TEST_REFERENCES[0]._id, TEST_REFERENCES[6]._id] },
           },
         };
         const queryResult = await queryService.findRelation(TestReference, 'testReference', entities, options);

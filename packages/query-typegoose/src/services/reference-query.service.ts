@@ -1,4 +1,4 @@
-import { Document, DocumentToObjectOptions, Model as MongooseModel, UpdateQuery } from 'mongoose';
+import { Document, Model as MongooseModel, ToObjectOptions, UpdateQuery } from 'mongoose';
 import {
   AggregateQuery,
   AggregateResponse,
@@ -13,8 +13,8 @@ import {
   Query,
   UpdateOneOptions,
 } from '@nestjs-query/core';
-import { ReturnModelType, DocumentType, getModelWithString, getClassForDocument } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { ReturnModelType, DocumentType, getModelWithString, getClass } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { TypegooseQueryServiceOpts } from './typegoose-query-service';
@@ -26,12 +26,12 @@ import {
 } from '../typegoose-types.helper';
 
 export abstract class ReferenceQueryService<Entity extends Base> {
-  protected readonly documentToObjectOptions: DocumentToObjectOptions;
-
   abstract readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
+  public readonly toObjectOptions: ToObjectOptions;
+
   protected constructor(readonly Model: ReturnModelType<new () => Entity>, opts?: TypegooseQueryServiceOpts) {
-    this.documentToObjectOptions = opts?.documentToObjectOptions || { virtuals: true };
+    this.toObjectOptions = opts?.toObjectOptions || { virtuals: true };
   }
 
   abstract getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<DocumentType<Entity>>;
@@ -70,6 +70,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
         return map.set(curr, ref);
       }, Promise.resolve(new Map<DocumentType<Entity>, DocumentType<Relation> | undefined>()));
     }
+
     // eslint-disable-next-line no-underscore-dangle
     const foundEntity = await this.Model.findById(dto._id);
     if (!foundEntity) {
@@ -77,14 +78,12 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     }
 
     const ReferenceModel = this.getReferenceModel(relationName);
-    const referenceDoc = new ReferenceModel();
-    const ReferenceEntity: any = getClassForDocument(referenceDoc);
-    // console.log('referenceEntity: ', ReferenceEntity.toString())
+    const ReferenceEntity = getClass(ReferenceModel.modelName) as Class<Entity>;
     const assembler = AssemblerFactory.getAssembler(RelationClass, ReferenceEntity);
     const filterQuery = referenceQueryBuilder.buildFilterQuery(assembler.convertQuery({ filter: opts?.filter }).filter);
     const populated = await foundEntity.populate({ path: relationName, match: filterQuery }).execPopulate();
-    const populatedRef: DocumentType<typeof ReferenceEntity> = populated.get(relationName);
-    return populatedRef ? assembler.convertToDTO(populatedRef as DocumentType<Relation>) : undefined;
+    const populatedRef = populated.get(relationName);
+    return populatedRef ? assembler.convertToDTO(populatedRef) : undefined;
   }
 
   queryRelations<Relation>(
@@ -212,7 +211,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     if (!refFilter) {
       return 0;
     }
-    return relationModel.count(referenceQueryBuilder.buildFilterQuery(refFilter)).exec();
+    return relationModel.countDocuments(referenceQueryBuilder.buildFilterQuery(refFilter)).exec();
   }
 
   async addRelations<Relation>(
@@ -383,7 +382,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
   ): Promise<number> {
     const referenceModel = this.getReferenceModel(relationName);
     const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder<Relation>();
-    return referenceModel.count(referenceQueryBuilder.buildIdFilterQuery(relationIds, filter)).exec();
+    return referenceModel.countDocuments(referenceQueryBuilder.buildIdFilterQuery(relationIds, filter)).exec();
   }
 
   static getReferenceQueryBuilder<Ref extends Document>(): FilterQueryBuilder<Ref> {

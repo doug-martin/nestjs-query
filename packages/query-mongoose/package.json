@@ -35,7 +35,7 @@
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
     "@types/mongodb": "3.6.9",
-    "class-transformer": "0.3.2",
+    "class-transformer": "0.3.1",
     "mongodb": "3.6.4",
     "mongodb-memory-server": "6.9.6",
     "mongoose": "5.11.19",
