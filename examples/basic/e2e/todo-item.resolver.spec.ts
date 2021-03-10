@@ -279,6 +279,48 @@ describe('TodoItemResolver (basic - e2e)', () => {
           ]);
         }));
 
+    it(`should allow querying relations with overlapping matches on the results and correct pagination (issue 954)`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+            todoItems(
+             paging: {first: 2}
+             filter: { 
+               or: [
+                 { id: { eq: 2 } }, 
+                 { subTasks: { title: { like: "Create Nest App%" } } } 
+               ]
+             }
+          ) {
+              edges {
+                node {
+                  id
+                  title
+                }
+              }
+            }
+          }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          expect(edges).toHaveLength(2);
+
+          expect(edges.map((e) => e.node)).toEqual([
+            {
+              id: '1',
+              title: 'Create Nest App',
+            },
+            {
+              id: '2',
+              title: 'Create Entity',
+            },
+          ]);
+        }));
+
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
         .post('/graphql')
