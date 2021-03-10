@@ -21,8 +21,8 @@ export const PLAIN_TEST_ENTITIES: Pick<
 export const PLAIN_TEST_RELATIONS: Pick<
   TestRelation,
   'testRelationPk' | 'relationName' | 'testEntityId'
->[] = PLAIN_TEST_ENTITIES.reduce((relations, te) => {
-  return [
+>[] = PLAIN_TEST_ENTITIES.reduce(
+  (relations, te) => [
     ...relations,
     {
       testRelationPk: `test-relations-${te.testEntityPk}-1`,
@@ -42,8 +42,9 @@ export const PLAIN_TEST_RELATIONS: Pick<
       testEntityId: te.testEntityPk,
       oneTestEntityId: null,
     },
-  ];
-}, [] as Pick<TestRelation, 'testRelationPk' | 'relationName' | 'testEntityId'>[]);
+  ],
+  [] as Pick<TestRelation, 'testRelationPk' | 'relationName' | 'testEntityId'>[],
+);
 
 export const seed = async (sequelize: Sequelize): Promise<void> => {
   await truncate(sequelize);

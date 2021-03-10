@@ -23,9 +23,7 @@ describe('ReferenceResolver', () => {
     return expectSDL([TestSDLResolver], sdl);
   };
 
-  it('should create a new resolver with a resolveReference method', () => {
-    return expectResolverSDL(referenceBasicResolverSDL);
-  });
+  it('should create a new resolver with a resolveReference method', () => expectResolverSDL(referenceBasicResolverSDL));
 
   it('should return the original resolver if key is not provided', () => {
     const TestReferenceResolver = ReferenceResolver(TestResolverDTO);

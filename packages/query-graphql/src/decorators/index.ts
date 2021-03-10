@@ -6,12 +6,16 @@ export {
 } from './filterable-field.decorator';
 export { ResolverMethodOpts } from './resolver-method.decorator';
 export {
-  Connection,
+  CursorConnection,
+  FilterableCursorConnection,
+  OffsetConnection,
+  FilterableOffsetConnection,
+  UnPagedRelation,
+  FilterableUnPagedRelation,
   Relation,
+  FilterableRelation,
   RelationDecoratorOpts,
   RelationTypeFunc,
-  FilterableConnection,
-  FilterableRelation,
   getRelations,
 } from './relation.decorator';
 export * from './resolver-mutation.decorator';
@@ -23,9 +27,9 @@ export { InjectPubSub } from './inject-pub-sub.decorator';
 export * from './skip-if.decorator';
 export * from './aggregate-query-param.decorator';
 export * from './hook.decorator';
-export * from './mutation-args.decorator';
 export * from './decorator.utils';
 export * from './hook-args.decorator';
 export * from './authorizer.decorator';
 export * from './inject-authorizer.decorator';
 export * from './key-set.decorator';
+export * from './authorize-filter.decorator';

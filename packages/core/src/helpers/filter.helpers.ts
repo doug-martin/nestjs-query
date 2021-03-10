@@ -8,30 +8,19 @@ export type BetweenComparisonOperators = 'between' | 'notBetween';
 export type RangeComparisonOperators = 'gt' | 'gte' | 'lt' | 'lte';
 export type BooleanComparisonOperators = 'eq' | 'neq' | 'is' | 'isNot';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isLikeComparisonOperator = (op: any): op is LikeComparisonOperators => {
-  return op === 'like' || op === 'notLike' || op === 'iLike' || op === 'notILike';
-};
+export const isLikeComparisonOperator = (op: unknown): op is LikeComparisonOperators =>
+  op === 'like' || op === 'notLike' || op === 'iLike' || op === 'notILike';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isInComparisonOperators = (op: any): op is InComparisonOperators => {
-  return op === 'in' || op === 'notIn';
-};
+export const isInComparisonOperators = (op: unknown): op is InComparisonOperators => op === 'in' || op === 'notIn';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isBetweenComparisonOperators = (op: any): op is BetweenComparisonOperators => {
-  return op === 'between' || op === 'notBetween';
-};
+export const isBetweenComparisonOperators = (op: unknown): op is BetweenComparisonOperators =>
+  op === 'between' || op === 'notBetween';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isRangeComparisonOperators = (op: any): op is RangeComparisonOperators => {
-  return op === 'gt' || op === 'gte' || op === 'lt' || op === 'lte';
-};
+export const isRangeComparisonOperators = (op: unknown): op is RangeComparisonOperators =>
+  op === 'gt' || op === 'gte' || op === 'lt' || op === 'lte';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isBooleanComparisonOperators = (op: any): op is BooleanComparisonOperators => {
-  return op === 'eq' || op === 'neq' || op === 'is' || op === 'isNot';
-};
+export const isBooleanComparisonOperators = (op: unknown): op is BooleanComparisonOperators =>
+  op === 'eq' || op === 'neq' || op === 'is' || op === 'isNot';
 
 export const isComparison = <DTO, K extends keyof DTO>(
   maybeComparison?: FilterFieldComparison<DTO[K]> | Filter<DTO[K]>,
@@ -40,24 +29,21 @@ export const isComparison = <DTO, K extends keyof DTO>(
     return false;
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return Object.keys(maybeComparison as Record<string, any>).every((op) => {
-    return (
+  return Object.keys(maybeComparison as Record<string, unknown>).every(
+    (op) =>
       isLikeComparisonOperator(op) ||
       isInComparisonOperators(op) ||
       isBetweenComparisonOperators(op) ||
       isRangeComparisonOperators(op) ||
-      isBooleanComparisonOperators(op)
-    );
-  });
+      isBooleanComparisonOperators(op),
+  );
 };
 
 // TODO: test
 export const getFilterFieldComparison = <DTO, K extends keyof FilterComparisons<DTO>>(
   obj: FilterComparisons<DTO>,
   field: K,
-): FilterFieldComparison<DTO[K]> & Filter<DTO[K]> => {
-  return obj[field] as FilterFieldComparison<DTO[K]> & Filter<DTO[K]>;
-};
+): FilterFieldComparison<DTO[K]> & Filter<DTO[K]> => obj[field] as FilterFieldComparison<DTO[K]> & Filter<DTO[K]>;
 
 export const transformFilter = <From, To>(
   filter: Filter<From> | undefined,
@@ -94,9 +80,10 @@ export const getFilterFields = <DTO>(filter: Filter<DTO>): string[] => {
     if (filterField === 'and' || filterField === 'or') {
       const andOrFilters = filter[filterField];
       if (andOrFilters !== undefined) {
-        return andOrFilters.reduce((andOrFields, andOrFilter) => {
-          return new Set<string>([...andOrFields, ...getFilterFields(andOrFilter)]);
-        }, fields);
+        return andOrFilters.reduce(
+          (andOrFields, andOrFilter) => new Set<string>([...andOrFields, ...getFilterFields(andOrFilter)]),
+          fields,
+        );
       }
     } else {
       fields.add(filterField);
@@ -122,8 +109,8 @@ export const getFilterComparisons = <DTO, K extends keyof FilterComparisons<DTO>
   return [...results];
 };
 
-export const getFilterOmitting = <DTO>(filter: Filter<DTO>, key: keyof DTO): Filter<DTO> => {
-  return Object.keys(filter).reduce<Filter<DTO>>((f, next) => {
+export const getFilterOmitting = <DTO>(filter: Filter<DTO>, key: keyof DTO): Filter<DTO> =>
+  Object.keys(filter).reduce<Filter<DTO>>((f, next) => {
     const omitted = { ...f };
     const k = next as keyof Filter<DTO>;
     if (k === 'and' && filter.and) {
@@ -141,7 +128,6 @@ export const getFilterOmitting = <DTO>(filter: Filter<DTO>, key: keyof DTO): Fil
     }
     return omitted;
   }, {} as Filter<DTO>);
-};
 
 export function applyFilter<DTO>(dto: DTO[], filter: Filter<DTO>): DTO[];
 export function applyFilter<DTO>(dto: DTO, filter: Filter<DTO>): boolean;

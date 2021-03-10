@@ -1,12 +1,12 @@
-import { Class, ValueReflector } from '@nestjs-query/core';
-import { OffsetQueryArgsType, NoPagingQueryArgsType } from '../query/query-args';
-import { QueryMany, StaticConnection } from './interfaces';
+import { Class, Query, ValueReflector } from '@nestjs-query/core';
+import { PagingStrategies } from '../query';
+import { BaseConnectionOptions, QueryMany, StaticConnection } from './interfaces';
 
-export type StaticArrayConnectionType<DTO> = StaticConnection<
-  DTO,
-  OffsetQueryArgsType<DTO> | NoPagingQueryArgsType<DTO>,
-  ArrayConnectionType<DTO>
->;
+export interface ArrayConnectionOptions extends BaseConnectionOptions {
+  pagingStrategy: PagingStrategies.NONE;
+}
+
+export type StaticArrayConnectionType<DTO> = StaticConnection<DTO, ArrayConnectionType<DTO>>;
 
 const reflector = new ValueReflector('nestjs-query:array-connection-type');
 
@@ -17,11 +17,9 @@ export function ArrayConnectionType<DTO>(TItemClass: Class<DTO>): StaticArrayCon
     class AbstractConnection extends Array<DTO> {
       static resolveType = [TItemClass];
 
-      static async createFromPromise(
-        queryMany: QueryMany<DTO>,
-        query: OffsetQueryArgsType<DTO> | NoPagingQueryArgsType<DTO>,
-      ): Promise<AbstractConnection> {
-        return queryMany(query);
+      static async createFromPromise(queryMany: QueryMany<DTO>, query: Query<DTO>): Promise<AbstractConnection> {
+        const { paging, ...rest } = query;
+        return queryMany(rest);
       }
     }
     return AbstractConnection;

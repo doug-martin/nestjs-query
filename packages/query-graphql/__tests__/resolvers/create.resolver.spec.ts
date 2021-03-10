@@ -49,29 +49,21 @@ describe('CreateResolver', () => {
     return createResolverFromNest(TestResolver);
   };
 
-  it('should create a CreateResolver for the DTO', () => {
-    return expectResolverSDL(createBasicResolverSDL);
-  });
+  it('should create a CreateResolver for the DTO', () => expectResolverSDL(createBasicResolverSDL));
 
-  it('should use the dtoName if provided', () => {
-    return expectResolverSDL(createCustomNameResolverSDL, { dtoName: 'Test' });
-  });
+  it('should use the dtoName if provided', () => expectResolverSDL(createCustomNameResolverSDL, { dtoName: 'Test' }));
 
-  it('should use the one.name option for the createOne if provided', () => {
-    return expectResolverSDL(createCustomOneMutationResolverSDL, { one: { name: 'create_one_test' } });
-  });
+  it('should use the one.name option for the createOne if provided', () =>
+    expectResolverSDL(createCustomOneMutationResolverSDL, { one: { name: 'create_one_test' } }));
 
-  it('should use the many.name option for the createMany if provided', () => {
-    return expectResolverSDL(createCustomManyMutationResolverSDL, { many: { name: 'create_many_test' } });
-  });
+  it('should use the many.name option for the createMany if provided', () =>
+    expectResolverSDL(createCustomManyMutationResolverSDL, { many: { name: 'create_many_test' } }));
 
-  it('should use the CreateDTOClass if provided', () => {
-    return expectResolverSDL(createCustomDTOResolverSDL, { CreateDTOClass: TestResolverInputDTO });
-  });
+  it('should use the CreateDTOClass if provided', () =>
+    expectResolverSDL(createCustomDTOResolverSDL, { CreateDTOClass: TestResolverInputDTO }));
 
-  it('should not expose create methods if disabled', () => {
-    return expectResolverSDL(createDisabledResolverSDL, { disabled: true });
-  });
+  it('should not expose create methods if disabled', () =>
+    expectResolverSDL(createDisabledResolverSDL, { disabled: true }));
 
   describe('#createOne', () => {
     it('should use the provided CreateOneInput type', () => {
@@ -83,9 +75,8 @@ describe('CreateResolver', () => {
       });
     });
 
-    it('should not expose create one method if disabled', () => {
-      return expectResolverSDL(createOneDisabledResolverSDL, { one: { disabled: true } });
-    });
+    it('should not expose create one method if disabled', () =>
+      expectResolverSDL(createOneDisabledResolverSDL, { one: { disabled: true } }));
 
     it('should call the service createOne with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -114,9 +105,8 @@ describe('CreateResolver', () => {
       });
     });
 
-    it('should not expose create many method if disabled', () => {
-      return expectResolverSDL(createManyDisabledResolverSDL, { many: { disabled: true } });
-    });
+    it('should not expose create many method if disabled', () =>
+      expectResolverSDL(createManyDisabledResolverSDL, { many: { disabled: true } }));
 
     it('should call the service createMany with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -140,15 +130,13 @@ describe('CreateResolver', () => {
   });
 
   describe('created subscription', () => {
-    it('should add subscription types if enableSubscriptions is true', () => {
-      return expectResolverSDL(createSubscriptionResolverSDL, {
+    it('should add subscription types if enableSubscriptions is true', () =>
+      expectResolverSDL(createSubscriptionResolverSDL, {
         enableSubscriptions: true,
-      });
-    });
+      }));
 
-    it('should not expose subscriptions if enableSubscriptions is false', () => {
-      return expectResolverSDL(createBasicResolverSDL, { enableSubscriptions: false });
-    });
+    it('should not expose subscriptions if enableSubscriptions is false', () =>
+      expectResolverSDL(createBasicResolverSDL, { enableSubscriptions: false }));
 
     describe('create one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {

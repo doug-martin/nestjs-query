@@ -36,6 +36,14 @@ type TestResolverDTOConnection {
   edges: [TestResolverDTOEdge!]!
 }
 
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
 type Query {
   read_one_test(
     """The id of the record to find."""

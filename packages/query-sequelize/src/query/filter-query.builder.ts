@@ -210,9 +210,10 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
     const { relationNames } = this;
     const referencedFields = getFilterFields(filter);
     const referencedRelations = referencedFields.filter((f) => relationNames.includes(f));
-    return referencedRelations.reduce((map, r) => {
-      return map.set(r, this.model.associations[r]);
-    }, new Map<string, Association>());
+    return referencedRelations.reduce(
+      (map, r) => map.set(r, this.model.associations[r]),
+      new Map<string, Association>(),
+    );
   }
 
   private get relationNames(): string[] {

@@ -144,11 +144,11 @@ describe('AssemblerQueryService', () => {
           deepEqual([entity]),
           objectContaining({ filter: { foo: { eq: 'bar' } } }),
         ),
-      ).thenCall((relationClass, relation, entities) => {
-        return Promise.resolve(
+      ).thenCall((relationClass, relation, entities) =>
+        Promise.resolve(
           new Map<TestEntity, TestDTO[]>([[entities[0], [result]]]),
-        );
-      });
+        ),
+      );
       return expect(
         assemblerService.queryRelations(TestDTO, 'test', [{ foo: 'bar' }], { filter: { foo: { eq: 'bar' } } }),
       ).resolves.toEqual(new Map([[dto, [result]]]));
@@ -209,11 +209,11 @@ describe('AssemblerQueryService', () => {
           objectContaining({ foo: { eq: 'bar' } }),
           aggQuery,
         ),
-      ).thenCall((relationClass, relation, entities) => {
-        return Promise.resolve(
+      ).thenCall((relationClass, relation, entities) =>
+        Promise.resolve(
           new Map<TestEntity, AggregateResponse<TestDTO>>([[entities[0], result]]),
-        );
-      });
+        ),
+      );
       return expect(
         assemblerService.aggregateRelations(TestDTO, 'test', [{ foo: 'bar' }], { foo: { eq: 'bar' } }, aggQuery),
       ).resolves.toEqual(new Map([[dto, result]]));
@@ -265,11 +265,11 @@ describe('AssemblerQueryService', () => {
       const entity: TestEntity = { bar: 'bar' };
       when(
         mockQueryService.countRelations(TestDTO, 'test', deepEqual([entity]), objectContaining({ foo: { eq: 'bar' } })),
-      ).thenCall((relationClass, relation, entities) => {
-        return Promise.resolve(
+      ).thenCall((relationClass, relation, entities) =>
+        Promise.resolve(
           new Map<TestEntity, number>([[entities[0], 1]]),
-        );
-      });
+        ),
+      );
       return expect(
         assemblerService.countRelations(TestDTO, 'test', [{ foo: 'bar' }], { foo: { eq: 'bar' } }),
       ).resolves.toEqual(new Map([[dto, 1]]));
@@ -294,11 +294,10 @@ describe('AssemblerQueryService', () => {
       const entity: TestEntity = { bar: 'bar' };
       const result: TestDTO = { foo: 'baz' };
       when(mockQueryService.findRelation(TestDTO, 'test', deepEqual([entity]), undefined)).thenCall(
-        (relationClass, relation, entities) => {
-          return Promise.resolve(
+        (relationClass, relation, entities) =>
+          Promise.resolve(
             new Map<TestEntity, TestDTO>([[entities[0], result]]),
-          );
-        },
+          ),
       );
       return expect(assemblerService.findRelation(TestDTO, 'test', [{ foo: 'bar' }])).resolves.toEqual(
         new Map([[dto, result]]),

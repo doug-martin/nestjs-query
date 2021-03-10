@@ -48,11 +48,9 @@ const knownTypes: Set<ReturnTypeFuncValue> = new Set([
 ]);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isNamed = (SomeType: any): SomeType is { name: string } => {
+const isNamed = (SomeType: any): SomeType is { name: string } =>
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  return 'name' in SomeType && typeof SomeType.name === 'string';
-};
-
+  'name' in SomeType && typeof SomeType.name === 'string';
 /** @internal */
 const getTypeName = (SomeType: ReturnTypeFuncValue): string => {
   if (knownTypes.has(SomeType) || isNamed(SomeType)) {
@@ -68,9 +66,7 @@ const getTypeName = (SomeType: ReturnTypeFuncValue): string => {
   throw new Error(`Unable to create filter comparison for ${JSON.stringify(SomeType)}.`);
 };
 
-const isCustomFieldComparison = <T>(options: FilterComparisonOptions<T>): boolean => {
-  return !!options.allowedComparisons;
-};
+const isCustomFieldComparison = <T>(options: FilterComparisonOptions<T>): boolean => !!options.allowedComparisons;
 
 const getComparisonTypeName = <T>(fieldType: ReturnTypeFuncValue, options: FilterComparisonOptions<T>): string => {
   if (isCustomFieldComparison(options)) {
@@ -81,9 +77,8 @@ const getComparisonTypeName = <T>(fieldType: ReturnTypeFuncValue, options: Filte
 
 const isNotAllowedChecker = (options: FilterComparisonOptions<unknown>) => {
   const { allowedComparisons } = options;
-  return (cmp: FilterComparisonOperators<unknown>) => () => {
-    return allowedComparisons ? !allowedComparisons.includes(cmp) : false;
-  };
+  return (cmp: FilterComparisonOperators<unknown>) => () =>
+    allowedComparisons ? !allowedComparisons.includes(cmp) : false;
 };
 
 type FilterComparisonOptions<T> = {

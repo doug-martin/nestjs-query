@@ -74,6 +74,15 @@
         "tsConfigPath": "./tsconfig.json"
       }
     },
+    "hooks": {
+      "type": "application",
+      "root": "hooks",
+      "entryFile": "main",
+      "sourceRoot": "hooks/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.json"
+      }
+    },
     "mongoose": {
       "type": "application",
       "root": "mongoose",

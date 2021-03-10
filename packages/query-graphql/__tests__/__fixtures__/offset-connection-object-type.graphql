@@ -1,0 +1,25 @@
+type Test {
+  stringField: String!
+  numberField: Float!
+  boolField: Boolean!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type TestOffsetConnection {
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Array of nodes."""
+  nodes: [Test!]!
+}
+
+type Query {
+  test: TestOffsetConnection!
+}

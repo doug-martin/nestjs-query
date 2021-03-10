@@ -24,25 +24,17 @@ export const transformSort = <From, To>(
   });
 };
 
-export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFieldMap<From, To>): Query<To> => {
-  return {
-    filter: transformFilter(query.filter, fieldMap),
-    paging: query.paging,
-    sorting: transformSort(query.sorting, fieldMap),
-  };
-};
+export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFieldMap<From, To>): Query<To> => ({
+  filter: transformFilter(query.filter, fieldMap),
+  paging: query.paging,
+  sorting: transformSort(query.sorting, fieldMap),
+});
 
-export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
-  return merge(base, source);
-};
+export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => merge(base, source);
 
-export const applySort = <DTO>(dtos: DTO[], sortFields: SortField<DTO>[]): DTO[] => {
-  return SortBuilder.build(sortFields)(dtos);
-};
+export const applySort = <DTO>(dtos: DTO[], sortFields: SortField<DTO>[]): DTO[] => SortBuilder.build(sortFields)(dtos);
 
-export const applyPaging = <DTO>(dtos: DTO[], paging: Paging): DTO[] => {
-  return PageBuilder.build<DTO>(paging)(dtos);
-};
+export const applyPaging = <DTO>(dtos: DTO[], paging: Paging): DTO[] => PageBuilder.build<DTO>(paging)(dtos);
 
 export const applyQuery = <DTO>(dtos: DTO[], query: Query<DTO>): DTO[] => {
   const filtered = applyFilter(dtos, query.filter ?? {});

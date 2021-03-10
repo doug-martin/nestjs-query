@@ -44,7 +44,9 @@ export class WhereBuilder<Entity> {
     relationNames: string[],
     alias?: string,
   ): Where {
-    return filters.reduce((w, f) => w.andWhere(this.createBrackets(f, relationNames, alias)), where);
+    return where.andWhere(
+      new Brackets((qb) => filters.reduce((w, f) => qb.andWhere(this.createBrackets(f, relationNames, alias)), qb)),
+    );
   }
 
   /**
@@ -60,7 +62,9 @@ export class WhereBuilder<Entity> {
     relationNames: string[],
     alias?: string,
   ): Where {
-    return filter.reduce((w, f) => where.orWhere(this.createBrackets(f, relationNames, alias)), where);
+    return where.andWhere(
+      new Brackets((qb) => filter.reduce((w, f) => qb.orWhere(this.createBrackets(f, relationNames, alias)), qb)),
+    );
   }
 
   /**

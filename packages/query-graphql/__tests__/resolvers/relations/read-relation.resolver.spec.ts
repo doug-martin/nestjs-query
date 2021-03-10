@@ -30,9 +30,7 @@ describe('ReadRelationsResolver', () => {
     return expectSDL([TestSDLResolver], sdl);
   };
 
-  it('should not add read methods if one and many are empty', () => {
-    return expectResolverSDL(readRelationEmptySDL);
-  });
+  it('should not add read methods if one and many are empty', () => expectResolverSDL(readRelationEmptySDL));
   describe('one', () => {
     @Resolver(() => TestResolverDTO)
     class TestResolver extends ReadRelationsResolver(TestResolverDTO, {
@@ -42,27 +40,23 @@ describe('ReadRelationsResolver', () => {
         super(service);
       }
     }
-    it('should use the object type name', () => {
-      return expectResolverSDL(readRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } });
-    });
+    it('should use the object type name', () =>
+      expectResolverSDL(readRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } }));
 
-    it('should use the dtoName if provided', () => {
-      return expectResolverSDL(readRelationOneCustomNameSDL, {
+    it('should use the dtoName if provided', () =>
+      expectResolverSDL(readRelationOneCustomNameSDL, {
         one: { relation: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      });
-    });
+      }));
 
-    it('should set the field to nullable if set to true', () => {
-      return expectResolverSDL(readRelationOneNullableSDL, {
+    it('should set the field to nullable if set to true', () =>
+      expectResolverSDL(readRelationOneNullableSDL, {
         one: { relation: { DTO: TestRelationDTO, nullable: true } },
-      });
-    });
+      }));
 
-    it('should not add read one methods if disableRead is true', () => {
-      return expectResolverSDL(readRelationOneDisabledSDL, {
+    it('should not add read one methods if disableRead is true', () =>
+      expectResolverSDL(readRelationOneDisabledSDL, {
         one: { relation: { DTO: TestRelationDTO, disableRead: true } },
-      });
-    });
+      }));
 
     it('should call the service findRelation with the provided dto', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
@@ -104,33 +98,28 @@ describe('ReadRelationsResolver', () => {
   });
 
   describe('many', () => {
-    it('should use the object type name', () => {
-      return expectResolverSDL(readRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } });
-    });
+    it('should use the object type name', () =>
+      expectResolverSDL(readRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } }));
 
-    it('should use the dtoName if provided', () => {
-      return expectResolverSDL(readRelationManyCustomNameSDL, {
+    it('should use the dtoName if provided', () =>
+      expectResolverSDL(readRelationManyCustomNameSDL, {
         many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      });
-    });
+      }));
 
-    it('should set the field to nullable if set to true', () => {
-      return expectResolverSDL(readRelationManyNullableSDL, {
+    it('should set the field to nullable if set to true', () =>
+      expectResolverSDL(readRelationManyNullableSDL, {
         many: { relations: { DTO: TestRelationDTO, nullable: true } },
-      });
-    });
+      }));
 
-    it('should not use connections if pagingStrategy is offset', () => {
-      return expectResolverSDL(readRelationManyOffset, {
+    it('should use an offset connection if pagingStrategy is offset', () =>
+      expectResolverSDL(readRelationManyOffset, {
         many: { relations: { DTO: TestRelationDTO, nullable: true, pagingStrategy: PagingStrategies.OFFSET } },
-      });
-    });
+      }));
 
-    it('should not add read methods if disableRead is true', () => {
-      return expectResolverSDL(readRelationManyDisabledSDL, {
+    it('should not add read methods if disableRead is true', () =>
+      expectResolverSDL(readRelationManyDisabledSDL, {
         many: { relations: { DTO: TestRelationDTO, disableRead: true } },
-      });
-    });
+      }));
 
     describe('many connection query', () => {
       @Resolver(() => TestResolverDTO)
@@ -302,12 +291,24 @@ describe('ReadRelationsResolver', () => {
           },
         ];
         when(
-          mockService.queryRelations(TestRelationDTO, 'relations', deepEqual([dto]), objectContaining({ ...query })),
+          mockService.queryRelations(
+            TestRelationDTO,
+            'relations',
+            deepEqual([dto]),
+            objectContaining({ ...query, paging: { limit: 2 } }),
+          ),
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.queryRelations(dto, query, {});
-        return expect(result).toEqual(output);
+        return expect(result).toEqual({
+          nodes: output,
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+          totalCountFn: expect.any(Function),
+        });
       });
 
       it('should call the service findRelation with the provided dto and correct relation name', async () => {
@@ -327,12 +328,24 @@ describe('ReadRelationsResolver', () => {
           },
         ];
         when(
-          mockService.queryRelations(TestRelationDTO, 'others', deepEqual([dto]), objectContaining(query)),
+          mockService.queryRelations(
+            TestRelationDTO,
+            'others',
+            deepEqual([dto]),
+            objectContaining({ ...query, paging: { limit: 2 } }),
+          ),
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.queryCustoms(dto, query, {});
-        return expect(result).toEqual(output);
+        return expect(result).toEqual({
+          nodes: output,
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+          totalCountFn: expect.any(Function),
+        });
       });
     });
 

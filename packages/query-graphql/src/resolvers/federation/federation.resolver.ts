@@ -10,6 +10,4 @@ export const FederationResolver = <
 >(
   DTOClass: Class<DTO>,
   opts: BaseResolverOptions = {},
-): Class<ServiceResolver<DTO, QS>> => {
-  return ReadRelationsResolver(DTOClass, getRelations(DTOClass, opts));
-};
+): Class<ServiceResolver<DTO, QS>> => ReadRelationsResolver(DTOClass, getRelations(DTOClass, opts));

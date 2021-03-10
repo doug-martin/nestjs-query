@@ -1,11 +1,12 @@
-import { Class, QueryService } from '@nestjs-query/core';
-import { Resolver, ArgsType, Args, Context } from '@nestjs/graphql';
+import { Class, ModifyRelationOptions, QueryService } from '@nestjs-query/core';
+import { Resolver, ArgsType, Args } from '@nestjs/graphql';
+import { AuthorizerInterceptor } from '../../interceptors';
 import { getDTONames } from '../../common';
-import { ResolverMutation } from '../../decorators';
+import { ModifyRelationAuthorizerFilter, ResolverMutation } from '../../decorators';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
 import { transformAndValidate } from '../helpers';
 import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
-import { flattenRelations, getModifyRelationOptions, removeRelationOpts } from './helpers';
+import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
 
 const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
@@ -26,14 +27,15 @@ const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateOneMixin extends Base {
-    @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
+    @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
+      interceptors: [AuthorizerInterceptor(DTOClass)],
+    })
     async [`set${baseName}On${dtoNames.baseName}`](
       @Args() setArgs: SetArgs,
-      @Context() context?: unknown,
+      @ModifyRelationAuthorizerFilter(baseNameLower) modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
-      const opts = await getModifyRelationOptions(baseNameLower, this.authorizer, context);
-      return this.service.setRelation(relationName, input.id, input.relationId, opts);
+      return this.service.setRelation(relationName, input.id, input.relationId, modifyRelationsFilter);
     }
   }
   return UpdateOneMixin;
@@ -57,14 +59,15 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateManyMixin extends Base {
-    @ResolverMutation(() => DTOClass, {}, commonResolverOpts)
+    @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
+      interceptors: [AuthorizerInterceptor(DTOClass)],
+    })
     async [`add${pluralBaseName}To${dtoNames.baseName}`](
       @Args() addArgs: AddArgs,
-      @Context() context?: unknown,
+      @ModifyRelationAuthorizerFilter(pluralBaseNameLower) modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(AddArgs, addArgs);
-      const opts = await getModifyRelationOptions(pluralBaseNameLower, this.authorizer, context);
-      return this.service.addRelations(relationName, input.id, input.relationIds, opts);
+      return this.service.addRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
     }
   }
   return UpdateManyMixin;
@@ -88,6 +91,4 @@ export const UpdateRelationsResolver = <
 >(
   DTOClass: Class<DTO>,
   relations: RelationsOpts,
-): Class<ServiceResolver<DTO, QS>> => {
-  return UpdateRelationsMixin(DTOClass, relations)(BaseServiceResolver);
-};
+): Class<ServiceResolver<DTO, QS>> => UpdateRelationsMixin(DTOClass, relations)(BaseServiceResolver);

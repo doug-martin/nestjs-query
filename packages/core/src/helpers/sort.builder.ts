@@ -42,14 +42,13 @@ function descSort<Field>(a: Field, b: Field): SortResult {
 export class SortBuilder {
   static build<DTO>(sorts: SortField<DTO>[]): Sorter<DTO> {
     const comparators = sorts.map(({ field, direction, nulls }) => this.buildComparator(field, direction, nulls));
-    const comparator: SortComparator<DTO> = (a, b): SortResult => {
-      return comparators.reduce((result: SortResult, cmp) => {
+    const comparator: SortComparator<DTO> = (a, b): SortResult =>
+      comparators.reduce((result: SortResult, cmp) => {
         if (result === 0) {
           return cmp(a, b);
         }
         return result;
       }, 0);
-    };
     return (dtos: DTO[]): DTO[] => [...dtos].sort(comparator);
   }
 

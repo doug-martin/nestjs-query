@@ -1,10 +1,11 @@
-import { AggregateQuery, AggregateResponse, Class, mergeFilter, QueryService } from '@nestjs-query/core';
-import { Args, ArgsType, Resolver, Context } from '@nestjs/graphql';
+import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@nestjs-query/core';
+import { Args, ArgsType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
+import { AuthorizerInterceptor } from '../interceptors';
 import { getDTONames } from '../common';
-import { AggregateQueryParam, ResolverMethodOpts, ResolverQuery, SkipIf } from '../decorators';
+import { AggregateQueryParam, AuthorizerFilter, ResolverMethodOpts, ResolverQuery, SkipIf } from '../decorators';
 import { AggregateArgsType, AggregateResponseType } from '../types';
-import { getAuthFilter, transformAndValidate } from './helpers';
+import { transformAndValidate } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver } from './resolver.interface';
 
 export type AggregateResolverOpts = {
@@ -13,7 +14,11 @@ export type AggregateResolverOpts = {
 
 export interface AggregateResolver<DTO, QS extends QueryService<DTO, unknown, unknown>>
   extends ServiceResolver<DTO, QS> {
-  aggregate(filter: AggregateArgsType<DTO>, aggregateQuery: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>>;
+  aggregate(
+    filter: AggregateArgsType<DTO>,
+    aggregateQuery: AggregateQuery<DTO>,
+    authFilter?: Filter<DTO>,
+  ): Promise<AggregateResponse<DTO>>;
 }
 
 /**
@@ -33,15 +38,23 @@ export const Aggregateable = <DTO, QS extends QueryService<DTO, unknown, unknown
 
   @Resolver(() => AR, { isAbstract: true })
   class AggregateResolverBase extends BaseClass {
-    @SkipIf(() => !opts || !opts.enabled, ResolverQuery(() => AR, { name: queryName }, commonResolverOpts, opts ?? {}))
+    @SkipIf(
+      () => !opts || !opts.enabled,
+      ResolverQuery(
+        () => AR,
+        { name: queryName },
+        commonResolverOpts,
+        { interceptors: [AuthorizerInterceptor(DTOClass)] },
+        opts ?? {},
+      ),
+    )
     async aggregate(
       @Args() args: AA,
       @AggregateQueryParam() query: AggregateQuery<DTO>,
-      @Context() context?: unknown,
+      @AuthorizerFilter() authFilter?: Filter<DTO>,
     ): Promise<AggregateResponse<DTO>> {
       const qa = await transformAndValidate(AA, args);
-      const authorizeFilter = await getAuthFilter(this.authorizer, context);
-      return this.service.aggregate(mergeFilter(qa.filter || {}, authorizeFilter ?? {}), query);
+      return this.service.aggregate(mergeFilter(qa.filter || {}, authFilter ?? {}), query);
     }
   }
   return AggregateResolverBase;

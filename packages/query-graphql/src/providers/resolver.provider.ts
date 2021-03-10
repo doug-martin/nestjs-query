@@ -7,15 +7,14 @@ import {
   AssemblerQueryService,
   Assembler,
 } from '@nestjs-query/core';
-import { Provider, Inject, Optional } from '@nestjs/common';
+import { Provider, Inject } from '@nestjs/common';
 import { Resolver } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
-import { InjectAuthorizer, InjectPubSub } from '../decorators';
+import { InjectPubSub } from '../decorators';
 import { CRUDResolver, CRUDResolverOpts, FederationResolver } from '../resolvers';
 import { PagingStrategies } from '../types/query/paging';
-import { Authorizer } from '../auth';
 
-type CRUDAutoResolverOpts<DTO, C, U, R, PS extends PagingStrategies> = CRUDResolverOpts<DTO, C, U, R, PS> & {
+export type CRUDAutoResolverOpts<DTO, C, U, R, PS extends PagingStrategies> = CRUDResolverOpts<DTO, C, U, R, PS> & {
   DTOClass: Class<DTO>;
 };
 
@@ -63,21 +62,16 @@ export type AutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS extends 
 
 export const isFederatedResolverOpts = <DTO, MaybeService, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeService, C, U, R, PS>,
-): opts is FederatedAutoResolverOpts<DTO, MaybeService> => {
-  return 'type' in opts && opts.type === 'federated';
-};
+): opts is FederatedAutoResolverOpts<DTO, MaybeService> => 'type' in opts && opts.type === 'federated';
 
 export const isAssemblerCRUDAutoResolverOpts = <DTO, MaybeAssembler, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS>,
-): opts is AssemblerCRUDAutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS> => {
-  return 'DTOClass' in opts && 'AssemblerClass' in opts;
-};
+): opts is AssemblerCRUDAutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS> =>
+  'DTOClass' in opts && 'AssemblerClass' in opts;
 
 export const isServiceCRUDAutoResolverOpts = <DTO, MaybeService, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeService, C, U, R, PS>,
-): opts is ServiceCRUDAutoResolverOpts<DTO, MaybeService, C, U, R, PS> => {
-  return 'DTOClass' in opts && 'ServiceClass' in opts;
-};
+): opts is ServiceCRUDAutoResolverOpts<DTO, MaybeService, C, U, R, PS> => 'DTOClass' in opts && 'ServiceClass' in opts;
 
 const getResolverToken = <DTO>(DTOClass: Class<DTO>): string => `${DTOClass.name}AutoResolver`;
 const getFederatedResolverToken = <DTO>(DTOClass: Class<DTO>): string => `${DTOClass.name}FederatedAutoResolver`;
@@ -90,7 +84,6 @@ function createFederatedResolver<DTO, Service>(resolverOpts: FederatedAutoResolv
     constructor(
       @Inject(resolverOpts.Service) readonly service: QueryService<DTO, unknown, unknown>,
       @InjectPubSub() readonly pubSub: PubSub,
-      @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
       super(service);
     }
@@ -116,7 +109,6 @@ function createEntityAutoResolver<DTO, Entity, C, U, R, PS extends PagingStrateg
     constructor(
       @InjectQueryService(EntityClass) service: QueryService<Entity, C, U>,
       @InjectPubSub() readonly pubSub: PubSub,
-      @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
       super(new Service(service));
     }
@@ -138,7 +130,6 @@ function createAssemblerAutoResolver<DTO, Asmblr, C, U, R, PS extends PagingStra
       )
       service: QueryService<DTO, C, U>,
       @InjectPubSub() readonly pubSub: PubSub,
-      @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
     ) {
       super(service);
     }
@@ -154,11 +145,7 @@ function createServiceAutoResolver<DTO, Service, C, U, R, PS extends PagingStrat
   const { DTOClass, ServiceClass } = resolverOpts;
   @Resolver(() => DTOClass)
   class AutoResolver extends CRUDResolver(DTOClass, resolverOpts) {
-    constructor(
-      @Inject(ServiceClass) service: QueryService<DTO, C, U>,
-      @InjectPubSub() readonly pubSub: PubSub,
-      @Optional() @InjectAuthorizer(DTOClass) readonly authorizer?: Authorizer<DTO>,
-    ) {
+    constructor(@Inject(ServiceClass) service: QueryService<DTO, C, U>, @InjectPubSub() readonly pubSub: PubSub) {
       super(service);
     }
   }
@@ -184,6 +171,4 @@ function createResolver<DTO, EntityServiceOrAssembler, C, U, R, PS extends Pagin
 
 export const createResolvers = (
   opts: AutoResolverOpts<unknown, unknown, unknown, unknown, unknown, PagingStrategies>[],
-): Provider[] => {
-  return opts.map((opt) => createResolver(opt));
-};
+): Provider[] => opts.map((opt) => createResolver(opt));

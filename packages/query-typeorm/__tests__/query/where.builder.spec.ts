@@ -65,7 +65,7 @@ describe('WhereBuilder', (): void => {
             { numberType: { lte: 40 } },
           ],
         },
-        ` WHERE (("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?)) AND (("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?))`,
+        ` WHERE ((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?)) AND (("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?)))`,
         [10, 20, 30, 40],
       );
     });
@@ -78,7 +78,7 @@ describe('WhereBuilder', (): void => {
             { numberType: { lt: 20 }, stringType: { like: '%bar' } },
           ],
         },
-        ` WHERE (("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) AND (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?))`,
+        ` WHERE ((("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) AND (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?)))`,
         [10, 'foo%', 20, '%bar'],
       );
     });
@@ -91,8 +91,19 @@ describe('WhereBuilder', (): void => {
             { or: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] },
           ],
         },
-        ` WHERE ((("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?))) AND ((("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?)))`,
+        ` WHERE ((((("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?)))) AND (((("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?)))))`,
         [10, 20, 30, 40],
+      );
+    });
+
+    it('should properly group AND with a sibling field comparison', (): void => {
+      assertSQL(
+        {
+          and: [{ numberType: { gt: 2 } }, { numberType: { lt: 10 } }],
+          stringType: { eq: 'foo' },
+        },
+        ` WHERE ((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?))) AND ("TestEntity"."string_type" = ?)`,
+        [2, 10, 'foo'],
       );
     });
   });
@@ -108,7 +119,7 @@ describe('WhereBuilder', (): void => {
             { numberType: { lte: 40 } },
           ],
         },
-        ` WHERE (("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?)) OR (("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?))`,
+        ` WHERE ((("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?)) OR (("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?)))`,
         [10, 20, 30, 40],
       );
     });
@@ -121,7 +132,7 @@ describe('WhereBuilder', (): void => {
             { numberType: { lt: 20 }, stringType: { like: '%bar' } },
           ],
         },
-        ` WHERE (("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) OR (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?))`,
+        ` WHERE ((("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) OR (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?)))`,
         [10, 'foo%', 20, '%bar'],
       );
     });
@@ -134,8 +145,19 @@ describe('WhereBuilder', (): void => {
             { and: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] },
           ],
         },
-        ` WHERE ((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?))) OR ((("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?)))`,
+        ` WHERE ((((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?)))) OR (((("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?)))))`,
         [10, 20, 30, 40],
+      );
+    });
+
+    it('should properly group OR with a sibling field comparison', (): void => {
+      assertSQL(
+        {
+          or: [{ numberType: { eq: 2 } }, { numberType: { gt: 10 } }],
+          stringType: { eq: 'foo' },
+        },
+        ` WHERE ((("TestEntity"."number_type" = ?)) OR (("TestEntity"."number_type" > ?))) AND ("TestEntity"."string_type" = ?)`,
+        [2, 10, 'foo'],
       );
     });
   });

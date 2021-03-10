@@ -13,6 +13,5 @@ function createServiceProvider<DTO>(DTOClass: Class<DTO>): Provider {
   return { provide: token, useClass: authorizer };
 }
 
-export const createAuthorizerProviders = (DTOClasses: Class<unknown>[]): Provider[] => {
-  return DTOClasses.map((DTOClass) => createServiceProvider(DTOClass));
-};
+export const createAuthorizerProviders = (DTOClasses: Class<unknown>[]): Provider[] =>
+  DTOClasses.map((DTOClass) => createServiceProvider(DTOClass));

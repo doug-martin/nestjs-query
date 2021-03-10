@@ -1,25 +1,19 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql';
-import { Class, MapReflector } from '@nestjs-query/core';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Class, MapReflector, Query } from '@nestjs-query/core';
 import { NotImplementedException } from '@nestjs/common';
 import { SkipIf } from '../../../decorators';
-import { CursorQueryArgsType } from '../../query';
-import { CountFn, createPager } from './pager';
-import { Count, QueryMany, StaticConnection } from '../interfaces';
+import { PagingStrategies } from '../../query';
+import { createPager } from './pager';
+import { BaseConnectionOptions, Count, CountFn, QueryMany, StaticConnection } from '../interfaces';
 import { EdgeType } from './edge.type';
 import { PageInfoType } from './page-info.type';
 import { getGraphqlObjectName } from '../../../common';
 
-export type CursorConnectionOptions = {
-  enableTotalCount?: boolean;
-  connectionName?: string;
-  disableKeySetPagination?: boolean;
-};
+export interface CursorConnectionOptions extends BaseConnectionOptions {
+  pagingStrategy?: PagingStrategies.CURSOR;
+}
 
-export type StaticCursorConnectionType<DTO> = StaticConnection<
-  DTO,
-  CursorQueryArgsType<DTO>,
-  CursorConnectionType<DTO>
->;
+export type StaticCursorConnectionType<DTO> = StaticConnection<DTO, CursorConnectionType<DTO>>;
 
 export type CursorConnectionType<DTO> = {
   pageInfo: PageInfoType;
@@ -43,8 +37,9 @@ function getOrCreateConnectionName<DTO>(DTOClass: Class<DTO>, opts: CursorConnec
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function CursorConnectionType<DTO>(
   TItemClass: Class<DTO>,
-  opts: CursorConnectionOptions = {},
+  maybeOpts?: CursorConnectionOptions,
 ): StaticCursorConnectionType<DTO> {
+  const opts = maybeOpts ?? { pagingStrategy: PagingStrategies.CURSOR };
   const connectionName = getOrCreateConnectionName(TItemClass, opts);
   return reflector.memoize(TItemClass, connectionName, () => {
     const pager = createPager<DTO>(TItemClass, opts);
@@ -58,7 +53,7 @@ export function CursorConnectionType<DTO>(
 
       static async createFromPromise(
         queryMany: QueryMany<DTO>,
-        query: CursorQueryArgsType<DTO>,
+        query: Query<DTO>,
         count?: Count<DTO>,
       ): Promise<AbstractConnection> {
         const { pageInfo, edges, totalCount } = await pager.page(queryMany, query, count ?? DEFAULT_COUNT);

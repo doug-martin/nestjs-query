@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.23.0](https://github.com/doug-martin/nestjs-query/compare/v0.22.0...v0.23.0) (2021-02-26)
+
+
+### Features
+
+* **graphql:** Added new offset connection with totalCount ([2780e7e](https://github.com/doug-martin/nestjs-query/commit/2780e7ebfefbcee010797b244fcb46a182a4102e))
+* **graphql:** Enabling registering DTOs without auto-generating a resolver ([2f18142](https://github.com/doug-martin/nestjs-query/commit/2f18142edf5a0dc0563099b532d54f4a44ac7e56))
+* **graphql,hooks:** Provide support for injectable hooks ([d100de8](https://github.com/doug-martin/nestjs-query/commit/d100de8306113c044bcbbdc0ceb373c977354255))
+* **graphql,relations:** Revert back to unPagedRelation ([cb3dc62](https://github.com/doug-martin/nestjs-query/commit/cb3dc624328077267eded288f7cfbd5a6e9b7806))
+
+
+
+
+
+# [0.22.0](https://github.com/doug-martin/nestjs-query/compare/v0.21.2...v0.22.0) (2021-02-08)
+
+**Note:** Version bump only for package @nestjs-query/query-graphql
+
+
+
+
+
 ## [0.21.2](https://github.com/doug-martin/nestjs-query/compare/v0.21.1...v0.21.2) (2020-10-23)
 
 

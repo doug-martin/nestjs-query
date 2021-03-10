@@ -11,9 +11,8 @@ import {
   OffsetQueryArgsType,
   QueryArgsTypeOpts,
 } from '../types/query/query-args';
-import { Authorizer } from '../auth';
 
-type NameedEndpoint = {
+type NamedEndpoint = {
   /** Specify to override the name of the graphql query or mutation * */
   name?: string;
 };
@@ -22,23 +21,22 @@ export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
   /**
    * Options for single record graphql endpoints
    */
-  one?: ResolverMethodOpts & NameedEndpoint;
+  one?: ResolverMethodOpts & NamedEndpoint;
   /**
    * Options for multiple record graphql endpoints
    */
-  many?: ResolverMethodOpts & NameedEndpoint;
+  many?: ResolverMethodOpts & NamedEndpoint;
 }
 
 export interface SubscriptionResolverOpts extends SubscriptionResolverMethodOpts, DTONamesOpts {
-  one?: SubscriptionResolverMethodOpts & NameedEndpoint;
-  many?: SubscriptionResolverMethodOpts & NameedEndpoint;
+  one?: SubscriptionResolverMethodOpts & NamedEndpoint;
+  many?: SubscriptionResolverMethodOpts & NamedEndpoint;
 }
 
 /** @internal */
 export interface ServiceResolver<DTO, QS extends QueryService<DTO, unknown, unknown>> {
   service: QS;
   readonly pubSub?: GraphQLPubSub;
-  readonly authorizer?: Authorizer<DTO>;
 }
 
 /** @internal */

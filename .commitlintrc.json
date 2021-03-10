@@ -19,7 +19,7 @@
         "perf",
         "refactor",
         "revert",
-        "style",
+        "lint",
         "test",
         "example"
       ]

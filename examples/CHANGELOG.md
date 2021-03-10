@@ -3,6 +3,65 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.23.1](https://github.com/doug-martin/nestjs-query/compare/v0.23.0...v0.23.1) (2021-02-26)
+
+**Note:** Version bump only for package nestjs-query-examples
+
+
+
+
+
+# [0.23.0](https://github.com/doug-martin/nestjs-query/compare/v0.22.0...v0.23.0) (2021-02-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency apollo-server-express to v2.20.0 ([ac3fb92](https://github.com/doug-martin/nestjs-query/commit/ac3fb923be63e2bf1185eb8bfb14fee73d7b8658))
+* **deps:** update dependency apollo-server-express to v2.21.0 ([e3039c3](https://github.com/doug-martin/nestjs-query/commit/e3039c379ad5be513c5b1e10c49e9becac05b270))
+* **deps:** update dependency graphql-tools to v7.0.3 ([8e2ef1c](https://github.com/doug-martin/nestjs-query/commit/8e2ef1c48be0d7f4e91a84861c638b4bda64e337))
+* **deps:** update dependency graphql-tools to v7.0.4 ([cba3d4d](https://github.com/doug-martin/nestjs-query/commit/cba3d4da5f2ed18e03cb6c8188597c78d2ec28d6))
+* **deps:** update dependency rxjs to v6.6.6 ([13e251b](https://github.com/doug-martin/nestjs-query/commit/13e251b0f5bbdb77a0e1bcfaf35a3585234dbf49))
+
+
+### Features
+
+* **graphql:** Enabling registering DTOs without auto-generating a resolver ([2f18142](https://github.com/doug-martin/nestjs-query/commit/2f18142edf5a0dc0563099b532d54f4a44ac7e56))
+* **graphql,relations:** Revert back to unPagedRelation ([cb3dc62](https://github.com/doug-martin/nestjs-query/commit/cb3dc624328077267eded288f7cfbd5a6e9b7806))
+
+
+
+
+
+# [0.22.0](https://github.com/doug-martin/nestjs-query/compare/v0.21.2...v0.22.0) (2021-02-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @nestjs/jwt to v7.2.0 ([a8845c2](https://github.com/doug-martin/nestjs-query/commit/a8845c2f1473792f11828d99c7c6b0dd697189b6))
+* **deps:** update dependency @nestjs/passport to v7.1.1 ([2be7848](https://github.com/doug-martin/nestjs-query/commit/2be78489b6c73652de998f2c5364b63a6a937f2f))
+* **deps:** update dependency @nestjs/passport to v7.1.2 ([4a38d0c](https://github.com/doug-martin/nestjs-query/commit/4a38d0c25032bd24131378e861e205fdc50c8615))
+* **deps:** update dependency @nestjs/passport to v7.1.3 ([a74b544](https://github.com/doug-martin/nestjs-query/commit/a74b544a067c5a678479f8b9aaa091fb6c6a3aeb))
+* **deps:** update dependency @nestjs/passport to v7.1.4 ([84471a4](https://github.com/doug-martin/nestjs-query/commit/84471a4210a104d6b344f26d3bd87b83405a1b44))
+* **deps:** update dependency @nestjs/passport to v7.1.5 ([2bc9164](https://github.com/doug-martin/nestjs-query/commit/2bc91644004df4cda83c968f95e9ff45d8de328c))
+* **deps:** update dependency apollo-server-express to v2.19.0 ([1624f4e](https://github.com/doug-martin/nestjs-query/commit/1624f4e99a64258ff381972e5ad5cce1aec146a5))
+* **deps:** update dependency apollo-server-express to v2.19.1 ([63cc89f](https://github.com/doug-martin/nestjs-query/commit/63cc89f0b98d1164a9bf201489d996b74700444f))
+* **deps:** update dependency apollo-server-express to v2.19.2 ([6035bdd](https://github.com/doug-martin/nestjs-query/commit/6035bdd0f76f743a43facf658ea4f7baed13e15d))
+* **deps:** update dependency apollo-server-plugin-base to v0.10.2 ([b39da69](https://github.com/doug-martin/nestjs-query/commit/b39da690428eaabe39ac184bdc654b54565130e1))
+* **deps:** update dependency apollo-server-plugin-base to v0.10.3 ([12093ae](https://github.com/doug-martin/nestjs-query/commit/12093ae5dd579ab94f42ab0209e199d5afcad32a))
+* **deps:** update dependency apollo-server-plugin-base to v0.10.4 ([7c0e391](https://github.com/doug-martin/nestjs-query/commit/7c0e3917e24081cf5bfcb596840038adef61b7e9))
+* **deps:** update dependency graphql-query-complexity to v0.7.1 ([8bd196d](https://github.com/doug-martin/nestjs-query/commit/8bd196d017ab7452ce3b7f1ca1f3ef2f0d1e6325))
+* **deps:** update dependency graphql-query-complexity to v0.7.2 ([905f0f5](https://github.com/doug-martin/nestjs-query/commit/905f0f51a9db801f76e9f4581fc95eadd6e39841))
+* **deps:** update dependency graphql-tools to v6.2.6 ([c1bba6d](https://github.com/doug-martin/nestjs-query/commit/c1bba6d4011085929ec5f733a4d6ac640428ee88))
+* **deps:** update dependency graphql-tools to v7.0.2 ([6b204dc](https://github.com/doug-martin/nestjs-query/commit/6b204dc83988ad8be730fe83df0cf3c707895664))
+* **deps:** update dependency pg to v8.4.2 ([be2dd88](https://github.com/doug-martin/nestjs-query/commit/be2dd884377b3eaff21a8adaf8f05f08b2ef505f))
+* **deps:** update dependency pg to v8.5.0 ([52e4258](https://github.com/doug-martin/nestjs-query/commit/52e4258bd5912b4ef5eff53943d291269dc89101))
+* **deps:** update dependency pg to v8.5.1 ([b435a7f](https://github.com/doug-martin/nestjs-query/commit/b435a7fc04f29f5433374e24dff6c67771c2d819))
+* **deps:** Update mongoose and @nestjs/mongoose to latest versions ([ca575cf](https://github.com/doug-martin/nestjs-query/commit/ca575cfce5634233dfefa93c6c9347db91086b39))
+
+
+
+
+
 ## [0.21.2](https://github.com/doug-martin/nestjs-query/compare/v0.21.1...v0.21.2) (2020-10-23)
 
 

@@ -3,17 +3,18 @@ import { Connection } from 'mongoose';
 import { TestEntity } from './test.entity';
 import { TestReference } from './test-reference.entity';
 
-export const TEST_ENTITIES: TestEntity[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
-  return {
-    boolType: i % 2 === 0,
-    dateType: new Date(`2020-02-${i}`),
-    numberType: i,
-    stringType: `foo${i}`,
-  } as TestEntity;
-});
+export const TEST_ENTITIES: TestEntity[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+  (i) =>
+    ({
+      boolType: i % 2 === 0,
+      dateType: new Date(`2020-02-${i}`),
+      numberType: i,
+      stringType: `foo${i}`,
+    } as TestEntity),
+);
 
-export const TEST_REFERENCES: TestReference[] = TEST_ENTITIES.reduce((relations, te) => {
-  return [
+export const TEST_REFERENCES: TestReference[] = TEST_ENTITIES.reduce(
+  (relations, te) => [
     ...relations,
     {
       referenceName: `${te.stringType}-test-reference-1-one`,
@@ -24,8 +25,9 @@ export const TEST_REFERENCES: TestReference[] = TEST_ENTITIES.reduce((relations,
     {
       referenceName: `${te.stringType}-test-reference-3-three`,
     } as TestReference,
-  ];
-}, [] as TestReference[]);
+  ],
+  [] as TestReference[],
+);
 
 export const seed = async (connection: Connection): Promise<void> => {
   const TestEntityModel = connection.model<TestEntity>('TestEntity');

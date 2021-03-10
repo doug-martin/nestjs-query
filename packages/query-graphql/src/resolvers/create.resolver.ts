@@ -6,16 +6,10 @@
 import { Class, DeepPartial, QueryService } from '@nestjs-query/core';
 import { Args, ArgsType, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
+import { HookTypes } from '../hooks';
 import { DTONames, getDTONames } from '../common';
-import {
-  ResolverMutation,
-  ResolverSubscription,
-  getCreateOneHook,
-  getCreateManyHook,
-  MutationArgs,
-  CreateOneHook,
-  CreateManyHook,
-} from '../decorators';
+import { MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
+import { HookInterceptor } from '../interceptors';
 import { EventType, getDTOEventName } from '../subscription';
 import {
   CreateManyInputType,
@@ -81,17 +75,6 @@ const defaultCreateManyInput = <C>(dtoNames: DTONames, InputDTO: Class<C>): Clas
   return CM;
 };
 
-const lookupCreateOneHook = <DTO, C>(DTOClass: Class<DTO>, CreateDTOClass: Class<C>): CreateOneHook<C> | undefined => {
-  return (getCreateOneHook(CreateDTOClass) ?? getCreateOneHook(DTOClass)) as CreateOneHook<C> | undefined;
-};
-
-const lookupCreateManyHook = <DTO, C>(
-  DTOClass: Class<DTO>,
-  CreateDTOClass: Class<C>,
-): CreateManyHook<C> | undefined => {
-  return (getCreateManyHook(CreateDTOClass) ?? getCreateManyHook(DTOClass)) as CreateManyHook<C> | undefined;
-};
-
 /**
  * @internal
  * Mixin to add `create` graphql endpoints.
@@ -111,8 +94,6 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
     CreateOneInput = defaultCreateOneInput(dtoNames, CreateDTOClass),
     CreateManyInput = defaultCreateManyInput(dtoNames, CreateDTOClass),
   } = opts;
-  const createOneHook = lookupCreateOneHook(DTOClass, CreateDTOClass);
-  const createManyHook = lookupCreateManyHook(DTOClass, CreateDTOClass);
   const createOneMutationName = opts.one?.name ?? `createOne${baseName}`;
   const createManyMutationName = opts.many?.name ?? `createMany${pluralBaseName}`;
   const commonResolverOpts = omit(
@@ -142,8 +123,14 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class CreateResolverBase extends BaseClass {
-    @ResolverMutation(() => DTOClass, { name: createOneMutationName }, commonResolverOpts, opts.one ?? {})
-    async createOne(@MutationArgs(CO, createOneHook) input: CO): Promise<DTO> {
+    @ResolverMutation(
+      () => DTOClass,
+      { name: createOneMutationName },
+      commonResolverOpts,
+      { interceptors: [HookInterceptor(HookTypes.BEFORE_CREATE_ONE, CreateDTOClass, DTOClass)] },
+      opts.one ?? {},
+    )
+    async createOne(@MutationHookArgs() input: CO): Promise<DTO> {
       const created = await this.service.createOne(input.input.input);
       if (enableOneSubscriptions) {
         await this.publishCreatedEvent(created);
@@ -151,8 +138,14 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       return created;
     }
 
-    @ResolverMutation(() => [DTOClass], { name: createManyMutationName }, commonResolverOpts, opts.many ?? {})
-    async createMany(@MutationArgs(CM, createManyHook) input: CM): Promise<DTO[]> {
+    @ResolverMutation(
+      () => [DTOClass],
+      { name: createManyMutationName },
+      { ...commonResolverOpts },
+      { interceptors: [HookInterceptor(HookTypes.BEFORE_CREATE_MANY, CreateDTOClass, DTOClass)] },
+      opts.many ?? {},
+    )
+    async createMany(@MutationHookArgs() input: CM): Promise<DTO[]> {
       const created = await this.service.createMany(input.input.input);
       if (enableManySubscriptions) {
         await Promise.all(created.map((c) => this.publishCreatedEvent(c)));

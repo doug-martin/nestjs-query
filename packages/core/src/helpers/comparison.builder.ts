@@ -13,9 +13,8 @@ import {
   BetweenComparisonOperators,
 } from './filter.helpers';
 
-const compare = <DTO>(filter: (dto: DTO) => boolean, fallback: boolean): FilterFn<DTO> => {
-  return (dto?: DTO) => (dto ? filter(dto) : fallback);
-};
+const compare = <DTO>(filter: (dto: DTO) => boolean, fallback: boolean): FilterFn<DTO> => (dto?: DTO) =>
+  dto ? filter(dto) : fallback;
 
 export class ComparisonBuilder {
   static build<DTO, F extends keyof DTO>(
