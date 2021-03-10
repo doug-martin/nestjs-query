@@ -24,7 +24,6 @@ export {
   PagingTypes,
   CursorQueryArgsType,
   OffsetQueryArgsType,
-  StaticNonePagingQueryArgs,
   NonePagingQueryArgsType,
   CursorPagingType,
   OffsetPagingType,
