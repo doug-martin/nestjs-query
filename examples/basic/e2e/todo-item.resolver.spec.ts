@@ -199,6 +199,86 @@ describe('TodoItemResolver (basic - e2e)', () => {
           ]);
         }));
 
+    it(`should allow querying relations`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+            todoItems(filter: { subTasks: { title: { eq: "Create Nest App - Sub Task 1" } } }) {
+              ${pageInfoField}
+              ${edgeNodes(`
+                ${todoItemFields}
+                subTasks {
+                  ${pageInfoField}
+                  ${edgeNodes(subTaskFields)}
+                }
+              `)}
+            }
+          }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          expect(pageInfo).toEqual({
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          });
+          expect(edges).toHaveLength(1);
+
+          expect(edges.map((e) => e.node)).toEqual([
+            {
+              id: '1',
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              subTasks: {
+                pageInfo: {
+                  endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+                  hasNextPage: false,
+                  hasPreviousPage: false,
+                  startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+                },
+                edges: [
+                  {
+                    node: {
+                      id: '1',
+                      completed: true,
+                      title: `Create Nest App - Sub Task 1`,
+                      description: null,
+                      todoItemId: '1',
+                    },
+                    cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+                  },
+                  {
+                    node: {
+                      id: '2',
+                      completed: false,
+                      title: `Create Nest App - Sub Task 2`,
+                      description: null,
+                      todoItemId: '1',
+                    },
+                    cursor: 'YXJyYXljb25uZWN0aW9uOjE=',
+                  },
+                  {
+                    node: {
+                      id: '3',
+                      completed: false,
+                      title: `Create Nest App - Sub Task 3`,
+                      description: null,
+                      todoItemId: '1',
+                    },
+                    cursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+                  },
+                ],
+              },
+            },
+          ]);
+        }));
+
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
         .post('/graphql')
