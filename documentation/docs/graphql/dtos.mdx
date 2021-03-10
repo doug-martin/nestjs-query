@@ -236,7 +236,8 @@ You can override the default `pagingStrategy` to one of the following alternativ
 * `OFFSET` - sets paging to allow `limit` and `offset` fields, and returns an `OffsetConnection`.
 * `NONE` - turn off all paging and always return an `ArrayConnection`.
 
-When using the `OFFSET` strategy your the paging arguments for a many query will accept a `limit` and/or `offset`. This will also change the return type from a `CursorConnection` to an `ArrayConnection`.
+When using the `OFFSET` strategy your the paging arguments for a many query will accept a `limit` and/or `offset`.
+This will also change the return type from a `CursorConnection` to an `OffsetConnection`.
 
 ```ts title="todo-item.dto.ts" {5}
 import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
@@ -293,7 +294,7 @@ export class TodoItemDTO {
 ### Paging with Total Count
 
 :::note
-This section **ONLY** applies to `CURSOR` or `OFFSET` connections.
+This section **ONLY** applies to `CURSOR` and `OFFSET` connections.
 :::
 :::warning
 Enabling `totalCount` can be expensive. If your table is large the `totalCount` query may be expensive, use with caution.
@@ -302,7 +303,7 @@ Enabling `totalCount` can be expensive. If your table is large the `totalCount` 
 The `totalCount` field is not eagerly fetched. It will only be executed if the field is queried from the client.
 :::
 
-When using the `CURSOR` (the default) or OFFSET paging strategy  you have the option to expose a `totalCount` field to
+When using the `CURSOR` (the default) or `OFFSET` paging strategy  you have the option to expose a `totalCount` field to
 allow clients to fetch a total count of records in a connection.
 
 To enable the `totalCount` field for connections set the `enableTotalCount` option to `true` using the
