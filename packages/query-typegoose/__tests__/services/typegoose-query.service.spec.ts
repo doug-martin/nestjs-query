@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
 import { getModelForClass, DocumentType } from '@typegoose/typegoose';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -445,7 +444,7 @@ describe('TypegooseQueryService', () => {
 
     it('should reject if the update contains the ID', () => {
       const queryService = moduleRef.get(TestEntityService);
-      return expect(queryService.updateMany({ _id: new ObjectId() }, {})).rejects.toThrow(
+      return expect(queryService.updateMany({ id: new ObjectId().toHexString() }, {})).rejects.toThrow(
         'Id cannot be specified when updating',
       );
     });
