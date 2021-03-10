@@ -5,16 +5,15 @@ import { Type } from 'class-transformer';
 import { getOrCreateArrayConnectionType } from '../../connection';
 import { PagingStrategies, getOrCreateNonePagingType, NonePagingType } from '../paging';
 import { DEFAULT_QUERY_OPTS } from './constants';
-import { NonePagingQueryArgsTypeOpts, StaticQueryType } from './interfaces';
+import { NonePagingQueryArgsTypeOpts, QueryType, StaticQueryType } from './interfaces';
 import { FilterType } from '../filter.type';
 import { getOrCreateSortType } from '../sorting.type';
 
-export type StaticNonePagingQueryArgs<DTO> = StaticQueryType<DTO, PagingStrategies.NONE>;
-export type NonePagingQueryArgsType<DTO> = InstanceType<StaticNonePagingQueryArgs<DTO>>;
+export type NonePagingQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.NONE>;
 export function createNonePagingQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: NonePagingQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.NONE },
-): StaticNonePagingQueryArgs<DTO> {
+): StaticQueryType<DTO, PagingStrategies.NONE> {
   const F = FilterType(DTOClass);
   const S = getOrCreateSortType(DTOClass);
   const C = getOrCreateArrayConnectionType(DTOClass);
