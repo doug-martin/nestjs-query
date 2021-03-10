@@ -112,6 +112,7 @@ export class FilterQueryBuilder<Entity> {
    * Applies paging to a Pageable `typeorm` query builder
    * @param qb - the `typeorm` QueryBuilder
    * @param paging - the Paging options.
+   * @param useSkipTake - if skip/take should be used instead of limit/offset.
    */
   applyPaging<P extends Pageable<Entity>>(qb: P, paging?: Paging, useSkipTake?: boolean): P {
     if (!paging) {
