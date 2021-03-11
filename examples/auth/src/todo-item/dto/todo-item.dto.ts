@@ -1,4 +1,10 @@
-import { FilterableField, Authorize, Relation, FilterableCursorConnection } from '@nestjs-query/query-graphql';
+import {
+  FilterableField,
+  Authorize,
+  Relation,
+  FilterableCursorConnection,
+  QueryOptions,
+} from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 import { TagDTO } from '../../tag/dto/tag.dto';
@@ -6,6 +12,7 @@ import { UserDTO } from '../../user/user.dto';
 import { UserContext } from '../../auth/auth.interfaces';
 
 @ObjectType('TodoItem')
+@QueryOptions({ enableTotalCount: true })
 @Authorize({ authorize: (context: UserContext) => ({ ownerId: { eq: context.req.user.id } }) })
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableCursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })

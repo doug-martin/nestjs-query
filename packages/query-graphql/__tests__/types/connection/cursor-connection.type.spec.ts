@@ -2,13 +2,15 @@
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { SortDirection } from '@nestjs-query/core';
-import { ConnectionType, CursorPagingType, StaticConnectionType } from '../../../src';
+import { CursorConnectionType, CursorPagingType, PagingStrategies, StaticConnectionType } from '../../../src';
 import {
   cursorConnectionObjectTypeSDL,
   cursorConnectionObjectTypeWithTotalCountSDL,
   expectSDL,
 } from '../../__fixtures__';
 import { KeySet } from '../../../src/decorators';
+import { getOrCreateCursorConnectionType } from '../../../src/types/connection';
+import { getOrCreateCursorPagingType } from '../../../src/types/query/paging';
 
 describe('CursorConnectionType', (): void => {
   @ObjectType('Test')
@@ -29,7 +31,8 @@ describe('CursorConnectionType', (): void => {
     stringField!: string;
   }
 
-  const createPage = (paging: CursorPagingType): CursorPagingType => plainToClass(CursorPagingType(), paging);
+  const createPage = (paging: CursorPagingType): CursorPagingType =>
+    plainToClass(getOrCreateCursorPagingType(), paging);
 
   const createTestDTO = (index: number): TestDto => ({
     stringField: `foo${index}`,
@@ -38,11 +41,11 @@ describe('CursorConnectionType', (): void => {
   });
 
   it('should create the connection SDL', async () => {
-    const TestConnection = ConnectionType(TestDto);
+    const TestConnection = getOrCreateCursorConnectionType(TestDto, { pagingStrategy: PagingStrategies.CURSOR });
     @Resolver()
     class TestConnectionTypeResolver {
       @Query(() => TestConnection)
-      test(): ConnectionType<TestDto> | undefined {
+      test(): CursorConnectionType<TestDto> | undefined {
         return undefined;
       }
     }
@@ -51,11 +54,14 @@ describe('CursorConnectionType', (): void => {
   });
 
   it('should create the connection SDL with totalCount if enabled', async () => {
-    const TestConnectionWithTotalCount = ConnectionType(TestTotalCountDto, { enableTotalCount: true });
+    const TestConnectionWithTotalCount = getOrCreateCursorConnectionType(TestTotalCountDto, {
+      pagingStrategy: PagingStrategies.CURSOR,
+      enableTotalCount: true,
+    });
     @Resolver()
     class TestConnectionTypeResolver {
       @Query(() => TestConnectionWithTotalCount)
-      test(): ConnectionType<TestTotalCountDto> | undefined {
+      test(): CursorConnectionType<TestTotalCountDto> | undefined {
         return undefined;
       }
     }
@@ -69,13 +75,13 @@ describe('CursorConnectionType', (): void => {
       stringField!: string;
     }
 
-    expect(() => ConnectionType(TestBadDto)).toThrow(
+    expect(() => getOrCreateCursorConnectionType(TestBadDto, { pagingStrategy: PagingStrategies.CURSOR })).toThrow(
       'Unable to make ConnectionType. Ensure TestBadDto is annotated with @nestjs/graphql @ObjectType',
     );
   });
 
   describe('limit offset offset cursor connection', () => {
-    const TestConnection = ConnectionType(TestDto);
+    const TestConnection = getOrCreateCursorConnectionType(TestDto, { pagingStrategy: PagingStrategies.CURSOR });
 
     it('should create an empty connection when created with new', () => {
       expect(new TestConnection()).toEqual({
@@ -231,8 +237,8 @@ describe('CursorConnectionType', (): void => {
     @ObjectType()
     @KeySet(['stringField'])
     class TestKeySetDTO extends TestDto {}
-    function getConnectionType(): StaticConnectionType<TestKeySetDTO> {
-      return ConnectionType(TestKeySetDTO);
+    function getConnectionType(): StaticConnectionType<TestKeySetDTO, PagingStrategies.CURSOR> {
+      return getOrCreateCursorConnectionType(TestKeySetDTO, { pagingStrategy: PagingStrategies.CURSOR });
     }
 
     it('should create an empty connection when created with new', () => {

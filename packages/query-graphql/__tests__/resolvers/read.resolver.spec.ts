@@ -1,11 +1,10 @@
 // eslint-disable-next-line max-classes-per-file
-import { ArgsType, Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
+import { ArgsType, Field, Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when } from 'ts-mockito';
 import { Filter } from '@nestjs-query/core';
 import {
-  ConnectionType,
   CursorQueryArgsType,
-  NoPagingQueryArgsType,
+  NonePagingQueryArgsType,
   OffsetQueryArgsType,
   PagingStrategies,
   QueryArgsType,
@@ -17,14 +16,13 @@ import {
   createResolverFromNest,
   readBasicResolverSDL,
   readCursorConnectionWithTotalCountSDL,
-  readOffsetConnectionWithTotalCountSDL,
-  readCustomConnectionResolverSDL,
   readCustomManyQueryResolverSDL,
   readCustomNameResolverSDL,
   readCustomOneQueryResolverSDL,
   readCustomQueryResolverSDL,
   readDisabledResolverSDL,
   readManyDisabledResolverSDL,
+  readOffsetConnectionWithTotalCountSDL,
   readOffsetQueryResolverSDL,
   readOneDisabledResolverSDL,
   TestResolverDTO,
@@ -78,25 +76,18 @@ describe('ReadResolver', () => {
     it('should not use a connection if pagingStrategy is OFFSET', () =>
       expectResolverSDL(readOffsetQueryResolverSDL, { pagingStrategy: PagingStrategies.OFFSET }));
 
-    it('should not use a connection if custom QueryArgs is a limit offset', () => {
+    it('should use an offset connection if custom QueryArgs is a limit offset', () => {
       @ArgsType()
-      class CustomQueryArgs extends QueryArgsType(TestResolverDTO, { pagingStrategy: PagingStrategies.OFFSET }) {}
+      class CustomQueryArgs extends QueryArgsType(TestResolverDTO, {
+        pagingStrategy: PagingStrategies.OFFSET,
+        connectionName: 'TestResolverDTOConnection',
+      }) {}
 
       return expectResolverSDL(readOffsetQueryResolverSDL, { QueryArgs: CustomQueryArgs });
     });
 
     it('should not expose query method if disabled', () =>
       expectResolverSDL(readManyDisabledResolverSDL, { many: { disabled: true } }));
-
-    it('should not create a new type if the Connection is supplied', () => {
-      @ObjectType()
-      class CustomConnection extends ConnectionType(TestResolverDTO) {
-        @Field()
-        other!: string;
-      }
-
-      return expectResolverSDL(readCustomConnectionResolverSDL, { Connection: CustomConnection });
-    });
 
     describe('#queryMany cursor connection', () => {
       @Resolver(() => TestResolverDTO)
@@ -271,7 +262,7 @@ describe('ReadResolver', () => {
 
       it('should call the service query with the provided input', async () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
-        const input: NoPagingQueryArgsType<TestResolverDTO> = {
+        const input: NonePagingQueryArgsType<TestResolverDTO> = {
           filter: {
             stringField: { eq: 'foo' },
           },

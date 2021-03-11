@@ -1,30 +1,32 @@
-import { Class, Filter, Paging, Query, SortField } from '@nestjs-query/core';
+import { Class, Filter, Query, SortField } from '@nestjs-query/core';
 import { ArgsType, Field } from '@nestjs/graphql';
 import { ValidateNested, Validate } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PropertyMax } from '../../validators/property-max.validator';
 import { DEFAULT_QUERY_OPTS } from './constants';
-import { QueryArgsTypeOpts, QueryType, StaticQueryType } from './interfaces';
-import { OffsetPagingType, PagingStrategies, StaticOffsetPagingType } from '../paging';
+import { OffsetQueryArgsTypeOpts, QueryType, StaticQueryType } from './interfaces';
+import { getOrCreateOffsetPagingType, OffsetPagingType, PagingStrategies } from '../paging';
 import { FilterType } from '../filter.type';
-import { SortType } from '../sorting.type';
+import { getOrCreateSortType } from '../sorting.type';
+import { getOrCreateOffsetConnectionType } from '../../connection';
 
-export type StaticOffsetQueryArgsType<DTO> = StaticQueryType<DTO, StaticOffsetPagingType>;
-export type OffsetQueryArgsType<DTO> = QueryType<DTO, OffsetPagingType>;
-// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export function OffsetQueryArgsType<DTO>(
+export type OffsetQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.OFFSET>;
+export function createOffsetQueryArgs<DTO>(
   DTOClass: Class<DTO>,
-  opts: QueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.OFFSET },
-): StaticOffsetQueryArgsType<DTO> {
+  opts: OffsetQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.OFFSET },
+): StaticQueryType<DTO, PagingStrategies.OFFSET> {
   const F = FilterType(DTOClass);
-  const S = SortType(DTOClass);
-  const P = OffsetPagingType();
+  const S = getOrCreateSortType(DTOClass);
+  const C = getOrCreateOffsetConnectionType(DTOClass, opts);
+  const P = getOrCreateOffsetPagingType();
 
   @ArgsType()
   class QueryArgs implements Query<DTO> {
     static SortType = S;
 
     static FilterType = F;
+
+    static ConnectionType = C;
 
     static PageType = P;
 
@@ -35,7 +37,7 @@ export function OffsetQueryArgsType<DTO>(
     @ValidateNested()
     @Validate(PropertyMax, ['limit', opts.maxResultsSize ?? DEFAULT_QUERY_OPTS.maxResultsSize])
     @Type(() => P)
-    paging?: Paging;
+    paging?: OffsetPagingType;
 
     @Field(() => F, {
       defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,

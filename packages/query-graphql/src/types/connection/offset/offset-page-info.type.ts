@@ -1,19 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Class } from '@nestjs-query/core';
+import { OffsetPageInfoType } from '../interfaces';
 
 export interface OffsetPageInfoTypeConstructor {
   new (hasNextPage: boolean, hasPreviousPage: boolean): OffsetPageInfoType;
 }
 
-export interface OffsetPageInfoType {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
 /** @internal */
 let pageInfoType: Class<OffsetPageInfoType> | null = null;
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export const OffsetPageInfoType = (): OffsetPageInfoTypeConstructor => {
+export const getOrCreateOffsetPageInfoType = (): OffsetPageInfoTypeConstructor => {
   if (pageInfoType) {
     return pageInfoType;
   }

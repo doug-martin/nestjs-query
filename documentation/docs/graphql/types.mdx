@@ -42,7 +42,7 @@ Args type used in `read` endpoints to allow `filtering`, `paging`, and `sorting`
 
 The `QueryArgsType` will generate an `ArgsType` that will require the user to provide three arguments.
 * `filter?` - A filter that should be used to find records to update. See [FilterType](#filtertype)
-* `paging?` - Options to page of result. See [CursorPagingType](#cursorpagingtype)
+* `paging?` - Options to page of result.
 * `sorting?` - Optional array to allow sorting of results. See [SortType](#sorttype).
 
 #### Usage
@@ -193,7 +193,7 @@ type DeleteManyResponse {
 
 GraphQL implementation of the `@nestjs-query/core` `Filter` type.
 
-The `FilterType` is dynamically created based on the fields in the `DTO` annotated with [@FilterableField](./dtos.md#filterablefield).
+The `FilterType` is dynamically created based on the fields in the `DTO` annotated with [@FilterableField](./dtos.mdx#filterablefield).
 
 Along with the dynamically create fields filter also has the following static fields:
 
@@ -316,61 +316,6 @@ input DateFieldComparison {
 
 ---
 
-### CursorPagingType
-
-The `CursorPagingType` allows you to limit or page through a [ConnectionType](#ConnectionType).
-
-**NOTE** This type is automatically created when using [QueryArgsType](#queryargstype).
-
-For more comprehensive examples take a look at the [Paging Docs](./queries.mdx#paging)
-
-#### Forward Paging
-
-* `first` - The number of records to return. This is the equivalent to an `limit`.
-* `after?` - The cursor of the `node` from a connection to start from.
-    * The most common use case is to set this to the `endCursor` from a [ConnectionType](#connectiontype).
-
-#### Backward Paging
-
-* `before` - The cursor of the node in a connection to start from.
-    * The most common use case is to set this to the `startCursor` from a [ConnectionType](#connectiontype).
-* `last` - The number of records before the `before` parameter to return.
-
-<Tabs
-  defaultValue="code"
-  values={[
-    { label: 'Code', value: 'code', },
-    { label: 'Schema', value: 'schema', },
-  ]
-}>
-<TabItem value="code">
-
-```ts
-import { CursorPagingType } from '@nestjs-query/query-graphql';
-
-export const CursorPaging = CursorPagingType()
-```
-
-</TabItem>
-<TabItem value="schema">
-
-
-```graphql
-scalar ConnectionCursor
-
-input CursorPaging {
-  before: ConnectionCursor
-  after: ConnectionCursor
-  first: Int
-  last: Int
-}
-```
-
-</TabItem>
-</Tabs>
-
----
-
 ### SortType
 
 The `SortType` allows you to sort results.
@@ -381,7 +326,7 @@ For more comprehensive examples take a look at the [Sorting Docs](./queries.mdx#
 
 #### Fields
 
-* `field` - The field to sort on. The is an ENUM of [@FilterableFields](./dtos.md#filterablefield) defined in the DTO.
+* `field` - The field to sort on. The is an ENUM of [@FilterableFields](./dtos.mdx#filterablefield) defined in the DTO.
 * `direction` - The direction to sort the field `ASC` or `DESC`.
 * `nulls?` - On supported storage engines you can specify the null sort order `NULLS_FIRST`, `NULLS_LAST`
 
@@ -395,10 +340,11 @@ For more comprehensive examples take a look at the [Sorting Docs](./queries.mdx#
 <TabItem value="code">
 
 ```ts
-import { CursorPagingType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@nestjs-query/query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
-export const TodoItemSort = SortType(TodoItemDTO)
+export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
+export const TodoItemSort = QueryArgsType.SortType;
 ```
 
 </TabItem>
@@ -430,49 +376,6 @@ enum SortNulls {
   NULLS_LAST
 }
 
-```
-
-</TabItem>
-</Tabs>
-
----
-
-### PartialInputType
-
-Utility type to create a `Partial` from an `ObjectType`.
-
-This is the type used by resolvers when a `CreateDTOClass` or `UpdateDTOClass` are not specified.
-
-<Tabs
-  defaultValue="code"
-  values={[
-    { label: 'Code', value: 'code', },
-    { label: 'Schema', value: 'schema', },
-  ]
-}>
-<TabItem value="code">
-
-```ts
-import { CursorPagingType } from '@nestjs-query/query-graphql';
-import { InputType } from `@nestjs/graphql`;
-import { TodoItemDTO } from './dto/todo-item.dto';
-
-@InputType()
-export class TodoItemPartialInput extends PartialInput(TodoItemDTO) { }
-```
-
-</TabItem>
-<TabItem value="schema">
-
-
-```graphql
-type TodoItemPartialInput {
-  id: ID
-  title: String
-  completed: Boolean
-  created: DateTime
-  updated: DateTime
-}
 ```
 
 </TabItem>

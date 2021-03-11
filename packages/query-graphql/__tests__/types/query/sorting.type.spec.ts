@@ -1,6 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import { ObjectType, InputType, Query, Resolver, Args, Int } from '@nestjs/graphql';
-import { SortType, FilterableField } from '../../../src';
+import { FilterableField } from '../../../src';
+import { getOrCreateSortType } from '../../../src/types/query/sorting.type';
 import { expectSDL, sortingInputTypeSDL } from '../../__fixtures__';
 
 describe('SortingType', (): void => {
@@ -24,7 +25,7 @@ describe('SortingType', (): void => {
 
   it('should create the correct graphql schema for sorting type', () => {
     @InputType()
-    class Sorting extends SortType(TestSort) {}
+    class Sorting extends getOrCreateSortType(TestSort) {}
 
     @Resolver()
     class SortingTypeSpec {
@@ -39,14 +40,14 @@ describe('SortingType', (): void => {
 
   it('should throw an error if the class is not annotated with @ObjectType', () => {
     class BadTestSort {}
-    expect(() => SortType(BadTestSort)).toThrow(
+    expect(() => getOrCreateSortType(BadTestSort)).toThrow(
       'Unable to make SortType. Ensure BadTestSort is annotated with @nestjs/graphql @ObjectType',
     );
   });
   it('should throw an error if no fields are found', () => {
     @ObjectType()
     class BadTestSort {}
-    expect(() => SortType(BadTestSort)).toThrow(
+    expect(() => getOrCreateSortType(BadTestSort)).toThrow(
       'No fields found to create SortType for BadTestSort. Ensure fields are annotated with @FilterableField',
     );
   });

@@ -16,7 +16,6 @@ import { TodoItemEntity } from './todo-item.entity';
           EntityClass: TodoItemEntity,
           CreateDTOClass: TodoItemInputDTO,
           UpdateDTOClass: TodoItemUpdateDTO,
-          enableTotalCount: true,
         },
       ],
     }),

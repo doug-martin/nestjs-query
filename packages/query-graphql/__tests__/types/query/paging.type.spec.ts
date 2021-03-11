@@ -1,13 +1,14 @@
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Resolver, Query, Int, InputType, Args } from '@nestjs/graphql';
-import { CursorPagingType } from '../../../src';
 import { expectSDL, pagingInputTypeSDL } from '../../__fixtures__';
+import { getOrCreateCursorPagingType } from '../../../src/types/query/paging';
 
 describe('PagingType', (): void => {
+  const CursorPaging = getOrCreateCursorPagingType();
   it('should create the correct filter graphql schema', () => {
     @InputType()
-    class Paging extends CursorPagingType() {}
+    class Paging extends CursorPaging {}
 
     @Resolver()
     class PagingTypeSpec {
@@ -21,7 +22,7 @@ describe('PagingType', (): void => {
   });
 
   it('throw a validation error if first is defined with before', () => {
-    const paging = plainToClass(CursorPagingType(), {
+    const paging = plainToClass(CursorPaging, {
       first: 10,
       before: 'YXJyYXljb25uZWN0aW9uOjEx',
     });
@@ -55,7 +56,7 @@ describe('PagingType', (): void => {
   });
 
   it('throw a validation error if last is defined with after', () => {
-    const paging = plainToClass(CursorPagingType(), {
+    const paging = plainToClass(CursorPaging, {
       last: 10,
       after: 'YXJyYXljb25uZWN0aW9uOjEx',
     });
@@ -90,7 +91,7 @@ describe('PagingType', (): void => {
   });
 
   it('throw a validation error if after is defined without first', () => {
-    const paging = plainToClass(CursorPagingType(), {
+    const paging = plainToClass(CursorPaging, {
       after: 'YXJyYXljb25uZWN0aW9uOjEx',
     });
     const validateErrors = validateSync(paging);
@@ -110,7 +111,7 @@ describe('PagingType', (): void => {
   });
 
   it('throw a validation before if after is defined without last', () => {
-    const paging = plainToClass(CursorPagingType(), {
+    const paging = plainToClass(CursorPaging, {
       before: 'YXJyYXljb25uZWN0aW9uOjEx',
     });
     const validateErrors = validateSync(paging);

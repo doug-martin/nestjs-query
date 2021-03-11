@@ -1,9 +1,10 @@
-import { FilterableField, UnPagedRelation } from '@nestjs-query/query-graphql';
+import { FilterableField, PagingStrategies, QueryOptions, UnPagedRelation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 import { TagDTO } from '../../tag/dto/tag.dto';
 
 @ObjectType('TodoItem')
+@QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 @UnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
 @UnPagedRelation('tags', () => TagDTO)
 export class TodoItemDTO {
