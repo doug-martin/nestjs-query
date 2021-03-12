@@ -1,7 +1,7 @@
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
-import { TodoItemEntity } from '../todo-item/todo-item.entity';
 import { Types } from 'mongoose';
+import { TodoItemEntity } from '../todo-item/todo-item.entity';
 
 @modelOptions({
   schemaOptions: {
@@ -11,11 +11,10 @@ import { Types } from 'mongoose';
   },
 })
 export class SubTaskEntity implements Base {
-
-  _id!: Types.ObjectId
+  _id!: Types.ObjectId;
 
   id!: string;
-  
+
   @Prop({ required: true })
   title!: string;
 

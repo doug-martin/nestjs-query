@@ -161,9 +161,7 @@ export const SUB_TASKS = [
 const documents = ['TodoItemEntity', 'SubTaskEntity', 'TagEntity'];
 
 export const truncate = async (connection: Connection): Promise<void> =>
-  asyncLoop(documents, (document) => {
-    return connection.model(document).deleteMany({}).exec();
-  });
+  asyncLoop(documents, (document) => connection.model(document).deleteMany({}).exec());
 
 export const refresh = async (connection: Connection): Promise<void> => {
   await truncate(connection);

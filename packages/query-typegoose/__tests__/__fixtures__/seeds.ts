@@ -4,17 +4,18 @@ import { getModelForClass, DocumentType } from '@typegoose/typegoose';
 import { TestEntity } from './test.entity';
 import { TestReference } from './test-reference.entity';
 
-export const TEST_ENTITIES: DocumentType<TestEntity>[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
-  return {
-    boolType: i % 2 === 0,
-    dateType: new Date(`2020-02-${i}`),
-    numberType: i,
-    stringType: `foo${i}`,
-  } as DocumentType<TestEntity>;
-});
+export const TEST_ENTITIES: DocumentType<TestEntity>[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+  (i) =>
+    ({
+      boolType: i % 2 === 0,
+      dateType: new Date(`2020-02-${i}`),
+      numberType: i,
+      stringType: `foo${i}`,
+    } as DocumentType<TestEntity>),
+);
 
-export const TEST_REFERENCES: DocumentType<TestReference>[] = TEST_ENTITIES.reduce((relations, te) => {
-  return [
+export const TEST_REFERENCES: DocumentType<TestReference>[] = TEST_ENTITIES.reduce(
+  (relations, te) => [
     ...relations,
     {
       referenceName: `${te.stringType}-test-reference-1-one`,
@@ -25,8 +26,9 @@ export const TEST_REFERENCES: DocumentType<TestReference>[] = TEST_ENTITIES.redu
     {
       referenceName: `${te.stringType}-test-reference-3-three`,
     } as DocumentType<TestReference>,
-  ];
-}, [] as DocumentType<TestReference>[]);
+  ],
+  [] as DocumentType<TestReference>[],
+);
 
 export const seed = async (connection: Connection): Promise<void> => {
   const TestEntityModel = getModelForClass(TestEntity, { existingConnection: connection });

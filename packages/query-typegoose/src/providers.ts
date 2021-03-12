@@ -3,8 +3,10 @@ import { FactoryProvider } from '@nestjs/common';
 import { ReturnModelType, DocumentType } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { getModelToken } from 'nestjs-typegoose';
+import { Document } from 'mongoose';
 import { TypegooseQueryService } from './services';
 
+AssemblerSerializer((obj: Document) => obj.toObject({ virtuals: true }))(Document);
 function createTypegooseQueryServiceProvider<Entity extends Base>(model: Class<unknown>): FactoryProvider {
   return {
     provide: getQueryServiceToken(model),
@@ -19,6 +21,5 @@ function createTypegooseQueryServiceProvider<Entity extends Base>(model: Class<u
   };
 }
 
-export const createTypegooseQueryServiceProviders = (models: Class<unknown>[]): FactoryProvider[] => {
-  return models.map((model) => createTypegooseQueryServiceProvider(model));
-};
+export const createTypegooseQueryServiceProviders = (models: Class<unknown>[]): FactoryProvider[] =>
+  models.map((model) => createTypegooseQueryServiceProvider(model));

@@ -237,10 +237,12 @@ export class TypegooseQueryService<Entity extends Base>
     const arrayUpdateQuery: any = this.buildArrayUpdateQuery(entity as DeepPartial<Entity>);
 
     if (entity instanceof this.Model) {
-      return entity.modifiedPaths().reduce((update: UpdateQuery<DocumentType<Entity>>, k) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        return { ...update, [k]: entity.get(k) };
-      }, {});
+      return entity.modifiedPaths().reduce(
+        (update: UpdateQuery<DocumentType<Entity>>, k) =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          ({ ...update, [k]: entity.get(k) }),
+        {},
+      );
     }
 
     return { ...entity, ...arrayUpdateQuery } as UpdateQuery<DocumentType<Entity>>;

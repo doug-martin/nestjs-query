@@ -656,7 +656,7 @@ describe('TypegooseQueryService', () => {
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_ENTITIES[0], {
           filter: { referenceName: { isNot: null } },
         });
-        return expect(convertDocuments(queryResult)).toEqual(TEST_REFERENCES.slice(0, 3));
+        return expect(queryResult).toEqual(TEST_REFERENCES.slice(0, 3));
       });
 
       it('should apply a filter', async () => {
@@ -664,7 +664,7 @@ describe('TypegooseQueryService', () => {
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_ENTITIES[0], {
           filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
         });
-        expect(convertDocuments(queryResult)).toEqual([TEST_REFERENCES[1]]);
+        expect(queryResult).toEqual([TEST_REFERENCES[1]]);
       });
 
       it('should apply paging', async () => {
@@ -672,7 +672,7 @@ describe('TypegooseQueryService', () => {
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_ENTITIES[0], {
           paging: { limit: 2, offset: 1 },
         });
-        expect(convertDocuments(queryResult)).toEqual(TEST_REFERENCES.slice(1, 3));
+        expect(queryResult).toEqual(TEST_REFERENCES.slice(1, 3));
       });
     });
 
@@ -687,7 +687,7 @@ describe('TypegooseQueryService', () => {
             filter: { referenceName: { isNot: null } },
           },
         );
-        return expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_REFERENCES.slice(0, 3)));
+        return expect(queryResult).toEqual(expect.arrayContaining(TEST_REFERENCES.slice(0, 3)));
       });
 
       it('should apply a filter', async () => {
@@ -700,7 +700,7 @@ describe('TypegooseQueryService', () => {
             filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } },
           },
         );
-        expect(convertDocuments(queryResult)).toEqual([TEST_REFERENCES[1]]);
+        expect(queryResult).toEqual([TEST_REFERENCES[1]]);
       });
 
       it('should apply paging', async () => {
@@ -714,7 +714,7 @@ describe('TypegooseQueryService', () => {
             sorting: [{ field: 'referenceName', direction: SortDirection.ASC }],
           },
         );
-        expect(convertDocuments(queryResult)).toEqual(TEST_REFERENCES.slice(1, 3));
+        expect(queryResult).toEqual(TEST_REFERENCES.slice(1, 3));
       });
     });
 
@@ -726,9 +726,9 @@ describe('TypegooseQueryService', () => {
           filter: { referenceName: { isNot: null } },
         });
         expect(queryResult.size).toBe(3);
-        expect(convertDocuments(queryResult.get(entities[0])!)).toEqual(TEST_REFERENCES.slice(0, 3));
-        expect(convertDocuments(queryResult.get(entities[1])!)).toEqual(TEST_REFERENCES.slice(3, 6));
-        expect(convertDocuments(queryResult.get(entities[2])!)).toEqual(TEST_REFERENCES.slice(6, 9));
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES.slice(0, 3));
+        expect(queryResult.get(entities[1])).toEqual(TEST_REFERENCES.slice(3, 6));
+        expect(queryResult.get(entities[2])).toEqual(TEST_REFERENCES.slice(6, 9));
       });
 
       it('should apply a filter per entity', async () => {
@@ -739,9 +739,9 @@ describe('TypegooseQueryService', () => {
           filter: { referenceName: { in: references.map((r) => r.referenceName) } },
         });
         expect(queryResult.size).toBe(3);
-        expect(convertDocuments(queryResult.get(entities[0])!)).toEqual([references[0]]);
-        expect(convertDocuments(queryResult.get(entities[1])!)).toEqual([references[1]]);
-        expect(convertDocuments(queryResult.get(entities[2])!)).toEqual([references[2]]);
+        expect(queryResult.get(entities[0])).toEqual([references[0]]);
+        expect(queryResult.get(entities[1])).toEqual([references[1]]);
+        expect(queryResult.get(entities[2])).toEqual([references[2]]);
       });
 
       it('should apply paging per entity', async () => {
@@ -751,9 +751,9 @@ describe('TypegooseQueryService', () => {
           paging: { limit: 2, offset: 1 },
         });
         expect(queryResult.size).toBe(3);
-        expect(convertDocuments(queryResult.get(entities[0])!)).toEqual(TEST_REFERENCES.slice(1, 3));
-        expect(convertDocuments(queryResult.get(entities[1])!)).toEqual(TEST_REFERENCES.slice(4, 6));
-        expect(convertDocuments(queryResult.get(entities[2])!)).toEqual(TEST_REFERENCES.slice(7, 9));
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES.slice(1, 3));
+        expect(queryResult.get(entities[1])).toEqual(TEST_REFERENCES.slice(4, 6));
+        expect(queryResult.get(entities[2])).toEqual(TEST_REFERENCES.slice(7, 9));
       });
 
       it('should return an empty array if no results are found.', async () => {
@@ -766,8 +766,8 @@ describe('TypegooseQueryService', () => {
           filter: { referenceName: { isNot: null } },
         });
         expect(queryResult.size).toBe(2);
-        expect(convertDocuments(queryResult.get(entities[0])!)).toEqual(TEST_REFERENCES.slice(0, 3));
-        expect(convertDocuments(queryResult.get(entities[1])!)).toEqual([]);
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES.slice(0, 3));
+        expect(queryResult.get(entities[1])).toEqual([]);
       });
     });
   });

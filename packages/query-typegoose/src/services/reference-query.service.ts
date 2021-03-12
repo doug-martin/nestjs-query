@@ -1,17 +1,16 @@
+/* eslint-disable no-underscore-dangle */
 import { Document, Model as MongooseModel, ToObjectOptions, UpdateQuery } from 'mongoose';
 import {
   AggregateQuery,
   AggregateResponse,
   AssemblerFactory,
   Class,
-  DeepPartial,
   Filter,
   FindRelationOptions,
   GetByIdOptions,
   mergeFilter,
   ModifyRelationOptions,
   Query,
-  UpdateOneOptions,
 } from '@nestjs-query/core';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { ReturnModelType, DocumentType, getModelWithString, getClass } from '@typegoose/typegoose';
@@ -35,96 +34,6 @@ export abstract class ReferenceQueryService<Entity extends Base> {
   }
 
   abstract getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<DocumentType<Entity>>;
-
-  abstract updateOne(id: string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity>;
-
-  findRelation<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dtos: DocumentType<Entity>[],
-    opts?: FindRelationOptions<Relation>,
-  ): Promise<Map<Entity, Relation | undefined>>;
-  findRelation<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: DocumentType<Entity>,
-    opts?: FindRelationOptions<Relation>,
-  ): Promise<DocumentType<Relation> | undefined>;
-  async findRelation<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: DocumentType<Entity> | DocumentType<Entity>[],
-    opts?: FindRelationOptions<Relation>,
-  ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
-    this.checkForReference('FindRelation', relationName);
-    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
-    if (Array.isArray(dto)) {
-      return dto.reduce(async (prev, curr) => {
-        const map = await prev;
-        const ref: DocumentType<Relation> | undefined = await this.findRelation(
-          RelationClass,
-          relationName,
-          curr,
-          opts,
-        );
-        return map.set(curr, ref);
-      }, Promise.resolve(new Map<DocumentType<Entity>, DocumentType<Relation> | undefined>()));
-    }
-
-    // eslint-disable-next-line no-underscore-dangle
-    const foundEntity = await this.Model.findById(dto._id);
-    if (!foundEntity) {
-      return undefined;
-    }
-
-    const ReferenceModel = this.getReferenceModel(relationName);
-    const ReferenceEntity = getClass(ReferenceModel.modelName) as Class<Entity>;
-    const assembler = AssemblerFactory.getAssembler(RelationClass, ReferenceEntity);
-    const filterQuery = referenceQueryBuilder.buildFilterQuery(assembler.convertQuery({ filter: opts?.filter }).filter);
-    const populated = await foundEntity.populate({ path: relationName, match: filterQuery }).execPopulate();
-    const populatedRef = populated.get(relationName);
-    return populatedRef ? assembler.convertToDTO(populatedRef) : undefined;
-  }
-
-  queryRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    entities: DocumentType<Entity>[],
-    query: Query<Relation>,
-  ): Promise<Map<DocumentType<Entity>, DocumentType<Relation>[]>>;
-  queryRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: DocumentType<Entity>,
-    query: Query<Relation>,
-  ): Promise<DocumentType<Relation>[]>;
-  async queryRelations<Relation>(
-    RelationClass: Class<Relation>,
-    relationName: string,
-    dto: DocumentType<Entity> | DocumentType<Entity>[],
-    query: Query<Relation>,
-  ): Promise<DocumentType<Relation>[] | Map<DocumentType<Entity>, DocumentType<Relation>[]>> {
-    this.checkForReference('QueryRelations', relationName);
-    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
-    if (Array.isArray(dto)) {
-      return dto.reduce(async (mapPromise, entity) => {
-        const map = await mapPromise;
-        const refs: DocumentType<Relation>[] = await this.queryRelations(RelationClass, relationName, entity, query);
-        return map.set(entity, refs);
-      }, Promise.resolve(new Map<DocumentType<Entity>, DocumentType<Relation>[]>()));
-    }
-    // eslint-disable-next-line no-underscore-dangle
-    const foundEntity = await this.Model.findById(dto._id);
-    if (!foundEntity) {
-      return [];
-    }
-    const assembler = AssemblerFactory.getAssembler(RelationClass, Document);
-    const { filterQuery, options } = referenceQueryBuilder.buildQuery(assembler.convertQuery(query));
-    const populated = await foundEntity.populate({ path: relationName, match: filterQuery, options }).execPopulate();
-    const populatedRef: DocumentType<Relation>[] = populated.get(relationName) as DocumentType<Relation>[];
-
-    return populatedRef;
-  }
 
   aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -161,7 +70,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
         return map.set(entity, refs);
       }, Promise.resolve(new Map<DocumentType<Entity>, AggregateResponse<DocumentType<Relation>>>()));
     }
-    const assembler = AssemblerFactory.getAssembler(RelationClass, Document);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getReferenceEntity(relationName));
     const refFilter = this.getReferenceFilter(relationName, dto, assembler.convertQuery({ filter }).filter);
     if (!refFilter) {
       return {};
@@ -204,7 +113,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
         return map.set(entity, refs);
       }, Promise.resolve(new Map<DocumentType<Entity>, number>()));
     }
-    const assembler = AssemblerFactory.getAssembler(RelationClass, Document);
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getReferenceEntity(relationName));
     const relationModel = this.getReferenceModel(relationName);
     const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
     const refFilter = this.getReferenceFilter(relationName, dto, assembler.convertQuery({ filter }).filter);
@@ -212,6 +121,83 @@ export abstract class ReferenceQueryService<Entity extends Base> {
       return 0;
     }
     return relationModel.countDocuments(referenceQueryBuilder.buildFilterQuery(refFilter)).exec();
+  }
+
+  findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dtos: DocumentType<Entity>[],
+    opts?: FindRelationOptions<Relation>,
+  ): Promise<Map<Entity, Relation | undefined>>;
+  findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DocumentType<Entity>,
+    opts?: FindRelationOptions<Relation>,
+  ): Promise<DocumentType<Relation> | undefined>;
+  async findRelation<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DocumentType<Entity> | DocumentType<Entity>[],
+    opts?: FindRelationOptions<Relation>,
+  ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
+    this.checkForReference('FindRelation', relationName);
+    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
+    if (Array.isArray(dto)) {
+      return dto.reduce(async (prev, curr) => {
+        const map = await prev;
+        const ref = await this.findRelation(RelationClass, relationName, curr, opts);
+        return map.set(curr, ref);
+      }, Promise.resolve(new Map<DocumentType<Entity>, DocumentType<Relation> | undefined>()));
+    }
+
+    // eslint-disable-next-line no-underscore-dangle
+    const foundEntity = await this.Model.findById(dto._id);
+    if (!foundEntity) {
+      return undefined;
+    }
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getReferenceEntity(relationName));
+    const filterQuery = referenceQueryBuilder.buildFilterQuery(assembler.convertQuery({ filter: opts?.filter }).filter);
+    const populated = await foundEntity.populate({ path: relationName, match: filterQuery }).execPopulate();
+    const populatedRef: unknown = populated.get(relationName);
+    return populatedRef ? assembler.convertToDTO(populatedRef) : undefined;
+  }
+
+  queryRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    entities: DocumentType<Entity>[],
+    query: Query<Relation>,
+  ): Promise<Map<DocumentType<Entity>, DocumentType<Relation>[]>>;
+  queryRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DocumentType<Entity>,
+    query: Query<Relation>,
+  ): Promise<DocumentType<Relation>[]>;
+  async queryRelations<Relation>(
+    RelationClass: Class<Relation>,
+    relationName: string,
+    dto: DocumentType<Entity> | DocumentType<Entity>[],
+    query: Query<Relation>,
+  ): Promise<Relation[] | Map<Entity, Relation[]>> {
+    this.checkForReference('QueryRelations', relationName);
+    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
+    if (Array.isArray(dto)) {
+      return dto.reduce(async (mapPromise, entity) => {
+        const map = await mapPromise;
+        const refs = await this.queryRelations(RelationClass, relationName, entity, query);
+        return map.set(entity, refs);
+      }, Promise.resolve(new Map<Entity, Relation[]>()));
+    }
+    const foundEntity = await this.Model.findById(dto._id ?? dto.id);
+    if (!foundEntity) {
+      return [];
+    }
+    const assembler = AssemblerFactory.getAssembler(RelationClass, this.getReferenceModel(relationName));
+    const { filterQuery, options } = referenceQueryBuilder.buildQuery(assembler.convertQuery(query));
+    const populated = await foundEntity.populate({ path: relationName, match: filterQuery, options }).execPopulate();
+    return assembler.convertToDTOs(populated.get(relationName) as Document[]);
   }
 
   async addRelations<Relation>(
@@ -302,6 +288,11 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     return this.getById(id);
   }
 
+  private getReferenceEntity(relationName: string) {
+    const ReferenceModel = this.getReferenceModel(relationName);
+    return getClass(ReferenceModel.modelName) as Class<unknown>;
+  }
+
   private isReferencePath(refName: string): boolean {
     return !!this.Model.schema.path(refName);
   }
@@ -367,13 +358,6 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     }
     throw new Error(`Unable to lookup reference type for ${refName}`);
   }
-
-  /* private getEntity(relationName: string) {
-    const ReferenceModel = this.getReferenceModel(relationName)
-    const referenceDoc = new ReferenceModel()
-    console.log(referenceDoc)
-    return getClassForDocument(referenceDoc)
-  } */
 
   private getRefCount<Relation extends Document>(
     relationName: string,

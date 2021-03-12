@@ -1,8 +1,8 @@
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
 import { TagEntity } from '../tag/tag.entity';
-import { Types } from 'mongoose';
 
 @modelOptions({
   schemaOptions: {
@@ -12,8 +12,7 @@ import { Types } from 'mongoose';
   },
 })
 export class TodoItemEntity implements Base {
-
-  _id!: Types.ObjectId
+  _id!: Types.ObjectId;
 
   id!: string;
 
@@ -50,5 +49,4 @@ export class TodoItemEntity implements Base {
     foreignField: 'todoItem',
   })
   subTasks?: Ref<SubTaskEntity>[];
-
 }
