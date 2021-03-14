@@ -33,7 +33,7 @@
     "@nestjs/testing": "7.6.14",
     "@types/lodash.pick": "4.4.6",
     "@types/sequelize": "4.28.9",
-    "sequelize": "5.22.3",
+    "sequelize": "5.22.4",
     "sequelize-typescript": "1.1.0",
     "sqlite3": "5.0.2",
     "ts-mockito": "2.6.1",
