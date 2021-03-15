@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.21.2",
+    "@nestjs-query/core": "0.23.0",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.merge": "^4.6.2"
   },
@@ -30,8 +30,8 @@
     "mongodb": "3.6.3"
   },
   "devDependencies": {
-    "@nestjs/common": "7.6.13",
-    "@nestjs/testing": "7.6.13",
+    "@nestjs/common": "7.6.14",
+    "@nestjs/testing": "7.6.14",
     "@typegoose/typegoose": "8.0.0-beta.2",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
@@ -40,7 +40,7 @@
     "class-transformer": "0.3.1",
     "mongodb": "3.6.4",
     "mongodb-memory-server": "6.9.6",
-    "mongoose": "5.11.19",
+    "mongoose": "5.12.0",
     "ts-mockito": "2.6.1",
     "typescript": "4.2.3"
   },
