@@ -25,6 +25,7 @@ All examples assume the following entity.
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
     { label: 'Mongoose', value: 'mongoose', },
+    { label: 'Typegoose', value: 'typegoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -120,6 +121,42 @@ export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity)
 ```
 
 </TabItem>
+<TabItem value="typegoose">
+
+```ts title="todo-item.entity.ts"
+import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
+import { SubTaskEntity } from '../sub-task/sub-task.entity';
+import { TagEntity } from '../tag/tag.entity';
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: { createdAt: 'created', updatedAt: 'updated' },
+    collection: 'todo-items',
+    toObject: { virtuals: true },
+  },
+})
+export class TodoItemEntity implements Base {
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop()
+  description?: string;
+
+  @Prop({ required: true })
+  completed!: boolean;
+
+  @Prop({ default: Date.now })
+  created!: Date;
+
+  @Prop({ default: Date.now })
+  updated!: Date;
+}
+
+```
+
+</TabItem>
 </Tabs>
 
 
@@ -127,8 +164,8 @@ export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity)
 
 ### Module
 
-The `nestjs-query` `typeorm`, `sequelize`, and `mongoose` packages provide a module that will add providers to inject
-auto-created `QueryServices` using the `@InjectQueryService` decorator.
+The `nestjs-query` `typeorm`, `sequelize`, `mongoose`, and 'typegoose' packages provide a module that will add providers
+ to inject auto-created `QueryServices` using the `@InjectQueryService` decorator.
 
 In order to use the decorator you will need to use the module that comes with the `nestjs-query` orm module providing it your entities that you want the services created for.
 
@@ -139,6 +176,7 @@ In order to use the decorator you will need to use the module that comes with th
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
     { label: 'Mongoose', value: 'mongoose', },
+    { label: 'Typegoose', value: 'typegoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -189,6 +227,22 @@ import { TodoItemResolver } from './todo-item.resolver';
       { document: TodoItemEntity, name: TodoItemEntity.name, schema: TodoItemEntitySchema },
     ]),
   ],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
+<TabItem value="typegoose">
+
+```ts title="todo-item.module.ts" {8}
+import { NestjsQueryTypegooseModule } from '@nestjs-query/query-typegoose';
+import { Module } from '@nestjs/common';
+import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemResolver } from './todo-item.resolver';
+
+@Module({
+  providers: [TodoItemResolver],
+  imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
 })
 export class TodoItemModule {}
 ```

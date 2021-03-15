@@ -44,7 +44,7 @@ npm i @nestjs-query/query-mongoose @nestjs/common @nestjs/mongoose mongoose mong
 ## @nestjs-query/query-typegoose
 
 ```sh
-npm i @nestjs-query/query-typegoose @nestjs/common nestjs/typegoose @typegoose/typegoose mongoose mongodb
+npm i @nestjs-query/query-typegoose @nestjs/common @typegoose/typegoose nestjs-typegoose mongoose mongodb
 ```
 
 **NOTE** `@nestjs-query/query-typegoose` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
