@@ -43,18 +43,18 @@
         <summary type="html"><![CDATA[* docs(typeorm): Call out foreign keys in entity and DTO #84]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.8.2]]></title>
-        <id>v0.8.2</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/15/v0.8.2"/>
-        <updated>2020-04-15T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* [TESTS] Updated graphql types tests to check schema rather than spies.]]></summary>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[v0.8.3]]></title>
         <id>v0.8.3</id>
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/15/v0.8.3"/>
         <updated>2020-04-15T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[* FIXED]  Add support for extending abstract object types [#82]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.8.2]]></title>
+        <id>v0.8.2</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/04/15/v0.8.2"/>
+        <updated>2020-04-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* [TESTS] Updated graphql types tests to check schema rather than spies.]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[v0.8.1]]></title>
@@ -169,18 +169,18 @@
         <summary type="html"><![CDATA[* Update typescript to 3.8.]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.3.0]]></title>
-        <id>v0.3.0</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0"/>
-        <updated>2020-02-21T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Added dataloader support!]]></summary>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[v0.3.1]]></title>
         <id>v0.3.1</id>
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1"/>
         <updated>2020-02-21T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[* Hardened TypeORM querying]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.0]]></title>
+        <id>v0.3.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0"/>
+        <updated>2020-02-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Added dataloader support!]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[v0.2.1]]></title>
