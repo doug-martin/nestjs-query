@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.24.0](https://github.com/doug-martin/nestjs-query/compare/v0.23.1...v0.24.0) (2021-03-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency apollo-server-express to v2.21.1 ([cb43994](https://github.com/doug-martin/nestjs-query/commit/cb43994ed6f0bf998c0365cc5193bf80b8162d3f))
+
+
+### Features
+
+* **graphql:** Allow disabling `and`/`or` filters ([c20fdbd](https://github.com/doug-martin/nestjs-query/commit/c20fdbd9774a541cf4ada8df1c5981e12ede7e8d))
+* **typegoose:** Add typegoose package ([#846](https://github.com/doug-martin/nestjs-query/issues/846)) ([73cf5cd](https://github.com/doug-martin/nestjs-query/commit/73cf5cdbf11496ad3a3ce3f6bb69975510de26e2))
+
+
+
+
+
 ## [0.23.1](https://github.com/doug-martin/nestjs-query/compare/v0.23.0...v0.23.1) (2021-02-26)
 
 
