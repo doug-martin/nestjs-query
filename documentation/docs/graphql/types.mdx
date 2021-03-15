@@ -76,10 +76,11 @@ where the end user should be able to page through the results.
 <TabItem value="code">
 
 ```ts
-import { ConnectionType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@nestjs-query/query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
-export const TodoItemConnection = ConnectionType(TodoItemDTO);
+export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
+export const TodoItemConnection = TodoItemQueryArgs.ConnectionType;
 ```
 
 
@@ -344,7 +345,7 @@ import { QueryArgsType } from '@nestjs-query/query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
-export const TodoItemSort = QueryArgsType.SortType;
+export const TodoItemSort = TodoItemQueryArgs.SortType;
 ```
 
 </TabItem>
