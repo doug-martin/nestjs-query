@@ -55,6 +55,7 @@ Add the following to `src/todo-item/todo-item.entity.ts`.
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
     { label: 'Mongoose', value: 'mongoose', },
+    { label: 'Typegoose', value: 'typegoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -150,6 +151,40 @@ export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity)
 ```
 
 </TabItem>
+<TabItem value="typegoose">
+
+```ts title="todo-item/todo-item.entity.ts"
+import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Prop, modelOptions } from '@typegoose/typegoose';
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'todo-items',
+    toObject: { virtuals: true }
+  }
+})
+export class TodoItemEntity extends Base {
+
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop()
+  description?: string;
+
+  @Prop({ required: true })
+  completed!: boolean;
+
+  @Prop({ default: Date.now })
+  createdAt!: Date;
+
+  @Prop({ default: Date.now })
+  updatedAt!: Date;
+}
+
+```
+
+</TabItem>
 </Tabs>
 
 ## Create the DTO
@@ -227,6 +262,7 @@ The `NestjsQueryGraphQLModule` will automatically create a Resolver that will ex
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
     { label: 'Mongoose', value: 'mongoose', },
+    { label: 'Typegoose', value: 'typegoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -305,6 +341,35 @@ export class TodoItemModule {}
 ```
 
 </TabItem>
+<TabItem value="typegoose">
+
+```ts {9-19}
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { Module } from '@nestjs/common';
+import { NestjsQueryTypegooseModule } from '@nestjs-query/query-typegoose';
+import { TodoItemDTO } from './dto/todo-item.dto';
+import { TodoItemEntity } from './todo-item.entity';
+
+const guards = [AuthGuard];
+@Module({
+  providers: [TodoItemResolver],
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [
+        NestjsQueryTypegooseModule.forFeature([TodoItemEntity]),
+      ],
+      resolvers: [
+        {
+          DTOClass: TodoItemDTO,
+        },
+      ],
+    }),
+  ],
+})
+export class TodoItemModule {}
+```
+
+</TabItem>
 </Tabs>
 
 Next update `app.module` to set up your db connection and the `graphql` nest modules.
@@ -317,6 +382,7 @@ Next update `app.module` to set up your db connection and the `graphql` nest mod
     { label: 'TypeOrm', value: 'typeorm', },
     { label: 'Sequelize', value: 'sequelize', },
     { label: 'Mongoose', value: 'mongoose', },
+    { label: 'Typegoose', value: 'typegoose', },
   ]
 }>
 <TabItem value="typeorm">
@@ -413,6 +479,31 @@ export class AppModule {}
 
 
 ```
+
+</TabItem>
+<TabItem value="typegoose">
+
+```ts
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { TypegooseModule } from 'nestjs-typegoose';
+import { TodoItemModule } from './todo-item/todo-item.module';
+
+@Module({
+  imports: [
+    TypegooseModule.forRoot('mongodb://localhost/nest', options),
+    GraphQLModule.forRoot({
+      // set to true to automatically generate schema
+      autoSchemaFile: true,
+    }),
+    TodoItemModule,
+  ],
+})
+export class AppModule {}
+
+
+```
+**NOTE** For the sake of brevity, the `options` object in the Mongoose and Typegoose examples aren't defined. If you'd like to see full examples of all of the persistence services, please refer to the `./examples` directory in the [source code](https://github.com/doug-martin/nestjs-query/tree/master/examples).
 
 </TabItem>
 </Tabs>

@@ -10,3 +10,15 @@ db.createUser(
     ]
   }
 );
+db.createUser(
+  {
+    user: "typegoose",
+    pwd: "typegoose",
+    roles: [
+      {
+        role: "readWrite",
+        db: "typegoose"
+      }
+    ]
+  }
+);
