@@ -136,14 +136,17 @@ export class TodoItemEntity extends Document {
   @Prop({ required: true })
   title!: string;
 
+  @Prop()
+  description?: string;
+
   @Prop({ required: true })
   completed!: boolean;
 
   @Prop({ default: Date.now })
-  createdAt!: Date;
+  created!: Date;
 
   @Prop({ default: Date.now })
-  updatedAt!: Date;
+  updated!: Date;
 }
 
 export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity);
@@ -155,17 +158,19 @@ export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity)
 
 ```ts title="todo-item/todo-item.entity.ts"
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { Prop, modelOptions } from '@typegoose/typegoose';
+import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
+import { SubTaskEntity } from '../sub-task/sub-task.entity';
+import { TagEntity } from '../tag/tag.entity';
 
 @modelOptions({
   schemaOptions: {
-    timestamps: true,
+    timestamps: { createdAt: 'created', updatedAt: 'updated' },
     collection: 'todo-items',
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 })
-export class TodoItemEntity extends Base {
-
+export class TodoItemEntity implements Base {
   @Prop({ required: true })
   title!: string;
 
@@ -176,12 +181,11 @@ export class TodoItemEntity extends Base {
   completed!: boolean;
 
   @Prop({ default: Date.now })
-  createdAt!: Date;
+  created!: Date;
 
   @Prop({ default: Date.now })
-  updatedAt!: Date;
+  updated!: Date;
 }
-
 ```
 
 </TabItem>
@@ -355,14 +359,8 @@ const guards = [AuthGuard];
   providers: [TodoItemResolver],
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [
-        NestjsQueryTypegooseModule.forFeature([TodoItemEntity]),
-      ],
-      resolvers: [
-        {
-          DTOClass: TodoItemDTO,
-        },
-      ],
+      imports: [NestjsQueryTypegooseModule.forFeature([TodoItemEntity])],
+      resolvers: [{ DTOClass: TodoItemDTO, EntityClass: TodoItemEntity }],
     }),
   ],
 })

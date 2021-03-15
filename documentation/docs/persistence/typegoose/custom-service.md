@@ -6,7 +6,7 @@ To create a custom query service to add your own methods to you can extend the `
 
 ```ts title="todo-item.service.ts"
 import { QueryService } from '@nestjs-query/core';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'nestjs-typegoose';
 import { TypegooseQueryService } from '@nestjs-query/query-typegoose';
 import { TodoItemEntity } from './entity/todo-item.entity';
 
