@@ -50,6 +50,16 @@ module.exports = {
           'persistence/mongoose/serialization',
         ],
       },
+      {
+        type: 'category',
+        label: 'Typegoose',
+        items: [
+          'persistence/typegoose/getting-started',
+          'persistence/typegoose/relations',
+          'persistence/typegoose/custom-service',
+          'persistence/typegoose/serialization',
+        ],
+      },
     ],
     GraphQL: [
       'graphql/getting-started',
@@ -77,4 +87,4 @@ module.exports = {
       'migration-guides/v0.5.x-to-v0.6.x',
     ],
   },
-};
+}
