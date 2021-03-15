@@ -127,13 +127,6 @@
             <description><![CDATA[* DOCS] Added clarification around individual resolvers and relations with examples [#42]]></description>
         </item>
         <item>
-            <title><![CDATA[v0.5.0]]></title>
-            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/25/v0.5.0</link>
-            <guid>v0.5.0</guid>
-            <pubDate>Tue, 25 Feb 2020 00:00:00 GMT</pubDate>
-            <description><![CDATA[* Added decorators option to resolver options to allow providing custom decorators to endpoints #36]]></description>
-        </item>
-        <item>
             <title><![CDATA[v0.4.0]]></title>
             <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/25/v0.4.0</link>
             <guid>v0.4.0</guid>
@@ -141,11 +134,11 @@
             <description><![CDATA[* Updated all mutations to take a single input argument with custom fields.]]></description>
         </item>
         <item>
-            <title><![CDATA[v0.3.5]]></title>
-            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/23/v0.3.5</link>
-            <guid>v0.3.5</guid>
-            <pubDate>Sun, 23 Feb 2020 00:00:00 GMT</pubDate>
-            <description><![CDATA[* FIXED] Validate Input for Create & Update [#19]]></description>
+            <title><![CDATA[v0.5.0]]></title>
+            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/25/v0.5.0</link>
+            <guid>v0.5.0</guid>
+            <pubDate>Tue, 25 Feb 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[* Added decorators option to resolver options to allow providing custom decorators to endpoints #36]]></description>
         </item>
         <item>
             <title><![CDATA[v0.3.4]]></title>
@@ -153,6 +146,13 @@
             <guid>v0.3.4</guid>
             <pubDate>Sun, 23 Feb 2020 00:00:00 GMT</pubDate>
             <description><![CDATA[* FIXED] Can't remove on Many-To-Many relations [#31]]></description>
+        </item>
+        <item>
+            <title><![CDATA[v0.3.5]]></title>
+            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/23/v0.3.5</link>
+            <guid>v0.3.5</guid>
+            <pubDate>Sun, 23 Feb 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[* FIXED] Validate Input for Create & Update [#19]]></description>
         </item>
         <item>
             <title><![CDATA[v0.3.2]]></title>
@@ -204,6 +204,13 @@
             <description><![CDATA[As of v0.1.0 you can specify relations in your graphql resolvers.]]></description>
         </item>
         <item>
+            <title><![CDATA[v0.0.5]]></title>
+            <link>https://doug-martin.github.io/nestjs-query/blog/2020/01/28/v0.0.5</link>
+            <guid>v0.0.5</guid>
+            <pubDate>Tue, 28 Jan 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[* Add ability to specify query defaults.]]></description>
+        </item>
+        <item>
             <title><![CDATA[v0.0.6]]></title>
             <link>https://doug-martin.github.io/nestjs-query/blog/2020/01/28/v0.0.6</link>
             <guid>v0.0.6</guid>
@@ -211,11 +218,11 @@
             <description><![CDATA[* Dont allow empty filters with updateMany or deleteMany operations.]]></description>
         </item>
         <item>
-            <title><![CDATA[v0.0.5]]></title>
-            <link>https://doug-martin.github.io/nestjs-query/blog/2020/01/28/v0.0.5</link>
-            <guid>v0.0.5</guid>
-            <pubDate>Tue, 28 Jan 2020 00:00:00 GMT</pubDate>
-            <description><![CDATA[* Add ability to specify query defaults.]]></description>
+            <title><![CDATA[v0.0.3]]></title>
+            <link>https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.3</link>
+            <guid>v0.0.3</guid>
+            <pubDate>Mon, 27 Jan 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[* Fix package READMEs]]></description>
         </item>
         <item>
             <title><![CDATA[v0.0.2]]></title>
@@ -230,13 +237,6 @@
             <guid>v0.0.4</guid>
             <pubDate>Mon, 27 Jan 2020 00:00:00 GMT</pubDate>
             <description><![CDATA[* Add files field to @nestjs-query/core package.json]]></description>
-        </item>
-        <item>
-            <title><![CDATA[v0.0.3]]></title>
-            <link>https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.3</link>
-            <guid>v0.0.3</guid>
-            <pubDate>Mon, 27 Jan 2020 00:00:00 GMT</pubDate>
-            <description><![CDATA[* Fix package READMEs]]></description>
         </item>
         <item>
             <title><![CDATA[Initial Release]]></title>
