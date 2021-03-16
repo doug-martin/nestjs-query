@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-typegoose",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "description": "Typegoose adapter for @nestjs-query/core",
   "author": "john mcinall<johnmcinall@gmail.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
