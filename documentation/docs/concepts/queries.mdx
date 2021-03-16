@@ -171,8 +171,12 @@ const q: Query<MyClass> = {
 </Tabs>
 
 :::note
-When using filters on relations in combination with paging, performance can be degraded on large result sets.
-For more info see this [issue](https://github.com/doug-martin/nestjs-query/issues/954)
+When using filters on relations with `typeorm` in combination with paging, performance can be degraded on large result
+sets. For more info see this [issue](https://github.com/doug-martin/nestjs-query/issues/954)
+
+In short two queries will be executed:
+* The first one fetching a distinct list of primary keys with paging applied.
+* The second uses primary keys from the first query to fetch the actual records.
 :::
 
 ---

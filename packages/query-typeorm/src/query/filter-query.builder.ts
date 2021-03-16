@@ -50,9 +50,9 @@ export class FilterQueryBuilder<Entity> {
    * @param query - the query to apply.
    */
   select(query: Query<Entity>): SelectQueryBuilder<Entity> {
+    const hasRelations = this.filterHasRelations(query.filter);
     let qb = this.createQueryBuilder();
-    let hasRelations = false;
-    [qb, hasRelations] = this.applyRelationJoins(qb, query.filter);
+    qb = hasRelations ? this.applyRelationJoins(qb, query.filter) : qb;
     qb = this.applyFilter(qb, query.filter, qb.alias);
     qb = this.applySorting(qb, query.sorting, qb.alias);
     qb = this.applyPaging(qb, query.paging, hasRelations);
@@ -60,9 +60,9 @@ export class FilterQueryBuilder<Entity> {
   }
 
   selectById(id: string | number | (string | number)[], query: Query<Entity>): SelectQueryBuilder<Entity> {
+    const hasRelations = this.filterHasRelations(query.filter);
     let qb = this.createQueryBuilder();
-    let hasRelations = false;
-    [qb, hasRelations] = this.applyRelationJoins(qb, query.filter);
+    qb = hasRelations ? this.applyRelationJoins(qb, query.filter) : qb;
     qb = qb.andWhereInIds(id);
     qb = this.applyFilter(qb, query.filter, qb.alias);
     qb = this.applySorting(qb, query.sorting, qb.alias);
@@ -180,20 +180,28 @@ export class FilterQueryBuilder<Entity> {
    * @param qb - the `typeorm` QueryBuilder.
    * @param filter - the filter.
    *
-   * @returns the query builder for chaining and a boolean indicating if relations have been added to the filter
+   * @returns the query builder for chaining
    */
-  private applyRelationJoins(
-    qb: SelectQueryBuilder<Entity>,
-    filter?: Filter<Entity>,
-  ): [SelectQueryBuilder<Entity>, boolean] {
+  private applyRelationJoins(qb: SelectQueryBuilder<Entity>, filter?: Filter<Entity>): SelectQueryBuilder<Entity> {
     if (!filter) {
-      return [qb, false];
+      return qb;
     }
     const referencedRelations = this.getReferencedRelations(filter);
-    return [
-      referencedRelations.reduce((rqb, relation) => rqb.leftJoin(`${rqb.alias}.${relation}`, relation), qb),
-      referencedRelations.length > 0,
-    ];
+    return referencedRelations.reduce((rqb, relation) => rqb.leftJoin(`${rqb.alias}.${relation}`, relation), qb);
+  }
+
+  /**
+   * Checks if a filter references any relations.
+   * @param filter
+   * @private
+   *
+   * @returns true if there are any referenced relations
+   */
+  private filterHasRelations(filter?: Filter<Entity>): boolean {
+    if (!filter) {
+      return false;
+    }
+    return this.getReferencedRelations(filter).length > 0;
   }
 
   private getReferencedRelations(filter: Filter<Entity>): string[] {
