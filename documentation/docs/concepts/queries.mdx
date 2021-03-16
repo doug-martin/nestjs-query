@@ -6,13 +6,13 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 The core of `nestjs-query` is the `Query`, it is used by `@nestjs-query/query-graphql`, `@nestjs-query/query-typeorm`
- `@nestjs-query/query-sequelize` and `@nestjs-query/query-mongoose`.
+`@nestjs-query/query-sequelize` and `@nestjs-query/query-mongoose`.
 
 The query interface contains three optional fields.
 
-* `filter`
-* `paging`
-* `sorting`
+- `filter`
+- `paging`
+- `sorting`
 
 All examples will be based on the following class.
 
@@ -43,7 +43,7 @@ import { Query } from '@nestjs-query/core';
 
 const q: Query<MyClass> = {
   filter: {
-    title: {eq: 'Foo Bar'},
+    title: { eq: 'Foo Bar' },
   },
 };
 ```
@@ -58,9 +58,9 @@ import { Query } from '@nestjs-query/core';
 const q: Query<MyClass> = {
   filter: {
     // title = 'Foo Bar' AND completed IS TRUE and age > 10
-    title: {eq: 'Foo Bar'},
+    title: { eq: 'Foo Bar' },
     completed: { is: true },
-    age: {gt: 10},
+    age: { gt: 10 },
   },
 };
 ```
@@ -75,7 +75,7 @@ import { Query } from '@nestjs-query/core';
 const q: Query<MyClass> = {
   filter: {
     // title = 'Foo Bar' OR field LIKE '%foo%'
-    title: {eq: 'Foo Bar', like: '%foo%'},
+    title: { eq: 'Foo Bar', like: '%foo%' },
   },
 };
 ```
@@ -90,10 +90,7 @@ In this example we `AND` two filters for the same property together: `age >= 10 
 ```ts
 const q: Query<MyClass> = {
   filter: {
-    and: [
-      { age: { gte: 10 } },
-      { age: { lte: 20 } },
-    ],
+    and: [{ age: { gte: 10 } }, { age: { lte: 20 } }],
   },
 };
 ```
@@ -103,10 +100,7 @@ In this example a simple `OR` condition is created: `age >= 10 OR title NOT LIKE
 ```ts
 const q: Query<MyClass> = {
   filter: {
-    or: [
-      { age: { gte: 10 } },
-      { title: { notLike: '%bar' } },
-    ],
+    or: [{ age: { gte: 10 } }, { title: { notLike: '%bar' } }],
   },
 };
 ```
@@ -119,10 +113,7 @@ const q: Query<MyClass> = {
     and: [
       { age: { gte: 10 } },
       {
-        or: [
-          { title: { like: '%bar' } },
-          { title: { eq: 'foobar' } },
-        ],
+        or: [{ title: { like: '%bar' } }, { title: { eq: 'foobar' } }],
       },
     ],
   },
@@ -179,6 +170,11 @@ const q: Query<MyClass> = {
 </TabItem>
 </Tabs>
 
+:::note
+When using filters on relations in combination with paging, performance can be degraded on large result sets.
+For more info see this [issue](https://github.com/doug-martin/nestjs-query/issues/954)
+:::
+
 ---
 
 ## Sorting
@@ -186,9 +182,10 @@ const q: Query<MyClass> = {
 The `sorting` field allows to specify the sort order for your query.
 
 The `sorting` field is an array of object containing:
- * `field` - the field to sort on
- * `direction` - `ASC` or `DESC`
- * `nulls?` - Optional nulls sort, `NULLS_FIRST` or `NULLS_LAST`
+
+- `field` - the field to sort on
+- `direction` - `ASC` or `DESC`
+- `nulls?` - Optional nulls sort, `NULLS_FIRST` or `NULLS_LAST`
 
 <Tabs
   defaultValue="single"
@@ -203,7 +200,7 @@ The `sorting` field is an array of object containing:
 // import { SortDirection } from '@nestjs-query/core';
 
 const q: Query<MyClass> = {
-    sorting: [{field: 'title', direction: SortDirection.DESC}],
+  sorting: [{ field: 'title', direction: SortDirection.DESC }],
 };
 ```
 
@@ -214,12 +211,11 @@ const q: Query<MyClass> = {
 // import { SortDirection } from '@nestjs-query/core';
 
 const q: Query<MyClass> = {
-    sorting: [
-        {field: 'title', direction: SortDirection.DESC},
-        {field: 'age', direction: SortDirection.ASC},
-    ],
+  sorting: [
+    { field: 'title', direction: SortDirection.DESC },
+    { field: 'age', direction: SortDirection.ASC },
+  ],
 };
-
 ```
 
 </TabItem>
@@ -237,85 +233,143 @@ The following examples show an approximation of the SQL that will be generated. 
 
 All types support the following comparisons.
 
-* `is` - Check is a field is `null`, `true` or `false`.
-    ```ts
-    // title IS NULL
-    { title: { is: null } }
-    // completed IS TRUE
-    { completed: { is: true } }
-    // completed IS false
-    { completed: { is: false } }
-    ```
-* `isNot` - Check is a field is not `null`, `true` or `false`.
-    ```ts
-    // title IS NOT NULL
-    { title: { isNot: null } }
-    // completed IS NOT TRUE
-    { completed: { isNot: true } }
-    // completed IS NOT false
-    { completed: { isNot: false } }
-    ```
-* `neq` - field is not equal to a value.
-    ```ts
-    // title != 'foo'
-    { title: { neq: 'foo' } }
-    ```
-* `gt` - field is greater than a value.
-    ```ts
-    // title > 'foo'
-    { title: { gt: 'foo' } }
-    ```
-* `gte` - field is greater than or equal to a value.
-    ```ts
-    // title >= 'foo'
-    { title: { gte: 'foo' } }
-    ```
-* `lt` - field is less than a value.
-    ```ts
-    // title < 'foo'
-    { title: { lt: 'foo' } }
-    ```
-* `lte` - field is less than or equal to a value.
-    ```ts
-    // title <= 'foo'
-    { title: { lte: 'foo' } }
-    ```
-* `in` - field is in a list of values.
-    ```ts
-    // title IN ('foo', 'bar', 'baz')
-    { title: { in: ['foo', 'bar', 'baz'] } }
-    ```
-* `notIn` - field is not in a list of values.
-    ```ts
-    // title NOT IN ('foo', 'bar', 'baz')
-    { title: { notIn: ['foo', 'bar', 'baz'] } }
-    ```
+- `is` - Check is a field is `null`, `true` or `false`.
+  ```ts
+  // title IS NULL
+  {
+    title: {
+      is: null;
+    }
+  }
+  // completed IS TRUE
+  {
+    completed: {
+      is: true;
+    }
+  }
+  // completed IS false
+  {
+    completed: {
+      is: false;
+    }
+  }
+  ```
+- `isNot` - Check is a field is not `null`, `true` or `false`.
+  ```ts
+  // title IS NOT NULL
+  {
+    title: {
+      isNot: null;
+    }
+  }
+  // completed IS NOT TRUE
+  {
+    completed: {
+      isNot: true;
+    }
+  }
+  // completed IS NOT false
+  {
+    completed: {
+      isNot: false;
+    }
+  }
+  ```
+- `neq` - field is not equal to a value.
+  ```ts
+  // title != 'foo'
+  {
+    title: {
+      neq: 'foo';
+    }
+  }
+  ```
+- `gt` - field is greater than a value.
+  ```ts
+  // title > 'foo'
+  {
+    title: {
+      gt: 'foo';
+    }
+  }
+  ```
+- `gte` - field is greater than or equal to a value.
+  ```ts
+  // title >= 'foo'
+  {
+    title: {
+      gte: 'foo';
+    }
+  }
+  ```
+- `lt` - field is less than a value.
+  ```ts
+  // title < 'foo'
+  {
+    title: {
+      lt: 'foo';
+    }
+  }
+  ```
+- `lte` - field is less than or equal to a value.
+  ```ts
+  // title <= 'foo'
+  {
+    title: {
+      lte: 'foo';
+    }
+  }
+  ```
+- `in` - field is in a list of values.
+  ```ts
+  // title IN ('foo', 'bar', 'baz')
+  { title: { in: ['foo', 'bar', 'baz'] } }
+  ```
+- `notIn` - field is not in a list of values.
+  ```ts
+  // title NOT IN ('foo', 'bar', 'baz')
+  {
+    title: {
+      notIn: ['foo', 'bar', 'baz'];
+    }
+  }
+  ```
 
 ### String Comparisons
 
-* `like` - field is like a value (case sensitive).
-    ```ts
-    // title LIKE 'Foo%'
-    { title: { like: 'Foo%' } }
-    ```
-* `notLike` - field is not like a value  (case sensitive).
-    ```ts
-    // title NOT LIKE 'Foo%'
-    { title: { notLike: 'Foo%' } }
-    ```
-* `iLike` - field is like a value (case insensitive).
-    ```ts
-    // title ILIKE 'Foo%'
-    { title: { iLike: 'Foo%' } }
-    ```
-* `notILike` - field is not like a value  (case insensitive).
-    ```ts
-    // title NOT ILIKE 'Foo%'
-    { title: { notILike: 'Foo%' } }
-    ```
-
-
-
-
-
-
+- `like` - field is like a value (case sensitive).
+  ```ts
+  // title LIKE 'Foo%'
+  {
+    title: {
+      like: 'Foo%';
+    }
+  }
+  ```
+- `notLike` - field is not like a value (case sensitive).
+  ```ts
+  // title NOT LIKE 'Foo%'
+  {
+    title: {
+      notLike: 'Foo%';
+    }
+  }
+  ```
+- `iLike` - field is like a value (case insensitive).
+  ```ts
+  // title ILIKE 'Foo%'
+  {
+    title: {
+      iLike: 'Foo%';
+    }
+  }
+  ```
+- `notILike` - field is not like a value (case insensitive).
+  ```ts
+  // title NOT ILIKE 'Foo%'
+  {
+    title: {
+      notILike: 'Foo%';
+    }
+  }
+  ```
