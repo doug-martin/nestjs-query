@@ -1,4 +1,4 @@
-import { Filter } from '@nestjs-query/core';
+import { Filter, SortDirection } from '@nestjs-query/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
@@ -81,6 +81,28 @@ describe('TypeOrmQueryService', (): void => {
           });
           expect(queryResult).toEqual([entity]);
         });
+
+        it('should allow filtering on a one to one relation with an OR clause', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              or: [
+                { testEntityPk: { eq: TEST_ENTITIES[1].testEntityPk } },
+                {
+                  oneTestRelation: {
+                    testRelationPk: {
+                      in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
+                    },
+                  },
+                },
+              ],
+            },
+            sorting: [{ field: 'testEntityPk', direction: SortDirection.ASC }],
+            paging: { limit: 2 },
+          });
+          expect(queryResult).toEqual([entity, TEST_ENTITIES[1]]);
+        });
       });
 
       describe('manyToOne', () => {
@@ -111,6 +133,27 @@ describe('TypeOrmQueryService', (): void => {
           });
           expect(queryResults).toEqual(TEST_RELATIONS.slice(0, 6));
         });
+
+        it('should allow filtering on a many to one relation with paging', async () => {
+          const queryService = moduleRef.get(TestRelationService);
+          const queryResults = await queryService.query({
+            filter: {
+              or: [
+                { testRelationPk: { eq: TEST_RELATIONS[6].testRelationPk } },
+                {
+                  testEntity: {
+                    testEntityPk: {
+                      in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk],
+                    },
+                  },
+                },
+              ],
+            },
+            sorting: [{ field: 'testRelationPk', direction: SortDirection.ASC }],
+            paging: { limit: 3 },
+          });
+          expect(queryResults).toEqual(TEST_RELATIONS.slice(0, 3));
+        });
       });
 
       describe('oneToMany', () => {
@@ -127,6 +170,27 @@ describe('TypeOrmQueryService', (): void => {
             },
           });
           expect(queryResult).toEqual([entity]);
+        });
+        it('should allow filtering on a one to many relation with paging', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              or: [
+                { testEntityPk: { eq: TEST_ENTITIES[1].testEntityPk } },
+                {
+                  testRelations: {
+                    testRelationPk: {
+                      in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
+                    },
+                  },
+                },
+              ],
+            },
+            sorting: [{ field: 'testEntityPk', direction: SortDirection.ASC }],
+            paging: { limit: 2 },
+          });
+          expect(queryResult).toEqual([entity, TEST_ENTITIES[1]]);
         });
       });
 
@@ -163,6 +227,33 @@ describe('TypeOrmQueryService', (): void => {
             },
           });
           expect(queryResult).toEqual([TEST_ENTITIES[2], TEST_ENTITIES[5], TEST_ENTITIES[8]]);
+        });
+        it('should allow filtering on a many to many relation with paging', async () => {
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              or: [
+                { testEntityPk: { eq: TEST_ENTITIES[2].testEntityPk } },
+                {
+                  manyTestRelations: {
+                    relationName: {
+                      in: [TEST_RELATIONS[1].relationName, TEST_RELATIONS[4].relationName],
+                    },
+                  },
+                },
+              ],
+            },
+            sorting: [{ field: 'numberType', direction: SortDirection.ASC }],
+            paging: { limit: 6 },
+          });
+          expect(queryResult).toEqual([
+            TEST_ENTITIES[1],
+            TEST_ENTITIES[2], // additional one from the or
+            TEST_ENTITIES[3],
+            TEST_ENTITIES[5],
+            TEST_ENTITIES[7],
+            TEST_ENTITIES[9],
+          ]);
         });
       });
     });

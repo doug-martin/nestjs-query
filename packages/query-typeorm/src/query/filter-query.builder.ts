@@ -28,6 +28,8 @@ interface Sortable<Entity> extends QueryBuilder<Entity> {
 interface Pageable<Entity> extends QueryBuilder<Entity> {
   limit(limit?: number): this;
   offset(offset?: number): this;
+  skip(skip?: number): this;
+  take(take?: number): this;
 }
 
 /**
@@ -48,21 +50,23 @@ export class FilterQueryBuilder<Entity> {
    * @param query - the query to apply.
    */
   select(query: Query<Entity>): SelectQueryBuilder<Entity> {
+    const hasRelations = this.filterHasRelations(query.filter);
     let qb = this.createQueryBuilder();
-    qb = this.applyRelationJoins(qb, query.filter);
+    qb = hasRelations ? this.applyRelationJoins(qb, query.filter) : qb;
     qb = this.applyFilter(qb, query.filter, qb.alias);
     qb = this.applySorting(qb, query.sorting, qb.alias);
-    qb = this.applyPaging(qb, query.paging);
+    qb = this.applyPaging(qb, query.paging, hasRelations);
     return qb;
   }
 
   selectById(id: string | number | (string | number)[], query: Query<Entity>): SelectQueryBuilder<Entity> {
+    const hasRelations = this.filterHasRelations(query.filter);
     let qb = this.createQueryBuilder();
-    qb = this.applyRelationJoins(qb, query.filter);
+    qb = hasRelations ? this.applyRelationJoins(qb, query.filter) : qb;
     qb = qb.andWhereInIds(id);
     qb = this.applyFilter(qb, query.filter, qb.alias);
     qb = this.applySorting(qb, query.sorting, qb.alias);
-    qb = this.applyPaging(qb, query.paging);
+    qb = this.applyPaging(qb, query.paging, hasRelations);
     return qb;
   }
 
@@ -108,11 +112,17 @@ export class FilterQueryBuilder<Entity> {
    * Applies paging to a Pageable `typeorm` query builder
    * @param qb - the `typeorm` QueryBuilder
    * @param paging - the Paging options.
+   * @param useSkipTake - if skip/take should be used instead of limit/offset.
    */
-  applyPaging<P extends Pageable<Entity>>(qb: P, paging?: Paging): P {
+  applyPaging<P extends Pageable<Entity>>(qb: P, paging?: Paging, useSkipTake?: boolean): P {
     if (!paging) {
       return qb;
     }
+
+    if (useSkipTake) {
+      return qb.take(paging.limit).skip(paging.offset);
+    }
+
     return qb.limit(paging.limit).offset(paging.offset);
   }
 
@@ -165,12 +175,33 @@ export class FilterQueryBuilder<Entity> {
     return this.repo.createQueryBuilder();
   }
 
+  /**
+   * Gets relations referenced in the filter and adds joins for them to the query builder
+   * @param qb - the `typeorm` QueryBuilder.
+   * @param filter - the filter.
+   *
+   * @returns the query builder for chaining
+   */
   private applyRelationJoins(qb: SelectQueryBuilder<Entity>, filter?: Filter<Entity>): SelectQueryBuilder<Entity> {
     if (!filter) {
       return qb;
     }
     const referencedRelations = this.getReferencedRelations(filter);
     return referencedRelations.reduce((rqb, relation) => rqb.leftJoin(`${rqb.alias}.${relation}`, relation), qb);
+  }
+
+  /**
+   * Checks if a filter references any relations.
+   * @param filter
+   * @private
+   *
+   * @returns true if there are any referenced relations
+   */
+  private filterHasRelations(filter?: Filter<Entity>): boolean {
+    if (!filter) {
+      return false;
+    }
+    return this.getReferencedRelations(filter).length > 0;
   }
 
   private getReferencedRelations(filter: Filter<Entity>): string[] {
