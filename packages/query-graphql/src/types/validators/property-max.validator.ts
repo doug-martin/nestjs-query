@@ -5,11 +5,17 @@ import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments 
 export class PropertyMax implements ValidatorConstraintInterface {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
   validate(value: any, args: ValidationArguments): boolean {
-    const object = args.object as Record<string, Record<string, number>>;
-    const field = args.constraints[0] as string;
     const maxVal = args.constraints[1] as number;
+    if (maxVal === -1) {
+      return true;
+    }
+    const field = args.constraints[0] as string;
+    const object = args.object as Record<string, Record<string, number>>;
     const prop = object[args.property] ?? {};
-    return prop[field] !== undefined ? prop[field] <= maxVal : true;
+    if (prop[field] === undefined) {
+      return true;
+    }
+    return prop[field] <= maxVal;
   }
 
   defaultMessage(args: ValidationArguments): string {
