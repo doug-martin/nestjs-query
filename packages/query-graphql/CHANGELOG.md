@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.24.2](https://github.com/doug-martin/nestjs-query/compare/v0.24.1...v0.24.2) (2021-03-17)
+
+
+### Bug Fixes
+
+* **graphql,hooks,#957:** Fix HookInterceptor not working with custom resolvers ([c947b3a](https://github.com/doug-martin/nestjs-query/commit/c947b3a509d9ba12310680baf8382d8ec7116fd7))
+
+
+
+
+
 # [0.24.0](https://github.com/doug-martin/nestjs-query/compare/v0.23.1...v0.24.0) (2021-03-15)
 
 
