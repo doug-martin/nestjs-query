@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.24.3](https://github.com/doug-martin/nestjs-query/compare/v0.24.2...v0.24.3) (2021-03-17)
+
+
+### Features
+
+* **graphql,#609:** Allow disabling maxResultSize ([a3cd664](https://github.com/doug-martin/nestjs-query/commit/a3cd664eb3cd2ebf81a110b7218fb69d4b4a3955)), closes [#609](https://github.com/doug-martin/nestjs-query/issues/609)
+
+
+
+
+
 ## [0.24.2](https://github.com/doug-martin/nestjs-query/compare/v0.24.1...v0.24.2) (2021-03-17)
 
 
