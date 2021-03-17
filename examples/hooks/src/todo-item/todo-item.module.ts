@@ -7,9 +7,11 @@ import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
+import { TodoItemResolver } from './todo-item.resolver';
 
 const guards = [AuthGuard];
 @Module({
+  providers: [TodoItemResolver],
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity]), AuthModule],

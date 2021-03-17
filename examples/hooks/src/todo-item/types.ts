@@ -1,10 +1,13 @@
 import { MutationArgsType, UpdateManyInputType } from '@nestjs-query/query-graphql';
-import { ArgsType, InputType } from '@nestjs/graphql';
+import { ArgsType, InputType, OmitType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
 
 @InputType()
-class UpdateManyTodoItemsInput extends UpdateManyInputType(TodoItemDTO, TodoItemUpdateDTO) {}
+class MarkTodoItemAsCompleted extends OmitType(TodoItemUpdateDTO, ['completed']) {}
+
+@InputType()
+class MarkTodoItemsAsCompletedInput extends UpdateManyInputType(TodoItemDTO, MarkTodoItemAsCompleted) {}
 
 @ArgsType()
-export class UpdateManyTodoItemsArgs extends MutationArgsType(UpdateManyTodoItemsInput) {}
+export class MarkTodoItemsAsCompletedArgs extends MutationArgsType(MarkTodoItemsAsCompletedInput) {}
