@@ -141,18 +141,18 @@
         <summary type="html"><![CDATA[* Added decorators option to resolver options to allow providing custom decorators to endpoints #36]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.3.5]]></title>
-        <id>v0.3.5</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/23/v0.3.5"/>
-        <updated>2020-02-23T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* FIXED] Validate Input for Create & Update [#19]]></summary>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[v0.3.4]]></title>
         <id>v0.3.4</id>
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/23/v0.3.4"/>
         <updated>2020-02-23T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[* FIXED] Can't remove on Many-To-Many relations [#31]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.5]]></title>
+        <id>v0.3.5</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/23/v0.3.5"/>
+        <updated>2020-02-23T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* FIXED] Validate Input for Create & Update [#19]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[v0.3.2]]></title>
@@ -218,6 +218,13 @@
         <summary type="html"><![CDATA[* Dont allow empty filters with updateMany or deleteMany operations.]]></summary>
     </entry>
     <entry>
+        <title type="html"><![CDATA[v0.0.4]]></title>
+        <id>v0.0.4</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.4"/>
+        <updated>2020-01-27T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Add files field to @nestjs-query/core package.json]]></summary>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[v0.0.2]]></title>
         <id>v0.0.2</id>
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.2"/>
@@ -230,13 +237,6 @@
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.3"/>
         <updated>2020-01-27T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[* Fix package READMEs]]></summary>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[v0.0.4]]></title>
-        <id>v0.0.4</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.4"/>
-        <updated>2020-01-27T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Add files field to @nestjs-query/core package.json]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[Initial Release]]></title>
