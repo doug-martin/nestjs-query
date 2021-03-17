@@ -165,7 +165,7 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
       return expectSDL([TestCursorQueryManualOptionsResolver], cursorQueryArgsOptionsTypeSDL);
     });
 
-    it('allow validate a maxResultsSize for paging.first', () => {
+    it('should validate a maxResultsSize for paging.first', () => {
       const queryObj: TestCursorQuery = {
         paging: { first: 10 },
       };
@@ -183,7 +183,7 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
       ]);
     });
 
-    it('allow validate a maxResultsSize for paging.last', () => {
+    it('should validate a maxResultsSize for paging.last', () => {
       const queryObj: TestCursorQuery = {
         paging: { last: 10, before: 'abc' },
       };
@@ -199,6 +199,20 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
           value: queryObj.paging,
         },
       ]);
+    });
+
+    it('should ignore a maxResultsSize for paging.first and paging.last if maxResultSize === -1', () => {
+      class NoMaxQueryArgsTpe extends QueryArgsType(TestDto, { maxResultsSize: -1 }) {}
+      const queryObjFirst: NoMaxQueryArgsTpe = {
+        paging: { first: 1000 },
+      };
+      expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObjFirst))).toEqual([]);
+
+      const queryObjLast: NoMaxQueryArgsTpe = {
+        paging: { last: 1000, before: 'abc' },
+      };
+      const queryInstance = plainToClass(NoMaxQueryArgsTpe, queryObjLast);
+      expect(validateSync(queryInstance)).toEqual([]);
     });
   });
 });

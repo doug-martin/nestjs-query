@@ -93,7 +93,7 @@ describe('Offset paging strategy QueryArgsType with decorator options', (): void
     return expectSDL([TestOffsetQueryOptionsDecoratorResolver], offsetQueryArgsDecoratorTypeSDL);
   });
 
-  it('validate a maxResultsSize for paging.limit', () => {
+  it('should validate a maxResultsSize for paging.limit', () => {
     const queryObj: CursorQueryArgsType<TestDto> = {
       paging: { limit: 10 },
     };

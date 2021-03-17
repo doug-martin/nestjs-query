@@ -94,7 +94,7 @@ describe('QueryArgsType with decorator options', (): void => {
   });
 
   describe('max result size', () => {
-    it('allow validate a maxResultsSize for paging.first', () => {
+    it('should validate a maxResultsSize for paging.first', () => {
       const queryObj: CursorQueryOptionsArgs = {
         paging: { first: 10 },
       };
@@ -112,7 +112,7 @@ describe('QueryArgsType with decorator options', (): void => {
       ]);
     });
 
-    it('allow validate a maxResultsSize for paging.last', () => {
+    it('should validate a maxResultsSize for paging.last', () => {
       const queryObj: CursorQueryOptionsArgs = {
         paging: { last: 10, before: 'abc' },
       };

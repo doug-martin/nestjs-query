@@ -196,6 +196,10 @@ By default the max number records that can be returned is `50`.
 
 To override the default you can override the following options specifying the `maxResultSize` option.
 
+:::note
+You can disable `maxResultSize` by setting the option to `-1`.
+:::
+
 In this example we specify limit the max number of records an end user can request to 20.
 
 ```ts title="todo-item.dto.ts" {5}
