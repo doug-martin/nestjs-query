@@ -105,6 +105,14 @@ your class with `@Resolver`.
  DTO/Entity.
 :::
 
+:::warning
+When using the `@Resolver` decorator from `@nestjs/graphql` you must use the following
+```ts
+@Resolver(() => DTOClass)
+```
+otherwise relations will not work.
+:::
+
 ```ts title="todo-item.resolver.ts"
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver } from '@nestjs-query/query-graphql';
