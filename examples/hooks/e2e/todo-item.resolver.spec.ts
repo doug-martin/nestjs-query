@@ -1168,6 +1168,58 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         }));
   });
 
+  describe('markAllAsCompleted', () => {
+    it('should call the beforeUpdateMany hook when marking all items as completed', async () => {
+      const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
+      const todoItems = await queryService.createMany([
+        { title: 'To Be Marked As Completed - 1', completed: false },
+        { title: 'To Be Marked As Completed - 2', completed: false },
+      ]);
+      expect(todoItems).toHaveLength(2);
+      const ids = todoItems.map((ti) => ti.id);
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .set({
+          [AUTH_HEADER_NAME]: config.auth.header,
+          [USER_HEADER_NAME]: 'e2e',
+        })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            markTodoItemsAsCompleted(
+              input: {
+                filter: {id: { in: [${ids.join(',')}]} },
+                update: { }
+              }
+            ) {
+              updatedCount
+            }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            markTodoItemsAsCompleted: {
+              updatedCount: 2,
+            },
+          },
+        })
+        .then(async () => {
+          const updatedTodoItems = await queryService.query({ filter: { id: { in: ids } } });
+          expect(
+            updatedTodoItems.map((ti) => ({
+              title: ti.title,
+              completed: ti.completed,
+              updatedBy: ti.updatedBy,
+            })),
+          ).toEqual([
+            { title: 'To Be Marked As Completed - 1', completed: true, updatedBy: 'e2e@nestjs-query.com' },
+            { title: 'To Be Marked As Completed - 2', completed: true, updatedBy: 'e2e@nestjs-query.com' },
+          ]);
+        });
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });

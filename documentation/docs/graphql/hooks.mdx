@@ -413,45 +413,58 @@ import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
 
 // create the base input type
 @InputType()
-export class UpdateManyTodoItemsInput extends UpdateManyInputType(TodoItemDTO, TodoItemUpdateDTO) {}
+export class MarkTodoItemsAsCompletedInput extends UpdateManyInputType(TodoItemDTO, TodoItemUpdateDTO) {}
 
 // Wrap the input in the MutationArgsType to provide a uniform format for all mutations
 // The `MutationArgsType` is a thin wrapper that names the args as input
 @ArgsType()
-export class UpdateManyTodoItemsArgs extends MutationArgsType(UpdateManyTodoItemsInput) {}
+export class MarkTodoItemsAsCompletedArgs extends MutationArgsType(UpdateManyTodoItemsInput) {}
 ```
 Now we can use our new types in the resolver.
 
-```ts title="todo-item/todo-item.resolver.ts" {14,15}
+```ts title="todo-item/todo-item.resolver.ts" {16,17}
 import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@nestjs-query/core';
 import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@nestjs-query/query-graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
-import { UpdateManyTodoItemsArgs } from './types';
+import { MarkTodoItemsAsCompletedArgs } from './types';
+import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
 
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver {
   constructor(@InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemDTO>) {}
 
+  // Set the return type to the TodoItemConnection
   @Mutation(() => UpdateManyResponseType())
-  @UseInterceptors(HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, TodoItemDTO))
-  markTodoItemsAsCompleted(@MutationHookArgs() { input }: UpdateManyTodoItemsArgs): Promise<UpdateManyResponse> {
+  @UseInterceptors(HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, TodoItemUpdateDTO))
+  markTodoItemsAsCompleted(@MutationHookArgs() { input }: MarkTodoItemsAsCompletedArgs): Promise<UpdateManyResponse> {
     return this.service.updateMany(
-      { ...input.update, completed: false },
+      { ...input.update, completed: true },
       mergeFilter(input.filter, { completed: { is: false } }),
     );
   }
 }
+
 ```
 The first thing to notice is the
 
 ```ts
-@UseInterceptors(HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, TodoItemDTO))
+@UseInterceptors(HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, TodoItemUpdateDTO))
 ```
 
 This interceptor adds the correct hook to the `context` to be used by the param decorator.
+
+There are a few things to take note of:
+* The `HookTypes.BEFORE_UPDATE_MANY` lets the interceptor know we are wanting the BeforeUpdateMany hook to be used
+for this mutation.
+* We use the `TodoItemUpdateDTO`, that is because the `@BeforeUpdateMany` decorator was put on the
+`TodoItemUpdateDTO` not the `TodoItemDTO`.
+
+:::warning
+When using the HookInterceptor you must use the DTO that you added the hook decorator to.
+:::
 
 :::note
 In this example we bind the `BEFORE_UPDATE_MANY` hook, you can use any of the hooks available to bind to the correct
