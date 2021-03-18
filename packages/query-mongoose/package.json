@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-mongoose",
-  "version": "0.24.0",
+  "version": "0.24.4",
   "description": "Mongoose adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.24.0",
+    "@nestjs-query/core": "0.24.4",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.merge": "^4.6.2",
     "tslib": "^2.1.0"

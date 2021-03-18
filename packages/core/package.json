@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/core",
-  "version": "0.24.0",
+  "version": "0.24.4",
   "description": "Base query package",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "lodash.merge": "^4.6.2",
-    "tslib": "^2.1.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^2.1.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
