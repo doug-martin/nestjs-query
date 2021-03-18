@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@nestjs-query/core": "0.24.0",
-    "lodash.pick": "4.4.0"
+    "lodash.pick": "4.4.0",
+    "tslib": "^2.1.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",

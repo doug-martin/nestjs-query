@@ -43,7 +43,8 @@
     "lodash.omit": "^4.5.0",
     "lower-case-first": "^2.0.1",
     "pluralize": "^8.0.0",
-    "upper-case-first": "^2.0.1"
+    "upper-case-first": "^2.0.1",
+    "tslib": "^2.1.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
