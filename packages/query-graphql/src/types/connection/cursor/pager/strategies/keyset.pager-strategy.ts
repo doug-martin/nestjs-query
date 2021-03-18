@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
 import { KeySetCursorPayload, KeySetPagingOpts, PagerStrategy } from './pager-strategy';
 import { CursorPagingType } from '../../../../query';
-import { hasBeforeCursor, isBackwardPaging, isForwardPaging } from './helpers';
+import { decodeBase64, encodeBase64, hasBeforeCursor, isBackwardPaging, isForwardPaging } from './helpers';
 
 export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
   constructor(readonly DTOClass: Class<DTO>, readonly pageFields: (keyof DTO)[]) {}
@@ -68,12 +68,12 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
   }
 
   private encodeCursor(fields: KeySetCursorPayload<DTO>): string {
-    return Buffer.from(JSON.stringify(fields), 'utf8').toString('base64');
+    return encodeBase64(JSON.stringify(fields));
   }
 
   private decodeCursor(cursor: string): KeySetCursorPayload<DTO> {
     try {
-      const payload = JSON.parse(Buffer.from(cursor, 'base64').toString('utf8')) as KeySetCursorPayload<DTO>;
+      const payload = JSON.parse(decodeBase64(cursor)) as KeySetCursorPayload<DTO>;
       if (payload.type !== 'keyset') {
         throw new BadRequestException('Invalid cursor');
       }

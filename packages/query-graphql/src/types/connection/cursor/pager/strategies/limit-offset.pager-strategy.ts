@@ -1,12 +1,13 @@
-import { cursorToOffset, offsetToCursor } from 'graphql-relay';
 import { Query } from '@nestjs-query/core';
 import { CursorPagingType } from '../../../../query';
 import { OffsetPagingOpts, PagerStrategy } from './pager-strategy';
-import { hasBeforeCursor, isBackwardPaging, isForwardPaging } from './helpers';
+import { decodeBase64, encodeBase64, hasBeforeCursor, isBackwardPaging, isForwardPaging } from './helpers';
 
 export class LimitOffsetPagerStrategy<DTO> implements PagerStrategy<DTO> {
+  private static CURSOR_PREFIX = 'arrayconnection:';
+
   toCursor(dto: DTO, index: number, pagingOpts: OffsetPagingOpts): string {
-    return offsetToCursor(pagingOpts.offset + index);
+    return LimitOffsetPagerStrategy.offsetToCursor(pagingOpts.offset + index);
   }
 
   fromCursorArgs(cursor: CursorPagingType): OffsetPagingOpts {
@@ -59,7 +60,7 @@ export class LimitOffsetPagerStrategy<DTO> implements PagerStrategy<DTO> {
   private getLimit(cursor: CursorPagingType): number {
     if (isBackwardPaging(cursor)) {
       const { last = 0, before } = cursor;
-      const offsetFromCursor = before ? cursorToOffset(before) : 0;
+      const offsetFromCursor = before ? LimitOffsetPagerStrategy.cursorToOffset(before) : 0;
       const offset = offsetFromCursor - last;
       // Check to see if our before-page is underflowing past the 0th item
       if (offset < 0) {
@@ -74,14 +75,22 @@ export class LimitOffsetPagerStrategy<DTO> implements PagerStrategy<DTO> {
   private getOffset(cursor: CursorPagingType): number {
     if (isBackwardPaging(cursor)) {
       const { last, before } = cursor;
-      const beforeOffset = before ? cursorToOffset(before) : 0;
+      const beforeOffset = before ? LimitOffsetPagerStrategy.cursorToOffset(before) : 0;
       const offset = last ? beforeOffset - last : 0;
 
       // Check to see if our before-page is underflowing past the 0th item
       return Math.max(offset, 0);
     }
     const { after } = cursor;
-    const offset = after ? cursorToOffset(after) + 1 : 0;
+    const offset = after ? LimitOffsetPagerStrategy.cursorToOffset(after) + 1 : 0;
     return Math.max(offset, 0);
+  }
+
+  private static offsetToCursor(offset: number): string {
+    return encodeBase64(`${this.CURSOR_PREFIX}${String(offset)}`);
+  }
+
+  private static cursorToOffset(cursor: string): number {
+    return parseInt(decodeBase64(cursor).substring(this.CURSOR_PREFIX.length), 10);
   }
 }
