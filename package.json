@@ -16,7 +16,8 @@
     "jest": "jest --runInBand --coverage",
     "jest:e2e": "jest --runInBand --config=./jest.e2e.config.js",
     "jest:unit": "jest --coverage --config=./jest.unit.config.js",
-    "coverage": "cat ./coverage/lcov.info | coveralls"
+    "coverage": "cat ./coverage/lcov.info | coveralls",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@commitlint/cli": "12.0.1",
