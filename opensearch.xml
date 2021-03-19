@@ -4,8 +4,8 @@
   <ShortName>Nestjs-query</ShortName>
   <Description>Search Nestjs-query</Description>
   <InputEncoding>UTF-8</InputEncoding>
-  <Image width="16" height="16" type="image/x-icon">https://doug-martin.github.io/img/favicon.ico</Image>
-  <Url type="text/html" method="get" template="https://doug-martin.github.io/search?q={searchTerms}"/>
-  <Url type="application/opensearchdescription+xml" rel="self" template="https://doug-martin.github.io/opensearch.xml" />
-  <moz:SearchForm>https://doug-martin.github.io</moz:SearchForm>
+  <Image width="16" height="16" type="image/x-icon">https://doug-martin.github.io/nestjs-query/img/favicon.ico</Image>
+  <Url type="text/html" method="get" template="https://doug-martin.github.io/nestjs-query/search?q={searchTerms}"/>
+  <Url type="application/opensearchdescription+xml" rel="self" template="https://doug-martin.github.io/nestjs-query/opensearch.xml" />
+  <moz:SearchForm>https://doug-martin.github.io/nestjs-query/</moz:SearchForm>
 </OpenSearchDescription>
