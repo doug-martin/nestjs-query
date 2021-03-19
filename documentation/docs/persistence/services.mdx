@@ -68,7 +68,7 @@ import {
 } from 'sequelize-typescript';
 
 @Table
-export class TodoItemEntity extends Model<TodoItemEntity> {
+export class TodoItemEntity extends Model<TodoItemEntity, Partial<TodoItemEntity>> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -589,7 +589,7 @@ import {
 import { TodoItemEntity } from '../todo-item/entity/todo-item.entity';
 
 @Table({})
-export class SubTaskEntity extends Model<SubTaskEntity> {
+export class SubTaskEntity extends Model<SubTaskEntity, Partial<SubTaskEntity>> {
   @PrimaryKey
   @AutoIncrement
   @Column
@@ -758,7 +758,7 @@ import { TodoItem } from '../todo-item/entity/todo-item';
 @ObjectType()
 @Relation('todoItem', () => TodoItem, { disableRemove: true })
 @Table
-export class SubTask extends Model<SubTaskEntity> {
+export class SubTaskEntity extends Model<SubTaskEntity, Partial<SubTaskEntity>> {
   @FilterableField(() => ID)
   @PrimaryKey
   @AutoIncrement

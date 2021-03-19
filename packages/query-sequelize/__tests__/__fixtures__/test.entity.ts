@@ -7,7 +7,7 @@ import { TestRelation } from './test-relation.entity';
 // eslint-disable-next-line @typescript-eslint/no-use-before-define,@typescript-eslint/ban-types
 @AssemblerDeserializer((obj: object) => TestEntity.build(obj))
 @Table({ timestamps: false })
-export class TestEntity extends Model<TestEntity> {
+export class TestEntity extends Model<TestEntity, Partial<TestEntity>> {
   @PrimaryKey
   @Column({ field: 'test_entity_pk' })
   testEntityPk!: string;

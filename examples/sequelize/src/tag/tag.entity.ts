@@ -12,7 +12,7 @@ import { TodoItemEntityTags } from '../todo-item/entity/todo-item-tag.entity';
 import { TodoItemEntity } from '../todo-item/entity/todo-item.entity';
 
 @Table({})
-export class TagEntity extends Model<TagEntity> {
+export class TagEntity extends Model<TagEntity, Partial<TagEntity>> {
   @PrimaryKey
   @AutoIncrement
   @Column

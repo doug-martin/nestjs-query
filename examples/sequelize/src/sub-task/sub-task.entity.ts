@@ -13,7 +13,7 @@ import {
 import { TodoItemEntity } from '../todo-item/entity/todo-item.entity';
 
 @Table({})
-export class SubTaskEntity extends Model<SubTaskEntity> {
+export class SubTaskEntity extends Model<SubTaskEntity, Partial<SubTaskEntity>> {
   @PrimaryKey
   @AutoIncrement
   @Column
