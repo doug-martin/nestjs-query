@@ -13,47 +13,31 @@ module.exports = {
       'concepts/queries',
       'concepts/services',
       {
-        type: 'category',
-        label: 'Advanced',
-        items: ['concepts/advanced/assemblers'],
+        Advanced: ['concepts/advanced/assemblers'],
       },
     ],
     Persistence: [
       'persistence/services',
       {
-        type: 'category',
-        label: 'TypeOrm',
-        items: [
+        TypeOrm: [
           'persistence/typeorm/getting-started',
           'persistence/typeorm/custom-service',
           'persistence/typeorm/multiple-databases',
           'persistence/typeorm/soft-delete',
           'persistence/typeorm/testing-services',
         ],
-      },
-      {
-        type: 'category',
-        label: 'Sequelize',
-        items: [
+        Sequelize: [
           'persistence/sequelize/getting-started',
           'persistence/sequelize/custom-service',
           'persistence/sequelize/serialization',
         ],
-      },
-      {
-        type: 'category',
-        label: 'Mongoose',
-        items: [
+        Mongoose: [
           'persistence/mongoose/getting-started',
           'persistence/mongoose/relations',
           'persistence/mongoose/custom-service',
           'persistence/mongoose/serialization',
         ],
-      },
-      {
-        type: 'category',
-        label: 'Typegoose',
-        items: [
+        Typegoose: [
           'persistence/typegoose/getting-started',
           'persistence/typegoose/relations',
           'persistence/typegoose/custom-service',
