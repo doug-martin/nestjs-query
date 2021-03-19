@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-sequelize",
-  "version": "0.24.4",
+  "version": "0.24.5",
   "description": "Sequelize adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
