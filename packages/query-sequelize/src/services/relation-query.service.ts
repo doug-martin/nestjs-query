@@ -23,7 +23,7 @@ interface SequelizeAssociation {
  * Base class to house relations loading.
  * @internal
  */
-export abstract class RelationQueryService<Entity extends Model> {
+export abstract class RelationQueryService<Entity extends Model<Entity, Partial<Entity>>> {
   abstract filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   abstract model: ModelCtor<Entity>;
@@ -401,7 +401,7 @@ export abstract class RelationQueryService<Entity extends Model> {
 
   private ensureIsEntity(e: Entity): Entity {
     if (!(e instanceof this.model)) {
-      return this.model.build(e) as Entity;
+      return this.model.build(e);
     }
     return e;
   }
@@ -426,7 +426,7 @@ export abstract class RelationQueryService<Entity extends Model> {
     const relationEntity = this.getRelationEntity(relationName);
     const relationQueryBuilder = this.getRelationQueryBuilder(relationEntity);
     const findOptions = relationQueryBuilder.findByIdOptions(ids, { filter });
-    return relationEntity.findAll({ ...findOptions, attributes: relationEntity.primaryKeyAttributes });
+    return relationEntity.findAll({ ...findOptions, attributes: [...relationEntity.primaryKeyAttributes] });
   }
 
   private foundAllRelations(relationIds: (string | number)[], relations: Model[]): boolean {

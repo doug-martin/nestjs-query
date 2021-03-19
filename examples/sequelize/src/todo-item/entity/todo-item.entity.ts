@@ -17,7 +17,7 @@ import { TagEntity } from '../../tag/tag.entity';
 import { TodoItemEntityTags } from './todo-item-tag.entity';
 
 @Table({})
-export class TodoItemEntity extends Model<TodoItemEntity> {
+export class TodoItemEntity extends Model<TodoItemEntity, Partial<TodoItemEntity>> {
   @PrimaryKey
   @AutoIncrement
   @Column

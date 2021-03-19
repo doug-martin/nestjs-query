@@ -38,7 +38,7 @@ interface Pageable {
  *
  * Class that will convert a Query into a `sequelize` Query Builder.
  */
-export class FilterQueryBuilder<Entity extends Model<Entity>> {
+export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
   constructor(
     readonly model: ModelCtor<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
@@ -200,8 +200,9 @@ export class FilterQueryBuilder<Entity extends Model<Entity>> {
     }
     const referencedRelations = this.getReferencedRelations(filter);
     return [...referencedRelations.values()].reduce((find, association) => {
+      const { include = [] } = find;
       // eslint-disable-next-line no-param-reassign
-      find.include = [...(find.include || []), { association, attributes: [] }];
+      find.include = [...(Array.isArray(include) ? include : [include]), { association, attributes: [] }];
       return find;
     }, findOpts);
   }

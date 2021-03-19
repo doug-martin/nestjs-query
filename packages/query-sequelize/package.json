@@ -25,7 +25,7 @@
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/sequelize": "^0.2.0",
-    "sequelize": "^5.21.11",
+    "sequelize": "^6.5.0",
     "sequelize-typescript": "^1.1.0"
   },
   "devDependencies": {
@@ -33,9 +33,8 @@
     "@nestjs/sequelize": "0.2.0",
     "@nestjs/testing": "7.6.14",
     "@types/lodash.pick": "4.4.6",
-    "@types/sequelize": "4.28.9",
-    "sequelize": "5.22.4",
-    "sequelize-typescript": "1.1.0",
+    "sequelize": "6.5.1",
+    "sequelize-typescript": "2.1.0",
     "sqlite3": "5.0.2",
     "ts-mockito": "2.6.1",
     "typescript": "4.2.3"

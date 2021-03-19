@@ -137,7 +137,7 @@ class UserEntity {
 import { Table, Column, Model } from 'sequelize-typescript';
 
 @Table
-export class UserEntity extends Model<UserEntity> {
+export class UserEntity extends Model<UserEntity, Partial<UserEntity>> {
    @Column
    first!: string;
 

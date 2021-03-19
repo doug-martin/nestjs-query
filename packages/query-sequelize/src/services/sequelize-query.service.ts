@@ -35,7 +35,7 @@ import { RelationQueryService } from './relation-query.service';
  * }
  * ```
  */
-export class SequelizeQueryService<Entity extends Model<Entity>>
+export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>>
   extends RelationQueryService<Entity>
   implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
   readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
