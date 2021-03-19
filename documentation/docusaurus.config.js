@@ -3,10 +3,13 @@ module.exports = {
   tagline: 'Easy CRUD for GraphQL.',
   url: 'https://doug-martin.github.io', // Your website URL
   baseUrl: '/nestjs-query/',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'doug-martin', // Usually your GitHub org/user name.
   projectName: 'nestjs-query', // Usually your repo name.
   themeConfig: {
+    hideableSidebar: true,
     navbar: {
       title: 'Nestjs-query',
       logo: {
@@ -20,8 +23,9 @@ module.exports = {
         { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/doug-martin/nestjs-query',
-          label: 'GitHub',
           position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
         },
       ],
     },
