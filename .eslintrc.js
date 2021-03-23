@@ -20,11 +20,12 @@ module.exports = {
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:jest/recommended',
     'plugin:jest/style',
-    'prettier',
-    'prettier/@typescript-eslint',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    "plugin:prettier/recommended"
   ],
   rules: {
-    'prettier/prettier': 'error',
     // airbnb default is 1
     'max-classes-per-file': ['error', 5],
     // never allow default export
