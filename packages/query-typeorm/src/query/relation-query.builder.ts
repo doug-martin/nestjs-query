@@ -96,7 +96,7 @@ export class RelationQueryBuilder<Entity, Relation> {
     query: Query<Relation>,
     aggregateQuery: AggregateQuery<Relation>,
   ): SelectQueryBuilder<EntityIndexRelation<Record<string, unknown>>> {
-    const selects = [...AggregateBuilder.getAggregateAliases(aggregateQuery), this.entityIndexColName].map((c) =>
+    const selects = [...AggregateBuilder.getAggregateSelects(aggregateQuery), this.entityIndexColName].map((c) =>
       this.escapeName(c),
     );
     const unionFragment = this.createUnionAggregateSubQuery(entities, query, aggregateQuery);
@@ -114,7 +114,13 @@ export class RelationQueryBuilder<Entity, Relation> {
   ): SelectQueryBuilder<Relation> {
     let relationBuilder = this.createRelationQueryBuilder(entity);
     relationBuilder = this.filterQueryBuilder.applyAggregate(relationBuilder, aggregateQuery, relationBuilder.alias);
-    return this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
+    relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
+    relationBuilder = this.filterQueryBuilder.applyGroupBy(
+      relationBuilder,
+      aggregateQuery.groupBy,
+      relationBuilder.alias,
+    );
+    return relationBuilder;
   }
 
   private createUnionAggregateSubQuery(

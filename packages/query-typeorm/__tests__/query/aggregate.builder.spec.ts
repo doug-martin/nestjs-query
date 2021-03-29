@@ -23,7 +23,7 @@ describe('AggregateBuilder', (): void => {
     expect(() => createAggregateBuilder().build(getQueryBuilder(), {})).toThrow('No aggregate fields found.');
   });
 
-  it('or multiple operators for a single field together', (): void => {
+  it('should create selects for all aggregate functions', (): void => {
     assertSQL(
       {
         count: ['testEntityPk'],
@@ -47,30 +47,53 @@ describe('AggregateBuilder', (): void => {
     );
   });
 
+  it('should create selects for all aggregate functions and group bys', (): void => {
+    assertSQL(
+      {
+        groupBy: ['stringType', 'boolType'],
+        count: ['testEntityPk'],
+      },
+      'SELECT ' +
+        '"TestEntity"."string_type" AS "GROUP_BY_stringType", ' +
+        '"TestEntity"."bool_type" AS "GROUP_BY_boolType", ' +
+        'COUNT("TestEntity"."test_entity_pk") AS "COUNT_testEntityPk" ' +
+        'FROM "test_entity" "TestEntity"',
+      [],
+    );
+  });
+
   describe('.convertToAggregateResponse', () => {
     it('should convert a flat response into an Aggregtate response', () => {
-      const dbResult = {
-        COUNT_testEntityPk: 10,
-        SUM_numberType: 55,
-        AVG_numberType: 5,
-        MAX_stringType: 'z',
-        MAX_numberType: 10,
-        MIN_stringType: 'a',
-        MIN_numberType: 1,
-      };
-      expect(AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toEqual({
-        count: { testEntityPk: 10 },
-        sum: { numberType: 55 },
-        avg: { numberType: 5 },
-        max: { stringType: 'z', numberType: 10 },
-        min: { stringType: 'a', numberType: 1 },
-      });
+      const dbResult = [
+        {
+          GROUP_BY_stringType: 'z',
+          COUNT_testEntityPk: 10,
+          SUM_numberType: 55,
+          AVG_numberType: 5,
+          MAX_stringType: 'z',
+          MAX_numberType: 10,
+          MIN_stringType: 'a',
+          MIN_numberType: 1,
+        },
+      ];
+      expect(AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toEqual([
+        {
+          groupBy: { stringType: 'z' },
+          count: { testEntityPk: 10 },
+          sum: { numberType: 55 },
+          avg: { numberType: 5 },
+          max: { stringType: 'z', numberType: 10 },
+          min: { stringType: 'a', numberType: 1 },
+        },
+      ]);
     });
 
     it('should throw an error if a column is not expected', () => {
-      const dbResult = {
-        COUNTtestEntityPk: 10,
-      };
+      const dbResult = [
+        {
+          COUNTtestEntityPk: 10,
+        },
+      ];
       expect(() => AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toThrow(
         'Unknown aggregate column encountered.',
       );
