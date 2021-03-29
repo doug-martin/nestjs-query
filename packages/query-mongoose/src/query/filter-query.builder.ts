@@ -1,6 +1,6 @@
 import { AggregateQuery, Filter, Query, SortDirection, SortField } from '@nestjs-query/core';
 import { FilterQuery, Document } from 'mongoose';
-import { AggregateBuilder, MongooseAggregate } from './aggregate.builder';
+import { AggregateBuilder, MongooseGroupAndAggregate } from './aggregate.builder';
 import { getSchemaKey } from './helpers';
 import { WhereBuilder } from './where.builder';
 
@@ -13,7 +13,7 @@ type MongooseQuery<Entity extends Document> = {
 
 type MongooseAggregateQuery<Entity extends Document> = {
   filterQuery: FilterQuery<Entity>;
-  aggregate: MongooseAggregate;
+  aggregate: MongooseGroupAndAggregate;
 };
 /**
  * @internal

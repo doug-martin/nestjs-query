@@ -68,13 +68,16 @@ export class MongooseQueryService<Entity extends Document>
     return this.Model.find(filterQuery, {}, options).exec();
   }
 
-  async aggregate(filter: Filter<Entity>, aggregateQuery: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
+  async aggregate(
+    filter: Filter<Entity>,
+    aggregateQuery: AggregateQuery<Entity>,
+  ): Promise<AggregateResponse<Entity>[]> {
     const { aggregate, filterQuery } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter);
     const aggResult = (await this.Model.aggregate<Record<string, unknown>>([
       { $match: filterQuery },
-      { $group: { _id: null, ...aggregate } },
+      { $group: aggregate },
     ]).exec()) as Record<string, unknown>[];
-    return AggregateBuilder.convertToAggregateResponse(aggResult[0]);
+    return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 
   count(filter: Filter<Entity>): Promise<number> {
