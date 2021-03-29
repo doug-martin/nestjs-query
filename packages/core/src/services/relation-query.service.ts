@@ -95,7 +95,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     dto: DTO,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation>>;
+  ): Promise<AggregateResponse<Relation>[]>;
 
   async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -103,7 +103,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     dtos: DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+  ): Promise<Map<DTO, AggregateResponse<Relation>[]>>;
 
   async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -111,7 +111,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     dto: DTO | DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation> | Map<DTO, AggregateResponse<Relation>>> {
+  ): Promise<AggregateResponse<Relation>[] | Map<DTO, AggregateResponse<Relation>[]>> {
     const serviceRelation = this.getRelation<Relation>(relationName);
     if (!serviceRelation) {
       if (Array.isArray(dto)) {
@@ -121,7 +121,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     }
     const { query: qf, service } = serviceRelation;
     if (Array.isArray(dto)) {
-      const map = new Map<DTO, AggregateResponse<Relation>>();
+      const map = new Map<DTO, AggregateResponse<Relation>[]>();
       await Promise.all(
         dto.map(async (d) => {
           const relations = await service.aggregate(mergeQuery({ filter }, qf(d)).filter ?? {}, aggregate);

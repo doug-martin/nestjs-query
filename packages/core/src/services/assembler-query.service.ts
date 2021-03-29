@@ -71,12 +71,12 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
     return this.assembler.convertAsyncToDTOs(this.queryService.query(this.assembler.convertQuery(query)));
   }
 
-  async aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>> {
+  async aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>[]> {
     const aggregateResponse = await this.queryService.aggregate(
       this.assembler.convertQuery({ filter }).filter || {},
       this.assembler.convertAggregateQuery(aggregate),
     );
-    return this.assembler.convertAggregateResponse(aggregateResponse);
+    return aggregateResponse.map((agg) => this.assembler.convertAggregateResponse(agg));
   }
 
   count(filter: Filter<DTO>): Promise<number> {
@@ -258,21 +258,21 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
     dto: DTO,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation>>;
+  ): Promise<AggregateResponse<Relation>[]>;
   aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+  ): Promise<Map<DTO, AggregateResponse<Relation>[]>>;
   async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation> | Map<DTO, AggregateResponse<Relation>>> {
+  ): Promise<AggregateResponse<Relation>[] | Map<DTO, AggregateResponse<Relation>[]>> {
     if (Array.isArray(dto)) {
       const entities = this.assembler.convertToEntities(dto);
       const relationMap = await this.queryService.aggregateRelations(
@@ -283,10 +283,10 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
         aggregate,
       );
       return entities.reduce((map, e, index) => {
-        const entry = relationMap.get(e) ?? {};
+        const entry = relationMap.get(e) ?? [];
         map.set(dto[index], entry);
         return map;
-      }, new Map<DTO, AggregateResponse<Relation>>());
+      }, new Map<DTO, AggregateResponse<Relation>[]>());
     }
     return this.queryService.aggregateRelations(
       RelationClass,

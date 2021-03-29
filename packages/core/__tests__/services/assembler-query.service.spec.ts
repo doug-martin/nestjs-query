@@ -178,7 +178,7 @@ describe('AssemblerQueryService', () => {
       const mockQueryService = mock<QueryService<TestEntity>>();
       const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
       const aggQuery: AggregateQuery<TestDTO> = { count: ['foo'] };
-      const result: AggregateResponse<TestDTO> = { count: { foo: 1 } };
+      const result: AggregateResponse<TestDTO>[] = [{ count: { foo: 1 } }];
       when(
         mockQueryService.aggregateRelations(
           TestDTO,
@@ -233,10 +233,10 @@ describe('AssemblerQueryService', () => {
           objectContaining({ foo: { eq: 'bar' } }),
           aggQuery,
         ),
-      ).thenResolve(new Map<TestEntity, AggregateResponse<TestDTO>>());
+      ).thenResolve(new Map<TestEntity, AggregateResponse<TestDTO>[]>());
       return expect(
         assemblerService.aggregateRelations(TestDTO, 'test', [{ foo: 'bar' }], { foo: { eq: 'bar' } }, aggQuery),
-      ).resolves.toEqual(new Map([[dto, {}]]));
+      ).resolves.toEqual(new Map([[dto, []]]));
     });
   });
 

@@ -88,7 +88,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     return Promise.reject(new NotImplementedException('query is not implemented'));
   }
 
-  aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>> {
+  aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>[]> {
     return Promise.reject(new NotImplementedException('aggregate is not implemented'));
   }
 
@@ -183,7 +183,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     dto: DTO,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation>>;
+  ): Promise<AggregateResponse<Relation>[]>;
 
   aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -191,7 +191,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     dtos: DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+  ): Promise<Map<DTO, AggregateResponse<Relation>[]>>;
 
   aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -199,7 +199,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     dto: DTO | DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation> | Map<DTO, AggregateResponse<Relation>>> {
+  ): Promise<AggregateResponse<Relation>[] | Map<DTO, AggregateResponse<Relation>[]>> {
     return Promise.reject(new NotImplementedException('aggregateRelations is not implemented'));
   }
 }

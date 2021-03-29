@@ -128,7 +128,7 @@ describe('RelationQueryService', () => {
     it('should proxy to the underlying service when calling queryRelations with one dto', async () => {
       const relationName = 'test';
       const dto = new TestType();
-      const result = { count: { foo: 1 } };
+      const result = [{ count: { foo: 1 } }];
       const filter = {};
       const relationFilter = {};
       const relationAggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
@@ -143,7 +143,7 @@ describe('RelationQueryService', () => {
     it('should proxy to the underlying service when calling queryRelations with many dtos', async () => {
       const relationName = 'test';
       const dtos = [new TestType()];
-      const relationResults = { count: { foo: 1 } };
+      const relationResults = [{ count: { foo: 1 } }];
       const result = new Map([[dtos[0], relationResults]]);
       const filter = {};
       const relationFilter = {};
@@ -162,7 +162,7 @@ describe('RelationQueryService', () => {
       const dto = new TestType();
       const filter = {};
       const aggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
-      const result = { count: { foo: 1 } };
+      const result = [{ count: { foo: 1 } }];
       when(mockQueryService.aggregateRelations(TestType, relationName, dto, filter, aggregateQuery)).thenResolve(
         result,
       );
@@ -176,7 +176,7 @@ describe('RelationQueryService', () => {
       const dtos = [new TestType()];
       const filter = {};
       const aggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
-      const result = new Map([[dtos[0], { count: { foo: 1 } }]]);
+      const result = new Map([[dtos[0], [{ count: { foo: 1 } }]]]);
       when(mockQueryService.aggregateRelations(TestType, relationName, dtos, filter, aggregateQuery)).thenResolve(
         result,
       );
