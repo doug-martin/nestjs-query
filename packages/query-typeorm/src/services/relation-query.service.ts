@@ -82,7 +82,7 @@ export abstract class RelationQueryService<Entity> {
     entities: Entity[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<Entity, AggregateResponse<Relation>>>;
+  ): Promise<Map<Entity, AggregateResponse<Relation>[]>>;
 
   async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -90,7 +90,7 @@ export abstract class RelationQueryService<Entity> {
     dto: Entity,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation>>;
+  ): Promise<AggregateResponse<Relation>[]>;
 
   async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -98,7 +98,7 @@ export abstract class RelationQueryService<Entity> {
     dto: Entity | Entity[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation> | Map<Entity, AggregateResponse<Relation>>> {
+  ): Promise<AggregateResponse<Relation>[] | Map<Entity, AggregateResponse<Relation>[]>> {
     if (Array.isArray(dto)) {
       return this.batchAggregateRelations(RelationClass, relationName, dto, filter, aggregate);
     }
@@ -107,9 +107,9 @@ export abstract class RelationQueryService<Entity> {
     const aggResponse = await AggregateBuilder.asyncConvertToAggregateResponse(
       relationQueryBuilder
         .aggregate(dto, assembler.convertQuery({ filter }), assembler.convertAggregateQuery(aggregate))
-        .getRawOne<Record<string, unknown>>(),
+        .getRawMany<Record<string, unknown>>(),
     );
-    return assembler.convertAggregateResponse(aggResponse);
+    return aggResponse.map((agg) => assembler.convertAggregateResponse(agg));
   }
 
   async countRelations<Relation>(
@@ -326,7 +326,7 @@ export abstract class RelationQueryService<Entity> {
     entities: Entity[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<Entity, AggregateResponse<Relation>>> {
+  ): Promise<Map<Entity, AggregateResponse<Relation>[]>> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder<Relation>(relationName);
     const convertedQuery = assembler.convertQuery({ filter });
@@ -337,12 +337,15 @@ export abstract class RelationQueryService<Entity> {
       // eslint-disable-next-line no-underscore-dangle
       const index = relationAgg.__nestjsQuery__entityIndex__;
       const e = entities[index];
-      results.set(
-        e,
-        AggregateBuilder.convertToAggregateResponse(lodashOmit(relationAgg, relationQueryBuilder.entityIndexColName)),
-      );
+      const resultingAgg = results.get(e) ?? [];
+      results.set(e, [
+        ...resultingAgg,
+        ...AggregateBuilder.convertToAggregateResponse([
+          lodashOmit(relationAgg, relationQueryBuilder.entityIndexColName),
+        ]),
+      ]);
       return results;
-    }, new Map<Entity, AggregateResponse<Relation>>());
+    }, new Map<Entity, AggregateResponse<Relation>[]>());
   }
 
   /**

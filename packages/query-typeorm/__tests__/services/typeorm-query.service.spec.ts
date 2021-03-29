@@ -272,29 +272,100 @@ describe('TypeOrmQueryService', (): void => {
           min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
         },
       );
-      return expect(queryResult).toEqual({
-        avg: {
-          numberType: 5.5,
+      return expect(queryResult).toEqual([
+        {
+          avg: {
+            numberType: 5.5,
+          },
+          count: {
+            testEntityPk: 10,
+          },
+          max: {
+            dateType: expect.stringMatching('2020-02-10'),
+            numberType: 10,
+            stringType: 'foo9',
+            testEntityPk: 'test-entity-9',
+          },
+          min: {
+            dateType: expect.stringMatching('2020-02-01'),
+            numberType: 1,
+            stringType: 'foo1',
+            testEntityPk: 'test-entity-1',
+          },
+          sum: {
+            numberType: 55,
+          },
         },
-        count: {
-          testEntityPk: 10,
+      ]);
+    });
+
+    it('call aggregate with a group by', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.aggregate(
+        {},
+        {
+          groupBy: ['boolType'],
+          count: ['testEntityPk'],
+          avg: ['numberType'],
+          sum: ['numberType'],
+          max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
         },
-        max: {
-          dateType: expect.stringMatching('2020-02-10'),
-          numberType: 10,
-          stringType: 'foo9',
-          testEntityPk: 'test-entity-9',
+      );
+      return expect(queryResult).toEqual([
+        {
+          groupBy: {
+            boolType: 0,
+          },
+          avg: {
+            numberType: 5,
+          },
+          count: {
+            testEntityPk: 5,
+          },
+          max: {
+            dateType: expect.stringMatching('2020-02-09'),
+            numberType: 9,
+            stringType: 'foo9',
+            testEntityPk: 'test-entity-9',
+          },
+          min: {
+            dateType: expect.stringMatching('2020-02-01'),
+            numberType: 1,
+            stringType: 'foo1',
+            testEntityPk: 'test-entity-1',
+          },
+          sum: {
+            numberType: 25,
+          },
         },
-        min: {
-          dateType: expect.stringMatching('2020-02-01'),
-          numberType: 1,
-          stringType: 'foo1',
-          testEntityPk: 'test-entity-1',
+        {
+          groupBy: {
+            boolType: 1,
+          },
+          avg: {
+            numberType: 6,
+          },
+          count: {
+            testEntityPk: 5,
+          },
+          max: {
+            dateType: expect.stringMatching('2020-02-10'),
+            numberType: 10,
+            stringType: 'foo8',
+            testEntityPk: 'test-entity-8',
+          },
+          min: {
+            dateType: expect.stringMatching('2020-02-02'),
+            numberType: 2,
+            stringType: 'foo10',
+            testEntityPk: 'test-entity-10',
+          },
+          sum: {
+            numberType: 30,
+          },
         },
-        sum: {
-          numberType: 55,
-        },
-      });
+      ]);
     });
 
     it('call select with the aggregate columns and return the result with a filter', async () => {
@@ -309,29 +380,100 @@ describe('TypeOrmQueryService', (): void => {
           min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
         },
       );
-      return expect(queryResult).toEqual({
-        avg: {
-          numberType: 2,
+      return expect(queryResult).toEqual([
+        {
+          avg: {
+            numberType: 2,
+          },
+          count: {
+            testEntityPk: 3,
+          },
+          max: {
+            dateType: expect.stringMatching('2020-02-03'),
+            numberType: 3,
+            stringType: 'foo3',
+            testEntityPk: 'test-entity-3',
+          },
+          min: {
+            dateType: expect.stringMatching('2020-02-01'),
+            numberType: 1,
+            stringType: 'foo1',
+            testEntityPk: 'test-entity-1',
+          },
+          sum: {
+            numberType: 6,
+          },
         },
-        count: {
-          testEntityPk: 3,
+      ]);
+    });
+
+    it('call aggregate with a group and filter', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.aggregate(
+        { stringType: { in: ['foo1', 'foo2', 'foo3'] } },
+        {
+          groupBy: ['boolType'],
+          count: ['testEntityPk'],
+          avg: ['numberType'],
+          sum: ['numberType'],
+          max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
         },
-        max: {
-          dateType: expect.stringMatching('2020-02-03'),
-          numberType: 3,
-          stringType: 'foo3',
-          testEntityPk: 'test-entity-3',
+      );
+      return expect(queryResult).toEqual([
+        {
+          groupBy: {
+            boolType: 0,
+          },
+          avg: {
+            numberType: 2,
+          },
+          count: {
+            testEntityPk: 2,
+          },
+          max: {
+            dateType: expect.stringMatching('2020-02-03'),
+            numberType: 3,
+            stringType: 'foo3',
+            testEntityPk: 'test-entity-3',
+          },
+          min: {
+            dateType: expect.stringMatching('2020-02-01'),
+            numberType: 1,
+            stringType: 'foo1',
+            testEntityPk: 'test-entity-1',
+          },
+          sum: {
+            numberType: 4,
+          },
         },
-        min: {
-          dateType: expect.stringMatching('2020-02-01'),
-          numberType: 1,
-          stringType: 'foo1',
-          testEntityPk: 'test-entity-1',
+        {
+          groupBy: {
+            boolType: 1,
+          },
+          avg: {
+            numberType: 2,
+          },
+          count: {
+            testEntityPk: 1,
+          },
+          max: {
+            dateType: expect.stringMatching('2020-02-02'),
+            numberType: 2,
+            stringType: 'foo2',
+            testEntityPk: 'test-entity-2',
+          },
+          min: {
+            dateType: expect.stringMatching('2020-02-02'),
+            numberType: 2,
+            stringType: 'foo2',
+            testEntityPk: 'test-entity-2',
+          },
+          sum: {
+            numberType: 2,
+          },
         },
-        sum: {
-          numberType: 6,
-        },
-      });
+      ]);
     });
   });
 
@@ -492,11 +634,13 @@ describe('TypeOrmQueryService', (): void => {
           {},
           { count: ['testRelationPk'] },
         );
-        return expect(aggResult).toEqual({
-          count: {
-            testRelationPk: 3,
+        return expect(aggResult).toEqual([
+          {
+            count: {
+              testRelationPk: 3,
+            },
           },
-        });
+        ]);
       });
 
       it('should apply a filter', async () => {
@@ -508,16 +652,18 @@ describe('TypeOrmQueryService', (): void => {
           { testRelationPk: { notLike: '%-1' } },
           { count: ['testRelationPk'] },
         );
-        return expect(aggResult).toEqual({
-          count: {
-            testRelationPk: 2,
+        return expect(aggResult).toEqual([
+          {
+            count: {
+              testRelationPk: 2,
+            },
           },
-        });
+        ]);
       });
     });
 
     describe('with multiple entities', () => {
-      it('call select and return the result', async () => {
+      it('aggregate for each entities relation', async () => {
         const entities = TEST_ENTITIES.slice(0, 3);
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.aggregateRelations(
@@ -537,63 +683,167 @@ describe('TypeOrmQueryService', (): void => {
           new Map([
             [
               entities[0],
-              {
-                count: {
-                  relationName: 3,
-                  testEntityId: 3,
-                  testRelationPk: 3,
+              [
+                {
+                  count: {
+                    relationName: 3,
+                    testEntityId: 3,
+                    testRelationPk: 3,
+                  },
+                  max: {
+                    relationName: 'foo1-test-relation-two',
+                    testEntityId: 'test-entity-1',
+                    testRelationPk: 'test-relations-test-entity-1-3',
+                  },
+                  min: {
+                    relationName: 'foo1-test-relation-one',
+                    testEntityId: 'test-entity-1',
+                    testRelationPk: 'test-relations-test-entity-1-1',
+                  },
                 },
-                max: {
-                  relationName: 'foo1-test-relation-two',
-                  testEntityId: 'test-entity-1',
-                  testRelationPk: 'test-relations-test-entity-1-3',
-                },
-                min: {
-                  relationName: 'foo1-test-relation-one',
-                  testEntityId: 'test-entity-1',
-                  testRelationPk: 'test-relations-test-entity-1-1',
-                },
-              },
+              ],
             ],
             [
               entities[1],
-              {
-                count: {
-                  relationName: 3,
-                  testEntityId: 3,
-                  testRelationPk: 3,
+              [
+                {
+                  count: {
+                    relationName: 3,
+                    testEntityId: 3,
+                    testRelationPk: 3,
+                  },
+                  max: {
+                    relationName: 'foo2-test-relation-two',
+                    testEntityId: 'test-entity-2',
+                    testRelationPk: 'test-relations-test-entity-2-3',
+                  },
+                  min: {
+                    relationName: 'foo2-test-relation-one',
+                    testEntityId: 'test-entity-2',
+                    testRelationPk: 'test-relations-test-entity-2-1',
+                  },
                 },
-                max: {
-                  relationName: 'foo2-test-relation-two',
-                  testEntityId: 'test-entity-2',
-                  testRelationPk: 'test-relations-test-entity-2-3',
-                },
-                min: {
-                  relationName: 'foo2-test-relation-one',
-                  testEntityId: 'test-entity-2',
-                  testRelationPk: 'test-relations-test-entity-2-1',
-                },
-              },
+              ],
             ],
             [
               entities[2],
-              {
-                count: {
-                  relationName: 3,
-                  testEntityId: 3,
-                  testRelationPk: 3,
+              [
+                {
+                  count: {
+                    relationName: 3,
+                    testEntityId: 3,
+                    testRelationPk: 3,
+                  },
+                  max: {
+                    relationName: 'foo3-test-relation-two',
+                    testEntityId: 'test-entity-3',
+                    testRelationPk: 'test-relations-test-entity-3-3',
+                  },
+                  min: {
+                    relationName: 'foo3-test-relation-one',
+                    testEntityId: 'test-entity-3',
+                    testRelationPk: 'test-relations-test-entity-3-1',
+                  },
                 },
-                max: {
-                  relationName: 'foo3-test-relation-two',
-                  testEntityId: 'test-entity-3',
-                  testRelationPk: 'test-relations-test-entity-3-3',
+              ],
+            ],
+          ]),
+        );
+      });
+
+      it('aggregate and group for each entities relation', async () => {
+        const entities = TEST_ENTITIES.slice(0, 3);
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.aggregateRelations(
+          TestRelation,
+          'testRelations',
+          entities,
+          {},
+          {
+            groupBy: ['testEntityId'],
+            count: ['testRelationPk', 'relationName', 'testEntityId'],
+            min: ['testRelationPk', 'relationName', 'testEntityId'],
+            max: ['testRelationPk', 'relationName', 'testEntityId'],
+          },
+        );
+
+        expect(queryResult.size).toBe(3);
+        expect(queryResult).toEqual(
+          new Map([
+            [
+              entities[0],
+              [
+                {
+                  groupBy: {
+                    testEntityId: 'test-entity-1',
+                  },
+                  count: {
+                    relationName: 3,
+                    testEntityId: 3,
+                    testRelationPk: 3,
+                  },
+                  max: {
+                    relationName: 'foo1-test-relation-two',
+                    testEntityId: 'test-entity-1',
+                    testRelationPk: 'test-relations-test-entity-1-3',
+                  },
+                  min: {
+                    relationName: 'foo1-test-relation-one',
+                    testEntityId: 'test-entity-1',
+                    testRelationPk: 'test-relations-test-entity-1-1',
+                  },
                 },
-                min: {
-                  relationName: 'foo3-test-relation-one',
-                  testEntityId: 'test-entity-3',
-                  testRelationPk: 'test-relations-test-entity-3-1',
+              ],
+            ],
+            [
+              entities[1],
+              [
+                {
+                  groupBy: {
+                    testEntityId: 'test-entity-2',
+                  },
+                  count: {
+                    relationName: 3,
+                    testEntityId: 3,
+                    testRelationPk: 3,
+                  },
+                  max: {
+                    relationName: 'foo2-test-relation-two',
+                    testEntityId: 'test-entity-2',
+                    testRelationPk: 'test-relations-test-entity-2-3',
+                  },
+                  min: {
+                    relationName: 'foo2-test-relation-one',
+                    testEntityId: 'test-entity-2',
+                    testRelationPk: 'test-relations-test-entity-2-1',
+                  },
                 },
-              },
+              ],
+            ],
+            [
+              entities[2],
+              [
+                {
+                  groupBy: {
+                    testEntityId: 'test-entity-3',
+                  },
+                  count: {
+                    relationName: 3,
+                    testEntityId: 3,
+                    testRelationPk: 3,
+                  },
+                  max: {
+                    relationName: 'foo3-test-relation-two',
+                    testEntityId: 'test-entity-3',
+                    testRelationPk: 'test-relations-test-entity-3-3',
+                  },
+                  min: {
+                    relationName: 'foo3-test-relation-one',
+                    testEntityId: 'test-entity-3',
+                    testRelationPk: 'test-relations-test-entity-3-1',
+                  },
+                },
+              ],
             ],
           ]),
         );
@@ -619,63 +869,69 @@ describe('TypeOrmQueryService', (): void => {
           new Map([
             [
               entities[0],
-              {
-                count: {
-                  relationName: 2,
-                  testEntityId: 2,
-                  testRelationPk: 2,
+              [
+                {
+                  count: {
+                    relationName: 2,
+                    testEntityId: 2,
+                    testRelationPk: 2,
+                  },
+                  max: {
+                    relationName: 'foo1-test-relation-two',
+                    testEntityId: 'test-entity-1',
+                    testRelationPk: 'test-relations-test-entity-1-3',
+                  },
+                  min: {
+                    relationName: 'foo1-test-relation-three',
+                    testEntityId: 'test-entity-1',
+                    testRelationPk: 'test-relations-test-entity-1-2',
+                  },
                 },
-                max: {
-                  relationName: 'foo1-test-relation-two',
-                  testEntityId: 'test-entity-1',
-                  testRelationPk: 'test-relations-test-entity-1-3',
-                },
-                min: {
-                  relationName: 'foo1-test-relation-three',
-                  testEntityId: 'test-entity-1',
-                  testRelationPk: 'test-relations-test-entity-1-2',
-                },
-              },
+              ],
             ],
             [
               entities[1],
-              {
-                count: {
-                  relationName: 2,
-                  testEntityId: 2,
-                  testRelationPk: 2,
+              [
+                {
+                  count: {
+                    relationName: 2,
+                    testEntityId: 2,
+                    testRelationPk: 2,
+                  },
+                  max: {
+                    relationName: 'foo2-test-relation-two',
+                    testEntityId: 'test-entity-2',
+                    testRelationPk: 'test-relations-test-entity-2-3',
+                  },
+                  min: {
+                    relationName: 'foo2-test-relation-three',
+                    testEntityId: 'test-entity-2',
+                    testRelationPk: 'test-relations-test-entity-2-2',
+                  },
                 },
-                max: {
-                  relationName: 'foo2-test-relation-two',
-                  testEntityId: 'test-entity-2',
-                  testRelationPk: 'test-relations-test-entity-2-3',
-                },
-                min: {
-                  relationName: 'foo2-test-relation-three',
-                  testEntityId: 'test-entity-2',
-                  testRelationPk: 'test-relations-test-entity-2-2',
-                },
-              },
+              ],
             ],
             [
               entities[2],
-              {
-                count: {
-                  relationName: 2,
-                  testEntityId: 2,
-                  testRelationPk: 2,
+              [
+                {
+                  count: {
+                    relationName: 2,
+                    testEntityId: 2,
+                    testRelationPk: 2,
+                  },
+                  max: {
+                    relationName: 'foo3-test-relation-two',
+                    testEntityId: 'test-entity-3',
+                    testRelationPk: 'test-relations-test-entity-3-3',
+                  },
+                  min: {
+                    relationName: 'foo3-test-relation-three',
+                    testEntityId: 'test-entity-3',
+                    testRelationPk: 'test-relations-test-entity-3-2',
+                  },
                 },
-                max: {
-                  relationName: 'foo3-test-relation-two',
-                  testEntityId: 'test-entity-3',
-                  testRelationPk: 'test-relations-test-entity-3-3',
-                },
-                min: {
-                  relationName: 'foo3-test-relation-three',
-                  testEntityId: 'test-entity-3',
-                  testRelationPk: 'test-relations-test-entity-3-2',
-                },
-              },
+              ],
             ],
           ]),
         );
@@ -700,43 +956,47 @@ describe('TypeOrmQueryService', (): void => {
           new Map([
             [
               entities[0],
-              {
-                count: {
-                  relationName: 3,
-                  testEntityId: 3,
-                  testRelationPk: 3,
+              [
+                {
+                  count: {
+                    relationName: 3,
+                    testEntityId: 3,
+                    testRelationPk: 3,
+                  },
+                  max: {
+                    relationName: 'foo1-test-relation-two',
+                    testEntityId: 'test-entity-1',
+                    testRelationPk: 'test-relations-test-entity-1-3',
+                  },
+                  min: {
+                    relationName: 'foo1-test-relation-one',
+                    testEntityId: 'test-entity-1',
+                    testRelationPk: 'test-relations-test-entity-1-1',
+                  },
                 },
-                max: {
-                  relationName: 'foo1-test-relation-two',
-                  testEntityId: 'test-entity-1',
-                  testRelationPk: 'test-relations-test-entity-1-3',
-                },
-                min: {
-                  relationName: 'foo1-test-relation-one',
-                  testEntityId: 'test-entity-1',
-                  testRelationPk: 'test-relations-test-entity-1-1',
-                },
-              },
+              ],
             ],
             [
               { testEntityPk: 'does-not-exist' } as TestEntity,
-              {
-                count: {
-                  relationName: 0,
-                  testEntityId: 0,
-                  testRelationPk: 0,
+              [
+                {
+                  count: {
+                    relationName: 0,
+                    testEntityId: 0,
+                    testRelationPk: 0,
+                  },
+                  max: {
+                    relationName: null,
+                    testEntityId: null,
+                    testRelationPk: null,
+                  },
+                  min: {
+                    relationName: null,
+                    testEntityId: null,
+                    testRelationPk: null,
+                  },
                 },
-                max: {
-                  relationName: null,
-                  testEntityId: null,
-                  testRelationPk: null,
-                },
-                min: {
-                  relationName: null,
-                  testEntityId: null,
-                  testRelationPk: null,
-                },
-              },
+              ],
             ],
           ]),
         );

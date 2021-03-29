@@ -76,9 +76,9 @@ export class TypeOrmQueryService<Entity>
     return this.filterQueryBuilder.select(query).getMany();
   }
 
-  async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
+  async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>[]> {
     return AggregateBuilder.asyncConvertToAggregateResponse(
-      this.filterQueryBuilder.aggregate({ filter }, aggregate).getRawOne<Record<string, unknown>>(),
+      this.filterQueryBuilder.aggregate({ filter }, aggregate).getRawMany<Record<string, unknown>>(),
     );
   }
 
