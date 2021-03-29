@@ -139,14 +139,16 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TagDTO> = body.data.todoItem.subTasksAggregate;
-          expect(agg).toEqual({
-            avg: { id: 2 },
-            count: { completed: 3, description: 0, id: 3, title: 3, todoItemId: 3 },
-            max: { description: null, id: '3', title: 'Create Nest App - Sub Task 3', todoItemId: 1 },
-            min: { description: null, id: '1', title: 'Create Nest App - Sub Task 1', todoItemId: 1 },
-            sum: { id: 6 },
-          });
+          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.subTasksAggregate;
+          expect(agg).toEqual([
+            {
+              avg: { id: 2 },
+              count: { completed: 3, description: 0, id: 3, title: 3, todoItemId: 3 },
+              max: { description: null, id: '3', title: 'Create Nest App - Sub Task 3', todoItemId: 1 },
+              min: { description: null, id: '1', title: 'Create Nest App - Sub Task 1', todoItemId: 1 },
+              sum: { id: 6 },
+            },
+          ]);
         }));
 
     it(`should return tags as a connection`, () =>
@@ -195,14 +197,16 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TagDTO> = body.data.todoItem.tagsAggregate;
-          expect(agg).toEqual({
-            avg: { id: 1.5 },
-            count: { created: 2, id: 2, name: 2, updated: 2 },
-            max: { id: '2', name: 'Urgent' },
-            min: { id: '1', name: 'Home' },
-            sum: { id: 3 },
-          });
+          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.tagsAggregate;
+          expect(agg).toEqual([
+            {
+              avg: { id: 1.5 },
+              count: { created: 2, id: 2, name: 2, updated: 2 },
+              max: { id: '2', name: 'Urgent' },
+              min: { id: '1', name: 'Home' },
+              sum: { id: 3 },
+            },
+          ]);
         }));
   });
 
@@ -487,14 +491,55 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.todoItemAggregate;
-          expect(res).toEqual({
-            avg: { id: 3 },
-            count: { completed: 5, created: 5, description: 0, id: 5, title: 5, updated: 5 },
-            max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
-            min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
-            sum: { id: 15 },
-          });
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          expect(res).toEqual([
+            {
+              avg: { id: 3 },
+              count: { completed: 5, created: 5, description: 0, id: 5, title: 5, updated: 5 },
+              max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
+              min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
+              sum: { id: 15 },
+            },
+          ]);
+        }));
+
+    it(`should return a aggregate response with groupBy`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .set(AUTH_HEADER_NAME, config.auth.header)
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+          todoItemAggregate {
+              groupBy {
+                completed
+              }
+              ${todoItemAggregateFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          expect(res).toEqual([
+            {
+              groupBy: { completed: false },
+              avg: { id: 3.5 },
+              count: { completed: 4, created: 4, description: 0, id: 4, title: 4, updated: 4 },
+              max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
+              min: { description: null, id: '2', title: 'Add Todo Item Resolver' },
+              sum: { id: 14 },
+            },
+            {
+              groupBy: { completed: true },
+              avg: { id: 1 },
+              count: { completed: 1, created: 1, description: 0, id: 1, title: 1, updated: 1 },
+              max: { description: null, id: '1', title: 'Create Nest App' },
+              min: { description: null, id: '1', title: 'Create Nest App' },
+              sum: { id: 1 },
+            },
+          ]);
         }));
 
     it(`should allow filtering`, () =>
@@ -512,14 +557,16 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.todoItemAggregate;
-          expect(res).toEqual({
-            count: { id: 4, title: 4, description: 0, completed: 4, created: 4, updated: 4 },
-            sum: { id: 14 },
-            avg: { id: 3.5 },
-            min: { id: '2', title: 'Add Todo Item Resolver', description: null },
-            max: { id: '5', title: 'How to create item With Sub Tasks', description: null },
-          });
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          expect(res).toEqual([
+            {
+              count: { id: 4, title: 4, description: 0, completed: 4, created: 4, updated: 4 },
+              sum: { id: 14 },
+              avg: { id: 3.5 },
+              min: { id: '2', title: 'Add Todo Item Resolver', description: null },
+              max: { id: '5', title: 'How to create item With Sub Tasks', description: null },
+            },
+          ]);
         }));
   });
 
