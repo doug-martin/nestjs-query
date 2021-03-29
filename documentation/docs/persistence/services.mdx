@@ -387,17 +387,19 @@ const aggregateResponse = await this.service.aggregate({}, {
 The response will look like the following
 
 ```ts
-{
-  count: {
-    id: 10
-  },
-  min: {
-    title: 'Aggregate Todo Items'
-  },
-  min: {
-    title: 'Query Todo Items'
-  },
-}
+[
+  {
+    count: {
+      id: 10
+    },
+    min: {
+      title: 'Aggregate Todo Items'
+    },
+    min: {
+      title: 'Query Todo Items'
+    },
+  }
+]
 ```
 
 In this example we'll aggregate on all completed TodoItems

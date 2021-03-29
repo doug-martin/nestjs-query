@@ -62,6 +62,7 @@ module.exports = {
     ],
     Utilities: ['utilities/query-helpers'],
     'Migration Guides': [
+      'migration-guides/v0.24.x-to-v0.25.x',
       'migration-guides/v0.23.x-to-v0.24.x',
       'migration-guides/v0.22.x-to-v0.23.x',
       'migration-guides/v0.15.x-to-v0.16.x',

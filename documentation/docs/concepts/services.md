@@ -85,7 +85,7 @@ Delete a single record.
 `Promise<DTO>`
 
 ### `aggregate`
-Performs an aggregate query, supported aggregate functions are `count`, `sum`, `avg`, `min`, and `max`
+Performs an aggregate query, supported aggregate functions are `groupBy`, `count`, `sum`, `avg`, `min`, and `max`
 #### Arguments
 * `filter: Filter<DTO>` - Additional filter to apply
 * `aggregate: AggregateQuery<DTO>` - The aggregate query
@@ -103,18 +103,20 @@ Example `AggregateQuery`
 ```
 
 #### Returns
-An aggregate response.
+An array of aggregate responses.
 
 Example `AggregateResponse`
 
 ```ts
-{
-  count: { id: 5 },
-  sum: { id: 10 },
-  avg: { id: 2.5 },
-  min: {id: 1, title: 'A Title'},
-  max: {id: 4, title: 'Z Title'}
-}
+[
+  {
+    count: { id: 5 },
+    sum: { id: 10 },
+    avg: { id: 2.5 },
+    min: {id: 1, title: 'A Title'},
+    max: {id: 4, title: 'Z Title'}
+  }
+]
 ```
 
 ### `count`
