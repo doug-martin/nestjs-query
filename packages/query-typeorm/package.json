@@ -27,7 +27,7 @@
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/typeorm": "^7.0.0",
-    "class-transformer": "^0.2.3 || 0.3.1",
+    "class-transformer": "^0.2.3 || 0.3.1 || 0.4",
     "typeorm": "^0.2.25"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "@types/lodash.filter": "4.6.6",
     "@types/lodash.omit": "4.5.6",
     "@types/uuid": "8.3.0",
-    "class-transformer": "0.3.1",
+    "class-transformer": "0.4.0",
     "sqlite3": "5.0.2",
     "ts-mockito": "2.6.1",
     "typeorm": "0.2.31",
