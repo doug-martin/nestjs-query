@@ -33,7 +33,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    * @param filter
    * @param aggregate
    */
-  aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>>;
+  aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>[]>;
 
   /**
    * Count the number of records that match the filter.
@@ -85,7 +85,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     dto: DTO,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation>>;
+  ): Promise<AggregateResponse<Relation>[]>;
 
   aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -93,7 +93,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     dtos: DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<DTO, AggregateResponse<Relation>>>;
+  ): Promise<Map<DTO, AggregateResponse<Relation>[]>>;
 
   /**
    * Count the number of relations

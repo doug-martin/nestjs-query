@@ -12,4 +12,5 @@ export type AggregateResponse<DTO> = {
   avg?: NumberAggregate<DTO>;
   max?: TypeAggregate<DTO>;
   min?: TypeAggregate<DTO>;
+  groupBy?: Partial<DTO>;
 };
