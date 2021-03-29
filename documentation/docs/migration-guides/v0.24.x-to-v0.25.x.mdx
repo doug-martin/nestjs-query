@@ -1,0 +1,200 @@
+---
+title: v0.24.x to v0.25.x
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Aggregate Queryies Return Arrays
+
+In versions prior to `v0.24.0` aggregate queries returned a single response with just the aggregated values. In `v0.25.0` we have introduced a new `groupBy` option that requires aggregates to return arrays.
+
+When using aggregates without the groupBy the response will always contain a single record with your aggregated
+values. If you specify a `groupBy` you will get a response with a distinct group and the corresponding aggregated
+values.
+
+Given the following query
+
+```graphql
+{
+  todoItemAggregate {
+    count {
+      id
+    }
+    sum {
+      id
+    }
+    avg {
+      id
+    }
+    min {
+      id
+      title
+      created
+    }
+    max {
+      id
+      title
+      created
+    }
+  }
+}
+```
+
+### Old
+
+The old response would look like
+
+```json
+{
+  "data": {
+    "todoItemAggregate": {
+      "count": {
+        "id": 5
+      },
+      "sum": {
+        "id": 15
+      },
+      "avg": {
+        "id": 3
+      },
+      "min": {
+        "id": "1",
+        "title": "Add Todo Item Resolver",
+        "created": "2021-03-29T06:51:26.061Z"
+      },
+      "max": {
+        "id": "5",
+        "title": "How to create item With Sub Tasks",
+        "created": "2021-03-29T06:51:26.061Z"
+      }
+    }
+  }
+}
+```
+
+### New
+The new response will look like
+```json
+{
+  "data": {
+    "todoItemAggregate": [
+      {
+        "count": {
+          "id": 5
+        },
+        "sum": {
+          "id": 15
+        },
+        "avg": {
+          "id": 3
+        },
+        "min": {
+          "id": "1",
+          "title": "Add Todo Item Resolver",
+          "created": "2021-03-29T06:51:26.061Z"
+        },
+        "max": {
+          "id": "5",
+          "title": "How to create item With Sub Tasks",
+          "created": "2021-03-29T06:51:26.061Z"
+        }
+      }
+    ]
+  }
+}
+```
+
+## New Aggregate GroupBy
+
+The new response format really shines when using the `groupBy` query
+
+Given the following aggregate grouping on `completed`
+
+```graphql {3-5}
+{
+  todoItemAggregate {
+    groupBy {
+      completed
+    }
+    count {
+      id
+    }
+    sum {
+      id
+    }
+    avg {
+      id
+    }
+    min {
+      id
+      title
+      created
+    }
+    max {
+      id
+      title
+      created
+    }
+  }
+}
+```
+
+You'll get the following response with record for each distinct group
+
+```json
+{
+  "data": {
+    "todoItemAggregate": [
+      {
+        "groupBy": {
+          "completed": false
+        },
+        "count": {
+          "id": 4
+        },
+        "sum": {
+          "id": 14
+        },
+        "avg": {
+          "id": 3.5
+        },
+        "min": {
+          "id": "2",
+          "title": "Add Todo Item Resolver",
+          "created": "2021-03-29T06:51:26.061Z"
+        },
+        "max": {
+          "id": "5",
+          "title": "How to create item With Sub Tasks",
+          "created": "2021-03-29T06:51:26.061Z"
+        }
+      },
+      {
+        "groupBy": {
+          "completed": true
+        },
+        "count": {
+          "id": 1
+        },
+        "sum": {
+          "id": 1
+        },
+        "avg": {
+          "id": 1
+        },
+        "min": {
+          "id": "1",
+          "title": "Create Nest App",
+          "created": "2021-03-29T06:51:26.061Z"
+        },
+        "max": {
+          "id": "1",
+          "title": "Create Nest App",
+          "created": "2021-03-29T06:51:26.061Z"
+        }
+      }
+    ]
+  }
+}
+```

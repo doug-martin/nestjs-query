@@ -20,6 +20,17 @@ function NumberAggregatedType<DTO>(
   return Aggregated;
 }
 
+function AggregateGroupByType<DTO>(name: string, fields: FilterableFieldDescriptor[]): Class<TypeAggregate<DTO>> {
+  @ObjectType(name)
+  class Aggregated {}
+  fields.forEach(({ propertyName, target, returnTypeFunc }) => {
+    const rt = returnTypeFunc ? returnTypeFunc() : target;
+    Field(() => rt, { nullable: true })(Aggregated.prototype, propertyName);
+  });
+
+  return Aggregated;
+}
+
 function AggregatedType<DTO>(name: string, fields: FilterableFieldDescriptor[]): Class<TypeAggregate<DTO>> {
   @ObjectType(name)
   class Aggregated {}
@@ -49,6 +60,7 @@ export function AggregateResponseType<DTO>(
     }
     const numberFields = fields.filter(({ target }) => target === Number);
     const minMaxFields = fields.filter(({ target }) => target !== Boolean);
+    const GroupType = AggregateGroupByType(`${prefix}AggregateGroupBy`, fields);
     const CountType = NumberAggregatedType(`${prefix}CountAggregate`, fields, Int);
     const SumType = NumberAggregatedType(`${prefix}SumAggregate`, numberFields, Float);
     const AvgType = NumberAggregatedType(`${prefix}AvgAggregate`, numberFields, Float);
@@ -57,6 +69,9 @@ export function AggregateResponseType<DTO>(
 
     @ObjectType(aggName)
     class AggResponse {
+      @Field(() => GroupType, { nullable: true })
+      groupBy?: Partial<DTO>;
+
       @Field(() => CountType, { nullable: true })
       count?: NumberAggregate<DTO>;
 

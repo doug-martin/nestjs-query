@@ -3,6 +3,11 @@ type TestResolverDTO {
   stringField: String!
 }
 
+type TestResolverDTORelationsAggregateGroupBy {
+  id: ID
+  testResolverId: String
+}
+
 type TestResolverDTORelationsCountAggregate {
   id: Int
   testResolverId: Int
@@ -14,6 +19,11 @@ type TestResolverDTORelationsMinAggregate {
 }
 
 type TestResolverDTORelationsMaxAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsAggregateGroupBy {
   id: ID
   testResolverId: String
 }

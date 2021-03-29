@@ -3,6 +3,11 @@ type TestResolverDTO {
   stringField: String!
 }
 
+type TestResolverDTOAggregateGroupBy {
+  id: ID
+  stringField: String
+}
+
 type TestResolverDTOCountAggregate {
   id: Int
   stringField: Int
@@ -19,6 +24,7 @@ type TestResolverDTOMaxAggregate {
 }
 
 type TestResolverDTOAggregateResponse {
+  groupBy: TestResolverDTOAggregateGroupBy
   count: TestResolverDTOCountAggregate
   min: TestResolverDTOMinAggregate
   max: TestResolverDTOMaxAggregate
@@ -28,7 +34,7 @@ type Query {
   testResolverDTOAggregate(
     """Filter to find records to aggregate on"""
     filter: TestResolverDTOAggregateFilter
-  ): TestResolverDTOAggregateResponse!
+  ): [TestResolverDTOAggregateResponse!]!
   test: TestResolverDTO!
 }
 

@@ -68,10 +68,12 @@ describe('AggregateRelationsResolver', () => {
           count: ['id'],
           sum: ['testResolverId'],
         };
-        const output: AggregateResponse<TestRelationDTO> = {
-          count: { id: 10 },
-          sum: { testResolverId: 100 },
-        };
+        const output: AggregateResponse<TestRelationDTO>[] = [
+          {
+            count: { id: 10 },
+            sum: { testResolverId: 100 },
+          },
+        ];
         when(
           mockService.aggregateRelations(
             TestRelationDTO,

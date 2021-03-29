@@ -18,7 +18,7 @@ export interface AggregateResolver<DTO, QS extends QueryService<DTO, unknown, un
     filter: AggregateArgsType<DTO>,
     aggregateQuery: AggregateQuery<DTO>,
     authFilter?: Filter<DTO>,
-  ): Promise<AggregateResponse<DTO>>;
+  ): Promise<AggregateResponse<DTO>[]>;
 }
 
 /**
@@ -41,7 +41,7 @@ export const Aggregateable = <DTO, QS extends QueryService<DTO, unknown, unknown
     @SkipIf(
       () => !opts || !opts.enabled,
       ResolverQuery(
-        () => AR,
+        () => [AR],
         { name: queryName },
         commonResolverOpts,
         { interceptors: [AuthorizerInterceptor(DTOClass)] },
@@ -52,7 +52,7 @@ export const Aggregateable = <DTO, QS extends QueryService<DTO, unknown, unknown
       @Args() args: AA,
       @AggregateQueryParam() query: AggregateQuery<DTO>,
       @AuthorizerFilter() authFilter?: Filter<DTO>,
-    ): Promise<AggregateResponse<DTO>> {
+    ): Promise<AggregateResponse<DTO>[]> {
       const qa = await transformAndValidate(AA, args);
       return this.service.aggregate(mergeFilter(qa.filter || {}, authFilter ?? {}), query);
     }
