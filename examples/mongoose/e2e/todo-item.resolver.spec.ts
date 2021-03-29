@@ -143,12 +143,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TagDTO> = body.data.todoItem.subTasksAggregate;
-          expect(agg).toEqual({
-            count: { completed: 3, description: 0, id: 3, title: 3 },
-            max: { description: null, id: '5f74ed936c3afaeaadb8f31c', title: 'Create Nest App - Sub Task 3' },
-            min: { description: null, id: '5f74ed936c3afaeaadb8f31a', title: 'Create Nest App - Sub Task 1' },
-          });
+          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.subTasksAggregate;
+          expect(agg).toEqual([
+            {
+              count: { completed: 3, description: 0, id: 3, title: 3 },
+              max: { description: null, id: '5f74ed936c3afaeaadb8f31c', title: 'Create Nest App - Sub Task 3' },
+              min: { description: null, id: '5f74ed936c3afaeaadb8f31a', title: 'Create Nest App - Sub Task 1' },
+            },
+          ]);
         }));
 
     it(`should return tags as a connection`, () =>
@@ -197,12 +199,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TagDTO> = body.data.todoItem.tagsAggregate;
-          expect(agg).toEqual({
-            count: { createdAt: 2, id: 2, name: 2, updatedAt: 2 },
-            max: { id: '5f74ed2686b2bae7bf4b4aac', name: 'Urgent' },
-            min: { id: '5f74ed2686b2bae7bf4b4aab', name: 'Home' },
-          });
+          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.tagsAggregate;
+          expect(agg).toEqual([
+            {
+              count: { createdAt: 2, id: 2, name: 2, updatedAt: 2 },
+              max: { id: '5f74ed2686b2bae7bf4b4aac', name: 'Urgent' },
+              min: { id: '5f74ed2686b2bae7bf4b4aab', name: 'Home' },
+            },
+          ]);
         }));
   });
 
@@ -517,12 +521,49 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.todoItemAggregate;
-          expect(res).toEqual({
-            count: { completed: 5, createdAt: 5, description: 0, id: 5, title: 5, updatedAt: 5 },
-            max: { description: null, id: todoItemIds[4], title: 'How to create item With Sub Tasks' },
-            min: { description: null, id: todoItemIds[0], title: 'Add Todo Item Resolver' },
-          });
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          expect(res).toEqual([
+            {
+              count: { completed: 5, createdAt: 5, description: 0, id: 5, title: 5, updatedAt: 5 },
+              max: { description: null, id: todoItemIds[4], title: 'How to create item With Sub Tasks' },
+              min: { description: null, id: todoItemIds[0], title: 'Add Todo Item Resolver' },
+            },
+          ]);
+        }));
+
+    it(`should return a aggregate response with groupBy`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .set(AUTH_HEADER_NAME, config.auth.header)
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+          todoItemAggregate {
+              groupBy {
+                completed
+              }
+              ${todoItemAggregateFields}
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          expect(res).toEqual([
+            {
+              groupBy: { completed: false },
+              count: { completed: 4, createdAt: 4, description: 0, id: 4, title: 4, updatedAt: 4 },
+              max: { description: null, id: todoItemIds[4], title: 'How to create item With Sub Tasks' },
+              min: { description: null, id: todoItemIds[1], title: 'Add Todo Item Resolver' },
+            },
+            {
+              groupBy: { completed: true },
+              count: { completed: 1, createdAt: 1, description: 0, id: 1, title: 1, updatedAt: 1 },
+              max: { description: null, id: todoItemIds[0], title: 'Create Nest App' },
+              min: { description: null, id: todoItemIds[0], title: 'Create Nest App' },
+            },
+          ]);
         }));
 
     it(`should allow filtering`, () =>
@@ -540,12 +581,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.todoItemAggregate;
-          expect(res).toEqual({
-            count: { id: 4, title: 4, description: 0, completed: 4, createdAt: 4, updatedAt: 4 },
-            min: { id: todoItemIds[1], title: 'Add Todo Item Resolver', description: null },
-            max: { id: todoItemIds[4], title: 'How to create item With Sub Tasks', description: null },
-          });
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          expect(res).toEqual([
+            {
+              count: { id: 4, title: 4, description: 0, completed: 4, createdAt: 4, updatedAt: 4 },
+              min: { id: todoItemIds[1], title: 'Add Todo Item Resolver', description: null },
+              max: { id: todoItemIds[4], title: 'How to create item With Sub Tasks', description: null },
+            },
+          ]);
         }));
   });
 

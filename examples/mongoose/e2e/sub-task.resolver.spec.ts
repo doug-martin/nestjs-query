@@ -294,20 +294,22 @@ describe('SubTaskResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.subTaskAggregate;
-          expect(res).toEqual({
-            count: { id: 15, title: 15, description: 0, completed: 15 },
-            min: {
-              id: SUB_TASKS[0].id,
-              title: 'Add Todo Item Resolver - Sub Task 1',
-              description: null,
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.subTaskAggregate;
+          expect(res).toEqual([
+            {
+              count: { id: 15, title: 15, description: 0, completed: 15 },
+              min: {
+                id: SUB_TASKS[0].id,
+                title: 'Add Todo Item Resolver - Sub Task 1',
+                description: null,
+              },
+              max: {
+                id: SUB_TASKS[SUB_TASKS.length - 1].id,
+                title: 'How to create item With Sub Tasks - Sub Task 3',
+                description: null,
+              },
             },
-            max: {
-              id: SUB_TASKS[SUB_TASKS.length - 1].id,
-              title: 'How to create item With Sub Tasks - Sub Task 3',
-              description: null,
-            },
-          });
+          ]);
         }));
 
     it(`should allow filtering`, () =>
@@ -324,16 +326,18 @@ describe('SubTaskResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.subTaskAggregate;
-          expect(res).toEqual({
-            count: { id: 5, title: 5, description: 0, completed: 5 },
-            min: { id: SUB_TASKS[0].id, title: 'Add Todo Item Resolver - Sub Task 1', description: null },
-            max: {
-              id: SUB_TASKS[12].id,
-              title: 'How to create item With Sub Tasks - Sub Task 1',
-              description: null,
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.subTaskAggregate;
+          expect(res).toEqual([
+            {
+              count: { id: 5, title: 5, description: 0, completed: 5 },
+              min: { id: SUB_TASKS[0].id, title: 'Add Todo Item Resolver - Sub Task 1', description: null },
+              max: {
+                id: SUB_TASKS[12].id,
+                title: 'How to create item With Sub Tasks - Sub Task 1',
+                description: null,
+              },
             },
-          });
+          ]);
         }));
   });
 

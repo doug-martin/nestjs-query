@@ -156,14 +156,16 @@ describe('TagResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TodoItemDTO> = body.data.tag.todoItemsAggregate;
-          expect(agg).toEqual({
-            avg: { id: 1.5 },
-            count: { completed: 2, created: 2, description: 0, id: 2, title: 2, updated: 2 },
-            max: { description: null, id: '2', title: 'Create Nest App' },
-            min: { description: null, id: '1', title: 'Create Entity' },
-            sum: { id: 3 },
-          });
+          const agg: AggregateResponse<TodoItemDTO>[] = body.data.tag.todoItemsAggregate;
+          expect(agg).toEqual([
+            {
+              avg: { id: 1.5 },
+              count: { completed: 2, created: 2, description: 0, id: 2, title: 2, updated: 2 },
+              max: { description: null, id: '2', title: 'Create Nest App' },
+              min: { description: null, id: '1', title: 'Create Entity' },
+              sum: { id: 3 },
+            },
+          ]);
         }));
   });
 
@@ -393,14 +395,16 @@ describe('TagResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.tagAggregate;
-          expect(res).toEqual({
-            count: { id: 5, name: 5, created: 5, updated: 5 },
-            sum: { id: 15 },
-            avg: { id: 3 },
-            min: { id: '1', name: 'Blocked' },
-            max: { id: '5', name: 'Work' },
-          });
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.tagAggregate;
+          expect(res).toEqual([
+            {
+              count: { id: 5, name: 5, created: 5, updated: 5 },
+              sum: { id: 15 },
+              avg: { id: 3 },
+              min: { id: '1', name: 'Blocked' },
+              max: { id: '5', name: 'Work' },
+            },
+          ]);
         }));
 
     it(`should allow filtering`, () =>
@@ -418,14 +422,16 @@ describe('TagResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.tagAggregate;
-          expect(res).toEqual({
-            count: { id: 3, name: 3, created: 3, updated: 3 },
-            sum: { id: 9 },
-            avg: { id: 3 },
-            min: { id: '1', name: 'Blocked' },
-            max: { id: '5', name: 'Work' },
-          });
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.tagAggregate;
+          expect(res).toEqual([
+            {
+              count: { id: 3, name: 3, created: 3, updated: 3 },
+              sum: { id: 9 },
+              avg: { id: 3 },
+              min: { id: '1', name: 'Blocked' },
+              max: { id: '5', name: 'Work' },
+            },
+          ]);
         }));
   });
 

@@ -119,12 +119,14 @@ describe('TagResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TodoItemDTO> = body.data.tag.todoItemsAggregate;
-          expect(agg).toEqual({
-            count: { completed: 2, createdAt: 2, description: 0, id: 2, title: 2, updatedAt: 2 },
-            max: { description: null, id: TODO_ITEMS[1].id, title: 'Create Nest App' },
-            min: { description: null, id: TODO_ITEMS[0].id, title: 'Create Entity' },
-          });
+          const agg: AggregateResponse<TodoItemDTO>[] = body.data.tag.todoItemsAggregate;
+          expect(agg).toEqual([
+            {
+              count: { completed: 2, createdAt: 2, description: 0, id: 2, title: 2, updatedAt: 2 },
+              max: { description: null, id: TODO_ITEMS[1].id, title: 'Create Nest App' },
+              min: { description: null, id: TODO_ITEMS[0].id, title: 'Create Entity' },
+            },
+          ]);
         }));
   });
 
@@ -299,12 +301,14 @@ describe('TagResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.tagAggregate;
-          expect(res).toEqual({
-            count: { id: 5, name: 5, createdAt: 5, updatedAt: 5 },
-            min: { id: TAGS[0].id, name: 'Blocked' },
-            max: { id: TAGS[4].id, name: 'Work' },
-          });
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.tagAggregate;
+          expect(res).toEqual([
+            {
+              count: { id: 5, name: 5, createdAt: 5, updatedAt: 5 },
+              min: { id: TAGS[0].id, name: 'Blocked' },
+              max: { id: TAGS[4].id, name: 'Work' },
+            },
+          ]);
         }));
 
     it(`should allow filtering`, () =>
@@ -321,12 +325,14 @@ describe('TagResolver (mongoose - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO> = body.data.tagAggregate;
-          expect(res).toEqual({
-            count: { id: 3, name: 3, createdAt: 3, updatedAt: 3 },
-            min: { id: '5f74ed2686b2bae7bf4b4aab', name: 'Blocked' },
-            max: { id: '5f74ed2686b2bae7bf4b4aaf', name: 'Work' },
-          });
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.tagAggregate;
+          expect(res).toEqual([
+            {
+              count: { id: 3, name: 3, createdAt: 3, updatedAt: 3 },
+              min: { id: '5f74ed2686b2bae7bf4b4aab', name: 'Blocked' },
+              max: { id: '5f74ed2686b2bae7bf4b4aaf', name: 'Work' },
+            },
+          ]);
         }));
   });
 
