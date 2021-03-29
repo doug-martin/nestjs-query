@@ -192,29 +192,100 @@ describe('TypegooseQueryService', () => {
           min: ['id', 'dateType', 'numberType', 'stringType'],
         },
       );
-      return expect(queryResult).toEqual({
-        avg: {
-          numberType: 5.5,
+      return expect(queryResult).toEqual([
+        {
+          avg: {
+            numberType: 5.5,
+          },
+          count: {
+            id: 10,
+          },
+          max: {
+            dateType: TEST_ENTITIES[9].dateType,
+            numberType: 10,
+            stringType: 'foo9',
+            id: expect.any(ObjectId),
+          },
+          min: {
+            dateType: TEST_ENTITIES[0].dateType,
+            numberType: 1,
+            stringType: 'foo1',
+            id: expect.any(ObjectId),
+          },
+          sum: {
+            numberType: 55,
+          },
         },
-        count: {
-          id: 10,
+      ]);
+    });
+
+    it('allow aggregates with groupBy', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.aggregate(
+        {},
+        {
+          groupBy: ['boolType'],
+          count: ['id'],
+          avg: ['numberType'],
+          sum: ['numberType'],
+          max: ['id', 'dateType', 'numberType', 'stringType'],
+          min: ['id', 'dateType', 'numberType', 'stringType'],
         },
-        max: {
-          dateType: TEST_ENTITIES[9].dateType,
-          numberType: 10,
-          stringType: 'foo9',
-          id: expect.any(ObjectId),
+      );
+      return expect(queryResult).toEqual([
+        {
+          groupBy: {
+            boolType: true,
+          },
+          avg: {
+            numberType: 6,
+          },
+          count: {
+            id: 5,
+          },
+          max: {
+            dateType: TEST_ENTITIES[9].dateType,
+            numberType: 10,
+            stringType: 'foo8',
+            id: expect.any(ObjectId),
+          },
+          min: {
+            dateType: TEST_ENTITIES[1].dateType,
+            numberType: 2,
+            stringType: 'foo10',
+            id: expect.any(ObjectId),
+          },
+          sum: {
+            numberType: 30,
+          },
         },
-        min: {
-          dateType: TEST_ENTITIES[0].dateType,
-          numberType: 1,
-          stringType: 'foo1',
-          id: expect.any(ObjectId),
+        {
+          groupBy: {
+            boolType: false,
+          },
+          avg: {
+            numberType: 5,
+          },
+          count: {
+            id: 5,
+          },
+          max: {
+            dateType: TEST_ENTITIES[8].dateType,
+            numberType: 9,
+            stringType: 'foo9',
+            id: expect.any(ObjectId),
+          },
+          min: {
+            dateType: TEST_ENTITIES[0].dateType,
+            numberType: 1,
+            stringType: 'foo1',
+            id: expect.any(ObjectId),
+          },
+          sum: {
+            numberType: 25,
+          },
         },
-        sum: {
-          numberType: 55,
-        },
-      });
+      ]);
     });
 
     it('call select with the aggregate columns and return the result with a filter', async () => {
@@ -229,29 +300,31 @@ describe('TypegooseQueryService', () => {
           min: ['id', 'dateType', 'numberType', 'stringType'],
         },
       );
-      return expect(queryResult).toEqual({
-        avg: {
-          numberType: 2,
+      return expect(queryResult).toEqual([
+        {
+          avg: {
+            numberType: 2,
+          },
+          count: {
+            id: 3,
+          },
+          max: {
+            dateType: TEST_ENTITIES[2].dateType,
+            numberType: 3,
+            stringType: 'foo3',
+            id: expect.any(ObjectId),
+          },
+          min: {
+            dateType: TEST_ENTITIES[0].dateType,
+            numberType: 1,
+            stringType: 'foo1',
+            id: expect.any(ObjectId),
+          },
+          sum: {
+            numberType: 6,
+          },
         },
-        count: {
-          id: 3,
-        },
-        max: {
-          dateType: TEST_ENTITIES[2].dateType,
-          numberType: 3,
-          stringType: 'foo3',
-          id: expect.any(ObjectId),
-        },
-        min: {
-          dateType: TEST_ENTITIES[0].dateType,
-          numberType: 1,
-          stringType: 'foo1',
-          id: expect.any(ObjectId),
-        },
-        sum: {
-          numberType: 6,
-        },
-      });
+      ]);
     });
   });
 
@@ -774,7 +847,7 @@ describe('TypegooseQueryService', () => {
 
   describe('#aggregateRelations', () => {
     describe('with one entity', () => {
-      it('call select and return the result', async () => {
+      it('should return an aggregate', async () => {
         const queryService = moduleRef.get(TestEntityService);
         const aggResult = await queryService.aggregateRelations(
           TestReference,
@@ -783,11 +856,32 @@ describe('TypegooseQueryService', () => {
           { referenceName: { isNot: null } },
           { count: ['id'] },
         );
-        return expect(aggResult).toEqual({
-          count: {
-            id: 3,
+        return expect(aggResult).toEqual([
+          {
+            count: {
+              id: 3,
+            },
           },
-        });
+        ]);
+      });
+
+      it('should support groupBy when aggregating relations', async () => {
+        const queryService = moduleRef.get(TestEntityService);
+        const aggResult = await queryService.aggregateRelations(
+          TestReference,
+          'testReferences',
+          TEST_ENTITIES[0],
+          { referenceName: { isNot: null } },
+          { groupBy: ['testEntity'], count: ['id'] },
+        );
+        return expect(aggResult).toEqual([
+          {
+            groupBy: { testEntity: TEST_ENTITIES[0]._id },
+            count: {
+              id: 3,
+            },
+          },
+        ]);
       });
     });
 
@@ -801,16 +895,18 @@ describe('TypegooseQueryService', () => {
           { referenceName: { isNot: null } },
           { count: ['id'] },
         );
-        return expect(aggResult).toEqual({
-          count: {
-            id: 3,
+        return expect(aggResult).toEqual([
+          {
+            count: {
+              id: 3,
+            },
           },
-        });
+        ]);
       });
     });
 
     describe('with multiple entities', () => {
-      it('call select and return the result', async () => {
+      it('return a relation aggregate for each entity', async () => {
         const entities = TEST_ENTITIES.slice(0, 3);
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.aggregateRelations(
@@ -830,63 +926,161 @@ describe('TypegooseQueryService', () => {
           new Map([
             [
               entities[0],
-              {
-                count: {
-                  referenceName: 3,
-                  testEntity: 3,
-                  id: 3,
+              [
+                {
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3,
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES[2].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(ObjectId),
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES[0].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(ObjectId),
+                  },
                 },
-                max: {
-                  referenceName: TEST_REFERENCES[2].referenceName,
-                  testEntity: entities[0]._id,
-                  id: expect.any(ObjectId),
-                },
-                min: {
-                  referenceName: TEST_REFERENCES[0].referenceName,
-                  testEntity: entities[0]._id,
-                  id: expect.any(ObjectId),
-                },
-              },
+              ],
             ],
             [
               entities[1],
-              {
-                count: {
-                  referenceName: 3,
-                  testEntity: 3,
-                  id: 3,
+              [
+                {
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3,
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES[5].referenceName,
+                    testEntity: entities[1]._id,
+                    id: expect.any(ObjectId),
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES[3].referenceName,
+                    testEntity: entities[1]._id,
+                    id: expect.any(ObjectId),
+                  },
                 },
-                max: {
-                  referenceName: TEST_REFERENCES[5].referenceName,
-                  testEntity: entities[1]._id,
-                  id: expect.any(ObjectId),
-                },
-                min: {
-                  referenceName: TEST_REFERENCES[3].referenceName,
-                  testEntity: entities[1]._id,
-                  id: expect.any(ObjectId),
-                },
-              },
+              ],
             ],
             [
               entities[2],
-              {
-                count: {
-                  referenceName: 3,
-                  testEntity: 3,
-                  id: 3,
+              [
+                {
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3,
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES[8].referenceName,
+                    testEntity: entities[2]._id,
+                    id: expect.any(ObjectId),
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES[6].referenceName,
+                    testEntity: entities[2]._id,
+                    id: expect.any(ObjectId),
+                  },
                 },
-                max: {
-                  referenceName: TEST_REFERENCES[8].referenceName,
-                  testEntity: entities[2]._id,
-                  id: expect.any(ObjectId),
+              ],
+            ],
+          ]),
+        );
+      });
+
+      it('aggregate and group for each entities relation', async () => {
+        const entities = TEST_ENTITIES.slice(0, 3);
+        const queryService = moduleRef.get(TestEntityService);
+        const queryResult = await queryService.aggregateRelations(
+          TestReference,
+          'testReferences',
+          entities,
+          { referenceName: { isNot: null } },
+          {
+            groupBy: ['testEntity'],
+            count: ['id', 'referenceName', 'testEntity'],
+            min: ['id', 'referenceName', 'testEntity'],
+            max: ['id', 'referenceName', 'testEntity'],
+          },
+        );
+
+        expect(queryResult.size).toBe(3);
+        expect(queryResult).toEqual(
+          new Map([
+            [
+              entities[0],
+              [
+                {
+                  groupBy: { testEntity: entities[0]._id },
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3,
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES[2].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(ObjectId),
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES[0].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(ObjectId),
+                  },
                 },
-                min: {
-                  referenceName: TEST_REFERENCES[6].referenceName,
-                  testEntity: entities[2]._id,
-                  id: expect.any(ObjectId),
+              ],
+            ],
+            [
+              entities[1],
+              [
+                {
+                  groupBy: { testEntity: entities[1]._id },
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3,
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES[5].referenceName,
+                    testEntity: entities[1]._id,
+                    id: expect.any(ObjectId),
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES[3].referenceName,
+                    testEntity: entities[1]._id,
+                    id: expect.any(ObjectId),
+                  },
                 },
-              },
+              ],
+            ],
+            [
+              entities[2],
+              [
+                {
+                  groupBy: { testEntity: entities[2]._id },
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3,
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES[8].referenceName,
+                    testEntity: entities[2]._id,
+                    id: expect.any(ObjectId),
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES[6].referenceName,
+                    testEntity: entities[2]._id,
+                    id: expect.any(ObjectId),
+                  },
+                },
+              ],
             ],
           ]),
         );
@@ -914,25 +1108,27 @@ describe('TypegooseQueryService', () => {
           new Map([
             [
               entities[0],
-              {
-                count: {
-                  referenceName: 3,
-                  testEntity: 3,
-                  id: 3,
+              [
+                {
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3,
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES[2].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(ObjectId),
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES[0].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(ObjectId),
+                  },
                 },
-                max: {
-                  referenceName: TEST_REFERENCES[2].referenceName,
-                  testEntity: entities[0]._id,
-                  id: expect.any(ObjectId),
-                },
-                min: {
-                  referenceName: TEST_REFERENCES[0].referenceName,
-                  testEntity: entities[0]._id,
-                  id: expect.any(ObjectId),
-                },
-              },
+              ],
             ],
-            [entities[1], {}],
+            [entities[1], []],
           ]),
         );
       });

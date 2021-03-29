@@ -41,7 +41,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     entities: DocumentType<Entity>[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<DocumentType<Entity>, AggregateResponse<Relation>>>;
+  ): Promise<Map<DocumentType<Entity>, AggregateResponse<DocumentType<Relation>>[]>>;
 
   aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -49,7 +49,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     dto: DocumentType<Entity>,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<DocumentType<Relation>>>;
+  ): Promise<AggregateResponse<DocumentType<Relation>>[]>;
 
   async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -58,7 +58,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     filter: Filter<Relation>,
     aggregateQuery: AggregateQuery<Relation>,
   ): Promise<
-    AggregateResponse<DocumentType<Relation>> | Map<DocumentType<Entity>, AggregateResponse<DocumentType<Relation>>>
+    AggregateResponse<DocumentType<Relation>>[] | Map<DocumentType<Entity>, AggregateResponse<DocumentType<Relation>>[]>
   > {
     this.checkForReference('AggregateRelations', relationName);
     const relationModel = this.getReferenceModel(relationName);
@@ -68,21 +68,21 @@ export abstract class ReferenceQueryService<Entity extends Base> {
         const map = await mapPromise;
         const refs = await this.aggregateRelations(RelationClass, relationName, entity, filter, aggregateQuery);
         return map.set(entity, refs);
-      }, Promise.resolve(new Map<DocumentType<Entity>, AggregateResponse<DocumentType<Relation>>>()));
+      }, Promise.resolve(new Map<DocumentType<Entity>, AggregateResponse<DocumentType<Relation>>[]>()));
     }
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getReferenceEntity(relationName));
     const refFilter = this.getReferenceFilter(relationName, dto, assembler.convertQuery({ filter }).filter);
     if (!refFilter) {
-      return {};
+      return [];
     }
     const { filterQuery, aggregate } = referenceQueryBuilder.buildAggregateQuery(
       assembler.convertAggregateQuery(aggregateQuery),
       refFilter,
     );
-    const [aggResult] = (await relationModel
+    const aggResult = (await relationModel
       .aggregate<Record<string, unknown>>([{ $match: filterQuery }, { $group: { _id: null, ...aggregate } }])
       .exec()) as Record<string, unknown>[];
-    return aggResult ? AggregateBuilder.convertToAggregateResponse(aggResult) : {};
+    return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 
   countRelations<Relation>(
