@@ -2,6 +2,7 @@ import sequelize, { Projectable } from 'sequelize';
 import { AggregateQuery, AggregateResponse } from '@nestjs-query/core';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { BadRequestException } from '@nestjs/common';
+import { camelCase } from 'camel-case';
 
 enum AggregateFuncs {
   AVG = 'AVG',
@@ -11,7 +12,7 @@ enum AggregateFuncs {
   MIN = 'MIN',
 }
 
-const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN)_(.*)/;
+const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN|GROUP_BY)_(.*)/;
 
 /**
  * @internal
@@ -19,22 +20,24 @@ const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN)_(.*)/;
  */
 export class AggregateBuilder<Entity extends Model<Entity, Partial<Entity>>> {
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  static convertToAggregateResponse<Entity>(response: Record<string, unknown>): AggregateResponse<Entity> {
-    return Object.keys(response).reduce((agg, resultField: string) => {
-      const matchResult = AGG_REGEXP.exec(resultField);
-      if (!matchResult) {
-        throw new Error('Unknown aggregate column encountered.');
-      }
-      const [matchedFunc, matchedFieldName] = matchResult.slice(1);
-      const aggFunc = matchedFunc.toLowerCase() as keyof AggregateResponse<Entity>;
-      const fieldName = matchedFieldName as keyof Entity;
-      const aggResult = agg[aggFunc] || {};
-      return {
-        ...agg,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [aggFunc]: { ...aggResult, [fieldName]: response[resultField] },
-      };
-    }, {} as AggregateResponse<Entity>);
+  static convertToAggregateResponse<Entity>(rawAggregates: Record<string, unknown>[]): AggregateResponse<Entity>[] {
+    return rawAggregates.map((aggregate) => {
+      return Object.keys(aggregate).reduce((agg, resultField: string) => {
+        const matchResult = AGG_REGEXP.exec(resultField);
+        if (!matchResult) {
+          throw new Error('Unknown aggregate column encountered.');
+        }
+        const [matchedFunc, matchedFieldName] = matchResult.slice(1);
+        const aggResponseKey = camelCase(matchedFunc.toLowerCase()) as keyof AggregateResponse<Entity>;
+        const fieldName = matchedFieldName as keyof Entity;
+        const aggResult = agg[aggResponseKey] || {};
+        return {
+          ...agg,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          [aggResponseKey]: { ...aggResult, [fieldName]: aggregate[resultField] },
+        };
+      }, {} as AggregateResponse<Entity>);
+    });
   }
 
   constructor(readonly model: ModelCtor<Entity>) {}
@@ -45,6 +48,7 @@ export class AggregateBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    */
   build(aggregate: AggregateQuery<Entity>): Projectable {
     const selects = [
+      ...this.createGroupBySelect(aggregate.groupBy),
       ...this.createAggSelect(AggregateFuncs.COUNT, aggregate.count),
       ...this.createAggSelect(AggregateFuncs.SUM, aggregate.sum),
       ...this.createAggSelect(AggregateFuncs.AVG, aggregate.avg),
@@ -68,6 +72,16 @@ export class AggregateBuilder<Entity extends Model<Entity, Partial<Entity>>> {
       const colName = this.model.rawAttributes[field as string].field;
       const fn = sequelize.fn(func, sequelize.col(colName || (field as string)));
       return [fn, aggAlias];
+    });
+  }
+
+  private createGroupBySelect(fields?: (keyof Entity)[]): [sequelize.Utils.Col, string][] {
+    if (!fields) {
+      return [];
+    }
+    return fields.map((field) => {
+      const colName = this.model.rawAttributes[field as string].field;
+      return [sequelize.col(colName || (field as string)), `GROUP_BY_${field as string}`];
     });
   }
 }
