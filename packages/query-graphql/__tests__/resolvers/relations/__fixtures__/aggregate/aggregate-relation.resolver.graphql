@@ -4,7 +4,7 @@ type TestResolverDTO {
   relationsAggregate(
     """Filter to find records to aggregate on"""
     filter: TestRelationDTOAggregateFilter
-  ): TestResolverDTORelationsAggregateResponse!
+  ): [TestResolverDTORelationsAggregateResponse!]!
 }
 
 input TestRelationDTOAggregateFilter {
@@ -48,6 +48,11 @@ input StringFieldComparison {
   notIn: [String!]
 }
 
+type TestResolverDTORelationsAggregateGroupBy {
+  id: ID
+  testResolverId: String
+}
+
 type TestResolverDTORelationsCountAggregate {
   id: Int
   testResolverId: Int
@@ -64,6 +69,7 @@ type TestResolverDTORelationsMaxAggregate {
 }
 
 type TestResolverDTORelationsAggregateResponse {
+  groupBy: TestResolverDTORelationsAggregateGroupBy
   count: TestResolverDTORelationsCountAggregate
   min: TestResolverDTORelationsMinAggregate
   max: TestResolverDTORelationsMaxAggregate

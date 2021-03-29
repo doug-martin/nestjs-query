@@ -44,9 +44,11 @@ describe('AggregateResolver', () => {
         },
       };
       const aggregateQuery: AggregateQuery<TestResolverDTO> = { count: ['id'] };
-      const output: AggregateResponse<TestResolverDTO> = {
-        count: { id: 10 },
-      };
+      const output: AggregateResponse<TestResolverDTO>[] = [
+        {
+          count: { id: 10 },
+        },
+      ];
       when(mockService.aggregate(objectContaining(input.filter!), deepEqual(aggregateQuery))).thenResolve(output);
       const result = await resolver.aggregate(input, aggregateQuery);
       return expect(result).toEqual(output);

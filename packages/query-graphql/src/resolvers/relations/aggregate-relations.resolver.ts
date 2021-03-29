@@ -45,7 +45,7 @@ const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: A
   const AR = AggregateResponseType(relationDTO, { prefix: `${dtoName}${pluralBaseName}` });
   @Resolver(() => DTOClass, { isAbstract: true })
   class AggregateMixin extends Base {
-    @ResolverField(`${pluralBaseNameLower}Aggregate`, () => AR, {}, commonResolverOpts, {
+    @ResolverField(`${pluralBaseNameLower}Aggregate`, () => [AR], {}, commonResolverOpts, {
       interceptors: [AuthorizerInterceptor(DTOClass)],
     })
     async [`aggregate${pluralBaseName}`](

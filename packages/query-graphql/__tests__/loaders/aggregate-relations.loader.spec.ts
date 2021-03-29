@@ -26,8 +26,8 @@ describe('AggregateRelationsLoader', () => {
       const filter = {};
       const aggregate: AggregateQuery<RelationDTO> = { count: ['id'] };
       const dtos = [{ id: 'dto-1' }, { id: 'dto-2' }];
-      const dto1Aggregate = { count: { id: 2 } };
-      const dto2Aggregate = { count: { id: 3 } };
+      const dto1Aggregate = [{ count: { id: 2 } }];
+      const dto2Aggregate = [{ count: { id: 3 } }];
       when(
         service.aggregateRelations(RelationDTO, 'relation', deepEqual(dtos), deepEqual(filter), deepEqual(aggregate)),
       ).thenResolve(
@@ -52,7 +52,7 @@ describe('AggregateRelationsLoader', () => {
       const filter = {};
       const aggregate: AggregateQuery<RelationDTO> = { count: ['id'] };
       const dtos = [{ id: 'dto-1' }, { id: 'dto-2' }];
-      const dto1Aggregate = { count: { id: 2 } };
+      const dto1Aggregate = [{ count: { id: 2 } }];
       when(
         service.aggregateRelations(RelationDTO, 'relation', deepEqual(dtos), deepEqual(filter), deepEqual(aggregate)),
       ).thenResolve(new Map([[dtos[0], dto1Aggregate]]));
@@ -73,10 +73,10 @@ describe('AggregateRelationsLoader', () => {
       const filter2 = {};
       const aggregate: AggregateQuery<RelationDTO> = { count: ['id'] };
       const dtos = [{ id: 'dto-1' }, { id: 'dto-2' }, { id: 'dto-3' }, { id: 'dto-4' }];
-      const dto1Aggregate = { count: { id: 2 } };
-      const dto2Aggregate = { count: { id: 3 } };
-      const dto3Aggregate = { count: { id: 4 } };
-      const dto4Aggregate = { count: { id: 5 } };
+      const dto1Aggregate = [{ count: { id: 2 } }];
+      const dto2Aggregate = [{ count: { id: 3 } }];
+      const dto3Aggregate = [{ count: { id: 4 } }];
+      const dto4Aggregate = [{ count: { id: 5 } }];
       when(
         service.aggregateRelations(
           RelationDTO,
@@ -124,10 +124,10 @@ describe('AggregateRelationsLoader', () => {
       const aggregate1: AggregateQuery<RelationDTO> = { count: ['id'] };
       const aggregate2: AggregateQuery<RelationDTO> = { sum: ['id'] };
       const dtos = [{ id: 'dto-1' }, { id: 'dto-2' }, { id: 'dto-3' }, { id: 'dto-4' }];
-      const dto1Aggregate = { count: { id: 2 } };
-      const dto2Aggregate = { sum: { id: 3 } };
-      const dto3Aggregate = { count: { id: 4 } };
-      const dto4Aggregate = { sum: { id: 5 } };
+      const dto1Aggregate = [{ count: { id: 2 } }];
+      const dto2Aggregate = [{ sum: { id: 3 } }];
+      const dto3Aggregate = [{ count: { id: 4 } }];
+      const dto4Aggregate = [{ sum: { id: 5 } }];
       when(
         service.aggregateRelations(
           RelationDTO,

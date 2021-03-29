@@ -5,7 +5,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import graphqlFields from 'graphql-fields';
 
 const EXCLUDED_FIELDS = ['__typename'];
-const QUERY_OPERATORS: (keyof AggregateQuery<unknown>)[] = ['count', 'avg', 'sum', 'min', 'max'];
+const QUERY_OPERATORS: (keyof AggregateQuery<unknown>)[] = ['groupBy', 'count', 'avg', 'sum', 'min', 'max'];
 export const AggregateQueryParam = createParamDecorator(<DTO>(data: unknown, ctx: ExecutionContext) => {
   const info = GqlExecutionContext.create(ctx).getInfo<GraphQLResolveInfo>();
   const fields = graphqlFields(info, {}, { excludedFields: EXCLUDED_FIELDS }) as Record<

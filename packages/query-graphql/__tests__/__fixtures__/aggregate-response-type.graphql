@@ -1,3 +1,15 @@
+type FakeTypeAggregateGroupBy {
+  stringField: String
+  numberField: Float
+  boolField: Boolean
+  dateField: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type FakeTypeCountAggregate {
   stringField: Int
   numberField: Int
@@ -19,11 +31,6 @@ type FakeTypeMinAggregate {
   dateField: DateTime
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type FakeTypeMaxAggregate {
   stringField: String
   numberField: Float
@@ -31,6 +38,7 @@ type FakeTypeMaxAggregate {
 }
 
 type FakeTypeAggregateResponse {
+  groupBy: FakeTypeAggregateGroupBy
   count: FakeTypeCountAggregate
   sum: FakeTypeSumAggregate
   avg: FakeTypeAvgAggregate
