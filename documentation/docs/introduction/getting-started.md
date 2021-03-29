@@ -35,6 +35,7 @@ Nestjs-query is composed of multiple packages
 
 ## Migration Guides
 
+* [`v0.24.x` to `v0.25.x`](../migration-guides/v0.24.x-to-v0.25.x.mdx)
 * [`v0.23.x` to `v0.24.x`](../migration-guides/v0.23.x-to-v0.24.x.mdx)
 * [`v0.22.x` to `v0.23.x`](../migration-guides/v0.22.x-to-v0.23.x.mdx)
 * [`v0.15.x` to `v0.16.x`](../migration-guides/v0.15.x-to-v0.16.x.mdx)

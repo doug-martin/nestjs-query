@@ -97,7 +97,7 @@ type Query {
 
     sorting: [TodoItemSort!] = []
   ): TodoItemConnection!
-  todoItemAggregate(filter: TodoItemAggregateFilter): TodoItemAggregateResponse!
+  todoItemAggregate(filter: TodoItemAggregateFilter): [TodoItemAggregateResponse!]!
 }
 
 input TodoItemAggregateFilter {
@@ -113,6 +113,7 @@ input TodoItemAggregateFilter {
 }
 
 type TodoItemAggregateResponse {
+  groupBy: TodoItemAggregateGroupBy
   count: TodoItemCountAggregate
   sum: TodoItemSumAggregate
   avg: TodoItemAvgAggregate
@@ -123,6 +124,18 @@ type TodoItemAggregateResponse {
 type TodoItemAvgAggregate {
   id: Float
   priority: Float
+}
+
+type TodoItemAggregateGroupBy {
+  id: ID
+  title: String
+  description: String
+  completed: Boolean
+  created: DateTime
+  updated: DateTime
+  priority: Float
+  createdBy: String
+  updatedBy: String
 }
 
 type TodoItemCountAggregate {
@@ -206,27 +219,133 @@ type TodoItemSumAggregate {
 ```json
 {
   "data": {
-    "todoItemAggregate": {
-      "count": {
-        "id": 5
-      },
-      "sum": {
-        "id": 15
-      },
-      "avg": {
-        "id": 3
-      },
-      "min": {
-        "id": "1",
-        "title": "Add Todo Item Resolver",
-        "created": "2020-07-13T01:12:29.773Z"
-      },
-      "max": {
-        "id": "5",
-        "title": "How to create item With Sub Tasks",
-        "created": "2020-07-15T07:12:29.773Z"
+    "todoItemAggregate": [
+      {
+        "count": {
+          "id": 5
+        },
+        "sum": {
+          "id": 15
+        },
+        "avg": {
+          "id": 3
+        },
+        "min": {
+          "id": "1",
+          "title": "Add Todo Item Resolver",
+          "created": "2021-03-29T06:51:26.061Z"
+        },
+        "max": {
+          "id": "5",
+          "title": "How to create item With Sub Tasks",
+          "created": "2021-03-29T06:51:26.061Z"
+        }
       }
+    ]
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+### With GroupBy
+
+To group your aggregate queries you can add a `groupBy` to specify one or more fields to group on.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql {3-5}
+{
+  todoItemAggregate {
+    groupBy {
+      completed
     }
+    count {
+      id
+    }
+    sum {
+      id
+    }
+    avg {
+      id
+    }
+    min {
+      id
+      title
+      created
+    }
+    max {
+      id
+      title
+      created
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="response">
+
+```json
+{
+  "data": {
+    "todoItemAggregate": [
+      {
+        "groupBy": {
+          "completed": false
+        },
+        "count": {
+          "id": 4
+        },
+        "sum": {
+          "id": 14
+        },
+        "avg": {
+          "id": 3.5
+        },
+        "min": {
+          "id": "2",
+          "title": "Add Todo Item Resolver",
+          "created": "2021-03-29T06:51:26.061Z"
+        },
+        "max": {
+          "id": "5",
+          "title": "How to create item With Sub Tasks",
+          "created": "2021-03-29T06:51:26.061Z"
+        }
+      },
+      {
+        "groupBy": {
+          "completed": true
+        },
+        "count": {
+          "id": 1
+        },
+        "sum": {
+          "id": 1
+        },
+        "avg": {
+          "id": 1
+        },
+        "min": {
+          "id": "1",
+          "title": "Create Nest App",
+          "created": "2021-03-29T06:51:26.061Z"
+        },
+        "max": {
+          "id": "1",
+          "title": "Create Nest App",
+          "created": "2021-03-29T06:51:26.061Z"
+        }
+      }
+    ]
   }
 }
 ```
@@ -273,21 +392,23 @@ You can also provide a filter to only aggregate on a subset of data.
 ```json
 {
   "data": {
-    "todoItemAggregate": {
-      "count": {
-        "id": 4
-      },
-      "min": {
-        "id": "2",
-        "title": "Add Todo Item Resolver",
-        "created": "2020-07-15T07:12:29.773Z"
-      },
-      "max": {
-        "id": "5",
-        "title": "How to create item With Sub Tasks",
-        "created": "2020-07-15T07:12:29.773Z"
+    "todoItemAggregate": [
+      {
+        "count": {
+          "id": 4
+        },
+        "min": {
+          "id": "2",
+          "title": "Add Todo Item Resolver",
+          "created": "2021-03-29T06:51:26.061Z"
+        },
+        "max": {
+          "id": "5",
+          "title": "How to create item With Sub Tasks",
+          "created": "2021-03-29T06:51:26.061Z"
+        }
       }
-    }
+    ]
   }
 }
 ```
@@ -325,13 +446,15 @@ For example assume description is null for all todo items you will get `0` back.
  ```json
 {
   "data": {
-    "todoItemAggregate": {
-      "count": {
-        "id": 4,
-        "title": 4,
-        "description": 0
+    "todoItemAggregate": [
+      {
+        "count": {
+          "id": 4,
+          "title": 4,
+          "description": 0
+        }
       }
-    }
+    ]
   }
 }
 ```
@@ -365,15 +488,28 @@ type TodoItem {
   ): TodoItemSubTasksConnection!
   subTasksAggregate(
     filter: SubTaskAggregateFilter
-  ): TodoItemSubTasksAggregateResponse!
+  ):[ TodoItemSubTasksAggregateResponse!]!
 }
 
 type TodoItemSubTasksAggregateResponse {
+  groupBy: TodoItemSubTasksAggregateGroupBy
   count: TodoItemSubTasksCountAggregate
   sum: TodoItemSubTasksSumAggregate
   avg: TodoItemSubTasksAvgAggregate
   min: TodoItemSubTasksMinAggregate
   max: TodoItemSubTasksMaxAggregate
+}
+
+type TodoItemSubTasksAggregateGroupBy {
+  id: ID
+  title: String
+  description: String
+  completed: Boolean
+  created: DateTime
+  updated: DateTime
+  todoItemId: String
+  createdBy: String
+  updatedBy: String
 }
 
 type TodoItemSubTasksAvgAggregate {
@@ -463,31 +599,138 @@ In this example we'll aggregate on all related `subTasks`.
 {
   "data": {
     "todoItem": {
-      "subTasksAggregate": {
-        "count": {
-          "id": 3
-        },
-        "sum": {
-          "id": 42
-        },
-        "avg": {
-          "id": 14
-        },
-        "min": {
-          "id": "13",
-          "title": "How to create item With Sub Tasks - Sub Task 1"
-        },
-        "max": {
-          "id": "15",
-          "title": "How to create item With Sub Tasks - Sub Task 3"
+      "subTasksAggregate": [
+        {
+          "count": {
+            "id": 3
+          },
+          "sum": {
+            "id": 42
+          },
+          "avg": {
+            "id": 14
+          },
+          "min": {
+            "id": "13",
+            "title": "How to create item With Sub Tasks - Sub Task 1"
+          },
+          "max": {
+            "id": "15",
+            "title": "How to create item With Sub Tasks - Sub Task 3"
+          }
         }
-      }
+      ]
     }
   }
 }
 ```
 </TabItem>
 </Tabs>
+
+### With GroupBy
+
+In this example we'll aggregate on all related `subTasks` and group by `completed`.
+
+<Tabs
+  defaultValue="graphql"
+  values={[
+    { label: 'GraphQL', value: 'graphql', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="graphql">
+
+```graphql
+{
+  todoItem(id: 5) {
+    subTasksAggregate {
+      groupBy {
+        completed
+      }
+      count {
+        id
+      }
+      sum {
+        id
+      }
+      avg {
+        id
+      }
+      min {
+        id
+        title
+      }
+      max {
+        id
+        title
+      }
+    }
+  }
+}
+
+```
+
+</TabItem>
+
+<TabItem value="response">
+
+ ```json
+{
+  "data": {
+    "todoItem": {
+      "subTasksAggregate": [
+        {
+          "groupBy": {
+            "completed": false
+          },
+          "count": {
+            "id": 2
+          },
+          "sum": {
+            "id": 29
+          },
+          "avg": {
+            "id": 14.5
+          },
+          "min": {
+            "id": "14",
+            "title": "How to create item With Sub Tasks - Sub Task 2"
+          },
+          "max": {
+            "id": "15",
+            "title": "How to create item With Sub Tasks - Sub Task 3"
+          }
+        },
+        {
+          "groupBy": {
+            "completed": true
+          },
+          "count": {
+            "id": 1
+          },
+          "sum": {
+            "id": 13
+          },
+          "avg": {
+            "id": 13
+          },
+          "min": {
+            "id": "13",
+            "title": "How to create item With Sub Tasks - Sub Task 1"
+          },
+          "max": {
+            "id": "13",
+            "title": "How to create item With Sub Tasks - Sub Task 1"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+</TabItem>
+</Tabs>
+
 
 ### With Filter
 
@@ -529,19 +772,21 @@ This example will aggregate all related `subTasks` that are not completed.
 {
   "data": {
     "todoItem": {
-      "subTasksAggregate": {
-        "count": {
-          "id": 2
-        },
-        "min": {
-          "id": "14",
-          "title": "How to create item With Sub Tasks - Sub Task 2"
-        },
-        "max": {
-          "id": "15",
-          "title": "How to create item With Sub Tasks - Sub Task 3"
+      "subTasksAggregate": [
+        {
+          "count": {
+            "id": 2
+          },
+          "min": {
+            "id": "14",
+            "title": "How to create item With Sub Tasks - Sub Task 2"
+          },
+          "max": {
+            "id": "15",
+            "title": "How to create item With Sub Tasks - Sub Task 3"
+          }
         }
-      }
+      ]
     }
   }
 }
