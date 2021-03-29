@@ -20,7 +20,8 @@
   "dependencies": {
     "@nestjs-query/core": "0.24.4",
     "lodash.pick": "4.4.0",
-    "tslib": "^2.1.0"
+    "tslib": "^2.1.0",
+    "camel-case": "^4.1.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",

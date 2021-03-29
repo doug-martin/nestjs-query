@@ -1,5 +1,5 @@
 import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@nestjs-query/core';
-import {
+import sequelize, {
   FindOptions,
   Filterable,
   DestroyOptions,
@@ -9,6 +9,7 @@ import {
   CountOptions,
   Association,
   Projectable,
+  GroupOption,
 } from 'sequelize';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { AggregateBuilder } from './aggregate.builder';
@@ -31,6 +32,9 @@ interface Sortable {
 interface Pageable {
   limit?: number;
   offset?: number;
+}
+interface Groupable {
+  group?: GroupOption;
 }
 
 /**
@@ -85,6 +89,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     let opts: FindOptions = { raw: true };
     opts = this.applyAggregate(opts, aggregate);
     opts = this.applyFilter(opts, query.filter);
+    opts = this.applyGroupBy(opts, aggregate.groupBy);
     return opts;
   }
 
@@ -93,6 +98,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     let opts: FindOptions = { joinTableAttributes: [], raw: true } as FindOptions;
     opts = this.applyAggregate(opts, aggregate);
     opts = this.applyFilter(opts, query.filter);
+    opts = this.applyGroupBy(opts, aggregate.groupBy);
     return opts;
   }
 
@@ -182,6 +188,18 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
         return [col, dir.join(' ')];
       },
     );
+    return qb;
+  }
+
+  applyGroupBy<T extends Groupable>(qb: T, groupBy?: (keyof Entity)[], alias?: string): T {
+    if (!groupBy) {
+      return qb;
+    }
+    // eslint-disable-next-line no-param-reassign
+    qb.group = groupBy.map((field) => {
+      const colName = this.model.rawAttributes[field as string].field;
+      return sequelize.col(colName ?? (field as string));
+    });
     return qb;
   }
 

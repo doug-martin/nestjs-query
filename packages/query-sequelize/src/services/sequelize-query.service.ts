@@ -62,12 +62,12 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
     return this.model.findAll<Entity>(this.filterQueryBuilder.findOptions(query));
   }
 
-  async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>> {
-    const result = await this.model.findOne(this.filterQueryBuilder.aggregateOptions({ filter }, aggregate));
+  async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>[]> {
+    const result = await this.model.findAll(this.filterQueryBuilder.aggregateOptions({ filter }, aggregate));
     if (!result) {
-      return {};
+      return [{}];
     }
-    return AggregateBuilder.convertToAggregateResponse((result as unknown) as Record<string, unknown>);
+    return AggregateBuilder.convertToAggregateResponse((result as unknown) as Record<string, unknown>[]);
   }
 
   async count(filter: Filter<Entity>): Promise<number> {

@@ -83,7 +83,7 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
     entities: Entity[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<Entity, AggregateResponse<Relation>>>;
+  ): Promise<Map<Entity, AggregateResponse<Relation>[]>>;
 
   /**
    * Query for an array of relations.
@@ -99,7 +99,7 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
     dto: Entity,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation>>;
+  ): Promise<AggregateResponse<Relation>[]>;
 
   async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -107,7 +107,7 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
     dto: Entity | Entity[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<AggregateResponse<Relation> | Map<Entity, AggregateResponse<Relation>>> {
+  ): Promise<AggregateResponse<Relation>[] | Map<Entity, AggregateResponse<Relation>[]>> {
     if (Array.isArray(dto)) {
       return this.batchAggregateRelations(RelationClass, relationName, dto, filter, aggregate);
     }
@@ -121,8 +121,7 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
         assembler.convertAggregateQuery(aggregate),
       ),
     )) as unknown) as Record<string, unknown>[];
-    const [agg] = results.map((r) => AggregateBuilder.convertToAggregateResponse(r));
-    return assembler.convertAggregateResponse(agg);
+    return AggregateBuilder.convertToAggregateResponse(results).map((a) => assembler.convertAggregateResponse(a));
   }
 
   countRelations<Relation>(
@@ -339,7 +338,7 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
     entities: Entity[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>,
-  ): Promise<Map<Entity, AggregateResponse<Relation>>> {
+  ): Promise<Map<Entity, AggregateResponse<Relation>[]>> {
     const relationEntity = this.getRelationEntity(relationName);
     const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
     const relationQueryBuilder = this.getRelationQueryBuilder(relationEntity);
@@ -353,10 +352,12 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
         string,
         unknown
       >[];
-      const [agg] = results.map((r) => AggregateBuilder.convertToAggregateResponse(r));
-      map.set(e, assembler.convertAggregateResponse(agg));
+      const aggResponse = AggregateBuilder.convertToAggregateResponse(results).map((agg) =>
+        assembler.convertAggregateResponse(agg),
+      );
+      map.set(e, aggResponse);
       return map;
-    }, Promise.resolve(new Map<Entity, AggregateResponse<Relation>>()));
+    }, Promise.resolve(new Map<Entity, AggregateResponse<Relation>[]>()));
   }
 
   private async batchCountRelations<Relation>(
