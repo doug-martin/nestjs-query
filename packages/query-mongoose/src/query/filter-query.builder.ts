@@ -4,15 +4,18 @@ import { AggregateBuilder, MongooseGroupAndAggregate } from './aggregate.builder
 import { getSchemaKey } from './helpers';
 import { WhereBuilder } from './where.builder';
 
-type MongooseSort = Record<string, 'asc' | 'desc'>;
-
-type MongooseQuery<Entity extends Document> = {
-  filterQuery: FilterQuery<Entity>;
-  options: { limit?: number; skip?: number; sort?: MongooseSort[] };
+const MONGOOSE_SORT_DIRECTION: Record<SortDirection, 1 | -1> = {
+  [SortDirection.ASC]: 1,
+  [SortDirection.DESC]: -1,
 };
 
-type MongooseAggregateQuery<Entity extends Document> = {
+type MongooseSort = Record<string, 1 | -1>;
+type MongooseQuery<Entity extends Document> = {
   filterQuery: FilterQuery<Entity>;
+  options: { limit?: number; skip?: number; sort?: MongooseSort };
+};
+
+type MongooseAggregateQuery<Entity extends Document> = MongooseQuery<Entity> & {
   aggregate: MongooseGroupAndAggregate;
 };
 /**
@@ -37,6 +40,7 @@ export class FilterQueryBuilder<Entity extends Document> {
     return {
       filterQuery: this.buildFilterQuery(filter),
       aggregate: this.aggregateBuilder.build(aggregate),
+      options: { sort: this.buildAggregateSorting(aggregate) },
     };
   }
 
@@ -48,6 +52,7 @@ export class FilterQueryBuilder<Entity extends Document> {
     return {
       filterQuery: this.buildIdFilterQuery(id, filter),
       aggregate: this.aggregateBuilder.build(aggregate),
+      options: { sort: this.buildAggregateSorting(aggregate) },
     };
   }
 
@@ -74,9 +79,24 @@ export class FilterQueryBuilder<Entity extends Document> {
    * Applies the ORDER BY clause to a `typeorm` QueryBuilder.
    * @param sorts - an array of SortFields to create the ORDER BY clause.
    */
-  buildSorting(sorts?: SortField<Entity>[]): MongooseSort[] {
-    return (sorts || []).map((sort) => ({
-      [getSchemaKey(sort.field.toString())]: sort.direction === SortDirection.ASC ? 'asc' : 'desc',
-    }));
+  buildSorting(sorts?: SortField<Entity>[]): MongooseSort | undefined {
+    if (!sorts) {
+      return undefined;
+    }
+    return sorts.reduce((sort: MongooseSort, sortField: SortField<Entity>) => {
+      const field = getSchemaKey(sortField.field.toString());
+      const direction = MONGOOSE_SORT_DIRECTION[sortField.direction];
+      return { ...sort, [field]: direction };
+    }, {});
+  }
+
+  private buildAggregateSorting(aggregate: AggregateQuery<Entity>): MongooseSort | undefined {
+    const aggregateGroupBy = this.aggregateBuilder.getGroupBySelects(aggregate.groupBy);
+    if (!aggregateGroupBy) {
+      return undefined;
+    }
+    return aggregateGroupBy.reduce((sort: MongooseSort, sortField) => {
+      return { ...sort, [getSchemaKey(sortField)]: MONGOOSE_SORT_DIRECTION[SortDirection.ASC] };
+    }, {});
   }
 }

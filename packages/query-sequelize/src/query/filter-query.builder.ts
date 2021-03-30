@@ -89,6 +89,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     let opts: FindOptions = { raw: true };
     opts = this.applyAggregate(opts, aggregate);
     opts = this.applyFilter(opts, query.filter);
+    opts = this.applyAggregateSorting(opts, aggregate.groupBy);
     opts = this.applyGroupBy(opts, aggregate.groupBy);
     return opts;
   }
@@ -98,6 +99,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     let opts: FindOptions = { joinTableAttributes: [], raw: true } as FindOptions;
     opts = this.applyAggregate(opts, aggregate);
     opts = this.applyFilter(opts, query.filter);
+    opts = this.applyAggregateSorting(opts, aggregate.groupBy);
     opts = this.applyGroupBy(opts, aggregate.groupBy);
     return opts;
   }
@@ -191,7 +193,13 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     return qb;
   }
 
-  applyGroupBy<T extends Groupable>(qb: T, groupBy?: (keyof Entity)[], alias?: string): T {
+  private applyAggregate<P extends Projectable>(opts: P, aggregate: AggregateQuery<Entity>): P {
+    // eslint-disable-next-line no-param-reassign
+    opts.attributes = this.aggregateBuilder.build(aggregate).attributes;
+    return opts;
+  }
+
+  applyGroupBy<T extends Groupable>(qb: T, groupBy?: (keyof Entity)[]): T {
     if (!groupBy) {
       return qb;
     }
@@ -203,10 +211,19 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     return qb;
   }
 
-  private applyAggregate<P extends Projectable>(opts: P, aggregate: AggregateQuery<Entity>): P {
+  applyAggregateSorting<T extends Sortable>(qb: T, groupBy?: (keyof Entity)[]): T {
+    if (!groupBy) {
+      return qb;
+    }
     // eslint-disable-next-line no-param-reassign
-    opts.attributes = this.aggregateBuilder.build(aggregate).attributes;
-    return opts;
+    qb.order = groupBy.map(
+      (field): OrderItem => {
+        const colName = this.model.rawAttributes[field as string].field;
+        const col = sequelize.col(colName ?? (field as string));
+        return [col, 'ASC'];
+      },
+    );
+    return qb;
   }
 
   private applyAssociationIncludes<Opts extends FindOptions | CountOptions>(

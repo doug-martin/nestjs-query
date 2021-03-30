@@ -186,35 +186,6 @@ describe('SubTaskResolver (typegoose - e2e)', () => {
           expect(edges.map((e) => e.node)).toEqual(toGraphqlSubTasks(SUB_TASKS.slice(0, 3)));
         }));
 
-    // it(`should allow querying on todoItem`, () => {
-    //   return request(app.getHttpServer())
-    //     .post('/graphql')
-    //     .send({
-    //       operationName: null,
-    //       variables: {},
-    //       query: `{
-    //       subTasks(filter: { todoItem: { title: { like: "Create Entity%" } } }) {
-    //         ${pageInfoField}
-    //         ${edgeNodes(subTaskFields)}
-    //         totalCount
-    //       }
-    //     }`,
-    //     })
-    //     .expect(200)
-    //     .then(({ body }) => {
-    //       const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
-    //       expect(pageInfo).toEqual({
-    //         endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjl9XX0=',
-    //         hasNextPage: false,
-    //         hasPreviousPage: false,
-    //         startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
-    //       });
-    //       expect(totalCount).toBe(6);
-    //       expect(edges).toHaveLength(6);
-    //       expect(edges.map((e) => e.node)).toEqual(SUB_TASKS.slice(3, 9));
-    //     });
-    // });
-
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
         .post('/graphql')

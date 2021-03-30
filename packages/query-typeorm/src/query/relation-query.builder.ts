@@ -115,6 +115,11 @@ export class RelationQueryBuilder<Entity, Relation> {
     let relationBuilder = this.createRelationQueryBuilder(entity);
     relationBuilder = this.filterQueryBuilder.applyAggregate(relationBuilder, aggregateQuery, relationBuilder.alias);
     relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
+    relationBuilder = this.filterQueryBuilder.applyAggregateSorting(
+      relationBuilder,
+      aggregateQuery.groupBy,
+      relationBuilder.alias,
+    );
     relationBuilder = this.filterQueryBuilder.applyGroupBy(
       relationBuilder,
       aggregateQuery.groupBy,

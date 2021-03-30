@@ -193,35 +193,6 @@ describe('TagResolver (typegoose - e2e)', () => {
           expect(edges.map((e) => e.node)).toEqual(TAGS.slice(0, 3));
         }));
 
-    // it(`should allow querying on todoItems`, () => {
-    //   return request(app.getHttpServer())
-    //     .post('/graphql')
-    //     .send({
-    //       operationName: null,
-    //       variables: {},
-    //       query: `{
-    //       tags(filter: { todoItems: { title: { like: "Create Entity%" } } }, sorting: [{field: id, direction: ASC}]) {
-    //         ${pageInfoField}
-    //         ${edgeNodes(tagFields)}
-    //         totalCount
-    //       }
-    //     }`,
-    //     })
-    //     .expect(200)
-    //     .then(({ body }) => {
-    //       const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
-    //       expect(pageInfo).toEqual({
-    //         endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
-    //         hasNextPage: false,
-    //         hasPreviousPage: false,
-    //         startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
-    //       });
-    //       expect(totalCount).toBe(3);
-    //       expect(edges).toHaveLength(3);
-    //       expect(edges.map((e) => e.node)).toEqual([TAGS[0], TAGS[2], TAGS[4]]);
-    //     });
-    // });
-
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
         .post('/graphql')
