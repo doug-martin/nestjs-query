@@ -78,6 +78,7 @@ export class FilterQueryBuilder<Entity> {
     let qb = this.createQueryBuilder();
     qb = this.applyAggregate(qb, aggregate, qb.alias);
     qb = this.applyFilter(qb, query.filter, qb.alias);
+    qb = this.applyAggregateSorting(qb, aggregate.groupBy, qb.alias);
     qb = this.applyGroupBy(qb, aggregate.groupBy, qb.alias);
     return qb;
   }
@@ -179,6 +180,16 @@ export class FilterQueryBuilder<Entity> {
     return groupBy.reduce((prevQb, group) => {
       const col = alias ? `${alias}.${group as string}` : `${group as string}`;
       return prevQb.addGroupBy(col);
+    }, qb);
+  }
+
+  applyAggregateSorting<T extends Sortable<Entity>>(qb: T, groupBy?: (keyof Entity)[], alias?: string): T {
+    if (!groupBy) {
+      return qb;
+    }
+    return groupBy.reduce((prevQb, field) => {
+      const col = alias ? `${alias}.${field as string}` : `${field as string}`;
+      return prevQb.addOrderBy(col, 'ASC');
     }, qb);
   }
 

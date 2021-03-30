@@ -99,9 +99,21 @@ export class AggregateBuilder<Entity extends Document> {
       return null;
     }
     return fields.reduce((id: Record<string, string>, field) => {
-      const aggAlias = `group_by_${field as string}`;
+      const aggAlias = this.getGroupByAlias(field);
       const fieldAlias = `$${getSchemaKey(String(field))}`;
       return { ...id, [aggAlias]: fieldAlias };
     }, {});
+  }
+
+  getGroupBySelects(fields?: (keyof Entity)[]): string[] | undefined {
+    if (!fields) {
+      return undefined;
+    }
+    // append _id so it pulls the sort from the _id field
+    return (fields ?? []).map((f) => `_id.${this.getGroupByAlias(f)}`);
+  }
+
+  private getGroupByAlias(field: keyof Entity): string {
+    return `group_by_${field as string}`;
   }
 }

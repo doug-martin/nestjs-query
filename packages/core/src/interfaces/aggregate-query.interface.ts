@@ -6,15 +6,3 @@ export type AggregateQuery<DTO> = {
   min?: (keyof DTO)[];
   groupBy?: (keyof DTO)[];
 };
-
-// const j = `invoiceAgg(filter: {}){
-//   groupBy {
-//     currency
-//     created
-//   }
-//   max {
-//     amount
-//     date
-//  };
-// }`;
-//

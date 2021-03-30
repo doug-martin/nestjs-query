@@ -63,13 +63,18 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     if (!refFilter) {
       return [];
     }
-    const { filterQuery, aggregate } = referenceQueryBuilder.buildAggregateQuery(
+    const { filterQuery, aggregate, options } = referenceQueryBuilder.buildAggregateQuery(
       assembler.convertAggregateQuery(aggregateQuery),
       refFilter,
     );
-    const aggResult = (await relationModel
-      .aggregate<Record<string, unknown>>([{ $match: filterQuery }, { $group: aggregate }])
-      .exec()) as Record<string, unknown>[];
+    const aggPipeline: unknown[] = [{ $match: filterQuery }, { $group: aggregate }];
+    if (options.sort) {
+      aggPipeline.push({ $sort: options.sort ?? {} });
+    }
+    const aggResult = (await relationModel.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<
+      string,
+      unknown
+    >[];
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 

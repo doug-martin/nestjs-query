@@ -240,32 +240,6 @@ describe('MongooseQueryService', () => {
       return expect(queryResult).toEqual([
         {
           groupBy: {
-            boolType: true,
-          },
-          avg: {
-            numberType: 6,
-          },
-          count: {
-            id: 5,
-          },
-          max: {
-            dateType: TEST_ENTITIES[9].dateType,
-            numberType: 10,
-            stringType: 'foo8',
-            id: expect.any(ObjectId),
-          },
-          min: {
-            dateType: TEST_ENTITIES[1].dateType,
-            numberType: 2,
-            stringType: 'foo10',
-            id: expect.any(ObjectId),
-          },
-          sum: {
-            numberType: 30,
-          },
-        },
-        {
-          groupBy: {
             boolType: false,
           },
           avg: {
@@ -288,6 +262,32 @@ describe('MongooseQueryService', () => {
           },
           sum: {
             numberType: 25,
+          },
+        },
+        {
+          groupBy: {
+            boolType: true,
+          },
+          avg: {
+            numberType: 6,
+          },
+          count: {
+            id: 5,
+          },
+          max: {
+            dateType: TEST_ENTITIES[9].dateType,
+            numberType: 10,
+            stringType: 'foo8',
+            id: expect.any(ObjectId),
+          },
+          min: {
+            dateType: TEST_ENTITIES[1].dateType,
+            numberType: 2,
+            stringType: 'foo10',
+            id: expect.any(ObjectId),
+          },
+          sum: {
+            numberType: 30,
           },
         },
       ]);

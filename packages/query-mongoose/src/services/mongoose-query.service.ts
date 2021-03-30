@@ -72,11 +72,15 @@ export class MongooseQueryService<Entity extends Document>
     filter: Filter<Entity>,
     aggregateQuery: AggregateQuery<Entity>,
   ): Promise<AggregateResponse<Entity>[]> {
-    const { aggregate, filterQuery } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter);
-    const aggResult = (await this.Model.aggregate<Record<string, unknown>>([
-      { $match: filterQuery },
-      { $group: aggregate },
-    ]).exec()) as Record<string, unknown>[];
+    const { aggregate, filterQuery, options } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter);
+    const aggPipeline: unknown[] = [{ $match: filterQuery }, { $group: aggregate }];
+    if (options.sort) {
+      aggPipeline.push({ $sort: options.sort ?? {} });
+    }
+    const aggResult = (await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<
+      string,
+      unknown
+    >[];
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 

@@ -13,7 +13,7 @@ enum AggregateFuncs {
 }
 type Aggregate = Record<string, Record<string, unknown>>;
 type Group = { _id: Record<string, string> | null };
-export type TypegooseGroupAndAggregate = (Aggregate & Group) | Record<string, never>;
+export type TypegooseGroupAndAggregate = Aggregate & Group;
 
 const AGG_REGEXP = /(avg|sum|count|max|min|group_by)_(.*)/;
 
@@ -99,9 +99,21 @@ export class AggregateBuilder<Entity> {
       return null;
     }
     return fields.reduce((id: Record<string, string>, field) => {
-      const aggAlias = `group_by_${field as string}`;
+      const aggAlias = this.getGroupByAlias(field);
       const fieldAlias = `$${getSchemaKey(String(field))}`;
       return { ...id, [aggAlias]: fieldAlias };
     }, {});
+  }
+
+  getGroupBySelects(fields?: (keyof DocumentType<Entity>)[]): string[] | undefined {
+    if (!fields) {
+      return undefined;
+    }
+    // append _id so it pulls the sort from the _id field
+    return (fields ?? []).map((f) => `_id.${this.getGroupByAlias(f)}`);
+  }
+
+  private getGroupByAlias(field: keyof DocumentType<Entity>): string {
+    return `group_by_${field as string}`;
   }
 }

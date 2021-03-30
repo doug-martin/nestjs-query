@@ -5,15 +5,18 @@ import { AggregateBuilder, TypegooseGroupAndAggregate } from './aggregate.builde
 import { getSchemaKey } from './helpers';
 import { WhereBuilder } from './where.builder';
 
-type TypegooseSort = Record<string, 'asc' | 'desc'>;
+const TYPEGOOSE_SORT_DIRECTION: Record<SortDirection, 1 | -1> = {
+  [SortDirection.ASC]: 1,
+  [SortDirection.DESC]: -1,
+};
+type TypegooseSort = Record<string, 1 | -1>;
 
 type TypegooseQuery<Entity> = {
   filterQuery: FilterQuery<new () => Entity>;
-  options: { limit?: number; skip?: number; sort?: TypegooseSort[] };
+  options: { limit?: number; skip?: number; sort?: TypegooseSort };
 };
 
-type TypegooseAggregateQuery<Entity> = {
-  filterQuery: FilterQuery<Entity>;
+type TypegooseAggregateQuery<Entity> = TypegooseQuery<Entity> & {
   aggregate: TypegooseGroupAndAggregate;
 };
 /**
@@ -41,6 +44,7 @@ export class FilterQueryBuilder<Entity> {
     return {
       filterQuery: this.buildFilterQuery(filter),
       aggregate: this.aggregateBuilder.build(aggregate),
+      options: { sort: this.buildAggregateSorting(aggregate) },
     };
   }
 
@@ -52,6 +56,7 @@ export class FilterQueryBuilder<Entity> {
     return {
       filterQuery: this.buildIdFilterQuery(id, filter),
       aggregate: this.aggregateBuilder.build(aggregate),
+      options: { sort: this.buildAggregateSorting(aggregate) },
     };
   }
 
@@ -78,9 +83,24 @@ export class FilterQueryBuilder<Entity> {
    * Applies the ORDER BY clause to a `typeorm` QueryBuilder.
    * @param sorts - an array of SortFields to create the ORDER BY clause.
    */
-  buildSorting(sorts?: SortField<Entity>[]): TypegooseSort[] {
-    return (sorts || []).map((sort) => ({
-      [getSchemaKey(sort.field.toString())]: sort.direction === SortDirection.ASC ? 'asc' : 'desc',
-    }));
+  buildSorting(sorts?: SortField<Entity>[]): TypegooseSort | undefined {
+    if (!sorts) {
+      return undefined;
+    }
+    return sorts.reduce((sort: TypegooseSort, sortField: SortField<Entity>) => {
+      const field = getSchemaKey(sortField.field.toString());
+      const direction = TYPEGOOSE_SORT_DIRECTION[sortField.direction];
+      return { ...sort, [field]: direction };
+    }, {});
+  }
+
+  private buildAggregateSorting(aggregate: AggregateQuery<DocumentType<Entity>>): TypegooseSort | undefined {
+    const aggregateGroupBy = this.aggregateBuilder.getGroupBySelects(aggregate.groupBy);
+    if (!aggregateGroupBy) {
+      return undefined;
+    }
+    return aggregateGroupBy.reduce((sort: TypegooseSort, sortField) => {
+      return { ...sort, [getSchemaKey(sortField)]: TYPEGOOSE_SORT_DIRECTION[SortDirection.ASC] };
+    }, {});
   }
 }
