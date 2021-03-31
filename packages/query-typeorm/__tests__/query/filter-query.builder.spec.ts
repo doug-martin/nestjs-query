@@ -114,7 +114,7 @@ describe('FilterQueryBuilder', (): void => {
             },
           },
           instance(mockWhereBuilder),
-          '  LIMIT 10 OFFSET 11',
+          ' LIMIT 10 OFFSET 11',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), deepEqual([]), 'TestEntity')).never();
@@ -130,7 +130,7 @@ describe('FilterQueryBuilder', (): void => {
             },
           },
           instance(mockWhereBuilder),
-          '  LIMIT 10 OFFSET 10',
+          ' LIMIT 10 OFFSET 10',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), [], 'TestEntity')).never();
@@ -145,7 +145,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "TestEntity"."number_type" ASC',
+          ' ORDER BY "TestEntity"."number_type" ASC',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), [], 'TestEntity')).never();
@@ -158,7 +158,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "TestEntity"."number_type" ASC NULLS FIRST',
+          ' ORDER BY "TestEntity"."number_type" ASC NULLS FIRST',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), [], 'TestEntity')).never();
@@ -171,7 +171,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "TestEntity"."number_type" ASC NULLS LAST',
+          ' ORDER BY "TestEntity"."number_type" ASC NULLS LAST',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), [], 'TestEntity')).never();
@@ -184,7 +184,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "TestEntity"."number_type" DESC',
+          ' ORDER BY "TestEntity"."number_type" DESC',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), [], 'TestEntity')).never();
@@ -197,7 +197,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "TestEntity"."number_type" DESC NULLS FIRST',
+          ' ORDER BY "TestEntity"."number_type" DESC NULLS FIRST',
           [],
         );
       });
@@ -209,7 +209,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "TestEntity"."number_type" DESC NULLS LAST',
+          ' ORDER BY "TestEntity"."number_type" DESC NULLS LAST',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), [], 'TestEntity')).never();
@@ -227,7 +227,7 @@ describe('FilterQueryBuilder', (): void => {
             ],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "TestEntity"."number_type" ASC, "TestEntity"."bool_type" DESC, "TestEntity"."string_type" ASC' +
+          ' ORDER BY "TestEntity"."number_type" ASC, "TestEntity"."bool_type" DESC, "TestEntity"."string_type" ASC' +
             ' NULLS FIRST, "TestEntity"."date_type" DESC NULLS LAST',
           [],
         );
@@ -273,7 +273,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "number_type" ASC',
+          ' ORDER BY "number_type" ASC',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
@@ -286,7 +286,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "number_type" ASC NULLS FIRST',
+          ' ORDER BY "number_type" ASC NULLS FIRST',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
@@ -299,7 +299,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "number_type" ASC NULLS LAST',
+          ' ORDER BY "number_type" ASC NULLS LAST',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
@@ -312,7 +312,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "number_type" DESC',
+          ' ORDER BY "number_type" DESC',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
@@ -325,7 +325,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "number_type" DESC NULLS FIRST',
+          ' ORDER BY "number_type" DESC NULLS FIRST',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
@@ -338,7 +338,7 @@ describe('FilterQueryBuilder', (): void => {
             sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "number_type" DESC NULLS LAST',
+          ' ORDER BY "number_type" DESC NULLS LAST',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
@@ -356,7 +356,7 @@ describe('FilterQueryBuilder', (): void => {
             ],
           },
           instance(mockWhereBuilder),
-          '  ORDER BY "number_type" ASC, "bool_type" DESC, "string_type" ASC NULLS FIRST, "date_type" DESC NULLS LAST',
+          ' ORDER BY "number_type" ASC, "bool_type" DESC, "string_type" ASC NULLS FIRST, "date_type" DESC NULLS LAST',
           [],
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
