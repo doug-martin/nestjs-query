@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.25.0](https://github.com/doug-martin/nestjs-query/compare/v0.24.5...v0.25.0) (2021-03-31)
+
+
+### Features
+
+* **graphql:** Add new aggregate groupBy ([922e696](https://github.com/doug-martin/nestjs-query/commit/922e696df1c56d5d0181cbb769ffbfba943157dd))
+
+
+
+
+
 ## [0.24.5](https://github.com/doug-martin/nestjs-query/compare/v0.24.4...v0.24.5) (2021-03-19)
 
 **Note:** Version bump only for package @nestjs-query/query-graphql

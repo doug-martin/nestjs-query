@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.25.0](https://github.com/doug-martin/nestjs-query/compare/v0.24.5...v0.25.0) (2021-03-31)
+
+
+### Bug Fixes
+
+* Add consistent sorting for aggregate queries ([4ac7a14](https://github.com/doug-martin/nestjs-query/commit/4ac7a1485c7dcd83569951298606f487608806b1))
+* **deps:** update dependency apollo-server-express to v2.22.1 ([0a342bd](https://github.com/doug-martin/nestjs-query/commit/0a342bd3a57acdf919f5a8fb8bbd09db52cdf04c))
+* **deps:** update dependency apollo-server-express to v2.22.2 ([48bafef](https://github.com/doug-martin/nestjs-query/commit/48bafef9e1b3254f642c2d2cc93b33938bf17216))
+* **deps:** update dependency apollo-server-plugin-base to v0.11.0 ([a6387ce](https://github.com/doug-martin/nestjs-query/commit/a6387ce3880adc5dbea645ff6536c8cb6db33120))
+* **deps:** update dependency rxjs to v6.6.7 ([4708635](https://github.com/doug-martin/nestjs-query/commit/4708635ab00136ca82ab9fb1373ca435172ea897))
+* **deps:** update react monorepo to v17.0.2 ([11819da](https://github.com/doug-martin/nestjs-query/commit/11819da926f4753743cbb0322a63b5ad00f8a897))
+
+
+### Features
+
+* **core:** Add aggregate group by ([d5eb73b](https://github.com/doug-martin/nestjs-query/commit/d5eb73b9e7a193f664f46486435b7d8d76087b55))
+* **graphql:** Add new aggregate groupBy ([922e696](https://github.com/doug-martin/nestjs-query/commit/922e696df1c56d5d0181cbb769ffbfba943157dd))
+* **mongoose:** Update to support new aggregate with groupBy ([ccd0438](https://github.com/doug-martin/nestjs-query/commit/ccd04382de6ece10dd03db76052741ea1d7083a4))
+* **sequelize:** Update to support new aggregate with groupBy ([81fdef1](https://github.com/doug-martin/nestjs-query/commit/81fdef17304ad28a043f6a8e9a9496158e61022e))
+* **typegoose:** Update to support new aggregate with groupBy ([90992e1](https://github.com/doug-martin/nestjs-query/commit/90992e1a1dcc4e4e888e5946ab639535932f8f52))
+* **typeorm:** Update to support new aggregate with groupBy ([e2a4f30](https://github.com/doug-martin/nestjs-query/commit/e2a4f3066834ae7fddf0239ab647a0a9de667149))
+
+
+
+
+
 ## [0.24.5](https://github.com/doug-martin/nestjs-query/compare/v0.24.4...v0.24.5) (2021-03-19)
 
 

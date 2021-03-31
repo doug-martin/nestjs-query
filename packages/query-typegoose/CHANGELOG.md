@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.25.0](https://github.com/doug-martin/nestjs-query/compare/v0.24.5...v0.25.0) (2021-03-31)
+
+
+### Bug Fixes
+
+* Add consistent sorting for aggregate queries ([4ac7a14](https://github.com/doug-martin/nestjs-query/commit/4ac7a1485c7dcd83569951298606f487608806b1))
+
+
+### Features
+
+* **typegoose:** Update to support new aggregate with groupBy ([90992e1](https://github.com/doug-martin/nestjs-query/commit/90992e1a1dcc4e4e888e5946ab639535932f8f52))
+
+
+
+
+
 ## [0.24.4](https://github.com/doug-martin/nestjs-query/compare/v0.24.3...v0.24.4) (2021-03-18)
 
 **Note:** Version bump only for package @nestjs-query/query-typegoose

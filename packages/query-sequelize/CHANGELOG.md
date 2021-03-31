@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.25.0](https://github.com/doug-martin/nestjs-query/compare/v0.24.5...v0.25.0) (2021-03-31)
+
+
+### Bug Fixes
+
+* Add consistent sorting for aggregate queries ([4ac7a14](https://github.com/doug-martin/nestjs-query/commit/4ac7a1485c7dcd83569951298606f487608806b1))
+
+
+### Features
+
+* **sequelize:** Update to support new aggregate with groupBy ([81fdef1](https://github.com/doug-martin/nestjs-query/commit/81fdef17304ad28a043f6a8e9a9496158e61022e))
+
+
+
+
+
 ## [0.24.5](https://github.com/doug-martin/nestjs-query/compare/v0.24.4...v0.24.5) (2021-03-19)
 
 **Note:** Version bump only for package @nestjs-query/query-sequelize

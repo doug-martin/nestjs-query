@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.25.0](https://github.com/doug-martin/nestjs-query/compare/v0.24.5...v0.25.0) (2021-03-31)
+
+
+### Bug Fixes
+
+* Add consistent sorting for aggregate queries ([4ac7a14](https://github.com/doug-martin/nestjs-query/commit/4ac7a1485c7dcd83569951298606f487608806b1))
+* **deps:** update dependency apollo-server-express to v2.22.1 ([0a342bd](https://github.com/doug-martin/nestjs-query/commit/0a342bd3a57acdf919f5a8fb8bbd09db52cdf04c))
+* **deps:** update dependency apollo-server-express to v2.22.2 ([48bafef](https://github.com/doug-martin/nestjs-query/commit/48bafef9e1b3254f642c2d2cc93b33938bf17216))
+* **deps:** update dependency apollo-server-plugin-base to v0.11.0 ([a6387ce](https://github.com/doug-martin/nestjs-query/commit/a6387ce3880adc5dbea645ff6536c8cb6db33120))
+* **deps:** update dependency rxjs to v6.6.7 ([4708635](https://github.com/doug-martin/nestjs-query/commit/4708635ab00136ca82ab9fb1373ca435172ea897))
+
+
+
+
+
 ## [0.24.5](https://github.com/doug-martin/nestjs-query/compare/v0.24.4...v0.24.5) (2021-03-19)
 
 
