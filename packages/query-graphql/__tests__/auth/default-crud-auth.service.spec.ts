@@ -35,9 +35,17 @@ describe('createDefaultAuthorizer', () => {
     decoratorOwnerId!: number;
   }
 
-  @Authorize({ authorize: (ctx: UserContext) => ({ ownerId: { eq: ctx.user.id } }) })
+  @Authorize({
+    authorize: (ctx: UserContext, operationName?: string) =>
+      operationName === 'other' ? { ownerId: { neq: ctx.user.id } } : { ownerId: { eq: ctx.user.id } },
+  })
   @Relation('relations', () => TestRelation, {
-    auth: { authorize: (ctx: UserContext) => ({ relationOwnerId: { eq: ctx.user.id } }) },
+    auth: {
+      authorize: (ctx: UserContext, operationName?: string) =>
+        operationName === 'other'
+          ? { relationOwnerId: { neq: ctx.user.id } }
+          : { relationOwnerId: { eq: ctx.user.id } },
+    },
   })
   @UnPagedRelation('unPagedDecoratorRelations', () => TestDecoratorRelation)
   @Relation('authorizerRelation', () => RelationWithAuthorizer)
@@ -71,6 +79,12 @@ describe('createDefaultAuthorizer', () => {
     expect(filter).toEqual({ ownerId: { eq: 2 } });
   });
 
+  it('should create an auth filter that depends on the passed operation name', async () => {
+    const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
+    const filter = await authorizer.authorize({ user: { id: 2 } }, 'other');
+    expect(filter).toEqual({ ownerId: { neq: 2 } });
+  });
+
   it('should return an empty filter if auth not found', async () => {
     const authorizer = testingModule.get<Authorizer<TestNoAuthDTO>>(getAuthorizerToken(TestNoAuthDTO));
     const filter = await authorizer.authorize({ user: { id: 2 } });
@@ -87,6 +101,12 @@ describe('createDefaultAuthorizer', () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
     const filter = await authorizer.authorizeRelation('relations', { user: { id: 2 } });
     expect(filter).toEqual({ relationOwnerId: { eq: 2 } });
+  });
+
+  it('should create an auth filter that depends on the passed operation name for relations using the relation options', async () => {
+    const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
+    const filter = await authorizer.authorizeRelation('relations', { user: { id: 2 } }, 'other');
+    expect(filter).toEqual({ relationOwnerId: { neq: 2 } });
   });
 
   it('should create an auth filter for relations using the relation authorizer', async () => {
