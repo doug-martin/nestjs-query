@@ -13,7 +13,19 @@ import { UserContext } from '../../auth/auth.interfaces';
 
 @ObjectType('TodoItem')
 @QueryOptions({ enableTotalCount: true })
-@Authorize({ authorize: (context: UserContext) => ({ ownerId: { eq: context.req.user.id } }) })
+@Authorize({
+  authorize: (context: UserContext, operationName?: string) => {
+    if (
+      context.req.user.username === 'nestjs-query-3' &&
+      (operationName?.startsWith('query') ||
+        operationName?.startsWith('find') ||
+        operationName?.startsWith('aggregate'))
+    ) {
+      return {};
+    }
+    return { ownerId: { eq: context.req.user.id } };
+  },
+})
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableCursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
 @FilterableCursorConnection('tags', () => TagDTO)

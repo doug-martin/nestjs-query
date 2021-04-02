@@ -8,13 +8,13 @@ import { Authorizer } from './authorizer';
 
 export interface AuthorizerOptions<DTO> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  authorize: (context: any) => Filter<DTO> | Promise<Filter<DTO>>;
+  authorize: (context: any, operationName?: string) => Filter<DTO> | Promise<Filter<DTO>>;
 }
 
 const createRelationAuthorizer = (opts: AuthorizerOptions<unknown>): Authorizer<unknown> => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async authorize(context: any): Promise<Filter<unknown>> {
-    return opts.authorize(context) ?? {};
+  async authorize(context: any, operationName?: string): Promise<Filter<unknown>> {
+    return opts.authorize(context, operationName) ?? {};
   },
   authorizeRelation(): Promise<Filter<unknown>> {
     return Promise.reject(new Error('Not implemented'));
@@ -43,13 +43,13 @@ export function createDefaultAuthorizer<DTO>(
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async authorize(context: any): Promise<Filter<DTO>> {
-      return this.authOptions?.authorize(context) ?? {};
+    async authorize(context: any, operationName?: string): Promise<Filter<DTO>> {
+      return this.authOptions?.authorize(context, operationName) ?? {};
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async authorizeRelation(relationName: string, context: any): Promise<Filter<unknown>> {
-      return this.relationsAuthorizers.get(relationName)?.authorize(context) ?? {};
+    async authorizeRelation(relationName: string, context: any, operationName?: string): Promise<Filter<unknown>> {
+      return this.relationsAuthorizers.get(relationName)?.authorize(context, operationName) ?? {};
     }
 
     private get relations(): Map<string, ResolverRelation<unknown>> {

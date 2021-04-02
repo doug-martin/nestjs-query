@@ -86,7 +86,7 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
     )
     async queryMany(
       @HookArgs() query: QA,
-      @AuthorizerFilter() authorizeFilter?: Filter<DTO>,
+      @AuthorizerFilter('query') authorizeFilter?: Filter<DTO>,
     ): Promise<InstanceType<typeof ConnectionType>> {
       return ConnectionType.createFromPromise(
         (q) => this.service.query(q),
