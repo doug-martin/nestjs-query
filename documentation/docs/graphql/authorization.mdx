@@ -13,10 +13,10 @@ The following section assumes you are familiar with [authentication in nestjs](h
 
 The `nestjs-query` graphql package exposes decorators and options to allow the following
 
-* Additional filtering for objects based on the graphql context.
-* Filtering relations based on the graphql context.
-* Low level authorization service support when your authorizer needs to use other services or additional information
-that is not in the graphql context.
+- Additional filtering for objects based on the graphql context.
+- Filtering relations based on the graphql context.
+- Low level authorization service support when your authorizer needs to use other services or additional information
+  that is not in the graphql context.
 
 :::info
 If you are looking to modify incoming requests based on the context, take a look at the [hooks documentation](./hooks.mdx)
@@ -31,11 +31,10 @@ Authorization is invoked as the last step before calling the `QueryService`.
 All examples assume you have a guard that adds a `user` to the req on the context.
 
 ```ts
-
 type AuthenticatedUser = {
   id: number;
   username: string;
-}
+};
 
 type UserContext = {
   req: {
@@ -85,19 +84,21 @@ The `@nestjs-query/query-graphql` package includes a `@Authorize` decorator that
 criteria to authorize an incoming request.
 
 The `@Authorize` decorator accepts the following types.
-* An `object` that has an `authorize` method that returns a Filter for the DTO.
-* An instance of an `Authorizer` that implements the `authorize` and `authorizeRelation` methods.
-* An `Authorizer` class reference that implements the `Authorizer` interface. The `Authorizer` class will be
-instantiated using the `nestjs`'s dependency injection.
+
+- An `object` that has an `authorize` method that returns a Filter for the DTO.
+- An instance of an `Authorizer` that implements the `authorize` and `authorizeRelation` methods.
+- An `Authorizer` class reference that implements the `Authorizer` interface. The `Authorizer` class will be
+  instantiated using the `nestjs`'s dependency injection.
 
 The `@Authorize` decorator does not return an unauthorized error instead the following will occur:
- * `queryMany` results will not include any DTOs that do not match the filter criteria.
- * `findOne` will return a not found for a DTO that is cannot be found for the `id` and auth filter.
- * `updateOne` will return a not found error if the DTO to update cannot be found for the `id` and auth filter.
- * `updateMany` will exclude any records that do not match the user provided filter and the auth filter from being
- updated.
- * `deleteOne` will return a not found error if the DTO to delete cannot be found for the `id` and auth filter.
- * `deleteMany` will exclude any records that do not match the user provided filter and the auth filter from being
+
+- `queryMany` results will not include any DTOs that do not match the filter criteria.
+- `findOne` will return a not found for a DTO that is cannot be found for the `id` and auth filter.
+- `updateOne` will return a not found error if the DTO to update cannot be found for the `id` and auth filter.
+- `updateMany` will exclude any records that do not match the user provided filter and the auth filter from being
+  updated.
+- `deleteOne` will return a not found error if the DTO to delete cannot be found for the `id` and auth filter.
+- `deleteMany` will exclude any records that do not match the user provided filter and the auth filter from being
   deleted.
 
 :::note
@@ -155,7 +156,6 @@ export class TodoItemDTO {
   @FilterableField()
   ownerId!: number;
 }
-
 ```
 
 :::note
@@ -169,11 +169,12 @@ By default when relations are queried any additional filters defined using the `
 DTO will also be included.
 
 When mutating relations
-* If the DTO that is having a relation(s) added or removed cannot be found for the `id` and
-auth filter a not found error will be returned.
-* When adding or removing a single relation if the relation cannot be found for the `id` and auth filter a not found
-error will be returned.
-* When adding or removing multiple relations if all relations cannot be found a not found error will be throw.
+
+- If the DTO that is having a relation(s) added or removed cannot be found for the `id` and
+  auth filter a not found error will be returned.
+- When adding or removing a single relation if the relation cannot be found for the `id` and auth filter a not found
+  error will be returned.
+- When adding or removing multiple relations if all relations cannot be found a not found error will be throw.
 
 For example given the following `SubTaskDTO` definition whenever the `subTasks` connection is queried through a
 `todoItem`, only `subTasks` that belong to the user will be returned.
@@ -240,13 +241,13 @@ For example you could define the subtasks with the `auth` option, only allowing 
 ### Custom Authorizer
 
 When you need more control over authorization you can create a custom `Authorizer`. You may want to use a custom
- `Authorizer` if you need to use additional services to do authorization for a DTO.
+`Authorizer` if you need to use additional services to do authorization for a DTO.
 
 The `Authorizer` interface requires two methods to be implemented
 
-* `authorize` - Should return a filter that should be used for all queries and mutations for the DTO.
-* `authorizeRelation` - Should return a filter for the relation that will be used when querying the relation or
-adding/removing relations to/from the DTO.
+- `authorize` - Should return a filter that should be used for all queries and mutations for the DTO.
+- `authorizeRelation` - Should return a filter for the relation that will be used when querying the relation or
+  adding/removing relations to/from the DTO.
 
 In this example we'll create a simple authorizer for `SubTasks`. You can use this as a base to create a more complex
 authorizers that depends on other services.
@@ -324,8 +325,9 @@ The easiest way to leverage `Authorizers` in a custom resolver is to use the `Au
 `AuthorizerFilter` param decorator.
 
 In this example there are two important additions:
+
 1. The `AuthorizerInterceptor` is added to the `TodoItemResolver` as an interceptor, this interceptor will add the
- authorizer to the context so it can be used down stream
+   authorizer to the context so it can be used down stream
 2. The `AuthorizerFilter` param decorator uses the authorizer added by the interceptor to create an authorizer filter.
 
 ```ts title="todo-item/todo-item.resolver.ts" {9,17}
@@ -379,17 +381,72 @@ import { TodoItemEntity } from './todo-item.entity';
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
   constructor(
     @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>,
-    @InjectAuthorizer(TodoItemDTO) readonly authorizer: Authorizer<TodoItemDTO>
+    @InjectAuthorizer(TodoItemDTO) readonly authorizer: Authorizer<TodoItemDTO>,
   ) {
     super(service);
   }
 }
-
 ```
 
 :::important
 If you are extending the `CRUDResolver` directly be sure to [register your DTOs with the `NestjsQueryGraphQLModule`](./resolvers.mdx#crudresolver)
 :::
+
+## Authorize depending on operation
+
+Sometimes it might be necessary to perform different authorization based on the kind of operation an user wants to execute.
+E.g. some users could be allowed to read all todo items but only update/delete their own.
+
+In this case we can make use of the second parameter of the `authorize` function in our custom `Authorizer` or the one passed to the `@Authorizer` decorator which gets passed the name of the operation that should be authorized:
+
+```ts title='sub-task/sub-task.authorizer.ts'
+import { Injectable } from '@nestjs/common';
+import { Authorizer } from '@nestjs-query/query-graphql';
+import { Filter } from '@nestjs-query/core';
+import { UserContext } from '../auth/auth.interfaces';
+import { SubTaskDTO } from './dto/sub-task.dto';
+
+@Injectable()
+export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
+  authorize(context: UserContext, operationName?: string): Promise<Filter<SubTaskDTO>> {
+    if (
+      operationName.startsWith('query') ||
+      operationName.startsWith('find') ||
+      operationName.startsWith('aggregate')
+    ) {
+      return Promise.resolve({});
+    }
+
+    return Promise.resolve({ ownerId: { eq: context.req.user.id } });
+  }
+
+  authorizeRelation(relationName: string, context: UserContext): Promise<Filter<unknown>> {
+    if (relationName === 'todoItem') {
+      return Promise.resolve({ ownerId: { eq: context.req.user.id } });
+    }
+    return Promise.resolve({});
+  }
+}
+```
+
+The operation name is the name of the method that makes use of the `@AuthorizerFilter()` or the argument passed to this decorator (`@AuthorizerFilter('customMethodName')`).
+The names of the generated CRUD resolver methods are similar to the ones of the [QueryService](../concepts/services.mdx):
+
+- `query`
+- `findById`
+- `aggregate`
+- `updateOne`
+- `updateMany`
+- `deleteOne`
+- `deleteMany`
+
+**Relations**
+
+- `query{PluralRelationName}` (e.g. querySubTasks)
+- `find{SingularRelationName}` (e.g. findTodoItem)
+- `aggregate{PluralRelationName}` (e.g. aggregateSubTasks)
+- `remove{RelationName}from{SingularParentName}` (e.g. removeSubTaskFromTodoItem)
+- `set{RelationName}On{SingularParentName}` (e.g. setSubTaskOnTodoItem)
 
 ## Complete Example
 

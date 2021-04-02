@@ -25,6 +25,7 @@ import { AuthService } from '../src/auth/auth.service';
 describe('TodoItemResolver (auth - e2e)', () => {
   let app: INestApplication;
   let jwtToken: string;
+  let adminJwtToken: string;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -49,6 +50,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
   beforeEach(async () => {
     const authService = app.get(AuthService);
     jwtToken = (await authService.login({ username: 'nestjs-query', id: 1 })).accessToken;
+    adminJwtToken = (await authService.login({ username: 'nestjs-query-3', id: 3 })).accessToken;
   });
 
   afterAll(() => refresh(app.get(Connection)));
@@ -80,6 +82,34 @@ describe('TodoItemResolver (auth - e2e)', () => {
             ${todoItemFields}
           }
         }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: {
+              todoItem: {
+                id: '1',
+                title: 'Create Nest App',
+                completed: true,
+                description: null,
+                age: expect.any(Number),
+              },
+            },
+          });
+        }));
+
+    it(`should find a users todo item by id`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(adminJwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+            todoItem(id: 1) {
+              ${todoItemFields}
+            }
+          }`,
         })
         .expect(200)
         .then(({ body }) => {
@@ -299,6 +329,39 @@ describe('TodoItemResolver (auth - e2e)', () => {
       request(app.getHttpServer())
         .post('/graphql')
         .auth(jwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItems(filter: { id: { in: [1, 2, 3] } }) {
+            ${pageInfoField}
+            ${edgeNodes(todoItemFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          expect(pageInfo).toEqual({
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          });
+          expect(totalCount).toBe(3);
+          expect(edges).toHaveLength(3);
+          expect(edges.map((e) => e.node)).toEqual([
+            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+            { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
+          ]);
+        }));
+
+    it(`should allow querying for all users`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(adminJwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -549,6 +612,33 @@ describe('TodoItemResolver (auth - e2e)', () => {
               max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
               min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
               sum: { id: 15 },
+            },
+          ]);
+        }));
+
+    it(`should return a aggregate response for all users`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(adminJwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{ 
+            todoItemAggregate {
+                ${todoItemAggregateFields}
+              }
+          }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          expect(res).toEqual([
+            {
+              avg: { id: 8 },
+              count: { completed: 15, created: 15, description: 0, id: 15, title: 15, updated: 15 },
+              max: { description: null, id: '15', title: 'How to create item With Sub Tasks' },
+              min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
+              sum: { id: 120 },
             },
           ]);
         }));
@@ -884,6 +974,32 @@ describe('TodoItemResolver (auth - e2e)', () => {
           expect(body.errors[0].message).toBe('Unable to find TodoItemEntity with id: 6');
         }));
 
+    it('should not allow updating a todoItem that does not belong to the admin', () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(adminJwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+              updateOneTodoItem(
+                input: {
+                  id: "6",
+                  update: { title: "Should Not Update", completed: true }
+                }
+              ) {
+                id
+                title
+                completed
+              }
+          }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toBe('Unable to find TodoItemEntity with id: 6');
+        }));
+
     it('should call the beforeUpdateOne hook', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1035,6 +1151,32 @@ describe('TodoItemResolver (auth - e2e)', () => {
               updatedCount
             }
         }`,
+        })
+        .expect(200, {
+          data: {
+            updateManyTodoItems: {
+              updatedCount: 0,
+            },
+          },
+        }));
+
+    it('should not allow update records that do not belong to the admin', () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(adminJwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+              updateManyTodoItems(
+                input: {
+                  filter: {id: { in: ["6", "7"]} },
+                  update: { title: "Should not update", completed: true }
+                }
+              ) {
+                updatedCount
+              }
+          }`,
         })
         .expect(200, {
           data: {
@@ -1206,6 +1348,29 @@ describe('TodoItemResolver (auth - e2e)', () => {
           expect(body.errors[0].message).toContain('Unable to find TodoItemEntity with id: 6');
         }));
 
+    it('should not allow deleting a todoItem that does not belong to the admin', () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(adminJwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+              deleteOneTodoItem(
+                input: { id: "6" }
+              ) {
+                id
+                title
+                completed
+              }
+          }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find TodoItemEntity with id: 6');
+        }));
+
     it('should require an id', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1292,6 +1457,31 @@ describe('TodoItemResolver (auth - e2e)', () => {
               deletedCount
             }
         }`,
+        })
+        .expect(200, {
+          data: {
+            deleteManyTodoItems: {
+              deletedCount: 0,
+            },
+          },
+        }));
+
+    it('should not allow deleting multiple todoItems that do not belong to the admin', () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(adminJwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+              deleteManyTodoItems(
+                input: {
+                  filter: {id: { in: ["6", "7"]} },
+                }
+              ) {
+                deletedCount
+              }
+          }`,
         })
         .expect(200, {
           data: {
