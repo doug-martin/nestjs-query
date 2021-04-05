@@ -25,7 +25,7 @@ import { AuthService } from '../src/auth/auth.service';
 describe('TodoItemResolver (auth - e2e)', () => {
   let app: INestApplication;
   let jwtToken: string;
-  let adminJwtToken: string;
+  let user3JwtToken: string;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -50,7 +50,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
   beforeEach(async () => {
     const authService = app.get(AuthService);
     jwtToken = (await authService.login({ username: 'nestjs-query', id: 1 })).accessToken;
-    adminJwtToken = (await authService.login({ username: 'nestjs-query-3', id: 3 })).accessToken;
+    user3JwtToken = (await authService.login({ username: 'nestjs-query-3', id: 3 })).accessToken;
   });
 
   afterAll(() => refresh(app.get(Connection)));
@@ -101,7 +101,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should find a users todo item by id`, () =>
       request(app.getHttpServer())
         .post('/graphql')
-        .auth(adminJwtToken, { type: 'bearer' })
+        .auth(user3JwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -361,7 +361,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should allow querying for all users`, () =>
       request(app.getHttpServer())
         .post('/graphql')
-        .auth(adminJwtToken, { type: 'bearer' })
+        .auth(user3JwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -619,7 +619,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
     it(`should return a aggregate response for all users`, () =>
       request(app.getHttpServer())
         .post('/graphql')
-        .auth(adminJwtToken, { type: 'bearer' })
+        .auth(user3JwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -721,6 +721,31 @@ describe('TodoItemResolver (auth - e2e)', () => {
               completed: false,
             },
           },
+        }));
+
+    it('should forbid creating a todoItem for user 3', () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(user3JwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+              createOneTodoItem(
+                input: {
+                  todoItem: { title: "Test Todo", completed: false }
+                }
+              ) {
+                id
+                title
+                completed
+              }
+          }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
         }));
 
     it('should call the beforeCreateOne hook', () =>
@@ -974,10 +999,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
           expect(body.errors[0].message).toBe('Unable to find TodoItemEntity with id: 6');
         }));
 
-    it('should not allow updating a todoItem that does not belong to the admin', () =>
+    it('should not allow updating a todoItem that does not belong to user 3', () =>
       request(app.getHttpServer())
         .post('/graphql')
-        .auth(adminJwtToken, { type: 'bearer' })
+        .auth(user3JwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1160,10 +1185,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
           },
         }));
 
-    it('should not allow update records that do not belong to the admin', () =>
+    it('should not allow update records that do not belong to user 3', () =>
       request(app.getHttpServer())
         .post('/graphql')
-        .auth(adminJwtToken, { type: 'bearer' })
+        .auth(user3JwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1348,10 +1373,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
           expect(body.errors[0].message).toContain('Unable to find TodoItemEntity with id: 6');
         }));
 
-    it('should not allow deleting a todoItem that does not belong to the admin', () =>
+    it('should not allow deleting a todoItem that does not belong to user 3', () =>
       request(app.getHttpServer())
         .post('/graphql')
-        .auth(adminJwtToken, { type: 'bearer' })
+        .auth(user3JwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
@@ -1466,10 +1491,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
           },
         }));
 
-    it('should not allow deleting multiple todoItems that do not belong to the admin', () =>
+    it('should not allow deleting multiple todoItems that do not belong to user 3', () =>
       request(app.getHttpServer())
         .post('/graphql')
-        .auth(adminJwtToken, { type: 'bearer' })
+        .auth(user3JwtToken, { type: 'bearer' })
         .send({
           operationName: null,
           variables: {},
