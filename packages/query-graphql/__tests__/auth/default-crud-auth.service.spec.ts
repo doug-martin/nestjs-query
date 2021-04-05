@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Filter } from '@nestjs-query/core';
 import { Injectable } from '@nestjs/common';
 import { Authorizer, Relation, Authorize, UnPagedRelation } from '../../src';
-import { getAuthorizerToken } from '../../src/auth';
+import { AuthorizationContext, getAuthorizerToken } from '../../src/auth';
 import { createAuthorizerProviders } from '../../src/providers';
 
 describe('createDefaultAuthorizer', () => {
@@ -36,13 +36,15 @@ describe('createDefaultAuthorizer', () => {
   }
 
   @Authorize({
-    authorize: (ctx: UserContext, operationName?: string) =>
-      operationName === 'other' ? { ownerId: { neq: ctx.user.id } } : { ownerId: { eq: ctx.user.id } },
+    authorize: (ctx: UserContext, authorizationContext?: AuthorizationContext) =>
+      authorizationContext?.operationName === 'other'
+        ? { ownerId: { neq: ctx.user.id } }
+        : { ownerId: { eq: ctx.user.id } },
   })
   @Relation('relations', () => TestRelation, {
     auth: {
-      authorize: (ctx: UserContext, operationName?: string) =>
-        operationName === 'other'
+      authorize: (ctx: UserContext, authorizationContext?: AuthorizationContext) =>
+        authorizationContext?.operationName === 'other'
           ? { relationOwnerId: { neq: ctx.user.id } }
           : { relationOwnerId: { eq: ctx.user.id } },
     },
@@ -81,7 +83,7 @@ describe('createDefaultAuthorizer', () => {
 
   it('should create an auth filter that depends on the passed operation name', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorize({ user: { id: 2 } }, 'other');
+    const filter = await authorizer.authorize({ user: { id: 2 } }, { operationName: 'other' });
     expect(filter).toEqual({ ownerId: { neq: 2 } });
   });
 
@@ -105,7 +107,7 @@ describe('createDefaultAuthorizer', () => {
 
   it('should create an auth filter that depends on the passed operation name for relations using the relation options', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation('relations', { user: { id: 2 } }, 'other');
+    const filter = await authorizer.authorizeRelation('relations', { user: { id: 2 } }, { operationName: 'other' });
     expect(filter).toEqual({ relationOwnerId: { neq: 2 } });
   });
 
