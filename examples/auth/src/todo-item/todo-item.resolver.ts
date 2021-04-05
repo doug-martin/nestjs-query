@@ -17,7 +17,7 @@ export class TodoItemResolver {
   @Query(() => TodoItemConnection)
   async completedTodoItems(
     @Args() query: TodoItemQuery,
-    @AuthorizerFilter() authFilter: Filter<TodoItemDTO>,
+    @AuthorizerFilter('queryCompletedTodoItems') authFilter: Filter<TodoItemDTO>,
   ): Promise<ConnectionType<TodoItemDTO>> {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: true } });
@@ -33,7 +33,13 @@ export class TodoItemResolver {
   @Query(() => TodoItemConnection)
   async uncompletedTodoItems(
     @Args() query: TodoItemQuery,
-    @AuthorizerFilter() authFilter: Filter<TodoItemDTO>,
+    @AuthorizerFilter({
+      operationName: 'queryUncompletedTodoItems',
+      operationGroup: 'read',
+      readonly: true,
+      many: true,
+    })
+    authFilter: Filter<TodoItemDTO>,
   ): Promise<ConnectionType<TodoItemDTO>> {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: false } });

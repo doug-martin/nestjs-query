@@ -16,12 +16,9 @@ import { UserContext } from '../../auth/auth.interfaces';
 @QueryOptions({ enableTotalCount: true })
 @Authorize({
   authorize: (context: UserContext, authorizationContext?: AuthorizationContext) => {
-    const operationName = authorizationContext?.operationName;
     if (
       context.req.user.username === 'nestjs-query-3' &&
-      (operationName?.startsWith('query') ||
-        operationName?.startsWith('find') ||
-        operationName?.startsWith('aggregate'))
+      (authorizationContext?.operationGroup === 'read' || authorizationContext?.operationGroup === 'aggregate')
     ) {
       return {};
     }
