@@ -3,13 +3,13 @@
  * @packageDocumentation
  */
 // eslint-disable-next-line max-classes-per-file
-import { Class, DeepPartial, QueryService } from '@nestjs-query/core';
+import { Class, DeepPartial, Filter, QueryService } from '@nestjs-query/core';
 import { Args, ArgsType, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { HookTypes } from '../hooks';
 import { DTONames, getDTONames } from '../common';
-import { MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
-import { HookInterceptor } from '../interceptors';
+import { AuthorizerFilter, MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
+import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
 import { EventType, getDTOEventName } from '../subscription';
 import {
   CreateManyInputType,
@@ -127,10 +127,17 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       () => DTOClass,
       { name: createOneMutationName },
       commonResolverOpts,
-      { interceptors: [HookInterceptor(HookTypes.BEFORE_CREATE_ONE, CreateDTOClass, DTOClass)] },
+      {
+        interceptors: [
+          HookInterceptor(HookTypes.BEFORE_CREATE_ONE, CreateDTOClass, DTOClass),
+          AuthorizerInterceptor(DTOClass),
+        ],
+      },
       opts.one ?? {},
     )
-    async createOne(@MutationHookArgs() input: CO): Promise<DTO> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async createOne(@MutationHookArgs() input: CO, @AuthorizerFilter() authorizeFilter?: Filter<DTO>): Promise<DTO> {
+      // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
       const created = await this.service.createOne(input.input.input);
       if (enableOneSubscriptions) {
         await this.publishCreatedEvent(created);
@@ -142,10 +149,17 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       () => [DTOClass],
       { name: createManyMutationName },
       { ...commonResolverOpts },
-      { interceptors: [HookInterceptor(HookTypes.BEFORE_CREATE_MANY, CreateDTOClass, DTOClass)] },
+      {
+        interceptors: [
+          HookInterceptor(HookTypes.BEFORE_CREATE_MANY, CreateDTOClass, DTOClass),
+          AuthorizerInterceptor(DTOClass),
+        ],
+      },
       opts.many ?? {},
     )
-    async createMany(@MutationHookArgs() input: CM): Promise<DTO[]> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async createMany(@MutationHookArgs() input: CM, @AuthorizerFilter() authorizeFilter?: Filter<DTO>): Promise<DTO[]> {
+      // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
       const created = await this.service.createMany(input.input.input);
       if (enableManySubscriptions) {
         await Promise.all(created.map((c) => this.publishCreatedEvent(c)));
