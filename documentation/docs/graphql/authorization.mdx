@@ -397,7 +397,7 @@ If you are extending the `CRUDResolver` directly be sure to [register your DTOs 
 Sometimes it might be necessary to perform different authorization based on the kind of operation an user wants to execute.
 E.g. some users could be allowed to read all todo items but only update/delete their own.
 
-In this case we can make use of the second parameter of the `authorize` function in our custom `Authorizer` or the one passed to the `@Authorizer` decorator which gets passed the name of the operation that should be authorized:
+In this case we can make use of the second parameter of the `authorize` function in our custom `Authorizer` or the one passed to the `@Authorizer` decorator which gets passed additional `AuthorizationContext` such as the name of the operation that should be authorized:
 
 ```ts title='sub-task/sub-task.authorizer.ts'
 import { Injectable } from '@nestjs/common';
@@ -408,7 +408,9 @@ import { SubTaskDTO } from './dto/sub-task.dto';
 
 @Injectable()
 export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
-  authorize(context: UserContext, operationName?: string): Promise<Filter<SubTaskDTO>> {
+  authorize(context: UserContext, authorizationContext?: AuthorizationContext): Promise<Filter<SubTaskDTO>> {
+    const operationName = authorizationContext?.operationName;
+
     if (
       operationName.startsWith('query') ||
       operationName.startsWith('find') ||
@@ -429,7 +431,7 @@ export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
 }
 ```
 
-The operation name is the name of the method that makes use of the `@AuthorizerFilter()` or the argument passed to this decorator (`@AuthorizerFilter('customMethodName')`).
+The `operationName` is the name of the method that makes use of the `@AuthorizerFilter()` or the argument passed to this decorator (`@AuthorizerFilter('customMethodName')`).
 The names of the generated CRUD resolver methods are similar to the ones of the [QueryService](../concepts/services.mdx):
 
 - `query`

@@ -4,17 +4,17 @@ import { Injectable } from '@nestjs/common';
 import { getAuthorizer, getRelations } from '../decorators';
 import { getAuthorizerToken } from './tokens';
 import { ResolverRelation } from '../resolvers/relations';
-import { Authorizer } from './authorizer';
+import { Authorizer, AuthorizationContext } from './authorizer';
 
 export interface AuthorizerOptions<DTO> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  authorize: (context: any, operationName?: string) => Filter<DTO> | Promise<Filter<DTO>>;
+  authorize: (context: any, authorizationContext?: AuthorizationContext) => Filter<DTO> | Promise<Filter<DTO>>;
 }
 
 const createRelationAuthorizer = (opts: AuthorizerOptions<unknown>): Authorizer<unknown> => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async authorize(context: any, operationName?: string): Promise<Filter<unknown>> {
-    return opts.authorize(context, operationName) ?? {};
+  async authorize(context: any, authorizationContext?: AuthorizationContext): Promise<Filter<unknown>> {
+    return opts.authorize(context, authorizationContext) ?? {};
   },
   authorizeRelation(): Promise<Filter<unknown>> {
     return Promise.reject(new Error('Not implemented'));
@@ -43,13 +43,17 @@ export function createDefaultAuthorizer<DTO>(
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async authorize(context: any, operationName?: string): Promise<Filter<DTO>> {
-      return this.authOptions?.authorize(context, operationName) ?? {};
+    async authorize(context: any, authorizationContext?: AuthorizationContext): Promise<Filter<DTO>> {
+      return this.authOptions?.authorize(context, authorizationContext) ?? {};
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async authorizeRelation(relationName: string, context: any, operationName?: string): Promise<Filter<unknown>> {
-      return this.relationsAuthorizers.get(relationName)?.authorize(context, operationName) ?? {};
+    async authorizeRelation(
+      relationName: string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      context: any,
+      authorizationContext?: AuthorizationContext,
+    ): Promise<Filter<unknown>> {
+      return this.relationsAuthorizers.get(relationName)?.authorize(context, authorizationContext) ?? {};
     }
 
     private get relations(): Map<string, ResolverRelation<unknown>> {

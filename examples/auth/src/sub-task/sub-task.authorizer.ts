@@ -1,10 +1,11 @@
-import { Authorizer } from '@nestjs-query/query-graphql';
+import { Authorizer, AuthorizationContext } from '@nestjs-query/query-graphql';
 import { Filter } from '@nestjs-query/core';
 import { UserContext } from '../auth/auth.interfaces';
 import { SubTaskDTO } from './dto/sub-task.dto';
 
 export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
-  authorize(context: UserContext, operationName?: string): Promise<Filter<SubTaskDTO>> {
+  authorize(context: UserContext, authorizationContext?: AuthorizationContext): Promise<Filter<SubTaskDTO>> {
+    const operationName = authorizationContext?.operationName;
     if (
       context.req.user.username === 'nestjs-query-3' &&
       (operationName?.startsWith('query') ||

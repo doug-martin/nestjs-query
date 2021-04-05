@@ -4,6 +4,7 @@ import {
   Relation,
   FilterableCursorConnection,
   QueryOptions,
+  AuthorizationContext,
 } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
@@ -14,7 +15,8 @@ import { UserContext } from '../../auth/auth.interfaces';
 @ObjectType('TodoItem')
 @QueryOptions({ enableTotalCount: true })
 @Authorize({
-  authorize: (context: UserContext, operationName?: string) => {
+  authorize: (context: UserContext, authorizationContext?: AuthorizationContext) => {
+    const operationName = authorizationContext?.operationName;
     if (
       context.req.user.username === 'nestjs-query-3' &&
       (operationName?.startsWith('query') ||
