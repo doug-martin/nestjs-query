@@ -409,13 +409,7 @@ import { SubTaskDTO } from './dto/sub-task.dto';
 @Injectable()
 export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
   authorize(context: UserContext, authorizationContext?: AuthorizationContext): Promise<Filter<SubTaskDTO>> {
-    const operationName = authorizationContext?.operationName;
-
-    if (
-      operationName.startsWith('query') ||
-      operationName.startsWith('find') ||
-      operationName.startsWith('aggregate')
-    ) {
+    if (authorizationContext?.readonly) {
       return Promise.resolve({});
     }
 
@@ -430,6 +424,39 @@ export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
   }
 }
 ```
+
+The `AuthorizationContext` has the following shape:
+
+```ts title='authorizer.ts'
+interface AuthorizationContext {
+  /** The name of the method that uses the @AuthorizeFilter decorator */
+  operationName: string;
+
+  /** The group this operation belongs to */
+  operationGroup: 'read' | 'aggregate' | 'create' | 'update' | 'delete';
+
+  /** If the operation does not modify any entities */
+  readonly: boolean;
+
+  /** If the operation can affect multiple entities */
+  many: boolean;
+}
+```
+
+This context is automatially created for you when using the built-in resolvers.
+If you authorize custom methods by using the `@AuthorizerFilter()`, you have three options:
+
+- Pass your own `AuthorizationContext` as argument to the decorator:
+  ```ts
+  @AuthorizerFilter({
+    operationName: 'completedTodoItems',
+    operationGroup: 'read',
+    readonly: true,
+    many: true
+  })
+  ```
+- Pass a custom operation name as argument and let the context be inferred from the name (the nae should follow the conventions below): `@AuthorizerFilter('queryCompletedTodoItems')`.
+- Don't pass a custom name and let the decorator use the name of the decorated method: `@AuthorizerFilter()`
 
 The `operationName` is the name of the method that makes use of the `@AuthorizerFilter()` or the argument passed to this decorator (`@AuthorizerFilter('customMethodName')`).
 The names of the generated CRUD resolver methods are similar to the ones of the [QueryService](../concepts/services.mdx):
