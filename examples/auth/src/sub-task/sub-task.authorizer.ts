@@ -5,13 +5,7 @@ import { SubTaskDTO } from './dto/sub-task.dto';
 
 export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
   authorize(context: UserContext, authorizationContext?: AuthorizationContext): Promise<Filter<SubTaskDTO>> {
-    const operationName = authorizationContext?.operationName;
-    if (
-      context.req.user.username === 'nestjs-query-3' &&
-      (operationName?.startsWith('query') ||
-        operationName?.startsWith('find') ||
-        operationName?.startsWith('aggregate'))
-    ) {
+    if (context.req.user.username === 'nestjs-query-3' && authorizationContext?.readonly) {
       return Promise.resolve({});
     }
     return Promise.resolve({ ownerId: { eq: context.req.user.id } });
