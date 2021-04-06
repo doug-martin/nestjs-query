@@ -207,8 +207,6 @@ type FilterFieldComparisonType<FieldType, IsKeys extends true | false> = FieldTy
   ? StringFieldComparisons // eslint-disable-next-line @typescript-eslint/ban-types
   : FieldType extends boolean | Boolean
   ? BooleanFieldComparisons
-  : FieldType extends null | undefined | never
-  ? BooleanFieldComparisons // eslint-disable-next-line @typescript-eslint/no-explicit-any
   : FieldType extends number | Date | RegExp | bigint | BuiltInTypes[] | symbol
   ? CommonFieldComparisonType<FieldType>
   : FieldType extends Array<infer U>

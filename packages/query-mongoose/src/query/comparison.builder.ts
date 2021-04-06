@@ -1,7 +1,8 @@
 import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
 import escapeRegExp from 'lodash.escaperegexp';
-import { FilterQuery, Document } from 'mongoose';
+import { Model as MongooseModel, FilterQuery, Document, Types, Schema } from 'mongoose';
 import { QuerySelector } from 'mongodb';
+import { BadRequestException } from '@nestjs/common';
 import { getSchemaKey } from './helpers';
 
 /**
@@ -33,7 +34,10 @@ export class ComparisonBuilder<Entity extends Document> {
     isnot: '$ne',
   };
 
-  constructor(readonly comparisonMap: Record<string, string> = ComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
+  constructor(
+    readonly Model: MongooseModel<Entity>,
+    readonly comparisonMap: Record<string, string> = ComparisonBuilder.DEFAULT_COMPARISON_MAP,
+  ) {}
 
   /**
    * Creates a valid SQL fragment with parameters.
@@ -52,39 +56,32 @@ export class ComparisonBuilder<Entity extends Document> {
     let querySelector: QuerySelector<Entity[F]> | undefined;
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)
-      querySelector = { [this.comparisonMap[normalizedCmp]]: val };
+      querySelector = { [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F]) };
     }
     if (normalizedCmp.includes('like')) {
       querySelector = (this.likeComparison(normalizedCmp, val) as unknown) as QuerySelector<Entity[F]>;
     }
-    if (normalizedCmp === 'between') {
-      // between comparison (field BETWEEN x AND y)
-      querySelector = this.betweenComparison(val);
-    }
-    if (normalizedCmp === 'notbetween') {
-      // notBetween comparison (field NOT BETWEEN x AND y)
-      querySelector = this.notBetweenComparison(val);
+    if (normalizedCmp.includes('between')) {
+      querySelector = this.betweenComparison(normalizedCmp, field, val);
     }
     if (!querySelector) {
-      throw new Error(`unknown operator ${JSON.stringify(cmp)}`);
+      throw new BadRequestException(`unknown operator ${JSON.stringify(cmp)}`);
     }
     return { [schemaKey]: querySelector } as FilterQuery<Entity>;
   }
 
-  private betweenComparison<F extends keyof Entity>(val: EntityComparisonField<Entity, F>): QuerySelector<Entity[F]> {
-    if (this.isBetweenVal(val)) {
-      return { $gte: val.lower, $lte: val.upper };
-    }
-    throw new Error(`Invalid value for between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
-  }
-
-  private notBetweenComparison<F extends keyof Entity>(
+  private betweenComparison<F extends keyof Entity>(
+    cmp: string,
+    field: F,
     val: EntityComparisonField<Entity, F>,
   ): QuerySelector<Entity[F]> {
-    if (this.isBetweenVal(val)) {
-      return { $lt: val.lower, $gt: val.upper };
+    if (!this.isBetweenVal(val)) {
+      throw new Error(`Invalid value for ${cmp} expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
     }
-    throw new Error(`Invalid value for not between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
+    if (cmp === 'notbetween') {
+      return { $lt: this.convertQueryValue(field, val.lower), $gt: this.convertQueryValue(field, val.upper) };
+    }
+    return { $gte: this.convertQueryValue(field, val.lower), $lte: this.convertQueryValue(field, val.upper) };
   }
 
   private isBetweenVal<F extends keyof Entity>(
@@ -103,5 +100,28 @@ export class ComparisonBuilder<Entity extends Document> {
       return { $not: { $regex: regExp } };
     }
     return { $regex: regExp };
+  }
+
+  private convertQueryValue<F extends keyof Entity>(field: F, val: Entity[F]): Entity[F] {
+    const schemaType = this.Model.schema.path(getSchemaKey(field as string));
+    if (!schemaType) {
+      throw new BadRequestException(`unknown comparison field ${String(field)}`);
+    }
+    if (schemaType instanceof Schema.Types.ObjectId) {
+      return this.convertToObjectId(val) as Entity[F];
+    }
+    return val;
+  }
+
+  private convertToObjectId(val: unknown): unknown {
+    if (Array.isArray(val)) {
+      return val.map((v) => this.convertToObjectId(v));
+    }
+    if (typeof val === 'string' || typeof val === 'number') {
+      if (Types.ObjectId.isValid(val)) {
+        return Types.ObjectId(val);
+      }
+    }
+    return val;
   }
 }

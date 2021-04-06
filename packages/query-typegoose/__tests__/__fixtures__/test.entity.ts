@@ -20,7 +20,7 @@ export class TestEntity {
   dateType!: Date;
 
   @prop({ ref: TestReference, required: false })
-  testReference?: Ref<TestReference>;
+  testReference?: Ref<TestReference> | string;
 
   @prop({ ref: TestReference, required: false })
   testReferences?: Ref<TestReference>[];

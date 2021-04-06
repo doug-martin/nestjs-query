@@ -27,10 +27,11 @@ export interface TypegooseQueryServiceOpts {
 export class TypegooseQueryService<Entity extends Base>
   extends ReferenceQueryService<Entity>
   implements QueryService<Entity> {
-  readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder();
-
-  constructor(readonly Model: ReturnModelType<new () => Entity>, opts?: TypegooseQueryServiceOpts) {
-    super(Model, opts);
+  constructor(
+    readonly Model: ReturnModelType<new () => Entity>,
+    readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model),
+  ) {
+    super(Model);
   }
 
   /**

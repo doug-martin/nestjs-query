@@ -16,7 +16,7 @@ export class TestEntity extends Document {
   dateType!: Date;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'TestReference' })
-  testReference?: Types.ObjectId;
+  testReference?: Types.ObjectId | string;
 
   @Prop([{ type: SchemaTypes.ObjectId, ref: 'TestReference' }])
   testReferences?: Types.ObjectId[];
