@@ -1,4 +1,5 @@
 import { Filter, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { FilterQuery } from 'mongoose';
 import { EntityComparisonField, ComparisonBuilder } from './comparison.builder';
 
@@ -7,7 +8,10 @@ import { EntityComparisonField, ComparisonBuilder } from './comparison.builder';
  * Builds a WHERE clause from a Filter.
  */
 export class WhereBuilder<Entity> {
-  constructor(readonly comparisonBuilder: ComparisonBuilder<Entity> = new ComparisonBuilder<Entity>()) {}
+  constructor(
+    readonly Model: ReturnModelType<new () => Entity>,
+    readonly comparisonBuilder: ComparisonBuilder<Entity> = new ComparisonBuilder<Entity>(Model),
+  ) {}
 
   /**
    * Builds a WHERE clause from a Filter.

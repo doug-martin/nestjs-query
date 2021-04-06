@@ -1,10 +1,11 @@
 import { Filter } from '@nestjs-query/core';
 import { FilterQuery } from 'mongoose';
+import { getModelForClass } from '@typegoose/typegoose';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { WhereBuilder } from '../../src/query';
 
 describe('WhereBuilder', (): void => {
-  const createWhereBuilder = () => new WhereBuilder<TestEntity>();
+  const createWhereBuilder = () => new WhereBuilder<TestEntity>(getModelForClass(TestEntity));
 
   const assertFilterQuery = (filter: Filter<TestEntity>, expectedFilterQuery: FilterQuery<TestEntity>): void => {
     const actual = createWhereBuilder().build(filter);

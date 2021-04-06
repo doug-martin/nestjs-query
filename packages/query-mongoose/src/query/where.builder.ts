@@ -1,5 +1,5 @@
 import { Filter, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
-import { FilterQuery, Document } from 'mongoose';
+import { FilterQuery, Document, Model as MongooseModel } from 'mongoose';
 import { EntityComparisonField, ComparisonBuilder } from './comparison.builder';
 
 /**
@@ -7,7 +7,10 @@ import { EntityComparisonField, ComparisonBuilder } from './comparison.builder';
  * Builds a WHERE clause from a Filter.
  */
 export class WhereBuilder<Entity extends Document> {
-  constructor(readonly comparisonBuilder: ComparisonBuilder<Entity> = new ComparisonBuilder<Entity>()) {}
+  constructor(
+    readonly Model: MongooseModel<Entity>,
+    readonly comparisonBuilder: ComparisonBuilder<Entity> = new ComparisonBuilder(Model),
+  ) {}
 
   /**
    * Builds a WHERE clause from a Filter.

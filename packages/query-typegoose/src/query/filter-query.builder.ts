@@ -1,6 +1,6 @@
 import { AggregateQuery, Filter, Query, SortDirection, SortField } from '@nestjs-query/core';
 import { FilterQuery } from 'mongoose';
-import { DocumentType } from '@typegoose/typegoose';
+import { DocumentType, ReturnModelType } from '@typegoose/typegoose';
 import { AggregateBuilder, TypegooseGroupAndAggregate } from './aggregate.builder';
 import { getSchemaKey } from './helpers';
 import { WhereBuilder } from './where.builder';
@@ -26,7 +26,8 @@ type TypegooseAggregateQuery<Entity> = TypegooseQuery<Entity> & {
  */
 export class FilterQueryBuilder<Entity> {
   constructor(
-    readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
+    readonly Model: ReturnModelType<new () => Entity>,
+    readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(Model),
     readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(),
   ) {}
 

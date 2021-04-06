@@ -50,7 +50,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
   ): Promise<AggregateResponse<Relation>[] | Map<Entity, AggregateResponse<Relation>[]>> {
     this.checkForReference('AggregateRelations', relationName);
     const relationModel = this.getReferenceModel(relationName);
-    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
+    const referenceQueryBuilder = this.getReferenceQueryBuilder(relationName);
     if (Array.isArray(dto)) {
       return dto.reduce(async (mapPromise, entity) => {
         const map = await mapPromise;
@@ -108,7 +108,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     }
     const assembler = AssemblerFactory.getAssembler(RelationClass, Document);
     const relationModel = this.getReferenceModel(relationName);
-    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
+    const referenceQueryBuilder = this.getReferenceQueryBuilder(relationName);
     const refFilter = this.getReferenceFilter(relationName, dto, assembler.convertQuery({ filter }).filter);
     if (!refFilter) {
       return 0;
@@ -135,7 +135,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     opts?: FindRelationOptions<Relation>,
   ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
     this.checkForReference('FindRelation', relationName);
-    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
+    const referenceQueryBuilder = this.getReferenceQueryBuilder(relationName);
     if (Array.isArray(dto)) {
       return dto.reduce(async (prev, curr) => {
         const map = await prev;
@@ -173,7 +173,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     query: Query<Relation>,
   ): Promise<Relation[] | Map<Entity, Relation[]>> {
     this.checkForReference('QueryRelations', relationName);
-    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder();
+    const referenceQueryBuilder = this.getReferenceQueryBuilder(relationName);
     if (Array.isArray(dto)) {
       return dto.reduce(async (mapPromise, entity) => {
         const map = await mapPromise;
@@ -291,8 +291,8 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     return !!this.Model.schema.virtualpath(refName);
   }
 
-  static getReferenceQueryBuilder<Ref extends Document>(): FilterQueryBuilder<Ref> {
-    return new FilterQueryBuilder<Ref>();
+  private getReferenceQueryBuilder<Ref extends Document>(refName: string): FilterQueryBuilder<Ref> {
+    return new FilterQueryBuilder<Ref>(this.getReferenceModel(refName));
   }
 
   private getReferenceModel<Ref extends Document>(refName: string): MongooseModel<Ref> {
@@ -364,7 +364,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     filter?: Filter<Relation>,
   ): Promise<number> {
     const referenceModel = this.getReferenceModel<Relation>(relationName);
-    const referenceQueryBuilder = ReferenceQueryService.getReferenceQueryBuilder<Relation>();
+    const referenceQueryBuilder = this.getReferenceQueryBuilder<Relation>(relationName);
     return referenceModel.count(referenceQueryBuilder.buildIdFilterQuery(relationIds, filter)).exec();
   }
 }

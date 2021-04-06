@@ -1,9 +1,11 @@
 import { CommonFieldComparisonBetweenType } from '@nestjs-query/core';
+import { getModelForClass } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { ComparisonBuilder } from '../../src/query';
 
 describe('ComparisonBuilder', (): void => {
-  const createComparisonBuilder = () => new ComparisonBuilder<TestEntity>();
+  const createComparisonBuilder = () => new ComparisonBuilder<TestEntity>(getModelForClass(TestEntity));
 
   it('should throw an error for an invalid comparison type', () => {
     // @ts-ignore
@@ -15,6 +17,14 @@ describe('ComparisonBuilder', (): void => {
       expect(createComparisonBuilder().build('stringType', 'eq', 'foo')).toEqual({
         stringType: {
           $eq: 'foo',
+        },
+      });
+    });
+
+    it('should convert query fields to objectIds if the field is an objectId', (): void => {
+      expect(createComparisonBuilder().build('testReference', 'eq', '5f74af112fae2b251510e3ad')).toEqual({
+        testReference: {
+          $eq: Types.ObjectId('5f74af112fae2b251510e3ad'),
         },
       });
     });
@@ -153,6 +163,14 @@ describe('ComparisonBuilder', (): void => {
         },
       });
     });
+
+    it('should convert query fields to objectIds if the field is an objectId', (): void => {
+      expect(createComparisonBuilder().build('testReference', 'in', ['5f74af112fae2b251510e3ad'])).toEqual({
+        testReference: {
+          $in: [Types.ObjectId('5f74af112fae2b251510e3ad')],
+        },
+      });
+    });
   });
 
   describe('notIn comparisons', () => {
@@ -164,6 +182,14 @@ describe('ComparisonBuilder', (): void => {
         },
       });
     });
+
+    it('should convert query fields to objectIds if the field is an objectId', (): void => {
+      expect(createComparisonBuilder().build('testReference', 'notIn', ['5f74af112fae2b251510e3ad'])).toEqual({
+        testReference: {
+          $nin: [Types.ObjectId('5f74af112fae2b251510e3ad')],
+        },
+      });
+    });
   });
 
   describe('between comparisons', () => {
@@ -171,6 +197,20 @@ describe('ComparisonBuilder', (): void => {
       const between: CommonFieldComparisonBetweenType<number> = { lower: 1, upper: 10 };
       expect(createComparisonBuilder().build('numberType', 'between', between)).toEqual({
         numberType: { $gte: between.lower, $lte: between.upper },
+      });
+    });
+
+    it('should convert query fields to objectIds if the field is an objectId', (): void => {
+      expect(
+        createComparisonBuilder().build('testReference', 'between', {
+          lower: '5f74af112fae2b251510e3ad',
+          upper: '5f74af112fae2b251510e3ad',
+        }),
+      ).toEqual({
+        testReference: {
+          $gte: Types.ObjectId('5f74af112fae2b251510e3ad'),
+          $lte: Types.ObjectId('5f74af112fae2b251510e3ad'),
+        },
       });
     });
 
@@ -190,10 +230,24 @@ describe('ComparisonBuilder', (): void => {
       });
     });
 
+    it('should convert query fields to objectIds if the field is an objectId', (): void => {
+      expect(
+        createComparisonBuilder().build('testReference', 'notBetween', {
+          lower: '5f74af112fae2b251510e3ad',
+          upper: '5f74af112fae2b251510e3ad',
+        }),
+      ).toEqual({
+        testReference: {
+          $lt: Types.ObjectId('5f74af112fae2b251510e3ad'),
+          $gt: Types.ObjectId('5f74af112fae2b251510e3ad'),
+        },
+      });
+    });
+
     it('should throw an error if the comparison is not a between comparison', (): void => {
       const between = [1, 10];
       expect(() => createComparisonBuilder().build('numberType', 'notBetween', between)).toThrow(
-        'Invalid value for not between expected {lower: val, upper: val} got [1,10]',
+        'Invalid value for notbetween expected {lower: val, upper: val} got [1,10]',
       );
     });
   });
