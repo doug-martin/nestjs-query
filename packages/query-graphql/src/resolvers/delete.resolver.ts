@@ -17,6 +17,7 @@ import {
 import { MutationHookArgs, ResolverMutation, ResolverSubscription, AuthorizerFilter } from '../decorators';
 import { createSubscriptionFilter } from './helpers';
 import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
+import { OperationGroup } from '../auth';
 
 export type DeletedEvent<DTO> = { [eventName: string]: DTO };
 export interface DeleteResolverOpts<DTO> extends SubscriptionResolverOpts {
@@ -104,7 +105,11 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
     )
     async deleteOne(
       @MutationHookArgs() input: DO,
-      @AuthorizerFilter() authorizeFilter?: Filter<DTO>,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.DELETE,
+        many: false,
+      })
+      authorizeFilter?: Filter<DTO>,
     ): Promise<Partial<DTO>> {
       const deletedResponse = await this.service.deleteOne(input.input.id, { filter: authorizeFilter ?? {} });
       if (enableOneSubscriptions) {
@@ -122,7 +127,11 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
     )
     async deleteMany(
       @MutationHookArgs() input: DM,
-      @AuthorizerFilter() authorizeFilter?: Filter<DTO>,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.DELETE,
+        many: false,
+      })
+      authorizeFilter?: Filter<DTO>,
     ): Promise<DeleteManyResponse> {
       const deleteManyResponse = await this.service.deleteMany(mergeFilter(input.input.filter, authorizeFilter ?? {}));
       if (enableManySubscriptions) {

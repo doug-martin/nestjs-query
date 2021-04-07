@@ -1,5 +1,6 @@
 import { Class, ModifyRelationOptions, QueryService } from '@nestjs-query/core';
 import { Resolver, ArgsType, Args } from '@nestjs/graphql';
+import { OperationGroup } from '../../auth';
 import { getDTONames } from '../../common';
 import { ModifyRelationAuthorizerFilter, ResolverMutation } from '../../decorators';
 import { AuthorizerInterceptor } from '../../interceptors';
@@ -30,7 +31,11 @@ const RemoveOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts, { interceptors: [AuthorizerInterceptor(DTOClass)] })
     async [`remove${baseName}From${dtoNames.baseName}`](
       @Args() setArgs: SetArgs,
-      @ModifyRelationAuthorizerFilter(baseNameLower) modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+      @ModifyRelationAuthorizerFilter(baseNameLower, {
+        operationGroup: OperationGroup.UPDATE,
+        many: false,
+      })
+      modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
       return this.service.removeRelation(relationName, input.id, input.relationId, modifyRelationsFilter);
@@ -60,7 +65,11 @@ const RemoveManyRelationsMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation:
     @ResolverMutation(() => DTOClass, {}, commonResolverOpts, { interceptors: [AuthorizerInterceptor(DTOClass)] })
     async [`remove${pluralBaseName}From${dtoNames.baseName}`](
       @Args() addArgs: AddArgs,
-      @ModifyRelationAuthorizerFilter(pluralBaseNameLower) modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+      @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
+        operationGroup: OperationGroup.UPDATE,
+        many: true,
+      })
+      modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(AddArgs, addArgs);
       return this.service.removeRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);

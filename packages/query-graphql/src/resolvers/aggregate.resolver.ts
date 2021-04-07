@@ -7,6 +7,7 @@ import { AggregateQueryParam, AuthorizerFilter, ResolverMethodOpts, ResolverQuer
 import { AggregateArgsType, AggregateResponseType } from '../types';
 import { transformAndValidate } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver } from './resolver.interface';
+import { OperationGroup } from '../auth';
 
 export type AggregateResolverOpts = {
   enabled?: boolean;
@@ -51,7 +52,11 @@ export const Aggregateable = <DTO, QS extends QueryService<DTO, unknown, unknown
     async aggregate(
       @Args() args: AA,
       @AggregateQueryParam() query: AggregateQuery<DTO>,
-      @AuthorizerFilter() authFilter?: Filter<DTO>,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.AGGREGATE,
+        many: true,
+      })
+      authFilter?: Filter<DTO>,
     ): Promise<AggregateResponse<DTO>[]> {
       const qa = await transformAndValidate(AA, args);
       return this.service.aggregate(mergeFilter(qa.filter || {}, authFilter ?? {}), query);

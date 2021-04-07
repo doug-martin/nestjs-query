@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Filter } from '@nestjs-query/core';
 import { Injectable } from '@nestjs/common';
 import { Authorizer, Relation, Authorize, UnPagedRelation } from '../../src';
-import { AuthorizationContext, getAuthorizerToken } from '../../src/auth';
+import { AuthorizationContext, OperationGroup, getAuthorizerToken } from '../../src/auth';
 import { createAuthorizerProviders } from '../../src/providers';
 
 describe('createDefaultAuthorizer', () => {
@@ -85,7 +85,7 @@ describe('createDefaultAuthorizer', () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
     const filter = await authorizer.authorize(
       { user: { id: 2 } },
-      { operationName: 'other', operationGroup: 'read', readonly: true, many: true },
+      { operationName: 'other', operationGroup: OperationGroup.READ, readonly: true, many: true },
     );
     expect(filter).toEqual({ ownerId: { neq: 2 } });
   });
@@ -113,7 +113,7 @@ describe('createDefaultAuthorizer', () => {
     const filter = await authorizer.authorizeRelation(
       'relations',
       { user: { id: 2 } },
-      { operationName: 'other', operationGroup: 'read', readonly: true, many: true },
+      { operationName: 'other', operationGroup: OperationGroup.READ, readonly: true, many: true },
     );
     expect(filter).toEqual({ relationOwnerId: { neq: 2 } });
   });

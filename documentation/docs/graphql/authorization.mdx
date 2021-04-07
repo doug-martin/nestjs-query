@@ -428,12 +428,20 @@ export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
 The `AuthorizationContext` has the following shape:
 
 ```ts title='authorizer.ts'
+export enum OperationGroup {
+  READ = 'read',
+  AGGREGATE = 'aggregate',
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
+
 interface AuthorizationContext {
   /** The name of the method that uses the @AuthorizeFilter decorator */
   operationName: string;
 
   /** The group this operation belongs to */
-  operationGroup: 'read' | 'aggregate' | 'create' | 'update' | 'delete';
+  operationGroup: OperationGroup;
 
   /** If the operation does not modify any entities */
   readonly: boolean;
@@ -444,26 +452,27 @@ interface AuthorizationContext {
 ```
 
 This context is automatially created for you when using the built-in resolvers.
-If you authorize custom methods by using the `@AuthorizerFilter()`, you have three options:
+If you authorize custom methods by using the `@AuthorizerFilter()`, you should pass the context as argument to the decorator:
 
-- Pass your own `AuthorizationContext` as argument to the decorator:
-  ```ts
-  @AuthorizerFilter({
-    operationName: 'completedTodoItems',
-    operationGroup: 'read',
-    readonly: true,
-    many: true
-  })
-  ```
-- Pass a custom operation name as argument and let the context be inferred from the name (the nae should follow the conventions below): `@AuthorizerFilter('queryCompletedTodoItems')`.
-- Don't pass a custom name and let the decorator use the name of the decorated method: `@AuthorizerFilter()`
+```ts
+@AuthorizerFilter({
+  operationName: 'completedTodoItems',
+  operationGroup: OperationGroup.READ,
+  readonly: true,
+  many: true
+})
+```
 
-The `operationName` is the name of the method that makes use of the `@AuthorizerFilter()` or the argument passed to this decorator (`@AuthorizerFilter('customMethodName')`).
-The names of the generated CRUD resolver methods are similar to the ones of the [QueryService](../concepts/services.mdx):
+You can leave out the `operationName` to let the context use the name of the decorated Method.
+If you leave out the `readonly` property, it's inferred from the `operationGroup`.
 
-- `query`
+The `operationNames` of the generated CRUD resolver methods are similar to the ones of the [QueryService](../concepts/services.mdx):
+
+- `queryMany`
 - `findById`
 - `aggregate`
+- `createOne`
+- `createMany`
 - `updateOne`
 - `updateMany`
 - `deleteOne`
@@ -474,8 +483,10 @@ The names of the generated CRUD resolver methods are similar to the ones of the 
 - `query{PluralRelationName}` (e.g. querySubTasks)
 - `find{SingularRelationName}` (e.g. findTodoItem)
 - `aggregate{PluralRelationName}` (e.g. aggregateSubTasks)
-- `remove{RelationName}from{SingularParentName}` (e.g. removeSubTaskFromTodoItem)
-- `set{RelationName}On{SingularParentName}` (e.g. setSubTaskOnTodoItem)
+- `remove{SingularRelationName}from{SingularParentName}` (e.g. removeSubTaskFromTodoItem)
+- `remove{PluralRelationName}from{SingularParentName}` (e.g. removeSubTasksFromTodoItem)
+- `set{SingularRelationName}On{SingularParentName}` (e.g. setSubTaskOnTodoItem)
+- `add{PluralRelationName}On{SingularParentName}` (e.g. addSubTasksOnTodoItem)
 
 ## Complete Example
 

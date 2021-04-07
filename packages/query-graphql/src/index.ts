@@ -40,7 +40,12 @@ export { DTONamesOpts } from './common';
 export { NestjsQueryGraphQLModule } from './module';
 export { AutoResolverOpts } from './providers';
 export { pubSubToken, GraphQLPubSub } from './subscription';
-export { Authorizer, AuthorizerOptions, AuthorizationContext } from './auth';
+export {
+  Authorizer,
+  AuthorizerOptions,
+  AuthorizationContext,
+  OperationGroup as AuthorizationOperationGroup,
+} from './auth';
 export {
   Hook,
   HookTypes,
