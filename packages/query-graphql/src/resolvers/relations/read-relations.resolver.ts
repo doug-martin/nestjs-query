@@ -1,6 +1,7 @@
 import { Class, Filter, mergeQuery, QueryService } from '@nestjs-query/core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
+import { OperationGroup } from '../../auth';
 import { getDTONames } from '../../common';
 import { RelationAuthorizerFilter, ResolverField } from '../../decorators';
 import { AuthorizerInterceptor } from '../../interceptors';
@@ -42,7 +43,11 @@ const ReadOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Res
     async [`find${baseName}`](
       @Parent() dto: DTO,
       @Context() context: ExecutionContext,
-      @RelationAuthorizerFilter(baseNameLower) authFilter?: Filter<Relation>,
+      @RelationAuthorizerFilter(baseNameLower, {
+        operationGroup: OperationGroup.READ,
+        many: false,
+      })
+      authFilter?: Filter<Relation>,
     ): Promise<Relation | undefined> {
       return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load({
         dto,
@@ -89,7 +94,11 @@ const ReadManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: Re
       @Parent() dto: DTO,
       @Args() q: RelationQA,
       @Context() context: ExecutionContext,
-      @RelationAuthorizerFilter(pluralBaseNameLower) relationFilter?: Filter<Relation>,
+      @RelationAuthorizerFilter(pluralBaseNameLower, {
+        operationGroup: OperationGroup.READ,
+        many: true,
+      })
+      relationFilter?: Filter<Relation>,
     ): Promise<InstanceType<typeof CT>> {
       const qa = await transformAndValidate(RelationQA, q);
       const relationLoader = DataLoaderFactory.getOrCreateLoader(

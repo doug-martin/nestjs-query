@@ -25,6 +25,7 @@ import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolv
 import { AuthorizerFilter, MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
 import { createSubscriptionFilter } from './helpers';
 import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
+import { OperationGroup } from '../auth';
 
 export type UpdatedEvent<DTO> = { [eventName: string]: DTO };
 export interface UpdateResolverOpts<DTO, U = DeepPartial<DTO>> extends SubscriptionResolverOpts {
@@ -142,7 +143,14 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
       commonResolverOpts,
       opts.one ?? {},
     )
-    async updateOne(@MutationHookArgs() input: UO, @AuthorizerFilter() authorizeFilter?: Filter<DTO>): Promise<DTO> {
+    async updateOne(
+      @MutationHookArgs() input: UO,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.UPDATE,
+        many: false,
+      })
+      authorizeFilter?: Filter<DTO>,
+    ): Promise<DTO> {
       const { id, update } = input.input;
       const updateResult = await this.service.updateOne(id, update, { filter: authorizeFilter ?? {} });
       if (enableOneSubscriptions) {
@@ -165,7 +173,11 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
     )
     async updateMany(
       @MutationHookArgs() input: UM,
-      @AuthorizerFilter() authorizeFilter?: Filter<DTO>,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.UPDATE,
+        many: true,
+      })
+      authorizeFilter?: Filter<DTO>,
     ): Promise<UpdateManyResponse> {
       const { update, filter } = input.input;
       const updateManyResponse = await this.service.updateMany(update, mergeFilter(filter, authorizeFilter ?? {}));

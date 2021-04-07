@@ -1,5 +1,10 @@
 import { Filter, InjectAssemblerQueryService, mergeFilter, mergeQuery, QueryService } from '@nestjs-query/core';
-import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@nestjs-query/query-graphql';
+import {
+  AuthorizerInterceptor,
+  AuthorizerFilter,
+  ConnectionType,
+  AuthorizationOperationGroup,
+} from '@nestjs-query/query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -17,7 +22,11 @@ export class TodoItemResolver {
   @Query(() => TodoItemConnection)
   async completedTodoItems(
     @Args() query: TodoItemQuery,
-    @AuthorizerFilter('queryCompletedTodoItems') authFilter: Filter<TodoItemDTO>,
+    @AuthorizerFilter({
+      operationGroup: AuthorizationOperationGroup.READ,
+      many: true,
+    })
+    authFilter: Filter<TodoItemDTO>,
   ): Promise<ConnectionType<TodoItemDTO>> {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: true } });
@@ -34,9 +43,7 @@ export class TodoItemResolver {
   async uncompletedTodoItems(
     @Args() query: TodoItemQuery,
     @AuthorizerFilter({
-      operationName: 'queryUncompletedTodoItems',
-      operationGroup: 'read',
-      readonly: true,
+      operationGroup: AuthorizationOperationGroup.READ,
       many: true,
     })
     authFilter: Filter<TodoItemDTO>,

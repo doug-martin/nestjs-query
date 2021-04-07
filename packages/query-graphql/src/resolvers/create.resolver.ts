@@ -20,6 +20,7 @@ import {
 } from '../types';
 import { createSubscriptionFilter } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
+import { OperationGroup } from '../auth';
 
 export type CreatedEvent<DTO> = { [eventName: string]: DTO };
 
@@ -135,8 +136,14 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       },
       opts.one ?? {},
     )
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async createOne(@MutationHookArgs() input: CO, @AuthorizerFilter() authorizeFilter?: Filter<DTO>): Promise<DTO> {
+    async createOne(
+      @MutationHookArgs() input: CO,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.CREATE,
+        many: false,
+      }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      authorizeFilter?: Filter<DTO>,
+    ): Promise<DTO> {
       // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
       const created = await this.service.createOne(input.input.input);
       if (enableOneSubscriptions) {
@@ -157,8 +164,15 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       },
       opts.many ?? {},
     )
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async createMany(@MutationHookArgs() input: CM, @AuthorizerFilter() authorizeFilter?: Filter<DTO>): Promise<DTO[]> {
+    async createMany(
+      @MutationHookArgs() input: CM,
+
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.CREATE,
+        many: true,
+      }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      authorizeFilter?: Filter<DTO>,
+    ): Promise<DTO[]> {
       // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
       const created = await this.service.createMany(input.input.input);
       if (enableManySubscriptions) {
