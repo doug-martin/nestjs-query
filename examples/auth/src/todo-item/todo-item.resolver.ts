@@ -1,10 +1,5 @@
 import { Filter, InjectAssemblerQueryService, mergeFilter, mergeQuery, QueryService } from '@nestjs-query/core';
-import {
-  AuthorizerInterceptor,
-  AuthorizerFilter,
-  ConnectionType,
-  AuthorizationOperationGroup,
-} from '@nestjs-query/query-graphql';
+import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType, OperationGroup } from '@nestjs-query/query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -23,7 +18,7 @@ export class TodoItemResolver {
   async completedTodoItems(
     @Args() query: TodoItemQuery,
     @AuthorizerFilter({
-      operationGroup: AuthorizationOperationGroup.READ,
+      operationGroup: OperationGroup.READ,
       many: true,
     })
     authFilter: Filter<TodoItemDTO>,
@@ -43,7 +38,9 @@ export class TodoItemResolver {
   async uncompletedTodoItems(
     @Args() query: TodoItemQuery,
     @AuthorizerFilter({
-      operationGroup: AuthorizationOperationGroup.READ,
+      operationName: 'queryUncompletedTodoItems',
+      operationGroup: OperationGroup.READ,
+      readonly: true,
       many: true,
     })
     authFilter: Filter<TodoItemDTO>,
