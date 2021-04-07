@@ -8,12 +8,12 @@ import { Authorizer, AuthorizationContext } from './authorizer';
 
 export interface AuthorizerOptions<DTO> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  authorize: (context: any, authorizationContext?: AuthorizationContext) => Filter<DTO> | Promise<Filter<DTO>>;
+  authorize: (context: any, authorizationContext: AuthorizationContext) => Filter<DTO> | Promise<Filter<DTO>>;
 }
 
 const createRelationAuthorizer = (opts: AuthorizerOptions<unknown>): Authorizer<unknown> => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async authorize(context: any, authorizationContext?: AuthorizationContext): Promise<Filter<unknown>> {
+  async authorize(context: any, authorizationContext: AuthorizationContext): Promise<Filter<unknown>> {
     return opts.authorize(context, authorizationContext) ?? {};
   },
   authorizeRelation(): Promise<Filter<unknown>> {
@@ -43,7 +43,7 @@ export function createDefaultAuthorizer<DTO>(
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async authorize(context: any, authorizationContext?: AuthorizationContext): Promise<Filter<DTO>> {
+    async authorize(context: any, authorizationContext: AuthorizationContext): Promise<Filter<DTO>> {
       return this.authOptions?.authorize(context, authorizationContext) ?? {};
     }
 
@@ -51,7 +51,7 @@ export function createDefaultAuthorizer<DTO>(
       relationName: string,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       context: any,
-      authorizationContext?: AuthorizationContext,
+      authorizationContext: AuthorizationContext,
     ): Promise<Filter<unknown>> {
       return this.relationsAuthorizers.get(relationName)?.authorize(context, authorizationContext) ?? {};
     }

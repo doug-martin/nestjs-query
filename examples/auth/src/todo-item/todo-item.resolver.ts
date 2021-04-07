@@ -54,4 +54,20 @@ export class TodoItemResolver {
       (q) => this.service.count(q),
     );
   }
+
+  @Query(() => TodoItemConnection)
+  async failingTodoItems(
+    @Args() query: TodoItemQuery,
+    @AuthorizerFilter() // Intentionally left out argument to test error
+    authFilter: Filter<TodoItemDTO>,
+  ): Promise<ConnectionType<TodoItemDTO>> {
+    // add the completed filter the user provided filter
+    const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: false } });
+    const uncompletedQuery = mergeQuery(query, { filter: mergeFilter(filter, authFilter) });
+    return TodoItemConnection.createFromPromise(
+      (q) => this.service.query(q),
+      uncompletedQuery,
+      (q) => this.service.count(q),
+    );
+  }
 }

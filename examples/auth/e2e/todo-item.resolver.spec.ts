@@ -498,6 +498,28 @@ describe('TodoItemResolver (auth - e2e)', () => {
           ]);
         }));
 
+    it(`should throw an error if AuthorizationContext was not setup`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .auth(user3JwtToken, { type: 'bearer' })
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+              failingTodoItems {
+              ${pageInfoField}
+              ${edgeNodes(todoItemFields)}
+              totalCount
+            }
+          }`,
+        })
+        .expect(200)
+        .then(({ body }) =>
+          expect(body.errors[0].message).toBe(
+            'No AuthorizationContext available for method failingTodoItems! Make sure that you provide an AuthorizationContext to your custom methods as argument of the @AuthorizerFilter decorator.',
+          ),
+        ));
+
     describe('paging', () => {
       it(`should allow paging with the 'first' field`, () =>
         request(app.getHttpServer())
