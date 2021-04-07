@@ -1,6 +1,7 @@
 import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@nestjs-query/core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
+import { OperationGroup } from '../../auth';
 import { getDTONames } from '../../common';
 import { AggregateQueryParam, RelationAuthorizerFilter, ResolverField } from '../../decorators';
 import { AuthorizerInterceptor } from '../../interceptors';
@@ -53,7 +54,11 @@ const AggregateRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: A
       @Args() q: RelationQA,
       @AggregateQueryParam() aggregateQuery: AggregateQuery<Relation>,
       @Context() context: ExecutionContext,
-      @RelationAuthorizerFilter(baseNameLower) relationFilter?: Filter<Relation>,
+      @RelationAuthorizerFilter(baseNameLower, {
+        operationGroup: OperationGroup.AGGREGATE,
+        many: true,
+      })
+      relationFilter?: Filter<Relation>,
     ): Promise<AggregateResponse<Relation>> {
       const qa = await transformAndValidate(RelationQA, q);
       const loader = DataLoaderFactory.getOrCreateLoader(

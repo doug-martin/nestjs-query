@@ -8,6 +8,7 @@ import { transformAndValidate } from '../helpers';
 import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
 import { flattenRelations, removeRelationOpts } from './helpers';
 import { RelationsOpts, ResolverRelation } from './relations.interface';
+import { OperationGroup } from '../../auth';
 
 const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) => <
   B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
@@ -32,7 +33,11 @@ const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
     })
     async [`set${baseName}On${dtoNames.baseName}`](
       @Args() setArgs: SetArgs,
-      @ModifyRelationAuthorizerFilter(baseNameLower) modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+      @ModifyRelationAuthorizerFilter(baseNameLower, {
+        operationGroup: OperationGroup.UPDATE,
+        many: false,
+      })
+      modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(SetArgs, setArgs);
       return this.service.setRelation(relationName, input.id, input.relationId, modifyRelationsFilter);
@@ -64,7 +69,11 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
     })
     async [`add${pluralBaseName}To${dtoNames.baseName}`](
       @Args() addArgs: AddArgs,
-      @ModifyRelationAuthorizerFilter(pluralBaseNameLower) modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+      @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
+        operationGroup: OperationGroup.UPDATE,
+        many: true,
+      })
+      modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
     ): Promise<DTO> {
       const { input } = await transformAndValidate(AddArgs, addArgs);
       return this.service.addRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);

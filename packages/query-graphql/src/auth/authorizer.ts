@@ -1,13 +1,19 @@
 import { Filter } from '@nestjs-query/core';
 
-export type AuthorizationOperationGroup = 'read' | 'aggregate' | 'create' | 'update' | 'delete';
+export enum OperationGroup {
+  READ = 'read',
+  AGGREGATE = 'aggregate',
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
 
 export interface AuthorizationContext {
   /** The name of the method that uses the @AuthorizeFilter decorator */
   operationName: string;
 
   /** The group this operation belongs to */
-  operationGroup: AuthorizationOperationGroup;
+  operationGroup: OperationGroup;
 
   /** If the operation does not modify any entities */
   readonly: boolean;

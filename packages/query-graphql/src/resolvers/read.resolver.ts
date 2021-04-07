@@ -21,6 +21,7 @@ import {
 } from './resolver.interface';
 import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
 import { HookTypes } from '../hooks';
+import { OperationGroup } from '../auth';
 
 export type ReadResolverFromOpts<
   DTO,
@@ -73,7 +74,14 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
       { interceptors: [HookInterceptor(HookTypes.BEFORE_FIND_ONE, DTOClass), AuthorizerInterceptor(DTOClass)] },
       opts.one ?? {},
     )
-    async findById(@HookArgs() input: FO, @AuthorizerFilter() authorizeFilter?: Filter<DTO>): Promise<DTO | undefined> {
+    async findById(
+      @HookArgs() input: FO,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.READ,
+        many: false,
+      })
+      authorizeFilter?: Filter<DTO>,
+    ): Promise<DTO | undefined> {
       return this.service.findById(input.id, { filter: authorizeFilter });
     }
 
@@ -86,7 +94,11 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
     )
     async queryMany(
       @HookArgs() query: QA,
-      @AuthorizerFilter('query') authorizeFilter?: Filter<DTO>,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.READ,
+        many: true,
+      })
+      authorizeFilter?: Filter<DTO>,
     ): Promise<InstanceType<typeof ConnectionType>> {
       return ConnectionType.createFromPromise(
         (q) => this.service.query(q),
