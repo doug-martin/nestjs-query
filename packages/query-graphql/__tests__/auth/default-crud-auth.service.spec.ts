@@ -77,7 +77,10 @@ describe('createDefaultAuthorizer', () => {
 
   it('should create an auth filter', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorize({ user: { id: 2 } });
+    const filter = await authorizer.authorize(
+      { user: { id: 2 } },
+      { operationName: 'queryMany', operationGroup: OperationGroup.READ, readonly: true, many: true },
+    );
     expect(filter).toEqual({ ownerId: { eq: 2 } });
   });
 
@@ -92,19 +95,30 @@ describe('createDefaultAuthorizer', () => {
 
   it('should return an empty filter if auth not found', async () => {
     const authorizer = testingModule.get<Authorizer<TestNoAuthDTO>>(getAuthorizerToken(TestNoAuthDTO));
-    const filter = await authorizer.authorize({ user: { id: 2 } });
+    const filter = await authorizer.authorize(
+      { user: { id: 2 } },
+      { operationName: 'queryMany', operationGroup: OperationGroup.READ, readonly: true, many: true },
+    );
     expect(filter).toEqual({});
   });
 
   it('should create an auth filter for relations using the default auth decorator', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation('unPagedDecoratorRelations', { user: { id: 2 } });
+    const filter = await authorizer.authorizeRelation(
+      'unPagedDecoratorRelations',
+      { user: { id: 2 } },
+      { operationName: 'queryRelation', operationGroup: OperationGroup.READ, readonly: true, many: true },
+    );
     expect(filter).toEqual({ decoratorOwnerId: { eq: 2 } });
   });
 
   it('should create an auth filter for relations using the relation options', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation('relations', { user: { id: 2 } });
+    const filter = await authorizer.authorizeRelation(
+      'relations',
+      { user: { id: 2 } },
+      { operationName: 'queryRelation', operationGroup: OperationGroup.READ, readonly: true, many: true },
+    );
     expect(filter).toEqual({ relationOwnerId: { eq: 2 } });
   });
 
@@ -120,13 +134,21 @@ describe('createDefaultAuthorizer', () => {
 
   it('should create an auth filter for relations using the relation authorizer', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation('authorizerRelation', { user: { id: 2 } });
+    const filter = await authorizer.authorizeRelation(
+      'authorizerRelation',
+      { user: { id: 2 } },
+      { operationName: 'queryRelation', operationGroup: OperationGroup.READ, readonly: true, many: true },
+    );
     expect(filter).toEqual({ authorizerOwnerId: { eq: 2 } });
   });
 
   it('should return an empty object for an unknown relation', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation('unknownRelations', { user: { id: 2 } });
+    const filter = await authorizer.authorizeRelation(
+      'unknownRelations',
+      { user: { id: 2 } },
+      { operationName: 'queryRelation', operationGroup: OperationGroup.READ, readonly: true, many: true },
+    );
     expect(filter).toEqual({});
   });
 });
