@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.1](https://github.com/doug-martin/nestjs-query/compare/v0.25.0...v0.25.1) (2021-04-07)
+
+
+### Bug Fixes
+
+* **mongoose,typegoose,#881:** Allow string objectId filters ([11098c4](https://github.com/doug-martin/nestjs-query/commit/11098c441de41462fe6c45742bc317f52ea09711)), closes [#881](https://github.com/doug-martin/nestjs-query/issues/881)
+
+
+
+
+
 # [0.25.0](https://github.com/doug-martin/nestjs-query/compare/v0.24.5...v0.25.0) (2021-03-31)
 
 
