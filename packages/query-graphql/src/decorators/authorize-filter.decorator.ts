@@ -14,7 +14,7 @@ function getContext<C>(executionContext: ExecutionContext): C {
 
 function getAuthorizerFilter<C extends AuthorizerContext<unknown>>(
   context: C,
-  authorizationContext?: AuthorizationContext,
+  authorizationContext: AuthorizationContext,
 ) {
   if (!context.authorizer) {
     return undefined;
@@ -25,7 +25,7 @@ function getAuthorizerFilter<C extends AuthorizerContext<unknown>>(
 function getRelationAuthFilter<C extends AuthorizerContext<unknown>>(
   context: C,
   relationName: string,
-  authorizationContext?: AuthorizationContext,
+  authorizationContext: AuthorizationContext,
 ) {
   if (!context.authorizer) {
     return undefined;
@@ -36,8 +36,15 @@ function getRelationAuthFilter<C extends AuthorizerContext<unknown>>(
 function getAuthorizationContext(
   methodName: string | symbol,
   partialAuthContext?: PartialAuthorizationContext,
-): AuthorizationContext | undefined {
-  if (!partialAuthContext) return undefined;
+): AuthorizationContext {
+  if (!partialAuthContext)
+    return new Proxy<AuthorizationContext>({} as AuthorizationContext, {
+      get: () => {
+        throw new Error(
+          `No AuthorizationContext available for method ${methodName.toString()}! Make sure that you provide an AuthorizationContext to your custom methods as argument of the @AuthorizerFilter decorator.`,
+        );
+      },
+    });
 
   return {
     operationName: methodName.toString(),
