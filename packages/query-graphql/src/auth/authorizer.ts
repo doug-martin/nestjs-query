@@ -10,16 +10,16 @@ export enum OperationGroup {
 
 export interface AuthorizationContext {
   /** The name of the method that uses the @AuthorizeFilter decorator */
-  operationName: string;
+  readonly operationName: string;
 
   /** The group this operation belongs to */
-  operationGroup: OperationGroup;
+  readonly operationGroup: OperationGroup;
 
   /** If the operation does not modify any entities */
-  readonly: boolean;
+  readonly readonly: boolean;
 
   /** If the operation can affect multiple entities */
-  many: boolean;
+  readonly many: boolean;
 }
 
 export interface Authorizer<DTO> {
