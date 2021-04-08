@@ -75,6 +75,25 @@ describe('TodoItemResolver (basic - e2e)', () => {
           },
         }));
 
+    it(`should not include filter-only fields`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+            todoItem(id: 1) {
+              ${todoItemFields}
+              created
+            }
+          }`,
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toBe('Cannot query field "created" on type "TodoItem".');
+        }));
+
     it(`should return subTasks as a connection`, () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -196,6 +215,41 @@ describe('TodoItemResolver (basic - e2e)', () => {
             { id: '1', title: 'Create Nest App', completed: true, description: null },
             { id: '2', title: 'Create Entity', completed: false, description: null },
             { id: '3', title: 'Create Entity Service', completed: false, description: null },
+          ]);
+        }));
+
+    it(`should allow querying by filter-only fields`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {
+            now: new Date().toISOString(),
+          },
+          query: `query ($now: DateTime!) {
+            todoItems(filter: { created: { lt: $now } }) {
+              ${pageInfoField}
+              ${edgeNodes(todoItemFields)}
+            }
+          }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          expect(pageInfo).toEqual({
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          });
+          expect(edges).toHaveLength(5);
+
+          expect(edges.map((e) => e.node)).toEqual([
+            { id: '1', title: 'Create Nest App', completed: true, description: null },
+            { id: '2', title: 'Create Entity', completed: false, description: null },
+            { id: '3', title: 'Create Entity Service', completed: false, description: null },
+            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
+            { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null },
           ]);
         }));
 

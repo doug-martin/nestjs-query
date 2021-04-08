@@ -24,6 +24,8 @@ In addition to the normal field options you can also specify the following optio
 * `filterRequired` - When set to `true` the field will be required whenever a `filter` is used. The `filter` requirement applies to all `read`, `update`, and `delete` endpoints that use a `filter`.
   * The `filterRequired` option is useful when your entity has an index that requires a subset of fields to be used to provide certain level of query performance.
   * **NOTE**: When a field is a required in a filter the default `filter` option is ignored.
+* `filterOnly`- When set to `true`, the field will only appear as `filter` but isn't included as field inside the `ObjectType`.
+  * This option is useful if you want to filter on foreign keys without resolving the relation but you don't want to have the foreign key show up as field in your query type for the DTO. This might be especially useful for [federated relations](./federation.mdx#reference-decorator)
 
 ### Example
 
@@ -110,7 +112,37 @@ export class TodoItemDTO {
   @Field(() => GraphQLISODateTime)
   updated!: Date;
 }
+```
 
+### Example - filterOnly
+
+In the following example the `filterOnly` option is applied to the `assigneeId` field, which makes a query filerable by the id of an assignd user but won't return the `assigneeId` as field.
+
+```ts title="todo-item.dto.ts"
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
+
+@ObjectType('TodoItem')
+@Relation('assignee', () => UserDTO)
+export class TodoItemDTO {
+  @FilterableField(() => ID)
+  id!: string;
+
+  @FilterableField()
+  title!: string;
+
+  @FilterableField()
+  completed!: boolean;
+
+  @FilterableField({ filterOnly: true })
+  assigneeId!: string;
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updated!: Date;
+}
 ```
 
 ## `@QueryOptions`
@@ -163,7 +195,7 @@ By default all results will be limited to 10 records.
 To override the default you can override the default page size by setting the `defaultResultSize` option.
 
 In this example we specify the `defaultResultSize` to 5 which means if a page size is not specified 5 results will be
- returned.
+returned.
 
 ```ts title="todo-item.dto.ts" {5}
 import { FilterableField, QueryOptions } from '@nestjs-query/query-graphql';
@@ -307,7 +339,7 @@ Enabling `totalCount` can be expensive. If your table is large the `totalCount` 
 The `totalCount` field is not eagerly fetched. It will only be executed if the field is queried from the client.
 :::
 
-When using the `CURSOR` (the default) or `OFFSET` paging strategy  you have the option to expose a `totalCount` field to
+When using the `CURSOR` (the default) or `OFFSET` paging strategy you have the option to expose a `totalCount` field to
 allow clients to fetch a total count of records in a connection.
 
 To enable the `totalCount` field for connections set the `enableTotalCount` option to `true` using the
@@ -353,7 +385,7 @@ values={[
 {
   todoItems {
     totalCount
-    pageInfo{
+    pageInfo {
       hasNextPage
       hasPreviousPage
       startCursor

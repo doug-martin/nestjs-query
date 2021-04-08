@@ -6,6 +6,7 @@ const reflector = new ArrayReflector(FILTERABLE_FIELD_KEY);
 export type FilterableFieldOptions = {
   allowedComparisons?: FilterComparisonOperators<unknown>[];
   filterRequired?: boolean;
+  filterOnly?: boolean;
 } & FieldOptions;
 
 export interface FilterableFieldDescriptor {
@@ -78,6 +79,11 @@ export function FilterableField(
       returnTypeFunc,
       advancedOptions,
     });
+
+    if (advancedOptions?.filterOnly) {
+      return undefined;
+    }
+
     if (returnTypeFunc) {
       return Field(returnTypeFunc, advancedOptions)(target, propertyName, descriptor);
     }
