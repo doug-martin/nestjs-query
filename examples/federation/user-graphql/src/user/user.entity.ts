@@ -1,21 +1,15 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity({ name: 'todo_item' })
-export class TodoItemEntity {
+@Entity({ name: 'user' })
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
-  title!: string;
-
-  @Column({ nullable: true })
-  description?: string;
+  name!: string;
 
   @Column()
-  completed!: boolean;
-
-  @Column({ nullable: true })
-  assigneeId?: number;
+  email!: string;
 
   @CreateDateColumn()
   created!: Date;
