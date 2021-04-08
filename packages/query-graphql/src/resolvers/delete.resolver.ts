@@ -129,7 +129,7 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
       @MutationHookArgs() input: DM,
       @AuthorizerFilter({
         operationGroup: OperationGroup.DELETE,
-        many: false,
+        many: true,
       })
       authorizeFilter?: Filter<DTO>,
     ): Promise<DeleteManyResponse> {
