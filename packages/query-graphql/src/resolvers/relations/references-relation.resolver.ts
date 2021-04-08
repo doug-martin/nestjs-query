@@ -16,6 +16,10 @@ const pluckFields = <DTO, Relation>(dto: DTO, fieldMap: ReferencesKeys<DTO, Rela
   return partial as Partial<Relation>;
 };
 
+const allFieldsAreNull = <Relation>(fields: Partial<Relation>): boolean => {
+  return Object.entries(fields).reduce<boolean>((previousNull, [, value]) => previousNull && value === null, true);
+};
+
 const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: ResolverRelationReference<DTO, Relation>) => <
   B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
 >(
@@ -33,9 +37,15 @@ const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: Resolve
       { nullable: reference.nullable, complexity: reference.complexity },
       commonResolverOpts,
     )
-    [`${baseNameLower}Reference`](@Parent() dto: DTO): RepresentationType {
+    [`${baseNameLower}Reference`](@Parent() dto: DTO): RepresentationType | null {
+      const fields = pluckFields<DTO, Relation>(dto, reference.keys);
+
+      if (allFieldsAreNull(fields)) {
+        return null;
+      }
+
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      return { __typename: baseName, ...pluckFields<DTO, Relation>(dto, reference.keys) };
+      return { __typename: baseName, ...fields };
     }
   }
   return ReadOneMixin;

@@ -6,14 +6,14 @@ import { BaseResolverOptions } from './resolver-method.decorator';
 import { mergeBaseResolverOpts } from '../common';
 
 const reflector = new ArrayReflector(REFERENCE_KEY);
-export type ReferenceDecoratorOpts<DTO, Relation> = Omit<ResolverRelationReference<DTO, Relation>, 'DTO'>;
+export type ReferenceDecoratorOpts<DTO, Relation> = Omit<ResolverRelationReference<DTO, Relation>, 'DTO' | 'keys'>;
 export type ReferenceTypeFunc<Relation> = () => Class<Relation>;
 
 interface ReferenceDescriptor<DTO, Reference> {
   name: string;
   keys: ReferencesKeys<DTO, Reference>;
   relationTypeFunc: () => Class<Reference>;
-  relationOpts?: Omit<ResolverRelationReference<DTO, Reference>, 'DTO'>;
+  relationOpts?: Omit<ResolverRelationReference<DTO, Reference>, 'DTO' | 'keys'>;
 }
 
 function getReferenceDescriptors<DTO>(DTOClass: Class<DTO>): ReferenceDescriptor<DTO, unknown>[] {
