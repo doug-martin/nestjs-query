@@ -19,9 +19,9 @@ export class TodoItemDTO {
   @FilterableField()
   completed!: boolean;
 
-  @FilterableField(() => GraphQLISODateTime)
+  @FilterableField(() => GraphQLISODateTime, { filterOnly: true })
   created!: Date;
 
-  @FilterableField(() => GraphQLISODateTime)
+  @FilterableField(() => GraphQLISODateTime, { filterOnly: true })
   updated!: Date;
 }

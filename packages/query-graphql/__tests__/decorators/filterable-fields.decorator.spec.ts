@@ -23,6 +23,9 @@ describe('FilterableField decorator', (): void => {
 
       @FilterableField(undefined, { nullable: true })
       numberField?: number;
+
+      @FilterableField({ filterOnly: true })
+      filterOnlyField!: string;
     }
     const fields = getFilterableFields(TestDto);
     expect(fields).toMatchObject([
@@ -40,6 +43,12 @@ describe('FilterableField decorator', (): void => {
         returnTypeFunc: floatReturnFunc,
       },
       { propertyName: 'numberField', target: Number, advancedOptions: { nullable: true }, returnTypeFunc: undefined },
+      {
+        propertyName: 'filterOnlyField',
+        target: String,
+        advancedOptions: { filterOnly: true },
+        returnTypeFunc: undefined,
+      },
     ]);
     expect(fieldSpy).toHaveBeenCalledTimes(4);
     expect(fieldSpy).toHaveBeenNthCalledWith(1);
