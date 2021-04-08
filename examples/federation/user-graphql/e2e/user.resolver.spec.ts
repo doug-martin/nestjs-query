@@ -4,11 +4,11 @@ import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
-import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
+import { UserDTO } from '../src/user/dto/user.dto';
 import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, todoItemFields } from './graphql-fragments';
+import { edgeNodes, pageInfoField, userFields } from './graphql-fragments';
 
-describe('Federated - TodoItemResolver (e2e)', () => {
+describe('Federated - UserResolver (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -34,15 +34,15 @@ describe('Federated - TodoItemResolver (e2e)', () => {
   afterAll(() => refresh(app.get(Connection)));
 
   describe('find one', () => {
-    it(`should find a todo item by id`, () =>
+    it(`should find a user by id`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `{
-          todoItem(id: 1) {
-            ${todoItemFields}
+          user(id: 1) {
+            ${userFields}
           }
         }`,
         })
@@ -50,100 +50,30 @@ describe('Federated - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body).toEqual({
             data: {
-              todoItem: {
+              user: {
                 id: '1',
-                title: 'Create Nest App',
-                completed: true,
-                description: null,
+                name: 'User 1',
+                email: 'user1@example.com',
               },
             },
           });
         }));
 
-    it(`should find a todo and assignee`, () =>
+    it(`should return null if the user is not found`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `{
-            todoItem(id: 1) {
-              ${todoItemFields}
-              assigneeId
-              assignee {
-                id
-                __typename
-              }
-            }
-          }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual({
-            data: {
-              todoItem: {
-                id: '1',
-                title: 'Create Nest App',
-                completed: true,
-                description: null,
-                assigneeId: '1',
-                assignee: {
-                  id: '1',
-                  __typename: 'User',
-                },
-              },
-            },
-          });
-        }));
-
-    it(`should return null if there is no assignee`, () =>
-      request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `{
-              todoItem(id: 5) {
-                ${todoItemFields}
-                assigneeId
-                assignee {
-                  id
-                  __typename
-                }
-              }
-            }`,
-        })
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual({
-            data: {
-              todoItem: {
-                id: '5',
-                title: 'How to create item With Sub Tasks',
-                completed: false,
-                description: null,
-                assigneeId: null,
-                assignee: null,
-              },
-            },
-          });
-        }));
-
-    it(`should return null if the todo item is not found`, () =>
-      request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          operationName: null,
-          variables: {},
-          query: `{
-          todoItem(id: 100) {
-            ${todoItemFields}
+          user(id: 100) {
+            ${userFields}
           }
         }`,
         })
         .expect(200, {
           data: {
-            todoItem: null,
+            user: null,
           },
         }));
   });
@@ -156,28 +86,26 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItems {
+          users {
             ${pageInfoField}
-            ${edgeNodes(todoItemFields)}
+            ${edgeNodes(userFields)}
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<UserDTO> = body.data.users;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          expect(edges).toHaveLength(5);
+          expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null },
-            { id: '2', title: 'Create Entity', completed: false, description: null },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
-            { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null },
+            { id: '1', name: 'User 1', email: 'user1@example.com' },
+            { id: '2', name: 'User 2', email: 'user2@example.com' },
+            { id: '3', name: 'User 3', email: 'user3@example.com' },
           ]);
         }));
 
@@ -188,26 +116,25 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItems(filter: { id: { in: [1, 2, 3] } }) {
+          users(filter: { id: { in: [1, 2] } }) {
             ${pageInfoField}
-            ${edgeNodes(todoItemFields)}
+            ${edgeNodes(userFields)}
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<UserDTO> = body.data.users;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          expect(edges).toHaveLength(3);
+          expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null },
-            { id: '2', title: 'Create Entity', completed: false, description: null },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null },
+            { id: '1', name: 'User 1', email: 'user1@example.com' },
+            { id: '2', name: 'User 2', email: 'user2@example.com' },
           ]);
         }));
 
@@ -218,28 +145,26 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `{
-          todoItems(sorting: [{field: id, direction: DESC}]) {
+          users(sorting: [{field: id, direction: DESC}]) {
             ${pageInfoField}
-            ${edgeNodes(todoItemFields)}
+            ${edgeNodes(userFields)}
           }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<UserDTO> = body.data.users;
           expect(pageInfo).toEqual({
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           });
-          expect(edges).toHaveLength(5);
+          expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null },
-            { id: '2', title: 'Create Entity', completed: false, description: null },
-            { id: '1', title: 'Create Nest App', completed: true, description: null },
+            { id: '3', name: 'User 3', email: 'user3@example.com' },
+            { id: '2', name: 'User 2', email: 'user2@example.com' },
+            { id: '1', name: 'User 1', email: 'user1@example.com' },
           ]);
         }));
 
@@ -251,15 +176,15 @@ describe('Federated - TodoItemResolver (e2e)', () => {
             operationName: null,
             variables: {},
             query: `{
-          todoItems(paging: {first: 2}) {
+              users(paging: {first: 2}) {
             ${pageInfoField}
-            ${edgeNodes(todoItemFields)}
+            ${edgeNodes(userFields)}
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<UserDTO> = body.data.users;
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
@@ -268,8 +193,8 @@ describe('Federated - TodoItemResolver (e2e)', () => {
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
-              { id: '1', title: 'Create Nest App', completed: true, description: null },
-              { id: '2', title: 'Create Entity', completed: false, description: null },
+              { id: '1', name: 'User 1', email: 'user1@example.com' },
+              { id: '2', name: 'User 2', email: 'user2@example.com' },
             ]);
           }));
 
@@ -280,166 +205,166 @@ describe('Federated - TodoItemResolver (e2e)', () => {
             operationName: null,
             variables: {},
             query: `{
-          todoItems(paging: {first: 2, after: "YXJyYXljb25uZWN0aW9uOjE="}) {
+          users(paging: {first: 2, after: "YXJyYXljb25uZWN0aW9uOjA="}) {
             ${pageInfoField}
-            ${edgeNodes(todoItemFields)}
+            ${edgeNodes(userFields)}
           }
         }`,
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<UserDTO> = body.data.users;
             expect(pageInfo).toEqual({
-              endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
-              hasNextPage: true,
+              endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              hasNextPage: false,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
-              { id: '3', title: 'Create Entity Service', completed: false, description: null },
-              { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
+              { id: '2', name: 'User 2', email: 'user2@example.com' },
+              { id: '3', name: 'User 3', email: 'user3@example.com' },
             ]);
           }));
     });
   });
 
   describe('create one', () => {
-    it('should allow creating a todoItem', () =>
+    it('should allow creating a user', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            createOneTodoItem(
+            createOneUser(
               input: {
-                todoItem: { title: "Test Todo", completed: false }
+                user: { name: "User 4", email: "user4@example.com" }
               }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
         .expect(200, {
           data: {
-            createOneTodoItem: {
-              id: '6',
-              title: 'Test Todo',
-              completed: false,
+            createOneUser: {
+              id: '4',
+              name: 'User 4',
+              email: 'user4@example.com',
             },
           },
         }));
 
-    it('should validate a todoItem', () =>
+    it('should validate a user', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            createOneTodoItem(
+            createOneUser(
               input: {
-                todoItem: { title: "Test Todo with a too long title!", completed: false }
+                user: { name: "User 5", email: "This is not a valid email" }
               }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
+          expect(JSON.stringify(body.errors[0])).toContain('email must be an email');
         }));
   });
 
   describe('create many', () => {
-    it('should allow creating a todoItem', () =>
+    it('should allow creating a user', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            createManyTodoItems(
+            createManyUsers(
               input: {
-                todoItems: [
-                  { title: "Many Test Todo 1", completed: false },
-                  { title: "Many Test Todo 2", completed: true }
+                users: [
+                  { name: "User 5", email: "user5@example.com" },
+                  { name: "User 6", email: "user6@example.com" }
                 ]
               }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
         .expect(200, {
           data: {
-            createManyTodoItems: [
-              { id: '7', title: 'Many Test Todo 1', completed: false },
-              { id: '8', title: 'Many Test Todo 2', completed: true },
+            createManyUsers: [
+              { id: '5', name: 'User 5', email: 'user5@example.com' },
+              { id: '6', name: 'User 6', email: 'user6@example.com' },
             ],
           },
         }));
 
-    it('should validate a todoItem', () =>
+    it('should validate a user', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            createManyTodoItems(
+            createManyUsers(
               input: {
-                todoItems: [{ title: "Test Todo With A Really Long Title", completed: false }]
+                users: [{ name: "User 7", email: "This is not a valid email" }]
               }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
+          expect(JSON.stringify(body.errors[0])).toContain('email must be an email');
         }));
   });
 
   describe('update one', () => {
-    it('should allow updating a todoItem', () =>
+    it('should allow updating a user', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            updateOneTodoItem(
+            updateOneUser(
               input: {
                 id: "6",
-                update: { title: "Update Test Todo", completed: true }
+                update: { name: "User 6a", email: "user6a@example.com" }
               }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
         .expect(200, {
           data: {
-            updateOneTodoItem: {
+            updateOneUser: {
               id: '6',
-              title: 'Update Test Todo',
-              completed: true,
+              name: 'User 6a',
+              email: 'user6a@example.com',
             },
           },
         }));
@@ -451,23 +376,21 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            updateOneTodoItem(
+            updateOneUser(
               input: {
-                update: { title: "Update Test Todo With A Really Long Title" }
+                update: { name: "User X" }
               }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.',
-          );
+          expect(body.errors[0].message).toBe('Field "UpdateOneUserInput.id" of required type "ID!" was not provided.');
         }));
 
     it('should validate an update', () =>
@@ -477,37 +400,37 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            updateOneTodoItem(
+            updateOneUser(
               input: {
                 id: "6",
-                update: { title: "Update Test Todo With A Really Long Title" }
+                update: { email: "This is not a valid email address" }
               }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
         .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
+          expect(JSON.stringify(body.errors[0])).toContain('email must be an email');
         }));
   });
 
   describe('update many', () => {
-    it('should allow updating a todoItem', () =>
+    it('should allow updating a user', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            updateManyTodoItems(
+            updateManyUsers(
               input: {
-                filter: {id: { in: ["7", "8"]} },
-                update: { title: "Update Many Test", completed: true }
+                filter: {id: { in: ["5", "6"]} },
+                update: { name: "New Users" }
               }
             ) {
               updatedCount
@@ -516,7 +439,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
         })
         .expect(200, {
           data: {
-            updateManyTodoItems: {
+            updateManyUsers: {
               updatedCount: 2,
             },
           },
@@ -529,9 +452,9 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            updateManyTodoItems(
+            updateManyUsers(
               input: {
-                update: { title: "Update Many Test", completed: true }
+                update: { name: "New users" }
               }
             ) {
               updatedCount
@@ -542,7 +465,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.',
+            'Field "UpdateManyUsersInput.filter" of required type "UserUpdateFilter!" was not provided.',
           );
         }));
 
@@ -553,10 +476,10 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            updateManyTodoItems(
+            updateManyUsers(
               input: {
                 filter: { },
-                update: { title: "Update Many Test", completed: true }
+                update: { name: "New users" }
               }
             ) {
               updatedCount
@@ -571,28 +494,28 @@ describe('Federated - TodoItemResolver (e2e)', () => {
   });
 
   describe('delete one', () => {
-    it('should allow deleting a todoItem', () =>
+    it('should allow deleting a user', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteOneTodoItem(
+            deleteOneUser(
               input: { id: "6" }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
         .expect(200, {
           data: {
-            deleteOneTodoItem: {
+            deleteOneUser: {
               id: null,
-              title: 'Update Test Todo',
-              completed: true,
+              name: 'New Users',
+              email: 'user6a@example.com',
             },
           },
         }));
@@ -604,12 +527,12 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteOneTodoItem(
+            deleteOneUser(
               input: { }
             ) {
               id
-              title
-              completed
+              name
+              email
             }
         }`,
         })
@@ -621,16 +544,16 @@ describe('Federated - TodoItemResolver (e2e)', () => {
   });
 
   describe('delete many', () => {
-    it('should allow updating a todoItem', () =>
+    it('should allow deleting a user', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteManyTodoItems(
+            deleteManyUsers(
               input: {
-                filter: {id: { in: ["7", "8"]} },
+                filter: {id: { in: ["4", "5"]} },
               }
             ) {
               deletedCount
@@ -639,7 +562,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
         })
         .expect(200, {
           data: {
-            deleteManyTodoItems: {
+            deleteManyUsers: {
               deletedCount: 2,
             },
           },
@@ -652,7 +575,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteManyTodoItems(
+            deleteManyUsers(
               input: { }
             ) {
               deletedCount
@@ -663,7 +586,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.',
+            'Field "DeleteManyUsersInput.filter" of required type "UserDeleteFilter!" was not provided.',
           );
         }));
 
@@ -674,7 +597,7 @@ describe('Federated - TodoItemResolver (e2e)', () => {
           operationName: null,
           variables: {},
           query: `mutation {
-            deleteManyTodoItems(
+            deleteManyUsers(
               input: {
                 filter: { },
               }
