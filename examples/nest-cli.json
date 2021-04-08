@@ -74,6 +74,15 @@
         "tsConfigPath": "./tsconfig.json"
       }
     },
+    "federation:user": {
+      "type": "application",
+      "root": "federation/user-graphql",
+      "entryFile": "main",
+      "sourceRoot": "federation/user-graphql/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.json"
+      }
+    },
     "hooks": {
       "type": "application",
       "root": "hooks",

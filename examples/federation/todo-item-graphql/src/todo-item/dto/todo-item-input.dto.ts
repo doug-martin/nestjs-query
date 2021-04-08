@@ -1,5 +1,5 @@
-import { IsString, MaxLength, IsBoolean } from 'class-validator';
-import { Field, InputType } from '@nestjs/graphql';
+import { IsString, MaxLength, IsBoolean, IsOptional } from 'class-validator';
+import { Field, ID, InputType } from '@nestjs/graphql';
 
 @InputType('TodoItemInput')
 export class TodoItemInputDTO {
@@ -11,4 +11,8 @@ export class TodoItemInputDTO {
   @IsBoolean()
   @Field()
   completed!: boolean;
+
+  @IsOptional()
+  @Field(() => ID, { nullable: true })
+  assigneeId?: number;
 }

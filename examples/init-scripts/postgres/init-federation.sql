@@ -9,3 +9,7 @@ GRANT ALL PRIVILEGES ON DATABASE federation_tag TO federation_tag;
 CREATE USER federation_todo_item WITH SUPERUSER;
 CREATE DATABASE federation_todo_item;
 GRANT ALL PRIVILEGES ON DATABASE federation_todo_item TO federation_todo_item;
+
+CREATE USER federation_user WITH SUPERUSER;
+CREATE DATABASE federation_user;
+GRANT ALL PRIVILEGES ON DATABASE federation_user TO federation_user;

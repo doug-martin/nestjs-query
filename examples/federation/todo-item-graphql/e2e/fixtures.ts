@@ -10,9 +10,9 @@ export const refresh = async (connection: Connection): Promise<void> => {
 
   const todoRepo = connection.getRepository(TodoItemEntity);
   await todoRepo.save([
-    { title: 'Create Nest App', completed: true },
-    { title: 'Create Entity', completed: false },
-    { title: 'Create Entity Service', completed: false },
+    { title: 'Create Nest App', completed: true, assigneeId: 1 },
+    { title: 'Create Entity', completed: false, assigneeId: 2 },
+    { title: 'Create Entity Service', completed: false, assigneeId: 3 },
     { title: 'Add Todo Item Resolver', completed: false },
     { title: 'How to create item With Sub Tasks', completed: false },
   ]);
