@@ -221,6 +221,25 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     return entity;
   }
 
+  async setRelations<Relation>(
+    relationName: string,
+    id: string,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<Entity, Relation>,
+  ): Promise<DocumentType<Entity>> {
+    this.checkForReference('AddRelations', relationName, false);
+    const refCount = await this.getRefCount(relationName, relationIds, opts?.relationFilter);
+    if (relationIds.length !== refCount) {
+      throw new Error(`Unable to find all ${relationName} to set on ${this.Model.modelName}`);
+    }
+    const entity = await this.findAndUpdate(
+      id,
+      opts?.filter as Filter<Entity>,
+      { [relationName]: relationIds } as UpdateQuery<DocumentType<Entity>>,
+    );
+    return entity;
+  }
+
   async setRelation<Relation>(
     relationName: string,
     id: string | number,
