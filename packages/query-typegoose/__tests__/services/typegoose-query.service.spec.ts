@@ -1269,6 +1269,75 @@ describe('TypegooseQueryService', () => {
     });
   });
 
+  describe('#setRelations', () => {
+    it('set all relations on the entity', async () => {
+      const entity = TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const relationIds = TEST_REFERENCES.slice(3, 6).map((r) => r._id);
+      const queryResult = await queryService.setRelations(
+        'testReferences',
+        entity._id.toHexString(),
+        relationIds.map((id) => id.toHexString()),
+      );
+      expect(queryResult).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining(relationIds),
+        }),
+      );
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
+      expect(relations.map((r) => r._id)).toEqual(relationIds);
+    });
+
+    it('should remove all relations if the relationIds is empty', async () => {
+      const entity = TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.setRelations('testReferences', entity._id.toHexString(), []);
+      expect(queryResult).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining([]),
+        }),
+      );
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
+      expect(relations.map((r) => r._id)).toEqual([]);
+    });
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.setRelations(
+            'testReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES.slice(3, 6).map((r) => r._id.toHexString()),
+            {
+              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
+            },
+          ),
+        ).rejects.toThrow(`Unable to find TestEntity with id: ${String(entity._id)}`);
+      });
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.setRelations<TestReference>(
+            'testReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES.slice(3, 6).map((r) => r._id.toHexString()),
+            {
+              relationFilter: { referenceName: { like: '%-one' } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find all testReferences to set on TestEntity');
+      });
+    });
+  });
+
   describe('#setRelation', () => {
     it('call select and return the result', async () => {
       const entity = TEST_REFERENCES[0];
