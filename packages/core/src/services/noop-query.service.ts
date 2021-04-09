@@ -160,6 +160,15 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     return Promise.reject(new NotImplementedException('removeRelations is not implemented'));
   }
 
+  setRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationId: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
+    return Promise.reject(new NotImplementedException('setRelations is not implemented'));
+  }
+
   setRelation<Relation>(
     relationName: string,
     id: string | number,
