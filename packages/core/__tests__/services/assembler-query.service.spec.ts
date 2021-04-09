@@ -362,6 +362,33 @@ describe('AssemblerQueryService', () => {
     });
   });
 
+  describe('setRelations', () => {
+    it('should transform the results for a single entity', () => {
+      const mockQueryService = mock<QueryService<TestEntity>>();
+      const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
+      when(mockQueryService.setRelations('test', 1, deepEqual([2]), undefined)).thenResolve({
+        bar: 'baz',
+      });
+
+      return expect(assemblerService.setRelations('test', 1, [2])).resolves.toEqual({ foo: 'baz' });
+    });
+    it('should transform the options and results for a single entity', () => {
+      const mockQueryService = mock<QueryService<TestEntity>>();
+      const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
+      when(
+        mockQueryService.setRelations('test', 1, deepEqual([2]), objectContaining({ filter: { bar: { eq: 'bar' } } })),
+      ).thenResolve({
+        bar: 'baz',
+      });
+
+      return expect(
+        assemblerService.setRelations('test', 1, [2], {
+          filter: { foo: { eq: 'bar' } },
+        }),
+      ).resolves.toEqual({ foo: 'baz' });
+    });
+  });
+
   describe('removeRelations', () => {
     it('should transform the results for a single entity', () => {
       const mockQueryService = mock<QueryService<TestEntity>>();

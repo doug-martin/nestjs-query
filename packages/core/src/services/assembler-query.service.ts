@@ -227,6 +227,17 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
     );
   }
 
+  setRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
+    return this.assembler.convertAsyncToDTO(
+      this.queryService.setRelations(relationName, id, relationIds, this.convertModifyRelationsOptions(opts)),
+    );
+  }
+
   setRelation<Relation>(
     relationName: string,
     id: string | number,
