@@ -17,8 +17,8 @@ const pluckFields = <DTO, Relation>(dto: DTO, fieldMap: ReferencesKeys<DTO, Rela
 };
 
 const allFieldsAreNull = <Relation>(fields: Partial<Relation>): boolean => {
-  return Object.entries(fields).reduce<boolean>(
-    (previousNull, [, value]) => previousNull && (value === null || value === undefined),
+  return Object.values(fields).reduce<boolean>(
+    (previousNull, value) => previousNull && (value === null || value === undefined),
     true,
   );
 };
