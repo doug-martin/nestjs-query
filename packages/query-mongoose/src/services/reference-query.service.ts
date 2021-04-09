@@ -208,6 +208,23 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     return this.getById(id);
   }
 
+  async setRelations<Relation extends Document>(
+    relationName: string,
+    id: string,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<Entity, Relation>,
+  ): Promise<Entity> {
+    this.checkForReference('AddRelations', relationName, false);
+    const entity = await this.getById(id, opts);
+    const refCount = await this.getRefCount(relationName, relationIds, opts?.relationFilter);
+    if (relationIds.length !== refCount) {
+      throw new Error(`Unable to find all ${relationName} to set on ${this.Model.modelName}`);
+    }
+    await entity.updateOne({ [relationName]: relationIds } as UpdateQuery<Entity>).exec();
+    // reload the document
+    return this.getById(id);
+  }
+
   async setRelation<Relation extends Document>(
     relationName: string,
     id: string | number,
