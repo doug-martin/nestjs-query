@@ -203,7 +203,35 @@ export abstract class RelationQueryService<Entity> {
     if (!this.foundAllRelations(relationIds, relations)) {
       throw new Error(`Unable to find all ${relationName} to add to ${this.EntityClass.name}`);
     }
-    await this.createRelationQueryBuilder(entity, relationName).add(relationIds);
+    await this.createTypeormRelationQueryBuilder(entity, relationName).add(relationIds);
+    return entity;
+  }
+
+  /**
+   * Set the relations on the entity.
+   *
+   * @param id - The id of the entity to set the relation on.
+   * @param relationName - The name of the relation to query for.
+   * @param relationIds - The ids of the relation to set on the entity. If the relationIds is empty all relations
+   * will be removed.
+   * @param opts - Additional options
+   */
+  async setRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<Entity, Relation>,
+  ): Promise<Entity> {
+    const entity = await this.getById(id, opts);
+    const relations = await this.getRelations(relationName, relationIds, opts?.relationFilter);
+    if (relationIds.length) {
+      if (!this.foundAllRelations(relationIds, relations)) {
+        throw new Error(`Unable to find all ${relationName} to set on ${this.EntityClass.name}`);
+      }
+    }
+    const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
+    const existingRelations = await relationQueryBuilder.select(entity, { filter: opts?.relationFilter }).getMany();
+    await this.createTypeormRelationQueryBuilder(entity, relationName).addAndRemove(relations, existingRelations);
     return entity;
   }
 
@@ -226,7 +254,7 @@ export abstract class RelationQueryService<Entity> {
     if (!relation) {
       throw new Error(`Unable to find ${relationName} to set on ${this.EntityClass.name}`);
     }
-    await this.createRelationQueryBuilder(entity, relationName).set(relationId);
+    await this.createTypeormRelationQueryBuilder(entity, relationName).set(relationId);
     return entity;
   }
 
@@ -248,7 +276,7 @@ export abstract class RelationQueryService<Entity> {
     if (!this.foundAllRelations(relationIds, relations)) {
       throw new Error(`Unable to find all ${relationName} to remove from ${this.EntityClass.name}`);
     }
-    await this.createRelationQueryBuilder(entity, relationName).remove(relationIds);
+    await this.createTypeormRelationQueryBuilder(entity, relationName).remove(relationIds);
     return entity;
   }
 
@@ -272,9 +300,9 @@ export abstract class RelationQueryService<Entity> {
     }
     const meta = this.getRelationMeta(relationName);
     if (meta.isOneToOne || meta.isManyToOne) {
-      await this.createRelationQueryBuilder(entity, relationName).set(null);
+      await this.createTypeormRelationQueryBuilder(entity, relationName).set(null);
     } else {
-      await this.createRelationQueryBuilder(entity, relationName).remove(relationId);
+      await this.createTypeormRelationQueryBuilder(entity, relationName).remove(relationId);
     }
 
     return entity;
@@ -399,7 +427,7 @@ export abstract class RelationQueryService<Entity> {
     return results;
   }
 
-  private createRelationQueryBuilder(entity: Entity, relationName: string): TypeOrmRelationQueryBuilder<Entity> {
+  private createTypeormRelationQueryBuilder(entity: Entity, relationName: string): TypeOrmRelationQueryBuilder<Entity> {
     return this.repo.createQueryBuilder().relation(relationName).of(entity);
   }
 
