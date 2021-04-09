@@ -230,6 +230,32 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
   }
 
   /**
+   * Set the relations on the entity.
+   *
+   * @param id - The id of the entity to set the relation on.
+   * @param relationName - The name of the relation to query for.
+   * @param relationIds - The ids of the relation to set on the entity. If the relationIds is empty all relations
+   * will be removed.
+   * @param opts - Additional options
+   */
+  async setRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: string[] | number[],
+    opts?: ModifyRelationOptions<Entity, Relation>,
+  ): Promise<Entity> {
+    const entity = await this.getById(id, opts);
+    if (relationIds.length) {
+      const relations = await this.getRelations(relationName, relationIds, opts?.relationFilter);
+      if (relations.length !== relationIds.length) {
+        throw new Error(`Unable to find all ${relationName} to set on ${this.model.name}`);
+      }
+    }
+    await entity.$set(relationName as keyof Entity, relationIds);
+    return entity;
+  }
+
+  /**
    * Set the relation on the entity.
    *
    * @param id - The id of the entity to set the relation on.

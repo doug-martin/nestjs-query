@@ -867,6 +867,61 @@ describe('SequelizeQueryService', (): void => {
     });
   });
 
+  describe('#setRelations', () => {
+    it('set all relations on the entity', async () => {
+      const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+      const queryService = moduleRef.get(TestEntityService);
+      const relationIds = PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk);
+      const queryResult = await queryService.setRelations('testRelations', entity.testEntityPk, relationIds);
+      expect(queryResult).toEqual(expect.objectContaining(entity));
+
+      const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+      expect(relations.map((r) => r.testRelationPk)).toEqual(relationIds);
+    });
+
+    it('should remove all relations if the relationIds is empty', async () => {
+      const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.setRelations('testRelations', entity.testEntityPk, []);
+      expect(queryResult).toEqual(expect.objectContaining(entity));
+
+      const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+      expect(relations.map((r) => r.testRelationPk)).toEqual([]);
+    });
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.setRelations(
+            'testRelations',
+            entity.testEntityPk,
+            PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
+            {
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
+      });
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+        const queryService = moduleRef.get(TestEntityService);
+        return expect(
+          queryService.setRelations<TestRelation>(
+            'testRelations',
+            entity.testEntityPk,
+            PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
+            {
+              relationFilter: { relationName: { like: '%-one' } },
+            },
+          ),
+        ).rejects.toThrow('Unable to find all testRelations to set on TestEntity');
+      });
+    });
+  });
+
   describe('#setRelation', () => {
     it('call select and return the result', async () => {
       const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
