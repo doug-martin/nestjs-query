@@ -169,6 +169,14 @@ describe('ProxyQueryService', () => {
     when(mockQueryService.setRelation(relationName, id, relationId, undefined)).thenResolve(result);
     return expect(queryService.setRelation(relationName, id, relationId)).resolves.toBe(result);
   });
+  it('should proxy to the underlying service when calling setRelations', () => {
+    const relationName = 'test';
+    const id = 1;
+    const relationIds = [2];
+    const result = { foo: 'bar' };
+    when(mockQueryService.setRelations(relationName, id, relationIds, undefined)).thenResolve(result);
+    return expect(queryService.setRelations(relationName, id, relationIds)).resolves.toBe(result);
+  });
   it('should proxy to the underlying service when calling updateMany', () => {
     const update = { foo: 'bar' };
     const filter = {};

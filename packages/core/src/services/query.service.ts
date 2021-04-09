@@ -157,6 +157,22 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
   ): Promise<DTO>;
 
   /**
+   * Set the relations on the dto.
+   *
+   * @param relationName - The name of the relation to query for.
+   * @param id - The id of the dto to set the relation on.
+   * @param relationIds - The ids of the relation to set on the dto. If the array is empty the relations will be
+   * removed.
+   * @param opts - Additional options.
+   */
+  setRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO>;
+
+  /**
    * Set the relation on the dto.
    *
    * @param relationName - The name of the relation to query for.

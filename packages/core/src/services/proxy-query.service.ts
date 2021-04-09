@@ -45,6 +45,15 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     return this.proxied.removeRelations(relationName, id, relationIds, opts);
   }
 
+  setRelations<Relation>(
+    relationName: string,
+    id: string | number,
+    relationIds: (string | number)[],
+    opts?: ModifyRelationOptions<DTO, Relation>,
+  ): Promise<DTO> {
+    return this.proxied.setRelations(relationName, id, relationIds, opts);
+  }
+
   setRelation<Relation>(
     relationName: string,
     id: string | number,
