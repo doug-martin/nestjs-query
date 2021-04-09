@@ -17,7 +17,10 @@ const pluckFields = <DTO, Relation>(dto: DTO, fieldMap: ReferencesKeys<DTO, Rela
 };
 
 const allFieldsAreNull = <Relation>(fields: Partial<Relation>): boolean => {
-  return Object.entries(fields).reduce<boolean>((previousNull, [, value]) => previousNull && value === null, true);
+  return Object.entries(fields).reduce<boolean>(
+    (previousNull, [, value]) => previousNull && (value === null || value === undefined),
+    true,
+  );
 };
 
 const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: ResolverRelationReference<DTO, Relation>) => <
