@@ -8,6 +8,7 @@
     <jest-options value="--runInBand --coverage" />
     <envs>
       <env name="NESTJS_QUERY_DB_TYPE" value="mysql" />
+      <env name="TZ" value="UTC" />
     </envs>
     <scope-kind value="ALL" />
     <method v="2" />
