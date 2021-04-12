@@ -1,6 +1,6 @@
 import { Class } from '@nestjs-query/core';
 import { Field, ID, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, ArrayNotEmpty, ArrayUnique } from 'class-validator';
+import { IsNotEmpty, ArrayUnique } from 'class-validator';
 
 export interface RelationsInputType {
   id: string | number;
@@ -21,7 +21,6 @@ export function RelationsInputType(): Class<RelationsInputType> {
     id!: string | number;
 
     @Field(() => [ID], { description: 'The ids of the relations.' })
-    @ArrayNotEmpty()
     @ArrayUnique()
     @IsNotEmpty({ each: true })
     relationIds!: (string | number)[];

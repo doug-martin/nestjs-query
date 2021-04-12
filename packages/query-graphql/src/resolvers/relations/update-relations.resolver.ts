@@ -78,6 +78,21 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
       const { input } = await transformAndValidate(AddArgs, addArgs);
       return this.service.addRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
     }
+
+    @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
+      interceptors: [AuthorizerInterceptor(DTOClass)],
+    })
+    async [`set${pluralBaseName}On${dtoNames.baseName}`](
+      @Args() addArgs: AddArgs,
+      @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
+        operationGroup: OperationGroup.UPDATE,
+        many: true,
+      })
+      modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+    ): Promise<DTO> {
+      const { input } = await transformAndValidate(AddArgs, addArgs);
+      return this.service.setRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
+    }
   }
   return UpdateManyMixin;
 };
