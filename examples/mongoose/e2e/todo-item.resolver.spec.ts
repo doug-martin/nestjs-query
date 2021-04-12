@@ -1365,6 +1365,86 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
         }));
   });
 
+  describe('setTagsOnTodoItem', () => {
+    it('allow settings tags on a todoItem', () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .set(AUTH_HEADER_NAME, config.auth.header)
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            setTagsOnTodoItem(
+              input: {
+                id: ${graphqlIds[0]},
+                relationIds: ["5f74ed2686b2bae7bf4b4aab", "5f74ed2686b2bae7bf4b4aac", "5f74ed2686b2bae7bf4b4aad", "5f74ed2686b2bae7bf4b4aae", "5f74ed2686b2bae7bf4b4aaf"]
+              }
+            ) {
+              id
+              title
+              tags(sorting: [{ field: id, direction: ASC }]) {
+                ${pageInfoField}
+                ${edgeNodes(tagFields)}
+                totalCount
+              }
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.setTagsOnTodoItem.tags;
+          expect(body.data.setTagsOnTodoItem.id).toBe(todoItemIds[0]);
+          expect(pageInfo).toEqual({
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          });
+          expect(totalCount).toBe(5);
+          expect(edges).toHaveLength(5);
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
+        }));
+
+    it('allow settings tags to a todoItem to an empty array', () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .set(AUTH_HEADER_NAME, config.auth.header)
+        .send({
+          operationName: null,
+          variables: {},
+          query: `mutation {
+            setTagsOnTodoItem(
+              input: {
+                id: ${graphqlIds[0]},
+                relationIds: []
+              }
+            ) {
+              id
+              title
+              tags(sorting: [{ field: id, direction: ASC }]) {
+                ${pageInfoField}
+                ${edgeNodes(tagFields)}
+                totalCount
+              }
+            }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.setTagsOnTodoItem.tags;
+          expect(body.data.setTagsOnTodoItem.id).toBe(todoItemIds[0]);
+          expect(pageInfo).toEqual({
+            endCursor: null,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+          });
+          expect(totalCount).toBe(0);
+          expect(edges).toHaveLength(0);
+          expect(edges.map((e) => e.node.name)).toEqual([]);
+        }));
+  });
+
   afterAll(async () => {
     await app.close();
   });
