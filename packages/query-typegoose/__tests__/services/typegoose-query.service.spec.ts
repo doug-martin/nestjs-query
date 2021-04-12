@@ -1222,6 +1222,21 @@ describe('TypegooseQueryService', () => {
       expect(relations).toHaveLength(6);
     });
 
+    it('should not modify relations if relationIds is empty', async () => {
+      const entity = TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.addRelations('testReferences', entity._id.toHexString(), []);
+      expect(queryResult).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining(TEST_REFERENCES.slice(0, 3).map((r) => r._id)),
+        }),
+      );
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
+      expect(relations).toHaveLength(3);
+    });
+
     describe('with virtual reference', () => {
       it('should return a rejected promise', async () => {
         const entity = TEST_ENTITIES[0];
@@ -1459,6 +1474,21 @@ describe('TypegooseQueryService', () => {
 
       const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
       expect(relations).toHaveLength(0);
+    });
+
+    it('should not modify relations if relationIds is empty', async () => {
+      const entity = TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.removeRelations('testReferences', entity._id.toHexString(), []);
+      expect(queryResult.toObject()).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining(TEST_REFERENCES.slice(0, 3).map((r) => r._id)),
+        }),
+      );
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
+      expect(relations).toHaveLength(3);
     });
 
     describe('with virtual reference', () => {
