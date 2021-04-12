@@ -9,6 +9,7 @@ type Query {
 
 type Mutation {
   addTestsToTestResolverDTO(input: RelationsInput!): TestResolverDTO!
+  setTestsOnTestResolverDTO(input: RelationsInput!): TestResolverDTO!
 }
 
 input RelationsInput {
