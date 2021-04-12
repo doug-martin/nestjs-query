@@ -61,21 +61,11 @@ describe('RelationsInputType', (): void => {
       ]);
     });
 
-    it('should validate that relationsIds is not empty', () => {
+    it('should allow an empty relationIds array', () => {
       const input: RelationsInputType = { id: 1, relationIds: [] };
       const it = plainToClass(RelationsInput, input);
       const errors = validateSync(it);
-      expect(errors).toEqual([
-        {
-          children: [],
-          constraints: {
-            arrayNotEmpty: 'relationIds should not be empty',
-          },
-          property: 'relationIds',
-          target: input,
-          value: input.relationIds,
-        },
-      ]);
+      expect(errors).toEqual([]);
     });
 
     it('should validate that relationsIds is unique', () => {
