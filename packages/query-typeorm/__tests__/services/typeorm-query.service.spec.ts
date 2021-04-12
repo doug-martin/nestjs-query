@@ -1138,6 +1138,16 @@ describe('TypeOrmQueryService', (): void => {
       expect(relations).toHaveLength(6);
     });
 
+    it('should not modify if the relationIds is empty', async () => {
+      const entity = TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.addRelations('testRelations', entity.testEntityPk, []);
+      expect(queryResult).toEqual(entity);
+
+      const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+      expect(relations).toHaveLength(3);
+    });
+
     describe('with modify options', () => {
       it('should throw an error if the entity is not found with the id and provided filter', async () => {
         const entity = TEST_ENTITIES[0];
@@ -1282,6 +1292,16 @@ describe('TypeOrmQueryService', (): void => {
 
       const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
       expect(relations).toHaveLength(0);
+    });
+
+    it('should not remove any relations if relationIds is empty', async () => {
+      const entity = TEST_ENTITIES[0];
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.removeRelations('testRelations', entity.testEntityPk, []);
+      expect(queryResult).toEqual(entity);
+
+      const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+      expect(relations).toHaveLength(3);
     });
 
     describe('with modify options', () => {
