@@ -185,6 +185,16 @@ Adds relations to a `DTO`
 #### Returns
 The DTO the relations were added to.
 
+### `setRelations`
+Sets relations on a `DTO`
+#### Arguments
+* `relationName: string` - The name of the relation
+* `id: string | number` - The id of the DTO to add the relations to
+* `relationIds: (string | number)[]` - The ids of the relations to set. If the relationIds is empty the all relations will be removed.
+* `opts?: ModifyRelationOptions<DTO, Relation>` - Additional options apply when adding relations
+#### Returns
+The DTO the relations were added to.
+
 ### `setRelation`
 Set a relation on a DTO
 #### Arguments
