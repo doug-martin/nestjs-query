@@ -834,6 +834,16 @@ describe('SequelizeQueryService', (): void => {
       expect(relations).toHaveLength(6);
     });
 
+    it('should not modify relations if the relationIds is empty', async () => {
+      const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.addRelations('testRelations', entity.testEntityPk, []);
+      expect(queryResult).toEqual(expect.objectContaining(entity));
+
+      const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+      expect(relations).toHaveLength(3);
+    });
+
     describe('with modify options', () => {
       it('should throw an error if the entity is not found with the id and provided filter', async () => {
         const entity = PLAIN_TEST_ENTITIES[0];
@@ -978,6 +988,16 @@ describe('SequelizeQueryService', (): void => {
 
       const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
       expect(relations).toHaveLength(0);
+    });
+
+    it('should not modify relations if relationIds is empty', async () => {
+      const entity = PLAIN_TEST_ENTITIES[0] as TestEntity;
+      const queryService = moduleRef.get(TestEntityService);
+      const queryResult = await queryService.removeRelations('testRelations', entity.testEntityPk, []);
+      expect(queryResult).toEqual(expect.objectContaining(entity));
+
+      const relations = await queryService.queryRelations(TestRelation, 'testRelations', entity, {});
+      expect(relations).toHaveLength(3);
     });
 
     describe('with modify options', () => {
