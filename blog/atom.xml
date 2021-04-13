@@ -169,18 +169,18 @@
         <summary type="html"><![CDATA[* Update typescript to 3.8.]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.3.0]]></title>
-        <id>v0.3.0</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0"/>
-        <updated>2020-02-21T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Added dataloader support!]]></summary>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[v0.3.1]]></title>
         <id>v0.3.1</id>
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1"/>
         <updated>2020-02-21T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[* Hardened TypeORM querying]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.0]]></title>
+        <id>v0.3.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0"/>
+        <updated>2020-02-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Added dataloader support!]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[v0.2.1]]></title>

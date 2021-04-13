@@ -169,18 +169,18 @@
             <description><![CDATA[* Update typescript to 3.8.]]></description>
         </item>
         <item>
-            <title><![CDATA[v0.3.0]]></title>
-            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0</link>
-            <guid>v0.3.0</guid>
-            <pubDate>Fri, 21 Feb 2020 00:00:00 GMT</pubDate>
-            <description><![CDATA[* Added dataloader support!]]></description>
-        </item>
-        <item>
             <title><![CDATA[v0.3.1]]></title>
             <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1</link>
             <guid>v0.3.1</guid>
             <pubDate>Fri, 21 Feb 2020 00:00:00 GMT</pubDate>
             <description><![CDATA[* Hardened TypeORM querying]]></description>
+        </item>
+        <item>
+            <title><![CDATA[v0.3.0]]></title>
+            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0</link>
+            <guid>v0.3.0</guid>
+            <pubDate>Fri, 21 Feb 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[* Added dataloader support!]]></description>
         </item>
         <item>
             <title><![CDATA[v0.2.1]]></title>
