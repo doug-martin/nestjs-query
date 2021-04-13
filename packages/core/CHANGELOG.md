@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.26.0](https://github.com/doug-martin/nestjs-query/compare/v0.25.1...v0.26.0) (2021-04-13)
+
+
+### Features
+
+* **core:** Add new `setRelations` to set oneToMany/manyToMany relations ([4c73591](https://github.com/doug-martin/nestjs-query/commit/4c7359168c0713723d18ae2dc302366fd820dc7b))
+
+
+
+
+
 ## [0.25.1](https://github.com/doug-martin/nestjs-query/compare/v0.25.0...v0.25.1) (2021-04-07)
 
 

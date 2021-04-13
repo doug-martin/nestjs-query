@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.26.0](https://github.com/doug-martin/nestjs-query/compare/v0.25.1...v0.26.0) (2021-04-13)
+
+
+### Features
+
+* **typegoose:** Implement `setRelations` to set many references ([4ec5fe0](https://github.com/doug-martin/nestjs-query/commit/4ec5fe07689eacb0456f531d69368b0451ce69a1))
+
+
+
+
+
 ## [0.25.1](https://github.com/doug-martin/nestjs-query/compare/v0.25.0...v0.25.1) (2021-04-07)
 
 

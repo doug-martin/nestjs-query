@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.26.0](https://github.com/doug-martin/nestjs-query/compare/v0.25.1...v0.26.0) (2021-04-13)
+
+
+### Features
+
+* **typeorm:** Implement `setRelations` to set many relations ([d1109b7](https://github.com/doug-martin/nestjs-query/commit/d1109b70f961cf59d7cbc8b8a85c401980a2b6c4))
+
+
+
+
+
 ## [0.25.1](https://github.com/doug-martin/nestjs-query/compare/v0.25.0...v0.25.1) (2021-04-07)
 
 **Note:** Version bump only for package @nestjs-query/query-typeorm

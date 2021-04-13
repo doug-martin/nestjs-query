@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.26.0](https://github.com/doug-martin/nestjs-query/compare/v0.25.1...v0.26.0) (2021-04-13)
+
+
+### Bug Fixes
+
+* **graphql,auth,#1026:** Fixed auth context on deleteMany ([3d4efd4](https://github.com/doug-martin/nestjs-query/commit/3d4efd44fae7e2ee119e53884519e5b2700e9e72))
+* **graphql,auth,#1026:** Fixed renamed export ([24b1193](https://github.com/doug-martin/nestjs-query/commit/24b11936014312d435b0d7f17c4237fd48c5dc52))
+* **graphql,federation,#1051:** check for undefined as well ([298150a](https://github.com/doug-martin/nestjs-query/commit/298150a73571e08b9d4c3d24278a24b8aec8e62b)), closes [#1051](https://github.com/doug-martin/nestjs-query/issues/1051)
+* **graphql,federation,#1051:** return null for references ([6cb832e](https://github.com/doug-martin/nestjs-query/commit/6cb832ebe03c4b4cc1ec133e93a39c4637c87685)), closes [#1051](https://github.com/doug-martin/nestjs-query/issues/1051)
+
+
+### Features
+
+* **core:** Add new `setRelations` to set oneToMany/manyToMany relations ([4c73591](https://github.com/doug-martin/nestjs-query/commit/4c7359168c0713723d18ae2dc302366fd820dc7b))
+* **graphql:** Expose setRelations mutation ([676a4d5](https://github.com/doug-martin/nestjs-query/commit/676a4d5fc16717ae10c8f9f8e71550f1a42d6b2e))
+* **graphql,#1048:** added filter-only option to filterable fields ([55cb010](https://github.com/doug-martin/nestjs-query/commit/55cb0105a11224db1e61023762f030d5c2dae6bc)), closes [#1048](https://github.com/doug-martin/nestjs-query/issues/1048)
+* **graphql,auth:** Pass operation name to authorizer [#1026](https://github.com/doug-martin/nestjs-query/issues/1026) ([4343821](https://github.com/doug-martin/nestjs-query/commit/43438218d286791059a7a5f8eb40110320bdcfca))
+* **graphql,auth,#1026:** Added convenience fields to auth context ([32df50e](https://github.com/doug-martin/nestjs-query/commit/32df50e502483bd3492a2d3481786d8931556438)), closes [#1026](https://github.com/doug-martin/nestjs-query/issues/1026)
+* **graphql,auth,#1026:** Enable authorization on create methods as well ([4c7905e](https://github.com/doug-martin/nestjs-query/commit/4c7905e2c96bf3aab1841091d44599b917ecdd56)), closes [#1026](https://github.com/doug-martin/nestjs-query/issues/1026)
+* **mongoose:** Implement `setRelations` to set many references ([3dc8a84](https://github.com/doug-martin/nestjs-query/commit/3dc8a84ffdaf0e092871c280ac5264c4ab38104a))
+* **sequelize:** Implement `setRelations` to set many relations ([b0c2d2f](https://github.com/doug-martin/nestjs-query/commit/b0c2d2f419ba2782f6b6e1290548cc8bf2afc699))
+* **typegoose:** Implement `setRelations` to set many references ([4ec5fe0](https://github.com/doug-martin/nestjs-query/commit/4ec5fe07689eacb0456f531d69368b0451ce69a1))
+* **typeorm:** Implement `setRelations` to set many relations ([d1109b7](https://github.com/doug-martin/nestjs-query/commit/d1109b70f961cf59d7cbc8b8a85c401980a2b6c4))
+
+
+
+
+
 ## [0.25.1](https://github.com/doug-martin/nestjs-query/compare/v0.25.0...v0.25.1) (2021-04-07)
 
 

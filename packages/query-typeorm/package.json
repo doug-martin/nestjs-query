@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-typeorm",
-  "version": "0.25.1",
+  "version": "0.26.0",
   "description": "Typeorm adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.25.1",
+    "@nestjs-query/core": "0.26.0",
     "camel-case": "^4.1.2",
     "lodash.filter": "^4.6.0",
     "lodash.omit": "^4.5.0",

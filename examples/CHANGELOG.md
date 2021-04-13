@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.26.0](https://github.com/doug-martin/nestjs-query/compare/v0.25.1...v0.26.0) (2021-04-13)
+
+
+### Bug Fixes
+
+* **graphql,auth,#1026:** Fixed renamed export ([24b1193](https://github.com/doug-martin/nestjs-query/commit/24b11936014312d435b0d7f17c4237fd48c5dc52))
+* **graphql,federation,#1051:** check for undefined as well ([298150a](https://github.com/doug-martin/nestjs-query/commit/298150a73571e08b9d4c3d24278a24b8aec8e62b)), closes [#1051](https://github.com/doug-martin/nestjs-query/issues/1051)
+
+
+### Features
+
+* **graphql,#1048:** added filter-only option to filterable fields ([55cb010](https://github.com/doug-martin/nestjs-query/commit/55cb0105a11224db1e61023762f030d5c2dae6bc)), closes [#1048](https://github.com/doug-martin/nestjs-query/issues/1048)
+* **graphql,auth:** Pass operation name to authorizer [#1026](https://github.com/doug-martin/nestjs-query/issues/1026) ([4343821](https://github.com/doug-martin/nestjs-query/commit/43438218d286791059a7a5f8eb40110320bdcfca))
+* **graphql,auth,#1026:** Added convenience fields to auth context ([32df50e](https://github.com/doug-martin/nestjs-query/commit/32df50e502483bd3492a2d3481786d8931556438)), closes [#1026](https://github.com/doug-martin/nestjs-query/issues/1026)
+* **graphql,auth,#1026:** Enable authorization on create methods as well ([4c7905e](https://github.com/doug-martin/nestjs-query/commit/4c7905e2c96bf3aab1841091d44599b917ecdd56)), closes [#1026](https://github.com/doug-martin/nestjs-query/issues/1026)
+
+
+
+
+
 ## [0.25.1](https://github.com/doug-martin/nestjs-query/compare/v0.25.0...v0.25.1) (2021-04-07)
 
 **Note:** Version bump only for package nestjs-query-examples
