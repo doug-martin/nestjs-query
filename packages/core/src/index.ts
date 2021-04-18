@@ -8,6 +8,7 @@ export {
   RelationQueryService,
   NoOpQueryService,
   QueryServiceRelation,
+  ProxyQueryService,
 } from './services';
 export {
   transformFilter,
