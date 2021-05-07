@@ -2,7 +2,7 @@ version: "3"
 
 services:
   postgres:
-    image: "postgres:11"
+    image: "postgres:13"
     volumes:
       - ./init-scripts/postgres:/docker-entrypoint-initdb.d/
     environment:
