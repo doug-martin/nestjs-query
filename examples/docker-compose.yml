@@ -13,7 +13,7 @@ services:
     ports:
       - "5436:5432"
   mysql:
-    image: "mysql:5"
+    image: "mysql:8"
     volumes:
       - ./init-scripts/mysql:/docker-entrypoint-initdb.d/
     environment:
