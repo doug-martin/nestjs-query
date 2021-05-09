@@ -29,6 +29,15 @@
         "tsConfigPath": "./tsconfig.json"
       }
     },
+    "custom-id": {
+      "type": "application",
+      "root": "custom-id",
+      "entryFile": "main",
+      "sourceRoot": "custom-id/src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.json"
+      }
+    },
     "custom-service": {
       "type": "application",
       "root": "custom-service",
