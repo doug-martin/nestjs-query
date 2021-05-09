@@ -75,7 +75,7 @@ describe('UpdateResolver', () => {
   describe('#updateOne', () => {
     it('should use the provided UpdateOneInput type', () => {
       @InputType()
-      class CustomUpdateOneInput extends UpdateOneInputType(TestResolverInputDTO) {
+      class CustomUpdateOneInput extends UpdateOneInputType(TestResolverDTO, TestResolverInputDTO) {
         @Field()
         other!: string;
       }

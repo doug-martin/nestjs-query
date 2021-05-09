@@ -1,29 +1,26 @@
 import { Class } from '@nestjs-query/core';
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty } from 'class-validator';
+import { getDTOIdTypeOrDefault } from '../common';
 
 export interface RelationInputType {
   id: string | number;
   relationId: string | number;
 }
 
-/** @internal */
-let relationInputType: Class<RelationInputType> | null = null;
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export function RelationInputType(): Class<RelationInputType> {
-  if (relationInputType) {
-    return relationInputType;
-  }
-  @InputType()
+export function RelationInputType(DTOClass: Class<unknown>, RelationClass: Class<unknown>): Class<RelationInputType> {
+  const DTOIDType = getDTOIdTypeOrDefault([DTOClass]);
+  const RelationIDType = getDTOIdTypeOrDefault([RelationClass]);
+  @InputType({ isAbstract: true })
   class RelationInput implements RelationInputType {
-    @Field(() => ID, { description: 'The id of the record.' })
+    @Field(() => DTOIDType, { description: 'The id of the record.' })
     @IsNotEmpty()
     id!: string | number;
 
-    @Field(() => ID, { description: 'The id of relation.' })
+    @Field(() => RelationIDType, { description: 'The id of relation.' })
     @IsNotEmpty()
     relationId!: string | number;
   }
-  relationInputType = RelationInput;
-  return relationInputType;
+  return RelationInput;
 }

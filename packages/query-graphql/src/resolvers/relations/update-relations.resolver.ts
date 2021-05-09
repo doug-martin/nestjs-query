@@ -1,5 +1,6 @@
+// eslint-disable-next-line max-classes-per-file
 import { Class, ModifyRelationOptions, QueryService } from '@nestjs-query/core';
-import { Resolver, ArgsType, Args } from '@nestjs/graphql';
+import { Resolver, ArgsType, Args, InputType } from '@nestjs/graphql';
 import { AuthorizerInterceptor } from '../../interceptors';
 import { getDTONames } from '../../common';
 import { ModifyRelationAuthorizerFilter, ResolverMutation } from '../../decorators';
@@ -23,8 +24,10 @@ const UpdateOneRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: R
   const dtoNames = getDTONames(DTOClass);
   const { baseNameLower, baseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
   const relationName = relation.relationName ?? baseNameLower;
+  @InputType(`Set${baseName}On${dtoNames.baseName}Input`)
+  class RIT extends RelationInputType(DTOClass, relationDTO) {}
   @ArgsType()
-  class SetArgs extends MutationArgsType(RelationInputType()) {}
+  class SetArgs extends MutationArgsType(RIT) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateOneMixin extends Base {
@@ -59,8 +62,15 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
   const dtoNames = getDTONames(DTOClass);
   const { pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
   const relationName = relation.relationName ?? pluralBaseNameLower;
+  @InputType(`Add${pluralBaseName}To${dtoNames.baseName}Input`)
+  class AddRelationInput extends RelationsInputType(DTOClass, relationDTO) {}
   @ArgsType()
-  class AddArgs extends MutationArgsType(RelationsInputType()) {}
+  class AddArgs extends MutationArgsType(AddRelationInput) {}
+
+  @InputType(`Set${pluralBaseName}On${dtoNames.baseName}Input`)
+  class SetRelationInput extends RelationsInputType(DTOClass, relationDTO) {}
+  @ArgsType()
+  class SetArgs extends MutationArgsType(SetRelationInput) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class UpdateManyMixin extends Base {
@@ -83,7 +93,7 @@ const UpdateManyRelationMixin = <DTO, Relation>(DTOClass: Class<DTO>, relation: 
       interceptors: [AuthorizerInterceptor(DTOClass)],
     })
     async [`set${pluralBaseName}On${dtoNames.baseName}`](
-      @Args() addArgs: AddArgs,
+      @Args() addArgs: SetArgs,
       @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
         operationGroup: OperationGroup.UPDATE,
         many: true,

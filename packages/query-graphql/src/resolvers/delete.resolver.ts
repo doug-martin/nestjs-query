@@ -52,6 +52,14 @@ const defaultDeleteManyInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): 
   return DM;
 };
 
+/** @internal */
+const defaultDeleteOneInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): Class<DeleteOneInputType> => {
+  const { baseName } = dtoNames;
+  @InputType(`DeleteOne${baseName}Input`)
+  class DM extends DeleteOneInputType(DTOClass) {}
+  return DM;
+};
+
 /**
  * @internal
  * Mixin to add `delete` graphql endpoints.
@@ -67,7 +75,10 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
   const enableManySubscriptions = opts.many?.enableSubscriptions ?? enableSubscriptions;
   const deletedOneEvent = getDTOEventName(EventType.DELETED_ONE, DTOClass);
   const deletedManyEvent = getDTOEventName(EventType.DELETED_MANY, DTOClass);
-  const { DeleteOneInput = DeleteOneInputType(), DeleteManyInput = defaultDeleteManyInput(dtoNames, DTOClass) } = opts;
+  const {
+    DeleteOneInput = defaultDeleteOneInput(dtoNames, DTOClass),
+    DeleteManyInput = defaultDeleteManyInput(dtoNames, DTOClass),
+  } = opts;
   const deleteOneMutationName = opts.one?.name ?? `deleteOne${baseName}`;
   const deleteManyMutationName = opts.many?.name ?? `deleteMany${pluralBaseName}`;
   const DMR = DeleteManyResponseType();

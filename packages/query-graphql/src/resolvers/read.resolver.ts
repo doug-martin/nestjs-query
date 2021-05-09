@@ -63,7 +63,7 @@ export const Readable = <DTO, ReadOpts extends ReadResolverOpts<DTO>, QS extends
   class QA extends QueryArgs {}
 
   @ArgsType()
-  class FO extends FindOneArgsType() {}
+  class FO extends FindOneArgsType(DTOClass) {}
 
   @Resolver(() => DTOClass, { isAbstract: true })
   class ReadResolverBase extends BaseClass {
