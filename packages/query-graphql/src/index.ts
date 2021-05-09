@@ -33,6 +33,8 @@ export {
   MutationHookArgs,
   KeySet,
   QueryOptions,
+  IDField,
+  IDFieldOptions,
 } from './decorators';
 export * from './resolvers';
 export * from './federation';

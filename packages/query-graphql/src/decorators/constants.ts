@@ -1,4 +1,5 @@
 export const FILTERABLE_FIELD_KEY = 'nestjs-query:filterable-field';
+export const ID_FIELD_KEY = 'nestjs-query:id-field';
 export const RELATION_KEY = 'nestjs-query:relation';
 export const REFERENCE_KEY = 'nestjs-query:reference';
 

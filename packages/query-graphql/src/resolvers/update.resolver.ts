@@ -58,11 +58,15 @@ const defaultUpdateInput = <DTO, U>(dtoNames: DTONames, DTOClass: Class<DTO>): C
 };
 
 /** @internal */
-const defaultUpdateOneInput = <U>(dtoNames: DTONames, UpdateDTO: Class<U>): Class<UpdateOneInputType<U>> => {
+const defaultUpdateOneInput = <DTO, U>(
+  dtoNames: DTONames,
+  DTOClass: Class<DTO>,
+  UpdateDTO: Class<U>,
+): Class<UpdateOneInputType<U>> => {
   const { baseName } = dtoNames;
 
   @InputType(`UpdateOne${baseName}Input`)
-  class UM extends UpdateOneInputType(UpdateDTO) {}
+  class UM extends UpdateOneInputType(DTOClass, UpdateDTO) {}
 
   return UM;
 };
@@ -99,7 +103,7 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
   const updateManyEvent = getDTOEventName(EventType.UPDATED_MANY, DTOClass);
   const {
     UpdateDTOClass = defaultUpdateInput(dtoNames, DTOClass),
-    UpdateOneInput = defaultUpdateOneInput(dtoNames, UpdateDTOClass),
+    UpdateOneInput = defaultUpdateOneInput(dtoNames, DTOClass, UpdateDTOClass),
     UpdateManyInput = defaultUpdateManyInput(dtoNames, DTOClass, UpdateDTOClass),
   } = opts;
   const updateOneMutationName = opts.one?.name ?? `updateOne${baseName}`;

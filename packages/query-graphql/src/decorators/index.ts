@@ -34,3 +34,4 @@ export * from './inject-authorizer.decorator';
 export * from './key-set.decorator';
 export * from './authorize-filter.decorator';
 export * from './query-options.decorator';
+export * from './id-field.decorator';

@@ -1,0 +1,11 @@
+type Query {
+  test(input: RelationCustomParentIdInput!): Int!
+}
+
+input RelationCustomParentIdInput {
+  """The id of the record."""
+  id: String!
+
+  """The id of relation."""
+  relationId: ID!
+}

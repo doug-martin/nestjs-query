@@ -30,12 +30,36 @@ export const updateManyResponseTypeSDL = readGraphql(resolve(__dirname, './updat
 export const createOneInputTypeSDL = readGraphql(resolve(__dirname, './create-one-input-type.graphql'));
 export const createManyInputTypeSDL = readGraphql(resolve(__dirname, './create-many-input-type.graphql'));
 export const updateOneInputTypeSDL = readGraphql(resolve(__dirname, './update-one-input-type.graphql'));
+export const updateOneCustomIdInputTypeSDL = readGraphql(
+  resolve(__dirname, './update-one-custom-id-input-type.graphql'),
+);
 export const updateManyInputTypeSDL = readGraphql(resolve(__dirname, './update-many-input-type.graphql'));
 export const deleteOneInputTypeSDL = readGraphql(resolve(__dirname, './delete-one-input-type.graphql'));
+export const deleteOneCustomIdInputTypeSDL = readGraphql(
+  resolve(__dirname, './delete-one-custom-id-input-type.graphql'),
+);
 export const deleteManyInputTypeSDL = readGraphql(resolve(__dirname, './delete-many-input-type.graphql'));
 export const mutationArgsTypeSDL = readGraphql(resolve(__dirname, './mutation-args-type.graphql'));
 export const relationInputTypeSDL = readGraphql(resolve(__dirname, './relation-input-type.graphql'));
+export const relationCustomParentIdInputTypeSDL = readGraphql(
+  resolve(__dirname, './relation-custom-parent-id-input-type.graphql'),
+);
+export const relationCustomRelationIdInputTypeSDL = readGraphql(
+  resolve(__dirname, './relation-custom-relation-id-input-type.graphql'),
+);
+export const relationCustomParentRelationIdInputTypeSDL = readGraphql(
+  resolve(__dirname, './relation-custom-parent-relation-id-input-type.graphql'),
+);
 export const relationsInputTypeSDL = readGraphql(resolve(__dirname, './relations-input-type.graphql'));
+export const relationsCustomParentIdInputTypeSDL = readGraphql(
+  resolve(__dirname, './relations-custom-parent-id-input-type.graphql'),
+);
+export const relationsCustomRelationIdInputTypeSDL = readGraphql(
+  resolve(__dirname, './relations-custom-relation-id-input-type.graphql'),
+);
+export const relationsCustomParentRelationIdInputTypeSDL = readGraphql(
+  resolve(__dirname, './relations-custom-parent-relation-id-input-type.graphql'),
+);
 export const filterInputTypeSDL = readGraphql(resolve(__dirname, './filter-input-type.graphql'));
 export const filterAllowedComparisonsInputTypeSDL = readGraphql(
   resolve(__dirname, './filter-allowed-comparisons-input-type.graphql'),
@@ -52,6 +76,8 @@ export const filterAllowedBooleanExpressionsOnlyOrTypeSDL = readGraphql(
 export const filterNoBooleanExpressionsTypeSDL = readGraphql(
   resolve(__dirname, './filter-no-boolean-expression-type.graphql'),
 );
+export const findOneArgsTypeSDL = readGraphql(resolve(__dirname, './find-one-args-type.graphql'));
+export const findOneCustomIdArgsTypeSDL = readGraphql(resolve(__dirname, './find-one-custom-id-args-type.graphql'));
 export const updateFilterInputTypeSDL = readGraphql(resolve(__dirname, './update-filter-input-type.graphql'));
 export const deleteFilterInputTypeSDL = readGraphql(resolve(__dirname, './delete-filter-input-type.graphql'));
 export const subscriptionFilterInputTypeSDL = readGraphql(

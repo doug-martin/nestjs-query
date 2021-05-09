@@ -1,57 +1,57 @@
 // eslint-disable-next-line max-classes-per-file
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { Resolver, Query, Args, Int, InputType, ObjectType } from '@nestjs/graphql';
-import { DeleteOneInputType, FilterableField, IDField } from '../../src';
-import { deleteOneInputTypeSDL, deleteOneCustomIdInputTypeSDL, expectSDL } from '../__fixtures__';
+import { Resolver, Query, Args, Int, ArgsType, ObjectType } from '@nestjs/graphql';
+import { FilterableField, FindOneArgsType, IDField } from '../../src';
+import { findOneArgsTypeSDL, findOneCustomIdArgsTypeSDL, expectSDL } from '../__fixtures__';
 
-describe('DeleteOneInputType', (): void => {
+describe('FindOneArgsType', (): void => {
   @ObjectType()
-  class DeleteOneDTO {
+  class FindOneDTO {
     @FilterableField()
     field!: string;
   }
 
-  @InputType()
-  class DeleteOne extends DeleteOneInputType(DeleteOneDTO) {}
+  @ArgsType()
+  class FindOne extends FindOneArgsType(FindOneDTO) {}
 
-  it('should create an input type with id field as the type', async () => {
+  it('should create an args type with id field as the type', async () => {
     @Resolver()
-    class DeleteOneInputTypeSpec {
+    class FindOneArgsTypeSpec {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      test(@Args('input') input: DeleteOne): number {
+      test(@Args() input: FindOne): number {
         return 1;
       }
     }
-    return expectSDL([DeleteOneInputTypeSpec], deleteOneInputTypeSDL);
+    return expectSDL([FindOneArgsTypeSpec], findOneArgsTypeSDL);
   });
 
-  it('should create an input type with a custom ID type', async () => {
+  it('should create an args type with a custom ID type', async () => {
     @ObjectType()
-    class DeleteOneCustomIDDTO {
+    class FindOneCustomIDDTO {
       @IDField(() => String)
       field!: string;
     }
 
-    @InputType()
-    class DeleteOneCustomId extends DeleteOneInputType(DeleteOneCustomIDDTO) {}
+    @ArgsType()
+    class FindOneCustomId extends FindOneArgsType(FindOneCustomIDDTO) {}
 
     @Resolver()
-    class DeleteOneInputTypeSpec {
+    class FindOneArgsTypeSpec {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      test(@Args('input') input: DeleteOneCustomId): number {
+      test(@Args() input: FindOneCustomId): number {
         return 1;
       }
     }
-    return expectSDL([DeleteOneInputTypeSpec], deleteOneCustomIdInputTypeSDL);
+    return expectSDL([FindOneArgsTypeSpec], findOneCustomIdArgsTypeSDL);
   });
 
   describe('validation', () => {
     it('should validate the id is defined', () => {
       const input = {};
-      const it = plainToClass(DeleteOne, input);
+      const it = plainToClass(FindOne, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
@@ -67,7 +67,7 @@ describe('DeleteOneInputType', (): void => {
 
     it('should validate the id is not empty', () => {
       const input = { id: '' };
-      const it = plainToClass(DeleteOne, input);
+      const it = plainToClass(FindOne, input);
       const errors = validateSync(it);
       expect(errors).toEqual([
         {
