@@ -16,7 +16,7 @@ import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()

@@ -629,12 +629,12 @@ export class SubTaskEntity extends Model<SubTaskEntity, Partial<SubTaskEntity>> 
 Then we could add the `todoItemId` to the SubTaskDTO.
 
 ```ts title="sub-task.dto.ts" {24-26}
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('SubTask')
 export class SubTaskDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()
@@ -692,14 +692,14 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { ObjectType, ID } from '@nestjs/graphql';
-import { FilterableField, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, Relation } from '@nestjs-query/query-graphql';
 import { TodoItem } from '../todo-item/todo-item';
 
 @ObjectType()
 @Relation('todoItem', () => TodoItem, { disableRemove: true })
 @Entity({ name: 'sub_task' })
 export class SubTask {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -753,7 +753,7 @@ import {
   AutoIncrement,
   PrimaryKey,
 } from 'sequelize-typescript';
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItem } from '../todo-item/entity/todo-item';
 
@@ -761,7 +761,7 @@ import { TodoItem } from '../todo-item/entity/todo-item';
 @Relation('todoItem', () => TodoItem, { disableRemove: true })
 @Table
 export class SubTaskEntity extends Model<SubTaskEntity, Partial<SubTaskEntity>> {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   @PrimaryKey
   @AutoIncrement
   @Column

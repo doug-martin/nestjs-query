@@ -121,7 +121,7 @@ Now that we have the relationships defined, we can add the `@Relation` and `@Con
 
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, KeySet, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Connection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 
@@ -130,7 +130,7 @@ import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 // disable the remove because mongoose does not support removing a virtual
 @Connection('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -167,7 +167,7 @@ export class TodoItemDTO {
 
 
 ```ts title="sub-task/sub-task.dto.ts"
-import { FilterableField, KeySet, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Relation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
@@ -176,7 +176,7 @@ import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 // disable the remove because a sub task cannot exist without a todoitem
 @Relation('todoItem', () => TodoItemDTO, { disableRemove: true })
 export class SubTaskDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -348,7 +348,7 @@ Now that we have the relationship defined, we can add the `@Connection` to our D
 
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, KeySet, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Connection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { TagDTO } from '../../tag/dto/tag.dto';
 
@@ -356,7 +356,7 @@ import { TagDTO } from '../../tag/dto/tag.dto';
 @KeySet(['id'])
 @Connection('tags', () => TagDTO)
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -393,7 +393,7 @@ export class TodoItemDTO {
 
 
 ```ts title="tag/tag.dto.ts"
-import { FilterableField, KeySet, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Connection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
@@ -402,7 +402,7 @@ import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 // disable update and remove since it is a virtual in the entity
 @Connection('todoItems', () => TodoItemDTO, { disableUpdate: true, disableRemove: true })
 export class TagDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()

@@ -130,7 +130,7 @@ Based on the entities defined above we can add a `todoItem` relation to the `Sub
 
 
 ```ts title="sub-task/sub-task.dto.ts" {6}
-import { FilterableField, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, Relation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../todo-item/todo-item.dto.ts';
 
@@ -234,14 +234,14 @@ decorator.
 In this example we'll use the same Entities defined above to create a graphql endpoint that allows filtering `SubTasks` by `TodoItems`.
 
 ```ts title="sub-task/sub-task.dto.ts" {6}
-import { FilterableField, FilterableRelation } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, FilterableRelation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../todo-item/todo-item.dto.ts';
 
 @ObjectType('SubTask')
 @FilterableRelation('todoItem', () => TodoItemDTO, { disableRemove: true })
 export class SubTaskDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -256,7 +256,7 @@ export class SubTaskDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 
-  @FilterableField()
+  @FilterableField(() => ID)
   todoItemId!: string;
 }
 ```
@@ -305,14 +305,14 @@ You can also use the `@UnPagedRelation` decorator to define a relation that does
 Based on the entity definition above we can define a `TodoItemDTO` with a `subTasks` relation.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, UnPagedRelation } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, UnPagedRelation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
 @UnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -411,14 +411,14 @@ In this example we'll use the same Entities defined above to create a graphql en
  by `SubTasks`.
 
 ```ts title="sub-task/sub-task.dto.ts" {6}
-import { FilterableField, FilterableUnPagedRelation } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, FilterableUnPagedRelation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
 @FilterableUnPagedRelation('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -494,14 +494,14 @@ In this example we'll find all `todoItems` that are related to a `subTasks` that
 Based on the entity definitions above we can create a `TodoItemDTO` with a connection to the `subTasks`.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, OffsetConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, OffsetConnection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
 @OffsetConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -600,14 +600,14 @@ The `totalCount` field is not eagerly fetched. It will only be executed if the f
 When using the `@OffsetConnection` decorator you can enable the `totalCount` field. The `totalCount` field will return the total number of records included in the connection.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, OffsetConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, OffsetConnection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
 @OffsetConnection('subTasks', () => SubTaskDTO, { disableRemove: true, enableTotalCount: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -668,7 +668,7 @@ decorator.
 In this example we'll use the same Entities defined above to create a graphql endpoint that allows filtering `TodoItems` by `subTasks`.
 
 ```ts title="todo-item/todo-item.dto.ts" {7}
-import { FilterableField, FilterableOffsetConnection, QueryOptions } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, FilterableOffsetConnection, QueryOptions } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
@@ -676,7 +676,7 @@ import { SubTaskDTO } from '../sub-task/sub-task.dto'
 @QueryOptions({ pagingStrategy: PagingStrategies.OFFSET })
 @FilterableOffsetConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -751,14 +751,14 @@ In this example we'll find all `todoItems` that have `subTasks` that are complet
 Based on the entity definitions above we can create a `TodoItemDTO` with a connection to the `subTasks`.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, CursorConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, CursorConnection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
 @CursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -858,14 +858,14 @@ The `totalCount` field is not eagerly fetched. It will only be executed if the f
 When using the `@CursorConnection` decorator you can enable the `totalCount` field. The `totalCount` field will return the total number of records included in the connection.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, Connection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
 @CursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true, enableTotalCount: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -925,14 +925,14 @@ decorator.
 In this example we'll use the same Entities defined above to create a graphql endpoint that allows filtering `TodoItems` by `subTasks`.
 
 ```ts title="todo-item/todo-item.dto.ts" {6}
-import { FilterableField, FilterableCursorConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, FilterableCursorConnection } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto'
 
 @ObjectType('TodoItem')
 @FilterableCursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()

@@ -212,12 +212,12 @@ npx nest g cl todo-item.dto todo-item
 Now lets fill out the DTO. Add the following to `src/todo-item/todo-item.dto.ts`.
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@nestjs-query/query-graphql';
 import { ObjectType, GraphQLISODateTime, Field, Int } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
-  @FilterableField(() => Int)
+  @IDField(() => Int)
   id!: number;
 
   @FilterableField()

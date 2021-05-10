@@ -289,7 +289,7 @@ export class TodoItemService extends RelationQueryService<TodoItemEntity> {
 Once the `relation` is defined in the query service we can add it to our `DTO` to expose it in our schema.
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, FilterableConnection, KeySet } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, FilterableConnection, KeySet } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 
@@ -302,7 +302,7 @@ import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
   disableUpdate: true,
 })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()
