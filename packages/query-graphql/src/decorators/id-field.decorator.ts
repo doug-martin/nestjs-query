@@ -5,7 +5,7 @@ import { FilterableField, FilterableFieldOptions } from './filterable-field.deco
 
 const reflector = new ValueReflector(ID_FIELD_KEY);
 type NoFilterIDFieldOptions = {
-  disableFilter: false;
+  disableFilter: true;
 } & FieldOptions;
 export type IDFieldOptions = FilterableFieldOptions | NoFilterIDFieldOptions;
 

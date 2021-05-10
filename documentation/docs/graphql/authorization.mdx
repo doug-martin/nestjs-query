@@ -106,11 +106,17 @@ You can throw an `UnauthorizedException` or return a rejected promise with an `U
 authorize function, if you can determine at that point that the user should not be able to access the endpoint.
 :::
 
-In the following example the `authorize` function returns a `Filter` that includes the `ownerId` to ensure that only `TodoItems` that belong
-to the authenticated user are returned.
+In the following example the `authorize` function returns a `Filter` that includes the `ownerId` to ensure that only
+`TodoItems` that belong to the authenticated user are returned.
 
-```ts title="todo-item/dto/todo-item.dto.ts" {9}
-import { FilterableField, FilterableConnection, FilterableRelation, Authorize } from '@nestjs-query/query-graphql';
+```ts title="todo-item/dto/todo-item.dto.ts" {15}
+import {
+  FilterableField,
+  IDField,
+  FilterableConnection,
+  FilterableRelation,
+  Authorize
+} from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 import { TagDTO } from '../../tag/dto/tag.dto';
@@ -123,7 +129,7 @@ import { UserContext } from '../../auth/auth.interfaces';
 @FilterableConnection('subTasks', () => SubTaskDTO, { disableRemove: true })
 @FilterableConnection('tags', () => TagDTO)
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()
@@ -180,7 +186,7 @@ For example given the following `SubTaskDTO` definition whenever the `subTasks` 
 `todoItem`, only `subTasks` that belong to the user will be returned.
 
 ```ts title="sub-task/dto/sub-task.dto.ts"
-import { FilterableField, FilterableRelation, Authorize } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, FilterableRelation, Authorize } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 import { UserContext } from '../../auth/auth.interfaces';
@@ -189,7 +195,7 @@ import { UserContext } from '../../auth/auth.interfaces';
 @Authorize({ authorize: (context: UserContext) => ({ ownerId: { eq: context.req.user.id } }) })
 @FilterableRelation('todoItem', () => TodoItemDTO, { disableRemove: true })
 export class SubTaskDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()
@@ -277,7 +283,7 @@ export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
 To use the `SubTaskAuthorizer` you only need to provide it as an argument to the `@Authorize` decorator
 
 ```ts title='sub-task/sub-task.dto.ts' {8}
-import { Authorize, FilterableField, FilterableRelation } from '@nestjs-query/query-graphql';
+import { Authorize, FilterableField, IDField, FilterableRelation } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 import { UserDTO } from '../../user/user.dto';
@@ -288,7 +294,7 @@ import { SubTaskAuthorizer } from '../sub-task.authorizer';
 @FilterableRelation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableRelation('todoItem', () => TodoItemDTO, { disableRemove: true })
 export class SubTaskDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()

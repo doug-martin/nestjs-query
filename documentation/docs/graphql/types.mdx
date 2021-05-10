@@ -11,12 +11,12 @@ import TabItem from '@theme/TabItem';
 The following examples are based on the following `TodoItemDTO`
 
 ```ts
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -455,10 +455,14 @@ The `UpdateOneInputType` will generate an `InputType` that will require the user
 * `id` - The id of the record to update
 * `update` - A record with fields to update.
 
-**NOTE** Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
+:::note
+Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
+:::
 
-**NOTE** Your DTO should be one that you want to use for updates. For example you may not want to let the end user to
+:::note
+Your DTO should be one that you want to use for updates. For example you may not want to let the end user to
 update the `created` or `updated` fields so you would create a new DTO just for updates.
+:::
 
 #### Usage
 
@@ -481,7 +485,7 @@ export class TodoItemUpdateDTO {
 }
 
 @InputType()
-export class UpdateOneTodoItemInput extends UpdateOneInputType(TodoItemUpdateDTO) {}
+export class UpdateOneTodoItemInput extends UpdateOneInputType(TodoItemDTO, TodoItemUpdateDTO) {}
 ```
 ---
 
@@ -542,7 +546,7 @@ import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType()
-export class DeleteOneInput extends DeleteOneInputType() {}
+export class DeleteOneTodoItemInput extends DeleteOneInputType(TodoItemDTO) {}
 ```
 ---
 
