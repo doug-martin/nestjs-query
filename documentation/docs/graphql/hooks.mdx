@@ -180,7 +180,7 @@ interface CreatedBy {
 }
 
 @Injectable()
-export class CreatedByHook<T extends CreatedBy> implements BeforeCreateManyHook<T, GqlContext> {
+export class CreatedByHook<T extends CreatedBy> implements BeforeCreateManyHook<T, T, GqlContext> {
   constructor(readonly authService: AuthService) {}
 
   async run(instance: CreateManyInputType<T>, context: GqlContext): Promise<CreateManyInputType<T>> {
