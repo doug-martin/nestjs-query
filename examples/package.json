@@ -54,7 +54,7 @@
     "@nestjs/testing": "7.6.15",
     "@types/express": "4.17.11",
     "@types/jest": "26.0.23",
-    "@types/node": "13.13.51",
+    "@types/node": "13.13.52",
     "@types/passport-jwt": "3.0.5",
     "@types/passport-local": "1.0.33",
     "@types/supertest": "2.0.11",
