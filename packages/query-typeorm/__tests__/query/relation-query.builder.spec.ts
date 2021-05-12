@@ -113,16 +113,18 @@ describe('RelationQueryBuilder', (): void => {
     expect(params).toEqual(expectedArgs);
   };
 
-  const createSQLAsserter = <Entity>(EntityClass: Class<Entity>, baseSQL: string) => <Relation>(
-    entity: Entity,
-    relation: string,
-    query: Query<Relation>,
-    expectedSql: string,
-    expectedArgs: any[],
-  ): void => {
-    const selectQueryBuilder = getRelationQueryBuilder<Entity, Relation>(EntityClass, relation).select(entity, query);
-    assertSQL(selectQueryBuilder, `${baseSQL}${expectedSql}`, expectedArgs);
-  };
+  const createSQLAsserter =
+    <Entity>(EntityClass: Class<Entity>, baseSQL: string) =>
+    <Relation>(
+      entity: Entity,
+      relation: string,
+      query: Query<Relation>,
+      expectedSql: string,
+      expectedArgs: any[],
+    ): void => {
+      const selectQueryBuilder = getRelationQueryBuilder<Entity, Relation>(EntityClass, relation).select(entity, query);
+      assertSQL(selectQueryBuilder, `${baseSQL}${expectedSql}`, expectedArgs);
+    };
 
   const assertOneToManySQL = createSQLAsserter(TestEntity, oneToManySelect);
 

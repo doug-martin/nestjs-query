@@ -355,9 +355,9 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     filter?: Filter<Ref>,
   ): Filter<Ref> {
     const referenceIds = entity[refName as keyof Entity];
-    const refFilter = ({
+    const refFilter = {
       _id: { [Array.isArray(referenceIds) ? 'in' : 'eq']: referenceIds },
-    } as unknown) as Filter<Ref>;
+    } as unknown as Filter<Ref>;
     return mergeFilter(filter ?? ({} as Filter<Ref>), refFilter);
   }
 
@@ -369,9 +369,9 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     const { foreignField, localField } = virtualType.options;
     const refVal = entity[localField as keyof Entity];
     const isArray = Array.isArray(refVal);
-    const lookupFilter = ({
+    const lookupFilter = {
       [foreignField as keyof Ref]: { [isArray ? 'in' : 'eq']: refVal },
-    } as unknown) as Filter<Ref>;
+    } as unknown as Filter<Ref>;
     return mergeFilter(filter ?? ({} as Filter<Ref>), lookupFilter);
   }
 

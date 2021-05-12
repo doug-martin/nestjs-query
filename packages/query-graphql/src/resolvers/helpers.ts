@@ -10,18 +10,19 @@ export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Pro
     return partial;
   }
   const transformed = plainToClass(TClass, partial);
-  const validationErrors = await validate((transformed as unknown) as Record<keyof never, unknown>);
+  const validationErrors = await validate(transformed as unknown as Record<keyof never, unknown>);
   if (validationErrors.length) {
     throw new BadRequestException(validationErrors);
   }
   return transformed;
 };
 
-export const createSubscriptionFilter = <DTO, Input extends SubscriptionFilterInputType<DTO>>(
-  InputClass: Class<Input>,
-  payloadKey: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): ((payload: any, variables: SubscriptionArgsType<Input>, context: any) => boolean | Promise<boolean>) =>
+export const createSubscriptionFilter =
+  <DTO, Input extends SubscriptionFilterInputType<DTO>>(
+    InputClass: Class<Input>,
+    payloadKey: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): ((payload: any, variables: SubscriptionArgsType<Input>, context: any) => boolean | Promise<boolean>) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async (payload: any, variables: SubscriptionArgsType<Input>): Promise<boolean> => {
     const { input } = variables;

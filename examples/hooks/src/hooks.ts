@@ -23,7 +23,8 @@ interface UpdatedBy {
 
 @Injectable()
 export class CreatedByHook<T extends CreatedBy>
-  implements BeforeCreateOneHook<T, GqlContext>, BeforeCreateManyHook<T, GqlContext> {
+  implements BeforeCreateOneHook<T, GqlContext>, BeforeCreateManyHook<T, GqlContext>
+{
   constructor(readonly authService: AuthService) {}
 
   run(instance: CreateManyInputType<T>, context: GqlContext): Promise<CreateManyInputType<T>>;
@@ -46,7 +47,8 @@ export class CreatedByHook<T extends CreatedBy>
 
 @Injectable()
 export class UpdatedByHook<T extends UpdatedBy>
-  implements BeforeUpdateOneHook<T, GqlContext>, BeforeUpdateManyHook<T, T, GqlContext> {
+  implements BeforeUpdateOneHook<T, GqlContext>, BeforeUpdateManyHook<T, T, GqlContext>
+{
   constructor(readonly authService: AuthService) {}
 
   run(instance: UpdateOneInputType<T>, context: GqlContext): Promise<UpdateOneInputType<T>>;

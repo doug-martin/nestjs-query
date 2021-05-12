@@ -43,7 +43,8 @@ type MongoDBDeletedOutput = {
  */
 export class MongooseQueryService<Entity extends Document>
   extends ReferenceQueryService<Entity>
-  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
+  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
+{
   constructor(
     readonly Model: MongooseModel<Entity>,
     readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model),

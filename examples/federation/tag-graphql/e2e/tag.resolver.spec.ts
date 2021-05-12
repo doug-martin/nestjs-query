@@ -93,10 +93,8 @@ describe('Federated - TagResolver (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const {
-            edges,
-            pageInfo,
-          }: CursorConnectionType<TagTodoItemDTO & { todoItem: TodoItemReferenceDTO }> = body.data.tag.tagTodoItems;
+          const { edges, pageInfo }: CursorConnectionType<TagTodoItemDTO & { todoItem: TodoItemReferenceDTO }> =
+            body.data.tag.tagTodoItems;
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,

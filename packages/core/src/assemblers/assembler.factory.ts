@@ -24,6 +24,6 @@ export class AssemblerFactory {
     }
     const defaultAssembler = new DefaultAssembler(DTOClass, EntityClass);
     // if its a default just assume the types can be converted for all types
-    return (defaultAssembler as unknown) as Assembler<DTO, Entity, C, CE, U, UE>;
+    return defaultAssembler as unknown as Assembler<DTO, Entity, C, CE, U, UE>;
   }
 }

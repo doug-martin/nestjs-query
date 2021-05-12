@@ -4,9 +4,12 @@ import { Class } from './class.type';
 export type MetaValue<MetaType> = MetaType | undefined;
 
 type ClassDecoratorDataFunc<Data> = (data: Data) => ClassDecorator;
-export const classMetadataDecorator = <Data>(key: string): ClassDecoratorDataFunc<Data> =>
+export const classMetadataDecorator =
+  <Data>(key: string): ClassDecoratorDataFunc<Data> =>
   // eslint-disable-next-line @typescript-eslint/ban-types
-  (data: Data) => (target: Function): void => {
+  (data: Data) =>
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  (target: Function): void => {
     Reflect.defineMetadata(key, data, target);
   };
 

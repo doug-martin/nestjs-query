@@ -4,7 +4,7 @@ import { DataLoaderFactory } from '../../src/loader';
 
 describe('DataLoaderFactory', () => {
   describe('getOrCreateLoader', () => {
-    const createContext = (): ExecutionContext => (({} as unknown) as ExecutionContext);
+    const createContext = (): ExecutionContext => ({} as unknown as ExecutionContext);
 
     const dataloadFn = (args: ReadonlyArray<string>): Promise<string[]> => Promise.resolve([...args]);
 

@@ -1614,11 +1614,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const {
-            edges,
-            pageInfo,
-            totalCount,
-          }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> =
+            body.data.addSubTasksToTodoItem.subTasks;
           expect(body.data.addSubTasksToTodoItem.id).toBe('1');
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
