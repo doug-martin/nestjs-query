@@ -5,7 +5,8 @@ type QueryRelationsArgs<DTO, Relation> = { dto: DTO; query: Query<Relation> };
 type QueryRelationsMap<DTO, Relation> = Map<string, (QueryRelationsArgs<DTO, Relation> & { index: number })[]>;
 
 export class QueryRelationsLoader<DTO, Relation>
-  implements NestjsQueryDataloader<DTO, QueryRelationsArgs<DTO, Relation>, Relation[] | Error> {
+  implements NestjsQueryDataloader<DTO, QueryRelationsArgs<DTO, Relation>, Relation[] | Error>
+{
   constructor(readonly RelationDTO: Class<Relation>, readonly relationName: string) {}
 
   createLoader(service: QueryService<DTO, unknown, unknown>) {

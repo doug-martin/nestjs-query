@@ -658,10 +658,8 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const {
-            id,
-            subTasks,
-          }: { id: string; subTasks: OffsetConnectionType<SubTaskDTO> } = body.data.addSubTasksToTodoItem;
+          const { id, subTasks }: { id: string; subTasks: OffsetConnectionType<SubTaskDTO> } =
+            body.data.addSubTasksToTodoItem;
           expect(id).toBe('1');
           expect(subTasks.nodes).toHaveLength(6);
           subTasks.nodes.forEach((e) => expect(e.todoItemId).toBe('1'));

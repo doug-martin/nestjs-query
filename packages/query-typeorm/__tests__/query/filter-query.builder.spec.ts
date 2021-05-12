@@ -88,10 +88,9 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(
-          mockWhereBuilder.build(anything(), query.filter, deepEqual([]), 'TestEntity'),
-        ).thenCall((where: WhereExpression, field: Filter<TestEntity>, relationNames: string[], alias: string) =>
-          where.andWhere(`${alias}.stringType = 'foo'`),
+        when(mockWhereBuilder.build(anything(), query.filter, deepEqual([]), 'TestEntity')).thenCall(
+          (where: WhereExpression, field: Filter<TestEntity>, relationNames: string[], alias: string) =>
+            where.andWhere(`${alias}.stringType = 'foo'`),
         );
         assertSelectSQL(query, instance(mockWhereBuilder), ` WHERE "TestEntity"."string_type" = 'foo'`, []);
       });
@@ -241,9 +240,9 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(
-          mockWhereBuilder.build(anything(), query.filter, deepEqual([]), undefined),
-        ).thenCall((where: WhereExpression) => where.andWhere(`stringType = 'foo'`));
+        when(mockWhereBuilder.build(anything(), query.filter, deepEqual([]), undefined)).thenCall(
+          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`),
+        );
         assertUpdateSQL(query, instance(mockWhereBuilder), ` WHERE "string_type" = 'foo'`, []);
       });
     });
@@ -369,9 +368,9 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(
-          mockWhereBuilder.build(anything(), query.filter, deepEqual([]), undefined),
-        ).thenCall((where: WhereExpression) => where.andWhere(`stringType = 'foo'`));
+        when(mockWhereBuilder.build(anything(), query.filter, deepEqual([]), undefined)).thenCall(
+          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`),
+        );
         assertDeleteSQL(query, instance(mockWhereBuilder), ` WHERE "string_type" = 'foo'`, []);
       });
     });
@@ -419,9 +418,9 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestSoftDeleteEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(
-          mockWhereBuilder.build(anything(), query.filter, deepEqual([]), undefined),
-        ).thenCall((where: WhereExpression) => where.andWhere(`stringType = 'foo'`));
+        when(mockWhereBuilder.build(anything(), query.filter, deepEqual([]), undefined)).thenCall(
+          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`),
+        );
         assertSoftDeleteSQL(query, instance(mockWhereBuilder), ` WHERE "string_type" = 'foo'`, []);
       });
     });

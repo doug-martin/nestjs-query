@@ -23,49 +23,45 @@ const allFieldsAreNull = <Relation>(fields: Partial<Relation>): boolean => {
   );
 };
 
-const ReferencesMixin = <DTO, Relation>(DTOClass: Class<DTO>, reference: ResolverRelationReference<DTO, Relation>) => <
-  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
->(
-  Base: B,
-): B => {
-  const commonResolverOpts = removeRelationOpts(reference);
-  const relationDTO = reference.DTO;
-  const { baseNameLower, baseName } = getDTONames(relationDTO, { dtoName: reference.dtoName });
+const ReferencesMixin =
+  <DTO, Relation>(DTOClass: Class<DTO>, reference: ResolverRelationReference<DTO, Relation>) =>
+  <B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>>(Base: B): B => {
+    const commonResolverOpts = removeRelationOpts(reference);
+    const relationDTO = reference.DTO;
+    const { baseNameLower, baseName } = getDTONames(relationDTO, { dtoName: reference.dtoName });
 
-  @Resolver(() => DTOClass, { isAbstract: true })
-  class ReadOneMixin extends Base {
-    @ResolverField(
-      baseNameLower,
-      () => relationDTO,
-      { nullable: reference.nullable, complexity: reference.complexity },
-      commonResolverOpts,
-    )
-    [`${baseNameLower}Reference`](@Parent() dto: DTO): RepresentationType | null {
-      const fields = pluckFields<DTO, Relation>(dto, reference.keys);
+    @Resolver(() => DTOClass, { isAbstract: true })
+    class ReadOneMixin extends Base {
+      @ResolverField(
+        baseNameLower,
+        () => relationDTO,
+        { nullable: reference.nullable, complexity: reference.complexity },
+        commonResolverOpts,
+      )
+      [`${baseNameLower}Reference`](@Parent() dto: DTO): RepresentationType | null {
+        const fields = pluckFields<DTO, Relation>(dto, reference.keys);
 
-      if (allFieldsAreNull(fields)) {
-        return null;
+        if (allFieldsAreNull(fields)) {
+          return null;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        return { __typename: baseName, ...fields };
       }
-
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      return { __typename: baseName, ...fields };
     }
-  }
-  return ReadOneMixin;
-};
+    return ReadOneMixin;
+  };
 
-export const ReferencesRelationMixin = <DTO>(DTOClass: Class<DTO>, references: ReferencesOpts<DTO>) => <
-  B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>
->(
-  Base: B,
-): B => {
-  const flattened = flattenRelations(references);
-  return flattened.reduce((RB, a) => ReferencesMixin(DTOClass, a)(RB), Base);
-};
+export const ReferencesRelationMixin =
+  <DTO>(DTOClass: Class<DTO>, references: ReferencesOpts<DTO>) =>
+  <B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>>(Base: B): B => {
+    const flattened = flattenRelations(references);
+    return flattened.reduce((RB, a) => ReferencesMixin(DTOClass, a)(RB), Base);
+  };
 
 export const ReferencesRelationsResolver = <
   DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
 >(
   DTOClass: Class<DTO>,
   references: ReferencesOpts<DTO>,

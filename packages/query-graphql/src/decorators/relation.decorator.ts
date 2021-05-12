@@ -49,22 +49,22 @@ export function getRelations<DTO>(DTOClass: Class<DTO>, opts?: BaseResolverOptio
   return convertRelationsToOpts(relationDescriptors, opts);
 }
 
-const relationDecorator = (isMany: boolean, allowFiltering: boolean, pagingStrategy?: PagingStrategies) => <
-  DTO,
-  Relation
->(
-  name: string,
-  relationTypeFunc: RelationTypeFunc<Relation>,
-  options?: RelationDecoratorOpts<Relation>,
-): RelationClassDecorator<DTO> => <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-  reflector.append(DTOClass, {
-    name,
-    isMany,
-    relationOpts: { pagingStrategy, allowFiltering, ...options },
-    relationTypeFunc,
-  });
-  return DTOClass;
-};
+const relationDecorator =
+  (isMany: boolean, allowFiltering: boolean, pagingStrategy?: PagingStrategies) =>
+  <DTO, Relation>(
+    name: string,
+    relationTypeFunc: RelationTypeFunc<Relation>,
+    options?: RelationDecoratorOpts<Relation>,
+  ): RelationClassDecorator<DTO> =>
+  <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
+    reflector.append(DTOClass, {
+      name,
+      isMany,
+      relationOpts: { pagingStrategy, allowFiltering, ...options },
+      relationTypeFunc,
+    });
+    return DTOClass;
+  };
 
 export const Relation = relationDecorator(false, false);
 export const FilterableRelation = relationDecorator(false, true);

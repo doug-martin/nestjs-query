@@ -13,8 +13,10 @@ import {
   BetweenComparisonOperators,
 } from './filter.helpers';
 
-const compare = <DTO>(filter: (dto: DTO) => boolean, fallback: boolean): FilterFn<DTO> => (dto?: DTO) =>
-  dto ? filter(dto) : fallback;
+const compare =
+  <DTO>(filter: (dto: DTO) => boolean, fallback: boolean): FilterFn<DTO> =>
+  (dto?: DTO) =>
+    dto ? filter(dto) : fallback;
 
 export class ComparisonBuilder {
   static build<DTO, F extends keyof DTO>(
@@ -32,7 +34,7 @@ export class ComparisonBuilder {
       return this.inComparison(cmp, field, val as DTO[F][]);
     }
     if (isLikeComparisonOperator(cmp)) {
-      return this.likeComparison(cmp, field, (val as unknown) as string);
+      return this.likeComparison(cmp, field, val as unknown as string);
     }
 
     if (isBetweenComparisonOperators(cmp)) {
@@ -84,18 +86,18 @@ export class ComparisonBuilder {
   ): FilterFn<DTO> {
     if (cmp === 'like') {
       const likeRegexp = this.likeSearchToRegexp(val);
-      return compare((dto) => likeRegexp.test((dto[field] as unknown) as string), false);
+      return compare((dto) => likeRegexp.test(dto[field] as unknown as string), false);
     }
     if (cmp === 'notLike') {
       const likeRegexp = this.likeSearchToRegexp(val);
-      return compare((dto) => !likeRegexp.test((dto[field] as unknown) as string), true);
+      return compare((dto) => !likeRegexp.test(dto[field] as unknown as string), true);
     }
     if (cmp === 'iLike') {
       const likeRegexp = this.likeSearchToRegexp(val, true);
-      return compare((dto) => likeRegexp.test((dto[field] as unknown) as string), false);
+      return compare((dto) => likeRegexp.test(dto[field] as unknown as string), false);
     }
     const likeRegexp = this.likeSearchToRegexp(val, true);
-    return compare((dto) => !likeRegexp.test((dto[field] as unknown) as string), true);
+    return compare((dto) => !likeRegexp.test(dto[field] as unknown as string), true);
   }
 
   private static inComparison<DTO, F extends keyof DTO>(

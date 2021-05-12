@@ -24,13 +24,15 @@ const hookMetaDataKey = (hookType: HookTypes): string => `nestjs-query:${hookTyp
 const hookDecorator = <H extends Hook<unknown>>(hookType: HookTypes) => {
   const key = hookMetaDataKey(hookType);
   // eslint-disable-next-line @typescript-eslint/ban-types
-  return (data: HookDecoratorArg<H>) => (target: Function): void => {
-    if (isHookClass(data)) {
-      return Reflect.defineMetadata(key, data, target);
-    }
-    const hook = createDefaultHook(data);
-    return Reflect.defineMetadata(key, hook, target);
-  };
+  return (data: HookDecoratorArg<H>) =>
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    (target: Function): void => {
+      if (isHookClass(data)) {
+        return Reflect.defineMetadata(key, data, target);
+      }
+      const hook = createDefaultHook(data);
+      return Reflect.defineMetadata(key, hook, target);
+    };
 };
 
 export const BeforeCreateOne = hookDecorator<BeforeCreateOneHook<any>>(HookTypes.BEFORE_CREATE_ONE);

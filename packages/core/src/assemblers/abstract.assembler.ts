@@ -10,7 +10,8 @@ import { Assembler, getAssemblerClasses } from './assembler';
  *
  */
 export abstract class AbstractAssembler<DTO, Entity, C = DeepPartial<DTO>, CE = DeepPartial<Entity>, U = C, UE = CE>
-  implements Assembler<DTO, Entity, C, CE, U, UE> {
+  implements Assembler<DTO, Entity, C, CE, U, UE>
+{
   readonly DTOClass: Class<DTO>;
 
   readonly EntityClass: Class<Entity>;

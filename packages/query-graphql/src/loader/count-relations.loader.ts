@@ -5,7 +5,8 @@ type CountRelationsArgs<DTO, Relation> = { dto: DTO; filter: Filter<Relation> };
 type CountRelationsMap<DTO, Relation> = Map<string, (CountRelationsArgs<DTO, Relation> & { index: number })[]>;
 
 export class CountRelationsLoader<DTO, Relation>
-  implements NestjsQueryDataloader<DTO, CountRelationsArgs<DTO, Relation>, number | Error> {
+  implements NestjsQueryDataloader<DTO, CountRelationsArgs<DTO, Relation>, number | Error>
+{
   constructor(readonly RelationDTO: Class<Relation>, readonly relationName: string) {}
 
   createLoader(service: QueryService<DTO, unknown, unknown>) {

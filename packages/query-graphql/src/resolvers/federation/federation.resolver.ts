@@ -6,7 +6,7 @@ import { BaseResolverOptions } from '../../decorators/resolver-method.decorator'
 
 export const FederationResolver = <
   DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
 >(
   DTOClass: Class<DTO>,
   opts: BaseResolverOptions = {},

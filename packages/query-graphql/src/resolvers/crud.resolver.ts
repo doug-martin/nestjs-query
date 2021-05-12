@@ -17,7 +17,7 @@ export interface CRUDResolverOpts<
   C = DeepPartial<DTO>,
   U = DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
-  PS extends PagingStrategies = PagingStrategies.CURSOR
+  PS extends PagingStrategies = PagingStrategies.CURSOR,
 > extends BaseResolverOptions,
     Pick<ConnectionOptions, 'enableTotalCount'> {
   /**
@@ -44,7 +44,7 @@ export interface CRUDResolver<
   C,
   U,
   R extends ReadResolverOpts<DTO>,
-  QS extends QueryService<DTO, C, U> = QueryService<DTO, C, U>
+  QS extends QueryService<DTO, C, U> = QueryService<DTO, C, U>,
 > extends CreateResolver<DTO, C, QS>,
     ReadResolverFromOpts<DTO, R, QS>,
     UpdateResolver<DTO, U, QS>,
@@ -122,7 +122,7 @@ export const CRUDResolver = <
   C = DeepPartial<DTO>,
   U = DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
-  PS extends PagingStrategies = PagingStrategies.CURSOR
+  PS extends PagingStrategies = PagingStrategies.CURSOR,
 >(
   DTOClass: Class<DTO>,
   opts: CRUDResolverOpts<DTO, C, U, R, PS> = {},
