@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.27.0](https://github.com/doug-martin/nestjs-query/compare/v0.26.0...v0.27.0) (2021-05-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency apollo-server-express to v2.23.0 ([29b4b6c](https://github.com/doug-martin/nestjs-query/commit/29b4b6cb261a21ff66ba93feaf901c2232255fb9))
+* **deps:** update dependency apollo-server-express to v2.24.0 ([174fd38](https://github.com/doug-martin/nestjs-query/commit/174fd3843cacabf4e460bc9d0f2424095a61b1aa))
+* **deps:** update dependency apollo-server-plugin-base to v0.12.0 ([7265251](https://github.com/doug-martin/nestjs-query/commit/7265251f7fac7c3b69fc9b7adbd5f1f13f621ee1))
+* **deps:** update dependency graphql-query-complexity to v0.8.1 ([a8b4764](https://github.com/doug-martin/nestjs-query/commit/a8b4764190e5df7c15704fe8319c7ccc691a42bf))
+* **deps:** update dependency graphql-tools to v7.0.5 ([1afde63](https://github.com/doug-martin/nestjs-query/commit/1afde6338f8db83f568856a79015fb04fdc19fc4))
+* **deps:** update dependency rxjs to v7.0.1 ([c9ce5a6](https://github.com/doug-martin/nestjs-query/commit/c9ce5a64a04c95eb0d18edbdac5acbc213999aec))
+* Update examples to use new generated input type names ([f987dcd](https://github.com/doug-martin/nestjs-query/commit/f987dcd1192d71df038cdf1d7259ea2f0861f428))
+* **deps:** update dependency pg to v8.6.0 ([1b51a6b](https://github.com/doug-martin/nestjs-query/commit/1b51a6bbd7bbbf289ab5d779048c7994fb41a60b))
+* **deps:** update dependency rxjs to v7 ([5c54794](https://github.com/doug-martin/nestjs-query/commit/5c5479433838de97bfdb519c111b56531a8b91aa))
+
+
+
+
+
 # [0.26.0](https://github.com/doug-martin/nestjs-query/compare/v0.25.1...v0.26.0) (2021-04-13)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.27.0](https://github.com/doug-martin/nestjs-query/compare/v0.26.0...v0.27.0) (2021-05-12)
+
+
+### Features
+
+* **graphql,#1058:** Allow declaration of custom ID scalar type ([fb2ed7a](https://github.com/doug-martin/nestjs-query/commit/fb2ed7aca59d66fa8827522cf81b6e31e77161d3)), closes [#1058](https://github.com/doug-martin/nestjs-query/issues/1058)
+
+
+
+
+
 # [0.26.0](https://github.com/doug-martin/nestjs-query/compare/v0.25.1...v0.26.0) (2021-04-13)
 
 
