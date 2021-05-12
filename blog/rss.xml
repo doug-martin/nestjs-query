@@ -127,18 +127,18 @@
             <description><![CDATA[* DOCS] Added clarification around individual resolvers and relations with examples [#42]]></description>
         </item>
         <item>
-            <title><![CDATA[v0.5.0]]></title>
-            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/25/v0.5.0</link>
-            <guid>v0.5.0</guid>
-            <pubDate>Tue, 25 Feb 2020 00:00:00 GMT</pubDate>
-            <description><![CDATA[* Added decorators option to resolver options to allow providing custom decorators to endpoints #36]]></description>
-        </item>
-        <item>
             <title><![CDATA[v0.4.0]]></title>
             <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/25/v0.4.0</link>
             <guid>v0.4.0</guid>
             <pubDate>Tue, 25 Feb 2020 00:00:00 GMT</pubDate>
             <description><![CDATA[* Updated all mutations to take a single input argument with custom fields.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[v0.5.0]]></title>
+            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/25/v0.5.0</link>
+            <guid>v0.5.0</guid>
+            <pubDate>Tue, 25 Feb 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[* Added decorators option to resolver options to allow providing custom decorators to endpoints #36]]></description>
         </item>
         <item>
             <title><![CDATA[v0.3.4]]></title>
@@ -169,18 +169,18 @@
             <description><![CDATA[* Update typescript to 3.8.]]></description>
         </item>
         <item>
-            <title><![CDATA[v0.3.1]]></title>
-            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1</link>
-            <guid>v0.3.1</guid>
-            <pubDate>Fri, 21 Feb 2020 00:00:00 GMT</pubDate>
-            <description><![CDATA[* Hardened TypeORM querying]]></description>
-        </item>
-        <item>
             <title><![CDATA[v0.3.0]]></title>
             <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0</link>
             <guid>v0.3.0</guid>
             <pubDate>Fri, 21 Feb 2020 00:00:00 GMT</pubDate>
             <description><![CDATA[* Added dataloader support!]]></description>
+        </item>
+        <item>
+            <title><![CDATA[v0.3.1]]></title>
+            <link>https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1</link>
+            <guid>v0.3.1</guid>
+            <pubDate>Fri, 21 Feb 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[* Hardened TypeORM querying]]></description>
         </item>
         <item>
             <title><![CDATA[v0.2.1]]></title>
