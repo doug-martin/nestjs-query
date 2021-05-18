@@ -30,9 +30,9 @@
     "sequelize-typescript": "^1.1.0 || ^2.0.0"
   },
   "devDependencies": {
-    "@nestjs/common": "7.6.15",
+    "@nestjs/common": "7.6.17",
     "@nestjs/sequelize": "0.2.0",
-    "@nestjs/testing": "7.6.15",
+    "@nestjs/testing": "7.6.17",
     "@types/lodash.pick": "4.4.6",
     "sequelize": "6.6.2",
     "sequelize-typescript": "2.1.0",
