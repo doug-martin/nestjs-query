@@ -31,9 +31,9 @@
     "mongoose": "^5.10.0"
   },
   "devDependencies": {
-    "@nestjs/common": "7.6.15",
+    "@nestjs/common": "7.6.17",
     "@nestjs/mongoose": "7.2.4",
-    "@nestjs/testing": "7.6.15",
+    "@nestjs/testing": "7.6.17",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
     "@types/mongodb": "3.6.12",
