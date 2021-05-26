@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WhereBuilder and and multiple expressions together 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?)) AND (("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?)))`;
+
+exports[`WhereBuilder and and multiple expressions together 2`] = `
+Array [
+  10,
+  20,
+  30,
+  40,
+]
+`;
+
+exports[`WhereBuilder and and multiple filters together with multiple fields 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) AND (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?)))`;
+
+exports[`WhereBuilder and and multiple filters together with multiple fields 2`] = `
+Array [
+  10,
+  foo%,
+  20,
+  %bar,
+]
+`;
+
+exports[`WhereBuilder and multiple field comparisons together 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ("TestEntity"."number_type" = ?) AND ("TestEntity"."string_type" LIKE ?) AND ("TestEntity"."bool_type" IS TRUE)`;
+
+exports[`WhereBuilder and multiple field comparisons together 2`] = `
+Array [
+  1,
+  foo%,
+]
+`;
+
+exports[`WhereBuilder and should properly group AND with a sibling field comparison 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?))) AND ("TestEntity"."string_type" = ?)`;
+
+exports[`WhereBuilder and should properly group AND with a sibling field comparison 2`] = `
+Array [
+  2,
+  10,
+  foo,
+]
+`;
+
+exports[`WhereBuilder and should support nested ors 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((((("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?)))) AND (((("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?)))))`;
+
+exports[`WhereBuilder and should support nested ors 2`] = `
+Array [
+  10,
+  20,
+  30,
+  40,
+]
+`;
+
+exports[`WhereBuilder or and multiple and filters together 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) OR (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?)))`;
+
+exports[`WhereBuilder or and multiple and filters together 2`] = `
+Array [
+  10,
+  foo%,
+  20,
+  %bar,
+]
+`;
+
+exports[`WhereBuilder or multiple operators for a single field together 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ("TestEntity"."number_type" > ? OR "TestEntity"."number_type" < ? OR "TestEntity"."number_type" >= ? OR "TestEntity"."number_type" <= ?)`;
+
+exports[`WhereBuilder or multiple operators for a single field together 2`] = `
+Array [
+  10,
+  20,
+  21,
+  31,
+]
+`;
+
+exports[`WhereBuilder or or multiple expressions together 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?)) OR (("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?)))`;
+
+exports[`WhereBuilder or or multiple expressions together 2`] = `
+Array [
+  10,
+  20,
+  30,
+  40,
+]
+`;
+
+exports[`WhereBuilder or should properly group OR with a sibling field comparison 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" = ?)) OR (("TestEntity"."number_type" > ?))) AND ("TestEntity"."string_type" = ?)`;
+
+exports[`WhereBuilder or should properly group OR with a sibling field comparison 2`] = `
+Array [
+  2,
+  10,
+  foo,
+]
+`;
+
+exports[`WhereBuilder or should support nested ands 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?)))) OR (((("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?)))))`;
+
+exports[`WhereBuilder or should support nested ands 2`] = `
+Array [
+  10,
+  20,
+  30,
+  40,
+]
+`;
+
+exports[`WhereBuilder should accept a empty filter 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity"`;
+
+exports[`WhereBuilder should accept a empty filter 2`] = `Array []`;

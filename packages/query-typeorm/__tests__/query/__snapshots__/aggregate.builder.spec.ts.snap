@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AggregateBuilder should create selects for all aggregate functions 1`] = `SELECT COUNT("TestEntity"."test_entity_pk") AS "COUNT_testEntityPk", SUM("TestEntity"."number_type") AS "SUM_numberType", AVG("TestEntity"."number_type") AS "AVG_numberType", MAX("TestEntity"."string_type") AS "MAX_stringType", MAX("TestEntity"."date_type") AS "MAX_dateType", MAX("TestEntity"."number_type") AS "MAX_numberType", MIN("TestEntity"."string_type") AS "MIN_stringType", MIN("TestEntity"."date_type") AS "MIN_dateType", MIN("TestEntity"."number_type") AS "MIN_numberType" FROM "test_entity" "TestEntity"`;
+
+exports[`AggregateBuilder should create selects for all aggregate functions 2`] = `Array []`;
+
+exports[`AggregateBuilder should create selects for all aggregate functions and group bys 1`] = `SELECT "TestEntity"."string_type" AS "GROUP_BY_stringType", "TestEntity"."bool_type" AS "GROUP_BY_boolType", COUNT("TestEntity"."test_entity_pk") AS "COUNT_testEntityPk" FROM "test_entity" "TestEntity"`;
+
+exports[`AggregateBuilder should create selects for all aggregate functions and group bys 2`] = `Array []`;

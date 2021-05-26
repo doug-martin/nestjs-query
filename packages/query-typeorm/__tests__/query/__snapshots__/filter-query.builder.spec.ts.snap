@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterQueryBuilder #delete with filter should call whereBuilder#build if there is a filter 1`] = `DELETE FROM "test_entity" WHERE "string_type" = 'foo'`;
+
+exports[`FilterQueryBuilder #delete with filter should call whereBuilder#build if there is a filter 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #delete with paging should ignore paging args 1`] = `DELETE FROM "test_entity"`;
+
+exports[`FilterQueryBuilder #delete with paging should ignore paging args 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #delete with sorting should ignore sorting 1`] = `DELETE FROM "test_entity"`;
+
+exports[`FilterQueryBuilder #delete with sorting should ignore sorting 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with filter should call whereBuilder#build if there is a filter 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE "TestEntity"."string_type" = 'foo'`;
+
+exports[`FilterQueryBuilder #select with filter should call whereBuilder#build if there is a filter 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with filter should not call whereBuilder#build 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity"`;
+
+exports[`FilterQueryBuilder #select with filter should not call whereBuilder#build 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with paging should apply empty paging args 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity"`;
+
+exports[`FilterQueryBuilder #select with paging should apply empty paging args 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with paging should apply paging args going backward 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" LIMIT 10 OFFSET 10`;
+
+exports[`FilterQueryBuilder #select with paging should apply paging args going backward 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with paging should apply paging args going forward 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" LIMIT 10 OFFSET 11`;
+
+exports[`FilterQueryBuilder #select with paging should apply paging args going forward 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with sorting should apply ASC NULLS_FIRST sorting 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" ORDER BY "TestEntity"."number_type" ASC NULLS FIRST`;
+
+exports[`FilterQueryBuilder #select with sorting should apply ASC NULLS_FIRST sorting 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with sorting should apply ASC NULLS_LAST sorting 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" ORDER BY "TestEntity"."number_type" ASC NULLS LAST`;
+
+exports[`FilterQueryBuilder #select with sorting should apply ASC NULLS_LAST sorting 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with sorting should apply ASC sorting 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" ORDER BY "TestEntity"."number_type" ASC`;
+
+exports[`FilterQueryBuilder #select with sorting should apply ASC sorting 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with sorting should apply DESC NULLS_FIRST sorting 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" ORDER BY "TestEntity"."number_type" DESC NULLS FIRST`;
+
+exports[`FilterQueryBuilder #select with sorting should apply DESC NULLS_FIRST sorting 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with sorting should apply DESC NULLS_LAST sorting 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" ORDER BY "TestEntity"."number_type" DESC NULLS LAST`;
+
+exports[`FilterQueryBuilder #select with sorting should apply DESC NULLS_LAST sorting 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with sorting should apply DESC sorting 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" ORDER BY "TestEntity"."number_type" DESC`;
+
+exports[`FilterQueryBuilder #select with sorting should apply DESC sorting 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #select with sorting should apply multiple sorts 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" ORDER BY "TestEntity"."number_type" ASC, "TestEntity"."bool_type" DESC, "TestEntity"."string_type" ASC NULLS FIRST, "TestEntity"."date_type" DESC NULLS LAST`;
+
+exports[`FilterQueryBuilder #select with sorting should apply multiple sorts 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #softDelete with filter should call whereBuilder#build if there is a filter 1`] = `UPDATE "test_soft_delete_entity" SET "deleted_at" = CURRENT_TIMESTAMP WHERE "string_type" = 'foo'`;
+
+exports[`FilterQueryBuilder #softDelete with filter should call whereBuilder#build if there is a filter 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #softDelete with paging should ignore paging args 1`] = `UPDATE "test_soft_delete_entity" SET "deleted_at" = CURRENT_TIMESTAMP`;
+
+exports[`FilterQueryBuilder #softDelete with paging should ignore paging args 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #softDelete with sorting should ignore sorting 1`] = `UPDATE "test_soft_delete_entity" SET "deleted_at" = CURRENT_TIMESTAMP`;
+
+exports[`FilterQueryBuilder #softDelete with sorting should ignore sorting 2`] = `Array []`;
+
+exports[`FilterQueryBuilder #update with filter should call whereBuilder#build if there is a filter 1`] = `UPDATE "test_entity" SET "string_type" = ? WHERE "string_type" = 'foo'`;
+
+exports[`FilterQueryBuilder #update with filter should call whereBuilder#build if there is a filter 2`] = `
+Array [
+  baz,
+]
+`;
+
+exports[`FilterQueryBuilder #update with paging should ignore paging args 1`] = `UPDATE "test_entity" SET "string_type" = ?`;
+
+exports[`FilterQueryBuilder #update with paging should ignore paging args 2`] = `
+Array [
+  baz,
+]
+`;
+
+exports[`FilterQueryBuilder #update with sorting should apply ASC NULLS_FIRST sorting 1`] = `UPDATE "test_entity" SET "string_type" = ? ORDER BY "number_type" ASC NULLS FIRST`;
+
+exports[`FilterQueryBuilder #update with sorting should apply ASC NULLS_FIRST sorting 2`] = `
+Array [
+  baz,
+]
+`;
+
+exports[`FilterQueryBuilder #update with sorting should apply ASC NULLS_LAST sorting 1`] = `UPDATE "test_entity" SET "string_type" = ? ORDER BY "number_type" ASC NULLS LAST`;
+
+exports[`FilterQueryBuilder #update with sorting should apply ASC NULLS_LAST sorting 2`] = `
+Array [
+  baz,
+]
+`;
+
+exports[`FilterQueryBuilder #update with sorting should apply ASC sorting 1`] = `UPDATE "test_entity" SET "string_type" = ? ORDER BY "number_type" ASC`;
+
+exports[`FilterQueryBuilder #update with sorting should apply ASC sorting 2`] = `
+Array [
+  baz,
+]
+`;
+
+exports[`FilterQueryBuilder #update with sorting should apply DESC NULLS_FIRST sorting 1`] = `UPDATE "test_entity" SET "string_type" = ? ORDER BY "number_type" DESC NULLS FIRST`;
+
+exports[`FilterQueryBuilder #update with sorting should apply DESC NULLS_FIRST sorting 2`] = `
+Array [
+  baz,
+]
+`;
+
+exports[`FilterQueryBuilder #update with sorting should apply DESC NULLS_LAST sorting 1`] = `UPDATE "test_entity" SET "string_type" = ? ORDER BY "number_type" DESC NULLS LAST`;
+
+exports[`FilterQueryBuilder #update with sorting should apply DESC NULLS_LAST sorting 2`] = `
+Array [
+  baz,
+]
+`;
+
+exports[`FilterQueryBuilder #update with sorting should apply DESC sorting 1`] = `UPDATE "test_entity" SET "string_type" = ? ORDER BY "number_type" DESC`;
+
+exports[`FilterQueryBuilder #update with sorting should apply DESC sorting 2`] = `
+Array [
+  baz,
+]
+`;
+
+exports[`FilterQueryBuilder #update with sorting should apply multiple sorts 1`] = `UPDATE "test_entity" SET "string_type" = ? ORDER BY "number_type" ASC, "bool_type" DESC, "string_type" ASC NULLS FIRST, "date_type" DESC NULLS LAST`;
+
+exports[`FilterQueryBuilder #update with sorting should apply multiple sorts 2`] = `
+Array [
+  baz,
+]
+`;
