@@ -6,17 +6,17 @@ import { WhereBuilder } from '../../src/query';
 describe('WhereBuilder', (): void => {
   const createWhereBuilder = () => new WhereBuilder<TestEntity>();
 
-  const assertSQL = (filter: Filter<TestEntity>, expectedWhereOpts: WhereOptions): void => {
+  const expectWhereQuery = (filter: Filter<TestEntity>, expectedWhereOpts: WhereOptions): void => {
     const actual = createWhereBuilder().build(filter, new Map());
     expect(actual).toEqual(expectedWhereOpts);
   };
 
   it('should accept a empty filter', (): void => {
-    assertSQL({}, {});
+    expectWhereQuery({}, {});
   });
 
   it('or multiple operators for a single field together', (): void => {
-    assertSQL(
+    expectWhereQuery(
       {
         numberType: { gt: 10, lt: 20, gte: 21, lte: 31 },
       },
@@ -36,7 +36,7 @@ describe('WhereBuilder', (): void => {
   });
 
   it('and multiple field comparisons together', (): void => {
-    assertSQL(
+    expectWhereQuery(
       {
         numberType: { eq: 1 },
         stringType: { like: 'foo%' },
@@ -58,7 +58,7 @@ describe('WhereBuilder', (): void => {
 
   describe('and', (): void => {
     it('and multiple expressions together', (): void => {
-      assertSQL(
+      expectWhereQuery(
         {
           and: [
             { numberType: { gt: 10 } },
@@ -79,7 +79,7 @@ describe('WhereBuilder', (): void => {
     });
 
     it('and multiple filters together with multiple fields', (): void => {
-      assertSQL(
+      expectWhereQuery(
         {
           and: [
             { numberType: { gt: 10 }, stringType: { like: 'foo%' } },
@@ -96,7 +96,7 @@ describe('WhereBuilder', (): void => {
     });
 
     it('should support nested ors', (): void => {
-      assertSQL(
+      expectWhereQuery(
         {
           and: [
             { or: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }] },
@@ -125,7 +125,7 @@ describe('WhereBuilder', (): void => {
 
   describe('or', (): void => {
     it('or multiple expressions together', (): void => {
-      assertSQL(
+      expectWhereQuery(
         {
           or: [
             { numberType: { gt: 10 } },
@@ -146,7 +146,7 @@ describe('WhereBuilder', (): void => {
     });
 
     it('and multiple and filters together', (): void => {
-      assertSQL(
+      expectWhereQuery(
         {
           or: [
             { numberType: { gt: 10 }, stringType: { like: 'foo%' } },
@@ -175,7 +175,7 @@ describe('WhereBuilder', (): void => {
     });
 
     it('should support nested ands', (): void => {
-      assertSQL(
+      expectWhereQuery(
         {
           or: [
             { and: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }] },

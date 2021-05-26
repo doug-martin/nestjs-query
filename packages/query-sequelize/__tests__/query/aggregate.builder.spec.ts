@@ -14,7 +14,7 @@ describe('AggregateBuilder', (): void => {
   let moduleRef: TestingModule;
   const createAggregateBuilder = () => new AggregateBuilder<TestEntity>(TestEntity);
 
-  const assertSQL = (agg: AggregateQuery<TestEntity>, expected: Projectable): void => {
+  const expectAggregateQuery = (agg: AggregateQuery<TestEntity>, expected: Projectable): void => {
     const actual = createAggregateBuilder().build(agg);
     expect(actual).toEqual(expected);
   };
@@ -36,7 +36,7 @@ describe('AggregateBuilder', (): void => {
   });
 
   it('should create selects for all aggregate functions', (): void => {
-    assertSQL(
+    expectAggregateQuery(
       {
         count: ['testEntityPk', 'stringType'],
         avg: ['numberType'],
@@ -62,7 +62,7 @@ describe('AggregateBuilder', (): void => {
   });
 
   it('should create selects for all aggregate functions and group bys', (): void => {
-    assertSQL(
+    expectAggregateQuery(
       {
         groupBy: ['stringType', 'boolType'],
         count: ['testEntityPk'],
