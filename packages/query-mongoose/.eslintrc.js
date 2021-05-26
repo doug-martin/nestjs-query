@@ -5,8 +5,7 @@ module.exports = {
       {
         assertFunctionNames: [
           'expect',
-          'assertFilterQuery',
-          'assertQuery',
+          'expectFilter',
           'expectEqualEntities',
           'expectEqualCreate'
         ],
