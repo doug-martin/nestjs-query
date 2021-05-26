@@ -4,11 +4,12 @@ module.exports = {
       "error",
       {
         assertFunctionNames: [
-          "expect",
-          "assertSQL",
-          "assertFindOptions",
-          "assertUpdateOptions",
-          'assertDestroyOptions'
+          'expect',
+          'expectUpdateOptions',
+          'expectDestroyOptions',
+          'expectFindOptions',
+          'expectWhereQuery',
+          'expectAggregateQuery',
         ]
       }
     ]
