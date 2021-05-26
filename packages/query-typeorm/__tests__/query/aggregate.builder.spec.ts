@@ -12,11 +12,11 @@ describe('AggregateBuilder', (): void => {
   const getQueryBuilder = () => getRepo().createQueryBuilder();
   const createAggregateBuilder = () => new AggregateBuilder<TestEntity>();
 
-  const assertSQL = (agg: AggregateQuery<TestEntity>, expectedSql: string, expectedArgs: any[]): void => {
+  const expectSQLSnapshot = (agg: AggregateQuery<TestEntity>): void => {
     const selectQueryBuilder = createAggregateBuilder().build(getQueryBuilder(), agg, 'TestEntity');
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
-    expect(sql).toEqual(expectedSql);
-    expect(params).toEqual(expectedArgs);
+    expect(sql).toMatchSnapshot();
+    expect(params).toMatchSnapshot();
   };
 
   it('should throw an error if no selects are generated', (): void => {
@@ -24,46 +24,24 @@ describe('AggregateBuilder', (): void => {
   });
 
   it('should create selects for all aggregate functions', (): void => {
-    assertSQL(
-      {
-        count: ['testEntityPk'],
-        avg: ['numberType'],
-        sum: ['numberType'],
-        max: ['stringType', 'dateType', 'numberType'],
-        min: ['stringType', 'dateType', 'numberType'],
-      },
-      'SELECT ' +
-        'COUNT("TestEntity"."test_entity_pk") AS "COUNT_testEntityPk", ' +
-        'SUM("TestEntity"."number_type") AS "SUM_numberType", ' +
-        'AVG("TestEntity"."number_type") AS "AVG_numberType", ' +
-        'MAX("TestEntity"."string_type") AS "MAX_stringType", ' +
-        'MAX("TestEntity"."date_type") AS "MAX_dateType", ' +
-        'MAX("TestEntity"."number_type") AS "MAX_numberType", ' +
-        'MIN("TestEntity"."string_type") AS "MIN_stringType", ' +
-        'MIN("TestEntity"."date_type") AS "MIN_dateType", ' +
-        'MIN("TestEntity"."number_type") AS "MIN_numberType" ' +
-        'FROM "test_entity" "TestEntity"',
-      [],
-    );
+    expectSQLSnapshot({
+      count: ['testEntityPk'],
+      avg: ['numberType'],
+      sum: ['numberType'],
+      max: ['stringType', 'dateType', 'numberType'],
+      min: ['stringType', 'dateType', 'numberType'],
+    });
   });
 
   it('should create selects for all aggregate functions and group bys', (): void => {
-    assertSQL(
-      {
-        groupBy: ['stringType', 'boolType'],
-        count: ['testEntityPk'],
-      },
-      'SELECT ' +
-        '"TestEntity"."string_type" AS "GROUP_BY_stringType", ' +
-        '"TestEntity"."bool_type" AS "GROUP_BY_boolType", ' +
-        'COUNT("TestEntity"."test_entity_pk") AS "COUNT_testEntityPk" ' +
-        'FROM "test_entity" "TestEntity"',
-      [],
-    );
+    expectSQLSnapshot({
+      groupBy: ['stringType', 'boolType'],
+      count: ['testEntityPk'],
+    });
   });
 
   describe('.convertToAggregateResponse', () => {
-    it('should convert a flat response into an Aggregtate response', () => {
+    it('should convert a flat response into an Aggregate response', () => {
       const dbResult = [
         {
           GROUP_BY_stringType: 'z',
