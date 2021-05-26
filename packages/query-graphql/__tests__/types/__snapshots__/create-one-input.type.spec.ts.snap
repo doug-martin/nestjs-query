@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateOneInputType should create an args type with the field as the type 1`] = `
+type Query {
+  test(input: CreateOne!): Int!
+}
+
+input CreateOne {
+  """The record to create"""
+  fakeInput: FakeType!
+}
+
+input FakeType {
+  field: String!
+}
+
+`;

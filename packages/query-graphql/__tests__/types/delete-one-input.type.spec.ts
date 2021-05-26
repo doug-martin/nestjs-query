@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Resolver, Query, Args, Int, InputType, ObjectType } from '@nestjs/graphql';
 import { DeleteOneInputType, FilterableField, IDField } from '../../src';
-import { deleteOneInputTypeSDL, deleteOneCustomIdInputTypeSDL, expectSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('DeleteOneInputType', (): void => {
   @ObjectType()
@@ -24,7 +24,8 @@ describe('DeleteOneInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([DeleteOneInputTypeSpec], deleteOneInputTypeSDL);
+    const schema = await generateSchema([DeleteOneInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should create an input type with a custom ID type', async () => {
@@ -45,7 +46,8 @@ describe('DeleteOneInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([DeleteOneInputTypeSpec], deleteOneCustomIdInputTypeSDL);
+    const schema = await generateSchema([DeleteOneInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   describe('validation', () => {

@@ -11,12 +11,16 @@ import {
   Relation,
   UnPagedRelation,
 } from '../../../src';
-import { expectSDL } from '../../__fixtures__';
-import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
-import { federationRelationEmptySDL, federationRelationSDL, TestRelationDTO } from './__fixtures__';
+import {
+  generateSchema,
+  createResolverFromNest,
+  TestResolverDTO,
+  TestService,
+  TestRelationDTO,
+} from '../../__fixtures__';
 
 describe('FederationResolver', () => {
-  const expectResolverSDL = <DTO extends TestResolverDTO>(sdl: string, DTOClass: Class<DTO>) => {
+  const generateSDL = <DTO extends TestResolverDTO>(DTOClass: Class<DTO>): Promise<string> => {
     @Resolver(() => DTOClass)
     class TestSDLResolver extends FederationResolver(DTOClass) {
       @Query(() => DTOClass)
@@ -24,7 +28,8 @@ describe('FederationResolver', () => {
         return { id: '1', stringField: 'foo' } as DTO;
       }
     }
-    return expectSDL([TestSDLResolver], sdl);
+
+    return generateSchema([TestSDLResolver]);
   };
 
   @ObjectType('TestFederated')
@@ -48,10 +53,15 @@ describe('FederationResolver', () => {
     }
   }
 
-  it('should not add federation methods if one and many are empty', () =>
-    expectResolverSDL(federationRelationEmptySDL, TestResolverDTO));
+  it('should not add federation methods if one and many are empty', async () => {
+    const schema = await generateSDL(TestResolverDTO);
+    expect(schema).toMatchSnapshot();
+  });
 
-  it('use the defined relations', () => expectResolverSDL(federationRelationSDL, TestFederatedDTO));
+  it('use the defined relations', async () => {
+    const schema = await generateSDL(TestFederatedDTO);
+    expect(schema).toMatchSnapshot();
+  });
 
   describe('one', () => {
     describe('one relation', () => {

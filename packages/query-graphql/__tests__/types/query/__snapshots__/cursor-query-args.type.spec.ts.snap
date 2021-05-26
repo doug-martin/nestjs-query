@@ -1,0 +1,716 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cursor paging strategy QueryArgsType with manual options create a query for string fields 1`] = `
+type TestQuery {
+  idField: ID!
+  idFieldOption: ID
+  stringField: String!
+  stringFieldOptional: String
+  booleanField: Boolean!
+  booleanFieldOptional: Boolean
+  numberField: Float!
+  numberFieldOptional: Float
+  floatField: Float!
+  floatFieldOptional: Float
+  intField: Int!
+  intFieldOptional: Int
+  timestampField: Timestamp!
+  timestampFieldOptional: Timestamp
+  date: DateTime!
+  dateOptional: DateTime
+}
+
+"""
+\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type TestQueryEdge {
+  """The node containing the TestQuery"""
+  node: TestQuery!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type Query {
+  test(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestQueryFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestQuerySort!] = []
+  ): String!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestQueryFilter {
+  and: [TestQueryFilter!]
+  or: [TestQueryFilter!]
+  idField: IDFilterComparison
+  idFieldOption: IDFilterComparison
+  stringField: StringFieldComparison
+  stringFieldOptional: StringFieldComparison
+  booleanField: BooleanFieldComparison
+  booleanFieldOptional: BooleanFieldComparison
+  numberField: NumberFieldComparison
+  numberFieldOptional: NumberFieldComparison
+  floatField: FloatFieldComparison
+  floatFieldOptional: FloatFieldComparison
+  intField: IntFieldComparison
+  intFieldOptional: IntFieldComparison
+  timestampField: TimestampFieldComparison
+  timestampFieldOptional: TimestampFieldComparison
+  date: DateFieldComparison
+  dateOptional: DateFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input FloatFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: FloatFieldComparisonBetween
+  notBetween: FloatFieldComparisonBetween
+}
+
+input FloatFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input IntFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Int
+  neq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int!]
+  notIn: [Int!]
+  between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
+}
+
+input IntFieldComparisonBetween {
+  lower: Int!
+  upper: Int!
+}
+
+input TimestampFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Timestamp
+  neq: Timestamp
+  gt: Timestamp
+  gte: Timestamp
+  lt: Timestamp
+  lte: Timestamp
+  in: [Timestamp!]
+  notIn: [Timestamp!]
+  between: TimestampFieldComparisonBetween
+  notBetween: TimestampFieldComparisonBetween
+}
+
+input TimestampFieldComparisonBetween {
+  lower: Timestamp!
+  upper: Timestamp!
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+input TestQuerySort {
+  field: TestQuerySortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestQuerySortFields {
+  idField
+  idFieldOption
+  stringField
+  stringFieldOptional
+  booleanField
+  booleanFieldOptional
+  numberField
+  numberFieldOptional
+  floatField
+  floatFieldOptional
+  intField
+  intFieldOptional
+  timestampField
+  timestampFieldOptional
+  date
+  dateOptional
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`Cursor paging strategy QueryArgsType with manual options options allow apply the options to the generated SDL 1`] = `
+type TestQuery {
+  idField: ID!
+  idFieldOption: ID
+  stringField: String!
+  stringFieldOptional: String
+  booleanField: Boolean!
+  booleanFieldOptional: Boolean
+  numberField: Float!
+  numberFieldOptional: Float
+  floatField: Float!
+  floatFieldOptional: Float
+  intField: Int!
+  intFieldOptional: Int
+  timestampField: Timestamp!
+  timestampFieldOptional: Timestamp
+  date: DateTime!
+  dateOptional: DateTime
+}
+
+"""
+\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type TestFilterRequiredDto {
+  requiredFilterableField: String!
+}
+
+type TestQueryEdge {
+  """The node containing the TestQuery"""
+  node: TestQuery!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestFilterRequiredDtoEdge {
+  """The node containing the TestFilterRequiredDto"""
+  node: TestFilterRequiredDto!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type Query {
+  test(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 2}
+
+    """Specify to filter the records returned."""
+    filter: TestQueryFilter = {booleanField: {is: true}}
+
+    """Specify to sort results."""
+    sorting: [TestQuerySort!] = [{field: booleanField, direction: DESC}]
+  ): String!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestQueryFilter {
+  and: [TestQueryFilter!]
+  or: [TestQueryFilter!]
+  idField: IDFilterComparison
+  idFieldOption: IDFilterComparison
+  stringField: StringFieldComparison
+  stringFieldOptional: StringFieldComparison
+  booleanField: BooleanFieldComparison
+  booleanFieldOptional: BooleanFieldComparison
+  numberField: NumberFieldComparison
+  numberFieldOptional: NumberFieldComparison
+  floatField: FloatFieldComparison
+  floatFieldOptional: FloatFieldComparison
+  intField: IntFieldComparison
+  intFieldOptional: IntFieldComparison
+  timestampField: TimestampFieldComparison
+  timestampFieldOptional: TimestampFieldComparison
+  date: DateFieldComparison
+  dateOptional: DateFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input FloatFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: FloatFieldComparisonBetween
+  notBetween: FloatFieldComparisonBetween
+}
+
+input FloatFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input IntFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Int
+  neq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int!]
+  notIn: [Int!]
+  between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
+}
+
+input IntFieldComparisonBetween {
+  lower: Int!
+  upper: Int!
+}
+
+input TimestampFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Timestamp
+  neq: Timestamp
+  gt: Timestamp
+  gte: Timestamp
+  lt: Timestamp
+  lte: Timestamp
+  in: [Timestamp!]
+  notIn: [Timestamp!]
+  between: TimestampFieldComparisonBetween
+  notBetween: TimestampFieldComparisonBetween
+}
+
+input TimestampFieldComparisonBetween {
+  lower: Timestamp!
+  upper: Timestamp!
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+input TestQuerySort {
+  field: TestQuerySortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestQuerySortFields {
+  idField
+  idFieldOption
+  stringField
+  stringFieldOptional
+  booleanField
+  booleanFieldOptional
+  numberField
+  numberFieldOptional
+  floatField
+  floatFieldOptional
+  intField
+  intFieldOptional
+  timestampField
+  timestampFieldOptional
+  date
+  dateOptional
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`Cursor paging strategy QueryArgsType with manual options should make the filter required if there is a filterRequired field 1`] = `
+type TestQuery {
+  idField: ID!
+  idFieldOption: ID
+  stringField: String!
+  stringFieldOptional: String
+  booleanField: Boolean!
+  booleanFieldOptional: Boolean
+  numberField: Float!
+  numberFieldOptional: Float
+  floatField: Float!
+  floatFieldOptional: Float
+  intField: Int!
+  intFieldOptional: Int
+  timestampField: Timestamp!
+  timestampFieldOptional: Timestamp
+  date: DateTime!
+  dateOptional: DateTime
+}
+
+"""
+\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type TestFilterRequiredDto {
+  requiredFilterableField: String!
+}
+
+type TestQueryEdge {
+  """The node containing the TestQuery"""
+  node: TestQuery!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestFilterRequiredDtoEdge {
+  """The node containing the TestFilterRequiredDto"""
+  node: TestFilterRequiredDto!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type Query {
+  test(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestFilterRequiredDtoFilter!
+
+    """Specify to sort results."""
+    sorting: [TestFilterRequiredDtoSort!] = []
+  ): String!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestFilterRequiredDtoFilter {
+  and: [TestFilterRequiredDtoFilter!]
+  or: [TestFilterRequiredDtoFilter!]
+  requiredFilterableField: StringFieldComparison!
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestFilterRequiredDtoSort {
+  field: TestFilterRequiredDtoSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestFilterRequiredDtoSortFields {
+  requiredFilterableField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;

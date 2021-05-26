@@ -1,6 +1,6 @@
 import { InputType, ArgsType, Resolver, Query, Int, Args, Field } from '@nestjs/graphql';
 import { MutationArgsType } from '../../src/types';
-import { expectSDL, mutationArgsTypeSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('MutationArgsType', (): void => {
   @InputType()
@@ -14,7 +14,7 @@ describe('MutationArgsType', (): void => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  it('should create an args type with an array field', () => {
+  it('should create an args type with an array field', async () => {
     @Resolver()
     class MutationArgsTypeSpec {
       @Query(() => Int)
@@ -23,6 +23,7 @@ describe('MutationArgsType', (): void => {
         return 1;
       }
     }
-    return expectSDL([MutationArgsTypeSpec], mutationArgsTypeSDL);
+    const schema = await generateSchema([MutationArgsTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 });

@@ -6,27 +6,16 @@ import { PubSub } from 'graphql-subscriptions';
 import { CreateManyInputType, CreateOneInputType, CreateResolver, CreateResolverOpts, InjectPubSub } from '../../src';
 import { CreatedEvent } from '../../src/resolvers/create.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
-import { expectSDL } from '../__fixtures__';
 import {
-  createBasicResolverSDL,
-  createCustomDTOResolverSDL,
-  createCustomManyInputResolverSDL,
-  createCustomManyMutationResolverSDL,
-  createCustomNameResolverSDL,
-  createCustomOneInputResolverSDL,
-  createCustomOneMutationResolverSDL,
-  createDisabledResolverSDL,
-  createManyDisabledResolverSDL,
-  createOneDisabledResolverSDL,
+  generateSchema,
   createResolverFromNest,
-  createSubscriptionResolverSDL,
   TestResolverDTO,
   TestResolverInputDTO,
   TestService,
-} from './__fixtures__';
+} from '../__fixtures__';
 
 describe('CreateResolver', () => {
-  const expectResolverSDL = (sdl: string, opts?: CreateResolverOpts<TestResolverDTO>) => {
+  const expectResolverSDL = async (opts?: CreateResolverOpts<TestResolverDTO>) => {
     @Resolver(() => TestResolverDTO)
     class TestSDLResolver extends CreateResolver(TestResolverDTO, opts) {
       @Query(() => TestResolverDTO)
@@ -35,7 +24,8 @@ describe('CreateResolver', () => {
       }
     }
 
-    return expectSDL([TestSDLResolver], sdl);
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
 
   const createTestResolver = (opts?: CreateResolverOpts<TestResolverDTO>) => {
@@ -49,34 +39,29 @@ describe('CreateResolver', () => {
     return createResolverFromNest(TestResolver);
   };
 
-  it('should create a CreateResolver for the DTO', () => expectResolverSDL(createBasicResolverSDL));
+  it('should create a CreateResolver for the DTO', () => expectResolverSDL());
 
-  it('should use the dtoName if provided', () => expectResolverSDL(createCustomNameResolverSDL, { dtoName: 'Test' }));
+  it('should use the dtoName if provided', () => expectResolverSDL({ dtoName: 'Test' }));
 
   it('should use the one.name option for the createOne if provided', () =>
-    expectResolverSDL(createCustomOneMutationResolverSDL, { one: { name: 'create_one_test' } }));
+    expectResolverSDL({ one: { name: 'create_one_test' } }));
 
   it('should use the many.name option for the createMany if provided', () =>
-    expectResolverSDL(createCustomManyMutationResolverSDL, { many: { name: 'create_many_test' } }));
+    expectResolverSDL({ many: { name: 'create_many_test' } }));
 
-  it('should use the CreateDTOClass if provided', () =>
-    expectResolverSDL(createCustomDTOResolverSDL, { CreateDTOClass: TestResolverInputDTO }));
+  it('should use the CreateDTOClass if provided', () => expectResolverSDL({ CreateDTOClass: TestResolverInputDTO }));
 
-  it('should not expose create methods if disabled', () =>
-    expectResolverSDL(createDisabledResolverSDL, { disabled: true }));
+  it('should not expose create methods if disabled', () => expectResolverSDL({ disabled: true }));
 
   describe('#createOne', () => {
     it('should use the provided CreateOneInput type', () => {
       @InputType()
       class CreateOneInput extends CreateOneInputType('createResolverDTO', TestResolverInputDTO) {}
 
-      return expectResolverSDL(createCustomOneInputResolverSDL, {
-        CreateOneInput,
-      });
+      return expectResolverSDL({ CreateOneInput });
     });
 
-    it('should not expose create one method if disabled', () =>
-      expectResolverSDL(createOneDisabledResolverSDL, { one: { disabled: true } }));
+    it('should not expose create one method if disabled', () => expectResolverSDL({ one: { disabled: true } }));
 
     it('should call the service createOne with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -100,13 +85,10 @@ describe('CreateResolver', () => {
       @InputType()
       class CreateManyInput extends CreateManyInputType('testResolvers', TestResolverInputDTO) {}
 
-      return expectResolverSDL(createCustomManyInputResolverSDL, {
-        CreateManyInput,
-      });
+      return expectResolverSDL({ CreateManyInput });
     });
 
-    it('should not expose create many method if disabled', () =>
-      expectResolverSDL(createManyDisabledResolverSDL, { many: { disabled: true } }));
+    it('should not expose create many method if disabled', () => expectResolverSDL({ many: { disabled: true } }));
 
     it('should call the service createMany with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -131,12 +113,10 @@ describe('CreateResolver', () => {
 
   describe('created subscription', () => {
     it('should add subscription types if enableSubscriptions is true', () =>
-      expectResolverSDL(createSubscriptionResolverSDL, {
-        enableSubscriptions: true,
-      }));
+      expectResolverSDL({ enableSubscriptions: true }));
 
     it('should not expose subscriptions if enableSubscriptions is false', () =>
-      expectResolverSDL(createBasicResolverSDL, { enableSubscriptions: false }));
+      expectResolverSDL({ enableSubscriptions: false }));
 
     describe('create one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {

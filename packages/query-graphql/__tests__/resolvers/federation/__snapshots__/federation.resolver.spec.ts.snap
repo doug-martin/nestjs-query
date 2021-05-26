@@ -1,0 +1,232 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FederationResolver should not add federation methods if one and many are empty 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestRelationDTO {
+  id: ID!
+  testResolverId: String!
+}
+
+type TestRelationDTOEdge {
+  """The node containing the TestRelationDTO"""
+  node: TestRelationDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`FederationResolver use the defined relations 1`] = `
+type TestRelationDTO {
+  id: ID!
+  testResolverId: String!
+}
+
+type TestFederated {
+  id: ID!
+  stringField: String!
+  relation: TestRelationDTO!
+  custom: TestRelationDTO!
+  unPagedRelations(
+    """Specify to filter the records returned."""
+    filter: TestRelationDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestRelationDTOSort!] = []
+  ): [TestRelationDTO!]!
+  relationOffsetConnections(
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestRelationDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestRelationDTOSort!] = []
+  ): TestFederatedRelationOffsetConnectionsConnection!
+  relationCursorConnections(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestRelationDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestRelationDTOSort!] = []
+  ): TestFederatedRelationCursorConnectionsConnection!
+}
+
+input TestRelationDTOFilter {
+  and: [TestRelationDTOFilter!]
+  or: [TestRelationDTOFilter!]
+  id: IDFilterComparison
+  testResolverId: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestRelationDTOSort {
+  field: TestRelationDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestRelationDTOSortFields {
+  id
+  testResolverId
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+input OffsetPaging {
+  """Limit the number of records returned"""
+  limit: Int
+
+  """Offset to start returning records from"""
+  offset: Int
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type TestRelationDTOEdge {
+  """The node containing the TestRelationDTO"""
+  node: TestRelationDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestFederatedRelationCursorConnectionsConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestRelationDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type TestFederatedRelationOffsetConnectionsConnection {
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Array of nodes."""
+  nodes: [TestRelationDTO!]!
+}
+
+type Query {
+  test: TestFederated!
+}
+
+`;

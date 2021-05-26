@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import { Resolver, Query, ObjectType, GraphQLISODateTime, Args, Int, ArgsType } from '@nestjs/graphql';
 import { FilterableField, AggregateArgsType } from '../../../src';
-import { expectSDL, aggregateArgsTypeSDL } from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('AggregateArgsType', (): void => {
   @ObjectType()
@@ -31,6 +31,7 @@ describe('AggregateArgsType', (): void => {
         return 1;
       }
     }
-    return expectSDL([AggregateArgsTypeSpec], aggregateArgsTypeSDL);
+    const schema = await generateSchema([AggregateArgsTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 });

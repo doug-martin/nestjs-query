@@ -1,7 +1,7 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { UpdateManyResponse } from '@nestjs-query/core';
 import { UpdateManyResponseType } from '../../src';
-import { expectSDL, updateManyResponseTypeSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('UpdateManyResponseType', () => {
   const URT = UpdateManyResponseType();
@@ -13,6 +13,7 @@ describe('UpdateManyResponseType', () => {
         return { updatedCount: 1 };
       }
     }
-    return expectSDL([UpdateManyResponseTypeResolver], updateManyResponseTypeSDL);
+    const schema = await generateSchema([UpdateManyResponseTypeResolver]);
+    expect(schema).toMatchSnapshot();
   });
 });

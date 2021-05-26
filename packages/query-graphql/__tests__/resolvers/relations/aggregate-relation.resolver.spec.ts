@@ -3,18 +3,16 @@ import { deepEqual, objectContaining, when } from 'ts-mockito';
 import { AggregateQuery, AggregateResponse, Filter } from '@nestjs-query/core';
 import { AggregateRelationsResolver } from '../../../src/resolvers/relations';
 import { AggregateRelationsResolverOpts } from '../../../src/resolvers/relations/aggregate-relations.resolver';
-import { expectSDL } from '../../__fixtures__';
-import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 import {
-  aggregateRelationCustomNameSDL,
-  aggregateRelationDisabledSDL,
-  aggregateRelationEmptyResolverSDL,
-  aggregateRelationResolverSDL,
+  generateSchema,
+  createResolverFromNest,
+  TestResolverDTO,
+  TestService,
   TestRelationDTO,
-} from './__fixtures__';
+} from '../../__fixtures__';
 
 describe('AggregateRelationsResolver', () => {
-  const expectResolverSDL = (sdl: string, opts?: AggregateRelationsResolverOpts) => {
+  const expectResolverSDL = async (opts?: AggregateRelationsResolverOpts) => {
     @Resolver(() => TestResolverDTO)
     class TestSDLResolver extends AggregateRelationsResolver(TestResolverDTO, opts ?? {}) {
       @Query(() => TestResolverDTO)
@@ -22,28 +20,21 @@ describe('AggregateRelationsResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
-    return expectSDL([TestSDLResolver], sdl);
+
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
 
-  it('should not add read methods if one and many are empty', () =>
-    expectResolverSDL(aggregateRelationEmptyResolverSDL));
+  it('should not add read methods if one and many are empty', () => expectResolverSDL());
   describe('aggregate', () => {
     it('should use the object type name', () =>
-      expectResolverSDL(aggregateRelationResolverSDL, {
-        enableAggregate: true,
-        many: { relations: { DTO: TestRelationDTO } },
-      }));
+      expectResolverSDL({ enableAggregate: true, many: { relations: { DTO: TestRelationDTO } } }));
 
     it('should use the dtoName if provided', () =>
-      expectResolverSDL(aggregateRelationCustomNameSDL, {
-        enableAggregate: true,
-        many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      }));
+      expectResolverSDL({ enableAggregate: true, many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } } }));
 
     it('should not add read methods if enableAggregate is not true', () =>
-      expectResolverSDL(aggregateRelationDisabledSDL, {
-        many: { relations: { DTO: TestRelationDTO, disableRead: true } },
-      }));
+      expectResolverSDL({ many: { relations: { DTO: TestRelationDTO, disableRead: true } } }));
 
     describe('aggregate query', () => {
       it('should call the service aggregateRelations with the provided dto', async () => {

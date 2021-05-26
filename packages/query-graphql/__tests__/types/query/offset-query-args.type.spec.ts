@@ -15,12 +15,7 @@ import {
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType } from '../../../src';
-import {
-  expectSDL,
-  offsetQueryArgsFilterRequiredTypeSDL,
-  offsetQueryArgsOptionsTypeSDL,
-  offsetQueryArgsTypeSDL,
-} from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('Offset paging strategy QueryArgsType with manual options', (): void => {
   afterEach(() => jest.clearAllMocks());
@@ -94,7 +89,8 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
         return 'hello';
       }
     }
-    return expectSDL([TestOffsetQueryArgsResolver], offsetQueryArgsTypeSDL);
+    const schema = await generateSchema([TestOffsetQueryArgsResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should paging to the correct instance of paging', () => {
@@ -129,7 +125,7 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
     expect(queryInstance.filter).toBeInstanceOf(TestOffsetQuery.FilterType);
   });
 
-  it('should make the filter required if there is a filterRequired field', () => {
+  it('should make the filter required if there is a filterRequired field', async () => {
     @ArgsType()
     class TestFilterRequiredQuery extends QueryArgsType(TestFilterRequiredDto, {
       pagingStrategy: PagingStrategies.OFFSET,
@@ -143,7 +139,8 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
         return 'hello';
       }
     }
-    return expectSDL([TestOffsetPagingFilterRequiredResolver], offsetQueryArgsFilterRequiredTypeSDL);
+    const schema = await generateSchema([TestOffsetPagingFilterRequiredResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   describe('options', () => {
@@ -158,7 +155,7 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
       defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
     }) {}
 
-    it('allow apply the options to the generated SDL', () => {
+    it('allow apply the options to the generated SDL', async () => {
       @Resolver()
       class TestOffsetQueryManualOptionsResolver {
         @Query(() => String)
@@ -167,7 +164,8 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
           return 'hello';
         }
       }
-      return expectSDL([TestOffsetQueryManualOptionsResolver], offsetQueryArgsOptionsTypeSDL);
+      const schema = await generateSchema([TestOffsetQueryManualOptionsResolver]);
+      expect(schema).toMatchSnapshot();
     });
 
     it('should validate a maxResultsSize for paging.limit', () => {

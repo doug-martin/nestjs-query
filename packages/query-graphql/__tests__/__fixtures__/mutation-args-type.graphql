@@ -1,7 +1,0 @@
-type Query {
-  test(input: FakeType!): Int!
-}
-
-input FakeType {
-  foo: String!
-}

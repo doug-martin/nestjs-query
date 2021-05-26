@@ -1,0 +1,413 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateResolver #createMany should not create a new type if the CreateManyArgs is supplied 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+  createManyTestResolverDTOS(input: CreateManyInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: CreateTestResolverDTO!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input CreateManyInput {
+  """Array of records to create"""
+  testResolvers: [TestResolverInputDTO!]!
+}
+
+input TestResolverInputDTO {
+  id: ID!
+  stringField: String!
+}
+
+`;
+
+exports[`CreateResolver #createMany should not expose create many method if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: CreateTestResolverDTO!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+`;
+
+exports[`CreateResolver #createOne should not expose create one method if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createManyTestResolverDTOS(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [CreateTestResolverDTO!]!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+`;
+
+exports[`CreateResolver #createOne should use the provided CreateOneInput type 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneInput!): TestResolverDTO!
+  createManyTestResolverDTOS(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateOneInput {
+  """The record to create"""
+  createResolverDTO: TestResolverInputDTO!
+}
+
+input TestResolverInputDTO {
+  id: ID!
+  stringField: String!
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [CreateTestResolverDTO!]!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+`;
+
+exports[`CreateResolver created subscription should add subscription types if enableSubscriptions is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+  createManyTestResolverDTOS(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: CreateTestResolverDTO!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [CreateTestResolverDTO!]!
+}
+
+type Subscription {
+  createdTestResolverDTO(input: CreateTestResolverDTOSubscriptionFilterInput): TestResolverDTO!
+}
+
+input CreateTestResolverDTOSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TestResolverDTOSubscriptionFilter!
+}
+
+input TestResolverDTOSubscriptionFilter {
+  and: [TestResolverDTOSubscriptionFilter!]
+  or: [TestResolverDTOSubscriptionFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;
+
+exports[`CreateResolver created subscription should not expose subscriptions if enableSubscriptions is false 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+  createManyTestResolverDTOS(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: CreateTestResolverDTO!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [CreateTestResolverDTO!]!
+}
+
+`;
+
+exports[`CreateResolver should create a CreateResolver for the DTO 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+  createManyTestResolverDTOS(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: CreateTestResolverDTO!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [CreateTestResolverDTO!]!
+}
+
+`;
+
+exports[`CreateResolver should not expose create methods if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`CreateResolver should use the CreateDTOClass if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+  createManyTestResolverDTOS(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: TestResolverInputDTO!
+}
+
+input TestResolverInputDTO {
+  id: ID!
+  stringField: String!
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [TestResolverInputDTO!]!
+}
+
+`;
+
+exports[`CreateResolver should use the dtoName if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTest(input: CreateOneTestInput!): TestResolverDTO!
+  createManyTests(input: CreateManyTestsInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestInput {
+  """The record to create"""
+  test: CreateTest!
+}
+
+input CreateTest {
+  id: ID
+  stringField: String
+}
+
+input CreateManyTestsInput {
+  """Array of records to create"""
+  tests: [CreateTest!]!
+}
+
+`;
+
+exports[`CreateResolver should use the many.name option for the createMany if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  createOneTestResolverDTO(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+  create_many_test(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: CreateTestResolverDTO!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [CreateTestResolverDTO!]!
+}
+
+`;
+
+exports[`CreateResolver should use the one.name option for the createOne if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  create_one_test(input: CreateOneTestResolverDTOInput!): TestResolverDTO!
+  createManyTestResolverDTOS(input: CreateManyTestResolverDTOSInput!): [TestResolverDTO!]!
+}
+
+input CreateOneTestResolverDTOInput {
+  """The record to create"""
+  testResolverDTO: CreateTestResolverDTO!
+}
+
+input CreateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input CreateManyTestResolverDTOSInput {
+  """Array of records to create"""
+  testResolverDTOS: [CreateTestResolverDTO!]!
+}
+
+`;

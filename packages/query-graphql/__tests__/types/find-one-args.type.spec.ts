@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Resolver, Query, Args, Int, ArgsType, ObjectType } from '@nestjs/graphql';
 import { FilterableField, FindOneArgsType, IDField } from '../../src';
-import { findOneArgsTypeSDL, findOneCustomIdArgsTypeSDL, expectSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('FindOneArgsType', (): void => {
   @ObjectType()
@@ -24,7 +24,8 @@ describe('FindOneArgsType', (): void => {
         return 1;
       }
     }
-    return expectSDL([FindOneArgsTypeSpec], findOneArgsTypeSDL);
+    const schema = await generateSchema([FindOneArgsTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should create an args type with a custom ID type', async () => {
@@ -45,7 +46,8 @@ describe('FindOneArgsType', (): void => {
         return 1;
       }
     }
-    return expectSDL([FindOneArgsTypeSpec], findOneCustomIdArgsTypeSDL);
+    const schema = await generateSchema([FindOneArgsTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   describe('validation', () => {

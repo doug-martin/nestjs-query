@@ -1,0 +1,1159 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`filter types DeleteFilterType should create the correct filter graphql schema 1`] = `
+type Query {
+  test(input: TestDtoFilter!): Int!
+}
+
+input TestDtoFilter {
+  and: [TestFilterDtoDeleteFilter!]
+  or: [TestFilterDtoDeleteFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
+  timestampField: TimestampFieldComparison
+}
+
+input TestFilterDtoDeleteFilter {
+  and: [TestFilterDtoDeleteFilter!]
+  or: [TestFilterDtoDeleteFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
+  timestampField: TimestampFieldComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+input FloatFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: FloatFieldComparisonBetween
+  notBetween: FloatFieldComparisonBetween
+}
+
+input FloatFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input IntFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Int
+  neq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int!]
+  notIn: [Int!]
+  between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
+}
+
+input IntFieldComparisonBetween {
+  lower: Int!
+  upper: Int!
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input StringEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: StringEnum
+  neq: StringEnum
+  gt: StringEnum
+  gte: StringEnum
+  lt: StringEnum
+  lte: StringEnum
+  like: StringEnum
+  notLike: StringEnum
+  iLike: StringEnum
+  notILike: StringEnum
+  in: [StringEnum!]
+  notIn: [StringEnum!]
+}
+
+enum StringEnum {
+  ONE_STR
+  TWO_STR
+  THREE_STR
+  FOUR_STR
+}
+
+input NumberEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: NumberEnum
+  neq: NumberEnum
+  gt: NumberEnum
+  gte: NumberEnum
+  lt: NumberEnum
+  lte: NumberEnum
+  like: NumberEnum
+  notLike: NumberEnum
+  iLike: NumberEnum
+  notILike: NumberEnum
+  in: [NumberEnum!]
+  notIn: [NumberEnum!]
+}
+
+enum NumberEnum {
+  ONE
+  TWO
+  THREE
+  FOUR
+}
+
+input TimestampFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Timestamp
+  neq: Timestamp
+  gt: Timestamp
+  gte: Timestamp
+  lt: Timestamp
+  lte: Timestamp
+  in: [Timestamp!]
+  notIn: [Timestamp!]
+  between: TimestampFieldComparisonBetween
+  notBetween: TimestampFieldComparisonBetween
+}
+
+"""
+\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+input TimestampFieldComparisonBetween {
+  lower: Timestamp!
+  upper: Timestamp!
+}
+
+`;
+
+exports[`filter types FilterType allowedBooleanExpressions option no boolean expressions should only expose allowed comparisons 1`] = `
+type Query {
+  test(input: TestComparisonDtoFilter!): Int!
+}
+
+input TestComparisonDtoFilter {
+  id: NumberFieldComparison
+  numberField: NumberFieldComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+`;
+
+exports[`filter types FilterType allowedBooleanExpressions option only and boolean expressions should only expose allowed comparisons 1`] = `
+type Query {
+  test(input: TestComparisonDtoFilter!): Int!
+}
+
+input TestComparisonDtoFilter {
+  and: [TestAllowedComparisonsFilter!]
+  id: NumberFieldComparison
+  numberField: NumberFieldComparison
+}
+
+input TestAllowedComparisonsFilter {
+  and: [TestAllowedComparisonsFilter!]
+  id: NumberFieldComparison
+  numberField: NumberFieldComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+`;
+
+exports[`filter types FilterType allowedBooleanExpressions option only or boolean expressions should only expose allowed comparisons 1`] = `
+type Query {
+  test(input: TestComparisonDtoFilter!): Int!
+}
+
+input TestComparisonDtoFilter {
+  or: [TestAllowedComparisonsFilter!]
+  id: NumberFieldComparison
+  numberField: NumberFieldComparison
+}
+
+input TestAllowedComparisonsFilter {
+  or: [TestAllowedComparisonsFilter!]
+  id: NumberFieldComparison
+  numberField: NumberFieldComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+`;
+
+exports[`filter types FilterType allowedComparisons option should only expose allowed comparisons 1`] = `
+type Query {
+  test(input: TestComparisonDtoFilter!): Int!
+}
+
+input TestComparisonDtoFilter {
+  and: [TestAllowedComparisonFilter!]
+  or: [TestAllowedComparisonFilter!]
+  id: NumberFieldComparison
+  boolField: TestAllowedComparisonBoolFieldFilterComparison
+  dateField: TestAllowedComparisonDateFieldFilterComparison
+  floatField: TestAllowedComparisonFloatFieldFilterComparison
+  intField: TestAllowedComparisonIntFieldFilterComparison
+  numberField: TestAllowedComparisonNumberFieldFilterComparison
+  stringField: TestAllowedComparisonStringFieldFilterComparison
+}
+
+input TestAllowedComparisonFilter {
+  and: [TestAllowedComparisonFilter!]
+  or: [TestAllowedComparisonFilter!]
+  id: NumberFieldComparison
+  boolField: TestAllowedComparisonBoolFieldFilterComparison
+  dateField: TestAllowedComparisonDateFieldFilterComparison
+  floatField: TestAllowedComparisonFloatFieldFilterComparison
+  intField: TestAllowedComparisonIntFieldFilterComparison
+  numberField: TestAllowedComparisonNumberFieldFilterComparison
+  stringField: TestAllowedComparisonStringFieldFilterComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input TestAllowedComparisonBoolFieldFilterComparison {
+  is: Boolean
+}
+
+input TestAllowedComparisonDateFieldFilterComparison {
+  eq: DateTime
+  neq: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input TestAllowedComparisonFloatFieldFilterComparison {
+  gt: Float
+  gte: Float
+}
+
+input TestAllowedComparisonIntFieldFilterComparison {
+  lt: Int
+  lte: Int
+}
+
+input TestAllowedComparisonNumberFieldFilterComparison {
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+}
+
+input TestAllowedComparisonStringFieldFilterComparison {
+  like: String
+  notLike: String
+}
+
+`;
+
+exports[`filter types FilterType filterRequired option should only expose allowed comparisons 1`] = `
+type Query {
+  test(input: TestComparisonDtoFilter!): Int!
+}
+
+input TestComparisonDtoFilter {
+  and: [TestFilterRequiredComparisonFilter!]
+  or: [TestFilterRequiredComparisonFilter!]
+  id: NumberFieldComparison
+  requiredField: BooleanFieldComparison!
+  nonRequiredField: DateFieldComparison
+  notSpecifiedField: NumberFieldComparison
+}
+
+input TestFilterRequiredComparisonFilter {
+  and: [TestFilterRequiredComparisonFilter!]
+  or: [TestFilterRequiredComparisonFilter!]
+  id: NumberFieldComparison
+  requiredField: BooleanFieldComparison!
+  nonRequiredField: DateFieldComparison
+  notSpecifiedField: NumberFieldComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+`;
+
+exports[`filter types FilterType should create the correct filter graphql schema 1`] = `
+type Query {
+  test(input: TestDtoFilter!): Int!
+}
+
+input TestDtoFilter {
+  and: [TestFilterDtoFilter!]
+  or: [TestFilterDtoFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
+  timestampField: TimestampFieldComparison
+  filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
+  filterableCursorConnection: TestFilterDtoFilterTestRelationDtoFilter
+  filterableOffsetConnection: TestFilterDtoFilterTestRelationDtoFilter
+  filterableUnPagedRelations: TestFilterDtoFilterTestRelationDtoFilter
+}
+
+input TestFilterDtoFilter {
+  and: [TestFilterDtoFilter!]
+  or: [TestFilterDtoFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
+  timestampField: TimestampFieldComparison
+  filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
+  filterableCursorConnection: TestFilterDtoFilterTestRelationDtoFilter
+  filterableOffsetConnection: TestFilterDtoFilterTestRelationDtoFilter
+  filterableUnPagedRelations: TestFilterDtoFilterTestRelationDtoFilter
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+input FloatFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: FloatFieldComparisonBetween
+  notBetween: FloatFieldComparisonBetween
+}
+
+input FloatFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input IntFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Int
+  neq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int!]
+  notIn: [Int!]
+  between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
+}
+
+input IntFieldComparisonBetween {
+  lower: Int!
+  upper: Int!
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input StringEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: StringEnum
+  neq: StringEnum
+  gt: StringEnum
+  gte: StringEnum
+  lt: StringEnum
+  lte: StringEnum
+  like: StringEnum
+  notLike: StringEnum
+  iLike: StringEnum
+  notILike: StringEnum
+  in: [StringEnum!]
+  notIn: [StringEnum!]
+}
+
+enum StringEnum {
+  ONE_STR
+  TWO_STR
+  THREE_STR
+  FOUR_STR
+}
+
+input NumberEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: NumberEnum
+  neq: NumberEnum
+  gt: NumberEnum
+  gte: NumberEnum
+  lt: NumberEnum
+  lte: NumberEnum
+  like: NumberEnum
+  notLike: NumberEnum
+  iLike: NumberEnum
+  notILike: NumberEnum
+  in: [NumberEnum!]
+  notIn: [NumberEnum!]
+}
+
+enum NumberEnum {
+  ONE
+  TWO
+  THREE
+  FOUR
+}
+
+input TimestampFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Timestamp
+  neq: Timestamp
+  gt: Timestamp
+  gte: Timestamp
+  lt: Timestamp
+  lte: Timestamp
+  in: [Timestamp!]
+  notIn: [Timestamp!]
+  between: TimestampFieldComparisonBetween
+  notBetween: TimestampFieldComparisonBetween
+}
+
+"""
+\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+input TimestampFieldComparisonBetween {
+  lower: Timestamp!
+  upper: Timestamp!
+}
+
+input TestFilterDtoFilterTestRelationDtoFilter {
+  and: [TestFilterDtoFilterTestRelationDtoFilter!]
+  or: [TestFilterDtoFilterTestRelationDtoFilter!]
+  id: NumberFieldComparison
+  relationName: StringFieldComparison
+  relationAge: NumberFieldComparison
+}
+
+`;
+
+exports[`filter types SubscriptionFilterType should create the correct filter graphql schema 1`] = `
+type Query {
+  test(input: TestDtoFilter!): Int!
+}
+
+input TestDtoFilter {
+  and: [TestFilterDtoSubscriptionFilter!]
+  or: [TestFilterDtoSubscriptionFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
+  timestampField: TimestampFieldComparison
+}
+
+input TestFilterDtoSubscriptionFilter {
+  and: [TestFilterDtoSubscriptionFilter!]
+  or: [TestFilterDtoSubscriptionFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
+  timestampField: TimestampFieldComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+input FloatFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: FloatFieldComparisonBetween
+  notBetween: FloatFieldComparisonBetween
+}
+
+input FloatFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input IntFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Int
+  neq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int!]
+  notIn: [Int!]
+  between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
+}
+
+input IntFieldComparisonBetween {
+  lower: Int!
+  upper: Int!
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input StringEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: StringEnum
+  neq: StringEnum
+  gt: StringEnum
+  gte: StringEnum
+  lt: StringEnum
+  lte: StringEnum
+  like: StringEnum
+  notLike: StringEnum
+  iLike: StringEnum
+  notILike: StringEnum
+  in: [StringEnum!]
+  notIn: [StringEnum!]
+}
+
+enum StringEnum {
+  ONE_STR
+  TWO_STR
+  THREE_STR
+  FOUR_STR
+}
+
+input NumberEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: NumberEnum
+  neq: NumberEnum
+  gt: NumberEnum
+  gte: NumberEnum
+  lt: NumberEnum
+  lte: NumberEnum
+  like: NumberEnum
+  notLike: NumberEnum
+  iLike: NumberEnum
+  notILike: NumberEnum
+  in: [NumberEnum!]
+  notIn: [NumberEnum!]
+}
+
+enum NumberEnum {
+  ONE
+  TWO
+  THREE
+  FOUR
+}
+
+input TimestampFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Timestamp
+  neq: Timestamp
+  gt: Timestamp
+  gte: Timestamp
+  lt: Timestamp
+  lte: Timestamp
+  in: [Timestamp!]
+  notIn: [Timestamp!]
+  between: TimestampFieldComparisonBetween
+  notBetween: TimestampFieldComparisonBetween
+}
+
+"""
+\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+input TimestampFieldComparisonBetween {
+  lower: Timestamp!
+  upper: Timestamp!
+}
+
+`;
+
+exports[`filter types UpdateFilterType should create the correct filter graphql schema 1`] = `
+type Query {
+  test(input: TestDtoFilter!): Int!
+}
+
+input TestDtoFilter {
+  and: [TestFilterDtoUpdateFilter!]
+  or: [TestFilterDtoUpdateFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
+  timestampField: TimestampFieldComparison
+}
+
+input TestFilterDtoUpdateFilter {
+  and: [TestFilterDtoUpdateFilter!]
+  or: [TestFilterDtoUpdateFilter!]
+  id: NumberFieldComparison
+  boolField: BooleanFieldComparison
+  dateField: DateFieldComparison
+  floatField: FloatFieldComparison
+  intField: IntFieldComparison
+  numberField: NumberFieldComparison
+  stringField: StringFieldComparison
+  stringEnumField: StringEnumFilterComparison
+  numberEnumField: NumberEnumFilterComparison
+  timestampField: TimestampFieldComparison
+}
+
+input NumberFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: NumberFieldComparisonBetween
+  notBetween: NumberFieldComparisonBetween
+}
+
+input NumberFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
+input DateFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  between: DateFieldComparisonBetween
+  notBetween: DateFieldComparisonBetween
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+input FloatFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float!]
+  notIn: [Float!]
+  between: FloatFieldComparisonBetween
+  notBetween: FloatFieldComparisonBetween
+}
+
+input FloatFieldComparisonBetween {
+  lower: Float!
+  upper: Float!
+}
+
+input IntFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Int
+  neq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int!]
+  notIn: [Int!]
+  between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
+}
+
+input IntFieldComparisonBetween {
+  lower: Int!
+  upper: Int!
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input StringEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: StringEnum
+  neq: StringEnum
+  gt: StringEnum
+  gte: StringEnum
+  lt: StringEnum
+  lte: StringEnum
+  like: StringEnum
+  notLike: StringEnum
+  iLike: StringEnum
+  notILike: StringEnum
+  in: [StringEnum!]
+  notIn: [StringEnum!]
+}
+
+enum StringEnum {
+  ONE_STR
+  TWO_STR
+  THREE_STR
+  FOUR_STR
+}
+
+input NumberEnumFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: NumberEnum
+  neq: NumberEnum
+  gt: NumberEnum
+  gte: NumberEnum
+  lt: NumberEnum
+  lte: NumberEnum
+  like: NumberEnum
+  notLike: NumberEnum
+  iLike: NumberEnum
+  notILike: NumberEnum
+  in: [NumberEnum!]
+  notIn: [NumberEnum!]
+}
+
+enum NumberEnum {
+  ONE
+  TWO
+  THREE
+  FOUR
+}
+
+input TimestampFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Timestamp
+  neq: Timestamp
+  gt: Timestamp
+  gte: Timestamp
+  lt: Timestamp
+  lte: Timestamp
+  in: [Timestamp!]
+  notIn: [Timestamp!]
+  between: TimestampFieldComparisonBetween
+  notBetween: TimestampFieldComparisonBetween
+}
+
+"""
+\`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+input TimestampFieldComparisonBetween {
+  lower: Timestamp!
+  upper: Timestamp!
+}
+
+`;

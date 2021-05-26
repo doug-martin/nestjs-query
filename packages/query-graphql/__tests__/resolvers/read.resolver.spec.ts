@@ -11,26 +11,10 @@ import {
   ReadResolver,
   ReadResolverOpts,
 } from '../../src';
-import { expectSDL } from '../__fixtures__';
-import {
-  createResolverFromNest,
-  readBasicResolverSDL,
-  readCursorConnectionWithTotalCountSDL,
-  readCustomManyQueryResolverSDL,
-  readCustomNameResolverSDL,
-  readCustomOneQueryResolverSDL,
-  readCustomQueryResolverSDL,
-  readDisabledResolverSDL,
-  readManyDisabledResolverSDL,
-  readOffsetConnectionWithTotalCountSDL,
-  readOffsetQueryResolverSDL,
-  readOneDisabledResolverSDL,
-  TestResolverDTO,
-  TestService,
-} from './__fixtures__';
+import { createResolverFromNest, TestResolverDTO, TestService, generateSchema } from '../__fixtures__';
 
 describe('ReadResolver', () => {
-  const expectResolverSDL = (sdl: string, opts?: ReadResolverOpts<TestResolverDTO>) => {
+  const expectResolverSDL = async (opts?: ReadResolverOpts<TestResolverDTO>) => {
     @Resolver(() => TestResolverDTO)
     class TestSDLResolver extends ReadResolver(TestResolverDTO, opts) {
       @Query(() => TestResolverDTO)
@@ -39,21 +23,21 @@ describe('ReadResolver', () => {
       }
     }
 
-    return expectSDL([TestSDLResolver], sdl);
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
 
-  it('should create a ReadResolver for the DTO', () => expectResolverSDL(readBasicResolverSDL));
+  it('should create a ReadResolver for the DTO', () => expectResolverSDL());
 
-  it('should use the dtoName if provided', () => expectResolverSDL(readCustomNameResolverSDL, { dtoName: 'Test' }));
+  it('should use the dtoName if provided', () => expectResolverSDL({ dtoName: 'Test' }));
 
   it('should use the one.name option for the findById if provided', () =>
-    expectResolverSDL(readCustomOneQueryResolverSDL, { one: { name: 'read_one_test' } }));
+    expectResolverSDL({ one: { name: 'read_one_test' } }));
 
   it('should use the many.name option for the queryMany if provided', () =>
-    expectResolverSDL(readCustomManyQueryResolverSDL, { many: { name: 'read_many_test' } }));
+    expectResolverSDL({ many: { name: 'read_many_test' } }));
 
-  it('should not expose read methods if disabled', () =>
-    expectResolverSDL(readDisabledResolverSDL, { disabled: true }));
+  it('should not expose read methods if disabled', () => expectResolverSDL({ disabled: true }));
 
   describe('query many', () => {
     it('should not create a new type if the QueryArgs is supplied', () => {
@@ -63,18 +47,18 @@ describe('ReadResolver', () => {
         other!: string;
       }
 
-      return expectResolverSDL(readCustomQueryResolverSDL, { QueryArgs: CustomQueryArgs });
+      return expectResolverSDL({ QueryArgs: CustomQueryArgs });
     });
 
     it('should use a connection if custom QueryArgs is a cursor', () => {
       @ArgsType()
       class CustomQueryArgs extends QueryArgsType(TestResolverDTO, { pagingStrategy: PagingStrategies.CURSOR }) {}
 
-      return expectResolverSDL(readBasicResolverSDL, { QueryArgs: CustomQueryArgs });
+      return expectResolverSDL({ QueryArgs: CustomQueryArgs });
     });
 
     it('should not use a connection if pagingStrategy is OFFSET', () =>
-      expectResolverSDL(readOffsetQueryResolverSDL, { pagingStrategy: PagingStrategies.OFFSET }));
+      expectResolverSDL({ pagingStrategy: PagingStrategies.OFFSET }));
 
     it('should use an offset connection if custom QueryArgs is a limit offset', () => {
       @ArgsType()
@@ -83,11 +67,10 @@ describe('ReadResolver', () => {
         connectionName: 'TestResolverDTOConnection',
       }) {}
 
-      return expectResolverSDL(readOffsetQueryResolverSDL, { QueryArgs: CustomQueryArgs });
+      return expectResolverSDL({ QueryArgs: CustomQueryArgs });
     });
 
-    it('should not expose query method if disabled', () =>
-      expectResolverSDL(readManyDisabledResolverSDL, { many: { disabled: true } }));
+    it('should not expose query method if disabled', () => expectResolverSDL({ many: { disabled: true } }));
 
     describe('#queryMany cursor connection', () => {
       @Resolver(() => TestResolverDTO)
@@ -288,8 +271,7 @@ describe('ReadResolver', () => {
       }
     }
 
-    it('should not expose findById method if disabled', () =>
-      expectResolverSDL(readOneDisabledResolverSDL, { one: { disabled: true } }));
+    it('should not expose findById method if disabled', () => expectResolverSDL({ one: { disabled: true } }));
 
     it('should call the service findById with the provided input', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
@@ -318,7 +300,7 @@ describe('ReadResolver', () => {
     });
   });
 
-  it('should expose totalCount on cursor connections if enableTotalCount is true', () => {
+  it('should expose totalCount on cursor connections if enableTotalCount is true', async () => {
     @Resolver(() => TestResolverDTO)
     class TestTotalCountSDLResolver extends ReadResolver(TestResolverDTO, { enableTotalCount: true }) {
       @Query(() => TestResolverDTO)
@@ -326,11 +308,11 @@ describe('ReadResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
-
-    return expectSDL([TestTotalCountSDLResolver], readCursorConnectionWithTotalCountSDL);
+    const schema = await generateSchema([TestTotalCountSDLResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
-  it('should expose totalCount on offset connections if enableTotalCount is true', () => {
+  it('should expose totalCount on offset connections if enableTotalCount is true', async () => {
     @Resolver(() => TestResolverDTO)
     class TestTotalCountSDLResolver extends ReadResolver(TestResolverDTO, {
       pagingStrategy: PagingStrategies.OFFSET,
@@ -341,7 +323,7 @@ describe('ReadResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
-
-    return expectSDL([TestTotalCountSDLResolver], readOffsetConnectionWithTotalCountSDL);
+    const schema = await generateSchema([TestTotalCountSDLResolver]);
+    expect(schema).toMatchSnapshot();
   });
 });

@@ -3,7 +3,7 @@ import { MinLength, validateSync } from 'class-validator';
 import { ObjectType, Resolver, Args, Query, InputType, Int } from '@nestjs/graphql';
 import { FilterableField } from '../../src/decorators';
 import { UpdateManyInputType } from '../../src/types';
-import { expectSDL, updateManyInputTypeSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('UpdateManyInputType', (): void => {
   @InputType('FakeUpdateManyInput')
@@ -25,7 +25,8 @@ describe('UpdateManyInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([UpdateManyInputTypeSpec], updateManyInputTypeSDL);
+    const schema = await generateSchema([UpdateManyInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should return the input when accessing the update field', () => {

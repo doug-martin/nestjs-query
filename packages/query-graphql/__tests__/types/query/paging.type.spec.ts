@@ -1,12 +1,12 @@
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Resolver, Query, Int, InputType, Args } from '@nestjs/graphql';
-import { expectSDL, pagingInputTypeSDL } from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 import { getOrCreateCursorPagingType } from '../../../src/types/query/paging';
 
 describe('PagingType', (): void => {
   const CursorPaging = getOrCreateCursorPagingType();
-  it('should create the correct filter graphql schema', () => {
+  it('should create the correct filter graphql schema', async () => {
     @InputType()
     class Paging extends CursorPaging {}
 
@@ -18,7 +18,8 @@ describe('PagingType', (): void => {
         return 1;
       }
     }
-    return expectSDL([PagingTypeSpec], pagingInputTypeSDL);
+    const schema = await generateSchema([PagingTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('throw a validation error if first is defined with before', () => {

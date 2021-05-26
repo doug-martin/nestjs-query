@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpdateManyResponseType should create a @nestjs/graphql object type 1`] = `
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  updateTest: UpdateManyResponse!
+}
+
+`;

@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RemoveRelationsResolver many should not add remove many methods if disableRemove is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`RemoveRelationsResolver many should use the dtoName if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  removeTestsFromTestResolverDTO(input: RemoveTestsFromTestResolverDTOInput!): TestResolverDTO!
+}
+
+input RemoveTestsFromTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
+
+`;
+
+exports[`RemoveRelationsResolver many should use the object type name 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  removeRelationsFromTestResolverDTO(input: RemoveRelationsFromTestResolverDTOInput!): TestResolverDTO!
+}
+
+input RemoveRelationsFromTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
+
+`;
+
+exports[`RemoveRelationsResolver one should not add remove methods if disableRemove is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`RemoveRelationsResolver one should use the dtoName if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  removeTestFromTestResolverDTO(input: RemoveTestFromTestResolverDTOInput!): TestResolverDTO!
+}
+
+input RemoveTestFromTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The id of relation."""
+  relationId: ID!
+}
+
+`;
+
+exports[`RemoveRelationsResolver one should use the object type name 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  removeRelationFromTestResolverDTO(input: RemoveRelationFromTestResolverDTOInput!): TestResolverDTO!
+}
+
+input RemoveRelationFromTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The id of relation."""
+  relationId: ID!
+}
+
+`;
+
+exports[`RemoveRelationsResolver should not add remove methods if one and many are empty 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;

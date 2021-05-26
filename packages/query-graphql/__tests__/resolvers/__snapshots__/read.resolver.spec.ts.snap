@@ -1,0 +1,1666 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReadResolver #findById should not expose findById method if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestResolverDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  testResolverDTOS(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver query many should not create a new type if the QueryArgs is supplied 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestResolverDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  testResolverDTOS(
+    other: String!
+
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver query many should not expose query method if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`ReadResolver query many should not use a connection if pagingStrategy is OFFSET 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Array of nodes."""
+  nodes: [TestResolverDTO!]!
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  testResolverDTOS(
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input OffsetPaging {
+  """Limit the number of records returned"""
+  limit: Int
+
+  """Offset to start returning records from"""
+  offset: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver query many should use a connection if custom QueryArgs is a cursor 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestResolverDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  testResolverDTOS(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver query many should use an offset connection if custom QueryArgs is a limit offset 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Array of nodes."""
+  nodes: [TestResolverDTO!]!
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  testResolverDTOS(
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input OffsetPaging {
+  """Limit the number of records returned"""
+  limit: Int
+
+  """Offset to start returning records from"""
+  offset: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver should create a ReadResolver for the DTO 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestResolverDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  testResolverDTOS(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver should expose totalCount on cursor connections if enableTotalCount is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestResolverDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  testResolverDTOS(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver should expose totalCount on offset connections if enableTotalCount is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Array of nodes."""
+  nodes: [TestResolverDTO!]!
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  testResolverDTOS(
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input OffsetPaging {
+  """Limit the number of records returned"""
+  limit: Int
+
+  """Offset to start returning records from"""
+  offset: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver should not expose read methods if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`ReadResolver should use the dtoName if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type TestConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestResolverDTOEdge!]!
+}
+
+type Query {
+  test: TestResolverDTO!
+  tests(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestConnection!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver should use the many.name option for the queryMany if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestResolverDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  testResolverDTO(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  read_many_test(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;
+
+exports[`ReadResolver should use the one.name option for the findById if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOEdge {
+  """The node containing the TestResolverDTO"""
+  node: TestResolverDTO!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type TestResolverDTOConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [TestResolverDTOEdge!]!
+}
+
+type OffsetPageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+}
+
+type Query {
+  read_one_test(
+    """The id of the record to find."""
+    id: ID!
+  ): TestResolverDTO
+  testResolverDTOS(
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: TestResolverDTOFilter = {}
+
+    """Specify to sort results."""
+    sorting: [TestResolverDTOSort!] = []
+  ): TestResolverDTOConnection!
+  test: TestResolverDTO!
+}
+
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input TestResolverDTOFilter {
+  and: [TestResolverDTOFilter!]
+  or: [TestResolverDTOFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverDTOSort {
+  field: TestResolverDTOSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestResolverDTOSortFields {
+  id
+  stringField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;

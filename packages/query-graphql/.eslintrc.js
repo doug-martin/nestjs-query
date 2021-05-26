@@ -5,12 +5,7 @@ module.exports = {
       {
         assertFunctionNames: [
           'expect',
-          'expectSDL',
-          'expectResolverSDL',
-          'assertLimitAndOffset',
-          'assertQueryCall',
-          'assertResolverMethodCall',
-          'assertMutationCall'
+          'expectResolverSDL'
         ],
       },
     ],

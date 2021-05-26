@@ -2,7 +2,7 @@
 import { ObjectType, InputType, Query, Resolver, Args, Int } from '@nestjs/graphql';
 import { FilterableField } from '../../../src';
 import { getOrCreateSortType } from '../../../src/types/query/sorting.type';
-import { expectSDL, sortingInputTypeSDL } from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('SortingType', (): void => {
   @ObjectType({ isAbstract: true })
@@ -23,7 +23,7 @@ describe('SortingType', (): void => {
     boolField!: boolean;
   }
 
-  it('should create the correct graphql schema for sorting type', () => {
+  it('should create the correct graphql schema for sorting type', async () => {
     @InputType()
     class Sorting extends getOrCreateSortType(TestSort) {}
 
@@ -35,7 +35,8 @@ describe('SortingType', (): void => {
         return 1;
       }
     }
-    return expectSDL([SortingTypeSpec], sortingInputTypeSDL);
+    const schema = await generateSchema([SortingTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should throw an error if the class is not annotated with @ObjectType', () => {
