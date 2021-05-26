@@ -3,17 +3,10 @@ import { Query, Resolver } from '@nestjs/graphql';
 import { when, deepEqual, objectContaining } from 'ts-mockito';
 import { AggregateArgsType } from '../../src';
 import { AggregateResolver, AggregateResolverOpts } from '../../src/resolvers/aggregate.resolver';
-import { expectSDL } from '../__fixtures__';
-import {
-  createResolverFromNest,
-  TestResolverDTO,
-  TestService,
-  aggregateResolverSDL,
-  aggregateDisabledResolverSDL,
-} from './__fixtures__';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 
 describe('AggregateResolver', () => {
-  const expectResolverSDL = (sdl: string, opts?: AggregateResolverOpts) => {
+  const expectResolverSDL = async (opts?: AggregateResolverOpts) => {
     @Resolver(() => TestResolverDTO)
     class TestSDLResolver extends AggregateResolver(TestResolverDTO, opts) {
       @Query(() => TestResolverDTO)
@@ -21,13 +14,13 @@ describe('AggregateResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
-
-    return expectSDL([TestSDLResolver], sdl);
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
 
-  it('should create a AggregateResolver for the DTO', () => expectResolverSDL(aggregateResolverSDL, { enabled: true }));
+  it('should create a AggregateResolver for the DTO', () => expectResolverSDL({ enabled: true }));
 
-  it('should not expose read methods if not enabled', () => expectResolverSDL(aggregateDisabledResolverSDL));
+  it('should not expose read methods if not enabled', () => expectResolverSDL());
 
   describe('#aggregate', () => {
     @Resolver(() => TestResolverDTO)

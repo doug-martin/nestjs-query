@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpdateOneInputType should create an input type with a custom id and update type as fields 1`] = `
+type Query {
+  updateTest(input: UpdateOneCustomId!): Int!
+}
+
+input UpdateOneCustomId {
+  """The id of the record to update"""
+  id: String!
+
+  """The update to apply."""
+  update: FakeUpdateOneType!
+}
+
+input FakeUpdateOneType {
+  name: String!
+}
+
+`;
+
+exports[`UpdateOneInputType should create an input type with the id and update type as fields 1`] = `
+type Query {
+  updateTest(input: UpdateOne!): Int!
+}
+
+input UpdateOne {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: FakeUpdateOneType!
+}
+
+input FakeUpdateOneType {
+  name: String!
+}
+
+`;

@@ -5,27 +5,10 @@ import { PubSub } from 'graphql-subscriptions';
 import { DeleteManyInputType, DeleteOneInputType, DeleteResolver, DeleteResolverOpts, InjectPubSub } from '../../src';
 import { DeletedEvent } from '../../src/resolvers/delete.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
-import { expectSDL } from '../__fixtures__';
-import {
-  createResolverFromNest,
-  deleteBasicResolverSDL,
-  deleteCustomManyInputResolverSDL,
-  deleteCustomManyMutationResolverSDL,
-  deleteCustomNameResolverSDL,
-  deleteCustomOneInputResolverSDL,
-  deleteCustomOneMutationResolverSDL,
-  deleteDisabledResolverSDL,
-  deleteManyDisabledResolverSDL,
-  deleteManySubscriptionResolverSDL,
-  deleteOneDisabledResolverSDL,
-  deleteOneSubscriptionResolverSDL,
-  deleteSubscriptionResolverSDL,
-  TestService,
-} from './__fixtures__';
-import { TestResolverDTO } from './__fixtures__/test-resolver.dto';
+import { generateSchema, createResolverFromNest, TestService, TestResolverDTO } from '../__fixtures__';
 
 describe('DeleteResolver', () => {
-  const expectResolverSDL = (sdl: string, opts?: DeleteResolverOpts<TestResolverDTO>) => {
+  const expectResolverSDL = async (opts?: DeleteResolverOpts<TestResolverDTO>) => {
     @Resolver(() => TestResolverDTO)
     class TestSDLResolver extends DeleteResolver(TestResolverDTO, opts) {
       @Query(() => TestResolverDTO)
@@ -33,7 +16,9 @@ describe('DeleteResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
-    return expectSDL([TestSDLResolver], sdl);
+
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
 
   const createTestResolver = (opts?: DeleteResolverOpts<TestResolverDTO>) => {
@@ -47,18 +32,17 @@ describe('DeleteResolver', () => {
     return createResolverFromNest(TestResolver);
   };
 
-  it('should create a DeleteResolver for the DTO', () => expectResolverSDL(deleteBasicResolverSDL));
+  it('should create a DeleteResolver for the DTO', () => expectResolverSDL());
 
-  it('should use the dtoName if provided', () => expectResolverSDL(deleteCustomNameResolverSDL, { dtoName: 'Test' }));
+  it('should use the dtoName if provided', () => expectResolverSDL({ dtoName: 'Test' }));
 
   it('should use the one.name option for the deleteOne if provided', () =>
-    expectResolverSDL(deleteCustomOneMutationResolverSDL, { one: { name: 'delete_one_test' } }));
+    expectResolverSDL({ one: { name: 'delete_one_test' } }));
 
   it('should use the many.name option for the deleteMany if provided', () =>
-    expectResolverSDL(deleteCustomManyMutationResolverSDL, { many: { name: 'delete_many_test' } }));
+    expectResolverSDL({ many: { name: 'delete_many_test' } }));
 
-  it('should not expose delete methods if disabled', () =>
-    expectResolverSDL(deleteDisabledResolverSDL, { disabled: true }));
+  it('should not expose delete methods if disabled', () => expectResolverSDL({ disabled: true }));
 
   describe('#deleteOne', () => {
     it('should use the provided DeleteOneInput type', () => {
@@ -70,13 +54,10 @@ describe('DeleteResolver', () => {
         @Field()
         foo!: string;
       }
-      return expectResolverSDL(deleteCustomOneInputResolverSDL, {
-        DeleteOneInput: CustomDeleteOneInput,
-      });
+      return expectResolverSDL({ DeleteOneInput: CustomDeleteOneInput });
     });
 
-    it('should not expose delete one method if disabled', () =>
-      expectResolverSDL(deleteOneDisabledResolverSDL, { one: { disabled: true } }));
+    it('should not expose delete one method if disabled', () => expectResolverSDL({ one: { disabled: true } }));
 
     it('should call the service deleteOne with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -115,13 +96,10 @@ describe('DeleteResolver', () => {
         @Field()
         foo!: string;
       }
-      return expectResolverSDL(deleteCustomManyInputResolverSDL, {
-        DeleteManyInput: CustomDeleteManyInput,
-      });
+      return expectResolverSDL({ DeleteManyInput: CustomDeleteManyInput });
     });
 
-    it('should not expose delete many method if disabled', () =>
-      expectResolverSDL(deleteManyDisabledResolverSDL, { many: { disabled: true } }));
+    it('should not expose delete many method if disabled', () => expectResolverSDL({ many: { disabled: true } }));
 
     it('should call the service deleteMany with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -149,26 +127,16 @@ describe('DeleteResolver', () => {
 
   describe('deleted subscription', () => {
     it('should add subscription types if enableSubscriptions is true', () =>
-      expectResolverSDL(deleteSubscriptionResolverSDL, {
-        enableSubscriptions: true,
-      }));
+      expectResolverSDL({ enableSubscriptions: true }));
 
     it('should add subscription types if one.enableSubscriptions is true', () =>
-      expectResolverSDL(deleteOneSubscriptionResolverSDL, {
-        one: {
-          enableSubscriptions: true,
-        },
-      }));
+      expectResolverSDL({ one: { enableSubscriptions: true } }));
 
     it('should add subscription types if many.enableSubscriptions is true', () =>
-      expectResolverSDL(deleteManySubscriptionResolverSDL, {
-        many: {
-          enableSubscriptions: true,
-        },
-      }));
+      expectResolverSDL({ many: { enableSubscriptions: true } }));
 
     it('should not expose subscriptions if enableSubscriptions is false', () =>
-      expectResolverSDL(deleteBasicResolverSDL, { enableSubscriptions: false }));
+      expectResolverSDL({ enableSubscriptions: false }));
 
     describe('delete one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {

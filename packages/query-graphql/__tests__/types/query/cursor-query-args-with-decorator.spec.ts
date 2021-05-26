@@ -15,7 +15,7 @@ import {
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '../../../src';
-import { cursorQueryArgsDecoratorTypeSDL, expectSDL } from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('QueryArgsType with decorator options', (): void => {
   afterEach(() => jest.clearAllMocks());
@@ -81,7 +81,7 @@ describe('QueryArgsType with decorator options', (): void => {
   @ArgsType()
   class CursorQueryOptionsArgs extends QueryArgsType(TestDto) {}
 
-  it('allow apply the options to the generated SDL', () => {
+  it('allow apply the options to the generated SDL', async () => {
     @Resolver()
     class TestCursorQueryOptionsDecoratorResolver {
       @Query(() => String)
@@ -90,7 +90,8 @@ describe('QueryArgsType with decorator options', (): void => {
         return 'hello';
       }
     }
-    return expectSDL([TestCursorQueryOptionsDecoratorResolver], cursorQueryArgsDecoratorTypeSDL);
+    const schema = await generateSchema([TestCursorQueryOptionsDecoratorResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   describe('max result size', () => {

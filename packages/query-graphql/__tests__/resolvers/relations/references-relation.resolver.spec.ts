@@ -1,13 +1,12 @@
 import { Resolver, Query } from '@nestjs/graphql';
 import { ReferencesOpts, ReferencesRelationsResolver } from '../../../src/resolvers/relations';
-import { expectSDL } from '../../__fixtures__';
-import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 import {
-  referenceRelationEmptySDL,
-  referenceRelationNullableSDL,
-  referenceRelationSDL,
+  generateSchema,
+  createResolverFromNest,
+  TestResolverDTO,
+  TestService,
   TestRelationDTO,
-} from './__fixtures__';
+} from '../../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends ReferencesRelationsResolver(TestResolverDTO, {
@@ -19,7 +18,7 @@ class TestResolver extends ReferencesRelationsResolver(TestResolverDTO, {
 }
 
 describe('ReferencesRelationMixin', () => {
-  const expectResolverSDL = (sdl: string, opts?: ReferencesOpts<TestResolverDTO>) => {
+  const expectResolverSDL = async (opts?: ReferencesOpts<TestResolverDTO>) => {
     @Resolver(() => TestResolverDTO)
     class TestSDLResolver extends ReferencesRelationsResolver(TestResolverDTO, opts ?? {}) {
       @Query(() => TestResolverDTO)
@@ -27,19 +26,17 @@ describe('ReferencesRelationMixin', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
-    return expectSDL([TestSDLResolver], sdl);
+
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
-  it('should not add reference methods if references empty', () => expectResolverSDL(referenceRelationEmptySDL));
+  it('should not add reference methods if references empty', () => expectResolverSDL());
 
   it('should use the add the reference if provided', () =>
-    expectResolverSDL(referenceRelationSDL, {
-      reference: { DTO: TestRelationDTO, keys: { id: 'stringField' }, dtoName: 'Test' },
-    }));
+    expectResolverSDL({ reference: { DTO: TestRelationDTO, keys: { id: 'stringField' }, dtoName: 'Test' } }));
 
   it('should set the field to nullable if set to true', () =>
-    expectResolverSDL(referenceRelationNullableSDL, {
-      reference: { DTO: TestRelationDTO, keys: { id: 'stringField' }, nullable: true },
-    }));
+    expectResolverSDL({ reference: { DTO: TestRelationDTO, keys: { id: 'stringField' }, nullable: true } }));
 
   it('should return a references type from the passed in dto', async () => {
     const { resolver } = await createResolverFromNest(TestResolver);

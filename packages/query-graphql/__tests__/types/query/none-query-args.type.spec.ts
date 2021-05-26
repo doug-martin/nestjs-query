@@ -15,12 +15,7 @@ import {
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType } from '../../../src';
-import {
-  expectSDL,
-  noPagingQueryArgsFilterRequiredTypeSDL,
-  noPagingQueryArgsOptionsTypeSDL,
-  noPagingQueryArgsTypeSDL,
-} from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('None paging strategy QueryArgsType with manual options', (): void => {
   afterEach(() => jest.clearAllMocks());
@@ -93,7 +88,8 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
         return 'hello';
       }
     }
-    return expectSDL([TestNonePagingStrategyResolver], noPagingQueryArgsTypeSDL);
+    const schema = await generateSchema([TestNonePagingStrategyResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should sorting to the correct instance of sorting', () => {
@@ -116,7 +112,7 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
     expect(queryInstance.filter).toBeInstanceOf(TestNoPagingQuery.FilterType);
   });
 
-  it('should make the filter required if there is a filterRequired field', () => {
+  it('should make the filter required if there is a filterRequired field', async () => {
     @ArgsType()
     class TestFilterRequiredQuery extends QueryArgsType(TestFilterRequiredDto, {
       pagingStrategy: PagingStrategies.NONE,
@@ -130,7 +126,8 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
         return 'hello';
       }
     }
-    return expectSDL([TestNonePagingFilterRequiredResolver], noPagingQueryArgsFilterRequiredTypeSDL);
+    const schema = await generateSchema([TestNonePagingFilterRequiredResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   describe('options', () => {
@@ -145,7 +142,7 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
       defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
     }) {}
 
-    it('allow apply the options to the generated SDL', () => {
+    it('allow apply the options to the generated SDL', async () => {
       @Resolver()
       class TestNoPagingQueryManualOptionsResolver {
         @Query(() => String)
@@ -154,7 +151,8 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
           return 'hello';
         }
       }
-      return expectSDL([TestNoPagingQueryManualOptionsResolver], noPagingQueryArgsOptionsTypeSDL);
+      const schema = await generateSchema([TestNoPagingQueryManualOptionsResolver]);
+      expect(schema).toMatchSnapshot();
     });
   });
 });

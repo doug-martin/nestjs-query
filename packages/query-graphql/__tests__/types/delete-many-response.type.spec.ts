@@ -1,7 +1,7 @@
 import { Resolver, Query } from '@nestjs/graphql';
 import { DeleteManyResponse } from '@nestjs-query/core';
 import { DeleteManyResponseType } from '../../src/types';
-import { deleteManyResponseTypeSDL, expectSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('DeleteManyResponseType', (): void => {
   it('should create a @nestjs/graphql object type', async () => {
@@ -13,6 +13,7 @@ describe('DeleteManyResponseType', (): void => {
         return { deletedCount: 1 };
       }
     }
-    return expectSDL([TestDeleteManyResponseResolver], deleteManyResponseTypeSDL);
+    const schema = await generateSchema([TestDeleteManyResponseResolver]);
+    expect(schema).toMatchSnapshot();
   });
 });

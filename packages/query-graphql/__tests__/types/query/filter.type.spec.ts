@@ -29,18 +29,7 @@ import {
   FilterableUnPagedRelation,
   QueryOptions,
 } from '../../../src';
-import {
-  expectSDL,
-  filterInputTypeSDL,
-  updateFilterInputTypeSDL,
-  deleteFilterInputTypeSDL,
-  subscriptionFilterInputTypeSDL,
-  filterAllowedComparisonsInputTypeSDL,
-  filterRequiredFieldInputTypeSDL,
-  filterAllowedBooleanExpressionsOnlyAndTypeSDL,
-  filterNoBooleanExpressionsTypeSDL,
-  filterAllowedBooleanExpressionsOnlyOrTypeSDL,
-} from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('filter types', (): void => {
   enum NumberEnum {
@@ -134,7 +123,7 @@ describe('filter types', (): void => {
       );
     });
 
-    it('should create the correct filter graphql schema', () => {
+    it('should create the correct filter graphql schema', async () => {
       @Resolver()
       class FilterTypeSpec {
         @Query(() => Int)
@@ -143,7 +132,8 @@ describe('filter types', (): void => {
           return 1;
         }
       }
-      return expectSDL([FilterTypeSpec], filterInputTypeSDL);
+      const schema = await generateSchema([FilterTypeSpec]);
+      expect(schema).toMatchSnapshot();
     });
 
     it('should throw an error if no fields are found', () => {
@@ -210,7 +200,7 @@ describe('filter types', (): void => {
       @InputType()
       class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
-      it('should only expose allowed comparisons', () => {
+      it('should only expose allowed comparisons', async () => {
         @Resolver()
         class FilterTypeSpec {
           @Query(() => Int)
@@ -219,7 +209,8 @@ describe('filter types', (): void => {
             return 1;
           }
         }
-        return expectSDL([FilterTypeSpec], filterAllowedComparisonsInputTypeSDL);
+        const schema = await generateSchema([FilterTypeSpec]);
+        expect(schema).toMatchSnapshot();
       });
     });
 
@@ -236,7 +227,7 @@ describe('filter types', (): void => {
         @InputType()
         class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
-        it('should only expose allowed comparisons', () => {
+        it('should only expose allowed comparisons', async () => {
           @Resolver()
           class FilterTypeSpec {
             @Query(() => Int)
@@ -245,7 +236,8 @@ describe('filter types', (): void => {
               return 1;
             }
           }
-          return expectSDL([FilterTypeSpec], filterAllowedBooleanExpressionsOnlyAndTypeSDL);
+          const schema = await generateSchema([FilterTypeSpec]);
+          expect(schema).toMatchSnapshot();
         });
       });
 
@@ -261,7 +253,7 @@ describe('filter types', (): void => {
         @InputType()
         class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
-        it('should only expose allowed comparisons', () => {
+        it('should only expose allowed comparisons', async () => {
           @Resolver()
           class FilterTypeSpec {
             @Query(() => Int)
@@ -270,7 +262,8 @@ describe('filter types', (): void => {
               return 1;
             }
           }
-          return expectSDL([FilterTypeSpec], filterAllowedBooleanExpressionsOnlyOrTypeSDL);
+          const schema = await generateSchema([FilterTypeSpec]);
+          expect(schema).toMatchSnapshot();
         });
       });
 
@@ -286,7 +279,7 @@ describe('filter types', (): void => {
         @InputType()
         class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
-        it('should only expose allowed comparisons', () => {
+        it('should only expose allowed comparisons', async () => {
           @Resolver()
           class FilterTypeSpec {
             @Query(() => Int)
@@ -295,7 +288,8 @@ describe('filter types', (): void => {
               return 1;
             }
           }
-          return expectSDL([FilterTypeSpec], filterNoBooleanExpressionsTypeSDL);
+          const schema = await generateSchema([FilterTypeSpec]);
+          expect(schema).toMatchSnapshot();
         });
       });
     });
@@ -317,7 +311,7 @@ describe('filter types', (): void => {
       @InputType()
       class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
-      it('should only expose allowed comparisons', () => {
+      it('should only expose allowed comparisons', async () => {
         @Resolver()
         class FilterTypeSpec {
           @Query(() => Int)
@@ -326,7 +320,8 @@ describe('filter types', (): void => {
             return 1;
           }
         }
-        return expectSDL([FilterTypeSpec], filterRequiredFieldInputTypeSDL);
+        const schema = await generateSchema([FilterTypeSpec]);
+        expect(schema).toMatchSnapshot();
       });
     });
   });
@@ -345,7 +340,7 @@ describe('filter types', (): void => {
       );
     });
 
-    it('should create the correct filter graphql schema', () => {
+    it('should create the correct filter graphql schema', async () => {
       @Resolver()
       class FilterTypeSpec {
         @Query(() => Int)
@@ -354,7 +349,8 @@ describe('filter types', (): void => {
           return 1;
         }
       }
-      return expectSDL([FilterTypeSpec], updateFilterInputTypeSDL);
+      const schema = await generateSchema([FilterTypeSpec]);
+      expect(schema).toMatchSnapshot();
     });
 
     it('should throw an error if no fields are found', () => {
@@ -412,7 +408,7 @@ describe('filter types', (): void => {
       );
     });
 
-    it('should create the correct filter graphql schema', () => {
+    it('should create the correct filter graphql schema', async () => {
       @Resolver()
       class FilterTypeSpec {
         @Query(() => Int)
@@ -421,7 +417,8 @@ describe('filter types', (): void => {
           return 1;
         }
       }
-      return expectSDL([FilterTypeSpec], deleteFilterInputTypeSDL);
+      const schema = await generateSchema([FilterTypeSpec]);
+      expect(schema).toMatchSnapshot();
     });
 
     it('should throw an error if no fields are found', () => {
@@ -479,7 +476,7 @@ describe('filter types', (): void => {
       );
     });
 
-    it('should create the correct filter graphql schema', () => {
+    it('should create the correct filter graphql schema', async () => {
       @Resolver()
       class FilterTypeSpec {
         @Query(() => Int)
@@ -488,7 +485,8 @@ describe('filter types', (): void => {
           return 1;
         }
       }
-      return expectSDL([FilterTypeSpec], subscriptionFilterInputTypeSDL);
+      const schema = await generateSchema([FilterTypeSpec]);
+      expect(schema).toMatchSnapshot();
     });
 
     it('should throw an error if no fields are found', () => {

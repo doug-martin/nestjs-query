@@ -1,8 +1,0 @@
-type Query {
-  test(input: DeleteOneCustomId!): Int!
-}
-
-input DeleteOneCustomId {
-  """The id of the record to delete."""
-  id: String!
-}

@@ -15,7 +15,7 @@ import {
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '../../../src';
-import { expectSDL, offsetQueryArgsDecoratorTypeSDL } from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('Offset paging strategy QueryArgsType with decorator options', (): void => {
   afterEach(() => jest.clearAllMocks());
@@ -81,7 +81,7 @@ describe('Offset paging strategy QueryArgsType with decorator options', (): void
   @ArgsType()
   class OffsetQueryOptionsArgs extends QueryArgsType(TestDto) {}
 
-  it('allow apply the options to the generated SDL', () => {
+  it('allow apply the options to the generated SDL', async () => {
     @Resolver()
     class TestOffsetQueryOptionsDecoratorResolver {
       @Query(() => String)
@@ -90,7 +90,8 @@ describe('Offset paging strategy QueryArgsType with decorator options', (): void
         return 'hello';
       }
     }
-    return expectSDL([TestOffsetQueryOptionsDecoratorResolver], offsetQueryArgsDecoratorTypeSDL);
+    const schema = await generateSchema([TestOffsetQueryOptionsDecoratorResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should validate a maxResultsSize for paging.limit', () => {

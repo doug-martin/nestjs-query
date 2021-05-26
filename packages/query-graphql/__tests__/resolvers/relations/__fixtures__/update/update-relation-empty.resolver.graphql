@@ -1,8 +1,0 @@
-type TestResolverDTO {
-  id: ID!
-  stringField: String!
-}
-
-type Query {
-  test: TestResolverDTO!
-}

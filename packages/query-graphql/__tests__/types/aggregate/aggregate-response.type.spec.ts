@@ -2,7 +2,7 @@
 import { AggregateResponse } from '@nestjs-query/core';
 import { Resolver, Query, ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
 import { AggregateResponseType, FilterableField } from '../../../src';
-import { aggregateResponseTypeSDL, aggregateResponseTypeWithCustomNameSDL, expectSDL } from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('AggregateResponseType', (): void => {
   @ObjectType()
@@ -29,7 +29,8 @@ describe('AggregateResponseType', (): void => {
         return {};
       }
     }
-    return expectSDL([AggregateResponseTypeSpec], aggregateResponseTypeSDL);
+    const schema = await generateSchema([AggregateResponseTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should return the same class if called multiple times', async () => {
@@ -42,7 +43,8 @@ describe('AggregateResponseType', (): void => {
         return {};
       }
     }
-    return expectSDL([AggregateResponseTypeSpec], aggregateResponseTypeSDL);
+    const schema = await generateSchema([AggregateResponseTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should create an aggregate type with a custom name', async () => {
@@ -54,7 +56,8 @@ describe('AggregateResponseType', (): void => {
         return {};
       }
     }
-    return expectSDL([AggregateResponseTypeSpec], aggregateResponseTypeWithCustomNameSDL);
+    const schema = await generateSchema([AggregateResponseTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('throw an error if the type is not registered', () => {

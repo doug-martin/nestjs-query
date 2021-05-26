@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeleteManyInputType should create an args type with the field as the type 1`] = `
+type Query {
+  test(input: DeleteMany!): Int!
+}
+
+input DeleteMany {
+  """Filter to find records to delete"""
+  filter: DeleteManyDTODeleteFilter!
+}
+
+input DeleteManyDTODeleteFilter {
+  and: [DeleteManyDTODeleteFilter!]
+  or: [DeleteManyDTODeleteFilter!]
+  field: StringFieldComparison
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;

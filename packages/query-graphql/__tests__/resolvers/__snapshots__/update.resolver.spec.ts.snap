@@ -1,0 +1,1090 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpdateResolver #updateMany should not expose update many method if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+`;
+
+exports[`UpdateResolver #updateMany should not update a new type if the UpdateManyArgs is supplied 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: CustomUpdateManyInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input CustomUpdateManyInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: TestResolverInputDTO!
+  other: String!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input TestResolverInputDTO {
+  id: ID!
+  stringField: String!
+}
+
+`;
+
+exports[`UpdateResolver #updateOne should not expose update one method if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+`;
+
+exports[`UpdateResolver #updateOne should use the provided UpdateOneInput type 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: CustomUpdateOneInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input CustomUpdateOneInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: TestResolverInputDTO!
+  other: String!
+}
+
+input TestResolverInputDTO {
+  id: ID!
+  stringField: String!
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+`;
+
+exports[`UpdateResolver should create a UpdateResolver for the DTO 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;
+
+exports[`UpdateResolver should not expose update methods if disabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`UpdateResolver should use the UpdateDTOClass if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: TestResolverInputDTO!
+}
+
+input TestResolverInputDTO {
+  id: ID!
+  stringField: String!
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: TestResolverInputDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;
+
+exports[`UpdateResolver should use the dtoName if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTest(input: UpdateOneTestInput!): TestResolverDTO!
+  updateManyTests(input: UpdateManyTestsInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTest!
+}
+
+input UpdateTest {
+  id: ID
+  stringField: String
+}
+
+input UpdateManyTestsInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTest!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;
+
+exports[`UpdateResolver should use the many.name option for the updateMany if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  update_many_test(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;
+
+exports[`UpdateResolver should use the one.name option for the updateOne if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  update_one_test(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;
+
+exports[`UpdateResolver updated subscription should add subscription types if enableSubscriptions is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+type Subscription {
+  updatedOneTestResolverDTO(input: UpdateOneTestResolverDTOSubscriptionFilterInput): TestResolverDTO!
+  updatedManyTestResolverDTOS: UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TestResolverDTOSubscriptionFilter!
+}
+
+input TestResolverDTOSubscriptionFilter {
+  and: [TestResolverDTOSubscriptionFilter!]
+  or: [TestResolverDTOSubscriptionFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+`;
+
+exports[`UpdateResolver updated subscription should add subscription types if many.enableSubscriptions is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+type Subscription {
+  updatedManyTestResolverDTOS: UpdateManyResponse!
+}
+
+`;
+
+exports[`UpdateResolver updated subscription should add subscription types if one.enableSubscriptions is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+type Subscription {
+  updatedOneTestResolverDTO(input: UpdateOneTestResolverDTOSubscriptionFilterInput): TestResolverDTO!
+}
+
+input UpdateOneTestResolverDTOSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TestResolverDTOSubscriptionFilter!
+}
+
+input TestResolverDTOSubscriptionFilter {
+  and: [TestResolverDTOSubscriptionFilter!]
+  or: [TestResolverDTOSubscriptionFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+`;
+
+exports[`UpdateResolver updated subscription should not expose subscriptions if enableSubscriptions is false 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  updateOneTestResolverDTO(input: UpdateOneTestResolverDTOInput!): TestResolverDTO!
+  updateManyTestResolverDTOS(input: UpdateManyTestResolverDTOSInput!): UpdateManyResponse!
+}
+
+input UpdateOneTestResolverDTOInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTestResolverDTO!
+}
+
+input UpdateTestResolverDTO {
+  id: ID
+  stringField: String
+}
+
+input UpdateManyTestResolverDTOSInput {
+  """Filter used to find fields to update"""
+  filter: TestResolverDTOUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTestResolverDTO!
+}
+
+input TestResolverDTOUpdateFilter {
+  and: [TestResolverDTOUpdateFilter!]
+  or: [TestResolverDTOUpdateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;

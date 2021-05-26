@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { validateSync, MinLength } from 'class-validator';
 import { InputType, Resolver, Args, Field, Query, Int, ID, ObjectType } from '@nestjs/graphql';
 import { IDField, UpdateOneInputType } from '../../src';
-import { expectSDL, updateOneInputTypeSDL, updateOneCustomIdInputTypeSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('UpdateOneInputType', (): void => {
   @ObjectType()
@@ -31,7 +31,8 @@ describe('UpdateOneInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([UpdateOneInputTypeSpec], updateOneInputTypeSDL);
+    const schema = await generateSchema([UpdateOneInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should create an input type with a custom id and update type as fields', async () => {
@@ -52,7 +53,8 @@ describe('UpdateOneInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([UpdateOneCustomIdInputTypeSpec], updateOneCustomIdInputTypeSDL);
+    const schema = await generateSchema([UpdateOneCustomIdInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   describe('validation', () => {

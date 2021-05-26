@@ -15,12 +15,7 @@ import {
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { FilterableField, PagingStrategies, QueryArgsType } from '../../../src';
-import {
-  cursorQueryArgsFilterRequiredTypeSDL,
-  cursorQueryArgsOptionsTypeSDL,
-  cursorQueryArgsTypeSDL,
-  expectSDL,
-} from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('Cursor paging strategy QueryArgsType with manual options', (): void => {
   afterEach(() => jest.clearAllMocks());
@@ -93,7 +88,8 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
         return 'hello';
       }
     }
-    return expectSDL([TestCursorQueryResolver], cursorQueryArgsTypeSDL);
+    const schema = await generateSchema([TestCursorQueryResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should transform paging to the correct instance of paging', () => {
@@ -128,7 +124,7 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
     expect(queryInstance.filter).toBeInstanceOf(TestCursorQuery.FilterType);
   });
 
-  it('should make the filter required if there is a filterRequired field', () => {
+  it('should make the filter required if there is a filterRequired field', async () => {
     @ArgsType()
     class TestFilterRequiredQuery extends QueryArgsType(TestFilterRequiredDto) {}
 
@@ -140,7 +136,8 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
         return 'hello';
       }
     }
-    return expectSDL([TestFilterRequiredResolver], cursorQueryArgsFilterRequiredTypeSDL);
+    const schema = await generateSchema([TestFilterRequiredResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   describe('options', () => {
@@ -153,7 +150,7 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
       defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
     }) {}
 
-    it('allow apply the options to the generated SDL', () => {
+    it('allow apply the options to the generated SDL', async () => {
       @Resolver()
       class TestCursorQueryManualOptionsResolver {
         @Query(() => String)
@@ -162,7 +159,8 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
           return 'hello';
         }
       }
-      return expectSDL([TestCursorQueryManualOptionsResolver], cursorQueryArgsOptionsTypeSDL);
+      const schema = await generateSchema([TestCursorQueryManualOptionsResolver]);
+      expect(schema).toMatchSnapshot();
     });
 
     it('should validate a maxResultsSize for paging.first', () => {

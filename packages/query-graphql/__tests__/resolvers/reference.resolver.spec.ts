@@ -1,8 +1,7 @@
 import { when } from 'ts-mockito';
 import { Resolver, Query } from '@nestjs/graphql';
-import { CreateResolver, CreateResolverOpts, ReferenceResolver } from '../../src';
-import { expectSDL } from '../__fixtures__';
-import { createResolverFromNest, referenceBasicResolverSDL, TestResolverDTO, TestService } from './__fixtures__';
+import { ReferenceResolver, ReferenceResolverOpts } from '../../src';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends ReferenceResolver(TestResolverDTO, { key: 'id' }) {
@@ -12,18 +11,20 @@ class TestResolver extends ReferenceResolver(TestResolverDTO, { key: 'id' }) {
 }
 
 describe('ReferenceResolver', () => {
-  const expectResolverSDL = (sdl: string, opts?: CreateResolverOpts<TestResolverDTO>) => {
+  const expectResolverSDL = async (opts?: ReferenceResolverOpts) => {
     @Resolver(() => TestResolverDTO)
-    class TestSDLResolver extends CreateResolver(TestResolverDTO, opts) {
+    class TestSDLResolver extends ReferenceResolver(TestResolverDTO, opts) {
       @Query(() => TestResolverDTO)
       test(): TestResolverDTO {
         return { id: '1', stringField: 'foo' };
       }
     }
-    return expectSDL([TestSDLResolver], sdl);
+
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
 
-  it('should create a new resolver with a resolveReference method', () => expectResolverSDL(referenceBasicResolverSDL));
+  it('should create a new resolver with a resolveReference method', () => expectResolverSDL());
 
   it('should return the original resolver if key is not provided', () => {
     const TestReferenceResolver = ReferenceResolver(TestResolverDTO);

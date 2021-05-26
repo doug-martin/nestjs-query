@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Class } from '@nestjs-query/core';
 import * as nestGraphql from '@nestjs/graphql';
-import { ReturnTypeFunc, MutationOptions, ReturnTypeFuncValue } from '@nestjs/graphql';
+import { ReturnTypeFunc, MutationOptions } from '@nestjs/graphql';
 import { ResolverMutation } from '../../src/decorators';
 import * as resolverDecorator from '../../src/decorators/resolver-method.decorator';
 
@@ -14,36 +15,29 @@ describe('ResolverMutation decorator', (): void => {
     typeFunc: ReturnTypeFunc,
     options?: MutationOptions,
     ...opts: resolverDecorator.ResolverMethodOpts[]
-  ): void {
-    // @ts-ignore
+  ): Class<unknown> {
     class TestResolver {
       @ResolverMutation(typeFunc, options, ...opts)
       method(): boolean {
         return true;
       }
     }
-  }
-
-  function assertMutationCall(callNo: number, returnType: ReturnTypeFuncValue, advancedOpts: MutationOptions) {
-    const [rt, ao] = mutationSpy.mock.calls[callNo]!;
-    expect(rt()).toEqual(returnType);
-    expect(ao).toEqual(advancedOpts);
-  }
-
-  function assertResolverMethodCall(callNo: number, ...opts: resolverDecorator.ResolverMethodOpts[]) {
-    expect(resolverMethodSpy).toHaveBeenNthCalledWith(callNo + 1, ...opts);
+    return TestResolver;
   }
 
   it('should call Mutation with the correct mutation arguments', () => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{}];
     createTestResolver(() => Boolean, { name: 'test' }, ...opts);
-    assertMutationCall(0, Boolean, { name: 'test' });
+
+    const [rt, ao] = mutationSpy.mock.calls[0]!;
+    expect(rt()).toEqual(Boolean);
+    expect(ao).toEqual({ name: 'test' });
   });
 
   it('should call ResolverMethod with the correct options', () => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{}];
     createTestResolver(() => Boolean, { name: 'test' }, ...opts);
-    assertResolverMethodCall(0, ...opts);
+    expect(resolverMethodSpy).toHaveBeenNthCalledWith(1, ...opts);
   });
 
   it('should not call ResolverMethod if disabled is true', () => {

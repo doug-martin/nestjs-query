@@ -2,7 +2,7 @@ import { plainToClass } from 'class-transformer';
 import { validateSync, MinLength } from 'class-validator';
 import { InputType, Resolver, Args, Int, Query, Field } from '@nestjs/graphql';
 import { CreateManyInputType } from '../../src';
-import { createManyInputTypeSDL, expectSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('CreateManyInputType', (): void => {
   @InputType()
@@ -24,7 +24,8 @@ describe('CreateManyInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([CreateManyInputTypeSpec], createManyInputTypeSDL);
+    const schema = await generateSchema([CreateManyInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should properly assign the input field', () => {

@@ -3,13 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Args, Query, Resolver, Int, InputType, ObjectType } from '@nestjs/graphql';
 import { FilterableField, IDField, RelationsInputType } from '../../src';
-import {
-  expectSDL,
-  relationsInputTypeSDL,
-  relationsCustomParentIdInputTypeSDL,
-  relationsCustomRelationIdInputTypeSDL,
-  relationsCustomParentRelationIdInputTypeSDL,
-} from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('RelationsInputType', (): void => {
   @ObjectType()
@@ -39,7 +33,7 @@ describe('RelationsInputType', (): void => {
   @InputType()
   class RelationsInput extends RelationsInputType(ParentDTO, RelationDTO) {}
 
-  it('should create an input type with an id and relationIds fields', () => {
+  it('should create an input type with an id and relationIds fields', async () => {
     @Resolver()
     class RelationsInputTypeSpec {
       @Query(() => Int)
@@ -48,10 +42,11 @@ describe('RelationsInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([RelationsInputTypeSpec], relationsInputTypeSDL);
+    const schema = await generateSchema([RelationsInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
-  it('should create an input type with a custom parent id', () => {
+  it('should create an input type with a custom parent id', async () => {
     @InputType()
     class RelationsCustomParentIdInput extends RelationsInputType(ParentCustomIDDTO, RelationDTO) {}
 
@@ -63,10 +58,11 @@ describe('RelationsInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([RelationsCustomIdInputTypeSpec], relationsCustomParentIdInputTypeSDL);
+    const schema = await generateSchema([RelationsCustomIdInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
-  it('should create an input type with a custom relation id', () => {
+  it('should create an input type with a custom relation id', async () => {
     @InputType()
     class RelationsCustomRelationIdInput extends RelationsInputType(ParentDTO, RelationCustomIDDTO) {}
 
@@ -78,10 +74,11 @@ describe('RelationsInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([RelationsCustomIdInputTypeSpec], relationsCustomRelationIdInputTypeSDL);
+    const schema = await generateSchema([RelationsCustomIdInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
-  it('should create an input type with a custom parent and relation id', () => {
+  it('should create an input type with a custom parent and relation id', async () => {
     @InputType()
     class RelationsCustomParentRelationIdInput extends RelationsInputType(ParentCustomIDDTO, RelationCustomIDDTO) {}
 
@@ -93,7 +90,8 @@ describe('RelationsInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([RelationsCustomIdInputTypeSpec], relationsCustomParentRelationIdInputTypeSDL);
+    const schema = await generateSchema([RelationsCustomIdInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should return the input when accessing the update field', () => {

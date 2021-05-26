@@ -2,18 +2,13 @@ import { when, deepEqual } from 'ts-mockito';
 import { Resolver, Query } from '@nestjs/graphql';
 import { RelationsOpts, RemoveRelationsResolver } from '../../../src/resolvers/relations';
 import { RelationInputType, RelationsInputType } from '../../../src/types';
-import { expectSDL } from '../../__fixtures__';
-import { createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 import {
-  removeRelationEmptySDL,
-  removeRelationManyCustomNameSDL,
-  removeRelationManyDisabledSDL,
-  removeRelationManySDL,
-  removeRelationOneCustomNameSDL,
-  removeRelationOneDisabledSDL,
-  removeRelationOneSDL,
+  generateSchema,
+  createResolverFromNest,
+  TestResolverDTO,
+  TestService,
   TestRelationDTO,
-} from './__fixtures__';
+} from '../../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends RemoveRelationsResolver(TestResolverDTO, {
@@ -26,7 +21,7 @@ class TestResolver extends RemoveRelationsResolver(TestResolverDTO, {
 }
 
 describe('RemoveRelationsResolver', () => {
-  const expectResolverSDL = (sdl: string, opts?: RelationsOpts) => {
+  const expectResolverSDL = async (opts?: RelationsOpts) => {
     @Resolver(() => TestResolverDTO)
     class TestSDLResolver extends RemoveRelationsResolver(TestResolverDTO, opts ?? {}) {
       @Query(() => TestResolverDTO)
@@ -34,23 +29,20 @@ describe('RemoveRelationsResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
-    return expectSDL([TestSDLResolver], sdl);
+
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
-  it('should not add remove methods if one and many are empty', () => expectResolverSDL(removeRelationEmptySDL));
+  it('should not add remove methods if one and many are empty', () => expectResolverSDL());
 
   describe('one', () => {
-    it('should use the object type name', () =>
-      expectResolverSDL(removeRelationOneSDL, { one: { relation: { DTO: TestRelationDTO } } }));
+    it('should use the object type name', () => expectResolverSDL({ one: { relation: { DTO: TestRelationDTO } } }));
 
     it('should use the dtoName if provided', () =>
-      expectResolverSDL(removeRelationOneCustomNameSDL, {
-        one: { relation: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      }));
+      expectResolverSDL({ one: { relation: { DTO: TestRelationDTO, dtoName: 'Test' } } }));
 
     it('should not add remove methods if disableRemove is true', () =>
-      expectResolverSDL(removeRelationOneDisabledSDL, {
-        one: { relation: { DTO: TestRelationDTO, disableRemove: true } },
-      }));
+      expectResolverSDL({ one: { relation: { DTO: TestRelationDTO, disableRemove: true } } }));
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
@@ -88,18 +80,13 @@ describe('RemoveRelationsResolver', () => {
   });
 
   describe('many', () => {
-    it('should use the object type name', () =>
-      expectResolverSDL(removeRelationManySDL, { many: { relations: { DTO: TestRelationDTO } } }));
+    it('should use the object type name', () => expectResolverSDL({ many: { relations: { DTO: TestRelationDTO } } }));
 
     it('should use the dtoName if provided', () =>
-      expectResolverSDL(removeRelationManyCustomNameSDL, {
-        many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } },
-      }));
+      expectResolverSDL({ many: { relations: { DTO: TestRelationDTO, dtoName: 'Test' } } }));
 
     it('should not add remove many methods if disableRemove is true', () =>
-      expectResolverSDL(removeRelationManyDisabledSDL, {
-        many: { relations: { DTO: TestRelationDTO, disableRemove: true } },
-      }));
+      expectResolverSDL({ many: { relations: { DTO: TestRelationDTO, disableRemove: true } } }));
 
     it('should call the service findRelation with the provided dto and correct relation name', async () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);

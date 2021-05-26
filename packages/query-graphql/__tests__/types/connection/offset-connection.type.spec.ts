@@ -2,11 +2,7 @@
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { OffsetConnectionType, OffsetPagingType, PagingStrategies } from '../../../src';
-import {
-  offsetConnectionObjectTypeSDL,
-  offsetConnectionObjectTypeWithTotalCountSDL,
-  expectSDL,
-} from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 import { getOrCreateOffsetConnectionType } from '../../../src/types/connection';
 import { getOrCreateOffsetPagingType } from '../../../src/types/query/paging';
 
@@ -41,14 +37,14 @@ describe('OffsetConnectionType', (): void => {
   it('should create the connection SDL', async () => {
     const TestConnection = getOrCreateOffsetConnectionType(TestDto, { pagingStrategy: PagingStrategies.OFFSET });
     @Resolver()
-    class TestConnectionTypeResolver {
+    class TestOffsetConnectionTypeResolver {
       @Query(() => TestConnection)
       test(): OffsetConnectionType<TestDto> | undefined {
         return undefined;
       }
     }
-
-    return expectSDL([TestConnectionTypeResolver], offsetConnectionObjectTypeSDL);
+    const schema = await generateSchema([TestOffsetConnectionTypeResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should create the connection SDL with totalCount if enabled', async () => {
@@ -57,14 +53,15 @@ describe('OffsetConnectionType', (): void => {
       enableTotalCount: true,
     });
     @Resolver()
-    class TestConnectionTypeResolver {
+    class TestOffsetConnectionTypeResolver {
       @Query(() => TestConnectionWithTotalCount)
       test(): OffsetConnectionType<TestDto> | undefined {
         return undefined;
       }
     }
 
-    return expectSDL([TestConnectionTypeResolver], offsetConnectionObjectTypeWithTotalCountSDL);
+    const schema = await generateSchema([TestOffsetConnectionTypeResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should throw an error if the object is not registered with @nestjs/graphql', () => {

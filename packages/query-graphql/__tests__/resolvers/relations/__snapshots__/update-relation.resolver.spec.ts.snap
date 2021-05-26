@@ -1,0 +1,151 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpdateRelationsResolver many should not add update many methods if disableUpdate is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`UpdateRelationsResolver many should use the dtoName if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  addTestsToTestResolverDTO(input: AddTestsToTestResolverDTOInput!): TestResolverDTO!
+  setTestsOnTestResolverDTO(input: SetTestsOnTestResolverDTOInput!): TestResolverDTO!
+}
+
+input AddTestsToTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
+
+input SetTestsOnTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
+
+`;
+
+exports[`UpdateRelationsResolver many should use the object type name 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  addRelationsToTestResolverDTO(input: AddRelationsToTestResolverDTOInput!): TestResolverDTO!
+  setRelationsOnTestResolverDTO(input: SetRelationsOnTestResolverDTOInput!): TestResolverDTO!
+}
+
+input AddRelationsToTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
+
+input SetRelationsOnTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
+
+`;
+
+exports[`UpdateRelationsResolver one should not add update one methods if disableRead is true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`UpdateRelationsResolver one should use the dtoName if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  setTestOnTestResolverDTO(input: SetTestOnTestResolverDTOInput!): TestResolverDTO!
+}
+
+input SetTestOnTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The id of relation."""
+  relationId: ID!
+}
+
+`;
+
+exports[`UpdateRelationsResolver one should use the object type name 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+type Mutation {
+  setRelationOnTestResolverDTO(input: SetRelationOnTestResolverDTOInput!): TestResolverDTO!
+}
+
+input SetRelationOnTestResolverDTOInput {
+  """The id of the record."""
+  id: ID!
+
+  """The id of relation."""
+  relationId: ID!
+}
+
+`;
+
+exports[`UpdateRelationsResolver should not add update methods if one and many are empty 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;

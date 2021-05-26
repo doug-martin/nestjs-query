@@ -3,7 +3,7 @@ import { validateSync } from 'class-validator';
 import { InputType, Resolver, Query, Args, Int, ObjectType } from '@nestjs/graphql';
 import { DeleteManyInputType } from '../../src';
 import { FilterableField } from '../../src/decorators';
-import { deleteManyInputTypeSDL, expectSDL } from '../__fixtures__';
+import { generateSchema } from '../__fixtures__';
 
 describe('DeleteManyInputType', (): void => {
   @ObjectType()
@@ -24,7 +24,8 @@ describe('DeleteManyInputType', (): void => {
         return 1;
       }
     }
-    return expectSDL([DeleteManyInputTypeSpec], deleteManyInputTypeSDL);
+    const schema = await generateSchema([DeleteManyInputTypeSpec]);
+    expect(schema).toMatchSnapshot();
   });
 
   describe('validation', () => {

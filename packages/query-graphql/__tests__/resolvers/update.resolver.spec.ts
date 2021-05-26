@@ -12,29 +12,16 @@ import {
 } from '../../src';
 import { UpdatedEvent } from '../../src/resolvers/update.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
-import { expectSDL } from '../__fixtures__';
 import {
+  generateSchema,
   createResolverFromNest,
   TestResolverDTO,
   TestResolverInputDTO,
   TestService,
-  updateBasicResolverSDL,
-  updateCustomManyInputResolverSDL,
-  updateCustomNameResolverSDL,
-  updateCustomOneInputResolverSDL,
-  updateCustomDTOResolverSDL,
-  updateManyDisabledResolverSDL,
-  updateOneDisabledResolverSDL,
-  updateDisabledResolverSDL,
-  updateManySubscriptionResolverSDL,
-  updateOneSubscriptionResolverSDL,
-  updateSubscriptionResolverSDL,
-  updateCustomOneMutationResolverSDL,
-  updateCustomManyMutationResolverSDL,
-} from './__fixtures__';
+} from '../__fixtures__';
 
 describe('UpdateResolver', () => {
-  const expectResolverSDL = (sdl: string, opts?: UpdateResolverOpts<TestResolverDTO>) => {
+  const expectResolverSDL = async (opts?: UpdateResolverOpts<TestResolverDTO>) => {
     @Resolver(() => TestResolverDTO)
     class TestSDLResolver extends UpdateResolver(TestResolverDTO, opts) {
       @Query(() => TestResolverDTO)
@@ -42,7 +29,9 @@ describe('UpdateResolver', () => {
         return { id: '1', stringField: 'foo' };
       }
     }
-    return expectSDL([TestSDLResolver], sdl);
+
+    const schema = await generateSchema([TestSDLResolver]);
+    expect(schema).toMatchSnapshot();
   };
 
   const createTestResolver = (opts?: UpdateResolverOpts<TestResolverDTO>) => {
@@ -56,21 +45,19 @@ describe('UpdateResolver', () => {
     return createResolverFromNest(TestResolver);
   };
 
-  it('should create a UpdateResolver for the DTO', () => expectResolverSDL(updateBasicResolverSDL));
+  it('should create a UpdateResolver for the DTO', () => expectResolverSDL());
 
-  it('should use the dtoName if provided', () => expectResolverSDL(updateCustomNameResolverSDL, { dtoName: 'Test' }));
+  it('should use the dtoName if provided', () => expectResolverSDL({ dtoName: 'Test' }));
 
   it('should use the one.name option for the updateOne if provided', () =>
-    expectResolverSDL(updateCustomOneMutationResolverSDL, { one: { name: 'update_one_test' } }));
+    expectResolverSDL({ one: { name: 'update_one_test' } }));
 
   it('should use the many.name option for the updateMany if provided', () =>
-    expectResolverSDL(updateCustomManyMutationResolverSDL, { many: { name: 'update_many_test' } }));
+    expectResolverSDL({ many: { name: 'update_many_test' } }));
 
-  it('should use the UpdateDTOClass if provided', () =>
-    expectResolverSDL(updateCustomDTOResolverSDL, { UpdateDTOClass: TestResolverInputDTO }));
+  it('should use the UpdateDTOClass if provided', () => expectResolverSDL({ UpdateDTOClass: TestResolverInputDTO }));
 
-  it('should not expose update methods if disabled', () =>
-    expectResolverSDL(updateDisabledResolverSDL, { disabled: true }));
+  it('should not expose update methods if disabled', () => expectResolverSDL({ disabled: true }));
 
   describe('#updateOne', () => {
     it('should use the provided UpdateOneInput type', () => {
@@ -79,13 +66,10 @@ describe('UpdateResolver', () => {
         @Field()
         other!: string;
       }
-      return expectResolverSDL(updateCustomOneInputResolverSDL, {
-        UpdateOneInput: CustomUpdateOneInput,
-      });
+      return expectResolverSDL({ UpdateOneInput: CustomUpdateOneInput });
     });
 
-    it('should not expose update one method if disabled', () =>
-      expectResolverSDL(updateOneDisabledResolverSDL, { one: { disabled: true } }));
+    it('should not expose update one method if disabled', () => expectResolverSDL({ one: { disabled: true } }));
 
     it('should call the service updateOne with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -134,13 +118,10 @@ describe('UpdateResolver', () => {
         @Field()
         other!: string;
       }
-      return expectResolverSDL(updateCustomManyInputResolverSDL, {
-        UpdateManyInput: CustomUpdateManyInput,
-      });
+      return expectResolverSDL({ UpdateManyInput: CustomUpdateManyInput });
     });
 
-    it('should not expose update many method if disabled', () =>
-      expectResolverSDL(updateManyDisabledResolverSDL, { many: { disabled: true } }));
+    it('should not expose update many method if disabled', () => expectResolverSDL({ many: { disabled: true } }));
 
     it('should call the service updateMany with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
@@ -185,26 +166,16 @@ describe('UpdateResolver', () => {
 
   describe('updated subscription', () => {
     it('should add subscription types if enableSubscriptions is true', () =>
-      expectResolverSDL(updateSubscriptionResolverSDL, {
-        enableSubscriptions: true,
-      }));
+      expectResolverSDL({ enableSubscriptions: true }));
 
     it('should add subscription types if one.enableSubscriptions is true', () =>
-      expectResolverSDL(updateOneSubscriptionResolverSDL, {
-        one: {
-          enableSubscriptions: true,
-        },
-      }));
+      expectResolverSDL({ one: { enableSubscriptions: true } }));
 
     it('should add subscription types if many.enableSubscriptions is true', () =>
-      expectResolverSDL(updateManySubscriptionResolverSDL, {
-        many: {
-          enableSubscriptions: true,
-        },
-      }));
+      expectResolverSDL({ many: { enableSubscriptions: true } }));
 
     it('should not expose subscriptions if enableSubscriptions is false', () =>
-      expectResolverSDL(updateBasicResolverSDL, { enableSubscriptions: false }));
+      expectResolverSDL({ enableSubscriptions: false }));
 
     describe('update one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {

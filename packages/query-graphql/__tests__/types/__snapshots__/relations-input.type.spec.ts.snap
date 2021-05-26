@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RelationsInputType should create an input type with a custom parent and relation id 1`] = `
+type Query {
+  test(input: RelationsCustomParentRelationIdInput!): Int!
+}
+
+input RelationsCustomParentRelationIdInput {
+  """The id of the record."""
+  id: String!
+
+  """The ids of the relations."""
+  relationIds: [String!]!
+}
+
+`;
+
+exports[`RelationsInputType should create an input type with a custom parent id 1`] = `
+type Query {
+  test(input: RelationsCustomParentIdInput!): Int!
+}
+
+input RelationsCustomParentIdInput {
+  """The id of the record."""
+  id: String!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
+
+`;
+
+exports[`RelationsInputType should create an input type with a custom relation id 1`] = `
+type Query {
+  test(input: RelationsCustomRelationIdInput!): Int!
+}
+
+input RelationsCustomRelationIdInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [String!]!
+}
+
+`;
+
+exports[`RelationsInputType should create an input type with an id and relationIds fields 1`] = `
+type Query {
+  test(input: RelationsInput!): Int!
+}
+
+input RelationsInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
+}
+
+`;

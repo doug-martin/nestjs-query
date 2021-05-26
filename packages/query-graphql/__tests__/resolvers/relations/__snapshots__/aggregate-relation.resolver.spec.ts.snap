@@ -1,0 +1,253 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AggregateRelationsResolver aggregate should not add read methods if enableAggregate is not true 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTORelationsAggregateGroupBy {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTORelationsCountAggregate {
+  id: Int
+  testResolverId: Int
+}
+
+type TestResolverDTORelationsMinAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTORelationsMaxAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsAggregateGroupBy {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsCountAggregate {
+  id: Int
+  testResolverId: Int
+}
+
+type TestResolverDTOTestsMinAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsMaxAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`AggregateRelationsResolver aggregate should use the dtoName if provided 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+  testsAggregate(
+    """Filter to find records to aggregate on"""
+    filter: TestRelationDTOAggregateFilter
+  ): [TestResolverDTOTestsAggregateResponse!]!
+}
+
+input TestRelationDTOAggregateFilter {
+  and: [TestRelationDTOAggregateFilter!]
+  or: [TestRelationDTOAggregateFilter!]
+  id: IDFilterComparison
+  testResolverId: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+type TestResolverDTORelationsAggregateGroupBy {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTORelationsCountAggregate {
+  id: Int
+  testResolverId: Int
+}
+
+type TestResolverDTORelationsMinAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTORelationsMaxAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsAggregateGroupBy {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsCountAggregate {
+  id: Int
+  testResolverId: Int
+}
+
+type TestResolverDTOTestsMinAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsMaxAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTOTestsAggregateResponse {
+  groupBy: TestResolverDTOTestsAggregateGroupBy
+  count: TestResolverDTOTestsCountAggregate
+  min: TestResolverDTOTestsMinAggregate
+  max: TestResolverDTOTestsMaxAggregate
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`AggregateRelationsResolver aggregate should use the object type name 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+  relationsAggregate(
+    """Filter to find records to aggregate on"""
+    filter: TestRelationDTOAggregateFilter
+  ): [TestResolverDTORelationsAggregateResponse!]!
+}
+
+input TestRelationDTOAggregateFilter {
+  and: [TestRelationDTOAggregateFilter!]
+  or: [TestRelationDTOAggregateFilter!]
+  id: IDFilterComparison
+  testResolverId: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+type TestResolverDTORelationsAggregateGroupBy {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTORelationsCountAggregate {
+  id: Int
+  testResolverId: Int
+}
+
+type TestResolverDTORelationsMinAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTORelationsMaxAggregate {
+  id: ID
+  testResolverId: String
+}
+
+type TestResolverDTORelationsAggregateResponse {
+  groupBy: TestResolverDTORelationsAggregateGroupBy
+  count: TestResolverDTORelationsCountAggregate
+  min: TestResolverDTORelationsMinAggregate
+  max: TestResolverDTORelationsMaxAggregate
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;
+
+exports[`AggregateRelationsResolver should not add read methods if one and many are empty 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;

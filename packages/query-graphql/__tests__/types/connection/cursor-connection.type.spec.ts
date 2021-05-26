@@ -3,11 +3,7 @@ import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { SortDirection } from '@nestjs-query/core';
 import { CursorConnectionType, CursorPagingType, PagingStrategies, StaticConnectionType } from '../../../src';
-import {
-  cursorConnectionObjectTypeSDL,
-  cursorConnectionObjectTypeWithTotalCountSDL,
-  expectSDL,
-} from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 import { KeySet } from '../../../src/decorators';
 import { getOrCreateCursorConnectionType } from '../../../src/types/connection';
 import { getOrCreateCursorPagingType } from '../../../src/types/query/paging';
@@ -49,8 +45,8 @@ describe('CursorConnectionType', (): void => {
         return undefined;
       }
     }
-
-    return expectSDL([TestConnectionTypeResolver], cursorConnectionObjectTypeSDL);
+    const schema = await generateSchema([TestConnectionTypeResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should create the connection SDL with totalCount if enabled', async () => {
@@ -65,8 +61,8 @@ describe('CursorConnectionType', (): void => {
         return undefined;
       }
     }
-
-    return expectSDL([TestConnectionTypeResolver], cursorConnectionObjectTypeWithTotalCountSDL);
+    const schema = await generateSchema([TestConnectionTypeResolver]);
+    expect(schema).toMatchSnapshot();
   });
 
   it('should throw an error if the object is not registered with @nestjs/graphql', () => {

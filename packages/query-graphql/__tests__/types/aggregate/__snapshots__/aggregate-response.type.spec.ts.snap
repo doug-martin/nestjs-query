@@ -1,0 +1,200 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AggregateResponseType should create an aggregate type with a custom name 1`] = `
+type FakeTypeAggregateGroupBy {
+  stringField: String
+  numberField: Float
+  boolField: Boolean
+  dateField: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type FakeTypeCountAggregate {
+  stringField: Int
+  numberField: Int
+  boolField: Int
+  dateField: Int
+}
+
+type FakeTypeSumAggregate {
+  numberField: Float
+}
+
+type FakeTypeAvgAggregate {
+  numberField: Float
+}
+
+type FakeTypeMinAggregate {
+  stringField: String
+  numberField: Float
+  dateField: DateTime
+}
+
+type FakeTypeMaxAggregate {
+  stringField: String
+  numberField: Float
+  dateField: DateTime
+}
+
+type CustomPrefixAggregateGroupBy {
+  stringField: String
+  numberField: Float
+  boolField: Boolean
+  dateField: DateTime
+}
+
+type CustomPrefixCountAggregate {
+  stringField: Int
+  numberField: Int
+  boolField: Int
+  dateField: Int
+}
+
+type CustomPrefixSumAggregate {
+  numberField: Float
+}
+
+type CustomPrefixAvgAggregate {
+  numberField: Float
+}
+
+type CustomPrefixMinAggregate {
+  stringField: String
+  numberField: Float
+  dateField: DateTime
+}
+
+type CustomPrefixMaxAggregate {
+  stringField: String
+  numberField: Float
+  dateField: DateTime
+}
+
+type CustomPrefixAggregateResponse {
+  groupBy: CustomPrefixAggregateGroupBy
+  count: CustomPrefixCountAggregate
+  sum: CustomPrefixSumAggregate
+  avg: CustomPrefixAvgAggregate
+  min: CustomPrefixMinAggregate
+  max: CustomPrefixMaxAggregate
+}
+
+type Query {
+  aggregate: CustomPrefixAggregateResponse!
+}
+
+`;
+
+exports[`AggregateResponseType should create an aggregate type with the correct fields for each type 1`] = `
+type FakeTypeAggregateGroupBy {
+  stringField: String
+  numberField: Float
+  boolField: Boolean
+  dateField: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type FakeTypeCountAggregate {
+  stringField: Int
+  numberField: Int
+  boolField: Int
+  dateField: Int
+}
+
+type FakeTypeSumAggregate {
+  numberField: Float
+}
+
+type FakeTypeAvgAggregate {
+  numberField: Float
+}
+
+type FakeTypeMinAggregate {
+  stringField: String
+  numberField: Float
+  dateField: DateTime
+}
+
+type FakeTypeMaxAggregate {
+  stringField: String
+  numberField: Float
+  dateField: DateTime
+}
+
+type FakeTypeAggregateResponse {
+  groupBy: FakeTypeAggregateGroupBy
+  count: FakeTypeCountAggregate
+  sum: FakeTypeSumAggregate
+  avg: FakeTypeAvgAggregate
+  min: FakeTypeMinAggregate
+  max: FakeTypeMaxAggregate
+}
+
+type Query {
+  aggregate: FakeTypeAggregateResponse!
+}
+
+`;
+
+exports[`AggregateResponseType should return the same class if called multiple times 1`] = `
+type FakeTypeAggregateGroupBy {
+  stringField: String
+  numberField: Float
+  boolField: Boolean
+  dateField: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type FakeTypeCountAggregate {
+  stringField: Int
+  numberField: Int
+  boolField: Int
+  dateField: Int
+}
+
+type FakeTypeSumAggregate {
+  numberField: Float
+}
+
+type FakeTypeAvgAggregate {
+  numberField: Float
+}
+
+type FakeTypeMinAggregate {
+  stringField: String
+  numberField: Float
+  dateField: DateTime
+}
+
+type FakeTypeMaxAggregate {
+  stringField: String
+  numberField: Float
+  dateField: DateTime
+}
+
+type FakeTypeAggregateResponse {
+  groupBy: FakeTypeAggregateGroupBy
+  count: FakeTypeCountAggregate
+  sum: FakeTypeSumAggregate
+  avg: FakeTypeAvgAggregate
+  min: FakeTypeMinAggregate
+  max: FakeTypeMaxAggregate
+}
+
+type Query {
+  aggregate: FakeTypeAggregateResponse!
+}
+
+`;

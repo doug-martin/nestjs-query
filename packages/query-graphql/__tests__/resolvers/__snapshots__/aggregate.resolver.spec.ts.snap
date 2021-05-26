@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AggregateResolver should create a AggregateResolver for the DTO 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOAggregateGroupBy {
+  id: ID
+  stringField: String
+}
+
+type TestResolverDTOCountAggregate {
+  id: Int
+  stringField: Int
+}
+
+type TestResolverDTOMinAggregate {
+  id: ID
+  stringField: String
+}
+
+type TestResolverDTOMaxAggregate {
+  id: ID
+  stringField: String
+}
+
+type TestResolverDTOAggregateResponse {
+  groupBy: TestResolverDTOAggregateGroupBy
+  count: TestResolverDTOCountAggregate
+  min: TestResolverDTOMinAggregate
+  max: TestResolverDTOMaxAggregate
+}
+
+type Query {
+  testResolverDTOAggregate(
+    """Filter to find records to aggregate on"""
+    filter: TestResolverDTOAggregateFilter
+  ): [TestResolverDTOAggregateResponse!]!
+  test: TestResolverDTO!
+}
+
+input TestResolverDTOAggregateFilter {
+  and: [TestResolverDTOAggregateFilter!]
+  or: [TestResolverDTOAggregateFilter!]
+  id: IDFilterComparison
+  stringField: StringFieldComparison
+}
+
+input IDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: ID
+  neq: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  like: ID
+  notLike: ID
+  iLike: ID
+  notILike: ID
+  in: [ID!]
+  notIn: [ID!]
+}
+
+input StringFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  like: String
+  notLike: String
+  iLike: String
+  notILike: String
+  in: [String!]
+  notIn: [String!]
+}
+
+`;
+
+exports[`AggregateResolver should not expose read methods if not enabled 1`] = `
+type TestResolverDTO {
+  id: ID!
+  stringField: String!
+}
+
+type TestResolverDTOAggregateGroupBy {
+  id: ID
+  stringField: String
+}
+
+type TestResolverDTOCountAggregate {
+  id: Int
+  stringField: Int
+}
+
+type TestResolverDTOMinAggregate {
+  id: ID
+  stringField: String
+}
+
+type TestResolverDTOMaxAggregate {
+  id: ID
+  stringField: String
+}
+
+type Query {
+  test: TestResolverDTO!
+}
+
+`;

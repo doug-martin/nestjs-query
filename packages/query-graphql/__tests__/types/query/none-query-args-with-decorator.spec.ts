@@ -13,7 +13,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '../../../src';
-import { expectSDL, noPagingQueryArgsOptionsTypeSDL } from '../../__fixtures__';
+import { generateSchema } from '../../__fixtures__';
 
 describe('QueryArgsType with decorator options', (): void => {
   afterEach(() => jest.clearAllMocks());
@@ -81,7 +81,7 @@ describe('QueryArgsType with decorator options', (): void => {
       @ArgsType()
       class NoPagingQueryOptionsArgs extends QueryArgsType(TestDto) {}
 
-      it('allow apply the options to the generated SDL', () => {
+      it('allow apply the options to the generated SDL', async () => {
         @Resolver()
         class TestNoPagingQueryOptionsDecoratorResolver {
           @Query(() => String)
@@ -90,7 +90,8 @@ describe('QueryArgsType with decorator options', (): void => {
             return 'hello';
           }
         }
-        return expectSDL([TestNoPagingQueryOptionsDecoratorResolver], noPagingQueryArgsOptionsTypeSDL);
+        const schema = await generateSchema([TestNoPagingQueryOptionsDecoratorResolver]);
+        expect(schema).toMatchSnapshot();
       });
     });
   });

@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SortingType should create the correct graphql schema for sorting type 1`] = `
+type Query {
+  test(input: Sorting!): Int!
+}
+
+input Sorting {
+  field: TestSortSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum TestSortSortFields {
+  id
+  stringField
+  numberField
+  boolField
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+`;

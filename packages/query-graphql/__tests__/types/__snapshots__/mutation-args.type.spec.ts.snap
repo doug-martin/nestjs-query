@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MutationArgsType should create an args type with an array field 1`] = `
+type Query {
+  test(input: FakeType!): Int!
+}
+
+input FakeType {
+  foo: String!
+}
+
+`;

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Class } from '@nestjs-query/core';
 import * as nestGraphql from '@nestjs/graphql';
-import { ResolveFieldOptions, ReturnTypeFunc, ReturnTypeFuncValue } from '@nestjs/graphql';
+import { ResolveFieldOptions, ReturnTypeFunc } from '@nestjs/graphql';
 import { ResolverField } from '../../src/decorators';
 import * as resolverDecorator from '../../src/decorators/resolver-method.decorator';
 
@@ -15,42 +16,29 @@ describe('ResolverField decorator', (): void => {
     typeFunc: ReturnTypeFunc,
     options?: ResolveFieldOptions,
     ...opts: resolverDecorator.ResolverMethodOpts[]
-  ): void {
-    // @ts-ignore
+  ): Class<unknown> {
     class TestResolver {
       @ResolverField(name, typeFunc, options, ...opts)
       method(): boolean {
         return true;
       }
     }
-  }
-
-  function assertMutationCall(
-    callNo: number,
-    name: string,
-    returnType: ReturnTypeFuncValue,
-    advancedOpts: ResolveFieldOptions,
-  ) {
-    const [n, rt, ao] = propertySpy.mock.calls[callNo]!;
-    expect(n).toEqual(name);
-    expect(rt ? rt() : null).toEqual(returnType);
-    expect(ao).toEqual(advancedOpts);
-  }
-
-  function assertResolverMethodCall(callNo: number, ...opts: resolverDecorator.ResolverMethodOpts[]) {
-    expect(resolverMethodSpy).toHaveBeenNthCalledWith(callNo + 1, ...opts);
+    return TestResolver;
   }
 
   it('should call ResolveField with the correct mutation arguments', () => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{}];
     createTestResolver('test', () => Boolean, { nullable: true }, ...opts);
-    assertMutationCall(0, 'test', Boolean, { nullable: true });
+    const [n, rt, ao] = propertySpy.mock.calls[0]!;
+    expect(n).toEqual('test');
+    expect(rt ? rt() : null).toEqual(Boolean);
+    expect(ao).toEqual({ nullable: true });
   });
 
   it('should call ResolverMethod with the correct options', () => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{}];
     createTestResolver('test', () => Boolean, { nullable: true }, ...opts);
-    assertResolverMethodCall(0, ...opts);
+    expect(resolverMethodSpy).toHaveBeenNthCalledWith(1, ...opts);
   });
 
   it('should not call ResolverMethod if disabled is true', () => {

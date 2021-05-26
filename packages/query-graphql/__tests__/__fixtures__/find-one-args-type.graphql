@@ -1,6 +1,0 @@
-type Query {
-  test(
-    """The id of the record to find."""
-    id: ID!
-  ): Int!
-}
