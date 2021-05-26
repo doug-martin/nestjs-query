@@ -7,17 +7,17 @@ import { WhereBuilder } from '../../src/query';
 describe('WhereBuilder', (): void => {
   const createWhereBuilder = () => new WhereBuilder<TestEntity>(getModelForClass(TestEntity));
 
-  const assertFilterQuery = (filter: Filter<TestEntity>, expectedFilterQuery: FilterQuery<TestEntity>): void => {
+  const expectFilterQuery = (filter: Filter<TestEntity>, expectedFilterQuery: FilterQuery<TestEntity>): void => {
     const actual = createWhereBuilder().build(filter);
     expect(actual).toEqual(expectedFilterQuery);
   };
 
   it('should accept a empty filter', (): void => {
-    assertFilterQuery({}, {});
+    expectFilterQuery({}, {});
   });
 
   it('or multiple operators for a single field together', (): void => {
-    assertFilterQuery(
+    expectFilterQuery(
       {
         numberType: { gt: 10, lt: 20, gte: 21, lte: 31 },
       },
@@ -37,7 +37,7 @@ describe('WhereBuilder', (): void => {
   });
 
   it('and multiple field comparisons together', (): void => {
-    assertFilterQuery(
+    expectFilterQuery(
       {
         numberType: { eq: 1 },
         stringType: { like: 'foo%' },
@@ -55,7 +55,7 @@ describe('WhereBuilder', (): void => {
 
   describe('and', (): void => {
     it('and multiple expressions together', (): void => {
-      assertFilterQuery(
+      expectFilterQuery(
         {
           and: [
             { numberType: { gt: 10 } },
@@ -76,7 +76,7 @@ describe('WhereBuilder', (): void => {
     });
 
     it('and multiple filters together with multiple fields', (): void => {
-      assertFilterQuery(
+      expectFilterQuery(
         {
           and: [
             { numberType: { gt: 10 }, stringType: { like: 'foo%' } },
@@ -93,7 +93,7 @@ describe('WhereBuilder', (): void => {
     });
 
     it('should support nested ors', (): void => {
-      assertFilterQuery(
+      expectFilterQuery(
         {
           and: [
             { or: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }] },
@@ -116,7 +116,7 @@ describe('WhereBuilder', (): void => {
 
   describe('or', (): void => {
     it('or multiple expressions together', (): void => {
-      assertFilterQuery(
+      expectFilterQuery(
         {
           or: [
             { numberType: { gt: 10 } },
@@ -137,7 +137,7 @@ describe('WhereBuilder', (): void => {
     });
 
     it('and multiple and filters together', (): void => {
-      assertFilterQuery(
+      expectFilterQuery(
         {
           or: [
             { numberType: { gt: 10 }, stringType: { like: 'foo%' } },
@@ -166,7 +166,7 @@ describe('WhereBuilder', (): void => {
     });
 
     it('should support nested ands', (): void => {
-      assertFilterQuery(
+      expectFilterQuery(
         {
           or: [
             { and: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }] },
