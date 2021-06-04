@@ -147,7 +147,7 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
       const created = await this.service.createOne(input.input.input);
       if (enableOneSubscriptions) {
-        await this.publishCreatedEvent(created);
+        await this.publishCreatedEvent(created, authorizeFilter);
       }
       return created;
     }
@@ -176,29 +176,56 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
       const created = await this.service.createMany(input.input.input);
       if (enableManySubscriptions) {
-        await Promise.all(created.map((c) => this.publishCreatedEvent(c)));
+        await Promise.all(created.map((c) => this.publishCreatedEvent(c, authorizeFilter)));
       }
       return created;
     }
 
-    async publishCreatedEvent(dto: DTO): Promise<void> {
+    async publishCreatedEvent(dto: DTO, authorizeFilter?: Filter<DTO>): Promise<void> {
       if (this.pubSub) {
-        await this.pubSub.publish(createdEvent, { [createdEvent]: dto });
+        const eventName = authorizeFilter != null ? this.getUniqueNameFromFilter(authorizeFilter) : createdEvent;
+        await this.pubSub.publish(eventName, { [createdEvent]: dto });
       }
     }
 
     @ResolverSubscription(() => DTOClass, { name: createdEvent, filter: subscriptionFilter }, commonResolverOpts, {
       enableSubscriptions: enableOneSubscriptions || enableManySubscriptions,
+      interceptors: [AuthorizerInterceptor(DTOClass)],
     })
     // input required so graphql subscription filtering will work.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    createdSubscription(@Args() input?: SA): AsyncIterator<CreatedEvent<DTO>> {
+    createdSubscription(
+      @Args() input?: SA,
+      @AuthorizerFilter({
+        operationGroup: OperationGroup.CREATE,
+        operationName: 'onCreateOne',
+        many: false,
+      })
+      authorizeFilter?: Filter<DTO>,
+    ): AsyncIterator<CreatedEvent<DTO>> | void {
+      const eventName = authorizeFilter != null ? this.getUniqueNameFromFilter(authorizeFilter) : createdEvent;
+
       if (!this.pubSub || !(enableManySubscriptions || enableOneSubscriptions)) {
-        throw new Error(`Unable to subscribe to ${createdEvent}`);
+        throw new Error(`Unable to subscribe to ${eventName}`);
       }
-      return this.pubSub.asyncIterator<CreatedEvent<DTO>>(createdEvent);
+
+      // eslint-disable-next-line consistent-return
+      return this.pubSub.asyncIterator<CreatedEvent<DTO>>(eventName);
+    }
+
+    private getUniqueNameFromFilter(authorizeFilter: Filter<DTO>): string {
+      return `${createdEvent}-${this.flatFilter(authorizeFilter) as string}`;
+    }
+
+    private flatFilter(o: any, prefix = ''): any {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return Object.entries(o).flatMap(([k, v]) =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/restrict-template-expressions
+        Object(v) === v ? this.flatFilter(v, `${prefix}${k}-`) : `${prefix}${k}-${v}`,
+      );
     }
   }
+
   return CreateResolverBase;
 };
 
