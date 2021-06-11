@@ -242,7 +242,7 @@ import { TodoItemResolver } from './todo-item.resolver';
 
 @Module({
   providers: [TodoItemResolver],
-  imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
+  imports: [NestjsQueryTypegooseModule.forFeature([TodoItemEntity])],
 })
 export class TodoItemModule {}
 ```
