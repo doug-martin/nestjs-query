@@ -265,7 +265,7 @@ export class TodoItemEntity extends Base {
 <TabItem value="tag">
 
 
-```ts title="tag/tag.entity.ts" {23-27}
+```ts title="tag/tag.entity.ts" {15-21}
 import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
@@ -292,42 +292,6 @@ export class TagEntity extends Base {
 
   @Prop()
   updatedBy?: string;
-}
-
-
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { Prop, modelOptions, Ref} from '@typegoose/typegoose';
-import { TodoItemEntity } from '../todo-item/todo-item.entity';
-
-@modelOptions({
-  schemaOptions: {
-    timestamps: true,
-    collection: 'tags',
-    toObject: { virtuals: true }
-  }
-})
-export class TagEntity extends Base {
-
-  @Prop({ required: true })
-  name!: string;
-
-  @Prop()
-  createdAt!: Date;
-
-  @Prop()
-  updatedAt!: Date;
-
-  @Prop({
-    ref: 'TodoItemEntity',
-    localField: '_id',
-    foreignField: 'tags',
-  })
-  todoItems?: Ref<TodoItemEntity>[];
-
-  public get id(): string {
-    // eslint-disable-next-line no-underscore-dangle
-    return this._id.toHexString();
-  }
 }
 ```
 
