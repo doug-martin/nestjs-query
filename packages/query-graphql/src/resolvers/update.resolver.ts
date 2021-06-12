@@ -23,7 +23,7 @@ import {
 } from '../types';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
 import { AuthorizerFilter, MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
-import { createSubscriptionFilter } from './helpers';
+import { createSubscriptionFilter, getUniqueNameForEvent } from './helpers';
 import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
 import { OperationGroup } from '../auth';
 
@@ -154,7 +154,7 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
       const { id, update } = input.input;
       const updateResult = await this.service.updateOne(id, update, { filter: authorizeFilter ?? {} });
       if (enableOneSubscriptions) {
-        await this.publishUpdatedOneEvent(updateResult);
+        await this.publishUpdatedOneEvent(updateResult, authorizeFilter);
       }
       return updateResult;
     }
@@ -182,20 +182,22 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
       const { update, filter } = input.input;
       const updateManyResponse = await this.service.updateMany(update, mergeFilter(filter, authorizeFilter ?? {}));
       if (enableManySubscriptions) {
-        await this.publishUpdatedManyEvent(updateManyResponse);
+        await this.publishUpdatedManyEvent(updateManyResponse, authorizeFilter);
       }
       return updateManyResponse;
     }
 
-    async publishUpdatedOneEvent(dto: DTO): Promise<void> {
+    async publishUpdatedOneEvent(dto: DTO, authorizeFilter?: Filter<DTO>): Promise<void> {
       if (this.pubSub) {
-        await this.pubSub.publish(updateOneEvent, { [updateOneEvent]: dto });
+        const eventName = authorizeFilter != null ? getUniqueNameForEvent(updateOneEvent, authorizeFilter) : updateOneEvent;
+        await this.pubSub.publish(eventName, { [updateOneEvent]: dto });
       }
     }
 
-    async publishUpdatedManyEvent(umr: UpdateManyResponse): Promise<void> {
+    async publishUpdatedManyEvent(umr: UpdateManyResponse, authorizeFilter?: Filter<DTO>): Promise<void> {
       if (this.pubSub) {
-        await this.pubSub.publish(updateManyEvent, { [updateManyEvent]: umr });
+        const eventName = authorizeFilter != null ? getUniqueNameForEvent(updateManyEvent, authorizeFilter) : updateManyEvent;
+        await this.pubSub.publish(eventName, { [updateManyEvent]: umr });
       }
     }
 
@@ -209,21 +211,25 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
     )
     // input required so graphql subscription filtering will work.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updatedOneSubscription(@Args() input?: UOSA): AsyncIterator<UpdatedEvent<DTO>> {
+    updatedOneSubscription(@Args() input?: UOSA, authorizeFilter?: Filter<DTO>): AsyncIterator<UpdatedEvent<DTO>> {
       if (!enableOneSubscriptions || !this.pubSub) {
         throw new Error(`Unable to subscribe to ${updateOneEvent}`);
       }
-      return this.pubSub.asyncIterator(updateOneEvent);
+      const eventName = authorizeFilter != null ? getUniqueNameForEvent(updateOneEvent, authorizeFilter) : updateOneEvent;
+      return this.pubSub.asyncIterator(eventName);
     }
+
+
 
     @ResolverSubscription(() => UMR, { name: updateManyEvent }, commonResolverOpts, {
       enableSubscriptions: enableManySubscriptions,
     })
-    updatedManySubscription(): AsyncIterator<UpdatedEvent<DeleteManyResponse>> {
+    updatedManySubscription(authorizeFilter?: Filter<DTO>): AsyncIterator<UpdatedEvent<DeleteManyResponse>> {
       if (!enableManySubscriptions || !this.pubSub) {
         throw new Error(`Unable to subscribe to ${updateManyEvent}`);
       }
-      return this.pubSub.asyncIterator(updateManyEvent);
+      const eventName = authorizeFilter != null ? getUniqueNameForEvent(updateManyEvent, authorizeFilter) : updateManyEvent;
+      return this.pubSub.asyncIterator(eventName);
     }
   }
 

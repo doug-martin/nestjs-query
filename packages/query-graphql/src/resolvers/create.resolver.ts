@@ -18,7 +18,7 @@ import {
   SubscriptionArgsType,
   SubscriptionFilterInputType,
 } from '../types';
-import { createSubscriptionFilter } from './helpers';
+import { createSubscriptionFilter, getUniqueNameForEvent } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
 import { OperationGroup } from '../auth';
 
@@ -183,7 +183,7 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
 
     async publishCreatedEvent(dto: DTO, authorizeFilter?: Filter<DTO>): Promise<void> {
       if (this.pubSub) {
-        const eventName = authorizeFilter != null ? this.getUniqueNameFromFilter(authorizeFilter) : createdEvent;
+        const eventName = authorizeFilter != null ? getUniqueNameForEvent(createdEvent, authorizeFilter) : createdEvent;
         await this.pubSub.publish(eventName, { [createdEvent]: dto });
       }
     }
@@ -192,8 +192,7 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       enableSubscriptions: enableOneSubscriptions || enableManySubscriptions,
       interceptors: [AuthorizerInterceptor(DTOClass)],
     })
-    // input required so graphql subscription filtering will work.
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     createdSubscription(
       @Args() input?: SA,
       @AuthorizerFilter({
@@ -203,29 +202,14 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       })
       authorizeFilter?: Filter<DTO>,
     ): AsyncIterator<CreatedEvent<DTO>> | void {
-      const eventName = authorizeFilter != null ? this.getUniqueNameFromFilter(authorizeFilter) : createdEvent;
-
       if (!this.pubSub || !(enableManySubscriptions || enableOneSubscriptions)) {
-        throw new Error(`Unable to subscribe to ${eventName}`);
+        throw new Error(`Unable to subscribe to ${createdEvent}`);
       }
 
-      // eslint-disable-next-line consistent-return
+      const eventName = authorizeFilter != null ? getUniqueNameForEvent(createdEvent, authorizeFilter) : createdEvent;
       return this.pubSub.asyncIterator<CreatedEvent<DTO>>(eventName);
     }
-
-    private getUniqueNameFromFilter(authorizeFilter: Filter<DTO>): string {
-      return `${createdEvent}-${this.flatFilter(authorizeFilter) as string}`;
-    }
-
-    private flatFilter(o: any, prefix = ''): any {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return Object.entries(o).flatMap(([k, v]) =>
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/restrict-template-expressions
-        Object(v) === v ? this.flatFilter(v, `${prefix}${k}-`) : `${prefix}${k}-${v}`,
-      );
-    }
   }
-
   return CreateResolverBase;
 };
 
