@@ -180,16 +180,14 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
       return qb;
     }
     // eslint-disable-next-line no-param-reassign
-    qb.order = sorts.map(
-      ({ field, direction, nulls }): OrderItem => {
-        const col = `${field as string}`;
-        const dir: string[] = [direction];
-        if (nulls) {
-          dir.push(nulls);
-        }
-        return [col, dir.join(' ')];
-      },
-    );
+    qb.order = sorts.map(({ field, direction, nulls }): OrderItem => {
+      const col = `${field as string}`;
+      const dir: string[] = [direction];
+      if (nulls) {
+        dir.push(nulls);
+      }
+      return [col, dir.join(' ')];
+    });
     return qb;
   }
 
@@ -216,13 +214,11 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
       return qb;
     }
     // eslint-disable-next-line no-param-reassign
-    qb.order = groupBy.map(
-      (field): OrderItem => {
-        const colName = this.model.rawAttributes[field as string].field;
-        const col = sequelize.col(colName ?? (field as string));
-        return [col, 'ASC'];
-      },
-    );
+    qb.order = groupBy.map((field): OrderItem => {
+      const colName = this.model.rawAttributes[field as string].field;
+      const col = sequelize.col(colName ?? (field as string));
+      return [col, 'ASC'];
+    });
     return qb;
   }
 

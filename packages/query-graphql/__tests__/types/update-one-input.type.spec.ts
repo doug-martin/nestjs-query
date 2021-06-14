@@ -1,10 +1,17 @@
+// eslint-disable-next-line max-classes-per-file
 import { plainToClass } from 'class-transformer';
 import { validateSync, MinLength } from 'class-validator';
-import { InputType, Resolver, Args, Field, Query, Int } from '@nestjs/graphql';
-import { UpdateOneInputType } from '../../src';
-import { expectSDL, updateOneInputTypeSDL } from '../__fixtures__';
+import { InputType, Resolver, Args, Field, Query, Int, ID, ObjectType } from '@nestjs/graphql';
+import { IDField, UpdateOneInputType } from '../../src';
+import { expectSDL, updateOneInputTypeSDL, updateOneCustomIdInputTypeSDL } from '../__fixtures__';
 
 describe('UpdateOneInputType', (): void => {
+  @ObjectType()
+  class FakeDTO {
+    @Field(() => ID)
+    id!: string;
+  }
+
   @InputType()
   class FakeUpdateOneType {
     @Field()
@@ -13,9 +20,9 @@ describe('UpdateOneInputType', (): void => {
   }
 
   @InputType()
-  class UpdateOne extends UpdateOneInputType(FakeUpdateOneType) {}
+  class UpdateOne extends UpdateOneInputType(FakeDTO, FakeUpdateOneType) {}
 
-  it('should create an args type with the field as the type', async () => {
+  it('should create an input type with the id and update type as fields', async () => {
     @Resolver()
     class UpdateOneInputTypeSpec {
       @Query(() => Int)
@@ -27,9 +34,30 @@ describe('UpdateOneInputType', (): void => {
     return expectSDL([UpdateOneInputTypeSpec], updateOneInputTypeSDL);
   });
 
+  it('should create an input type with a custom id and update type as fields', async () => {
+    @ObjectType()
+    class FakeIDDTO {
+      @IDField(() => String)
+      id!: string;
+    }
+
+    @InputType()
+    class UpdateOneCustomId extends UpdateOneInputType(FakeIDDTO, FakeUpdateOneType) {}
+
+    @Resolver()
+    class UpdateOneCustomIdInputTypeSpec {
+      @Query(() => Int)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      updateTest(@Args('input') input: UpdateOneCustomId): number {
+        return 1;
+      }
+    }
+    return expectSDL([UpdateOneCustomIdInputTypeSpec], updateOneCustomIdInputTypeSDL);
+  });
+
   describe('validation', () => {
     it('should validate id is defined is not empty', () => {
-      const Type = UpdateOneInputType(FakeUpdateOneType);
+      const Type = UpdateOneInputType(FakeDTO, FakeUpdateOneType);
       const input = { update: { name: 'hello world' } };
       const it = plainToClass(Type, input);
       const errors = validateSync(it);
@@ -46,7 +74,7 @@ describe('UpdateOneInputType', (): void => {
     });
 
     it('should validate id is not empty is defined is not empty', () => {
-      const Type = UpdateOneInputType(FakeUpdateOneType);
+      const Type = UpdateOneInputType(FakeDTO, FakeUpdateOneType);
       const input = { id: '', update: { name: 'hello world' } };
       const it = plainToClass(Type, input);
       const errors = validateSync(it);
@@ -64,7 +92,7 @@ describe('UpdateOneInputType', (): void => {
     });
 
     it('should validate the update input', () => {
-      const Type = UpdateOneInputType(FakeUpdateOneType);
+      const Type = UpdateOneInputType(FakeDTO, FakeUpdateOneType);
       const input = { id: 'id-1', update: {} };
       const it = plainToClass(Type, input);
       const errors = validateSync(it);

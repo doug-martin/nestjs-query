@@ -29,7 +29,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
   }
 
   convertAggregateQuery(aggregate: AggregateQuery<DTO>): AggregateQuery<Entity> {
-    return (aggregate as unknown) as AggregateQuery<Entity>;
+    return aggregate as unknown as AggregateQuery<Entity>;
   }
 
   convertAggregateResponse(aggregate: AggregateResponse<Entity>): AggregateResponse<DTO> {
@@ -73,6 +73,6 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
       }
     }
     // eslint-disable-next-line @typescript-eslint/ban-types
-    return (entityOrDto as unknown) as object;
+    return entityOrDto as unknown as object;
   }
 }

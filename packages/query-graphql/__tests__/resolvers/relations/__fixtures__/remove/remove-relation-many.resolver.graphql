@@ -8,10 +8,10 @@ type Query {
 }
 
 type Mutation {
-  removeRelationsFromTestResolverDTO(input: RelationsInput!): TestResolverDTO!
+  removeRelationsFromTestResolverDTO(input: RemoveRelationsFromTestResolverDTOInput!): TestResolverDTO!
 }
 
-input RelationsInput {
+input RemoveRelationsFromTestResolverDTOInput {
   """The id of the record."""
   id: ID!
 

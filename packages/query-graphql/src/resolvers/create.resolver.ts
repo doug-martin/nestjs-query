@@ -192,7 +192,6 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
       enableSubscriptions: enableOneSubscriptions || enableManySubscriptions,
       interceptors: [AuthorizerInterceptor(DTOClass)],
     })
-
     createdSubscription(
       @Args() input?: SA,
       @AuthorizerFilter({

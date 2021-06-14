@@ -85,14 +85,14 @@ export function ModifyRelationAuthorizerFilter<DTO>(
   // eslint-disable-next-line @typescript-eslint/ban-types
   return (target: Object, propertyKey: string | symbol, parameterIndex: number) => {
     const authorizationContext = getAuthorizationContext(propertyKey, partialAuthContext);
-    return createParamDecorator(
-      async (data: unknown, executionContext: ExecutionContext): Promise<ModifyRelationOptions<unknown, unknown>> => {
-        const context = getContext<AuthorizerContext<DTO>>(executionContext);
-        return {
-          filter: await getAuthorizerFilter(context, authorizationContext),
-          relationFilter: await getRelationAuthFilter(context, relationName, authorizationContext),
-        };
-      },
-    )()(target, propertyKey, parameterIndex);
+    return createParamDecorator(async (data: unknown, executionContext: ExecutionContext): Promise<
+      ModifyRelationOptions<unknown, unknown>
+    > => {
+      const context = getContext<AuthorizerContext<DTO>>(executionContext);
+      return {
+        filter: await getAuthorizerFilter(context, authorizationContext),
+        relationFilter: await getRelationAuthFilter(context, relationName, authorizationContext),
+      };
+    })()(target, propertyKey, parameterIndex);
   };
 }

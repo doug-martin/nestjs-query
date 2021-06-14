@@ -14,20 +14,24 @@ export interface RelatableOpts extends BaseResolverOptions {
   enableAggregate?: boolean;
 }
 
-export const Relatable = <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
-  DTOClass: Class<DTO>,
-  opts: RelatableOpts,
-) => <B extends Class<ServiceResolver<DTO, QS>>>(Base: B): B => {
-  const { enableTotalCount, enableAggregate } = opts;
-  const relations = getRelations(DTOClass, opts);
-  const references = getReferences(DTOClass, opts);
+export const Relatable =
+  <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
+    DTOClass: Class<DTO>,
+    opts: RelatableOpts,
+  ) =>
+  <B extends Class<ServiceResolver<DTO, QS>>>(Base: B): B => {
+    const { enableTotalCount, enableAggregate } = opts;
+    const relations = getRelations(DTOClass, opts);
+    const references = getReferences(DTOClass, opts);
 
-  const referencesMixin = ReferencesRelationMixin(DTOClass, references);
-  const aggregateRelationsMixin = AggregateRelationsMixin(DTOClass, { ...relations, enableAggregate });
-  const readRelationsMixin = ReadRelationsMixin(DTOClass, { ...relations, enableTotalCount });
-  const updateRelationsMixin = UpdateRelationsMixin(DTOClass, relations);
+    const referencesMixin = ReferencesRelationMixin(DTOClass, references);
+    const aggregateRelationsMixin = AggregateRelationsMixin(DTOClass, { ...relations, enableAggregate });
+    const readRelationsMixin = ReadRelationsMixin(DTOClass, { ...relations, enableTotalCount });
+    const updateRelationsMixin = UpdateRelationsMixin(DTOClass, relations);
 
-  return referencesMixin(
-    aggregateRelationsMixin(readRelationsMixin(updateRelationsMixin(RemoveRelationsMixin(DTOClass, relations)(Base)))),
-  );
-};
+    return referencesMixin(
+      aggregateRelationsMixin(
+        readRelationsMixin(updateRelationsMixin(RemoveRelationsMixin(DTOClass, relations)(Base))),
+      ),
+    );
+  };

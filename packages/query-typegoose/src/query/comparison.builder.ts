@@ -60,7 +60,7 @@ export class ComparisonBuilder<Entity> {
       querySelector = { [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F]) };
     }
     if (normalizedCmp.includes('like')) {
-      querySelector = (this.likeComparison(normalizedCmp, val) as unknown) as QuerySelector<Entity[F]>;
+      querySelector = this.likeComparison(normalizedCmp, val) as unknown as QuerySelector<Entity[F]>;
     }
     if (normalizedCmp.includes('between')) {
       querySelector = this.betweenComparison(normalizedCmp, field, val);

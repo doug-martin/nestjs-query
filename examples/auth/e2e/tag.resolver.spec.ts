@@ -960,7 +960,7 @@ describe('TagResolver (auth - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
+          expect(body.errors[0].message).toBe('Field "DeleteOneTagInput.id" of required type "ID!" was not provided.');
         }));
   });
 
@@ -1107,11 +1107,8 @@ describe('TagResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const {
-            edges,
-            pageInfo,
-            totalCount,
-          }: CursorConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> =
+            body.data.addTodoItemsToTag.todoItems;
           expect(body.data.addTodoItemsToTag.id).toBe('1');
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
@@ -1181,11 +1178,8 @@ describe('TagResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const {
-            edges,
-            pageInfo,
-            totalCount,
-          }: CursorConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> =
+            body.data.removeTodoItemsFromTag.todoItems;
           expect(body.data.removeTodoItemsFromTag.id).toBe('1');
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',

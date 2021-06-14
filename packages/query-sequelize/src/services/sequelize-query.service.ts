@@ -37,7 +37,8 @@ import { RelationQueryService } from './relation-query.service';
  */
 export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>>
   extends RelationQueryService<Entity>
-  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
+  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
+{
   readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   constructor(readonly model: ModelCtor<Entity>) {
@@ -67,7 +68,7 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
     if (!result) {
       return [{}];
     }
-    return AggregateBuilder.convertToAggregateResponse((result as unknown) as Record<string, unknown>[]);
+    return AggregateBuilder.convertToAggregateResponse(result as unknown as Record<string, unknown>[]);
   }
 
   async count(filter: Filter<Entity>): Promise<number> {
@@ -223,7 +224,7 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
   // eslint-disable-next-line @typescript-eslint/ban-types
   private getChangedValues(record: object): object {
     if (record instanceof this.model) {
-      const recordEntity = (record as unknown) as Entity;
+      const recordEntity = record as unknown as Entity;
       const raw = recordEntity.get({ plain: true });
       const changed = recordEntity.changed();
       if (changed === false) {

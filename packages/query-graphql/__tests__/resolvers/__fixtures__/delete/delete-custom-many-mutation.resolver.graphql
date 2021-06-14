@@ -18,11 +18,11 @@ type Query {
 }
 
 type Mutation {
-  deleteOneTestResolverDTO(input: DeleteOneInput!): TestResolverDTODeleteResponse!
+  deleteOneTestResolverDTO(input: DeleteOneTestResolverDTOInput!): TestResolverDTODeleteResponse!
   delete_many_test(input: DeleteManyTestResolverDTOSInput!): DeleteManyResponse!
 }
 
-input DeleteOneInput {
+input DeleteOneTestResolverDTOInput {
   """The id of the record to delete."""
   id: ID!
 }

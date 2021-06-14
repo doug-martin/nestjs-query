@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-query/query-sequelize",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "description": "Sequelize adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.26.0",
+    "@nestjs-query/core": "0.27.0",
     "camel-case": "^4.1.2",
     "lodash.pick": "4.4.0",
     "tslib": "^2.1.0"
@@ -30,15 +30,15 @@
     "sequelize-typescript": "^1.1.0 || ^2.0.0"
   },
   "devDependencies": {
-    "@nestjs/common": "7.6.15",
+    "@nestjs/common": "7.6.17",
     "@nestjs/sequelize": "0.2.0",
-    "@nestjs/testing": "7.6.15",
+    "@nestjs/testing": "7.6.17",
     "@types/lodash.pick": "4.4.6",
     "sequelize": "6.6.2",
     "sequelize-typescript": "2.1.0",
     "sqlite3": "5.0.2",
     "ts-mockito": "2.6.1",
-    "typescript": "4.2.4"
+    "typescript": "4.3.2"
   },
   "repository": {
     "type": "git",

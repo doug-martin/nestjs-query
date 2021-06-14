@@ -527,7 +527,7 @@ describe('TagResolver (basic - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
+          expect(body.errors[0].message).toBe('Field "DeleteOneTagInput.id" of required type "ID!" was not provided.');
         }));
   });
 

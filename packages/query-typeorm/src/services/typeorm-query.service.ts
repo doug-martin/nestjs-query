@@ -43,7 +43,8 @@ export interface TypeOrmQueryServiceOpts<Entity> {
  */
 export class TypeOrmQueryService<Entity>
   extends RelationQueryService<Entity>
-  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
+  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
+{
   readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   readonly useSoftDelete: boolean;
@@ -288,7 +289,7 @@ export class TypeOrmQueryService<Entity>
   }
 
   private ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
-    if (this.repo.hasId((e as unknown) as Entity)) {
+    if (this.repo.hasId(e as unknown as Entity)) {
       throw new Error('Id cannot be specified when updating');
     }
   }

@@ -18,11 +18,11 @@ type Query {
 }
 
 type Mutation {
-  deleteOneTest(input: DeleteOneInput!): TestDeleteResponse!
+  deleteOneTest(input: DeleteOneTestInput!): TestDeleteResponse!
   deleteManyTests(input: DeleteManyTestsInput!): DeleteManyResponse!
 }
 
-input DeleteOneInput {
+input DeleteOneTestInput {
   """The id of the record to delete."""
   id: ID!
 }

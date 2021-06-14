@@ -125,9 +125,7 @@ function createAssemblerAutoResolver<DTO, Asmblr, C, U, R, PS extends PagingStra
   @Resolver(() => DTOClass)
   class AutoResolver extends CRUDResolver(DTOClass, resolverOpts) {
     constructor(
-      @InjectAssemblerQueryService(
-        (AssemblerClass as unknown) as Class<Assembler<DTO, unknown, C, unknown, U, unknown>>,
-      )
+      @InjectAssemblerQueryService(AssemblerClass as unknown as Class<Assembler<DTO, unknown, C, unknown, U, unknown>>)
       service: QueryService<DTO, C, U>,
       @InjectPubSub() readonly pubSub: PubSub,
     ) {

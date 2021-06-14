@@ -7,8 +7,8 @@ import { PagingStrategies } from './types/query/paging';
 
 interface DTOModuleOpts<DTO> {
   DTOClass: Class<DTO>;
-  CreateDTOClass: Class<DTO>;
-  UpdateDTOClass: Class<DTO>;
+  CreateDTOClass?: Class<DTO>;
+  UpdateDTOClass?: Class<DTO>;
 }
 
 export interface NestjsQueryGraphqlModuleOpts {
@@ -18,7 +18,7 @@ export interface NestjsQueryGraphqlModuleOpts {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assemblers?: Class<Assembler<any, any, any, any, any, any>>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  resolvers: AutoResolverOpts<any, any, unknown, unknown, ReadResolverOpts<any>, PagingStrategies>[];
+  resolvers?: AutoResolverOpts<any, any, unknown, unknown, ReadResolverOpts<any>, PagingStrategies>[];
   dtos?: DTOModuleOpts<unknown>[];
   pubSub?: Provider<GraphQLPubSub>;
 }
@@ -65,16 +65,16 @@ export class NestjsQueryGraphQLModule {
   }
 
   private static getResolverProviders(opts: NestjsQueryGraphqlModuleOpts): Provider<unknown>[] {
-    return createResolvers(opts.resolvers);
+    return createResolvers(opts.resolvers ?? []);
   }
 
   private static getAuthorizerProviders(opts: NestjsQueryGraphqlModuleOpts): Provider<unknown>[] {
-    const resolverDTOs = opts.resolvers.map((r) => r.DTOClass);
+    const resolverDTOs = opts.resolvers?.map((r) => r.DTOClass) ?? [];
     const dtos = opts.dtos?.map((o) => o.DTOClass) ?? [];
     return createAuthorizerProviders([...resolverDTOs, ...dtos]);
   }
 
   private static getHookProviders(opts: NestjsQueryGraphqlModuleOpts): Provider<unknown>[] {
-    return createHookProviders([...opts.resolvers, ...(opts.dtos ?? [])]);
+    return createHookProviders([...(opts.resolvers ?? []), ...(opts.dtos ?? [])]);
   }
 }

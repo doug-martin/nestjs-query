@@ -11,12 +11,12 @@ cover the different paging strategies and their applicable use cases.
 The following examples are based on the following `TodoItemDTO`
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: string;
 
   @FilterableField()
@@ -102,13 +102,13 @@ is a set of fields that uniquely identify a record (e.g. `id`).
 To enable key set based paging all you need to do is decorate your `DTO` with the `@KeySet` decorator.
 
 ```ts
-import { FilterableField, KeySet } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 @KeySet(['id'])
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()
@@ -499,13 +499,13 @@ type TodoItem {
 To enable OFFSET based paging all you need to do is set the `pagingStrategy` option using the `@QueryOptions` decorator.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, QueryOptions } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 @QueryOptions({ pagingStrategy: PagingStrategies.OFFSET })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()
@@ -673,13 +673,13 @@ To disable paging all you can set the `pagingStrategy` option using the `@QueryO
 `PagingStrategies.NONE`.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, QueryOptions } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 @QueryOptions({ pagingStrategy: PagingStrategies.NONE })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()

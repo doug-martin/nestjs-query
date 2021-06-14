@@ -1,0 +1,15 @@
+type Query {
+  updateTest(input: UpdateOneCustomId!): Int!
+}
+
+input UpdateOneCustomId {
+  """The id of the record to update"""
+  id: String!
+
+  """The update to apply."""
+  update: FakeUpdateOneType!
+}
+
+input FakeUpdateOneType {
+  name: String!
+}

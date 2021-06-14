@@ -13,33 +13,32 @@ export interface ReferenceResolverOpts {
  * @internal
  * Mixin to expose `resolveReference` for a DTO on the resolver.
  */
-export const Referenceable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
-  DTOClass: Class<DTO>,
-  opts: ReferenceResolverOpts,
-) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): B => {
-  if (!('key' in opts) || opts.key === undefined) {
-    return BaseClass;
-  }
-  const { key } = opts;
-  @Resolver(() => DTOClass, { isAbstract: true })
-  class ResolveReferenceResolverBase extends BaseClass {
-    @ResolveReference()
-    async resolveReference(representation: RepresentationType): Promise<DTO> {
-      const id = representation[key];
-      if (id === undefined) {
-        throw new BadRequestException(
-          `Unable to resolve reference, missing required key ${key} for ${getDTONames(DTOClass).baseName}`,
-        );
-      }
-      return this.service.getById(representation[key] as string | number);
+export const Referenceable =
+  <DTO, QS extends QueryService<DTO, unknown, unknown>>(DTOClass: Class<DTO>, opts: ReferenceResolverOpts) =>
+  <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): B => {
+    if (!('key' in opts) || opts.key === undefined) {
+      return BaseClass;
     }
-  }
-  return ResolveReferenceResolverBase;
-};
+    const { key } = opts;
+    @Resolver(() => DTOClass, { isAbstract: true })
+    class ResolveReferenceResolverBase extends BaseClass {
+      @ResolveReference()
+      async resolveReference(representation: RepresentationType): Promise<DTO> {
+        const id = representation[key];
+        if (id === undefined) {
+          throw new BadRequestException(
+            `Unable to resolve reference, missing required key ${key} for ${getDTONames(DTOClass).baseName}`,
+          );
+        }
+        return this.service.getById(representation[key] as string | number);
+      }
+    }
+    return ResolveReferenceResolverBase;
+  };
 
 export const ReferenceResolver = <
   DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
 >(
   DTOClass: Class<DTO>,
   opts: ReferenceResolverOpts = {},

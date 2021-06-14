@@ -1,4 +1,4 @@
-import { Class, FilterFieldComparison, FilterComparisonOperators } from '@nestjs-query/core';
+import { Class, FilterFieldComparison, FilterComparisonOperators, isNamed } from '@nestjs-query/core';
 import { IsBoolean, IsOptional } from 'class-validator';
 import { upperCaseFirst } from 'upper-case-first';
 import {
@@ -48,10 +48,6 @@ const knownTypes: Set<ReturnTypeFuncValue> = new Set([
   GraphQLTimestamp,
 ]);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isNamed = (SomeType: any): SomeType is { name: string } =>
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  'name' in SomeType && typeof SomeType.name === 'string';
 /** @internal */
 const getTypeName = (SomeType: ReturnTypeFuncValue): string => {
   if (knownTypes.has(SomeType) || isNamed(SomeType)) {

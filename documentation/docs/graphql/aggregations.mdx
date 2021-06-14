@@ -12,15 +12,16 @@ When aggregations are enabled `nestjs-query` will expose a new query that enable
 Only fields decorated with `@FilterableField` will be exposed in aggregate queries.
 :::
 
-All examples will be based on the following `TodoItem` DTO. All fields except `age`, because it is not decorated with `@FilterableField`, will be exposed in aggregate queries.
+All examples will be based on the following `TodoItem` DTO. All fields except `age`, because it is not decorated with
+ `@FilterableField` or `@IDField`, will be exposed in aggregate queries.
 
 ```ts  title="todo-item/dto/todo-item.dto.ts"
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()
@@ -833,7 +834,7 @@ export class TodoItemModule {}
 You can also selectively disable aggregates on an individual relation by specifying the enableAggregate option when defining the relation.
 
 ```ts {7}
-import { FilterableField, FilterableConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, FilterableConnection, IDField } from '@nestjs-query/query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { AuthGuard } from '../../auth.guard';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
@@ -841,7 +842,7 @@ import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 @ObjectType('TodoItem')
 @FilterableConnection('subTasks', () => SubTaskDTO, { enableAggregate: false })
 export class TodoItemDTO {
-  @FilterableField(() => ID)
+  @IDField(() => ID)
   id!: number;
 
   @FilterableField()

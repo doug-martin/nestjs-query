@@ -1,28 +1,23 @@
 import { Class } from '@nestjs-query/core';
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty } from 'class-validator';
+import { getDTOIdTypeOrDefault } from '../common';
 
 export interface DeleteOneInputType {
   id: string | number;
 }
 
-/** @internal */
-let deleteOneInputType: Class<DeleteOneInputType> | null = null;
-
 /**
  * The input type for delete one endpoints.
  */
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export function DeleteOneInputType(): Class<DeleteOneInputType> {
-  if (deleteOneInputType) {
-    return deleteOneInputType;
-  }
-  @InputType()
+export function DeleteOneInputType(DTOClass: Class<unknown>): Class<DeleteOneInputType> {
+  const IDType = getDTOIdTypeOrDefault([DTOClass]);
+  @InputType({ isAbstract: true })
   class DeleteOneInput implements DeleteOneInputType {
     @IsNotEmpty()
-    @Field(() => ID, { description: 'The id of the record to delete.' })
+    @Field(() => IDType, { description: 'The id of the record to delete.' })
     id!: string | number;
   }
-  deleteOneInputType = DeleteOneInput;
-  return deleteOneInputType;
+  return DeleteOneInput;
 }

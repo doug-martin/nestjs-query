@@ -26,7 +26,8 @@ export interface TypegooseQueryServiceOpts {
 
 export class TypegooseQueryService<Entity extends Base>
   extends ReferenceQueryService<Entity>
-  implements QueryService<Entity> {
+  implements QueryService<Entity>
+{
   constructor(
     readonly Model: ReturnModelType<new () => Entity>,
     readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model),
@@ -242,8 +243,6 @@ export class TypegooseQueryService<Entity extends Base>
   }
 
   private getUpdateQuery(entity: DocumentType<Entity>): UpdateQuery<DocumentType<Entity>> {
-    const arrayUpdateQuery: any = this.buildArrayUpdateQuery(entity as DeepPartial<Entity>);
-
     if (entity instanceof this.Model) {
       return entity.modifiedPaths().reduce(
         (update: UpdateQuery<DocumentType<Entity>>, k) =>
@@ -252,7 +251,7 @@ export class TypegooseQueryService<Entity extends Base>
         {},
       );
     }
-
+    const arrayUpdateQuery: UpdateQuery<unknown> = this.buildArrayUpdateQuery(entity as DeepPartial<Entity>);
     return { ...entity, ...arrayUpdateQuery } as UpdateQuery<DocumentType<Entity>>;
   }
 
@@ -269,7 +268,7 @@ export class TypegooseQueryService<Entity extends Base>
         typeof entity[key as keyof Entity] === 'object'
       ) {
         // Converting the type of the object as it has the custom array input type.
-        const convert = (entity[key as keyof Entity] as unknown) as { push: Entity[]; pull: Entity[] };
+        const convert = entity[key as keyof Entity] as unknown as { push: Entity[]; pull: Entity[] };
 
         if (Object.prototype.hasOwnProperty.call(convert, 'push')) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

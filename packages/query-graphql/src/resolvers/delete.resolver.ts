@@ -52,6 +52,14 @@ const defaultDeleteManyInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): 
   return DM;
 };
 
+/** @internal */
+const defaultDeleteOneInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): Class<DeleteOneInputType> => {
+  const { baseName } = dtoNames;
+  @InputType(`DeleteOne${baseName}Input`)
+  class DM extends DeleteOneInputType(DTOClass) {}
+  return DM;
+};
+
 /**
  * @internal
  * Mixin to add `delete` graphql endpoints.
@@ -67,7 +75,10 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
   const enableManySubscriptions = opts.many?.enableSubscriptions ?? enableSubscriptions;
   const deletedOneEvent = getDTOEventName(EventType.DELETED_ONE, DTOClass);
   const deletedManyEvent = getDTOEventName(EventType.DELETED_MANY, DTOClass);
-  const { DeleteOneInput = DeleteOneInputType(), DeleteManyInput = defaultDeleteManyInput(dtoNames, DTOClass) } = opts;
+  const {
+    DeleteOneInput = defaultDeleteOneInput(dtoNames, DTOClass),
+    DeleteManyInput = defaultDeleteManyInput(dtoNames, DTOClass),
+  } = opts;
   const deleteOneMutationName = opts.one?.name ?? `deleteOne${baseName}`;
   const deleteManyMutationName = opts.many?.name ?? `deleteMany${pluralBaseName}`;
   const DMR = DeleteManyResponseType();
@@ -142,14 +153,16 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
 
     async publishDeletedOneEvent(dto: DeleteOneResponse, authorizeFilter?: Filter<DTO>): Promise<void> {
       if (this.pubSub) {
-        const eventName = authorizeFilter != null ? getUniqueNameForEvent(deletedOneEvent, authorizeFilter) : deletedOneEvent;
+        const eventName =
+          authorizeFilter != null ? getUniqueNameForEvent(deletedOneEvent, authorizeFilter) : deletedOneEvent;
         await this.pubSub.publish(eventName, { [deletedOneEvent]: dto });
       }
     }
 
     async publishDeletedManyEvent(dmr: DeleteManyResponse, authorizeFilter?: Filter<DTO>): Promise<void> {
       if (this.pubSub) {
-        const eventName = authorizeFilter != null ? getUniqueNameForEvent(deletedManyEvent, authorizeFilter) : deletedManyEvent;
+        const eventName =
+          authorizeFilter != null ? getUniqueNameForEvent(deletedManyEvent, authorizeFilter) : deletedManyEvent;
         await this.pubSub.publish(eventName, { [deletedManyEvent]: dmr });
       }
     }
@@ -164,11 +177,15 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
     )
     // input required so graphql subscription filtering will work.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    deletedOneSubscription(@Args() input?: DOSA, authorizeFilter?: Filter<DTO>): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
+    deletedOneSubscription(
+      @Args() input?: DOSA,
+      authorizeFilter?: Filter<DTO>,
+    ): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
       if (!enableOneSubscriptions || !this.pubSub) {
         throw new Error(`Unable to subscribe to ${deletedOneEvent}`);
       }
-      const eventName = authorizeFilter != null ? getUniqueNameForEvent(deletedOneEvent, authorizeFilter) : deletedOneEvent;
+      const eventName =
+        authorizeFilter != null ? getUniqueNameForEvent(deletedOneEvent, authorizeFilter) : deletedOneEvent;
       return this.pubSub.asyncIterator(eventName);
     }
 
@@ -179,7 +196,8 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
       if (!enableManySubscriptions || !this.pubSub) {
         throw new Error(`Unable to subscribe to ${deletedManyEvent}`);
       }
-      const eventName = authorizeFilter != null ? getUniqueNameForEvent(deletedManyEvent, authorizeFilter) : deletedManyEvent;
+      const eventName =
+        authorizeFilter != null ? getUniqueNameForEvent(deletedManyEvent, authorizeFilter) : deletedManyEvent;
       return this.pubSub.asyncIterator(eventName);
     }
   }

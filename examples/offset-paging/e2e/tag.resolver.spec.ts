@@ -472,7 +472,7 @@ describe('TagResolver (limitOffset - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneInput.id" of required type "ID!" was not provided.');
+          expect(body.errors[0].message).toBe('Field "DeleteOneTagInput.id" of required type "ID!" was not provided.');
         }));
   });
 
@@ -569,10 +569,8 @@ describe('TagResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const {
-            id,
-            todoItems,
-          }: { id: string; todoItems: OffsetConnectionType<TodoItemDTO> } = body.data.addTodoItemsToTag;
+          const { id, todoItems }: { id: string; todoItems: OffsetConnectionType<TodoItemDTO> } =
+            body.data.addTodoItemsToTag;
           expect(id).toBe('1');
           expect(todoItems.nodes).toHaveLength(5);
           expect(todoItems.nodes.map((e) => e.title).sort()).toEqual([
@@ -608,10 +606,8 @@ describe('TagResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const {
-            id,
-            todoItems,
-          }: { id: string; todoItems: OffsetConnectionType<TodoItemDTO> } = body.data.removeTodoItemsFromTag;
+          const { id, todoItems }: { id: string; todoItems: OffsetConnectionType<TodoItemDTO> } =
+            body.data.removeTodoItemsFromTag;
           expect(id).toBe('1');
           expect(todoItems.nodes).toHaveLength(2);
           expect(todoItems.nodes.map((e) => e.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
