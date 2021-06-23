@@ -171,12 +171,22 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
           operationGroup: OperationGroup.CREATE,
           many: true,
         }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        authorizeFilter?: Filter<DTO>,
+        authorizeFilter?: Filter<DTO> | Filter<DTO>[],
       ): Promise<DTO[]> {
         // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
         const created = await this.service.createMany(input.input.input);
         if (enableManySubscriptions) {
-          await Promise.all(created.map((c) => this.publishCreatedEvent(c, authorizeFilter)));
+          if (Array.isArray(authorizeFilter)) {
+            let i = -1;
+            await Promise.all(
+              created.map((c) => {
+                i += 1;
+                return this.publishCreatedEvent(c, authorizeFilter[i]);
+              }),
+            );
+          } else {
+            await Promise.all(created.map((c) => this.publishCreatedEvent(c, authorizeFilter)));
+          }
         }
         return created;
       }
