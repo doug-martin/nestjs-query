@@ -72,6 +72,6 @@
     "graphql": "15.5.1",
     "graphql-subscriptions": "1.2.1",
     "ts-mockito": "2.6.1",
-    "typescript": "4.3.4"
+    "typescript": "4.3.5"
   }
 }
