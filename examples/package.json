@@ -23,7 +23,7 @@
     "@nestjs/graphql": "7.11.0",
     "@nestjs/jwt": "8.0.0",
     "@nestjs/mongoose": "7.2.4",
-    "@nestjs/passport": "7.1.6",
+    "@nestjs/passport": "8.0.0",
     "@nestjs/platform-express": "7.6.18",
     "@nestjs/sequelize": "0.2.0",
     "@nestjs/typeorm": "7.1.5",
