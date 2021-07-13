@@ -28,7 +28,7 @@ services:
     ports:
       - "6379:6379"
   mongo:
-    image: "mongo:4.4"
+    image: "mongo:5.0"
     restart: always
     ports:
       - "27017:27017"
