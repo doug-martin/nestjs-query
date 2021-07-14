@@ -42,9 +42,9 @@ export interface UpdateResolver<DTO, U, QS extends QueryService<DTO, unknown, U>
     authFilter?: Filter<DTO>,
   ): Promise<UpdateManyResponse>;
 
-  updatedOneSubscription(input?: SubscriptionArgsType<DTO>): AsyncIterator<UpdatedEvent<DTO>>;
+  updatedOneSubscription(input?: SubscriptionArgsType<DTO>, authFilter?: Filter<DTO>): AsyncIterator<UpdatedEvent<DTO>>;
 
-  updatedManySubscription(): AsyncIterator<UpdatedEvent<DeleteManyResponse>>;
+  updatedManySubscription(authFilter?: Filter<DTO>): AsyncIterator<UpdatedEvent<DeleteManyResponse>>;
 }
 
 /** @internal */
