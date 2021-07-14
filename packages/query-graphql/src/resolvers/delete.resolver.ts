@@ -39,9 +39,12 @@ export interface DeleteResolver<DTO, QS extends QueryService<DTO, unknown, unkno
     authorizeFilter?: Filter<DTO>,
   ): Promise<DeleteManyResponse>;
 
-  deletedOneSubscription(input?: SubscriptionArgsType<DTO>): AsyncIterator<DeletedEvent<Partial<DTO>>>;
+  deletedOneSubscription(
+    input?: SubscriptionArgsType<DTO>,
+    authorizeFilter?: Filter<DTO>,
+  ): AsyncIterator<DeletedEvent<Partial<DTO>>>;
 
-  deletedManySubscription(): AsyncIterator<DeletedEvent<DeleteManyResponse>>;
+  deletedManySubscription(authorizeFilter?: Filter<DTO>): AsyncIterator<DeletedEvent<DeleteManyResponse>>;
 }
 
 /** @internal */
