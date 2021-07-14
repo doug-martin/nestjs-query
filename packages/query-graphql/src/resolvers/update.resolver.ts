@@ -213,11 +213,20 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
         commonResolverOpts,
         {
           enableSubscriptions: enableOneSubscriptions,
+          interceptors: [AuthorizerInterceptor(DTOClass)],
         },
       )
       // input required so graphql subscription filtering will work.
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      updatedOneSubscription(@Args() input?: UOSA, authorizeFilter?: Filter<DTO>): AsyncIterator<UpdatedEvent<DTO>> {
+      updatedOneSubscription(
+        @Args() input?: UOSA,
+        @AuthorizerFilter({
+          operationGroup: OperationGroup.UPDATE,
+          operationName: 'onUpdateOne',
+          many: false,
+        })
+        authorizeFilter?: Filter<DTO>,
+      ): AsyncIterator<UpdatedEvent<DTO>> {
         if (!enableOneSubscriptions || !this.pubSub) {
           throw new Error(`Unable to subscribe to ${updateOneEvent}`);
         }
@@ -228,8 +237,16 @@ export const Updateable = <DTO, U, QS extends QueryService<DTO, unknown, U>>(
 
       @ResolverSubscription(() => UMR, { name: updateManyEvent }, commonResolverOpts, {
         enableSubscriptions: enableManySubscriptions,
+        interceptors: [AuthorizerInterceptor(DTOClass)],
       })
-      updatedManySubscription(authorizeFilter?: Filter<DTO>): AsyncIterator<UpdatedEvent<DeleteManyResponse>> {
+      updatedManySubscription(
+        @AuthorizerFilter({
+          operationGroup: OperationGroup.UPDATE,
+          operationName: 'onUpdateMany',
+          many: true,
+        })
+        authorizeFilter?: Filter<DTO>,
+      ): AsyncIterator<UpdatedEvent<DeleteManyResponse>> {
         if (!enableManySubscriptions || !this.pubSub) {
           throw new Error(`Unable to subscribe to ${updateManyEvent}`);
         }

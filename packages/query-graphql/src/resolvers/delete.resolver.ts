@@ -182,6 +182,11 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       deletedOneSubscription(
         @Args() input?: DOSA,
+        @AuthorizerFilter({
+          operationGroup: OperationGroup.DELETE,
+          operationName: 'onDeleteOne',
+          many: false,
+        })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
         if (!enableOneSubscriptions || !this.pubSub) {
@@ -195,7 +200,14 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(
       @ResolverSubscription(() => DMR, { name: deletedManyEvent }, commonResolverOpts, {
         enableSubscriptions: enableManySubscriptions,
       })
-      deletedManySubscription(authorizeFilter?: Filter<DTO>): AsyncIterator<DeletedEvent<DeleteManyResponse>> {
+      deletedManySubscription(
+        @AuthorizerFilter({
+          operationGroup: OperationGroup.DELETE,
+          operationName: 'onDeleteMany',
+          many: true,
+        })
+        authorizeFilter?: Filter<DTO>,
+      ): AsyncIterator<DeletedEvent<DeleteManyResponse>> {
         if (!enableManySubscriptions || !this.pubSub) {
           throw new Error(`Unable to subscribe to ${deletedManyEvent}`);
         }
