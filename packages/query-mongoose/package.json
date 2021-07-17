@@ -26,13 +26,13 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
-    "@nestjs/mongoose": "^7.0.0",
+    "@nestjs/mongoose": "^7.0.0 || ^8.0.0",
     "mongodb": "^3.6.0",
     "mongoose": "^5.10.0"
   },
   "devDependencies": {
     "@nestjs/common": "7.6.18",
-    "@nestjs/mongoose": "7.2.4",
+    "@nestjs/mongoose": "8.0.0",
     "@nestjs/testing": "7.6.18",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
