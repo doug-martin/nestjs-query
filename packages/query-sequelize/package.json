@@ -25,13 +25,13 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
-    "@nestjs/sequelize": "^0.2.0",
+    "@nestjs/sequelize": "^0.2.0 || ^8.0.0",
     "sequelize": "^6.5.0",
     "sequelize-typescript": "^1.1.0 || ^2.0.0"
   },
   "devDependencies": {
     "@nestjs/common": "7.6.18",
-    "@nestjs/sequelize": "0.2.0",
+    "@nestjs/sequelize": "8.0.0",
     "@nestjs/testing": "7.6.18",
     "@types/lodash.pick": "4.4.6",
     "sequelize": "6.6.2",
