@@ -25,15 +25,15 @@
     "tslib": "^2.1.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.0",
+    "@nestjs/common": "^7.0.0 || ^8.0.0",
     "@typegoose/typegoose": "^8.0.0-beta.2",
     "mongodb": "3.6.9",
     "mongoose": "^5.11.18",
     "nestjs-typegoose": "^7.1.38"
   },
   "devDependencies": {
-    "@nestjs/common": "7.6.18",
-    "@nestjs/testing": "7.6.18",
+    "@nestjs/common": "8.0.4",
+    "@nestjs/testing": "8.0.4",
     "@typegoose/typegoose": "8.0.0-beta.7",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
