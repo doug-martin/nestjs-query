@@ -26,7 +26,7 @@
     "@nestjs/passport": "8.0.0",
     "@nestjs/platform-express": "7.6.18",
     "@nestjs/sequelize": "0.2.0",
-    "@nestjs/typeorm": "7.1.5",
+    "@nestjs/typeorm": "8.0.1",
     "@typegoose/typegoose": "8.0.0-beta.7",
     "apollo-server-express": "2.25.2",
     "apollo-server-plugin-base": "0.13.0",
