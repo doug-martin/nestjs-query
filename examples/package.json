@@ -35,7 +35,7 @@
     "graphql": "15.5.1",
     "graphql-query-complexity": "0.8.1",
     "graphql-tools": "7.0.5",
-    "mongoose": "5.12.0",
+    "mongoose": "5.13.3",
     "mysql2": "2.2.5",
     "nestjs-typegoose": "7.1.38",
     "passport": "0.4.1",

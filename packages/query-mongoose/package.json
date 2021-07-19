@@ -40,7 +40,7 @@
     "class-transformer": "0.4.0",
     "mongodb": "3.6.9",
     "mongodb-memory-server": "6.9.6",
-    "mongoose": "5.12.0",
+    "mongoose": "5.13.3",
     "ts-mockito": "2.6.1",
     "typescript": "4.3.5"
   },
