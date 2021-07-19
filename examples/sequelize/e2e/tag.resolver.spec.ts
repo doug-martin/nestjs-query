@@ -1,7 +1,7 @@
 import { AggregateResponse } from '@nestjs-query/core';
 import { CursorConnectionType } from '@nestjs-query/query-graphql';
 import { Test } from '@nestjs/testing';
-import { Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';

@@ -36,12 +36,12 @@
     "tslib": "^2.1.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.0",
+    "@nestjs/common": "^8.0.4",
     "class-transformer": "^0.2.3 || 0.3.1 || 0.4"
   },
   "devDependencies": {
-    "@nestjs/common": "7.6.18",
-    "@nestjs/testing": "7.6.18",
+    "@nestjs/common": "8.0.4",
+    "@nestjs/testing": "8.0.4",
     "@types/lodash.merge": "4.6.6",
     "class-transformer": "0.4.0",
     "ts-mockito": "2.6.1",
