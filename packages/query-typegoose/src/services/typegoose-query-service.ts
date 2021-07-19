@@ -237,7 +237,11 @@ export class TypegooseQueryService<Entity extends Base>
   }
 
   private ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
-    if (Object.keys(e).find((f) => f === 'id' || f === '_id')) {
+    if (
+      Object.keys(e)
+        .filter((v) => typeof e[v] !== `undefined`)
+        .find((f) => f === 'id' || f === '_id')
+    ) {
       throw new Error('Id cannot be specified when updating or creating');
     }
   }
