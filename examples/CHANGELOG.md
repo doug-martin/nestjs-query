@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.28.0](https://github.com/doug-martin/nestjs-query/compare/v0.27.0...v0.28.0) (2021-07-19)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @nestjs/jwt to v8 ([b3eeed3](https://github.com/doug-martin/nestjs-query/commit/b3eeed30c45d9cfb22d2ebe8c9dfcf94f66a007e))
+* **deps:** update dependency @nestjs/passport to v7.1.6 ([5f02632](https://github.com/doug-martin/nestjs-query/commit/5f02632ff73965063ef6ad29764d586e7bd33a16))
+* **deps:** update dependency @nestjs/passport to v8 ([f861bf8](https://github.com/doug-martin/nestjs-query/commit/f861bf85da858c1f9087c735e01a382d0475ec10))
+* **deps:** update dependency apollo-server-express to v2.24.1 ([8f549e5](https://github.com/doug-martin/nestjs-query/commit/8f549e5fbbf3e1c4fcf8952d4a0bb1cf2e76f93c))
+* **deps:** update dependency apollo-server-express to v2.25.0 ([1e14523](https://github.com/doug-martin/nestjs-query/commit/1e1452385767281275f9f165a583049c9fe521b9))
+* **deps:** update dependency apollo-server-express to v2.25.1 ([3ddf4ce](https://github.com/doug-martin/nestjs-query/commit/3ddf4cee097f2f964b33baa6c7e8af75b591b8ee))
+* **deps:** update dependency apollo-server-express to v2.25.2 ([5b4e960](https://github.com/doug-martin/nestjs-query/commit/5b4e9608707b37747def496dba193840da9d31de))
+* **deps:** update dependency apollo-server-plugin-base to v0.13.0 ([aaef654](https://github.com/doug-martin/nestjs-query/commit/aaef6543a2e833f29ce89e9e078b08de6be1b128))
+* **deps:** update dependency rxjs to v7.1.0 ([99e564d](https://github.com/doug-martin/nestjs-query/commit/99e564d78204aad43891ebae15b98fc5a9e07587))
+* **deps:** update dependency rxjs to v7.2.0 ([276df90](https://github.com/doug-martin/nestjs-query/commit/276df909e516814172c5f4c626c4ad320997f9b5))
+
+
+
+
+
 # [0.27.0](https://github.com/doug-martin/nestjs-query/compare/v0.26.0...v0.27.0) (2021-05-12)
 
 

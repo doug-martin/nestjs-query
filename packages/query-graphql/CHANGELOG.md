@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.28.0](https://github.com/doug-martin/nestjs-query/compare/v0.27.0...v0.28.0) (2021-07-19)
+
+
+### Bug Fixes
+
+* NestjsQueryGraphqlModuleOpts ([984f591](https://github.com/doug-martin/nestjs-query/commit/984f5917db5971a336054186f8a7fddc522745cc))
+
+
+
+
+
 # [0.27.0](https://github.com/doug-martin/nestjs-query/compare/v0.26.0...v0.27.0) (2021-05-12)
 
 
