@@ -44,7 +44,7 @@
     "pg": "8.6.0",
     "rimraf": "3.0.2",
     "rxjs": "7.2.0",
-    "sequelize": "6.6.2",
+    "sequelize": "6.6.5",
     "sequelize-typescript": "2.1.0",
     "typeorm": "0.2.34",
     "typeorm-seeding": "1.6.1"
