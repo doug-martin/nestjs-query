@@ -34,7 +34,7 @@
   "devDependencies": {
     "@nestjs/common": "8.0.4",
     "@nestjs/testing": "8.0.4",
-    "@typegoose/typegoose": "8.0.0-beta.7",
+    "@typegoose/typegoose": "8.0.0-beta.21",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
     "@types/mongodb": "3.6.19",
