@@ -27,7 +27,7 @@
   "peerDependencies": {
     "@nestjs/common": "^8.0.4",
     "@typegoose/typegoose": "^8.0.0-beta.2",
-    "mongodb": "3.6.9",
+    "mongodb": "3.6.10",
     "mongoose": "^5.11.18",
     "nestjs-typegoose": "^7.1.38"
   },
@@ -37,9 +37,9 @@
     "@typegoose/typegoose": "8.0.0-beta.7",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
-    "@types/mongodb": "3.6.19",
+    "@types/mongodb": "3.6.20",
     "class-transformer": "0.4.0",
-    "mongodb": "3.6.9",
+    "mongodb": "3.6.10",
     "mongodb-memory-server": "6.9.6",
     "mongoose": "5.12.0",
     "nestjs-typegoose": "7.1.38",
