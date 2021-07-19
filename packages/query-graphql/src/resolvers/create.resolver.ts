@@ -18,7 +18,7 @@ import {
   SubscriptionArgsType,
   SubscriptionFilterInputType,
 } from '../types';
-import { createSubscriptionFilter } from './helpers';
+import { createSubscriptionFilter, getUniqueNameForEvent } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
 import { OperationGroup } from '../auth';
 
@@ -80,9 +80,10 @@ const defaultCreateManyInput = <C>(dtoNames: DTONames, InputDTO: Class<C>): Clas
  * @internal
  * Mixin to add `create` graphql endpoints.
  */
-export const Creatable =
-  <DTO, C, QS extends QueryService<DTO, C, unknown>>(DTOClass: Class<DTO>, opts: CreateResolverOpts<DTO, C>) =>
-  <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<CreateResolver<DTO, C, QS>> & B => {
+export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
+    DTOClass: Class<DTO>,
+    opts: CreateResolverOpts<DTO, C>,
+) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<CreateResolver<DTO, C, QS>> & B => {
     const dtoNames = getDTONames(DTOClass, opts);
     const { baseName, pluralBaseName } = dtoNames;
     const enableSubscriptions = opts.enableSubscriptions === true;
@@ -146,7 +147,7 @@ export const Creatable =
         // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
         const created = await this.service.createOne(input.input.input);
         if (enableOneSubscriptions) {
-          await this.publishCreatedEvent(created);
+          await this.publishCreatedEvent(created, authorizeFilter);
         }
         return created;
       }
@@ -170,36 +171,56 @@ export const Creatable =
           operationGroup: OperationGroup.CREATE,
           many: true,
         }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        authorizeFilter?: Filter<DTO>,
+        authorizeFilter?: Filter<DTO> | Filter<DTO>[],
       ): Promise<DTO[]> {
         // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
         const created = await this.service.createMany(input.input.input);
         if (enableManySubscriptions) {
-          await Promise.all(created.map((c) => this.publishCreatedEvent(c)));
+          if (Array.isArray(authorizeFilter)) {
+            let i = -1;
+            await Promise.all(
+              created.map((c) => {
+                i += 1;
+                return this.publishCreatedEvent(c, authorizeFilter[i]);
+              }),
+            );
+          } else {
+            await Promise.all(created.map((c) => this.publishCreatedEvent(c, authorizeFilter)));
+          }
         }
         return created;
       }
 
-      async publishCreatedEvent(dto: DTO): Promise<void> {
+      async publishCreatedEvent(dto: DTO, authorizeFilter?: Filter<DTO>): Promise<void> {
         if (this.pubSub) {
-          await this.pubSub.publish(createdEvent, { [createdEvent]: dto });
+          const eventName = authorizeFilter != null ? getUniqueNameForEvent(createdEvent, authorizeFilter) : createdEvent;
+          await this.pubSub.publish(eventName, { [createdEvent]: dto });
         }
       }
 
       @ResolverSubscription(() => DTOClass, { name: createdEvent, filter: subscriptionFilter }, commonResolverOpts, {
         enableSubscriptions: enableOneSubscriptions || enableManySubscriptions,
+        interceptors: [AuthorizerInterceptor(DTOClass)],
       })
-      // input required so graphql subscription filtering will work.
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      createdSubscription(@Args() input?: SA): AsyncIterator<CreatedEvent<DTO>> {
+      createdSubscription(
+        @Args() input?: SA,
+        @AuthorizerFilter({
+          operationGroup: OperationGroup.CREATE,
+          operationName: 'onCreateOne',
+          many: false,
+        })
+        authorizeFilter?: Filter<DTO>,
+      ): AsyncIterator<CreatedEvent<DTO>> {
         if (!this.pubSub || !(enableManySubscriptions || enableOneSubscriptions)) {
           throw new Error(`Unable to subscribe to ${createdEvent}`);
         }
-        return this.pubSub.asyncIterator<CreatedEvent<DTO>>(createdEvent);
+
+        const eventName = authorizeFilter != null ? getUniqueNameForEvent(createdEvent, authorizeFilter) : createdEvent;
+        return this.pubSub.asyncIterator<CreatedEvent<DTO>>(eventName);
       }
     }
     return CreateResolverBase;
-  };
+};
 
 /**
  * Factory to create a new abstract class that can be extended to add `create` endpoints.
