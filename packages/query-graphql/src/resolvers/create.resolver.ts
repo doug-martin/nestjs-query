@@ -196,11 +196,7 @@ export const Creatable =
       })
       createdSubscription(
         @Args() input?: SA,
-        @AuthorizerFilter({
-          operationGroup: OperationGroup.CREATE,
-          operationName: 'onCreateOne',
-          many: false,
-        })
+        @AuthorizerFilter({ operationGroup: OperationGroup.CREATE, many: false })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<CreatedEvent<DTO>> {
         if (!this.pubSub || !(enableManySubscriptions || enableOneSubscriptions)) {

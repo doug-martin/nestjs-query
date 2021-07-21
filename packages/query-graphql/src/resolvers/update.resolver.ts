@@ -217,11 +217,7 @@ export const Updateable =
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       updatedOneSubscription(
         @Args() input?: UOSA,
-        @AuthorizerFilter({
-          operationGroup: OperationGroup.UPDATE,
-          operationName: 'onUpdateOne',
-          many: false,
-        })
+        @AuthorizerFilter({ operationGroup: OperationGroup.UPDATE, many: false })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<UpdatedEvent<DTO>> {
         if (!enableOneSubscriptions || !this.pubSub) {
@@ -236,11 +232,7 @@ export const Updateable =
         interceptors: [AuthorizerInterceptor(DTOClass)],
       })
       updatedManySubscription(
-        @AuthorizerFilter({
-          operationGroup: OperationGroup.UPDATE,
-          operationName: 'onUpdateMany',
-          many: true,
-        })
+        @AuthorizerFilter({ operationGroup: OperationGroup.UPDATE, many: true })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<UpdatedEvent<DeleteManyResponse>> {
         if (!enableManySubscriptions || !this.pubSub) {

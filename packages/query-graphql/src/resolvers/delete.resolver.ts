@@ -181,11 +181,7 @@ export const Deletable =
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       deletedOneSubscription(
         @Args() input?: DOSA,
-        @AuthorizerFilter({
-          operationGroup: OperationGroup.DELETE,
-          operationName: 'onDeleteOne',
-          many: false,
-        })
+        @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: false })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
         if (!enableOneSubscriptions || !this.pubSub) {
@@ -199,11 +195,7 @@ export const Deletable =
         enableSubscriptions: enableManySubscriptions,
       })
       deletedManySubscription(
-        @AuthorizerFilter({
-          operationGroup: OperationGroup.DELETE,
-          operationName: 'onDeleteMany',
-          many: true,
-        })
+        @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: true })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<DeletedEvent<DeleteManyResponse>> {
         if (!enableManySubscriptions || !this.pubSub) {
