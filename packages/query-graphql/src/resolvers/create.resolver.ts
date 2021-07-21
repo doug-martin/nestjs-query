@@ -18,7 +18,7 @@ import {
   SubscriptionArgsType,
   SubscriptionFilterInputType,
 } from '../types';
-import { createSubscriptionFilter, getUniqueNameForEvent } from './helpers';
+import { createSubscriptionFilter, getSubscriptionEventName } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
 import { OperationGroup } from '../auth';
 
@@ -43,11 +43,14 @@ export interface CreateResolverOpts<DTO, C = DeepPartial<DTO>> extends Subscript
 }
 
 export interface CreateResolver<DTO, C, QS extends QueryService<DTO, C, unknown>> extends ServiceResolver<DTO, QS> {
-  createOne(input: MutationArgsType<CreateOneInputType<C>>): Promise<DTO>;
+  createOne(input: MutationArgsType<CreateOneInputType<C>>, authorizeFilter?: Filter<DTO>): Promise<DTO>;
 
-  createMany(input: MutationArgsType<CreateManyInputType<C>>): Promise<DTO[]>;
+  createMany(input: MutationArgsType<CreateManyInputType<C>>, authorizeFilter?: Filter<DTO>): Promise<DTO[]>;
 
-  createdSubscription(input?: SubscriptionArgsType<DTO>): AsyncIterator<CreatedEvent<DTO>>;
+  createdSubscription(
+    input?: SubscriptionArgsType<DTO>,
+    authorizeFilter?: Filter<DTO>,
+  ): AsyncIterator<CreatedEvent<DTO>>;
 }
 
 /** @internal */
@@ -80,10 +83,9 @@ const defaultCreateManyInput = <C>(dtoNames: DTONames, InputDTO: Class<C>): Clas
  * @internal
  * Mixin to add `create` graphql endpoints.
  */
-export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
-    DTOClass: Class<DTO>,
-    opts: CreateResolverOpts<DTO, C>,
-) => <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<CreateResolver<DTO, C, QS>> & B => {
+export const Creatable =
+  <DTO, C, QS extends QueryService<DTO, C, unknown>>(DTOClass: Class<DTO>, opts: CreateResolverOpts<DTO, C>) =>
+  <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<CreateResolver<DTO, C, QS>> & B => {
     const dtoNames = getDTONames(DTOClass, opts);
     const { baseName, pluralBaseName } = dtoNames;
     const enableSubscriptions = opts.enableSubscriptions === true;
@@ -171,29 +173,19 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
           operationGroup: OperationGroup.CREATE,
           many: true,
         }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        authorizeFilter?: Filter<DTO> | Filter<DTO>[],
+        authorizeFilter?: Filter<DTO>,
       ): Promise<DTO[]> {
         // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
         const created = await this.service.createMany(input.input.input);
         if (enableManySubscriptions) {
-          if (Array.isArray(authorizeFilter)) {
-            let i = -1;
-            await Promise.all(
-              created.map((c) => {
-                i += 1;
-                return this.publishCreatedEvent(c, authorizeFilter[i]);
-              }),
-            );
-          } else {
-            await Promise.all(created.map((c) => this.publishCreatedEvent(c, authorizeFilter)));
-          }
+          await Promise.all(created.map((c) => this.publishCreatedEvent(c, authorizeFilter)));
         }
         return created;
       }
 
       async publishCreatedEvent(dto: DTO, authorizeFilter?: Filter<DTO>): Promise<void> {
         if (this.pubSub) {
-          const eventName = authorizeFilter != null ? getUniqueNameForEvent(createdEvent, authorizeFilter) : createdEvent;
+          const eventName = getSubscriptionEventName(createdEvent, authorizeFilter);
           await this.pubSub.publish(eventName, { [createdEvent]: dto });
         }
       }
@@ -215,12 +207,12 @@ export const Creatable = <DTO, C, QS extends QueryService<DTO, C, unknown>>(
           throw new Error(`Unable to subscribe to ${createdEvent}`);
         }
 
-        const eventName = authorizeFilter != null ? getUniqueNameForEvent(createdEvent, authorizeFilter) : createdEvent;
+        const eventName = getSubscriptionEventName(createdEvent, authorizeFilter);
         return this.pubSub.asyncIterator<CreatedEvent<DTO>>(eventName);
       }
     }
     return CreateResolverBase;
-};
+  };
 
 /**
  * Factory to create a new abstract class that can be extended to add `create` endpoints.

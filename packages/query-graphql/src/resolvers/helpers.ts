@@ -35,17 +35,6 @@ export const createSubscriptionFilter =
     return true;
   };
 
-export function flattenFilter<T>(o: Filter<T> | Filter<T>[] | undefined, prefix = ''): any {
-  if (Array.isArray(o)) {
-    const reduced = o.reduce((current, item) => `${current}${current ? '-' : ''}${flattenFilter(item)}`, '');
-    return `${prefix}${reduced}`;
-  } else {
-    return Object.entries(o as Filter<T>).flatMap(([k, v]) =>
-      Object(v) === v ? flattenFilter(v, `${prefix}${k}-`) : `${prefix}${k}-${v}`,
-    ).join('-');
-  }
-}
-
-export function getUniqueNameForEvent<T>(eventName: string, authorizeFilter: Filter<T>): string {
-  return `${eventName}-${flattenFilter(authorizeFilter) as string}`;
+export function getSubscriptionEventName<T>(eventName: string, authorizeFilter?: Filter<T>): string {
+  return authorizeFilter ? `${eventName}-${JSON.stringify(authorizeFilter)}` : eventName;
 }
