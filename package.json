@@ -20,8 +20,8 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@commitlint/cli": "12.1.4",
-    "@commitlint/config-angular": "12.1.4",
+    "@commitlint/cli": "13.1.0",
+    "@commitlint/config-angular": "13.1.0",
     "@types/jest": "26.0.24",
     "@typescript-eslint/eslint-plugin": "4.28.4",
     "@typescript-eslint/parser": "4.28.4",
