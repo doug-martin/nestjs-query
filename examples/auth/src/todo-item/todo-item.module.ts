@@ -22,6 +22,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
           CreateDTOClass: TodoItemInputDTO,
           UpdateDTOClass: TodoItemUpdateDTO,
           enableAggregate: true,
+          enableSubscriptions: true,
           guards: [JwtAuthGuard],
         },
       ],
