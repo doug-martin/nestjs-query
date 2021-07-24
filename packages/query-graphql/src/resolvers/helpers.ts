@@ -1,4 +1,4 @@
-import { applyFilter, Class } from '@nestjs-query/core';
+import { applyFilter, Class, Filter } from '@nestjs-query/core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
@@ -34,3 +34,7 @@ export const createSubscriptionFilter =
     }
     return true;
   };
+
+export function getSubscriptionEventName<T>(eventName: string, authorizeFilter?: Filter<T>): string {
+  return authorizeFilter ? `${eventName}-${JSON.stringify(authorizeFilter)}` : eventName;
+}

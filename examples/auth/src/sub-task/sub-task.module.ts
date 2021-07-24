@@ -18,6 +18,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
           CreateDTOClass: CreateSubTaskDTO,
           UpdateDTOClass: SubTaskUpdateDTO,
           enableAggregate: true,
+          enableSubscriptions: true,
           guards: [JwtAuthGuard],
         },
       ],
