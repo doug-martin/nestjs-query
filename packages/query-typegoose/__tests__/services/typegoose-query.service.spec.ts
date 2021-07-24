@@ -454,6 +454,20 @@ describe('TypegooseQueryService', () => {
         'Id cannot be specified when updating or creating',
       );
     });
+
+    it('should not reject if the entity contains an undefined id', async () => {
+      const entity = testEntityToCreate(TEST_ENTITIES[0]);
+      const queryService = moduleRef.get(TestEntityService);
+      const created = await queryService.createOne({ ...entity, id: undefined });
+      expect(convertDocument(created)).toEqual(expect.objectContaining(entity));
+    });
+
+    it('should not reject if the entity contains an undefined _id', async () => {
+      const entity = testEntityToCreate(TEST_ENTITIES[0]);
+      const queryService = moduleRef.get(TestEntityService);
+      const created = await queryService.createOne({ ...entity, _id: undefined });
+      expect(convertDocument(created)).toEqual(expect.objectContaining(entity));
+    });
   });
 
   describe('#deleteMany', () => {
@@ -520,6 +534,18 @@ describe('TypegooseQueryService', () => {
       return expect(queryService.updateMany({ id: new ObjectId().toHexString() }, {})).rejects.toThrow(
         'Id cannot be specified when updating',
       );
+    });
+
+    it('should not reject if the update contains an undefined id', async () => {
+      const queryService = moduleRef.get(TestEntityService);
+      const entitiesToUpdate = TEST_ENTITIES.slice(0, 5);
+      const filter = {
+        stringType: { in: entitiesToUpdate.map((e) => e.stringType) },
+      };
+      await queryService.updateMany({ stringType: 'updated', id: undefined }, filter);
+      const entities = await queryService.query({ filter: { stringType: { eq: 'updated' } } });
+      expect(entities).toHaveLength(entitiesToUpdate.length);
+      expect(new Set(entities.map((e) => e.id))).toEqual(new Set(entitiesToUpdate.map((e) => e.id)));
     });
   });
 
