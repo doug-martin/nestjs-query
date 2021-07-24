@@ -15,7 +15,7 @@ import {
   SubscriptionFilterInputType,
 } from '../types';
 import { MutationHookArgs, ResolverMutation, ResolverSubscription, AuthorizerFilter } from '../decorators';
-import { createSubscriptionFilter } from './helpers';
+import { createSubscriptionFilter, getSubscriptionEventName } from './helpers';
 import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
 import { OperationGroup } from '../auth';
 
@@ -39,9 +39,12 @@ export interface DeleteResolver<DTO, QS extends QueryService<DTO, unknown, unkno
     authorizeFilter?: Filter<DTO>,
   ): Promise<DeleteManyResponse>;
 
-  deletedOneSubscription(input?: SubscriptionArgsType<DTO>): AsyncIterator<DeletedEvent<Partial<DTO>>>;
+  deletedOneSubscription(
+    input?: SubscriptionArgsType<DTO>,
+    authorizeFilter?: Filter<DTO>,
+  ): AsyncIterator<DeletedEvent<Partial<DTO>>>;
 
-  deletedManySubscription(): AsyncIterator<DeletedEvent<DeleteManyResponse>>;
+  deletedManySubscription(authorizeFilter?: Filter<DTO>): AsyncIterator<DeletedEvent<DeleteManyResponse>>;
 }
 
 /** @internal */
@@ -123,7 +126,7 @@ export const Deletable =
       ): Promise<Partial<DTO>> {
         const deletedResponse = await this.service.deleteOne(input.input.id, { filter: authorizeFilter ?? {} });
         if (enableOneSubscriptions) {
-          await this.publishDeletedOneEvent(deletedResponse);
+          await this.publishDeletedOneEvent(deletedResponse, authorizeFilter);
         }
         return deletedResponse;
       }
@@ -147,20 +150,22 @@ export const Deletable =
           mergeFilter(input.input.filter, authorizeFilter ?? {}),
         );
         if (enableManySubscriptions) {
-          await this.publishDeletedManyEvent(deleteManyResponse);
+          await this.publishDeletedManyEvent(deleteManyResponse, authorizeFilter);
         }
         return deleteManyResponse;
       }
 
-      async publishDeletedOneEvent(dto: DeleteOneResponse): Promise<void> {
+      async publishDeletedOneEvent(dto: DeleteOneResponse, authorizeFilter?: Filter<DTO>): Promise<void> {
         if (this.pubSub) {
-          await this.pubSub.publish(deletedOneEvent, { [deletedOneEvent]: dto });
+          const eventName = getSubscriptionEventName(deletedOneEvent, authorizeFilter);
+          await this.pubSub.publish(eventName, { [deletedOneEvent]: dto });
         }
       }
 
-      async publishDeletedManyEvent(dmr: DeleteManyResponse): Promise<void> {
+      async publishDeletedManyEvent(dmr: DeleteManyResponse, authorizeFilter?: Filter<DTO>): Promise<void> {
         if (this.pubSub) {
-          await this.pubSub.publish(deletedManyEvent, { [deletedManyEvent]: dmr });
+          const eventName = getSubscriptionEventName(deletedManyEvent, authorizeFilter);
+          await this.pubSub.publish(eventName, { [deletedManyEvent]: dmr });
         }
       }
 
@@ -174,21 +179,30 @@ export const Deletable =
       )
       // input required so graphql subscription filtering will work.
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      deletedOneSubscription(@Args() input?: DOSA): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
+      deletedOneSubscription(
+        @Args() input?: DOSA,
+        @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: false })
+        authorizeFilter?: Filter<DTO>,
+      ): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
         if (!enableOneSubscriptions || !this.pubSub) {
           throw new Error(`Unable to subscribe to ${deletedOneEvent}`);
         }
-        return this.pubSub.asyncIterator(deletedOneEvent);
+        const eventName = getSubscriptionEventName(deletedOneEvent, authorizeFilter);
+        return this.pubSub.asyncIterator(eventName);
       }
 
       @ResolverSubscription(() => DMR, { name: deletedManyEvent }, commonResolverOpts, {
         enableSubscriptions: enableManySubscriptions,
       })
-      deletedManySubscription(): AsyncIterator<DeletedEvent<DeleteManyResponse>> {
+      deletedManySubscription(
+        @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: true })
+        authorizeFilter?: Filter<DTO>,
+      ): AsyncIterator<DeletedEvent<DeleteManyResponse>> {
         if (!enableManySubscriptions || !this.pubSub) {
           throw new Error(`Unable to subscribe to ${deletedManyEvent}`);
         }
-        return this.pubSub.asyncIterator(deletedManyEvent);
+        const eventName = getSubscriptionEventName(deletedManyEvent, authorizeFilter);
+        return this.pubSub.asyncIterator(eventName);
       }
     }
     return DeleteResolverBase;
