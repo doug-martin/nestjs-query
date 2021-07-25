@@ -7,8 +7,11 @@ describe('NoOpQueryService', () => {
     foo!: string;
   }
 
-  const instance: QueryService<TestType> =
-    NoOpQueryService.getInstance<TestType, DeepPartial<TestType>, DeepPartial<TestType>>();
+  const instance: QueryService<TestType> = NoOpQueryService.getInstance<
+    TestType,
+    DeepPartial<TestType>,
+    DeepPartial<TestType>
+  >();
 
   it('should throw a NotImplementedException when calling addRelations', () =>
     expect(instance.addRelations('test', 1, [1, 2, 3])).rejects.toThrow('addRelations is not implemented'));

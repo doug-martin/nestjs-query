@@ -48,12 +48,17 @@ export class BaseServiceResolver<DTO, QS extends QueryService<DTO, unknown, unkn
   constructor(readonly service: QS) {}
 }
 
-export type ExtractPagingStrategy<DTO, Opts extends QueryArgsTypeOpts<DTO>> =
-  Opts['pagingStrategy'] extends PagingStrategies ? Opts['pagingStrategy'] : PagingStrategies.CURSOR;
+export type ExtractPagingStrategy<
+  DTO,
+  Opts extends QueryArgsTypeOpts<DTO>,
+> = Opts['pagingStrategy'] extends PagingStrategies ? Opts['pagingStrategy'] : PagingStrategies.CURSOR;
 
-export type MergePagingStrategyOpts<DTO, Opts extends QueryArgsTypeOpts<DTO>, S extends PagingStrategies> =
-  Opts['pagingStrategy'] extends PagingStrategies
-    ? Opts
-    : S extends PagingStrategies
-    ? Omit<Opts, 'pagingStrategy'> & { pagingStrategy: S }
-    : Opts;
+export type MergePagingStrategyOpts<
+  DTO,
+  Opts extends QueryArgsTypeOpts<DTO>,
+  S extends PagingStrategies,
+> = Opts['pagingStrategy'] extends PagingStrategies
+  ? Opts
+  : S extends PagingStrategies
+  ? Omit<Opts, 'pagingStrategy'> & { pagingStrategy: S }
+  : Opts;
