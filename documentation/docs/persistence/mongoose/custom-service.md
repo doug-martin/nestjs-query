@@ -2,7 +2,7 @@
 title: Custom Service
 ---
 
-To create a custom query service to add your own methods to you can extend the `SequelizeQueryService`.
+To create a custom query service to add your own methods to you can extend the `MongooseQueryService`.
 
 ```ts title="todo-item.service.ts"
 import { QueryService } from '@nestjs-query/core';
