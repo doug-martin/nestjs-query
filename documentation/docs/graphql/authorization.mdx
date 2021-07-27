@@ -378,7 +378,7 @@ In this example the `Authorizer` is injected as a `readonly` property you can th
 
 ```ts title="todo-item/todo-item.resolver.ts"
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver, InjectAuthorizer } from '@nestjs-query/query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
