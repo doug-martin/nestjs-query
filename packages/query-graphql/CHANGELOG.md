@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.28.1](https://github.com/doug-martin/nestjs-query/compare/v0.28.0...v0.28.1) (2021-07-27)
+
+
+### Features
+
+* **graphql,#958,#1160:** Enable authorizers on subscriptions ([d2f857f](https://github.com/doug-martin/nestjs-query/commit/d2f857f73540ee400f5dcc79cbb25dfba81c2963)), closes [#958](https://github.com/doug-martin/nestjs-query/issues/958) [#1160](https://github.com/doug-martin/nestjs-query/issues/1160)
+
+
+
+
+
 # [0.28.0](https://github.com/doug-martin/nestjs-query/compare/v0.27.0...v0.28.0) (2021-07-19)
 
 

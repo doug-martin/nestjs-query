@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.28.1](https://github.com/doug-martin/nestjs-query/compare/v0.28.0...v0.28.1) (2021-07-27)
+
+
+### Bug Fixes
+
+* **deps:** update docusaurus monorepo to v2.0.0-beta.3 ([65bafa7](https://github.com/doug-martin/nestjs-query/commit/65bafa7222044d2631d2fd91c2ed8c406e6abafa))
+* **query-typegoose:** ignore undefined id field in creation dto ([#1165](https://github.com/doug-martin/nestjs-query/issues/1165)) ([db5bf44](https://github.com/doug-martin/nestjs-query/commit/db5bf447bdf0095b01791b694785ecd3fb723c0f))
+* **typegoose:** allow undefined id field when updating or creating ([c2031aa](https://github.com/doug-martin/nestjs-query/commit/c2031aaf8c65fe7f2440f5b434329662c02296e4))
+
+
+### Features
+
+* **graphql,#958,#1160:** Enable authorizers on subscriptions ([d2f857f](https://github.com/doug-martin/nestjs-query/commit/d2f857f73540ee400f5dcc79cbb25dfba81c2963)), closes [#958](https://github.com/doug-martin/nestjs-query/issues/958) [#1160](https://github.com/doug-martin/nestjs-query/issues/1160)
+
+
+
+
+
 # [0.28.0](https://github.com/doug-martin/nestjs-query/compare/v0.27.0...v0.28.0) (2021-07-19)
 
 

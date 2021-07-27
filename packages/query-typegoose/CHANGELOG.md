@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.28.1](https://github.com/doug-martin/nestjs-query/compare/v0.28.0...v0.28.1) (2021-07-27)
+
+
+### Bug Fixes
+
+* **query-typegoose:** ignore undefined id field in creation dto ([#1165](https://github.com/doug-martin/nestjs-query/issues/1165)) ([db5bf44](https://github.com/doug-martin/nestjs-query/commit/db5bf447bdf0095b01791b694785ecd3fb723c0f))
+* **typegoose:** allow undefined id field when updating or creating ([c2031aa](https://github.com/doug-martin/nestjs-query/commit/c2031aaf8c65fe7f2440f5b434329662c02296e4))
+
+
+
+
+
 # [0.28.0](https://github.com/doug-martin/nestjs-query/compare/v0.27.0...v0.28.0) (2021-07-19)
 
 **Note:** Version bump only for package @nestjs-query/query-typegoose
