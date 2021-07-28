@@ -43,7 +43,7 @@
     "passport": "0.4.1",
     "passport-jwt": "4.0.0",
     "passport-local": "1.0.0",
-    "pg": "8.7.0",
+    "pg": "8.7.1",
     "rimraf": "3.0.2",
     "rxjs": "7.2.0",
     "sequelize": "6.6.2",
