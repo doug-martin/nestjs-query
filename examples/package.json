@@ -24,7 +24,7 @@
     "@nestjs/graphql": "8.0.2",
     "@nestjs/jwt": "8.0.0",
     "@nestjs/mongoose": "8.0.0",
-    "@nestjs/passport": "8.0.0",
+    "@nestjs/passport": "8.0.1",
     "@nestjs/platform-express": "8.0.5",
     "@nestjs/sequelize": "8.0.0",
     "@nestjs/typeorm": "8.0.2",
