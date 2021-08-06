@@ -102,6 +102,15 @@ describe('CursorConnectionType', (): void => {
         });
       });
 
+      it('should pass additional query params to queryMany', async () => {
+        const queryMany = jest.fn();
+        const dtos = [createTestDTO(1), createTestDTO(2)];
+        queryMany.mockResolvedValueOnce([...dtos]);
+        await TestConnection.createFromPromise(queryMany, { search: 'searchString', paging: createPage({ first: 2 }) });
+        expect(queryMany).toHaveBeenCalledTimes(1);
+        expect(queryMany).toHaveBeenCalledWith({ search: 'searchString', paging: { limit: 3, offset: 0 } });
+      });
+
       it('should create a connections response with an empty paging', async () => {
         const queryMany = jest.fn();
         const response = await TestConnection.createFromPromise(queryMany, { paging: {} });

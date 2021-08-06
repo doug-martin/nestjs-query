@@ -81,7 +81,7 @@ export interface StaticConnectionType<DTO, S extends PagingStrategies>
   resolveType: ReturnTypeFuncValue;
   createFromPromise(
     queryMany: QueryMany<DTO>,
-    query: Query<DTO>,
+    query: Query<DTO> & Record<string, any>,
     count?: Count<DTO>,
   ): Promise<InferConnectionTypeFromStrategy<DTO, S>>;
 }
