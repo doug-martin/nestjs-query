@@ -5,13 +5,14 @@ title: Custom Service
 To create a custom query service to add your own methods to you can extend the `MongooseQueryService`.
 
 ```ts title="todo-item.service.ts"
+import { Model } from 'mongoose'
 import { QueryService } from '@nestjs-query/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { MongooseQueryService } from '@nestjs-query/query-mongoose';
 import { TodoItemEntity } from './entity/todo-item.entity';
 
 @QueryService(TodoItemEntity)
-export class TodoItemService extends MongooseQueryServices<TodoItemEntity> {
+export class TodoItemService extends MongooseQueryService<TodoItemEntity> {
   constructor(@InjectModel(TodoItemEntity.name) model:  Model<TodoItemEntity>) {
     super(model);
   }
