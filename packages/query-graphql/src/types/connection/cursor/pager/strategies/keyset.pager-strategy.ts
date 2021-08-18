@@ -48,7 +48,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
     // Add 1 to the limit so we will fetch an additional node with the current node
     const sorting = this.getSortFields(query, opts);
     const filter = mergeFilter(query.filter ?? {}, this.createFieldsFilter(sorting, payload));
-    return { filter, paging, sorting };
+    return { ...query, filter, paging, sorting };
   }
 
   checkForExtraNode(nodes: DTO[], opts: KeySetPagingOpts<DTO>): DTO[] {
