@@ -63,7 +63,7 @@ export type InferConnectionTypeFromStrategy<DTO, S extends PagingStrategies> = S
   ? CursorConnectionType<DTO>
   : never;
 
-export type QueryMany<DTO> = (query: Query<DTO>) => Promise<DTO[]>;
+export type QueryMany<DTO, Q extends Query<DTO>> = (query: Q) => Promise<DTO[]>;
 export type Count<DTO> = (filter: Filter<DTO>) => Promise<number>;
 
 export type CountFn = () => Promise<number>;
@@ -73,15 +73,15 @@ export type PagerResult = {
 };
 
 export interface Pager<DTO, R extends PagerResult> {
-  page(queryMany: QueryMany<DTO>, query: Query<DTO>, count: Count<DTO>): Promise<R>;
+  page<Q extends Query<DTO>>(queryMany: QueryMany<DTO, Q>, query: Q, count: Count<DTO>): Promise<R>;
 }
 
 export interface StaticConnectionType<DTO, S extends PagingStrategies>
   extends Class<InferConnectionTypeFromStrategy<DTO, S>> {
   resolveType: ReturnTypeFuncValue;
-  createFromPromise(
-    queryMany: QueryMany<DTO>,
-    query: Query<DTO> & Record<string, any>,
+  createFromPromise<Q extends Query<DTO>>(
+    queryMany: QueryMany<DTO, Q>,
+    query: Q,
     count?: Count<DTO>,
   ): Promise<InferConnectionTypeFromStrategy<DTO, S>>;
 }

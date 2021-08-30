@@ -11,9 +11,13 @@ export function getOrCreateArrayConnectionType<DTO>(
     class AbstractConnection extends Array<DTO> {
       static resolveType = [TItemClass];
 
-      static async createFromPromise(queryMany: QueryMany<DTO>, query: Query<DTO>): Promise<AbstractConnection> {
+      static async createFromPromise<Q extends Query<DTO>>(
+        queryMany: QueryMany<DTO, Q>,
+        query: Q,
+      ): Promise<AbstractConnection> {
+        // remove paging from the query because the ArrayConnection does not support paging.
         const { paging, ...rest } = query;
-        return queryMany(rest);
+        return queryMany(rest as Q);
       }
     }
     return AbstractConnection;

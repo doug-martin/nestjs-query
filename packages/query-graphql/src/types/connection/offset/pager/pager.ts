@@ -15,7 +15,11 @@ const DEFAULT_PAGING_META = <DTO>(query: Query<DTO>): OffsetPagingMeta<DTO> => (
 });
 
 export class OffsetPager<DTO> implements Pager<DTO, OffsetPagerResult<DTO>> {
-  async page(queryMany: QueryMany<DTO>, query: Query<DTO>, count: Count<DTO>): Promise<OffsetPagerResult<DTO>> {
+  async page<Q extends Query<DTO>>(
+    queryMany: QueryMany<DTO, Q>,
+    query: Q,
+    count: Count<DTO>,
+  ): Promise<OffsetPagerResult<DTO>> {
     const pagingMeta = this.getPageMeta(query);
     if (!this.isValidPaging(pagingMeta)) {
       return EMPTY_PAGING_RESULTS();
@@ -28,9 +32,9 @@ export class OffsetPager<DTO> implements Pager<DTO, OffsetPagerResult<DTO>> {
     return pagingMeta.opts.limit > 0;
   }
 
-  private async runQuery(
-    queryMany: QueryMany<DTO>,
-    query: Query<DTO>,
+  private async runQuery<Q extends Query<DTO>>(
+    queryMany: QueryMany<DTO, Q>,
+    query: Q,
     pagingMeta: OffsetPagingMeta<DTO>,
   ): Promise<QueryResults<DTO>> {
     const windowedQuery = this.createQuery(query, pagingMeta);
@@ -63,7 +67,7 @@ export class OffsetPager<DTO> implements Pager<DTO, OffsetPagerResult<DTO>> {
     return { nodes, pageInfo, totalCount };
   }
 
-  private createQuery(query: OffsetQueryArgsType<DTO>, pagingMeta: OffsetPagingMeta<DTO>): Query<DTO> {
+  private createQuery<Q extends OffsetQueryArgsType<DTO>>(query: Q, pagingMeta: OffsetPagingMeta<DTO>): Q {
     const { limit, offset } = pagingMeta.opts;
     return { ...query, paging: { limit: limit + 1, offset } };
   }
