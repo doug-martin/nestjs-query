@@ -18,9 +18,9 @@ const DEFAULT_PAGING_META = <DTO>(query: Query<DTO>): PagingMeta<DTO, OffsetPagi
 export class CursorPager<DTO> implements Pager<DTO, CursorPagerResult<DTO>> {
   constructor(readonly strategy: PagerStrategy<DTO>) {}
 
-  async page(
-    queryMany: QueryMany<DTO>,
-    query: CursorQueryArgsType<DTO>,
+  async page<Q extends CursorQueryArgsType<DTO>>(
+    queryMany: QueryMany<DTO, Q>,
+    query: Q,
     count: Count<DTO>,
   ): Promise<CursorPagerResult<DTO>> {
     const pagingMeta = this.getPageMeta(query);
@@ -41,9 +41,9 @@ export class CursorPager<DTO> implements Pager<DTO, CursorPagerResult<DTO>> {
     return pagingMeta.opts.limit > 0;
   }
 
-  private async runQuery(
-    queryMany: QueryMany<DTO>,
-    query: Query<DTO>,
+  private async runQuery<Q extends Query<DTO>>(
+    queryMany: QueryMany<DTO, Q>,
+    query: Q,
     pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>,
   ): Promise<QueryResults<DTO>> {
     const { opts } = pagingMeta;

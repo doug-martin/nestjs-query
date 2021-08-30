@@ -47,9 +47,9 @@ export function getOrCreateCursorConnectionType<DTO>(
         return this;
       }
 
-      static async createFromPromise(
-        queryMany: QueryMany<DTO>,
-        query: Query<DTO>,
+      static async createFromPromise<Q extends Query<DTO>>(
+        queryMany: QueryMany<DTO, Q>,
+        query: Q,
         count?: Count<DTO>,
       ): Promise<AbstractConnection> {
         const { pageInfo, edges, totalCount } = await pager.page(queryMany, query, count ?? DEFAULT_COUNT);

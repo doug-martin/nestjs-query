@@ -38,7 +38,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
     return !opts.payload || !opts.payload.fields.length;
   }
 
-  createQuery(query: Query<DTO>, opts: KeySetPagingOpts<DTO>, includeExtraNode: boolean): Query<DTO> {
+  createQuery<Q extends Query<DTO>>(query: Q, opts: KeySetPagingOpts<DTO>, includeExtraNode: boolean): Q {
     const paging = { limit: opts.limit };
     if (includeExtraNode) {
       // Add 1 to the limit so we will fetch an additional node

@@ -21,7 +21,7 @@ export class LimitOffsetPagerStrategy<DTO> implements PagerStrategy<DTO> {
     return opts.offset === 0;
   }
 
-  createQuery(query: Query<DTO>, opts: OffsetPagingOpts, includeExtraNode: boolean): Query<DTO> {
+  createQuery<Q extends Query<DTO>>(query: Q, opts: OffsetPagingOpts, includeExtraNode: boolean): Q {
     const { isBackward } = opts;
     const paging = { limit: opts.limit, offset: opts.offset };
     if (includeExtraNode) {

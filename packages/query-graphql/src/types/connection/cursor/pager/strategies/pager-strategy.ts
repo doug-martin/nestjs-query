@@ -34,6 +34,6 @@ export interface PagerStrategy<DTO> {
   toCursor(dto: DTO, index: number, opts: CursorPagingOpts<DTO>, query: Query<DTO>): string;
   fromCursorArgs(cursor: CursorPagingType): CursorPagingOpts<DTO>;
   isEmptyCursor(opts: CursorPagingOpts<DTO>): boolean;
-  createQuery(query: Query<DTO>, opts: CursorPagingOpts<DTO>, includeExtraNode: boolean): Query<DTO>;
+  createQuery<Q extends Query<DTO>>(query: Q, opts: CursorPagingOpts<DTO>, includeExtraNode: boolean): Q;
   checkForExtraNode(nodes: DTO[], opts: CursorPagingOpts<DTO>): DTO[];
 }
