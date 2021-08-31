@@ -1,7 +1,8 @@
 import { SchemaOptions } from 'mongoose';
 
 export interface TypegooseClass {
-  new(...args: any[]): any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  new (...args: any[]): any;
 }
 
 export interface TypegooseClassWrapper {

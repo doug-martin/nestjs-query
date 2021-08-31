@@ -5,25 +5,27 @@ import { TestEntity } from './test.entity';
 import { TestDiscriminatedEntity } from './test-discriminated.entity';
 import { TestReference } from './test-reference.entity';
 
-export const TEST_ENTITIES: DocumentType<TestEntity>[] = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map(
+export const TEST_ENTITIES: DocumentType<TestEntity>[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
   (i) =>
-  ({
-    boolType: i % 2 === 0,
-    dateType: new Date(`2020-02-${i}`),
-    numberType: i,
-    stringType: `foo${i}`,
-  } as DocumentType<TestEntity>),
+    ({
+      boolType: i % 2 === 0,
+      dateType: new Date(`2020-02-${i}`),
+      numberType: i,
+      stringType: `foo${i}`,
+    } as DocumentType<TestEntity>),
 );
 
-export const TEST_DISCRIMINATED_ENTITIES: DocumentType<TestDiscriminatedEntity>[] = [ 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ].map(
+export const TEST_DISCRIMINATED_ENTITIES: DocumentType<TestDiscriminatedEntity>[] = [
+  11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+].map(
   (i) =>
-  ({
-    boolType: i % 2 === 0,
-    dateType: new Date(`2020-02-${i}`),
-    numberType: i,
-    stringType: `foo${i}`,
-    stringType2: `bar${i}`,
-  } as DocumentType<TestDiscriminatedEntity>),
+    ({
+      boolType: i % 2 === 0,
+      dateType: new Date(`2020-02-${i}`),
+      numberType: i,
+      stringType: `foo${i}`,
+      stringType2: `bar${i}`,
+    } as DocumentType<TestDiscriminatedEntity>),
 );
 
 export const TEST_REFERENCES: DocumentType<TestReference>[] = TEST_ENTITIES.reduce(
@@ -68,20 +70,24 @@ export const seed = async (connection: Connection): Promise<void> => {
   const testReferences = await TestReferencesModel.create(TEST_REFERENCES);
   const testReferencesForDiscriminates = await TestReferencesModel.create(TEST_REFERENCES_FOR_DISCRIMINATES);
 
-  testEntities.forEach((te, index) => Object.assign(TEST_ENTITIES[ index ], te.toObject({ virtuals: true })));
+  testEntities.forEach((te, index) => Object.assign(TEST_ENTITIES[index], te.toObject({ virtuals: true })));
 
-  testDiscriminatedEntities.forEach((tde, index) => Object.assign(TEST_DISCRIMINATED_ENTITIES[ index ], tde.toObject({ virtuals: true })));
+  testDiscriminatedEntities.forEach((tde, index) =>
+    Object.assign(TEST_DISCRIMINATED_ENTITIES[index], tde.toObject({ virtuals: true })),
+  );
 
-  testReferences.forEach((tr, index) => Object.assign(TEST_REFERENCES[ index ], tr.toObject({ virtuals: true })));
+  testReferences.forEach((tr, index) => Object.assign(TEST_REFERENCES[index], tr.toObject({ virtuals: true })));
 
-  testReferencesForDiscriminates.forEach((trfd, index) => Object.assign(TEST_REFERENCES_FOR_DISCRIMINATES[ index ], trfd.toObject({ virtuals: true })));
+  testReferencesForDiscriminates.forEach((trfd, index) =>
+    Object.assign(TEST_REFERENCES_FOR_DISCRIMINATES[index], trfd.toObject({ virtuals: true })),
+  );
 
   await Promise.all(
     testEntities.map(async (te, index) => {
       const references = testReferences.filter((tr: TestReference) => tr.referenceName.includes(`${te.stringType}-`));
-      TEST_ENTITIES[ index ].testReference = references[ 0 ]._id;
-      TEST_ENTITIES[ index ].testReferences = references.map((r) => r._id);
-      await te.updateOne({ $set: { testReferences: references.map((r) => r._id), testReference: references[ 0 ]._id } });
+      TEST_ENTITIES[index].testReference = references[0]._id;
+      TEST_ENTITIES[index].testReferences = references.map((r) => r._id);
+      await te.updateOne({ $set: { testReferences: references.map((r) => r._id), testReference: references[0]._id } });
       await Promise.all(
         references.map((r) => {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -94,10 +100,12 @@ export const seed = async (connection: Connection): Promise<void> => {
 
   await Promise.all(
     testDiscriminatedEntities.map(async (tde, index) => {
-      const references = testReferencesForDiscriminates.filter((trfd: TestReference) => trfd.referenceName.includes(`${tde.stringType}-`));
-      TEST_DISCRIMINATED_ENTITIES[ index ].testReference = references[ 0 ]._id;
-      TEST_DISCRIMINATED_ENTITIES[ index ].testReferences = references.map((r) => r._id);
-      await tde.updateOne({ $set: { testReferences: references.map((r) => r._id), testReference: references[ 0 ]._id } });
+      const references = testReferencesForDiscriminates.filter((trfd: TestReference) =>
+        trfd.referenceName.includes(`${tde.stringType}-`),
+      );
+      TEST_DISCRIMINATED_ENTITIES[index].testReference = references[0]._id;
+      TEST_DISCRIMINATED_ENTITIES[index].testReferences = references.map((r) => r._id);
+      await tde.updateOne({ $set: { testReferences: references.map((r) => r._id), testReference: references[0]._id } });
       await Promise.all(
         references.map((r) => {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

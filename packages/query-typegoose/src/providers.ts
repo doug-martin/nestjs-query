@@ -4,8 +4,8 @@ import { ReturnModelType, DocumentType } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { getModelToken } from 'nestjs-typegoose';
 import { Document } from 'mongoose';
-import { TypegooseQueryService } from './services';
 import { isClass } from 'is-class';
+import { TypegooseQueryService } from './services';
 import { TypegooseClass, TypegooseClassWithOptions, TypegooseDiscriminator } from './typegoose-interface.helpers';
 
 type ClassOrDiscriminator = TypegooseClassWithOptions | TypegooseDiscriminator;
@@ -13,16 +13,30 @@ type TypegooseInput = TypegooseClass | ClassOrDiscriminator;
 
 const isTypegooseClass = (item: TypegooseInput): item is TypegooseClass => isClass(item);
 
-const isTypegooseClassWithOptions = (item: ClassOrDiscriminator): item is TypegooseClassWithOptions => isTypegooseClass(item.typegooseClass);
+const isTypegooseClassWithOptions = (item: ClassOrDiscriminator): item is TypegooseClassWithOptions =>
+  isTypegooseClass(item.typegooseClass);
 
 AssemblerSerializer((obj: Document) => obj.toObject({ virtuals: true }))(Document);
 
-function createTypegooseQueryServiceProvider<Entity extends Base>(model: (TypegooseClass | TypegooseClassWithOptions)): FactoryProvider {
+function convertToTypegooseClass(item: TypegooseInput): ClassOrDiscriminator | undefined {
+  if (isTypegooseClass(item)) {
+    return { typegooseClass: item };
+  }
+  if (isTypegooseClassWithOptions(item)) {
+    return item;
+  }
+  return undefined;
+}
+
+function createTypegooseQueryServiceProvider<Entity extends Base>(
+  model: TypegooseClass | TypegooseClassWithOptions,
+): FactoryProvider {
   const convertedClass = convertToTypegooseClass(model);
   if (!convertedClass) {
-    throw new Error(`Model definitions ${model} is incorrect.`)
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    throw new Error(`Model definitions ${model} is incorrect.`);
   }
-  const modelName = convertedClass.typegooseClass?.name
+  const modelName = convertedClass.typegooseClass?.name;
 
   return {
     provide: getQueryServiceToken({ name: modelName }),
@@ -33,18 +47,10 @@ function createTypegooseQueryServiceProvider<Entity extends Base>(model: (Typego
 
       return new TypegooseQueryService(ModelClass);
     },
-    inject: [ getModelToken(modelName) ],
+    inject: [getModelToken(modelName)],
   };
 }
 
-function convertToTypegooseClass(item: TypegooseInput): ClassOrDiscriminator | undefined {
-  if (isTypegooseClass(item)) {
-    return { typegooseClass: item };
-  } else if (isTypegooseClassWithOptions(item)) {
-    return item;
-  }
-  return undefined;
-}
-
-export const createTypegooseQueryServiceProviders = (models: (TypegooseClass | TypegooseClassWithOptions)[]): FactoryProvider[] =>
-  models.map((model) => createTypegooseQueryServiceProvider(model));
+export const createTypegooseQueryServiceProviders = (
+  models: (TypegooseClass | TypegooseClassWithOptions)[],
+): FactoryProvider[] => models.map((model) => createTypegooseQueryServiceProvider(model));
