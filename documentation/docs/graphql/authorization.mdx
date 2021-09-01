@@ -80,7 +80,7 @@ export class TodoItemModule {}
 
 ## @Authorize Decorator
 
-The `@nestjs-query/query-graphql` package includes a `@Authorize` decorator that allows you to add additional filter
+The `@nestjs-query/query-graphql` package includes an `@Authorize` decorator that allows you to add additional filter
 criteria to authorize an incoming request.
 
 The `@Authorize` decorator accepts the following types.
@@ -93,7 +93,7 @@ The `@Authorize` decorator accepts the following types.
 The `@Authorize` decorator does not return an unauthorized error instead the following will occur:
 
 - `queryMany` results will not include any DTOs that do not match the filter criteria.
-- `findOne` will return a not found for a DTO that is cannot be found for the `id` and auth filter.
+- `findOne` will return a not found for a DTO that cannot be found for the `id` and auth filter.
 - `updateOne` will return a not found error if the DTO to update cannot be found for the `id` and auth filter.
 - `updateMany` will exclude any records that do not match the user provided filter and the auth filter from being
   updated.
