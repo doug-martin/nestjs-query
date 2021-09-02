@@ -18,7 +18,7 @@ const isTypegooseClassWithOptions = (item: ClassOrDiscriminator): item is Typego
 
 AssemblerSerializer((obj: Document) => obj.toObject({ virtuals: true }))(Document);
 
-function convertToTypegooseClass(item: TypegooseInput): ClassOrDiscriminator | undefined {
+function ensureProperInput(item: TypegooseInput): ClassOrDiscriminator | undefined {
   if (isTypegooseClass(item)) {
     return { typegooseClass: item };
   }
@@ -31,12 +31,12 @@ function convertToTypegooseClass(item: TypegooseInput): ClassOrDiscriminator | u
 function createTypegooseQueryServiceProvider<Entity extends Base>(
   model: TypegooseClass | TypegooseClassWithOptions,
 ): FactoryProvider {
-  const convertedClass = convertToTypegooseClass(model);
-  if (!convertedClass) {
+  const inputModel = ensureProperInput(model);
+  if (!inputModel) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     throw new Error(`Model definitions ${model} is incorrect.`);
   }
-  const modelName = convertedClass.typegooseClass?.name;
+  const modelName = inputModel.typegooseClass?.name;
 
   return {
     provide: getQueryServiceToken({ name: modelName }),
@@ -47,7 +47,7 @@ function createTypegooseQueryServiceProvider<Entity extends Base>(
 
       return new TypegooseQueryService(ModelClass);
     },
-    inject: [getModelToken(modelName)],
+    inject: [ getModelToken(modelName) ],
   };
 }
 
