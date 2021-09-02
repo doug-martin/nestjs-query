@@ -47,7 +47,7 @@ function createTypegooseQueryServiceProvider<Entity extends Base>(
 
       return new TypegooseQueryService(ModelClass);
     },
-    inject: [ getModelToken(modelName) ],
+    inject: [getModelToken(modelName)],
   };
 }
 
