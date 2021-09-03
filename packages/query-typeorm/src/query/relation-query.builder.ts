@@ -71,7 +71,11 @@ export class RelationQueryBuilder<Entity, Relation> {
   }
 
   select(entity: Entity, query: Query<Relation>): SelectQueryBuilder<Relation> {
+    const hasRelations = this.filterQueryBuilder.filterHasRelations(query.filter);
     let relationBuilder = this.createRelationQueryBuilder(entity);
+    relationBuilder = hasRelations
+      ? this.filterQueryBuilder.applyRelationJoins(relationBuilder, query.filter)
+      : relationBuilder;
     relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
     relationBuilder = this.filterQueryBuilder.applyPaging(relationBuilder, query.paging);
     return this.filterQueryBuilder.applySorting(relationBuilder, query.sorting, relationBuilder.alias);

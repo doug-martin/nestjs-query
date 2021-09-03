@@ -208,7 +208,7 @@ export class FilterQueryBuilder<Entity> {
    *
    * @returns the query builder for chaining
    */
-  private applyRelationJoins(qb: SelectQueryBuilder<Entity>, filter?: Filter<Entity>): SelectQueryBuilder<Entity> {
+  applyRelationJoins(qb: SelectQueryBuilder<Entity>, filter?: Filter<Entity>): SelectQueryBuilder<Entity> {
     if (!filter) {
       return qb;
     }
@@ -219,11 +219,10 @@ export class FilterQueryBuilder<Entity> {
   /**
    * Checks if a filter references any relations.
    * @param filter
-   * @private
    *
    * @returns true if there are any referenced relations
    */
-  private filterHasRelations(filter?: Filter<Entity>): boolean {
+  filterHasRelations(filter?: Filter<Entity>): boolean {
     if (!filter) {
       return false;
     }
