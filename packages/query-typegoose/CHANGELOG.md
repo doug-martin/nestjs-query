@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.29.0](https://github.com/doug-martin/nestjs-query/compare/v0.28.1...v0.29.0) (2021-09-09)
+
+
+### Features
+
+* **query-typegoose:** Adds the ability to use discriminators ([#1321](https://github.com/doug-martin/nestjs-query/issues/1321)) ([2a7da59](https://github.com/doug-martin/nestjs-query/commit/2a7da59c3c857acedbd786d6df5772645c00f543)), closes [#1320](https://github.com/doug-martin/nestjs-query/issues/1320)
+
+
+
+
+
 ## [0.28.1](https://github.com/doug-martin/nestjs-query/compare/v0.28.0...v0.28.1) (2021-07-27)
 
 

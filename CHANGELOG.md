@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.29.0](https://github.com/doug-martin/nestjs-query/compare/v0.28.1...v0.29.0) (2021-09-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @nestjs/passport to v8.0.1 ([4ce73e8](https://github.com/doug-martin/nestjs-query/commit/4ce73e857fcc89a8f6b6827057901144ac7f6ad7))
+* **deps:** update dependency graphql-query-complexity to v0.9.0 ([e34d870](https://github.com/doug-martin/nestjs-query/commit/e34d870af3e0c1d0b4ce778db216387fc152ae42))
+* **deps:** update dependency graphql-tools to v8 ([5dd27b8](https://github.com/doug-martin/nestjs-query/commit/5dd27b8f688bf2b67620775075365c12fd7c1d43))
+* **deps:** update dependency graphql-tools to v8.1.0 ([52f4595](https://github.com/doug-martin/nestjs-query/commit/52f45955f0300fd7728e74411eb03bfa00ac3594))
+* **deps:** update dependency graphql-tools to v8.2.0 ([a31316b](https://github.com/doug-martin/nestjs-query/commit/a31316b37b49457e10c4f7e5ebc8648b793fe006))
+* **deps:** update dependency mysql2 to v2.3.0 ([0b243bb](https://github.com/doug-martin/nestjs-query/commit/0b243bb8f59ad45b91bf11d8ea6e41ac010cab0d))
+* **deps:** update dependency pg to v8.7.0 ([b6c0d42](https://github.com/doug-martin/nestjs-query/commit/b6c0d42022e09967f6adfc8055f82c3db744ffc7))
+* **deps:** update dependency pg to v8.7.1 ([dee5981](https://github.com/doug-martin/nestjs-query/commit/dee59812f0865380d285021e2afff7e68e726117))
+* **deps:** update dependency rxjs to v7.3.0 ([70d08c9](https://github.com/doug-martin/nestjs-query/commit/70d08c982765c3594e7c3f1b4dc0488a9ad43722))
+* **query-graphql:** adapt createFromPromise typings and add tests for passing additional query params ([d81e531](https://github.com/doug-martin/nestjs-query/commit/d81e5315cbc6e2d665256fd6dcfa09689cadd2b1))
+* **query-graphql:** pass original query in keyset pager strategy ([07f9e7b](https://github.com/doug-martin/nestjs-query/commit/07f9e7b78cccc788c772776a4ced336eec016164))
+
+
+### Features
+
+* **graphql:** propagate correct query types throughout paging ([348044f](https://github.com/doug-martin/nestjs-query/commit/348044f8509d8aef21e4a5f55b93bd28793b0fcc))
+* **query-typegoose:** Adds the ability to use discriminators ([#1321](https://github.com/doug-martin/nestjs-query/issues/1321)) ([2a7da59](https://github.com/doug-martin/nestjs-query/commit/2a7da59c3c857acedbd786d6df5772645c00f543)), closes [#1320](https://github.com/doug-martin/nestjs-query/issues/1320)
+
+
+
+
+
 ## [0.28.1](https://github.com/doug-martin/nestjs-query/compare/v0.28.0...v0.28.1) (2021-07-27)
 
 

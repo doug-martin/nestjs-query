@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.29.0](https://github.com/doug-martin/nestjs-query/compare/v0.28.1...v0.29.0) (2021-09-09)
+
+
+### Bug Fixes
+
+* **query-graphql:** adapt createFromPromise typings and add tests for passing additional query params ([d81e531](https://github.com/doug-martin/nestjs-query/commit/d81e5315cbc6e2d665256fd6dcfa09689cadd2b1))
+* **query-graphql:** pass original query in keyset pager strategy ([07f9e7b](https://github.com/doug-martin/nestjs-query/commit/07f9e7b78cccc788c772776a4ced336eec016164))
+
+
+### Features
+
+* **graphql:** propagate correct query types throughout paging ([348044f](https://github.com/doug-martin/nestjs-query/commit/348044f8509d8aef21e4a5f55b93bd28793b0fcc))
+
+
+
+
+
 ## [0.28.1](https://github.com/doug-martin/nestjs-query/compare/v0.28.0...v0.28.1) (2021-07-27)
 
 
