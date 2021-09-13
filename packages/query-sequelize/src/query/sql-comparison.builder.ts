@@ -1,5 +1,5 @@
 import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
-import { Op, WhereOptions } from 'sequelize';
+import { Op, WhereOptions, Rangable } from 'sequelize';
 
 /**
  * @internal
@@ -72,8 +72,8 @@ export class SQLComparisonBuilder<Entity> {
   ): WhereOptions {
     if (this.isBetweenVal(val)) {
       return {
-        [col]: { [Op.between]: [val.lower, val.upper] },
-      } as WhereOptions;
+        [col]: { [Op.between]: [val.lower, val.upper] as unknown as Rangable },
+      };
     }
     throw new Error(`Invalid value for between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
   }
@@ -84,8 +84,8 @@ export class SQLComparisonBuilder<Entity> {
   ): WhereOptions {
     if (this.isBetweenVal(val)) {
       return {
-        [col]: { [Op.notBetween]: [val.lower, val.upper] },
-      } as WhereOptions;
+        [col]: { [Op.notBetween]: [val.lower, val.upper] as unknown as Rangable },
+      };
     }
     throw new Error(`Invalid value for not between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
   }
