@@ -45,6 +45,6 @@
     "@types/lodash.merge": "4.6.6",
     "class-transformer": "0.4.0",
     "ts-mockito": "2.6.1",
-    "typescript": "4.3.5"
+    "typescript": "4.4.2"
   }
 }

@@ -6,7 +6,7 @@ import { WhereBuilder } from '../../src/query';
 describe('WhereBuilder', (): void => {
   const createWhereBuilder = () => new WhereBuilder<TestEntity>();
 
-  const expectWhereQuery = (filter: Filter<TestEntity>, expectedWhereOpts: WhereOptions): void => {
+  const expectWhereQuery = (filter: Filter<TestEntity>, expectedWhereOpts: WhereOptions<TestEntity>): void => {
     const actual = createWhereBuilder().build(filter, new Map());
     expect(actual).toEqual(expectedWhereOpts);
   };
@@ -38,18 +38,13 @@ describe('WhereBuilder', (): void => {
   it('and multiple field comparisons together', (): void => {
     expectWhereQuery(
       {
-        numberType: { eq: 1 },
+        numberType: { gt: 1 },
         stringType: { like: 'foo%' },
-        boolType: { is: true },
       },
       {
         [Op.and]: [
           {
-            [Op.and]: [
-              { numberType: { [Op.eq]: 1 } },
-              { stringType: { [Op.like]: 'foo%' } },
-              { boolType: { [Op.is]: true } },
-            ],
+            [Op.and]: [{ numberType: { [Op.gt]: 1 } }, { stringType: { [Op.like]: 'foo%' } }],
           },
         ],
       },
