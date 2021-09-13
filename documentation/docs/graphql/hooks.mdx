@@ -255,7 +255,7 @@ export class TodoItemDTO {
 
 You can also provide a custom `Hook` class that can leverage `nestjs` dependency injection.
 
-In this example we create a simple Hook that works with any type that has a `createdBy` property.
+In this example we create a simple Hook that works with any type that has a `updatedBy` property.
 ```ts
 import { BeforeUpdateOneHook, UpdateOneInputType } from '@nestjs-query/query-graphql';
 import { Injectable } from '@nestjs/common';
@@ -341,7 +341,7 @@ export class TodoItemDTO {
 
 You can also provide a custom `Hook` class that can leverage `nestjs` dependency injection.
 
-In this example we create a simple Hook that works with any type that has a `createdBy` property.
+In this example we create a simple Hook that works with any type that has a `updatedBy` property.
 ```ts
 import { BeforeUpdateManyHook, UpdateManyInputType } from '@nestjs-query/query-graphql';
 import { Injectable } from '@nestjs/common';
