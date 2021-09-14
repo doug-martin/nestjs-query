@@ -1,0 +1,1 @@
+(self.webpackChunkdocumentation=self.webpackChunkdocumentation||[]).push([[8392],{8270:function(t){"use strict";t.exports=JSON.parse('{"allTagsPath":"/nestjs-query/blog/tags","slug":"patch","name":"patch","count":24,"permalink":"/nestjs-query/blog/tags/patch"}')}}]);

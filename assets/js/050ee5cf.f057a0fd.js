@@ -1,0 +1,1 @@
+(self.webpackChunkdocumentation=self.webpackChunkdocumentation||[]).push([[199],{2462:function(e){"use strict";e.exports=JSON.parse('{"allTagsPath":"/nestjs-query/blog/tags","slug":"typeorm","name":"typeorm","count":1,"permalink":"/nestjs-query/blog/tags/typeorm"}')}}]);

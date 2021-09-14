@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://doug-martin.github.io/blog</id>
+    <id>https://doug-martin.github.io/nestjs-query/blog</id>
     <title>Nestjs-query Blog</title>
     <updated>2020-05-13T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://doug-martin.github.io/blog"/>
+    <link rel="alternate" href="https://doug-martin.github.io/nestjs-query/blog"/>
     <subtitle>Nestjs-query Blog</subtitle>
-    <icon>https://doug-martin.github.io/img/favicon.ico</icon>
+    <icon>https://doug-martin.github.io/nestjs-query/img/favicon.ico</icon>
     <entry>
         <title type="html"><![CDATA[v0.11.2]]></title>
         <id>v0.11.2</id>
@@ -155,13 +155,6 @@
         <summary type="html"><![CDATA[* FIXED] Validate Input for Create & Update [#19]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.3.2]]></title>
-        <id>v0.3.2</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/22/v0.3.2"/>
-        <updated>2020-02-22T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Switched to github actions]]></summary>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[v0.3.3]]></title>
         <id>v0.3.3</id>
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/22/v0.3.3"/>
@@ -169,11 +162,11 @@
         <summary type="html"><![CDATA[* Update typescript to 3.8.]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.3.0]]></title>
-        <id>v0.3.0</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0"/>
-        <updated>2020-02-21T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Added dataloader support!]]></summary>
+        <title type="html"><![CDATA[v0.3.2]]></title>
+        <id>v0.3.2</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/22/v0.3.2"/>
+        <updated>2020-02-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Switched to github actions]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[v0.3.1]]></title>
@@ -181,6 +174,13 @@
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1"/>
         <updated>2020-02-21T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[* Hardened TypeORM querying]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.0]]></title>
+        <id>v0.3.0</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0"/>
+        <updated>2020-02-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Added dataloader support!]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[v0.2.1]]></title>
