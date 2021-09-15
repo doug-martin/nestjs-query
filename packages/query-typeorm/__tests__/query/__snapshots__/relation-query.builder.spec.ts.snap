@@ -48,6 +48,15 @@ Array [
 ]
 `;
 
+exports[`RelationQueryBuilder #select nested relations should query with deeply nested relations 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) AND (((testEntityRelation.testEntityId = ?)))`;
+
+exports[`RelationQueryBuilder #select nested relations should query with deeply nested relations 2`] = `
+Array [
+  test-entity-id-1,
+  123,
+]
+`;
+
 exports[`RelationQueryBuilder #select one to many should query with a single entity 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?)`;
 
 exports[`RelationQueryBuilder #select one to many should query with a single entity 2`] = `

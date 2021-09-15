@@ -1,6 +1,7 @@
 import { Brackets, WhereExpression } from 'typeorm';
 import { Filter, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
 import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
+import { NestedRecord } from './filter-query.builder';
 
 /**
  * @internal
@@ -18,7 +19,7 @@ export class WhereBuilder<Entity> {
   build<Where extends WhereExpression>(
     where: Where,
     filter: Filter<Entity>,
-    relationNames: string[],
+    relationNames: NestedRecord,
     alias?: string,
   ): Where {
     const { and, or } = filter;
@@ -41,7 +42,7 @@ export class WhereBuilder<Entity> {
   private filterAnd<Where extends WhereExpression>(
     where: Where,
     filters: Filter<Entity>[],
-    relationNames: string[],
+    relationNames: NestedRecord,
     alias?: string,
   ): Where {
     return where.andWhere(
@@ -59,7 +60,7 @@ export class WhereBuilder<Entity> {
   private filterOr<Where extends WhereExpression>(
     where: Where,
     filter: Filter<Entity>[],
-    relationNames: string[],
+    relationNames: NestedRecord,
     alias?: string,
   ): Where {
     return where.andWhere(
@@ -76,7 +77,7 @@ export class WhereBuilder<Entity> {
    * @param filter - the filter to wrap in brackets.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private createBrackets(filter: Filter<Entity>, relationNames: string[], alias?: string): Brackets {
+  private createBrackets(filter: Filter<Entity>, relationNames: NestedRecord, alias?: string): Brackets {
     return new Brackets((qb) => this.build(qb, filter, relationNames, alias));
   }
 
@@ -89,7 +90,7 @@ export class WhereBuilder<Entity> {
   private filterFields<Where extends WhereExpression>(
     where: Where,
     filter: Filter<Entity>,
-    relationNames: string[],
+    relationNames: NestedRecord,
     alias?: string,
   ): Where {
     return Object.keys(filter).reduce((w, field) => {
@@ -117,11 +118,11 @@ export class WhereBuilder<Entity> {
     where: Where,
     field: T,
     cmp: FilterFieldComparison<Entity[T]>,
-    relationNames: string[],
+    relationNames: NestedRecord,
     alias?: string,
   ): Where {
-    if (relationNames.includes(field as string)) {
-      return this.withRelationFilter(where, field, cmp as Filter<Entity[T]>);
+    if (relationNames[field as string]) {
+      return this.withRelationFilter(where, field, cmp as Filter<Entity[T]>, relationNames[field as string]);
     }
     return where.andWhere(
       new Brackets((qb) => {
@@ -138,12 +139,13 @@ export class WhereBuilder<Entity> {
     where: Where,
     field: T,
     cmp: Filter<Entity[T]>,
+    relationNames: NestedRecord,
   ): Where {
     return where.andWhere(
       new Brackets((qb) => {
         const relationWhere = new WhereBuilder<Entity[T]>();
         // for now ignore relations of relations.
-        return relationWhere.build(qb, cmp, [], field as string);
+        return relationWhere.build(qb, cmp, relationNames, field as string);
       }),
     );
   }

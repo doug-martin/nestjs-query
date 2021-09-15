@@ -40,6 +40,14 @@ describe('RelationQueryBuilder', (): void => {
       relationName: 'relation-name',
     };
 
+    describe('nested relations', () => {
+      it('should query with deeply nested relations', () => {
+        expectSQLSnapshot<TestEntity, TestRelation>(TestEntity, testEntity, 'testRelations', {
+          filter: { manyTestEntities: { testEntityRelation: { testEntityId: { eq: '123' } } } },
+        });
+      });
+    });
+
     it('should throw an error if there is no relation with that name', () => {
       expect(() => {
         expectSQLSnapshot(TestEntity, testEntity, 'badRelations', {});
