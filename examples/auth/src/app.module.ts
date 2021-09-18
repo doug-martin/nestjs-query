@@ -23,7 +23,9 @@ interface ContextArgs {
       autoSchemaFile: 'schema.gql',
       installSubscriptionHandlers: true,
       subscriptions: {
-        onConnect: (connectionParams: unknown) => ({ headers: connectionParams }),
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams: unknown) => ({ headers: connectionParams }),
+        },
       },
       context: ({ req, connection }: ContextArgs) => ({ req: { ...req, ...connection?.context } }),
     }),

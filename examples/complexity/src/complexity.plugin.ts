@@ -14,11 +14,11 @@ export class ComplexityPlugin implements ApolloServerPlugin {
     this.logger = new Logger('complexity-plugin');
   }
 
-  requestDidStart(): GraphQLRequestListener {
+  requestDidStart(): Promise<GraphQLRequestListener> {
     const { schema } = this.gqlSchemaHost;
 
-    return {
-      didResolveOperation: ({ request, document }) => {
+    return Promise.resolve({
+      didResolveOperation: ({ request, document }): Promise<void> => {
         const complexity = getComplexity({
           schema,
           operationName: request.operationName,
@@ -27,12 +27,13 @@ export class ComplexityPlugin implements ApolloServerPlugin {
           estimators: [fieldExtensionsEstimator(), simpleEstimator({ defaultComplexity: 1 })],
         });
         if (complexity >= this.maxComplexity) {
-          throw new GraphQLError(
-            `Query is too complex: ${complexity}. Maximum allowed complexity: ${this.maxComplexity}`,
+          return Promise.reject(
+            new GraphQLError(`Query is too complex: ${complexity}. Maximum allowed complexity: ${this.maxComplexity}`),
           );
         }
         this.logger.log(`Query Complexity: ${complexity}`);
+        return Promise.resolve();
       },
-    };
+    });
   }
 }
