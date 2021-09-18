@@ -10,7 +10,9 @@ import { typeormOrmConfig } from '../../helpers';
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('subscription')),
     GraphQLModule.forRoot({
-      installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': true,
+      },
       autoSchemaFile: 'schema.gql',
     }),
     SubTaskModule,
