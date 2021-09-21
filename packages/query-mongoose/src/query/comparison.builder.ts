@@ -1,7 +1,6 @@
 import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
 import escapeRegExp from 'lodash.escaperegexp';
 import { Model as MongooseModel, FilterQuery, Document, Types, Schema } from 'mongoose';
-import { QuerySelector } from 'mongodb';
 import { BadRequestException } from '@nestjs/common';
 import { getSchemaKey } from './helpers';
 
@@ -53,13 +52,15 @@ export class ComparisonBuilder<Entity extends Document> {
   ): FilterQuery<Entity> {
     const schemaKey = getSchemaKey(`${String(field)}`);
     const normalizedCmp = (cmp as string).toLowerCase();
-    let querySelector: QuerySelector<Entity[F]> | undefined;
+    let querySelector: FilterQuery<Entity[F]> | undefined;
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)
-      querySelector = { [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F]) };
+      querySelector = {
+        [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F]),
+      } as FilterQuery<Entity[F]>;
     }
     if (normalizedCmp.includes('like')) {
-      querySelector = this.likeComparison(normalizedCmp, val) as unknown as QuerySelector<Entity[F]>;
+      querySelector = this.likeComparison(normalizedCmp, val);
     }
     if (normalizedCmp.includes('between')) {
       querySelector = this.betweenComparison(normalizedCmp, field, val);
@@ -74,7 +75,7 @@ export class ComparisonBuilder<Entity extends Document> {
     cmp: string,
     field: F,
     val: EntityComparisonField<Entity, F>,
-  ): QuerySelector<Entity[F]> {
+  ): FilterQuery<Entity[F]> {
     if (!this.isBetweenVal(val)) {
       throw new Error(`Invalid value for ${cmp} expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
     }
@@ -93,7 +94,7 @@ export class ComparisonBuilder<Entity extends Document> {
   private likeComparison<F extends keyof Entity>(
     cmp: string,
     val: EntityComparisonField<Entity, F>,
-  ): QuerySelector<string> {
+  ): FilterQuery<string> {
     const regExpStr = escapeRegExp(`${String(val)}`).replace(/%/g, '.*');
     const regExp = new RegExp(regExpStr, cmp.includes('ilike') ? 'i' : undefined);
     if (cmp.startsWith('not')) {

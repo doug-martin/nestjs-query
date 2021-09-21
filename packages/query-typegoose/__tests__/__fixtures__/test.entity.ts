@@ -1,9 +1,8 @@
-import { Types } from 'mongoose';
-import { prop, Ref } from '@typegoose/typegoose';
+import { prop, Ref, mongoose } from '@typegoose/typegoose';
 import { TestReference } from './test-reference.entity';
 
 export class TestEntity {
-  _id!: Types.ObjectId;
+  _id!: mongoose.Types.ObjectId;
 
   id!: string;
 

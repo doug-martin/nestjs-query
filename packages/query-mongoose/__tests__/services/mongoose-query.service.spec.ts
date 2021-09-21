@@ -1,8 +1,7 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
 import { Test, TestingModule } from '@nestjs/testing';
 import { InjectModel, MongooseModule } from '@nestjs/mongoose';
-import { ObjectId } from 'mongodb';
-import { Model, Document, LeanDocument } from 'mongoose';
+import { Model, Document, LeanDocument, Types } from 'mongoose';
 import { SortDirection } from '@nestjs-query/core';
 import { MongooseQueryService } from '../../src/services';
 import {
@@ -209,13 +208,13 @@ describe('MongooseQueryService', () => {
             dateType: TEST_ENTITIES[9].dateType,
             numberType: 10,
             stringType: 'foo9',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           min: {
             dateType: TEST_ENTITIES[0].dateType,
             numberType: 1,
             stringType: 'foo1',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           sum: {
             numberType: 55,
@@ -252,13 +251,13 @@ describe('MongooseQueryService', () => {
             dateType: TEST_ENTITIES[8].dateType,
             numberType: 9,
             stringType: 'foo9',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           min: {
             dateType: TEST_ENTITIES[0].dateType,
             numberType: 1,
             stringType: 'foo1',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           sum: {
             numberType: 25,
@@ -278,13 +277,13 @@ describe('MongooseQueryService', () => {
             dateType: TEST_ENTITIES[9].dateType,
             numberType: 10,
             stringType: 'foo8',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           min: {
             dateType: TEST_ENTITIES[1].dateType,
             numberType: 2,
             stringType: 'foo10',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           sum: {
             numberType: 30,
@@ -317,13 +316,13 @@ describe('MongooseQueryService', () => {
             dateType: TEST_ENTITIES[2].dateType,
             numberType: 3,
             stringType: 'foo3',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           min: {
             dateType: TEST_ENTITIES[0].dateType,
             numberType: 1,
             stringType: 'foo1',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           sum: {
             numberType: 6,
@@ -352,7 +351,7 @@ describe('MongooseQueryService', () => {
 
     it('return undefined if not found', async () => {
       const queryService = moduleRef.get(TestEntityService);
-      const found = await queryService.findById(new ObjectId().toHexString());
+      const found = await queryService.findById(new Types.ObjectId().toHexString());
       expect(found).toBeUndefined();
     });
 
@@ -386,7 +385,7 @@ describe('MongooseQueryService', () => {
     });
 
     it('return undefined if not found', () => {
-      const badId = new ObjectId().toHexString();
+      const badId = new Types.ObjectId().toHexString();
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.getById(badId)).rejects.toThrow(`Unable to find TestEntity with id: ${badId}`);
     });
@@ -480,7 +479,7 @@ describe('MongooseQueryService', () => {
     });
 
     it('call fail if the entity is not found', async () => {
-      const badId = new ObjectId().toHexString();
+      const badId = new Types.ObjectId().toHexString();
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.deleteOne(badId)).rejects.toThrow(`Unable to find TestEntity with id: ${badId}`);
     });
@@ -520,7 +519,7 @@ describe('MongooseQueryService', () => {
 
     it('should reject if the update contains the ID', () => {
       const queryService = moduleRef.get(TestEntityService);
-      return expect(queryService.updateMany({ id: new ObjectId().toHexString() }, {})).rejects.toThrow(
+      return expect(queryService.updateMany({ id: new Types.ObjectId().toHexString() }, {})).rejects.toThrow(
         'Id cannot be specified when updating',
       );
     });
@@ -555,13 +554,13 @@ describe('MongooseQueryService', () => {
 
     it('should reject if the update contains the ID', async () => {
       const queryService = moduleRef.get(TestEntityService);
-      return expect(queryService.updateOne(TEST_ENTITIES[0]._id, { id: new ObjectId().toHexString() })).rejects.toThrow(
-        'Id cannot be specified when updating',
-      );
+      return expect(
+        queryService.updateOne(TEST_ENTITIES[0]._id, { id: new Types.ObjectId().toHexString() }),
+      ).rejects.toThrow('Id cannot be specified when updating');
     });
 
     it('call fail if the entity is not found', async () => {
-      const badId = new ObjectId().toHexString();
+      const badId = new Types.ObjectId().toHexString();
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.updateOne(badId, { stringType: 'updated' })).rejects.toThrow(
         `Unable to find TestEntity with id: ${badId}`,
@@ -707,7 +706,7 @@ describe('MongooseQueryService', () => {
       });
 
       it('should return undefined select if no results are found.', async () => {
-        const entities: TestEntity[] = [TEST_ENTITIES[0], { _id: new ObjectId() } as TestEntity];
+        const entities: TestEntity[] = [TEST_ENTITIES[0], { _id: new Types.ObjectId() } as TestEntity];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestReference, 'testReference', entities);
 
@@ -832,7 +831,7 @@ describe('MongooseQueryService', () => {
       });
 
       it('should return an empty array if no results are found.', async () => {
-        const entities: TestEntity[] = [TEST_ENTITIES[0], { id: new ObjectId() } as TestEntity];
+        const entities: TestEntity[] = [TEST_ENTITIES[0], { id: new Types.ObjectId() } as TestEntity];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
           filter: { referenceName: { isNot: null } },
@@ -935,12 +934,12 @@ describe('MongooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[2].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[0].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -957,12 +956,12 @@ describe('MongooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[5].referenceName,
                     testEntity: entities[1]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[3].referenceName,
                     testEntity: entities[1]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -979,12 +978,12 @@ describe('MongooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[8].referenceName,
                     testEntity: entities[2]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[6].referenceName,
                     testEntity: entities[2]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1025,12 +1024,12 @@ describe('MongooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[2].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[0].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1048,12 +1047,12 @@ describe('MongooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[5].referenceName,
                     testEntity: entities[1]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[3].referenceName,
                     testEntity: entities[1]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1071,12 +1070,12 @@ describe('MongooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[8].referenceName,
                     testEntity: entities[2]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[6].referenceName,
                     testEntity: entities[2]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1086,7 +1085,7 @@ describe('MongooseQueryService', () => {
       });
 
       it('should return an empty array if no results are found.', async () => {
-        const entities: TestEntity[] = [TEST_ENTITIES[0], { _id: new ObjectId() } as TestEntity];
+        const entities: TestEntity[] = [TEST_ENTITIES[0], { _id: new Types.ObjectId() } as TestEntity];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.aggregateRelations(
           TestReference,
@@ -1114,12 +1113,12 @@ describe('MongooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[2].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[0].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],

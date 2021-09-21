@@ -1,9 +1,8 @@
 import { AssemblerSerializer, getQueryServiceToken } from '@nestjs-query/core';
 import { FactoryProvider } from '@nestjs/common';
-import { ReturnModelType, DocumentType } from '@typegoose/typegoose';
+import { ReturnModelType, DocumentType, mongoose } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { getModelToken } from 'nestjs-typegoose';
-import { Document } from 'mongoose';
 import { isClass } from 'is-class';
 import { TypegooseQueryService } from './services';
 import { TypegooseClass, TypegooseClassWithOptions, TypegooseDiscriminator } from './typegoose-interface.helpers';
@@ -16,7 +15,7 @@ const isTypegooseClass = (item: TypegooseInput): item is TypegooseClass => isCla
 const isTypegooseClassWithOptions = (item: ClassOrDiscriminator): item is TypegooseClassWithOptions =>
   isTypegooseClass(item.typegooseClass);
 
-AssemblerSerializer((obj: Document) => obj.toObject({ virtuals: true }))(Document);
+AssemblerSerializer((obj: mongoose.Document) => obj.toObject({ virtuals: true }))(mongoose.Document);
 
 function ensureProperInput(item: TypegooseInput): ClassOrDiscriminator | undefined {
   if (isTypegooseClass(item)) {

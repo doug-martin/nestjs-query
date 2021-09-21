@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
-import { getModelForClass, DocumentType } from '@typegoose/typegoose';
+import { getModelForClass, DocumentType, mongoose } from '@typegoose/typegoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ObjectId } from 'mongodb';
 import { ReturnModelType } from '@typegoose/typegoose/lib/types';
 import { InjectModel, TypegooseModule } from 'nestjs-typegoose';
 import { FindRelationOptions, SortDirection } from '@nestjs-query/core';
@@ -18,6 +17,8 @@ import {
 } from '../__fixtures__';
 import { NestjsQueryTypegooseModule } from '../../src';
 import { TypegooseQueryService } from '../../src/services';
+
+const { Types } = mongoose;
 
 describe('TypegooseQueryService', () => {
   let moduleRef: TestingModule;
@@ -204,13 +205,13 @@ describe('TypegooseQueryService', () => {
             dateType: TEST_DISCRIMINATED_ENTITIES[9].dateType,
             numberType: 20,
             stringType: 'foo9',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           min: {
             dateType: TEST_ENTITIES[0].dateType,
             numberType: 1,
             stringType: 'foo1',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           sum: {
             numberType: 210,
@@ -247,13 +248,13 @@ describe('TypegooseQueryService', () => {
             dateType: TEST_DISCRIMINATED_ENTITIES[8].dateType,
             numberType: 19,
             stringType: 'foo9',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           min: {
             dateType: TEST_ENTITIES[0].dateType,
             numberType: 1,
             stringType: 'foo1',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           sum: {
             numberType: 100,
@@ -273,13 +274,13 @@ describe('TypegooseQueryService', () => {
             dateType: TEST_DISCRIMINATED_ENTITIES[9].dateType,
             numberType: 20,
             stringType: 'foo8',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           min: {
             dateType: TEST_ENTITIES[1].dateType,
             numberType: 2,
             stringType: 'foo10',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           sum: {
             numberType: 110,
@@ -312,13 +313,13 @@ describe('TypegooseQueryService', () => {
             dateType: TEST_ENTITIES[2].dateType,
             numberType: 3,
             stringType: 'foo3',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           min: {
             dateType: TEST_ENTITIES[0].dateType,
             numberType: 1,
             stringType: 'foo1',
-            id: expect.any(ObjectId),
+            id: expect.any(Types.ObjectId),
           },
           sum: {
             numberType: 6,
@@ -347,7 +348,7 @@ describe('TypegooseQueryService', () => {
 
     it('return undefined if not found', async () => {
       const queryService = moduleRef.get(TestEntityService);
-      const found = await queryService.findById(new ObjectId().toHexString());
+      const found = await queryService.findById(new Types.ObjectId().toHexString());
       expect(found).toBeUndefined();
     });
 
@@ -381,7 +382,7 @@ describe('TypegooseQueryService', () => {
     });
 
     it('return undefined if not found', () => {
-      const badId = new ObjectId().toHexString();
+      const badId = new Types.ObjectId().toHexString();
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.getById(badId)).rejects.toThrow(`Unable to find TestEntity with id: ${badId}`);
     });
@@ -491,7 +492,7 @@ describe('TypegooseQueryService', () => {
     });
 
     it('call fail if the entity is not found', async () => {
-      const badId = new ObjectId().toHexString();
+      const badId = new Types.ObjectId().toHexString();
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.deleteOne(badId)).rejects.toThrow(`Unable to find TestEntity with id: ${badId}`);
     });
@@ -531,7 +532,7 @@ describe('TypegooseQueryService', () => {
 
     it('should reject if the update contains the ID', () => {
       const queryService = moduleRef.get(TestEntityService);
-      return expect(queryService.updateMany({ id: new ObjectId().toHexString() }, {})).rejects.toThrow(
+      return expect(queryService.updateMany({ id: new Types.ObjectId().toHexString() }, {})).rejects.toThrow(
         'Id cannot be specified when updating',
       );
     });
@@ -580,12 +581,12 @@ describe('TypegooseQueryService', () => {
     it('should reject if the update contains the ID', async () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(
-        queryService.updateOne(TEST_ENTITIES[0]._id.toHexString(), { _id: new ObjectId() }),
+        queryService.updateOne(TEST_ENTITIES[0]._id.toHexString(), { _id: new Types.ObjectId() }),
       ).rejects.toThrow('Id cannot be specified when updating');
     });
 
     it('call fail if the entity is not found', async () => {
-      const badId = new ObjectId().toHexString();
+      const badId = new Types.ObjectId().toHexString();
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.updateOne(badId, { stringType: 'updated' })).rejects.toThrow(
         `Unable to find TestEntity with id: ${badId}`,
@@ -733,7 +734,7 @@ describe('TypegooseQueryService', () => {
       it('should return undefined select if no results are found.', async () => {
         const entities: DocumentType<TestEntity>[] = [
           TEST_ENTITIES[0],
-          { _id: new ObjectId() } as DocumentType<TestEntity>,
+          { _id: new Types.ObjectId() } as DocumentType<TestEntity>,
         ];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestReference, 'testReference', entities);
@@ -858,7 +859,7 @@ describe('TypegooseQueryService', () => {
       it('should return an empty array if no results are found.', async () => {
         const entities: DocumentType<TestEntity>[] = [
           TEST_ENTITIES[0],
-          { _id: new ObjectId() } as DocumentType<TestEntity>,
+          { _id: new Types.ObjectId() } as DocumentType<TestEntity>,
         ];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
@@ -962,12 +963,12 @@ describe('TypegooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[2].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[0].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -984,12 +985,12 @@ describe('TypegooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[5].referenceName,
                     testEntity: entities[1]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[3].referenceName,
                     testEntity: entities[1]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1006,12 +1007,12 @@ describe('TypegooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[8].referenceName,
                     testEntity: entities[2]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[6].referenceName,
                     testEntity: entities[2]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1052,12 +1053,12 @@ describe('TypegooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[2].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[0].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1075,12 +1076,12 @@ describe('TypegooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[5].referenceName,
                     testEntity: entities[1]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[3].referenceName,
                     testEntity: entities[1]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1098,12 +1099,12 @@ describe('TypegooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[8].referenceName,
                     testEntity: entities[2]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[6].referenceName,
                     testEntity: entities[2]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
@@ -1115,7 +1116,7 @@ describe('TypegooseQueryService', () => {
       it('should return an empty array if no results are found.', async () => {
         const entities: DocumentType<TestEntity>[] = [
           TEST_ENTITIES[0],
-          { _id: new ObjectId() } as DocumentType<TestEntity>,
+          { _id: new Types.ObjectId() } as DocumentType<TestEntity>,
         ];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.aggregateRelations(
@@ -1144,12 +1145,12 @@ describe('TypegooseQueryService', () => {
                   max: {
                     referenceName: TEST_REFERENCES[2].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                   min: {
                     referenceName: TEST_REFERENCES[0].referenceName,
                     testEntity: entities[0]._id,
-                    id: expect.any(ObjectId),
+                    id: expect.any(Types.ObjectId),
                   },
                 },
               ],
