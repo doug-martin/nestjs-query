@@ -1,7 +1,7 @@
-import { SchemaType } from 'mongoose';
+import { mongoose } from '@typegoose/typegoose';
 
 export type ReferenceOptions = {
-  type: SchemaType;
+  type: mongoose.SchemaType;
   ref: string;
 };
 

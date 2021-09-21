@@ -1,4 +1,4 @@
-import { SchemaOptions } from 'mongoose';
+import { mongoose } from '@typegoose/typegoose';
 
 export interface TypegooseClass {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,7 +10,7 @@ export interface TypegooseClassWrapper {
 }
 
 export interface TypegooseClassWithOptions extends TypegooseClassWrapper {
-  schemaOptions?: SchemaOptions;
+  schemaOptions?: mongoose.SchemaOptions;
   discriminators?: (TypegooseClass | TypegooseDiscriminator)[];
 }
 

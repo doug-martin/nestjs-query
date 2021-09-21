@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import { Document, UpdateQuery } from 'mongoose';
 import {
   AggregateQuery,
   AggregateResponse,
@@ -13,7 +12,7 @@ import {
   Query,
 } from '@nestjs-query/core';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { ReturnModelType, DocumentType, getModelWithString, getClass } from '@typegoose/typegoose';
+import { ReturnModelType, DocumentType, getModelWithString, getClass, mongoose } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import {
@@ -215,7 +214,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     const entity = await this.findAndUpdate(
       id,
       opts?.filter as Filter<Entity>,
-      { $push: { [relationName]: { $each: relationIds } } } as UpdateQuery<DocumentType<Entity>>,
+      { $push: { [relationName]: { $each: relationIds } } } as mongoose.UpdateQuery<DocumentType<Entity>>,
     );
 
     return entity;
@@ -235,7 +234,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     const entity = await this.findAndUpdate(
       id,
       opts?.filter as Filter<Entity>,
-      { [relationName]: relationIds } as UpdateQuery<DocumentType<Entity>>,
+      { [relationName]: relationIds } as mongoose.UpdateQuery<DocumentType<Entity>>,
     );
     return entity;
   }
@@ -254,7 +253,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     const entity = await this.findAndUpdate(
       id,
       opts?.filter as Filter<Entity>,
-      { [relationName]: relationId } as UpdateQuery<DocumentType<Entity>>,
+      { [relationName]: relationId } as mongoose.UpdateQuery<DocumentType<Entity>>,
     );
 
     // reload the document
@@ -276,7 +275,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     await this.findAndUpdate(
       id,
       opts?.filter as Filter<Entity>,
-      { $unset: { [relationName]: relationId } } as UpdateQuery<DocumentType<Entity>>,
+      { $unset: { [relationName]: relationId } } as mongoose.UpdateQuery<DocumentType<Entity>>,
     );
 
     // reload the document
@@ -300,7 +299,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     await this.findAndUpdate(
       id,
       opts?.filter as Filter<Entity>,
-      { $pullAll: { [relationName]: relationIds } } as UpdateQuery<DocumentType<Entity>>,
+      { $pullAll: { [relationName]: relationIds } } as mongoose.UpdateQuery<DocumentType<Entity>>,
     );
 
     // reload the document
@@ -411,7 +410,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
   private async findAndUpdate(
     id: string | number,
     filter: Filter<Entity>,
-    query: UpdateQuery<DocumentType<Entity>>,
+    query: mongoose.UpdateQuery<DocumentType<Entity>>,
   ): Promise<DocumentType<Entity>> {
     const entity = await this.Model.findOneAndUpdate(this.filterQueryBuilder.buildIdFilterQuery(id, filter), query, {
       new: true,

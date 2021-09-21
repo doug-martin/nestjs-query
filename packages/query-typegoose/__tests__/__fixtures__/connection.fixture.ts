@@ -1,7 +1,8 @@
-import { connections } from 'mongoose';
+import { mongoose } from '@typegoose/typegoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { seed } from './seeds';
 
+const { connections } = mongoose;
 const mongoServer = new MongoMemoryServer();
 
 export function getConnectionUri(): Promise<string> {

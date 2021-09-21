@@ -13,7 +13,6 @@ import {
   QueryService,
 } from '@nestjs-query/core';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { ToObjectOptions, UpdateQuery } from 'mongoose';
 import { ReturnModelType, DocumentType, mongoose } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
 import { ReferenceQueryService } from './reference-query.service';
@@ -21,7 +20,7 @@ import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { UpdateArrayQuery } from '../typegoose-types.helper';
 
 export interface TypegooseQueryServiceOpts {
-  toObjectOptions?: ToObjectOptions;
+  toObjectOptions?: mongoose.ToObjectOptions;
 }
 
 export class TypegooseQueryService<Entity extends Base>
@@ -242,17 +241,17 @@ export class TypegooseQueryService<Entity extends Base>
     }
   }
 
-  private getUpdateQuery(entity: DocumentType<Entity>): UpdateQuery<DocumentType<Entity>> {
+  private getUpdateQuery(entity: DocumentType<Entity>): mongoose.UpdateQuery<DocumentType<Entity>> {
     if (entity instanceof this.Model) {
       return entity.modifiedPaths().reduce(
-        (update: UpdateQuery<DocumentType<Entity>>, k) =>
+        (update: mongoose.UpdateQuery<DocumentType<Entity>>, k) =>
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           ({ ...update, [k]: entity.get(k) }),
         {},
       );
     }
-    const arrayUpdateQuery: UpdateQuery<unknown> = this.buildArrayUpdateQuery(entity as DeepPartial<Entity>);
-    return { ...entity, ...arrayUpdateQuery } as UpdateQuery<DocumentType<Entity>>;
+    const arrayUpdateQuery: mongoose.UpdateQuery<unknown> = this.buildArrayUpdateQuery(entity as DeepPartial<Entity>);
+    return { ...entity, ...arrayUpdateQuery } as mongoose.UpdateQuery<DocumentType<Entity>>;
   }
 
   private buildArrayUpdateQuery(entity: DeepPartial<Entity>) {

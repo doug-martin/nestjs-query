@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
-import { Connection } from 'mongoose';
-import { getModelForClass, DocumentType, getDiscriminatorModelForClass } from '@typegoose/typegoose';
+import { getModelForClass, DocumentType, getDiscriminatorModelForClass, mongoose } from '@typegoose/typegoose';
 import { TestEntity } from './test.entity';
 import { TestDiscriminatedEntity } from './test-discriminated.entity';
 import { TestReference } from './test-reference.entity';
@@ -60,7 +59,7 @@ export const TEST_REFERENCES_FOR_DISCRIMINATES: DocumentType<TestReference>[] = 
   [] as DocumentType<TestReference>[],
 );
 
-export const seed = async (connection: Connection): Promise<void> => {
+export const seed = async (connection: mongoose.Connection): Promise<void> => {
   const TestEntityModel = getModelForClass(TestEntity, { existingConnection: connection });
   const TestReferencesModel = getModelForClass(TestReference, { existingConnection: connection });
   const TestDiscriminatedModel = getDiscriminatorModelForClass(TestEntityModel, TestDiscriminatedEntity);
