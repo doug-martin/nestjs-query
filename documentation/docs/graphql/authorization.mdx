@@ -249,11 +249,12 @@ For example you could define the subtasks with the `auth` option, only allowing 
 When you need more control over authorization you can create a custom `Authorizer`. You may want to use a custom
 `Authorizer` if you need to use additional services to do authorization for a DTO.
 
-The `Authorizer` interface requires two methods to be implemented
+The `CustomAuthorizer` interface ensures two methods:
 
 - `authorize` - Should return a filter that should be used for all queries and mutations for the DTO.
-- `authorizeRelation` - Should return a filter for the relation that will be used when querying the relation or
-  adding/removing relations to/from the DTO.
+- `authorizeRelation` - Optionally modify the filter for the relation that will be used when querying the relation or
+  adding/removing relations to/from the DTO. If undefined is returned, the authorization filter of the relation DTO
+  will be used instead.
 
 In this example we'll create a simple authorizer for `SubTasks`. You can use this as a base to create a more complex
 authorizers that depends on other services.
@@ -266,16 +267,16 @@ import { UserContext } from '../auth/auth.interfaces';
 import { SubTaskDTO } from './dto/sub-task.dto';
 
 @Injectable()
-export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
+export class SubTaskAuthorizer implements CustomAuthorizer<SubTaskDTO> {
   authorize(context: UserContext): Promise<Filter<SubTaskDTO>> {
     return Promise.resolve({ ownerId: { eq: context.req.user.id } });
   }
 
-  authorizeRelation(relationName: string, context: UserContext): Promise<Filter<unknown>> {
+  authorizeRelation(relationName: string, context: UserContext): Promise<Filter<unknown> | undefined> {
     if (relationName === 'todoItem') {
       return Promise.resolve({ ownerId: { eq: context.req.user.id } });
     }
-    return Promise.resolve({});
+    return Promise.resolve(undefined);
   }
 }
 ```
@@ -396,6 +397,11 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 
 :::important
 If you are extending the `CRUDResolver` directly be sure to [register your DTOs with the `NestjsQueryGraphQLModule`](./resolvers.mdx#crudresolver)
+:::
+
+:::important
+When using `@InjectAuthorizer`, the injected Authorizer is not the CustomAuthorizer, but the DefaultCRUDAuthorizer that internally uses the CustomAuthorizer.
+If you want to use the CustomAuthorizer directly, inject it with `@InjectCustomAuthorizer` instead.
 :::
 
 ## Authorize depending on operation

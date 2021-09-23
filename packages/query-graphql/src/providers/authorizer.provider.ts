@@ -1,7 +1,7 @@
 import { Provider } from '@nestjs/common';
 import { Class } from '@nestjs-query/core';
-import { createDefaultAuthorizer, getAuthorizerToken } from '../auth';
-import { getAuthorizer } from '../decorators';
+import { createDefaultAuthorizer, getAuthorizerToken, getCustomAuthorizerToken } from '../auth';
+import { getAuthorizer, getCustomAuthorizer } from '../decorators';
 
 function createServiceProvider<DTO>(DTOClass: Class<DTO>): Provider {
   const token = getAuthorizerToken(DTOClass);
@@ -13,5 +13,19 @@ function createServiceProvider<DTO>(DTOClass: Class<DTO>): Provider {
   return { provide: token, useClass: authorizer };
 }
 
+function createCustomAuthorizerProvider<DTO>(DTOClass: Class<DTO>): Provider | undefined {
+  const token = getCustomAuthorizerToken(DTOClass);
+  const customAuthorizer = getCustomAuthorizer(DTOClass);
+  if (customAuthorizer) {
+    return { provide: token, useClass: customAuthorizer };
+  }
+  return undefined;
+}
+
 export const createAuthorizerProviders = (DTOClasses: Class<unknown>[]): Provider[] =>
-  DTOClasses.map((DTOClass) => createServiceProvider(DTOClass));
+  DTOClasses.reduce<Provider[]>((providers, DTOClass) => {
+    const p = createCustomAuthorizerProvider(DTOClass);
+    if (p) providers.push(p);
+    providers.push(createServiceProvider(DTOClass));
+    return providers;
+  }, []);

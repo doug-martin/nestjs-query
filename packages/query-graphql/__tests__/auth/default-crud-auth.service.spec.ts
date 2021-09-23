@@ -3,7 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Filter } from '@nestjs-query/core';
 import { Injectable } from '@nestjs/common';
 import { Authorizer, Relation, Authorize, UnPagedRelation } from '../../src';
-import { AuthorizationContext, OperationGroup, getAuthorizerToken } from '../../src/auth';
+import {
+  AuthorizationContext,
+  OperationGroup,
+  getAuthorizerToken,
+  getCustomAuthorizerToken,
+  CustomAuthorizer,
+} from '../../src/auth';
 import { createAuthorizerProviders } from '../../src/providers';
 
 describe('createDefaultAuthorizer', () => {
@@ -15,12 +21,12 @@ describe('createDefaultAuthorizer', () => {
   }
 
   @Injectable()
-  class RelationAuthorizer implements Authorizer<RelationWithAuthorizer> {
+  class RelationAuthorizer implements CustomAuthorizer<RelationWithAuthorizer> {
     authorize(context: UserContext): Promise<Filter<RelationWithAuthorizer>> {
       return Promise.resolve({ authorizerOwnerId: { eq: context.user.id } });
     }
 
-    authorizeRelation(): Promise<Filter<unknown>> {
+    authorizeRelation(): Promise<Filter<unknown> | undefined> {
       return Promise.reject(new Error('should not have called'));
     }
   }
@@ -30,7 +36,11 @@ describe('createDefaultAuthorizer', () => {
     authorizerOwnerId!: number;
   }
 
-  @Authorize({ authorize: (ctx: UserContext) => ({ decoratorOwnerId: { eq: ctx.user.id } }) })
+  @Authorize({
+    authorize: (ctx: UserContext) => ({
+      decoratorOwnerId: { eq: ctx.user.id },
+    }),
+  })
   class TestDecoratorRelation {
     decoratorOwnerId!: number;
   }
@@ -59,6 +69,32 @@ describe('createDefaultAuthorizer', () => {
     ownerId!: number;
   }
 
+  @Injectable()
+  class TestWithAuthorizerAuthorizer implements CustomAuthorizer<TestWithAuthorizerDTO> {
+    authorize(context: UserContext): Promise<Filter<TestWithAuthorizerDTO>> {
+      return Promise.resolve({ ownerId: { eq: context.user.id } });
+    }
+
+    authorizeRelation(): Promise<Filter<unknown> | undefined> {
+      return Promise.resolve(undefined);
+    }
+  }
+
+  @Authorize(TestWithAuthorizerAuthorizer)
+  @Relation('relations', () => TestRelation, {
+    auth: {
+      authorize: (ctx: UserContext, authorizationContext?: AuthorizationContext) =>
+        authorizationContext?.operationName === 'other'
+          ? { relationOwnerId: { neq: ctx.user.id } }
+          : { relationOwnerId: { eq: ctx.user.id } },
+    },
+  })
+  @UnPagedRelation('unPagedDecoratorRelations', () => TestDecoratorRelation)
+  @Relation('authorizerRelation', () => RelationWithAuthorizer)
+  class TestWithAuthorizerDTO {
+    ownerId!: number;
+  }
+
   beforeEach(async () => {
     testingModule = await Test.createTestingModule({
       providers: [
@@ -68,6 +104,7 @@ describe('createDefaultAuthorizer', () => {
           RelationWithAuthorizer,
           TestDTO,
           TestNoAuthDTO,
+          TestWithAuthorizerDTO,
         ]),
       ],
     }).compile();
@@ -79,7 +116,12 @@ describe('createDefaultAuthorizer', () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
     const filter = await authorizer.authorize(
       { user: { id: 2 } },
-      { operationName: 'queryMany', operationGroup: OperationGroup.READ, readonly: true, many: true },
+      {
+        operationName: 'queryMany',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
     );
     expect(filter).toEqual({ ownerId: { eq: 2 } });
   });
@@ -88,7 +130,12 @@ describe('createDefaultAuthorizer', () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
     const filter = await authorizer.authorize(
       { user: { id: 2 } },
-      { operationName: 'other', operationGroup: OperationGroup.READ, readonly: true, many: true },
+      {
+        operationName: 'other',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
     );
     expect(filter).toEqual({ ownerId: { neq: 2 } });
   });
@@ -97,7 +144,12 @@ describe('createDefaultAuthorizer', () => {
     const authorizer = testingModule.get<Authorizer<TestNoAuthDTO>>(getAuthorizerToken(TestNoAuthDTO));
     const filter = await authorizer.authorize(
       { user: { id: 2 } },
-      { operationName: 'queryMany', operationGroup: OperationGroup.READ, readonly: true, many: true },
+      {
+        operationName: 'queryMany',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
     );
     expect(filter).toEqual({});
   });
@@ -107,7 +159,12 @@ describe('createDefaultAuthorizer', () => {
     const filter = await authorizer.authorizeRelation(
       'unPagedDecoratorRelations',
       { user: { id: 2 } },
-      { operationName: 'queryRelation', operationGroup: OperationGroup.READ, readonly: true, many: true },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
     );
     expect(filter).toEqual({ decoratorOwnerId: { eq: 2 } });
   });
@@ -117,7 +174,12 @@ describe('createDefaultAuthorizer', () => {
     const filter = await authorizer.authorizeRelation(
       'relations',
       { user: { id: 2 } },
-      { operationName: 'queryRelation', operationGroup: OperationGroup.READ, readonly: true, many: true },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
     );
     expect(filter).toEqual({ relationOwnerId: { eq: 2 } });
   });
@@ -127,7 +189,12 @@ describe('createDefaultAuthorizer', () => {
     const filter = await authorizer.authorizeRelation(
       'relations',
       { user: { id: 2 } },
-      { operationName: 'other', operationGroup: OperationGroup.READ, readonly: true, many: true },
+      {
+        operationName: 'other',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
     );
     expect(filter).toEqual({ relationOwnerId: { neq: 2 } });
   });
@@ -137,7 +204,12 @@ describe('createDefaultAuthorizer', () => {
     const filter = await authorizer.authorizeRelation(
       'authorizerRelation',
       { user: { id: 2 } },
-      { operationName: 'queryRelation', operationGroup: OperationGroup.READ, readonly: true, many: true },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
     );
     expect(filter).toEqual({ authorizerOwnerId: { eq: 2 } });
   });
@@ -147,8 +219,125 @@ describe('createDefaultAuthorizer', () => {
     const filter = await authorizer.authorizeRelation(
       'unknownRelations',
       { user: { id: 2 } },
-      { operationName: 'queryRelation', operationGroup: OperationGroup.READ, readonly: true, many: true },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
     );
     expect(filter).toEqual({});
+  });
+
+  it('should call authorizeRelation of authorizer and fallback to authorize decorator', async () => {
+    const authorizer = testingModule.get<Authorizer<TestWithAuthorizerDTO>>(getAuthorizerToken(TestWithAuthorizerDTO));
+    jest.spyOn(authorizer, 'authorizeRelation');
+    const customAuthorizer = testingModule.get<CustomAuthorizer<TestWithAuthorizerDTO>>(
+      getCustomAuthorizerToken(TestWithAuthorizerDTO),
+    );
+    jest.spyOn(customAuthorizer, 'authorizeRelation');
+    expect(customAuthorizer).toBeDefined();
+    const filter = await authorizer.authorizeRelation(
+      'unPagedDecoratorRelations',
+      { user: { id: 2 } },
+      {
+        operationName: 'queryMany',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
+    );
+    expect(filter).toEqual({
+      decoratorOwnerId: { eq: 2 },
+    });
+    expect(customAuthorizer.authorizeRelation).toHaveBeenCalledWith(
+      'unPagedDecoratorRelations',
+      { user: { id: 2 } },
+      {
+        operationName: 'queryMany',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
+    );
+    expect(authorizer.authorizeRelation).toHaveBeenCalledWith(
+      'unPagedDecoratorRelations',
+      { user: { id: 2 } },
+      {
+        operationName: 'queryMany',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
+    );
+  });
+
+  it('should call authorizeRelation of authorizer and fallback to custom authorizer of relation', async () => {
+    const authorizer = testingModule.get<Authorizer<TestWithAuthorizerDTO>>(getAuthorizerToken(TestWithAuthorizerDTO));
+    jest.spyOn(authorizer, 'authorizeRelation');
+    const customAuthorizer = testingModule.get<CustomAuthorizer<TestWithAuthorizerDTO>>(
+      getCustomAuthorizerToken(TestWithAuthorizerDTO),
+    );
+    jest.spyOn(customAuthorizer, 'authorizeRelation');
+    expect(customAuthorizer).toBeDefined();
+    const relationAuthorizer = testingModule.get<Authorizer<RelationWithAuthorizer>>(
+      getAuthorizerToken(RelationWithAuthorizer),
+    );
+    jest.spyOn(relationAuthorizer, 'authorize');
+    const customRelationAuthorizer = testingModule.get<CustomAuthorizer<RelationWithAuthorizer>>(
+      getCustomAuthorizerToken(RelationWithAuthorizer),
+    );
+    jest.spyOn(customRelationAuthorizer, 'authorize');
+    const filter = await authorizer.authorizeRelation(
+      'authorizerRelation',
+      { user: { id: 2 } },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
+    );
+    expect(filter).toEqual({
+      authorizerOwnerId: { eq: 2 },
+    });
+    expect(customAuthorizer.authorizeRelation).toHaveBeenCalledWith(
+      'authorizerRelation',
+      { user: { id: 2 } },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
+    );
+    expect(authorizer.authorizeRelation).toHaveBeenCalledWith(
+      'authorizerRelation',
+      { user: { id: 2 } },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
+    );
+    expect(relationAuthorizer.authorize).toHaveBeenCalledWith(
+      { user: { id: 2 } },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
+    );
+    expect(customRelationAuthorizer.authorize).toHaveBeenCalledWith(
+      { user: { id: 2 } },
+      {
+        operationName: 'queryRelation',
+        operationGroup: OperationGroup.READ,
+        readonly: true,
+        many: true,
+      },
+    );
   });
 });

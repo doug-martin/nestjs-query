@@ -4,6 +4,7 @@ export const RELATION_KEY = 'nestjs-query:relation';
 export const REFERENCE_KEY = 'nestjs-query:reference';
 
 export const AUTHORIZER_KEY = 'nestjs-query:authorizer';
+export const CUSTOM_AUTHORIZER_KEY = 'nestjs-query:custom-authorizer';
 
 export const KEY_SET_KEY = 'nestjs-query:key-set';
 
