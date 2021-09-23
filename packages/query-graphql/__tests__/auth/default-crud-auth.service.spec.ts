@@ -250,6 +250,7 @@ describe('createDefaultAuthorizer', () => {
     expect(filter).toEqual({
       decoratorOwnerId: { eq: 2 },
     });
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(customAuthorizer.authorizeRelation).toHaveBeenCalledWith(
       'unPagedDecoratorRelations',
       { user: { id: 2 } },
@@ -260,6 +261,7 @@ describe('createDefaultAuthorizer', () => {
         many: true,
       },
     );
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(authorizer.authorizeRelation).toHaveBeenCalledWith(
       'unPagedDecoratorRelations',
       { user: { id: 2 } },
@@ -301,6 +303,7 @@ describe('createDefaultAuthorizer', () => {
     expect(filter).toEqual({
       authorizerOwnerId: { eq: 2 },
     });
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(customAuthorizer.authorizeRelation).toHaveBeenCalledWith(
       'authorizerRelation',
       { user: { id: 2 } },
@@ -311,6 +314,7 @@ describe('createDefaultAuthorizer', () => {
         many: true,
       },
     );
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(authorizer.authorizeRelation).toHaveBeenCalledWith(
       'authorizerRelation',
       { user: { id: 2 } },
@@ -321,6 +325,7 @@ describe('createDefaultAuthorizer', () => {
         many: true,
       },
     );
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(relationAuthorizer.authorize).toHaveBeenCalledWith(
       { user: { id: 2 } },
       {
@@ -330,6 +335,7 @@ describe('createDefaultAuthorizer', () => {
         many: true,
       },
     );
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(customRelationAuthorizer.authorize).toHaveBeenCalledWith(
       { user: { id: 2 } },
       {
