@@ -26,6 +26,7 @@ export {
   BeforeQueryMany,
   BeforeFindOne,
   InjectAuthorizer,
+  InjectCustomAuthorizer,
   Authorize,
   AuthorizerFilter,
   RelationAuthorizerFilter,
@@ -42,7 +43,7 @@ export { DTONamesOpts } from './common';
 export { NestjsQueryGraphQLModule } from './module';
 export { AutoResolverOpts } from './providers';
 export { pubSubToken, GraphQLPubSub } from './subscription';
-export { Authorizer, AuthorizerOptions, AuthorizationContext, OperationGroup } from './auth';
+export { Authorizer, CustomAuthorizer, AuthorizerOptions, AuthorizationContext, OperationGroup } from './auth';
 export {
   Hook,
   HookTypes,
