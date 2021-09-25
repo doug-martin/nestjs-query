@@ -12,7 +12,7 @@
     "start": "nest start --watch"
   },
   "dependencies": {
-    "@apollo/federation": "0.32.0",
+    "@apollo/federation": "0.33.0",
     "@nestjs-query/core": "0.29.0",
     "@nestjs-query/query-graphql": "0.29.0",
     "@nestjs-query/query-mongoose": "0.29.0",
