@@ -30,7 +30,7 @@ export class TestEntity {
   @JoinTable()
   manyToManyUniDirectional?: TestRelation[];
 
-  @OneToOne(() => TestRelation, (relation) => relation.oneTestEntity)
+  @OneToOne(() => TestRelation, (relation) => relation.oneTestEntity, { nullable: true })
   @JoinColumn()
   oneTestRelation?: TestRelation;
 

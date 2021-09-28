@@ -1,6 +1,7 @@
 import { ManyToOne, Column, Entity, JoinColumn, ManyToMany, OneToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestEntity } from './test.entity';
+import { RelationOfTestRelationEntity } from './relation-of-test-relation.entity';
 
 @Entity()
 export class TestRelation {
@@ -32,4 +33,14 @@ export class TestRelation {
 
   @OneToMany(() => TestEntityRelationEntity, (ter) => ter.testRelation)
   testEntityRelation?: TestEntityRelationEntity;
+
+  @OneToMany(() => RelationOfTestRelationEntity, (ter) => ter.testRelation)
+  relationsOfTestRelation?: RelationOfTestRelationEntity;
+
+  @Column({ name: 'uni_directional_relation_test_entity_id', nullable: true })
+  relationOfTestRelationId?: string;
+
+  @ManyToOne(() => RelationOfTestRelationEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'uni_directional_relation_test_entity_id' })
+  relationOfTestRelation?: RelationOfTestRelationEntity;
 }
