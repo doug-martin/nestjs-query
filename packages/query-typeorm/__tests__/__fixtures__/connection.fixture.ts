@@ -5,12 +5,13 @@ import { TestRelation } from './test-relation.entity';
 import { TestSoftDeleteEntity } from './test-soft-delete.entity';
 import { TestEntity } from './test.entity';
 import { seed } from './seeds';
+import { RelationOfTestRelationEntity } from './relation-of-test-relation.entity';
 
 export const CONNECTION_OPTIONS: ConnectionOptions = {
   type: 'sqlite',
   database: ':memory:',
   dropSchema: true,
-  entities: [TestEntity, TestSoftDeleteEntity, TestRelation, TestEntityRelationEntity],
+  entities: [TestEntity, TestSoftDeleteEntity, TestRelation, TestEntityRelationEntity, RelationOfTestRelationEntity],
   synchronize: true,
   logging: false,
 };
@@ -29,6 +30,7 @@ export function getTestConnection(): Connection {
 
 const tables = [
   'test_entity',
+  'relation_of_test_relation_entity',
   'test_relation',
   'test_entity_relation_entity',
   'test_soft_delete_entity',
