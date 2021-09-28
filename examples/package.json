@@ -21,7 +21,7 @@
     "@nestjs-query/query-typeorm": "0.29.0",
     "@nestjs/common": "8.0.8",
     "@nestjs/core": "8.0.8",
-    "@nestjs/graphql": "9.0.4",
+    "@nestjs/graphql": "9.0.5",
     "@nestjs/jwt": "8.0.0",
     "@nestjs/mongoose": "8.0.1",
     "@nestjs/passport": "8.0.1",
