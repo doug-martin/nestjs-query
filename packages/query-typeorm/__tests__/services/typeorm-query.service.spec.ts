@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { Filter, SortDirection } from '@nestjs-query/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
