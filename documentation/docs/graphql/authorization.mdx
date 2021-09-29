@@ -246,8 +246,8 @@ For example you could define the subtasks with the `auth` option, only allowing 
 
 ### Custom Authorizer
 
-When you need more control over authorization you can create a custom `Authorizer`. You may want to use a custom
-`Authorizer` if you need to use additional services to do authorization for a DTO.
+When you need more control over authorization you can create a `CustomAuthorizer`. You may want to use a
+`CustomAuthorizer` if you need to use additional services to do authorization for a DTO.
 
 The `CustomAuthorizer` interface ensures two methods:
 
@@ -409,17 +409,17 @@ If you want to use the CustomAuthorizer directly, inject it with `@InjectCustomA
 Sometimes it might be necessary to perform different authorization based on the kind of operation an user wants to execute.
 E.g. some users could be allowed to read all todo items but only update/delete their own.
 
-In this case we can make use of the second parameter of the `authorize` function in our custom `Authorizer` or the one passed to the `@Authorizer` decorator which gets passed additional `AuthorizationContext` such as the name of the operation that should be authorized:
+In this case we can make use of the second parameter of the `authorize` function in our `CustomAuthorizer` or the one passed to the `@Authorizer` decorator which gets passed additional `AuthorizationContext` such as the name of the operation that should be authorized:
 
 ```ts title='sub-task/sub-task.authorizer.ts'
 import { Injectable } from '@nestjs/common';
-import { Authorizer } from '@nestjs-query/query-graphql';
+import { CustomAuthorizer } from '@nestjs-query/query-graphql';
 import { Filter } from '@nestjs-query/core';
 import { UserContext } from '../auth/auth.interfaces';
 import { SubTaskDTO } from './dto/sub-task.dto';
 
 @Injectable()
-export class SubTaskAuthorizer implements Authorizer<SubTaskDTO> {
+export class SubTaskAuthorizer implements CustomAuthorizer<SubTaskDTO> {
   authorize(context: UserContext, authorizationContext?: AuthorizationContext): Promise<Filter<SubTaskDTO>> {
     if (authorizationContext?.readonly) {
       return Promise.resolve({});
@@ -463,7 +463,7 @@ interface AuthorizationContext {
 }
 ```
 
-This context is automatially created for you when using the built-in resolvers.
+This context is automatically created for you when using the built-in resolvers.
 If you authorize custom methods by using the `@AuthorizerFilter()`, you should pass the context as argument to the decorator:
 
 ```ts
