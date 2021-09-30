@@ -270,16 +270,12 @@ export class FilterQueryBuilder<Entity> {
   }
 
   getReferencedRelationsRecursive(metadata: EntityMetadata, filter: Filter<unknown> = {}): NestedRecord {
-    const referencedFields = Array.from(new Set(Object.keys(filter)));
+    const referencedFields = Array.from(new Set(Object.keys(filter) as (keyof Filter<unknown>)[]));
     return referencedFields.reduce((prev, curr) => {
-      if (filter.and) {
-        for (const andFilter of filter.and) {
-          prev = merge(prev, this.getReferencedRelationsRecursive(metadata, andFilter));
-        }
-      }
-      if (filter.or) {
-        for (const orFilter of filter.or) {
-          prev = merge(prev, this.getReferencedRelationsRecursive(metadata, orFilter));
+      const currFilterValue = filter[curr];
+      if ((curr === 'and' || curr === 'or') && currFilterValue) {
+        for (const subFilter of currFilterValue) {
+          prev = merge(prev, this.getReferencedRelationsRecursive(metadata, subFilter));
         }
       }
       const referencedRelation = metadata.relations.find((r) => r.propertyName === curr);
@@ -287,11 +283,8 @@ export class FilterQueryBuilder<Entity> {
       return {
         ...prev,
         [curr]: merge(
-          (prev as Record<string, any>)[curr],
-          this.getReferencedRelationsRecursive(
-            referencedRelation.inverseEntityMetadata,
-            (filter as Record<string, Filter<unknown>>)[curr],
-          ),
+          (prev as NestedRecord)[curr],
+          this.getReferencedRelationsRecursive(referencedRelation.inverseEntityMetadata, currFilterValue),
         ),
       };
     }, {});

@@ -18,7 +18,8 @@
         "noImplicitReturns": true,
         "pretty": true,
         "strict": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "types": ["jest-extended"]
     },
     "exclude": ["node_modules"]
 }
