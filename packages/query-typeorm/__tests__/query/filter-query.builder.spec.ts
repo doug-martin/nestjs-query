@@ -48,7 +48,7 @@ describe('FilterQueryBuilder', (): void => {
         oneTestRelation: { relationOfTestRelation: {} },
       });
     });
-    it('with nested and / or',  () => {
+    it('with nested and / or', () => {
       const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
       const qb = getEntityQueryBuilder(TestEntity, instance(mockWhereBuilder));
       expect(

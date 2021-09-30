@@ -8,5 +8,6 @@ module.exports = {
   moduleNameMapper: {
     '^@nestjs-query/(.*)$': '<rootDir>/packages/$1/src',
   },
+  "setupFilesAfterEnv": ["jest-extended"],
   snapshotSerializers: ['jest-snapshot-serializer-raw/always']
 };

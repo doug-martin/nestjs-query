@@ -1,4 +1,3 @@
-import 'jest-extended';
 import { Filter, SortDirection } from '@nestjs-query/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
@@ -156,10 +155,10 @@ describe('TypeOrmQueryService', (): void => {
               },
             },
           });
-          expect(queryResults).toBeArrayOfSize(6)
+          expect(queryResults).toBeArrayOfSize(6);
           queryResults.map((e, idx) => {
-            expect(e).toMatchObject(TEST_RELATIONS[idx])
-          })
+            expect(e).toMatchObject(TEST_RELATIONS[idx]);
+          });
         });
 
         it('should allow filtering on a uni directional many to one relation', async () => {
@@ -173,10 +172,10 @@ describe('TypeOrmQueryService', (): void => {
               },
             },
           });
-          expect(queryResults).toBeArrayOfSize(6)
+          expect(queryResults).toBeArrayOfSize(6);
           queryResults.map((e, idx) => {
-            expect(e).toMatchObject(TEST_RELATIONS[idx])
-          })
+            expect(e).toMatchObject(TEST_RELATIONS[idx]);
+          });
         });
 
         it('should allow filtering on a many to one relation with paging', async () => {
@@ -197,10 +196,10 @@ describe('TypeOrmQueryService', (): void => {
             sorting: [{ field: 'testRelationPk', direction: SortDirection.ASC }],
             paging: { limit: 3 },
           });
-          expect(queryResults).toBeArrayOfSize(3)
+          expect(queryResults).toBeArrayOfSize(3);
           queryResults.map((e, idx) => {
-            expect(e).toMatchObject(TEST_RELATIONS[idx])
-          })
+            expect(e).toMatchObject(TEST_RELATIONS[idx]);
+          });
         });
       });
 
@@ -617,7 +616,9 @@ describe('TypeOrmQueryService', (): void => {
         it('call select and return the with a uni-directional relation', async () => {
           const entity = TEST_ENTITIES[2];
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = (await queryService.queryRelations(TestRelation, 'manyToManyUniDirectional', entity, {})).map((r) => {
+          const queryResult = (
+            await queryService.queryRelations(TestRelation, 'manyToManyUniDirectional', entity, {})
+          ).map((r) => {
             delete r.relationOfTestRelationId;
             return r;
           });
