@@ -155,13 +155,6 @@
         <summary type="html"><![CDATA[* FIXED] Validate Input for Create & Update [#19]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.3.3]]></title>
-        <id>v0.3.3</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/22/v0.3.3"/>
-        <updated>2020-02-22T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Update typescript to 3.8.]]></summary>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[v0.3.2]]></title>
         <id>v0.3.2</id>
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/22/v0.3.2"/>
@@ -169,11 +162,11 @@
         <summary type="html"><![CDATA[* Switched to github actions]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.3.1]]></title>
-        <id>v0.3.1</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1"/>
-        <updated>2020-02-21T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Hardened TypeORM querying]]></summary>
+        <title type="html"><![CDATA[v0.3.3]]></title>
+        <id>v0.3.3</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/22/v0.3.3"/>
+        <updated>2020-02-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Update typescript to 3.8.]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[v0.3.0]]></title>
@@ -181,6 +174,13 @@
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.0"/>
         <updated>2020-02-21T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[* Added dataloader support!]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.3.1]]></title>
+        <id>v0.3.1</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/02/21/v0.3.1"/>
+        <updated>2020-02-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Hardened TypeORM querying]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[v0.2.1]]></title>
@@ -218,13 +218,6 @@
         <summary type="html"><![CDATA[* Dont allow empty filters with updateMany or deleteMany operations.]]></summary>
     </entry>
     <entry>
-        <title type="html"><![CDATA[v0.0.2]]></title>
-        <id>v0.0.2</id>
-        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.2"/>
-        <updated>2020-01-27T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Add MIT license]]></summary>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[v0.0.3]]></title>
         <id>v0.0.3</id>
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.3"/>
@@ -237,6 +230,13 @@
         <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.4"/>
         <updated>2020-01-27T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[* Add files field to @nestjs-query/core package.json]]></summary>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[v0.0.2]]></title>
+        <id>v0.0.2</id>
+        <link href="https://doug-martin.github.io/nestjs-query/blog/2020/01/27/v0.0.2"/>
+        <updated>2020-01-27T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[* Add MIT license]]></summary>
     </entry>
     <entry>
         <title type="html"><![CDATA[Initial Release]]></title>
