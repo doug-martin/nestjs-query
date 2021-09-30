@@ -32,8 +32,8 @@
     "typeorm": "^0.2.25"
   },
   "devDependencies": {
-    "@nestjs/common": "8.0.8",
-    "@nestjs/testing": "8.0.8",
+    "@nestjs/common": "8.0.9",
+    "@nestjs/testing": "8.0.9",
     "@nestjs/typeorm": "8.0.2",
     "@types/lodash.filter": "4.6.6",
     "@types/lodash.omit": "4.5.6",

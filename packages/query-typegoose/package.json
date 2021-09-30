@@ -31,8 +31,8 @@
     "nestjs-typegoose": "^7.1.38"
   },
   "devDependencies": {
-    "@nestjs/common": "8.0.8",
-    "@nestjs/testing": "8.0.8",
+    "@nestjs/common": "8.0.9",
+    "@nestjs/testing": "8.0.9",
     "@typegoose/typegoose": "8.0.0-beta.7",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
