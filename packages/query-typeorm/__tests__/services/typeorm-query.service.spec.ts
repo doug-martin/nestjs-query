@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { Filter, SortDirection } from '@nestjs-query/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
@@ -66,6 +67,44 @@ describe('TypeOrmQueryService', (): void => {
     });
 
     describe('filter on relations', () => {
+      describe('deeply nested', () => {
+        it('oneToOne - oneToMany', async () => {
+          const entity = TEST_ENTITIES[0];
+          const relationEntity = TEST_RELATIONS.find((r) => r.testEntityId === entity.testEntityPk);
+          expect(relationEntity).toBeDefined();
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              oneTestRelation: {
+                relationsOfTestRelation: {
+                  testRelationId: {
+                    eq: relationEntity?.testRelationPk,
+                  },
+                },
+              },
+            },
+          });
+          expect(queryResult).toEqual([entity]);
+        });
+        it('oneToOne - manyToOne', async () => {
+          const entity = TEST_ENTITIES[0];
+          const relationEntity = TEST_RELATIONS.find((r) => r.testEntityId === entity.testEntityPk);
+          expect(relationEntity).toBeDefined();
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.query({
+            filter: {
+              oneTestRelation: {
+                relationOfTestRelation: {
+                  testRelationId: {
+                    eq: relationEntity?.testRelationPk,
+                  },
+                },
+              },
+            },
+          });
+          expect(queryResult).toEqual([entity]);
+        });
+      });
       describe('oneToOne', () => {
         it('should allow filtering on a one to one relation', async () => {
           const entity = TEST_ENTITIES[0];
@@ -117,7 +156,10 @@ describe('TypeOrmQueryService', (): void => {
               },
             },
           });
-          expect(queryResults).toEqual(TEST_RELATIONS.slice(0, 6));
+          expect(queryResults).toBeArrayOfSize(6)
+          queryResults.map((e, idx) => {
+            expect(e).toMatchObject(TEST_RELATIONS[idx])
+          })
         });
 
         it('should allow filtering on a uni directional many to one relation', async () => {
@@ -131,7 +173,10 @@ describe('TypeOrmQueryService', (): void => {
               },
             },
           });
-          expect(queryResults).toEqual(TEST_RELATIONS.slice(0, 6));
+          expect(queryResults).toBeArrayOfSize(6)
+          queryResults.map((e, idx) => {
+            expect(e).toMatchObject(TEST_RELATIONS[idx])
+          })
         });
 
         it('should allow filtering on a many to one relation with paging', async () => {
@@ -152,7 +197,10 @@ describe('TypeOrmQueryService', (): void => {
             sorting: [{ field: 'testRelationPk', direction: SortDirection.ASC }],
             paging: { limit: 3 },
           });
-          expect(queryResults).toEqual(TEST_RELATIONS.slice(0, 3));
+          expect(queryResults).toBeArrayOfSize(3)
+          queryResults.map((e, idx) => {
+            expect(e).toMatchObject(TEST_RELATIONS[idx])
+          })
         });
       });
 
@@ -569,7 +617,11 @@ describe('TypeOrmQueryService', (): void => {
         it('call select and return the with a uni-directional relation', async () => {
           const entity = TEST_ENTITIES[2];
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = await queryService.queryRelations(TestRelation, 'manyToManyUniDirectional', entity, {});
+          const queryResult = (await queryService.queryRelations(TestRelation, 'manyToManyUniDirectional', entity, {})).map((r) => {
+            delete r.relationOfTestRelationId;
+            return r;
+          });
+
           TEST_RELATIONS.filter((tr) => tr.relationName.endsWith('three')).forEach((tr) => {
             expect(queryResult).toContainEqual(tr);
           });
@@ -1041,7 +1093,7 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
 
-        expect(queryResult).toEqual(TEST_RELATIONS[0]);
+        expect(queryResult).toMatchObject(TEST_RELATIONS[0]);
       });
 
       it('apply the filter option', async () => {
@@ -1050,7 +1102,7 @@ describe('TypeOrmQueryService', (): void => {
         const queryResult1 = await queryService.findRelation(TestRelation, 'oneTestRelation', entity, {
           filter: { relationName: { eq: TEST_RELATIONS[0].relationName } },
         });
-        expect(queryResult1).toEqual(TEST_RELATIONS[0]);
+        expect(queryResult1).toMatchObject(TEST_RELATIONS[0]);
 
         const queryResult2 = await queryService.findRelation(TestRelation, 'oneTestRelation', entity, {
           filter: { relationName: { eq: TEST_RELATIONS[1].relationName } },
@@ -1090,7 +1142,13 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities);
 
-        expect(queryResult).toEqual(
+        const adaptedQueryResult = new Map();
+        queryResult.forEach((entry, key) => {
+          delete entry?.relationOfTestRelationId;
+          adaptedQueryResult.set(key, entry);
+        });
+
+        expect(adaptedQueryResult).toEqual(
           new Map([
             [entities[0], TEST_RELATIONS[0]],
             [entities[1], TEST_RELATIONS[3]],
@@ -1105,7 +1163,12 @@ describe('TypeOrmQueryService', (): void => {
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities, {
           filter: { testRelationPk: { in: [TEST_RELATIONS[0].testRelationPk, TEST_RELATIONS[6].testRelationPk] } },
         });
-        expect(queryResult).toEqual(
+        const adaptedQueryResult = new Map();
+        queryResult.forEach((entry, key) => {
+          delete entry?.relationOfTestRelationId;
+          adaptedQueryResult.set(key, entry);
+        });
+        expect(adaptedQueryResult).toEqual(
           new Map([
             [entities[0], TEST_RELATIONS[0]],
             [entities[2], TEST_RELATIONS[6]],
@@ -1117,8 +1180,12 @@ describe('TypeOrmQueryService', (): void => {
         const entities: TestEntity[] = [TEST_ENTITIES[0], { testEntityPk: 'does-not-exist' } as TestEntity];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities);
-
-        expect(queryResult).toEqual(new Map([[entities[0], TEST_RELATIONS[0]]]));
+        const adaptedQueryResult = new Map();
+        queryResult.forEach((entry, key) => {
+          delete entry?.relationOfTestRelationId;
+          adaptedQueryResult.set(key, entry);
+        });
+        expect(adaptedQueryResult).toEqual(new Map([[entities[0], TEST_RELATIONS[0]]]));
       });
     });
   });
@@ -1390,7 +1457,7 @@ describe('TypeOrmQueryService', (): void => {
           relation.testRelationPk,
           TEST_ENTITIES[0].testEntityPk,
         );
-        expect(queryResult).toEqual(relation);
+        expect(queryResult).toMatchObject(relation);
 
         const entity = await queryService.findRelation(TestEntity, 'testEntity', relation);
         expect(entity).toBeUndefined();
