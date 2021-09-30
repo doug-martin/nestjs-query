@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.30.0](https://github.com/doug-martin/nestjs-query/compare/v0.29.0...v0.30.0) (2021-09-30)
+
+
+### Bug Fixes
+
+* **deps:** update apollo graphql packages ([6d40b9d](https://github.com/doug-martin/nestjs-query/commit/6d40b9d10de522d7950fca8279ee2d763c17e3a5))
+* **deps:** update dependency passport to v0.5.0 ([a8a05d1](https://github.com/doug-martin/nestjs-query/commit/a8a05d1d91c0c50aa0140c8709c9ea75b1aca05f))
+* **deps:** update docusaurus monorepo to v2.0.0-beta.6 ([9015c71](https://github.com/doug-martin/nestjs-query/commit/9015c7162181fcc5362baf9c26efe079d0c22476))
+* **query-graphql:** Custom authorizers now behave like auth decorators ([ff92b9a](https://github.com/doug-martin/nestjs-query/commit/ff92b9ae7a0ae4fb9585bead9b778e26fbd6b95a))
+* **query-graphql:** fix eslint errors ([73acbc3](https://github.com/doug-martin/nestjs-query/commit/73acbc3557d3e8cccbe7cb7e8e01dde9d4218208))
+* **query-typeorm:** import jest-extended into typeorm query service ([f539b29](https://github.com/doug-martin/nestjs-query/commit/f539b29fad60c070e8736f872d547fd498eb3c4f))
+* **tests:** fix jest-extended typings and eslint problems ([6af8af1](https://github.com/doug-martin/nestjs-query/commit/6af8af13a33faaa1585561e7b426b125a6368b6b))
+* **typeorm:** revert uneeded change to test entity ([86f7fd9](https://github.com/doug-martin/nestjs-query/commit/86f7fd9abb101eb40af2cf66009d50cb8c173eea))
+
+
+### Features
+
+* **query-typeorm:** allow deeply nested filters ([0bd6b76](https://github.com/doug-martin/nestjs-query/commit/0bd6b76c4dbd876df7f9a991803843405d24fdb9))
+
+
+
+
+
 # [0.29.0](https://github.com/doug-martin/nestjs-query/compare/v0.28.1...v0.29.0) (2021-09-09)
 
 

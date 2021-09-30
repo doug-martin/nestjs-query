@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.30.0](https://github.com/doug-martin/nestjs-query/compare/v0.29.0...v0.30.0) (2021-09-30)
+
+
+### Bug Fixes
+
+* **deps:** update apollo graphql packages ([6d40b9d](https://github.com/doug-martin/nestjs-query/commit/6d40b9d10de522d7950fca8279ee2d763c17e3a5))
+* **deps:** update dependency passport to v0.5.0 ([a8a05d1](https://github.com/doug-martin/nestjs-query/commit/a8a05d1d91c0c50aa0140c8709c9ea75b1aca05f))
+
+
+
+
+
 # [0.29.0](https://github.com/doug-martin/nestjs-query/compare/v0.28.1...v0.29.0) (2021-09-09)
 
 

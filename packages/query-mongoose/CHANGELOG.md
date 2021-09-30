@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.30.0](https://github.com/doug-martin/nestjs-query/compare/v0.29.0...v0.30.0) (2021-09-30)
+
+**Note:** Version bump only for package @nestjs-query/query-mongoose
+
+
+
+
+
 # [0.29.0](https://github.com/doug-martin/nestjs-query/compare/v0.28.1...v0.29.0) (2021-09-09)
 
 **Note:** Version bump only for package @nestjs-query/query-mongoose

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.30.0](https://github.com/doug-martin/nestjs-query/compare/v0.29.0...v0.30.0) (2021-09-30)
+
+
+### Bug Fixes
+
+* **deps:** update apollo graphql packages ([6d40b9d](https://github.com/doug-martin/nestjs-query/commit/6d40b9d10de522d7950fca8279ee2d763c17e3a5))
+* **query-graphql:** Custom authorizers now behave like auth decorators ([ff92b9a](https://github.com/doug-martin/nestjs-query/commit/ff92b9ae7a0ae4fb9585bead9b778e26fbd6b95a))
+* **query-graphql:** fix eslint errors ([73acbc3](https://github.com/doug-martin/nestjs-query/commit/73acbc3557d3e8cccbe7cb7e8e01dde9d4218208))
+
+
+
+
+
 # [0.29.0](https://github.com/doug-martin/nestjs-query/compare/v0.28.1...v0.29.0) (2021-09-09)
 
 
