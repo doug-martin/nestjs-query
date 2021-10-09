@@ -18,7 +18,8 @@ function createMongooseQueryServiceProvider<Entity extends Document>(
   return {
     provide: getQueryServiceToken(model.document),
     useFactory(ModelClass: Model<Entity>) {
-      AssemblerDeserializer<Entity>((obj: unknown) => new ModelClass(obj))(model.document);
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      AssemblerDeserializer<Entity>((obj: object) => new ModelClass(obj))(model.document);
       // eslint-disable-next-line @typescript-eslint/ban-types
       return new MongooseQueryService<Entity>(ModelClass);
     },
