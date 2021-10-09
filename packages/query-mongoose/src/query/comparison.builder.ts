@@ -94,7 +94,7 @@ export class ComparisonBuilder<Entity extends Document> {
   private likeComparison<F extends keyof Entity>(
     cmp: string,
     val: EntityComparisonField<Entity, F>,
-  ): FilterQuery<string> {
+  ): FilterQuery<RegExp> {
     const regExpStr = escapeRegExp(`${String(val)}`).replace(/%/g, '.*');
     const regExp = new RegExp(regExpStr, cmp.includes('ilike') ? 'i' : undefined);
     if (cmp.startsWith('not')) {
