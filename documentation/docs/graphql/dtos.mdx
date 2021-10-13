@@ -595,12 +595,13 @@ values={[
 
 ### Default Sort
 
-When querying the default sort is based on the persistence layer. You can override the default by providing the `defaultSort` option.
+When querying the default is based on the persistence layer. You can override the default by providing the `defaultSort` option.
 
 In this example we specify the default sort to be by `title`.
 
 ```ts title="todo-item.dto.ts" {5}
 import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { SortDirection } from '@nestjs-query/core';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
