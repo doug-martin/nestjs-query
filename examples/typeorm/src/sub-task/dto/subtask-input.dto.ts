@@ -1,5 +1,5 @@
-import { Field, InputType, ID } from '@nestjs/graphql';
-import { IsOptional, IsString, IsBoolean, IsNotEmpty } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsOptional, IsString, IsBoolean, IsNotEmpty, ValidateNested } from 'class-validator';
 import {
   BeforeCreateMany,
   BeforeCreateOne,
@@ -9,6 +9,11 @@ import {
 import { GqlContext } from '../../auth.guard';
 import { getUserName } from '../../helpers';
 import { SubTaskDTO } from './sub-task.dto';
+import { Type } from 'class-transformer';
+import { AssociateRelationInputType } from '../../relation-input.type';
+
+@InputType('SubTaskTodoItemRelation')
+class SubTaskTodoItemInputType extends AssociateRelationInputType {}
 
 @InputType('SubTaskInput')
 @BeforeCreateOne((input: CreateOneInputType<SubTaskDTO>, context: GqlContext) => {
@@ -38,7 +43,8 @@ export class CreateSubTaskDTO {
   @IsBoolean()
   completed!: boolean;
 
-  @Field(() => ID)
-  @IsNotEmpty()
-  todoItemId!: string;
+  @Field(() => SubTaskTodoItemInputType)
+  @ValidateNested()
+  @Type(() => SubTaskTodoItemInputType)
+  todoItem!: SubTaskTodoItemInputType;
 }

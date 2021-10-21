@@ -1,4 +1,4 @@
-import { IsString, MaxLength, IsBoolean } from 'class-validator';
+import { IsString, MaxLength, IsBoolean, IsOptional, IsArray } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
 import {
   BeforeCreateMany,
@@ -9,6 +9,10 @@ import {
 import { GqlContext } from '../../auth.guard';
 import { getUserName } from '../../helpers';
 import { TodoItemDTO } from './todo-item.dto';
+import { AssociateRelationInputType } from '../../relation-input.type';
+
+@InputType('TodoItemTagRelation')
+class TodoItemTagInputType extends AssociateRelationInputType {}
 
 @InputType('TodoItemInput')
 @BeforeCreateOne((input: CreateOneInputType<TodoItemDTO>, context: GqlContext) => {
@@ -31,4 +35,9 @@ export class TodoItemInputDTO {
   @IsBoolean()
   @Field()
   completed!: boolean;
+
+  @Field(() => [TodoItemTagInputType], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  tags?: TodoItemTagInputType[];
 }
