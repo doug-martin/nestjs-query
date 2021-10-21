@@ -6,6 +6,7 @@ import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
 import { mongooseConfig } from '../../helpers';
+import { resolve } from 'path';
 
 const { uri, ...options } = mongooseConfig('mongoose');
 @Module({
@@ -13,7 +14,7 @@ const { uri, ...options } = mongooseConfig('mongoose');
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     MongooseModule.forRoot(uri!, options),
     GraphQLModule.forRoot({
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: resolve(__dirname, '..', 'schema.gql'),
       context: ({ req }: { req: { headers: Record<string, string> } }): GqlContext => ({ request: req }),
     }),
     SubTaskModule,

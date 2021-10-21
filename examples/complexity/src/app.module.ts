@@ -6,13 +6,14 @@ import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
 import { typeormOrmConfig } from '../../helpers';
+import { resolve } from 'path';
 
 @Module({
   providers: [ComplexityPlugin],
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('complexity')),
     GraphQLModule.forRoot({
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: resolve(__dirname, '..', 'schema.gql'),
     }),
     SubTaskModule,
     TodoItemModule,

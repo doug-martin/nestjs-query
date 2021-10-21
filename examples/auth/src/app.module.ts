@@ -7,6 +7,7 @@ import { SubTaskModule } from './sub-task/sub-task.module';
 import { typeormOrmConfig } from '../../helpers';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { resolve } from 'path';
 
 interface HeadersContainer {
   headers?: Record<string, string>;
@@ -20,7 +21,7 @@ interface ContextArgs {
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('auth')),
     GraphQLModule.forRoot({
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: resolve(__dirname, '..', 'schema.gql'),
       installSubscriptionHandlers: true,
       subscriptions: {
         'subscriptions-transport-ws': {
