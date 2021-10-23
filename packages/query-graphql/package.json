@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@nestjs-query/core": "0.30.0",
+    "@nestjs/mapped-types": "1.0.0",
     "graphql-fields": "^2.0.3",
     "lodash.omit": "^4.5.0",
     "lower-case-first": "^2.0.1",
