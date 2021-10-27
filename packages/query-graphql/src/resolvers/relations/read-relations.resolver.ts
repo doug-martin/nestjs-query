@@ -4,7 +4,6 @@ import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { OperationGroup } from '../../auth';
 import { getDTONames } from '../../common';
 import { RelationAuthorizerFilter, ResolverField } from '../../decorators';
-import { AuthorizerInterceptor } from '../../interceptors';
 import { CountRelationsLoader, DataLoaderFactory, FindRelationsLoader, QueryRelationsLoader } from '../../loader';
 import { QueryArgsType } from '../../types';
 import { transformAndValidate } from '../helpers';
@@ -36,12 +35,11 @@ const ReadOneRelationMixin =
         () => relationDTO,
         { nullable: relation.nullable, complexity: relation.complexity },
         commonResolverOpts,
-        { interceptors: [AuthorizerInterceptor(DTOClass)] },
       )
       async [`find${baseName}`](
         @Parent() dto: DTO,
         @Context() context: ExecutionContext,
-        @RelationAuthorizerFilter(baseNameLower, {
+        @RelationAuthorizerFilter(DTOClass, baseNameLower, {
           operationGroup: OperationGroup.READ,
           many: false,
         })
@@ -88,13 +86,12 @@ const ReadManyRelationMixin =
         () => CT.resolveType,
         { nullable: relation.nullable, complexity: relation.complexity },
         commonResolverOpts,
-        { interceptors: [AuthorizerInterceptor(DTOClass)] },
       )
       async [`query${pluralBaseName}`](
         @Parent() dto: DTO,
         @Args() q: RelationQA,
         @Context() context: ExecutionContext,
-        @RelationAuthorizerFilter(pluralBaseNameLower, {
+        @RelationAuthorizerFilter(DTOClass, pluralBaseNameLower, {
           operationGroup: OperationGroup.READ,
           many: true,
         })

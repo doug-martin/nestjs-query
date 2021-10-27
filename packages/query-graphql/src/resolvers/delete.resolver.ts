@@ -16,7 +16,7 @@ import {
 } from '../types';
 import { MutationHookArgs, ResolverMutation, ResolverSubscription, AuthorizerFilter } from '../decorators';
 import { createSubscriptionFilter, getSubscriptionEventName } from './helpers';
-import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
+import { HookInterceptor } from '../interceptors';
 import { OperationGroup } from '../auth';
 
 export type DeletedEvent<DTO> = { [eventName: string]: DTO };
@@ -113,12 +113,12 @@ export const Deletable =
         () => DeleteOneResponse,
         { name: deleteOneMutationName },
         commonResolverOpts,
-        { interceptors: [HookInterceptor(HookTypes.BEFORE_DELETE_ONE, DTOClass), AuthorizerInterceptor(DTOClass)] },
+        { interceptors: [HookInterceptor(HookTypes.BEFORE_DELETE_ONE, DTOClass)] },
         opts.one ?? {},
       )
       async deleteOne(
         @MutationHookArgs() input: DO,
-        @AuthorizerFilter({
+        @AuthorizerFilter(DTOClass, {
           operationGroup: OperationGroup.DELETE,
           many: false,
         })
@@ -135,12 +135,12 @@ export const Deletable =
         () => DMR,
         { name: deleteManyMutationName },
         commonResolverOpts,
-        { interceptors: [HookInterceptor(HookTypes.BEFORE_DELETE_MANY, DTOClass), AuthorizerInterceptor(DTOClass)] },
+        { interceptors: [HookInterceptor(HookTypes.BEFORE_DELETE_MANY, DTOClass)] },
         opts.many ?? {},
       )
       async deleteMany(
         @MutationHookArgs() input: DM,
-        @AuthorizerFilter({
+        @AuthorizerFilter(DTOClass, {
           operationGroup: OperationGroup.DELETE,
           many: true,
         })
@@ -181,7 +181,7 @@ export const Deletable =
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       deletedOneSubscription(
         @Args() input?: DOSA,
-        @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: false })
+        @AuthorizerFilter(DTOClass, { operationGroup: OperationGroup.DELETE, many: false })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
         if (!enableOneSubscriptions || !this.pubSub) {
@@ -195,7 +195,7 @@ export const Deletable =
         enableSubscriptions: enableManySubscriptions,
       })
       deletedManySubscription(
-        @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: true })
+        @AuthorizerFilter(DTOClass, { operationGroup: OperationGroup.DELETE, many: true })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<DeletedEvent<DeleteManyResponse>> {
         if (!enableManySubscriptions || !this.pubSub) {

@@ -4,6 +4,9 @@ import { AutoResolverOpts, createAuthorizerProviders, createHookProviders, creat
 import { ReadResolverOpts } from './resolvers';
 import { defaultPubSub, pubSubToken, GraphQLPubSub } from './subscription';
 import { PagingStrategies } from './types/query/paging';
+import { GlobalAuthorizer } from './auth/global.authorizer';
+import { GlobalAuthorizerInterceptor } from './interceptors';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 interface DTOModuleOpts<DTO> {
   DTOClass: Class<DTO>;
@@ -32,6 +35,13 @@ export class NestjsQueryGraphQLModule {
       imports: [...opts.imports, coreModule],
       providers: [...providers],
       exports: [...providers, ...opts.imports, coreModule],
+    };
+  }
+
+  static forRoot(): DynamicModule {
+    return {
+      module: NestjsQueryGraphQLModule,
+      providers: [GlobalAuthorizer, { provide: APP_INTERCEPTOR, useClass: GlobalAuthorizerInterceptor }],
     };
   }
 

@@ -9,7 +9,7 @@ import omit from 'lodash.omit';
 import { HookTypes } from '../hooks';
 import { DTONames, getDTONames } from '../common';
 import { AuthorizerFilter, MutationHookArgs, ResolverMutation, ResolverSubscription } from '../decorators';
-import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
+import { HookInterceptor } from '../interceptors';
 import { EventType, getDTOEventName } from '../subscription';
 import {
   CreateManyInputType,
@@ -131,16 +131,13 @@ export const Creatable =
         { name: createOneMutationName },
         commonResolverOpts,
         {
-          interceptors: [
-            HookInterceptor(HookTypes.BEFORE_CREATE_ONE, CreateDTOClass, DTOClass),
-            AuthorizerInterceptor(DTOClass),
-          ],
+          interceptors: [HookInterceptor(HookTypes.BEFORE_CREATE_ONE, CreateDTOClass, DTOClass)],
         },
         opts.one ?? {},
       )
       async createOne(
         @MutationHookArgs() input: CO,
-        @AuthorizerFilter({
+        @AuthorizerFilter(DTOClass, {
           operationGroup: OperationGroup.CREATE,
           many: false,
         }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -159,17 +156,14 @@ export const Creatable =
         { name: createManyMutationName },
         { ...commonResolverOpts },
         {
-          interceptors: [
-            HookInterceptor(HookTypes.BEFORE_CREATE_MANY, CreateDTOClass, DTOClass),
-            AuthorizerInterceptor(DTOClass),
-          ],
+          interceptors: [HookInterceptor(HookTypes.BEFORE_CREATE_MANY, CreateDTOClass, DTOClass)],
         },
         opts.many ?? {},
       )
       async createMany(
         @MutationHookArgs() input: CM,
 
-        @AuthorizerFilter({
+        @AuthorizerFilter(DTOClass, {
           operationGroup: OperationGroup.CREATE,
           many: true,
         }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -192,11 +186,10 @@ export const Creatable =
 
       @ResolverSubscription(() => DTOClass, { name: createdEvent, filter: subscriptionFilter }, commonResolverOpts, {
         enableSubscriptions: enableOneSubscriptions || enableManySubscriptions,
-        interceptors: [AuthorizerInterceptor(DTOClass)],
       })
       createdSubscription(
         @Args() input?: SA,
-        @AuthorizerFilter({ operationGroup: OperationGroup.CREATE, many: false })
+        @AuthorizerFilter(DTOClass, { operationGroup: OperationGroup.CREATE, many: false })
         authorizeFilter?: Filter<DTO>,
       ): AsyncIterator<CreatedEvent<DTO>> {
         if (!this.pubSub || !(enableManySubscriptions || enableOneSubscriptions)) {

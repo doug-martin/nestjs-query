@@ -4,7 +4,6 @@ import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { OperationGroup } from '../../auth';
 import { getDTONames } from '../../common';
 import { AggregateQueryParam, RelationAuthorizerFilter, ResolverField } from '../../decorators';
-import { AuthorizerInterceptor } from '../../interceptors';
 import { AggregateRelationsLoader, DataLoaderFactory } from '../../loader';
 import { AggregateArgsType, AggregateResponseType } from '../../types';
 import { transformAndValidate } from '../helpers';
@@ -44,15 +43,13 @@ const AggregateRelationMixin =
     const AR = AggregateResponseType(relationDTO, { prefix: `${dtoName}${pluralBaseName}` });
     @Resolver(() => DTOClass, { isAbstract: true })
     class AggregateMixin extends Base {
-      @ResolverField(`${pluralBaseNameLower}Aggregate`, () => [AR], {}, commonResolverOpts, {
-        interceptors: [AuthorizerInterceptor(DTOClass)],
-      })
+      @ResolverField(`${pluralBaseNameLower}Aggregate`, () => [AR], {}, commonResolverOpts, {})
       async [`aggregate${pluralBaseName}`](
         @Parent() dto: DTO,
         @Args() q: RelationQA,
         @AggregateQueryParam() aggregateQuery: AggregateQuery<Relation>,
         @Context() context: ExecutionContext,
-        @RelationAuthorizerFilter(baseNameLower, {
+        @RelationAuthorizerFilter(DTOClass, baseNameLower, {
           operationGroup: OperationGroup.AGGREGATE,
           many: true,
         })

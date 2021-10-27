@@ -28,7 +28,7 @@ export class AuthService {
       const user = await this.usersService.getById(authUser.id);
       return user;
     } catch (e) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('TEST');
     }
   }
 

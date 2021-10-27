@@ -3,13 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Filter } from '@nestjs-query/core';
 import { Injectable } from '@nestjs/common';
 import { Authorizer, Relation, Authorize, UnPagedRelation } from '../../src';
-import {
-  AuthorizationContext,
-  OperationGroup,
-  getAuthorizerToken,
-  getCustomAuthorizerToken,
-  CustomAuthorizer,
-} from '../../src/auth';
+import { AuthorizationContext, OperationGroup, getAuthorizerToken, getCustomAuthorizerToken } from '../../src/auth';
 import { createAuthorizerProviders } from '../../src/providers';
 
 describe('createDefaultAuthorizer', () => {
@@ -21,7 +15,7 @@ describe('createDefaultAuthorizer', () => {
   }
 
   @Injectable()
-  class RelationAuthorizer implements CustomAuthorizer<RelationWithAuthorizer> {
+  class RelationAuthorizer implements Authorizer<RelationWithAuthorizer> {
     authorize(context: UserContext): Promise<Filter<RelationWithAuthorizer>> {
       return Promise.resolve({ authorizerOwnerId: { eq: context.user.id } });
     }
@@ -70,7 +64,7 @@ describe('createDefaultAuthorizer', () => {
   }
 
   @Injectable()
-  class TestWithAuthorizerAuthorizer implements CustomAuthorizer<TestWithAuthorizerDTO> {
+  class TestWithAuthorizerAuthorizer implements Authorizer<TestWithAuthorizerDTO> {
     authorize(context: UserContext): Promise<Filter<TestWithAuthorizerDTO>> {
       return Promise.resolve({ ownerId: { eq: context.user.id } });
     }
@@ -156,97 +150,109 @@ describe('createDefaultAuthorizer', () => {
 
   it('should create an auth filter for relations using the default auth decorator', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation(
-      'unPagedDecoratorRelations',
-      { user: { id: 2 } },
-      {
-        operationName: 'queryRelation',
-        operationGroup: OperationGroup.READ,
-        readonly: true,
-        many: true,
-      },
-    );
+    const filter =
+      authorizer.authorizeRelation &&
+      (await authorizer.authorizeRelation(
+        'unPagedDecoratorRelations',
+        { user: { id: 2 } },
+        {
+          operationName: 'queryRelation',
+          operationGroup: OperationGroup.READ,
+          readonly: true,
+          many: true,
+        },
+      ));
     expect(filter).toEqual({ decoratorOwnerId: { eq: 2 } });
   });
 
   it('should create an auth filter for relations using the relation options', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation(
-      'relations',
-      { user: { id: 2 } },
-      {
-        operationName: 'queryRelation',
-        operationGroup: OperationGroup.READ,
-        readonly: true,
-        many: true,
-      },
-    );
+    const filter =
+      authorizer.authorizeRelation &&
+      (await authorizer.authorizeRelation(
+        'relations',
+        { user: { id: 2 } },
+        {
+          operationName: 'queryRelation',
+          operationGroup: OperationGroup.READ,
+          readonly: true,
+          many: true,
+        },
+      ));
     expect(filter).toEqual({ relationOwnerId: { eq: 2 } });
   });
 
   it('should create an auth filter that depends on the passed operation name for relations using the relation options', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation(
-      'relations',
-      { user: { id: 2 } },
-      {
-        operationName: 'other',
-        operationGroup: OperationGroup.READ,
-        readonly: true,
-        many: true,
-      },
-    );
+    const filter =
+      authorizer.authorizeRelation &&
+      (await authorizer.authorizeRelation(
+        'relations',
+        { user: { id: 2 } },
+        {
+          operationName: 'other',
+          operationGroup: OperationGroup.READ,
+          readonly: true,
+          many: true,
+        },
+      ));
     expect(filter).toEqual({ relationOwnerId: { neq: 2 } });
   });
 
   it('should create an auth filter for relations using the relation authorizer', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation(
-      'authorizerRelation',
-      { user: { id: 2 } },
-      {
-        operationName: 'queryRelation',
-        operationGroup: OperationGroup.READ,
-        readonly: true,
-        many: true,
-      },
-    );
+    const filter =
+      authorizer.authorizeRelation &&
+      (await authorizer.authorizeRelation(
+        'authorizerRelation',
+        { user: { id: 2 } },
+        {
+          operationName: 'queryRelation',
+          operationGroup: OperationGroup.READ,
+          readonly: true,
+          many: true,
+        },
+      ));
     expect(filter).toEqual({ authorizerOwnerId: { eq: 2 } });
   });
 
   it('should return an empty object for an unknown relation', async () => {
     const authorizer = testingModule.get<Authorizer<TestDTO>>(getAuthorizerToken(TestDTO));
-    const filter = await authorizer.authorizeRelation(
-      'unknownRelations',
-      { user: { id: 2 } },
-      {
-        operationName: 'queryRelation',
-        operationGroup: OperationGroup.READ,
-        readonly: true,
-        many: true,
-      },
-    );
+    const filter =
+      authorizer.authorizeRelation &&
+      (await authorizer.authorizeRelation(
+        'unknownRelations',
+        { user: { id: 2 } },
+        {
+          operationName: 'queryRelation',
+          operationGroup: OperationGroup.READ,
+          readonly: true,
+          many: true,
+        },
+      ));
     expect(filter).toEqual({});
   });
 
   it('should call authorizeRelation of authorizer and fallback to authorize decorator', async () => {
     const authorizer = testingModule.get<Authorizer<TestWithAuthorizerDTO>>(getAuthorizerToken(TestWithAuthorizerDTO));
     jest.spyOn(authorizer, 'authorizeRelation');
-    const customAuthorizer = testingModule.get<CustomAuthorizer<TestWithAuthorizerDTO>>(
+    const customAuthorizer = testingModule.get<Authorizer<TestWithAuthorizerDTO>>(
       getCustomAuthorizerToken(TestWithAuthorizerDTO),
     );
     jest.spyOn(customAuthorizer, 'authorizeRelation');
     expect(customAuthorizer).toBeDefined();
-    const filter = await authorizer.authorizeRelation(
-      'unPagedDecoratorRelations',
-      { user: { id: 2 } },
-      {
-        operationName: 'queryMany',
-        operationGroup: OperationGroup.READ,
-        readonly: true,
-        many: true,
-      },
-    );
+    const filter =
+      authorizer.authorizeRelation &&
+      (await authorizer.authorizeRelation(
+        'unPagedDecoratorRelations',
+        { user: { id: 2 } },
+        {
+          operationName: 'queryMany',
+          operationGroup: OperationGroup.READ,
+          readonly: true,
+          many: true,
+        },
+      ));
     expect(filter).toEqual({
       decoratorOwnerId: { eq: 2 },
     });
@@ -277,7 +283,7 @@ describe('createDefaultAuthorizer', () => {
   it('should call authorizeRelation of authorizer and fallback to custom authorizer of relation', async () => {
     const authorizer = testingModule.get<Authorizer<TestWithAuthorizerDTO>>(getAuthorizerToken(TestWithAuthorizerDTO));
     jest.spyOn(authorizer, 'authorizeRelation');
-    const customAuthorizer = testingModule.get<CustomAuthorizer<TestWithAuthorizerDTO>>(
+    const customAuthorizer = testingModule.get<Authorizer<TestWithAuthorizerDTO>>(
       getCustomAuthorizerToken(TestWithAuthorizerDTO),
     );
     jest.spyOn(customAuthorizer, 'authorizeRelation');
@@ -286,20 +292,22 @@ describe('createDefaultAuthorizer', () => {
       getAuthorizerToken(RelationWithAuthorizer),
     );
     jest.spyOn(relationAuthorizer, 'authorize');
-    const customRelationAuthorizer = testingModule.get<CustomAuthorizer<RelationWithAuthorizer>>(
+    const customRelationAuthorizer = testingModule.get<Authorizer<RelationWithAuthorizer>>(
       getCustomAuthorizerToken(RelationWithAuthorizer),
     );
     jest.spyOn(customRelationAuthorizer, 'authorize');
-    const filter = await authorizer.authorizeRelation(
-      'authorizerRelation',
-      { user: { id: 2 } },
-      {
-        operationName: 'queryRelation',
-        operationGroup: OperationGroup.READ,
-        readonly: true,
-        many: true,
-      },
-    );
+    const filter =
+      authorizer.authorizeRelation &&
+      (await authorizer.authorizeRelation(
+        'authorizerRelation',
+        { user: { id: 2 } },
+        {
+          operationName: 'queryRelation',
+          operationGroup: OperationGroup.READ,
+          readonly: true,
+          many: true,
+        },
+      ));
     expect(filter).toEqual({
       authorizerOwnerId: { eq: 2 },
     });

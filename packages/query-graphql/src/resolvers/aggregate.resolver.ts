@@ -1,7 +1,6 @@
 import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@nestjs-query/core';
 import { Args, ArgsType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
-import { AuthorizerInterceptor } from '../interceptors';
 import { getDTONames } from '../common';
 import { AggregateQueryParam, AuthorizerFilter, ResolverMethodOpts, ResolverQuery, SkipIf } from '../decorators';
 import { AggregateArgsType, AggregateResponseType } from '../types';
@@ -40,18 +39,12 @@ export const Aggregateable =
     class AggregateResolverBase extends BaseClass {
       @SkipIf(
         () => !opts || !opts.enabled,
-        ResolverQuery(
-          () => [AR],
-          { name: queryName },
-          commonResolverOpts,
-          { interceptors: [AuthorizerInterceptor(DTOClass)] },
-          opts ?? {},
-        ),
+        ResolverQuery(() => [AR], { name: queryName }, commonResolverOpts, opts ?? {}),
       )
       async aggregate(
         @Args() args: AA,
         @AggregateQueryParam() query: AggregateQuery<DTO>,
-        @AuthorizerFilter({
+        @AuthorizerFilter(DTOClass, {
           operationGroup: OperationGroup.AGGREGATE,
           many: true,
         })

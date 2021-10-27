@@ -4,7 +4,6 @@ import { Resolver, ArgsType, Args, InputType } from '@nestjs/graphql';
 import { OperationGroup } from '../../auth';
 import { getDTONames } from '../../common';
 import { ModifyRelationAuthorizerFilter, ResolverMutation } from '../../decorators';
-import { AuthorizerInterceptor } from '../../interceptors';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
 import { transformAndValidate } from '../helpers';
 import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
@@ -29,10 +28,10 @@ const RemoveOneRelationMixin =
 
     @Resolver(() => DTOClass, { isAbstract: true })
     class RemoveOneMixin extends Base {
-      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, { interceptors: [AuthorizerInterceptor(DTOClass)] })
+      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {})
       async [`remove${baseName}From${dtoNames.baseName}`](
         @Args() setArgs: SetArgs,
-        @ModifyRelationAuthorizerFilter(baseNameLower, {
+        @ModifyRelationAuthorizerFilter(DTOClass, baseNameLower, {
           operationGroup: OperationGroup.UPDATE,
           many: false,
         })
@@ -63,10 +62,10 @@ const RemoveManyRelationsMixin =
 
     @Resolver(() => DTOClass, { isAbstract: true })
     class Mixin extends Base {
-      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, { interceptors: [AuthorizerInterceptor(DTOClass)] })
+      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {})
       async [`remove${pluralBaseName}From${dtoNames.baseName}`](
         @Args() addArgs: AddArgs,
-        @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
+        @ModifyRelationAuthorizerFilter(DTOClass, pluralBaseNameLower, {
           operationGroup: OperationGroup.UPDATE,
           many: true,
         })

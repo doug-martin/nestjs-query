@@ -1,4 +1,4 @@
-import { ModifyRelationOptions } from '@nestjs-query/core';
+import { Class, ModifyRelationOptions } from '@nestjs-query/core';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthorizationContext, OperationGroup } from '../auth';
@@ -12,25 +12,27 @@ function getContext<C>(executionContext: ExecutionContext): C {
   return gqlExecutionContext.getContext<C>();
 }
 
-function getAuthorizerFilter<C extends AuthorizerContext<unknown>>(
+function getAuthorizerFilter<DTO extends Class<unknown>, C extends AuthorizerContext>(
+  dto: DTO,
   context: C,
   authorizationContext: AuthorizationContext,
 ) {
   if (!context.authorizer) {
-    return undefined;
+    throw new Error('Global Authorizer not found. Did you register the root module?');
   }
-  return context.authorizer.authorize(context, authorizationContext);
+  return context.authorizer.authorize(dto, context, authorizationContext);
 }
 
-function getRelationAuthFilter<C extends AuthorizerContext<unknown>>(
+function getRelationAuthFilter<ParentDTO extends Class<unknown>, C extends AuthorizerContext>(
+  parentDto: ParentDTO,
   context: C,
   relationName: string,
   authorizationContext: AuthorizationContext,
 ) {
   if (!context.authorizer) {
-    return undefined;
+    throw new Error('Global Authorizer not found. Did you register the root module?');
   }
-  return context.authorizer.authorizeRelation(relationName, context, authorizationContext);
+  return context.authorizer.authorizeRelation(parentDto, relationName, context, authorizationContext);
 }
 
 function getAuthorizationContext(
@@ -55,17 +57,21 @@ function getAuthorizationContext(
   };
 }
 
-export function AuthorizerFilter<DTO>(partialAuthContext?: PartialAuthorizationContext): ParameterDecorator {
+export function AuthorizerFilter<DTO extends Class<unknown>>(
+  dto: DTO,
+  partialAuthContext?: PartialAuthorizationContext,
+): ParameterDecorator {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return (target: Object, propertyKey: string | symbol, parameterIndex: number) => {
     const authorizationContext = getAuthorizationContext(propertyKey, partialAuthContext);
     return createParamDecorator((data: unknown, executionContext: ExecutionContext) =>
-      getAuthorizerFilter(getContext<AuthorizerContext<DTO>>(executionContext), authorizationContext),
+      getAuthorizerFilter(dto, getContext<AuthorizerContext>(executionContext), authorizationContext),
     )()(target, propertyKey, parameterIndex);
   };
 }
 
-export function RelationAuthorizerFilter<DTO>(
+export function RelationAuthorizerFilter<DTO extends Class<unknown>>(
+  parentDto: DTO,
   relationName: string,
   partialAuthContext?: PartialAuthorizationContext,
 ): ParameterDecorator {
@@ -73,12 +79,18 @@ export function RelationAuthorizerFilter<DTO>(
   return (target: Object, propertyKey: string | symbol, parameterIndex: number) => {
     const authorizationContext = getAuthorizationContext(propertyKey, partialAuthContext);
     return createParamDecorator((data: unknown, executionContext: ExecutionContext) =>
-      getRelationAuthFilter(getContext<AuthorizerContext<DTO>>(executionContext), relationName, authorizationContext),
+      getRelationAuthFilter(
+        parentDto,
+        getContext<AuthorizerContext>(executionContext),
+        relationName,
+        authorizationContext,
+      ),
     )()(target, propertyKey, parameterIndex);
   };
 }
 
-export function ModifyRelationAuthorizerFilter<DTO>(
+export function ModifyRelationAuthorizerFilter<DTO extends Class<unknown>>(
+  dto: DTO,
   relationName: string,
   partialAuthContext?: PartialAuthorizationContext,
 ): ParameterDecorator {
@@ -87,10 +99,10 @@ export function ModifyRelationAuthorizerFilter<DTO>(
     const authorizationContext = getAuthorizationContext(propertyKey, partialAuthContext);
     return createParamDecorator(
       async (data: unknown, executionContext: ExecutionContext): Promise<ModifyRelationOptions<unknown, unknown>> => {
-        const context = getContext<AuthorizerContext<DTO>>(executionContext);
+        const context = getContext<AuthorizerContext>(executionContext);
         return {
-          filter: await getAuthorizerFilter(context, authorizationContext),
-          relationFilter: await getRelationAuthFilter(context, relationName, authorizationContext),
+          filter: await getAuthorizerFilter(dto, context, authorizationContext),
+          relationFilter: await getRelationAuthFilter(dto, context, relationName, authorizationContext),
         };
       },
     )()(target, propertyKey, parameterIndex);

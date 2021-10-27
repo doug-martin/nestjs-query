@@ -16,7 +16,7 @@ export class AuthResolver {
   async login(@Args('input') input: LoginInputDTO): Promise<LoginResponseDto> {
     const user = await this.authService.validateUser(input.username, input.password);
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('NO USER');
     }
     return this.authService.login(user);
   }

@@ -1,7 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Class, ModifyRelationOptions, QueryService } from '@nestjs-query/core';
 import { Resolver, ArgsType, Args, InputType } from '@nestjs/graphql';
-import { AuthorizerInterceptor } from '../../interceptors';
 import { getDTONames } from '../../common';
 import { ModifyRelationAuthorizerFilter, ResolverMutation } from '../../decorators';
 import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
@@ -29,12 +28,10 @@ const UpdateOneRelationMixin =
 
     @Resolver(() => DTOClass, { isAbstract: true })
     class UpdateOneMixin extends Base {
-      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
-        interceptors: [AuthorizerInterceptor(DTOClass)],
-      })
+      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {})
       async [`set${baseName}On${dtoNames.baseName}`](
         @Args() setArgs: SetArgs,
-        @ModifyRelationAuthorizerFilter(baseNameLower, {
+        @ModifyRelationAuthorizerFilter(DTOClass, baseNameLower, {
           operationGroup: OperationGroup.UPDATE,
           many: false,
         })
@@ -70,12 +67,10 @@ const UpdateManyRelationMixin =
 
     @Resolver(() => DTOClass, { isAbstract: true })
     class UpdateManyMixin extends Base {
-      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
-        interceptors: [AuthorizerInterceptor(DTOClass)],
-      })
+      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {})
       async [`add${pluralBaseName}To${dtoNames.baseName}`](
         @Args() addArgs: AddArgs,
-        @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
+        @ModifyRelationAuthorizerFilter(DTOClass, pluralBaseNameLower, {
           operationGroup: OperationGroup.UPDATE,
           many: true,
         })
@@ -85,12 +80,10 @@ const UpdateManyRelationMixin =
         return this.service.addRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
       }
 
-      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
-        interceptors: [AuthorizerInterceptor(DTOClass)],
-      })
+      @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {})
       async [`set${pluralBaseName}On${dtoNames.baseName}`](
         @Args() addArgs: SetArgs,
-        @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
+        @ModifyRelationAuthorizerFilter(DTOClass, pluralBaseNameLower, {
           operationGroup: OperationGroup.UPDATE,
           many: true,
         })

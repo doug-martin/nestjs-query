@@ -6,10 +6,12 @@ import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
 import { mongooseConfig } from '../../helpers';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 
 const { uri, ...options } = mongooseConfig('mongoose');
 @Module({
   imports: [
+    NestjsQueryGraphQLModule.forRoot(),
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     MongooseModule.forRoot(uri!, options),
     GraphQLModule.forRoot({

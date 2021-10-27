@@ -1,2 +1,2 @@
 export * from './hook.interceptor';
-export * from './authorizer.interceptor';
+export * from './global-authorizer.interceptor';

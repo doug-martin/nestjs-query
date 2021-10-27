@@ -3,9 +3,11 @@ import { GraphQLFederationModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubTaskModule } from './sub-task/sub-task.module';
 import { typeormOrmConfig } from '../../../helpers';
+import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 
 @Module({
   imports: [
+    NestjsQueryGraphQLModule.forRoot(),
     TypeOrmModule.forRoot(typeormOrmConfig('federation_sub_task')),
     GraphQLFederationModule.forRoot({
       autoSchemaFile: 'schema.gql',

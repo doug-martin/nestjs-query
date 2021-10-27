@@ -19,7 +19,7 @@ import {
   ResolverOpts,
   ServiceResolver,
 } from './resolver.interface';
-import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
+import { HookInterceptor } from '../interceptors';
 import { HookTypes } from '../hooks';
 import { OperationGroup } from '../auth';
 
@@ -73,12 +73,12 @@ export const Readable =
         () => DTOClass,
         { nullable: true, name: readOneQueryName },
         commonResolverOpts,
-        { interceptors: [HookInterceptor(HookTypes.BEFORE_FIND_ONE, DTOClass), AuthorizerInterceptor(DTOClass)] },
+        { interceptors: [HookInterceptor(HookTypes.BEFORE_FIND_ONE, DTOClass)] },
         opts.one ?? {},
       )
       async findById(
         @HookArgs() input: FO,
-        @AuthorizerFilter({
+        @AuthorizerFilter(DTOClass, {
           operationGroup: OperationGroup.READ,
           many: false,
         })
@@ -91,12 +91,12 @@ export const Readable =
         () => QueryArgs.ConnectionType.resolveType,
         { name: readManyQueryName },
         commonResolverOpts,
-        { interceptors: [HookInterceptor(HookTypes.BEFORE_QUERY_MANY, DTOClass), AuthorizerInterceptor(DTOClass)] },
+        { interceptors: [HookInterceptor(HookTypes.BEFORE_QUERY_MANY, DTOClass)] },
         opts.many ?? {},
       )
       async queryMany(
         @HookArgs() query: QA,
-        @AuthorizerFilter({
+        @AuthorizerFilter(DTOClass, {
           operationGroup: OperationGroup.READ,
           many: true,
         })
