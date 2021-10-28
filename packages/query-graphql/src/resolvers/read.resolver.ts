@@ -60,7 +60,7 @@ export const Readable =
     const { QueryArgs = QueryArgsType(DTOClass, { ...opts, connectionName: `${baseName}Connection` }) } = opts;
     const { ConnectionType } = QueryArgs;
 
-    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
+    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection', 'withDeleted');
     @ArgsType()
     class QA extends QueryArgs {}
 
@@ -84,7 +84,7 @@ export const Readable =
         })
         authorizeFilter?: Filter<DTO>,
       ): Promise<DTO | undefined> {
-        return this.service.findById(input.id, { filter: authorizeFilter });
+        return this.service.findById(input.id, { filter: authorizeFilter, withDeleted: opts?.one?.withDeleted });
       }
 
       @ResolverQuery(

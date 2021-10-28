@@ -29,6 +29,10 @@ export interface DeleteResolverOpts<DTO> extends SubscriptionResolverOpts {
    * ArgsType for deleteMany mutation.
    */
   DeleteManyInput?: Class<DeleteManyInputType<DTO>>;
+  /**
+   * Use soft delete when doing delete mutation
+   */
+  useSoftDelete?: boolean;
 }
 
 export interface DeleteResolver<DTO, QS extends QueryService<DTO, unknown, unknown>> extends ServiceResolver<DTO, QS> {
@@ -85,7 +89,7 @@ export const Deletable =
     const deleteManyMutationName = opts.many?.name ?? `deleteMany${pluralBaseName}`;
     const DMR = DeleteManyResponseType();
 
-    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput');
+    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput', 'useSoftDelete');
 
     @ObjectType(`${baseName}DeleteResponse`)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -124,7 +128,10 @@ export const Deletable =
         })
         authorizeFilter?: Filter<DTO>,
       ): Promise<Partial<DTO>> {
-        const deletedResponse = await this.service.deleteOne(input.input.id, { filter: authorizeFilter ?? {} });
+        const deletedResponse = await this.service.deleteOne(input.input.id, {
+          filter: authorizeFilter ?? {},
+          useSoftDelete: opts?.useSoftDelete,
+        });
         if (enableOneSubscriptions) {
           await this.publishDeletedOneEvent(deletedResponse, authorizeFilter);
         }
@@ -148,6 +155,7 @@ export const Deletable =
       ): Promise<DeleteManyResponse> {
         const deleteManyResponse = await this.service.deleteMany(
           mergeFilter(input.input.filter, authorizeFilter ?? {}),
+          opts ?? {},
         );
         if (enableManySubscriptions) {
           await this.publishDeletedManyEvent(deleteManyResponse, authorizeFilter);

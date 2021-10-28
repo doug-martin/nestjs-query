@@ -1,6 +1,6 @@
 import { QueryService } from '@nestjs-query/core';
 import { DTONamesOpts } from '../common';
-import { ResolverMethodOpts, SubscriptionResolverMethodOpts } from '../decorators';
+import { QueryResolverMethodOpts, SubscriptionResolverMethodOpts } from '../decorators';
 import { GraphQLPubSub } from '../subscription';
 import { PagingStrategies, QueryArgsTypeOpts } from '../types';
 
@@ -11,15 +11,15 @@ type NamedEndpoint = {
   description?: string;
 };
 
-export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
+export interface ResolverOpts extends QueryResolverMethodOpts, DTONamesOpts {
   /**
    * Options for single record graphql endpoints
    */
-  one?: ResolverMethodOpts & NamedEndpoint;
+  one?: QueryResolverMethodOpts & NamedEndpoint;
   /**
    * Options for multiple record graphql endpoints
    */
-  many?: ResolverMethodOpts & NamedEndpoint;
+  many?: QueryResolverMethodOpts & NamedEndpoint;
 }
 
 export interface SubscriptionResolverOpts extends SubscriptionResolverMethodOpts, DTONamesOpts {

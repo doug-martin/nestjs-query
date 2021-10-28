@@ -13,6 +13,7 @@ import {
   GetByIdOptions,
   UpdateOneOptions,
   DeleteOneOptions,
+  DeleteManyOptions,
 } from '../interfaces';
 
 /**
@@ -271,7 +272,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    *
    * @param filter - the filter to find records to delete.
    */
-  deleteMany(filter: Filter<DTO>): Promise<DeleteManyResponse>;
+  deleteMany(filter: Filter<DTO>, opts?: DeleteManyOptions<DTO>): Promise<DeleteManyResponse>;
 }
 
 /**
