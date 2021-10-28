@@ -128,7 +128,7 @@ export const Creatable =
     class CreateResolverBase extends BaseClass {
       @ResolverMutation(
         () => DTOClass,
-        { name: createOneMutationName },
+        { name: createOneMutationName, description: opts?.one?.description },
         commonResolverOpts,
         {
           interceptors: [
@@ -156,7 +156,7 @@ export const Creatable =
 
       @ResolverMutation(
         () => [DTOClass],
-        { name: createManyMutationName },
+        { name: createManyMutationName, description: opts?.many?.description },
         { ...commonResolverOpts },
         {
           interceptors: [

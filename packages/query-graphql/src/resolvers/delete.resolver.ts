@@ -111,7 +111,7 @@ export const Deletable =
     class DeleteResolverBase extends BaseClass {
       @ResolverMutation(
         () => DeleteOneResponse,
-        { name: deleteOneMutationName },
+        { name: deleteOneMutationName, description: opts?.one?.description },
         commonResolverOpts,
         { interceptors: [HookInterceptor(HookTypes.BEFORE_DELETE_ONE, DTOClass), AuthorizerInterceptor(DTOClass)] },
         opts.one ?? {},
@@ -133,7 +133,7 @@ export const Deletable =
 
       @ResolverMutation(
         () => DMR,
-        { name: deleteManyMutationName },
+        { name: deleteManyMutationName, description: opts?.many?.description },
         commonResolverOpts,
         { interceptors: [HookInterceptor(HookTypes.BEFORE_DELETE_MANY, DTOClass), AuthorizerInterceptor(DTOClass)] },
         opts.many ?? {},

@@ -7,6 +7,8 @@ import { PagingStrategies, QueryArgsTypeOpts } from '../types';
 type NamedEndpoint = {
   /** Specify to override the name of the graphql query or mutation * */
   name?: string;
+  /** Specify a description for the graphql query or mutation* */
+  description?: string;
 };
 
 export interface ResolverOpts extends ResolverMethodOpts, DTONamesOpts {
