@@ -1,3 +1,8 @@
 import { Filterable } from './filterable.interface';
 
-export type DeleteOneOptions<DTO> = Filterable<DTO>;
+export interface DeleteOneOptions<DTO> extends Filterable<DTO> {
+  /**
+   * Use soft delete when doing delete mutation
+   */
+  useSoftDelete?: boolean;
+}

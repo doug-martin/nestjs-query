@@ -2,6 +2,10 @@ import { Query, QueryOptions, ReturnTypeFunc } from '@nestjs/graphql';
 import { applyDecorators } from '@nestjs/common';
 import { isDisabled, ResolverMethod, ResolverMethodOpts } from './resolver-method.decorator';
 
+export interface QueryResolverMethodOpts extends ResolverMethodOpts {
+  withDeleted?: boolean;
+}
+
 /**
  * @internal
  * Decorator for a graphql `query` endpoint.
@@ -12,7 +16,7 @@ import { isDisabled, ResolverMethod, ResolverMethodOpts } from './resolver-metho
 export function ResolverQuery(
   typeFunc: ReturnTypeFunc,
   options?: QueryOptions,
-  ...opts: ResolverMethodOpts[]
+  ...opts: QueryResolverMethodOpts[]
 ): MethodDecorator {
   if (isDisabled(opts)) {
     return (): void => {};

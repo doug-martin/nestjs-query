@@ -13,6 +13,7 @@ import {
   UpdateOneOptions,
   DeleteOneOptions,
   Filterable,
+  DeleteManyOptions,
 } from '@nestjs-query/core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -97,7 +98,11 @@ export class TypeOrmQueryService<Entity>
    * @param id - The id of the record to find.
    */
   async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
-    return this.filterQueryBuilder.selectById(id, opts ?? {}).getOne();
+    const qb = this.filterQueryBuilder.selectById(id, opts ?? {});
+    if (opts?.withDeleted) {
+      qb.withDeleted();
+    }
+    return qb.getOne();
   }
 
   /**
@@ -202,10 +207,11 @@ export class TypeOrmQueryService<Entity>
    *
    * @param id - The `id` of the entity to delete.
    * @param filter Additional filter to use when finding the entity to delete.
+   * @param opts - Additional options.
    */
   async deleteOne(id: string | number, opts?: DeleteOneOptions<Entity>): Promise<Entity> {
     const entity = await this.getById(id, opts);
-    if (this.useSoftDelete) {
+    if (this.useSoftDelete || opts?.useSoftDelete) {
       return this.repo.softRemove(entity);
     }
     return this.repo.remove(entity);
@@ -224,9 +230,9 @@ export class TypeOrmQueryService<Entity>
    *
    * @param filter - A `Filter` to find records to delete.
    */
-  async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
+  async deleteMany(filter: Filter<Entity>, opts?: DeleteManyOptions<Entity>): Promise<DeleteManyResponse> {
     let deleteResult: DeleteResult;
-    if (this.useSoftDelete) {
+    if (this.useSoftDelete || opts?.useSoftDelete) {
       deleteResult = await this.filterQueryBuilder.softDelete({ filter }).execute();
     } else {
       deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
