@@ -231,7 +231,7 @@ export class TypeOrmQueryService<Entity>
    * @param filter - A `Filter` to find records to delete.
    */
   async deleteMany(filter: Filter<Entity>, opts?: DeleteManyOptions<Entity>): Promise<DeleteManyResponse> {
-    let deleteResult: DeleteResult;
+    let deleteResult = {} as DeleteResult;
     if (this.filterQueryBuilder.filterHasRelations(filter)) {
       const builder = this.filterQueryBuilder.select({ filter })
         .distinct(true);
