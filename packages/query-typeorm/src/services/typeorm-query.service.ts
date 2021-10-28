@@ -13,6 +13,7 @@ import {
   UpdateOneOptions,
   DeleteOneOptions,
   Filterable,
+  DeleteManyOptions,
 } from '@nestjs-query/core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -224,14 +225,35 @@ export class TypeOrmQueryService<Entity>
    *
    * @param filter - A `Filter` to find records to delete.
    */
-  async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
+  async deleteMany(filter: Filter<Entity>, opts?: DeleteManyOptions<Entity>): Promise<DeleteManyResponse> {
     let deleteResult: DeleteResult;
-    if (this.useSoftDelete) {
-      deleteResult = await this.filterQueryBuilder.softDelete({ filter }).execute();
+    if (this.filterQueryBuilder.filterHasRelations(filter)) {
+      const builder = this.filterQueryBuilder.select({ filter })
+        .distinct(true);
+
+      const distinctRecords = await builder
+        .addSelect(`${builder.alias}.id`)
+        .getRawMany();
+
+      const ids = distinctRecords.map(({ id }) => id);
+      const idsFilter = { id: { in: ids } } as Filter<Entity>;
+
+      if (ids.length > 0) {
+        if (this.useSoftDelete || opts?.useSoftDelete) {
+          deleteResult = await this.filterQueryBuilder.softDelete({ filter: idsFilter }).execute();
+        } else {
+          deleteResult = await this.filterQueryBuilder.delete({ filter: idsFilter }).execute();
+        }
+      }
     } else {
-      deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
+      if (this.useSoftDelete || opts?.useSoftDelete) {
+        deleteResult = await this.filterQueryBuilder.softDelete({ filter }).execute();
+      } else {
+        deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
+      }
     }
-    return { deletedCount: deleteResult.affected || 0 };
+
+    return { deletedCount: deleteResult?.affected || 0 };
   }
 
   /**
