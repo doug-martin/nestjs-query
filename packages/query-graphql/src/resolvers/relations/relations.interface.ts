@@ -68,6 +68,11 @@ export type ResolverRelation<Relation> = {
    */
   allowFiltering?: boolean;
 
+  /**
+   * Description of the relation.
+   */
+  description?: string;
+
   complexity?: Complexity;
 
   auth?: AuthorizerOptions<Relation>;

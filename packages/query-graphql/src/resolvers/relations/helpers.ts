@@ -9,4 +9,4 @@ export const flattenRelations = <RT extends ResolverRelation<unknown> | Resolver
 export const removeRelationOpts = <Relation>(
   opts: ResolverRelation<Relation> | ResolverRelationReference<unknown, Relation>,
 ): ResolverMethodOpts =>
-  omit(opts, 'DTO', 'keys', 'nullable', 'dtoName', 'relationName', 'disableRead', 'disableUpdate', 'disableRemove');
+  omit(opts, 'DTO', 'keys', 'nullable', 'dtoName', 'relationName', 'disableRead', 'disableUpdate', 'disableRemove', 'description');

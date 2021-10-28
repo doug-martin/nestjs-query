@@ -34,7 +34,7 @@ const ReadOneRelationMixin =
       @ResolverField(
         baseNameLower,
         () => relationDTO,
-        { nullable: relation.nullable, complexity: relation.complexity },
+        { nullable: relation.nullable, complexity: relation.complexity, description: relation?.description },
         commonResolverOpts,
         { interceptors: [AuthorizerInterceptor(DTOClass)] },
       )
@@ -86,7 +86,7 @@ const ReadManyRelationMixin =
       @ResolverField(
         pluralBaseNameLower,
         () => CT.resolveType,
-        { nullable: relation.nullable, complexity: relation.complexity },
+        { nullable: relation.nullable, complexity: relation.complexity, description: relation?.description },
         commonResolverOpts,
         { interceptors: [AuthorizerInterceptor(DTOClass)] },
       )
