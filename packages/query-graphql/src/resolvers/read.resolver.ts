@@ -83,8 +83,8 @@ export const Readable =
           many: false,
         })
         authorizeFilter?: Filter<DTO>,
-      ): Promise<DTO | undefined> {
-        return this.service.findById(input.id, { filter: authorizeFilter, withDeleted: opts?.one?.withDeleted });
+      ): Promise<DTO> {
+        return this.service.getById(input.id, { filter: authorizeFilter, withDeleted: opts?.one?.withDeleted });
       }
 
       @ResolverQuery(
