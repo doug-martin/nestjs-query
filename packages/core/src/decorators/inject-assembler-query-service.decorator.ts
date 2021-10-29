@@ -12,4 +12,4 @@ export const InjectAssemblerQueryService = <
   UE = CE,
 >(
   AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>,
-): ParameterDecorator => Inject(getAssemblerQueryServiceToken(AssemblerClass));
+): ReturnType<typeof Inject> => Inject(getAssemblerQueryServiceToken(AssemblerClass));
