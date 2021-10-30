@@ -75,7 +75,7 @@
     "graphql": "15.7.2",
     "graphql-subscriptions": "1.2.1",
     "ts-mockito": "2.6.1",
-    "ts-morph": "12.0.0",
+    "ts-morph": "12.1.0",
     "typescript": "4.4.4"
   }
 }
