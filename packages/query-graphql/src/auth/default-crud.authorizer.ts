@@ -38,11 +38,11 @@ export function createDefaultAuthorizer<DTO>(
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async authorize(context: any, authorizationContext: AuthorizationContext): Promise<Filter<DTO>> {
-      return (
-        this.customAuthorizer?.authorize(context, authorizationContext) ??
-        this.authOptions?.authorize(context, authorizationContext) ??
-        {}
-      );
+      const filter =
+        (await this.customAuthorizer?.authorize(context, authorizationContext)) ??
+        (await this.authOptions?.authorize(context, authorizationContext));
+      if (!filter) throw new Error(`No auth filter defined for ${DTOClass.name}`);
+      return filter;
     }
 
     async authorizeRelation(

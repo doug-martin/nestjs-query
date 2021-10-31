@@ -8,7 +8,10 @@ function createServiceProvider<DTO>(DTOClass: Class<DTO>): Provider {
   const authorizer = getAuthorizer(DTOClass);
   if (!authorizer) {
     // create default authorizer in case any relations have an authorizers
-    return { provide: token, useClass: createDefaultAuthorizer(DTOClass, { authorize: () => ({}) }) };
+    return {
+      provide: token,
+      useClass: createDefaultAuthorizer(DTOClass),
+    };
   }
   return { provide: token, useClass: authorizer };
 }

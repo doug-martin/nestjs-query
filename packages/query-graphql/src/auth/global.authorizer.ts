@@ -2,9 +2,9 @@ import { AuthorizationContext, Authorizer } from './authorizer';
 import { Class, Filter } from '@nestjs-query/core';
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { TypeMetadataStorage } from '@nestjs/graphql';
 import { getRelations } from '../decorators';
 import { getAuthorizerToken } from './tokens';
+import { getDTONames } from '../common';
 
 @Injectable()
 export class GlobalAuthorizer {
@@ -20,7 +20,9 @@ export class GlobalAuthorizer {
     authorizationContext: AuthorizationContext,
   ): Promise<Filter<DTO>> {
     const authorizer = this.getAuthorizer(dto);
-    return (await authorizer?.authorize(context, authorizationContext)) ?? {};
+    const filter = await authorizer?.authorize(context, authorizationContext);
+    if (!filter) throw new Error(`No auth filter defined for ${dto.name}`);
+    return filter;
   }
 
   async authorizeRelation<ParentDTO extends Class<unknown>, RelationDTO extends Class<unknown>>(
@@ -40,12 +42,12 @@ export class GlobalAuthorizer {
       context,
       authorizationContext,
     );
-    if (filter) return filter;
-    return {};
+    if (!filter) throw new Error(`No auth filter defined for relation ${relationName} of ${dto.name}`);
+    return filter;
   }
 
   private getAuthorizer<DTO extends Class<unknown>>(dto: DTO): Authorizer<unknown> {
-    const name = TypeMetadataStorage.getObjectTypeMetadataByTarget(dto)?.name;
+    const { baseName: name } = getDTONames(dto);
     if (!name) throw new Error(`${dto.name} is not an ObjectType`);
     let authorizer = this.authorizers.get(name);
     if (!authorizer) {
@@ -56,7 +58,7 @@ export class GlobalAuthorizer {
   }
 
   private getRelationDto<ParentDTO extends Class<unknown>>(parentDto: ParentDTO, relationName: string): Class<unknown> {
-    const name = TypeMetadataStorage.getObjectTypeMetadataByTarget(parentDto)?.name;
+    const { baseName: name } = getDTONames(parentDto);
     if (!name) throw new Error(`${parentDto.name} is not an ObjectType`);
     const relationKey = `${name}.${relationName}`;
     let relationDto = this.relationDtos.get(relationKey);
