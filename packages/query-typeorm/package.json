@@ -42,7 +42,7 @@
     "class-transformer": "0.4.0",
     "sqlite3": "5.0.2",
     "ts-mockito": "2.6.1",
-    "typeorm": "0.2.38",
+    "typeorm": "0.2.39",
     "typescript": "4.4.4"
   },
   "repository": {
