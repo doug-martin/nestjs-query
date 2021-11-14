@@ -3,10 +3,17 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { seed } from './seeds';
 
 const { connections } = mongoose;
-const mongoServer = new MongoMemoryServer();
+let mongoServer: Promise<MongoMemoryServer> | null = null;
 
-export function getConnectionUri(): Promise<string> {
-  return mongoServer.getUri();
+const getServer = (): Promise<MongoMemoryServer> => {
+  if (mongoServer === null) {
+    mongoServer = MongoMemoryServer.create();
+  }
+  return mongoServer;
+};
+
+export async function getConnectionUri(): Promise<string> {
+  return (await getServer()).getUri();
 }
 
 export const dropDatabase = async (): Promise<void> => {
@@ -19,5 +26,5 @@ export const prepareDb = async (): Promise<void> => {
 
 export const closeDbConnection = async (): Promise<void> => {
   await connections[connections.length - 1].close();
-  await mongoServer.stop();
+  await (await getServer()).stop();
 };
