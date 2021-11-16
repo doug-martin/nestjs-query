@@ -214,7 +214,8 @@ export class TypeOrmQueryService<Entity>
     if (this.useSoftDelete || opts?.useSoftDelete) {
       return this.repo.softRemove(entity);
     }
-    return this.repo.remove(entity);
+    await this.repo.remove(entity);
+    return entity;
   }
 
   /**
