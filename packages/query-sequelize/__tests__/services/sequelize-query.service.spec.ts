@@ -341,7 +341,7 @@ describe('SequelizeQueryService', (): void => {
               },
             },
           });
-          expect(count).toEqual(1);
+          expect(count).toBe(1);
         });
       });
 
@@ -355,7 +355,7 @@ describe('SequelizeQueryService', (): void => {
               },
             },
           });
-          expect(count).toEqual(6);
+          expect(count).toBe(6);
         });
       });
 
@@ -370,7 +370,7 @@ describe('SequelizeQueryService', (): void => {
               },
             },
           });
-          expect(count).toEqual(1);
+          expect(count).toBe(1);
         });
       });
     });
@@ -711,7 +711,7 @@ describe('SequelizeQueryService', (): void => {
         const countResult = await queryService.countRelations(TestRelation, 'testRelations', entity, {
           relationName: { isNot: null },
         });
-        return expect(countResult).toEqual(3);
+        return expect(countResult).toBe(3);
       });
     });
 
@@ -1286,7 +1286,7 @@ describe('SequelizeQueryService', (): void => {
       const { deletedCount } = await queryService.deleteMany({
         testEntityPk: { in: PLAIN_TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) },
       });
-      expect(deletedCount).toEqual(5);
+      expect(deletedCount).toBe(5);
       const allCount = await queryService.count({});
       expect(allCount).toBe(5);
     });

@@ -41,19 +41,11 @@ interface Pageable<Entity> extends QueryBuilder<Entity> {
 /**
  * @internal
  *
- * Workaround for nested record types, see
- * https://github.com/microsoft/TypeScript/pull/33050#issuecomment-714348057
- */
-interface R<T> {
-  [keys: string]: T;
-}
-
-/**
- * @internal
- *
  * Nested record type
  */
-export type NestedRecord = R<NestedRecord>;
+export interface NestedRecord<E = unknown> {
+  [keys: string]: NestedRecord<E>;
+}
 
 /**
  * @internal

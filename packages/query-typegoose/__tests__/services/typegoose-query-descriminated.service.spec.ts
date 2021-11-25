@@ -347,7 +347,7 @@ describe('TypegooseQueryService', () => {
       const queryService = moduleRef.get(TestDiscriminatedEntityService);
       const expectedEntities = TEST_DISCRIMINATED_ENTITIES.slice(0, 2);
       const count = await queryService.count({ stringType: { in: expectedEntities.map((e) => e.stringType) } });
-      expect(count).toEqual(2);
+      expect(count).toBe(2);
     });
   });
 
@@ -493,7 +493,7 @@ describe('TypegooseQueryService', () => {
       const { deletedCount } = await queryService.deleteMany({
         stringType: { in: entities.map((e) => e.stringType) },
       });
-      expect(deletedCount).toEqual(5);
+      expect(deletedCount).toBe(5);
       const allCount = await queryService.count({});
       expect(allCount).toBe(5);
     });
@@ -1211,7 +1211,7 @@ describe('TypegooseQueryService', () => {
             ],
           },
         });
-        return expect(countResult).toEqual(2);
+        return expect(countResult).toBe(2);
       });
 
       it('should return a rejected promise if the relation is not found', async () => {
@@ -1235,7 +1235,7 @@ describe('TypegooseQueryService', () => {
         const queryService = moduleRef.get(TestDiscriminatedEntityService);
         const entity = TEST_DISCRIMINATED_ENTITIES[0];
         const countResult = await queryService.countRelations(TestReference, 'virtualTestReferences', entity, {});
-        return expect(countResult).toEqual(3);
+        return expect(countResult).toBe(3);
       });
       it('count and return the result', async () => {
         const queryService = moduleRef.get(TestDiscriminatedEntityService);
@@ -1248,7 +1248,7 @@ describe('TypegooseQueryService', () => {
             ],
           },
         });
-        return expect(countResult).toEqual(2);
+        return expect(countResult).toBe(2);
       });
     });
 
