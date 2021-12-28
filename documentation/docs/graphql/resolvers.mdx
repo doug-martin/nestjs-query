@@ -123,7 +123,7 @@ import { TodoItemEntity } from './todo-item.entity';
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
   constructor(
-    @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
+    @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemDTO>
   ) {
     super(service);
   }
