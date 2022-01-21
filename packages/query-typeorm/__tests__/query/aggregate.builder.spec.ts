@@ -5,8 +5,8 @@ import { TestEntity } from '../__fixtures__/test.entity';
 import { AggregateBuilder } from '../../src/query';
 
 describe('AggregateBuilder', (): void => {
-  beforeEach(createTestConnection);
-  afterEach(closeTestConnection);
+  beforeEach(() => createTestConnection());
+  afterEach(() => closeTestConnection());
 
   const getRepo = () => getTestConnection().getRepository(TestEntity);
   const getQueryBuilder = () => getRepo().createQueryBuilder();

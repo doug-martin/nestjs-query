@@ -1,17 +1,24 @@
+import { WithTypeormQueryFilter } from '@nestjs-query/query-typeorm';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
+import { TodoItemLowPriorityFilter } from '../filters/todo-item-low-priority.filter';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
 import { TagEntity } from '../tag/tag.entity';
 
 @Entity({ name: 'todo_item' })
+@WithTypeormQueryFilter({
+  filter: TodoItemLowPriorityFilter,
+  fields: ['lowPriority'],
+  operations: ['is'],
+})
 export class TodoItemEntity {
   @PrimaryGeneratedColumn()
   id!: number;

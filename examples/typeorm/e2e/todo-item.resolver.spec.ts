@@ -1,8 +1,8 @@
 import { AggregateResponse, getQueryServiceToken, QueryService } from '@nestjs-query/core';
 import { CursorConnectionType } from '@nestjs-query/query-graphql';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import { config } from '../src/config';
@@ -10,18 +10,18 @@ import { AUTH_HEADER_NAME, USER_HEADER_NAME } from '../src/constants';
 import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { TagDTO } from '../src/tag/dto/tag.dto';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
+import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
 import { refresh } from './fixtures';
 import {
   edgeNodes,
   pageInfoField,
-  subTaskFields,
-  tagFields,
-  todoItemFields,
-  todoItemAggregateFields,
-  tagAggregateFields,
   subTaskAggregateFields,
+  subTaskFields,
+  tagAggregateFields,
+  tagFields,
+  todoItemAggregateFields,
+  todoItemFields,
 } from './graphql-fragments';
-import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
 
 describe('TodoItemResolver (typeorm - e2e)', () => {
   let app: INestApplication;
@@ -70,6 +70,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 title: 'Create Nest App',
                 completed: true,
                 description: null,
+                priority: 0,
                 age: expect.any(Number),
               },
             },
@@ -238,15 +239,44 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
+            {
+              id: '1',
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              priority: 0,
+              age: expect.any(Number),
+            },
+            {
+              id: '2',
+              title: 'Create Entity',
+              completed: false,
+              description: null,
+              priority: 1,
+              age: expect.any(Number),
+            },
+            {
+              id: '3',
+              title: 'Create Entity Service',
+              completed: false,
+              description: null,
+              priority: 2,
+              age: expect.any(Number),
+            },
+            {
+              id: '4',
+              title: 'Add Todo Item Resolver',
+              completed: false,
+              description: null,
+              priority: 3,
+              age: expect.any(Number),
+            },
             {
               id: '5',
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
+              priority: 4,
               age: expect.any(Number),
             },
           ]);
@@ -278,10 +308,94 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
+            {
+              id: '1',
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              priority: 0,
+              age: expect.any(Number),
+            },
+            {
+              id: '2',
+              title: 'Create Entity',
+              completed: false,
+              description: null,
+              priority: 1,
+              age: expect.any(Number),
+            },
+            {
+              id: '3',
+              title: 'Create Entity Service',
+              completed: false,
+              description: null,
+              priority: 2,
+              age: expect.any(Number),
+            },
           ]);
+        }));
+
+    it(`should allow querying with type-based custom filters`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItems(filter: { priority: { isMultipleOf: 3 } }) {
+            ${pageInfoField}
+            ${edgeNodes(todoItemFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          expect(totalCount).toBe(2);
+          expect(edges).toHaveLength(2);
+          expect(edges.map((e) => e.node)).toMatchObject([
+            { id: '1', title: 'Create Nest App', completed: true, priority: 0 },
+            { id: '4', title: 'Add Todo Item Resolver', completed: false, priority: 3 },
+          ]);
+          expect(pageInfo).toEqual({
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+          });
+        }));
+
+    it(`should allow querying with virtual field custom filters`, () =>
+      request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `{
+          todoItems(filter: { lowPriority: { is: true } }) {
+            ${pageInfoField}
+            ${edgeNodes(todoItemFields)}
+            totalCount
+          }
+        }`,
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          expect(totalCount).toBe(3);
+          expect(edges).toHaveLength(3);
+          expect(edges.map((e) => e.node)).toMatchObject([
+            { id: '1', title: 'Create Nest App', completed: true, priority: 0 },
+            { id: '2', title: 'Create Entity', completed: false, priority: 1 },
+            { id: '3', title: 'Create Entity Service', completed: false, priority: 2 },
+          ]);
+          expect(pageInfo).toEqual({
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+          });
         }));
 
     it(`should allow querying on subTasks`, () =>
@@ -311,8 +425,22 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(edges).toHaveLength(2);
 
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+            {
+              id: '1',
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              priority: 0,
+              age: expect.any(Number),
+            },
+            {
+              id: '2',
+              title: 'Create Entity',
+              completed: false,
+              description: null,
+              priority: 1,
+              age: expect.any(Number),
+            },
           ]);
         }));
 
@@ -343,8 +471,22 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           expect(edges).toHaveLength(2);
 
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
+            {
+              id: '1',
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              priority: 0,
+              age: expect.any(Number),
+            },
+            {
+              id: '4',
+              title: 'Add Todo Item Resolver',
+              completed: false,
+              description: null,
+              priority: 3,
+              age: expect.any(Number),
+            },
           ]);
         }));
 
@@ -379,12 +521,41 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
+              priority: 4,
               age: expect.any(Number),
             },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
-            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+            {
+              id: '4',
+              title: 'Add Todo Item Resolver',
+              completed: false,
+              description: null,
+              priority: 3,
+              age: expect.any(Number),
+            },
+            {
+              id: '3',
+              title: 'Create Entity Service',
+              completed: false,
+              description: null,
+              priority: 2,
+              age: expect.any(Number),
+            },
+            {
+              id: '2',
+              title: 'Create Entity',
+              completed: false,
+              description: null,
+              priority: 1,
+              age: expect.any(Number),
+            },
+            {
+              id: '1',
+              title: 'Create Nest App',
+              completed: true,
+              description: null,
+              priority: 0,
+              age: expect.any(Number),
+            },
           ]);
         }));
 
@@ -415,8 +586,22 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
-              { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-              { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+              {
+                id: '1',
+                title: 'Create Nest App',
+                completed: true,
+                description: null,
+                priority: 0,
+                age: expect.any(Number),
+              },
+              {
+                id: '2',
+                title: 'Create Entity',
+                completed: false,
+                description: null,
+                priority: 1,
+                age: expect.any(Number),
+              },
             ]);
           }));
 
@@ -446,12 +631,20 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
-              { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
+              {
+                id: '3',
+                title: 'Create Entity Service',
+                completed: false,
+                description: null,
+                priority: 2,
+                age: expect.any(Number),
+              },
               {
                 id: '4',
                 title: 'Add Todo Item Resolver',
                 completed: false,
                 description: null,
+                priority: 3,
                 age: expect.any(Number),
               },
             ]);

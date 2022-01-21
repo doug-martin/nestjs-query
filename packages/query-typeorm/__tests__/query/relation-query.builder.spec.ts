@@ -1,18 +1,24 @@
 import { Class, Query, SortDirection, SortNulls } from '@nestjs-query/core';
+import { CustomFilterRegistry, RelationQueryBuilder } from '../../src/query';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
-import { RelationQueryBuilder } from '../../src/query';
+import { getCustomFilterRegistry } from '../utils';
 
 describe('RelationQueryBuilder', (): void => {
-  beforeEach(createTestConnection);
-  afterEach(closeTestConnection);
+  let customFilterRegistry: CustomFilterRegistry;
+
+  beforeEach(async () => {
+    await createTestConnection();
+    customFilterRegistry = getCustomFilterRegistry(getTestConnection());
+  });
+  afterEach(() => closeTestConnection());
 
   const getRelationQueryBuilder = <Entity, Relation>(
     EntityClass: Class<Entity>,
     relationName: string,
   ): RelationQueryBuilder<Entity, Relation> =>
-    new RelationQueryBuilder(getTestConnection().getRepository(EntityClass), relationName);
+    new RelationQueryBuilder(getTestConnection().getRepository(EntityClass), relationName, { customFilterRegistry });
 
   const expectSQLSnapshot = <Entity, Relation>(
     EntityClass: Class<Entity>,
@@ -159,6 +165,22 @@ describe('RelationQueryBuilder', (): void => {
             { field: 'testRelationPk', direction: SortDirection.DESC },
           ],
         });
+      });
+    });
+    describe('with custom filters', () => {
+      // TODO Fix typings to avoid usage of any
+      it('should accept custom filters', (): void => {
+        const query: Query<TestRelation> = {
+          filter: {
+            // This has the global isMultipleOf filter
+            numberType: { gte: 1, lte: 10, isMultipleOf: 5 },
+            // Here, the isMultipleOf filter was overridden for dateType only
+            dateType: { isMultipleOf: 3 },
+            // This is a more complex filter involving geospatial queries
+            fakePointType: { distanceFrom: { point: { lat: 45.3, lng: 9.5 }, radius: 50000 } },
+          } as any, // TODO Fix any typing
+        };
+        expectSQLSnapshot(TestEntity, testEntity, 'testRelations', query);
       });
     });
   });
