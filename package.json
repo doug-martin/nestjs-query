@@ -29,7 +29,7 @@
     "coveralls": "3.1.1",
     "eslint": "8.10.0",
     "eslint-config-airbnb": "19.0.4",
-    "eslint-config-airbnb-typescript": "16.1.0",
+    "eslint-config-airbnb-typescript": "16.1.1",
     "eslint-config-prettier": "8.5.0",
     "eslint-import-resolver-typescript": "2.5.0",
     "eslint-plugin-import": "2.25.4",
