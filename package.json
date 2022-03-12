@@ -27,7 +27,7 @@
     "@typescript-eslint/eslint-plugin": "5.14.0",
     "@typescript-eslint/parser": "5.14.0",
     "coveralls": "3.1.1",
-    "eslint": "8.10.0",
+    "eslint": "8.11.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-airbnb-typescript": "16.1.1",
     "eslint-config-prettier": "8.5.0",
