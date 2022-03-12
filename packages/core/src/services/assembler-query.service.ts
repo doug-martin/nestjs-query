@@ -61,7 +61,7 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
     if (!entity) {
       return undefined;
     }
-    return this.assembler.convertToDTO(entity);
+    return this.assembler.convertAsyncToDTO(Promise.resolve(entity));
   }
 
   getById(id: string | number, opts?: GetByIdOptions<DTO>): Promise<DTO> {
