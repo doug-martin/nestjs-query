@@ -81,7 +81,7 @@ describe('AssemblerQueryService', () => {
       const assemblerService = new AssemblerQueryService(new TestAssembler(), instance(mockQueryService));
       when(mockQueryService.count(objectContaining({ bar: { eq: 'bar' } }))).thenResolve(1);
 
-      return expect(assemblerService.count({ foo: { eq: 'bar' } })).resolves.toEqual(1);
+      return expect(assemblerService.count({ foo: { eq: 'bar' } })).resolves.toBe(1);
     });
   });
 
@@ -251,7 +251,7 @@ describe('AssemblerQueryService', () => {
 
       return expect(
         assemblerService.countRelations(TestDTO, 'test', { foo: 'bar' }, { foo: { eq: 'bar' } }),
-      ).resolves.toEqual(1);
+      ).resolves.toBe(1);
     });
 
     it('should transform multiple entities', () => {

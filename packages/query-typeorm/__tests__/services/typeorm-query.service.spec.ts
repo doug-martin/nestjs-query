@@ -543,7 +543,7 @@ describe('TypeOrmQueryService', (): void => {
               },
             },
           });
-          expect(count).toEqual(1);
+          expect(count).toBe(1);
         });
       });
 
@@ -557,7 +557,7 @@ describe('TypeOrmQueryService', (): void => {
               },
             },
           });
-          expect(count).toEqual(6);
+          expect(count).toBe(6);
         });
       });
 
@@ -572,7 +572,7 @@ describe('TypeOrmQueryService', (): void => {
               },
             },
           });
-          expect(count).toEqual(1);
+          expect(count).toBe(1);
         });
       });
     });
@@ -1064,7 +1064,7 @@ describe('TypeOrmQueryService', (): void => {
         const countResult = await queryService.countRelations(TestRelation, 'testRelations', TEST_ENTITIES[0], {
           relationName: { isNot: null },
         });
-        return expect(countResult).toEqual(3);
+        return expect(countResult).toBe(3);
       });
     });
 

@@ -30,7 +30,7 @@ describe('ResolverField decorator', (): void => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{}];
     createTestResolver('test', () => Boolean, { nullable: true }, ...opts);
     const [n, rt, ao] = propertySpy.mock.calls[0]!;
-    expect(n).toEqual('test');
+    expect(n).toBe('test');
     expect(rt ? rt() : null).toEqual(Boolean);
     expect(ao).toEqual({ nullable: true });
   });

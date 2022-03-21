@@ -196,7 +196,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getReferenceEntity(relationName));
     const { filterQuery, options } = referenceQueryBuilder.buildQuery(assembler.convertQuery(query));
     const populated = await foundEntity.populate({ path: relationName, match: filterQuery, options }).execPopulate();
-    return assembler.convertToDTOs(populated.get(relationName));
+    return assembler.convertToDTOs(populated.get(relationName) as unknown[]);
   }
 
   async addRelations<Relation>(

@@ -307,7 +307,7 @@ export class TypeOrmQueryService<Entity>
 
   private async ensureEntityDoesNotExist(e: Entity): Promise<Entity> {
     if (this.repo.hasId(e)) {
-      const found = await this.repo.findOne(this.repo.getId(e));
+      const found = await this.repo.findOne(this.repo.getId(e) as string | number);
       if (found) {
         throw new Error('Entity already exists');
       }
