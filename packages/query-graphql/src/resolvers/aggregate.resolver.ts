@@ -1,13 +1,13 @@
 import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@nestjs-query/core';
 import { Args, ArgsType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
-import { AuthorizerInterceptor } from '../interceptors';
+import { OperationGroup } from '../auth';
 import { getDTONames } from '../common';
 import { AggregateQueryParam, AuthorizerFilter, ResolverMethodOpts, ResolverQuery, SkipIf } from '../decorators';
+import { AuthorizerInterceptor } from '../interceptors';
 import { AggregateArgsType, AggregateResponseType } from '../types';
 import { transformAndValidate } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver } from './resolver.interface';
-import { OperationGroup } from '../auth';
 
 export type AggregateResolverOpts = {
   enabled?: boolean;
@@ -32,14 +32,15 @@ export const Aggregateable =
     const { baseNameLower } = getDTONames(DTOClass);
     const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
     const queryName = `${baseNameLower}Aggregate`;
-    const AR = AggregateResponseType(DTOClass);
+    const disabled = !opts || !opts.enabled;
+    const AR = disabled ? DTOClass : AggregateResponseType(DTOClass);
     @ArgsType()
     class AA extends AggregateArgsType(DTOClass) {}
 
     @Resolver(() => AR, { isAbstract: true })
     class AggregateResolverBase extends BaseClass {
       @SkipIf(
-        () => !opts || !opts.enabled,
+        () => disabled,
         ResolverQuery(
           () => [AR],
           { name: queryName },
