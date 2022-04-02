@@ -1,9 +1,9 @@
 import { AggregateQuery, AggregateResponse } from '@nestjs-query/core';
 import { Query, Resolver } from '@nestjs/graphql';
-import { when, deepEqual, objectContaining } from 'ts-mockito';
+import { deepEqual, objectContaining, when } from 'ts-mockito';
 import { AggregateArgsType } from '../../src';
 import { AggregateResolver, AggregateResolverOpts } from '../../src/resolvers/aggregate.resolver';
-import { generateSchema, createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
+import { createResolverFromNest, generateSchema, TestResolverDTO, TestService } from '../__fixtures__';
 
 describe('AggregateResolver', () => {
   const expectResolverSDL = async (opts?: AggregateResolverOpts) => {
@@ -16,21 +16,33 @@ describe('AggregateResolver', () => {
     }
     const schema = await generateSchema([TestSDLResolver]);
     expect(schema).toMatchSnapshot();
+    return schema;
   };
 
   it('should create a AggregateResolver for the DTO', () => expectResolverSDL({ enabled: true }));
 
-  it('should not expose read methods if not enabled', () => expectResolverSDL());
+  it('should not expose read methods if not enabled', async () => {
+    const schema = await expectResolverSDL();
+    // It should not generate inputs
+    expect(schema).not.toContain('input');
+    // It should only generate 2 types (TestResolverDTO and Query)
+    const typeOccurrences = (schema.match(/type/g) || []).length;
+    expect(typeOccurrences).toBe(2);
+  });
 
   describe('#aggregate', () => {
-    @Resolver(() => TestResolverDTO)
-    class TestResolver extends AggregateResolver(TestResolverDTO, { enabled: true }) {
-      constructor(service: TestService) {
-        super(service);
+    const createResolver = () => {
+      @Resolver(() => TestResolverDTO)
+      class TestResolver extends AggregateResolver(TestResolverDTO, { enabled: true }) {
+        constructor(service: TestService) {
+          super(service);
+        }
       }
-    }
+      return TestResolver;
+    };
+
     it('should call the service query with the provided input', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
+      const { resolver, mockService } = await createResolverFromNest(createResolver());
       const input: AggregateArgsType<TestResolverDTO> = {
         filter: {
           stringField: { eq: 'foo' },
