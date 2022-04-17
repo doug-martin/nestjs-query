@@ -3,8 +3,8 @@ name: Test
 on:
   push:
     branches:    # Array of patterns that match refs/heads
-      - master     # Push events on master branch
-      - releases/* # Push events to branches matching refs/heads/releases/*
+#      - master     # Push events on master branch
+#      - releases/* # Push events to branches matching refs/heads/releases/*
   pull_request:  # Specify a second event with pattern matching
 env:
   CI: true
