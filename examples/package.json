@@ -16,7 +16,6 @@
     "@nestjs-query/core": "0.30.0",
     "@nestjs-query/query-graphql": "0.30.0",
     "@nestjs-query/query-sequelize": "0.30.0",
-    "@nestjs-query/query-typegoose": "0.30.0",
     "@nestjs-query/query-typeorm": "0.30.0",
     "@nestjs/common": "8.4.0",
     "@nestjs/core": "8.4.0",
