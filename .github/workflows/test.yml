@@ -39,19 +39,19 @@ jobs:
       - run: npm test
         env:
           NESTJS_QUERY_DB_TYPE: ${{ matrix.db-type }}
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.node-version }}-${{ matrix.db-type }}
-          parallel: true
-
-  finish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel-finished: true
+#      - name: Coveralls GitHub Action
+#        uses: coverallsapp/github-action@master
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          flag-name: run-${{ matrix.node-version }}-${{ matrix.db-type }}
+#          parallel: true
+#
+#  finish:
+#    needs: test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Coveralls Finished
+#        uses: coverallsapp/github-action@master
+#        with:
+#          github-token: ${{ secrets.github_token }}
+#          parallel-finished: true
