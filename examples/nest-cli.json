@@ -119,15 +119,6 @@
         "tsConfigPath": "./tsconfig.json"
       }
     },
-    "sequelize": {
-      "type": "application",
-      "root": "sequelize",
-      "entryFile": "main",
-      "sourceRoot": "sequelize/src",
-      "compilerOptions": {
-        "tsConfigPath": "./tsconfig.json"
-      }
-    },
     "subscriptions": {
       "type": "application",
       "root": "subscriptions",
