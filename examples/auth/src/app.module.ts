@@ -17,7 +17,7 @@ import { UserModule } from './user/user.module';
       autoSchemaFile: 'schema.gql',
       installSubscriptionHandlers: true,
       subscriptions: {
-        'subscriptions-transport-ws': {
+        'graphql-ws': {
           onConnect: (connectionParams: unknown) => ({ headers: connectionParams }),
         },
       },
