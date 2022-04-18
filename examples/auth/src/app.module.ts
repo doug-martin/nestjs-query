@@ -9,14 +9,6 @@ import { typeormOrmConfig } from '../../helpers';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 
-interface HeadersContainer {
-  headers?: Record<string, string>;
-}
-interface ContextArgs {
-  req?: HeadersContainer;
-  connection?: { context: HeadersContainer };
-}
-
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('auth')),
@@ -29,7 +21,6 @@ interface ContextArgs {
           onConnect: (connectionParams: unknown) => ({ headers: connectionParams }),
         },
       },
-      context: ({ req, connection }: ContextArgs) => ({ req: { ...req, ...connection?.context } }),
     }),
     AuthModule,
     UserModule,
