@@ -4,7 +4,7 @@ services:
   postgres:
     image: "postgres:14"
     volumes:
-      - ./init-scripts/postgres:/docker-entrypoint-initdb.d/
+      - ./.docker-init-scripts/postgres:/docker-entrypoint-initdb.d/
     environment:
       - "POSTGRES_USER=nestjs_query"
       - "POSTGRES_HOST_AUTH_METHOD=trust"
@@ -16,7 +16,7 @@ services:
     platform: linux/x86_64
     image: "mysql:8"
     volumes:
-      - ./init-scripts/mysql:/docker-entrypoint-initdb.d/
+      - ./.docker-init-scripts/mysql:/docker-entrypoint-initdb.d/
     environment:
       - "MYSQL_USER=nestjs_query"
       - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
@@ -28,16 +28,4 @@ services:
     image: "redis:6"
     ports:
       - "6379:6379"
-  mongo:
-    image: "mongo:5.0"
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./init/-scripts/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-  mongo-express:
-    image: "mongo-express:latest"
-    restart: always
-    ports:
-      - 8081:8081
 
