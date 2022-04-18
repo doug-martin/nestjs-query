@@ -6,12 +6,14 @@ import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
 import { typeormOrmConfig } from '../../helpers';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   providers: [ComplexityPlugin],
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('complexity')),
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
     }),
     SubTaskModule,

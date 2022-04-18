@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { typeormOrmConfig } from '../../helpers';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('typeorm_soft_delete')),
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
     }),
     TodoItemModule,
