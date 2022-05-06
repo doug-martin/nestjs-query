@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DeleteResolver #deleteMany should not create a new delete type if the DeleteManyArgs is supplied 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -26,12 +26,12 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input CustomDeleteManyInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
   foo: String!
 }
@@ -76,11 +76,11 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
+"
 `;
 
 exports[`DeleteResolver #deleteMany should not expose delete many method if disabled 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -99,20 +99,20 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
-
+"
 `;
 
 exports[`DeleteResolver #deleteOne should not expose delete one method if disabled 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -125,7 +125,7 @@ type Mutation {
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -169,17 +169,17 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
+"
 `;
 
 exports[`DeleteResolver #deleteOne should use the provided DeleteOneInput type 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -203,7 +203,7 @@ input CustomDeleteOneInput {
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -247,17 +247,17 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
+"
 `;
 
 exports[`DeleteResolver deleted subscription should add subscription types if enableSubscriptions is true 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -276,12 +276,12 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -332,7 +332,7 @@ type Subscription {
 }
 
 input DeleteOneTestResolverDTOSubscriptionFilterInput {
-  """Specify to filter the records returned."""
+  \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
   filter: TestResolverDTOSubscriptionFilter!
 }
 
@@ -342,17 +342,17 @@ input TestResolverDTOSubscriptionFilter {
   id: IDFilterComparison
   stringField: StringFieldComparison
 }
-
+"
 `;
 
 exports[`DeleteResolver deleted subscription should add subscription types if many.enableSubscriptions is true 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -371,12 +371,12 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -424,17 +424,17 @@ input StringFieldComparison {
 type Subscription {
   deletedManyTestResolverDTOS: DeleteManyResponse!
 }
-
+"
 `;
 
 exports[`DeleteResolver deleted subscription should add subscription types if one.enableSubscriptions is true 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -453,12 +453,12 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -508,7 +508,7 @@ type Subscription {
 }
 
 input DeleteOneTestResolverDTOSubscriptionFilterInput {
-  """Specify to filter the records returned."""
+  \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
   filter: TestResolverDTOSubscriptionFilter!
 }
 
@@ -518,17 +518,17 @@ input TestResolverDTOSubscriptionFilter {
   id: IDFilterComparison
   stringField: StringFieldComparison
 }
-
+"
 `;
 
 exports[`DeleteResolver deleted subscription should not expose subscriptions if enableSubscriptions is false 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -547,12 +547,12 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -596,17 +596,17 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
+"
 `;
 
 exports[`DeleteResolver should create a DeleteResolver for the DTO 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -625,12 +625,12 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -674,11 +674,11 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
+"
 `;
 
 exports[`DeleteResolver should not expose delete methods if disabled 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -686,17 +686,17 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
+"
 `;
 
 exports[`DeleteResolver should use the dtoName if provided 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -715,12 +715,12 @@ type Mutation {
 }
 
 input DeleteOneTestInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input DeleteManyTestsInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -764,17 +764,17 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
+"
 `;
 
 exports[`DeleteResolver should use the many.name option for the deleteMany if provided 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -793,12 +793,12 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -842,17 +842,17 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
+"
 `;
 
 exports[`DeleteResolver should use the one.name option for the deleteOne if provided 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
 
 type DeleteManyResponse {
-  """The number of records deleted."""
+  \\"\\"\\"The number of records deleted.\\"\\"\\"
   deletedCount: Int!
 }
 
@@ -871,12 +871,12 @@ type Mutation {
 }
 
 input DeleteOneTestResolverDTOInput {
-  """The id of the record to delete."""
+  \\"\\"\\"The id of the record to delete.\\"\\"\\"
   id: ID!
 }
 
 input DeleteManyTestResolverDTOSInput {
-  """Filter to find records to delete"""
+  \\"\\"\\"Filter to find records to delete\\"\\"\\"
   filter: TestResolverDTODeleteFilter!
 }
 
@@ -920,5 +920,5 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
+"
 `;

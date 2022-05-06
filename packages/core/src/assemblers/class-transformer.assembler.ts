@@ -8,14 +8,13 @@ import { getAssemblerDeserializer } from './assembler.deserializer';
 /**
  * Base assembler that uses class-transformer to transform to and from the DTO/Entity.
  */
-export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAssembler<
-  DTO,
+export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAssembler<DTO,
   Entity,
   DeepPartial<DTO>,
   DeepPartial<Entity>,
   DeepPartial<DTO>,
-  DeepPartial<Entity>
-> {
+  DeepPartial<Entity>> {
+
   convertToDTO(entity: Entity): DTO {
     return this.convert(this.DTOClass, this.toPlain(entity));
   }
@@ -25,7 +24,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
   }
 
   convertQuery(query: Query<DTO>): Query<Entity> {
-    return query as Query<Entity>;
+    return query as unknown as Query<Entity>;
   }
 
   convertAggregateQuery(aggregate: AggregateQuery<DTO>): AggregateQuery<Entity> {
@@ -33,7 +32,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
   }
 
   convertAggregateResponse(aggregate: AggregateResponse<Entity>): AggregateResponse<DTO> {
-    return aggregate as AggregateResponse<DTO>;
+    return aggregate as unknown as AggregateResponse<DTO>;
   }
 
   convertToCreateEntity(create: DeepPartial<DTO>): DeepPartial<Entity> {
@@ -67,7 +66,8 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
       }
     } else if ('constructor' in entityOrDto) {
       // eslint-disable-next-line @typescript-eslint/ban-types
-      const serializer = getAssemblerSerializer((entityOrDto as object).constructor as Class<unknown>);
+      const serializer = getAssemblerSerializer((entityOrDto).constructor as Class<unknown>);
+
       if (serializer) {
         return serializer(entityOrDto);
       }

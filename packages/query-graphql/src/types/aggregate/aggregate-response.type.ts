@@ -1,4 +1,4 @@
-import { AggregateResponse, Class, MapReflector, NumberAggregate, TypeAggregate } from '@nestjs-query/core';
+import { AggregateResponse, Class, MapReflector, NumberAggregate, TypeAggregate } from '@ptc/nestjs-query-core';
 import { Field, ObjectType, Float, Int } from '@nestjs/graphql';
 import { GraphQLScalarType } from 'graphql';
 import { FilterableFieldDescriptor, getFilterableFields, SkipIf } from '../../decorators';

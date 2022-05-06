@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`UpdateManyInputType should create an args type with the field as the type 1`] = `
-type Query {
+"type Query {
   updateTest(input: UpdateMany!): Int!
 }
 
 input UpdateMany {
-  """Filter used to find fields to update"""
+  \\"\\"\\"Filter used to find fields to update\\"\\"\\"
   filter: FakeUpdateManyTypeUpdateFilter!
 
-  """The update to apply to all records found using the filter"""
+  \\"\\"\\"The update to apply to all records found using the filter\\"\\"\\"
   update: FakeUpdateManyInput!
 }
 
@@ -39,5 +39,5 @@ input StringFieldComparison {
 input FakeUpdateManyInput {
   name: String!
 }
-
+"
 `;

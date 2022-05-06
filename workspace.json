@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "projects": {
+    "core": "packages/core",
+    "query-graphql": "packages/query-graphql",
+    "query-typeorm": "packages/query-typeorm",
+    "workspace": "workspace"
+  }
+}

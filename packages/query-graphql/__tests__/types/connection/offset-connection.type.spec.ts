@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
-import { OffsetConnectionType, OffsetPagingType, PagingStrategies } from '../../../src';
+import { OffsetConnectionType, OffsetPagingType, PagingStrategies } from '@ptc/nestjs-query-graphql';
 import { generateSchema } from '../../__fixtures__';
 import { getOrCreateOffsetConnectionType } from '../../../src/types/connection';
 import { getOrCreateOffsetPagingType } from '../../../src/types/query/paging';

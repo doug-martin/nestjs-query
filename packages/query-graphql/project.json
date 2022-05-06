@@ -1,0 +1,36 @@
+{
+  "sourceRoot": "packages/query-graphql/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/query-graphql/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/query-graphql"],
+      "options": {
+        "jestConfig": "packages/query-graphql/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/query-graphql",
+        "tsConfig": "packages/query-graphql/tsconfig.lib.json",
+        "packageJson": "packages/query-graphql/package.json",
+        "main": "packages/query-graphql/src/index.ts",
+        "assets": ["packages/query-graphql/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true,
+        "buildableProjectDepsInPackageJsonType": "dependencies"
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["core"]
+}

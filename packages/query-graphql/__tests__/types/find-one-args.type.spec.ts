@@ -2,7 +2,7 @@
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Resolver, Query, Args, Int, ArgsType, ObjectType } from '@nestjs/graphql';
-import { FilterableField, FindOneArgsType, IDField } from '../../src';
+import { FilterableField, FindOneArgsType, IDField } from '@ptc/nestjs-query-graphql';
 import { generateSchema } from '../__fixtures__';
 
 describe('FindOneArgsType', (): void => {

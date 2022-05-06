@@ -1,37 +1,27 @@
 {
-    "extends": "./tsconfig.build.json",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@nestjs-query/core": ["packages/core/src"],
-            "@nestjs-query/query-graphql": ["packages/query-graphql/src"],
-            "@nestjs-query/query-typeorm": ["packages/query-typeorm/src"],
-            "@nestjs-query/query-sequelize": ["packages/query-sequelize/src"],
-            "@nestjs-query/query-mongoose": ["packages/query-mongoose/src"],
-            "@nestjs-query/query-typegoose": ["packages/query-typegoose/src"]
-        }
-    },
-    "references": [{
-            "path": "./packages/core"
-        },
-        {
-            "path": "./packages/query-graphql"
-        },
-        {
-            "path": "./packages/query-typeorm"
-        },
-        {
-            "path": "./packages/query-sequelize"
-        },
-        {
-            "path": "./packages/query-mongoose"
-        },
-        {
-            "path": "./packages/query-typegoose"
-        },
-        {
-            "path": "./examples"
-        }
-    ],
-    "files": []
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "module": "esnext",
+    "target": "ES2021",
+    "typeRoots": ["node_modules/@types", "tools/@types"],
+    "lib": ["ES2021", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ptc/nestjs-query-core": ["packages/core/src/index.ts"],
+      "@ptc/nestjs-query-graphql": ["packages/query-graphql/src/index.ts"],
+      "@ptc/nestjs-query-typeorm": ["packages/query-typeorm/src/index.ts"]
+    }
+  },
+  "files": []
 }

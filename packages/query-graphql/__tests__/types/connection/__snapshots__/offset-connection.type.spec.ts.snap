@@ -1,36 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`OffsetConnectionType should create the connection SDL 1`] = `
-type Test {
+"type Test {
   stringField: String!
   numberField: Float!
   boolField: Boolean!
 }
 
 type OffsetPageInfo {
-  """true if paging forward and there are more records."""
+  \\"\\"\\"true if paging forward and there are more records.\\"\\"\\"
   hasNextPage: Boolean
 
-  """true if paging backwards and there are more records."""
+  \\"\\"\\"true if paging backwards and there are more records.\\"\\"\\"
   hasPreviousPage: Boolean
 }
 
 type TestOffsetConnection {
-  """Paging information"""
+  \\"\\"\\"Paging information\\"\\"\\"
   pageInfo: OffsetPageInfo!
 
-  """Array of nodes."""
+  \\"\\"\\"Array of nodes.\\"\\"\\"
   nodes: [Test!]!
 }
 
 type Query {
   test: TestOffsetConnection!
 }
-
+"
 `;
 
 exports[`OffsetConnectionType should create the connection SDL with totalCount if enabled 1`] = `
-type Test {
+"type Test {
   stringField: String!
   numberField: Float!
   boolField: Boolean!
@@ -41,26 +41,26 @@ type TestTotalCount {
 }
 
 type OffsetPageInfo {
-  """true if paging forward and there are more records."""
+  \\"\\"\\"true if paging forward and there are more records.\\"\\"\\"
   hasNextPage: Boolean
 
-  """true if paging backwards and there are more records."""
+  \\"\\"\\"true if paging backwards and there are more records.\\"\\"\\"
   hasPreviousPage: Boolean
 }
 
 type TestTotalCountOffsetConnection {
-  """Paging information"""
+  \\"\\"\\"Paging information\\"\\"\\"
   pageInfo: OffsetPageInfo!
 
-  """Array of nodes."""
+  \\"\\"\\"Array of nodes.\\"\\"\\"
   nodes: [TestTotalCount!]!
 
-  """Fetch total count of records"""
+  \\"\\"\\"Fetch total count of records\\"\\"\\"
   totalCount: Int!
 }
 
 type Query {
   test: TestTotalCountOffsetConnection!
 }
-
+"
 `;

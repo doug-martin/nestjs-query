@@ -33,10 +33,10 @@ jobs:
           key: ${{ runner.os }}-node-${{matrix.node-version}}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-${{matrix.node-version}}-
-      - run: npm ci
-      - run: npm run bootstrap
-      - run: npm run build
-      - run: npm test
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v2
+      - run: yarn
+      - run: yarn nx affected:test --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
         env:
           NESTJS_QUERY_DB_TYPE: ${{ matrix.db-type }}
       - name: Coveralls GitHub Action

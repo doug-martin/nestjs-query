@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AggregateArgsType should create an aggregate type with the correct fields for each type 1`] = `
-type Query {
+"type Query {
   aggregate(
-    """Filter to find records to aggregate on"""
+    \\"\\"\\"Filter to find records to aggregate on\\"\\"\\"
     filter: FakeTypeAggregateFilter
   ): Int!
 }
@@ -74,14 +74,14 @@ input DateFieldComparison {
   notBetween: DateFieldComparisonBetween
 }
 
-"""
+\\"\\"\\"
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
+\\"\\"\\"
 scalar DateTime
 
 input DateFieldComparisonBetween {
   lower: DateTime!
   upper: DateTime!
 }
-
+"
 `;

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AggregateRelationsResolver aggregate should not add read methods if enableAggregate is not true 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -49,15 +49,15 @@ type TestResolverDTOTestsMaxAggregate {
 type Query {
   test: TestResolverDTO!
 }
-
+"
 `;
 
 exports[`AggregateRelationsResolver aggregate should use the dtoName if provided 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
   testsAggregate(
-    """Filter to find records to aggregate on"""
+    \\"\\"\\"Filter to find records to aggregate on\\"\\"\\"
     filter: TestRelationDTOAggregateFilter
   ): [TestResolverDTOTestsAggregateResponse!]!
 }
@@ -153,15 +153,15 @@ type TestResolverDTOTestsAggregateResponse {
 type Query {
   test: TestResolverDTO!
 }
-
+"
 `;
 
 exports[`AggregateRelationsResolver aggregate should use the object type name 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
   relationsAggregate(
-    """Filter to find records to aggregate on"""
+    \\"\\"\\"Filter to find records to aggregate on\\"\\"\\"
     filter: TestRelationDTOAggregateFilter
   ): [TestResolverDTORelationsAggregateResponse!]!
 }
@@ -237,11 +237,11 @@ type TestResolverDTORelationsAggregateResponse {
 type Query {
   test: TestResolverDTO!
 }
-
+"
 `;
 
 exports[`AggregateRelationsResolver should not add read methods if one and many are empty 1`] = `
-type TestResolverDTO {
+"type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -249,5 +249,5 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
+"
 `;

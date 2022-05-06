@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AggregateResponseType should create an aggregate type with a custom name 1`] = `
-type FakeTypeAggregateGroupBy {
+"type FakeTypeAggregateGroupBy {
   stringField: String
   numberField: Float
   boolField: Boolean
   dateField: DateTime
 }
 
-"""
+\\"\\"\\"
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
+\\"\\"\\"
 scalar DateTime
 
 type FakeTypeCountAggregate {
@@ -86,20 +86,20 @@ type CustomPrefixAggregateResponse {
 type Query {
   aggregate: CustomPrefixAggregateResponse!
 }
-
+"
 `;
 
 exports[`AggregateResponseType should create an aggregate type with the correct fields for each type 1`] = `
-type FakeTypeAggregateGroupBy {
+"type FakeTypeAggregateGroupBy {
   stringField: String
   numberField: Float
   boolField: Boolean
   dateField: DateTime
 }
 
-"""
+\\"\\"\\"
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
+\\"\\"\\"
 scalar DateTime
 
 type FakeTypeCountAggregate {
@@ -141,20 +141,20 @@ type FakeTypeAggregateResponse {
 type Query {
   aggregate: FakeTypeAggregateResponse!
 }
-
+"
 `;
 
 exports[`AggregateResponseType should return the same class if called multiple times 1`] = `
-type FakeTypeAggregateGroupBy {
+"type FakeTypeAggregateGroupBy {
   stringField: String
   numberField: Float
   boolField: Boolean
   dateField: DateTime
 }
 
-"""
+\\"\\"\\"
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
+\\"\\"\\"
 scalar DateTime
 
 type FakeTypeCountAggregate {
@@ -196,5 +196,5 @@ type FakeTypeAggregateResponse {
 type Query {
   aggregate: FakeTypeAggregateResponse!
 }
-
+"
 `;

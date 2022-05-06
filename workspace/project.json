@@ -1,0 +1,29 @@
+{
+  "root": ".",
+  "targets": {
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "syncVersions": true,
+        "skipProjectChangelog": false,
+        "baseBranch": "master",
+        "changelogHeader": " ",
+        "commitMessageFormat": "chore(release): v${version}"
+      },
+      "configurations": {
+        "production": {
+          "postTargets": [
+            "workspace:github"
+          ]
+        }
+      }
+    },
+    "github": {
+      "executor": "@jscutlery/semver:github",
+      "options": {
+        "tag": "${tag}",
+        "notes": "${notes}"
+      }
+    }
+  }
+}

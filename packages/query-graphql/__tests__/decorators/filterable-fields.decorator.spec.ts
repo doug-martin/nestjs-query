@@ -1,5 +1,5 @@
 import * as nestjsGraphQL from '@nestjs/graphql';
-import { FilterableField } from '../../src';
+import { FilterableField } from '@ptc/nestjs-query-graphql';
 import { getFilterableFields } from '../../src/decorators';
 
 const { Float, ObjectType, Field, Int } = nestjsGraphQL;

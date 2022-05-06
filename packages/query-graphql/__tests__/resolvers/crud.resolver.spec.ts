@@ -1,5 +1,5 @@
 import { ID, ObjectType } from '@nestjs/graphql';
-import { CRUDResolver, FilterableField, PagingStrategies } from '../../src';
+import { CRUDResolver, FilterableField, PagingStrategies } from '@ptc/nestjs-query-graphql';
 import * as createResolver from '../../src/resolvers/create.resolver';
 import * as deleteResolver from '../../src/resolvers/delete.resolver';
 import * as readResolver from '../../src/resolvers/read.resolver';

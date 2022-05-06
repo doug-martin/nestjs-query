@@ -311,8 +311,9 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
 
   private convertFilterable(filterable?: Filterable<DTO>): Filterable<Entity> | undefined {
     if (!filterable) {
-      return filterable;
+      return undefined;
     }
+
     return { ...filterable, filter: this.assembler.convertQuery({ filter: filterable?.filter }).filter };
   }
 

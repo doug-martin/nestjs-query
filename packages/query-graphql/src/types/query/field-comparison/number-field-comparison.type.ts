@@ -1,4 +1,4 @@
-import { Class, FilterFieldComparison } from '@nestjs-query/core';
+import { Class, FilterFieldComparison } from '@ptc/nestjs-query-core';
 import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNumber, IsOptional, ValidateNested } from 'class-validator';

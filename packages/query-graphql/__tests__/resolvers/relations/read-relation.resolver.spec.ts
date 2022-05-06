@@ -1,6 +1,6 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when } from 'ts-mockito';
-import { CursorQueryArgsType, NonePagingQueryArgsType, OffsetQueryArgsType, PagingStrategies } from '../../../src';
+import { CursorQueryArgsType, NonePagingQueryArgsType, OffsetQueryArgsType, PagingStrategies } from '@ptc/nestjs-query-graphql';
 import { ReadRelationsResolver, RelationsOpts } from '../../../src/resolvers/relations';
 import {
   generateSchema,

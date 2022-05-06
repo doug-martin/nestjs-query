@@ -1,4 +1,4 @@
-import { Query, SortField } from '@nestjs-query/core';
+import { Query, SortField } from '@ptc/nestjs-query-core';
 import { CursorPagingType } from '../../../../query';
 
 export interface OffsetPagingOpts {

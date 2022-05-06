@@ -1,5 +1,5 @@
 import { mock, reset, instance, when, deepEqual } from 'ts-mockito';
-import { AggregateQuery, QueryService, RelationQueryService } from '../../src';
+import { AggregateQuery, QueryService, RelationQueryService } from '@ptc/nestjs-query-core';
 
 describe('RelationQueryService', () => {
   const mockQueryService: QueryService<TestType> = mock<QueryService<TestType>>();

@@ -1,4 +1,4 @@
-import { ArrayReflector, Class, FilterComparisonOperators, getPrototypeChain } from '@nestjs-query/core';
+import { ArrayReflector, Class, FilterComparisonOperators, getPrototypeChain } from '@ptc/nestjs-query-core';
 import { Field, FieldOptions, ReturnTypeFunc } from '@nestjs/graphql';
 import { FILTERABLE_FIELD_KEY } from './constants';
 

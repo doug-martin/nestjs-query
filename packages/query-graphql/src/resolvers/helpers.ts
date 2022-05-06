@@ -1,4 +1,4 @@
-import { applyFilter, Class, Filter } from '@nestjs-query/core';
+import { applyFilter, Class, Filter } from '@ptc/nestjs-query-core';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';

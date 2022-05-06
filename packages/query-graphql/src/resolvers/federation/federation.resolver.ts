@@ -1,4 +1,4 @@
-import { Class, QueryService } from '@nestjs-query/core';
+import { Class, QueryService } from '@ptc/nestjs-query-core';
 import { ReadRelationsResolver } from '../relations';
 import { ServiceResolver } from '../resolver.interface';
 import { getRelations } from '../../decorators';

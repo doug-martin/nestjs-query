@@ -1,4 +1,4 @@
-import { NoOpQueryService, QueryService } from '@nestjs-query/core';
+import { NoOpQueryService, QueryService } from '@ptc/nestjs-query-core';
 import { TestResolverDTO } from './test-resolver.dto';
 
 @QueryService(TestResolverDTO)

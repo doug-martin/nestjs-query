@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Class } from '@nestjs-query/core';
+import { Class } from '@ptc/nestjs-query-core';
 import { OffsetPageInfoType } from '../interfaces';
 
 export interface OffsetPageInfoTypeConstructor {

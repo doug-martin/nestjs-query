@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { validateSync, MinLength } from 'class-validator';
 import { InputType, Resolver, Args, Int, Query, Field } from '@nestjs/graphql';
-import { CreateManyInputType } from '../../src';
+import { CreateManyInputType } from '@ptc/nestjs-query-graphql';
 import { generateSchema } from '../__fixtures__';
 
 describe('CreateManyInputType', (): void => {

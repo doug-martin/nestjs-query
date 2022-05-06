@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Field, ObjectType } from '@nestjs/graphql';
-import { PagingStrategies, Relatable, FilterableField, CursorConnection, Reference, Relation } from '../../../src';
+import { PagingStrategies, Relatable, FilterableField, CursorConnection, Reference, Relation } from '@ptc/nestjs-query-graphql';
 import * as readRelations from '../../../src/resolvers/relations/read-relations.resolver';
 import * as referenceRelation from '../../../src/resolvers/relations/references-relation.resolver';
 import * as removeRelations from '../../../src/resolvers/relations/remove-relations.resolver';

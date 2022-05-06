@@ -1,6 +1,6 @@
 import { when } from 'ts-mockito';
 import { Resolver, Query } from '@nestjs/graphql';
-import { ReferenceResolver, ReferenceResolverOpts } from '../../src';
+import { ReferenceResolver, ReferenceResolverOpts } from '@ptc/nestjs-query-graphql';
 import { generateSchema, createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
