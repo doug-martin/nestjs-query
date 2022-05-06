@@ -11,10 +11,10 @@
     "dataloader"
   ],
   "license": "MIT",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "directories": {
-    "lib": "dist/src",
+    "lib": "src",
     "test": "__tests__"
   },
   "files": [
