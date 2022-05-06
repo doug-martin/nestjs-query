@@ -31,11 +31,11 @@ export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFiel
 });
 
 export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
-  const { filter: baseFilter = {} } = base;
-  const { filter: sourceFilter = {} } = source;
+  const { filter: baseFilter = {}, ...restBase } = base;
+  const { filter: sourceFilter = {}, ...restSource } = source;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  return merge(base, source, { filter: mergeFilter(baseFilter, sourceFilter) }) as Query<T>;
+  return merge(restBase, restSource, { filter: mergeFilter(baseFilter, sourceFilter) }) as Query<T>;
 };
 
 export const applySort = <DTO>(dtos: DTO[], sortFields: SortField<DTO>[]): DTO[] => SortBuilder.build(sortFields)(dtos);
