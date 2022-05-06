@@ -1,4 +1,4 @@
-import { FilterableField, FilterableRelation, Authorize, Relation, QueryOptions } from "@ptc-org/nestjs-query-graphql";
+import { FilterableField, FilterableRelation, Authorize, Relation, QueryOptions } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 import { SubTaskAuthorizer } from '../sub-task.authorizer';

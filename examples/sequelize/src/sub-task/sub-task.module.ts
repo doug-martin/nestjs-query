@@ -1,4 +1,4 @@
-import { NestjsQueryGraphQLModule } from "@ptc-org/nestjs-query-graphql";
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQuerySequelizeModule } from '@ptc-org/nestjs-query-sequelize';
 import { Module } from '@nestjs/common';
 import { SubTaskDTO } from './dto/sub-task.dto';

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ReferencesRelationMixin should not add reference methods if references empty 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -9,11 +9,11 @@ exports[`ReferencesRelationMixin should not add reference methods if references 
 type Query {
   test: TestResolverDTO!
 }
-"
+
 `;
 
 exports[`ReferencesRelationMixin should set the field to nullable if set to true 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
   reference: TestRelationDTO
@@ -27,11 +27,11 @@ type TestRelationDTO {
 type Query {
   test: TestResolverDTO!
 }
-"
+
 `;
 
 exports[`ReferencesRelationMixin should use the add the reference if provided 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
   test: TestRelationDTO!
@@ -45,5 +45,5 @@ type TestRelationDTO {
 type Query {
   test: TestResolverDTO!
 }
-"
+
 `;

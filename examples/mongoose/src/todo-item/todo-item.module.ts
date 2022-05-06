@@ -1,4 +1,4 @@
-import { NestjsQueryGraphQLModule } from "@ptc-org/nestjs-query-graphql";
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
 import { NestjsQueryMongooseModule } from '@ptc-org/nestjs-query-mongoose';
 import { AuthGuard } from '../auth.guard';

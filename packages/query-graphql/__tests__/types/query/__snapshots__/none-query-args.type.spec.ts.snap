@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`None paging strategy QueryArgsType with manual options create a query for string fields 1`] = `
-"type Query {
+type Query {
   test(
-    \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
+    """Specify to filter the records returned."""
     filter: TestQueryFilter = {}
 
-    \\"\\"\\"Specify to sort results.\\"\\"\\"
+    """Specify to sort results."""
     sorting: [TestQuerySort!] = []
   ): String!
 }
@@ -146,9 +146,9 @@ input TimestampFieldComparison {
   notBetween: TimestampFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-\\"\\"\\"
+"""
 scalar Timestamp
 
 input TimestampFieldComparisonBetween {
@@ -171,9 +171,9 @@ input DateFieldComparison {
   notBetween: DateFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-\\"\\"\\"
+"""
 scalar DateTime
 
 input DateFieldComparisonBetween {
@@ -206,27 +206,27 @@ enum TestQuerySortFields {
   dateOptional
 }
 
-\\"\\"\\"Sort Directions\\"\\"\\"
+"""Sort Directions"""
 enum SortDirection {
   ASC
   DESC
 }
 
-\\"\\"\\"Sort Nulls Options\\"\\"\\"
+"""Sort Nulls Options"""
 enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-"
+
 `;
 
 exports[`None paging strategy QueryArgsType with manual options options allow apply the options to the generated SDL 1`] = `
-"type Query {
+type Query {
   test(
-    \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
+    """Specify to filter the records returned."""
     filter: NoPagingQueryOptionsDTOFilter = {booleanField: {is: true}}
 
-    \\"\\"\\"Specify to sort results.\\"\\"\\"
+    """Specify to sort results."""
     sorting: [NoPagingQueryOptionsDTOSort!] = [{field: booleanField, direction: DESC}]
   ): String!
 }
@@ -366,9 +366,9 @@ input TimestampFieldComparison {
   notBetween: TimestampFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-\\"\\"\\"
+"""
 scalar Timestamp
 
 input TimestampFieldComparisonBetween {
@@ -391,9 +391,9 @@ input DateFieldComparison {
   notBetween: DateFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-\\"\\"\\"
+"""
 scalar DateTime
 
 input DateFieldComparisonBetween {
@@ -426,27 +426,27 @@ enum NoPagingQueryOptionsDTOSortFields {
   dateOptional
 }
 
-\\"\\"\\"Sort Directions\\"\\"\\"
+"""Sort Directions"""
 enum SortDirection {
   ASC
   DESC
 }
 
-\\"\\"\\"Sort Nulls Options\\"\\"\\"
+"""Sort Nulls Options"""
 enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-"
+
 `;
 
 exports[`None paging strategy QueryArgsType with manual options should make the filter required if there is a filterRequired field 1`] = `
-"type Query {
+type Query {
   test(
-    \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
+    """Specify to filter the records returned."""
     filter: TestFilterRequiredDtoFilter!
 
-    \\"\\"\\"Specify to sort results.\\"\\"\\"
+    """Specify to sort results."""
     sorting: [TestFilterRequiredDtoSort!] = []
   ): String!
 }
@@ -484,16 +484,16 @@ enum TestFilterRequiredDtoSortFields {
   requiredFilterableField
 }
 
-\\"\\"\\"Sort Directions\\"\\"\\"
+"""Sort Directions"""
 enum SortDirection {
   ASC
   DESC
 }
 
-\\"\\"\\"Sort Nulls Options\\"\\"\\"
+"""Sort Nulls Options"""
 enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-"
+
 `;

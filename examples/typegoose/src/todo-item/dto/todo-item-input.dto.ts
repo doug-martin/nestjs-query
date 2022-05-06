@@ -5,7 +5,7 @@ import {
   BeforeCreateOne,
   CreateManyInputType,
   CreateOneInputType,
-} from "@ptc-org/nestjs-query-graphql";
+} from '@ptc-org/nestjs-query-graphql';
 import { GqlContext } from '../../auth.guard';
 import { getUserName } from '../../helpers';
 import { TodoItemDTO } from './todo-item.dto';

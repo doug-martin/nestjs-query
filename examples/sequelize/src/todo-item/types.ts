@@ -1,4 +1,4 @@
-import { QueryArgsType } from "@ptc-org/nestjs-query-graphql";
+import { QueryArgsType } from '@ptc-org/nestjs-query-graphql';
 import { ArgsType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 

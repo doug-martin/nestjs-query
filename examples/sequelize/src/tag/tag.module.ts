@@ -1,4 +1,4 @@
-import { NestjsQueryGraphQLModule } from "@ptc-org/nestjs-query-graphql";
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQuerySequelizeModule } from '@ptc-org/nestjs-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TagInputDTO } from './dto/tag-input.dto';

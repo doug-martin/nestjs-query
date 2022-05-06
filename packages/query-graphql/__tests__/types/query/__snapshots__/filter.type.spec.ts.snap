@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`filter types DeleteFilterType should create the correct filter graphql schema 1`] = `
-"type Query {
+type Query {
   test(input: TestDtoFilter!): Int!
 }
 
@@ -75,9 +75,9 @@ input DateFieldComparison {
   notBetween: DateFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-\\"\\"\\"
+"""
 scalar DateTime
 
 input DateFieldComparisonBetween {
@@ -205,20 +205,20 @@ input TimestampFieldComparison {
   notBetween: TimestampFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-\\"\\"\\"
+"""
 scalar Timestamp
 
 input TimestampFieldComparisonBetween {
   lower: Timestamp!
   upper: Timestamp!
 }
-"
+
 `;
 
 exports[`filter types FilterType allowedBooleanExpressions option no boolean expressions should only expose allowed comparisons 1`] = `
-"type Query {
+type Query {
   test(input: TestComparisonDtoFilter!): Int!
 }
 
@@ -246,11 +246,11 @@ input NumberFieldComparisonBetween {
   lower: Float!
   upper: Float!
 }
-"
+
 `;
 
 exports[`filter types FilterType allowedBooleanExpressions option only and boolean expressions should only expose allowed comparisons 1`] = `
-"type Query {
+type Query {
   test(input: TestComparisonDtoFilter!): Int!
 }
 
@@ -285,11 +285,11 @@ input NumberFieldComparisonBetween {
   lower: Float!
   upper: Float!
 }
-"
+
 `;
 
 exports[`filter types FilterType allowedBooleanExpressions option only or boolean expressions should only expose allowed comparisons 1`] = `
-"type Query {
+type Query {
   test(input: TestComparisonDtoFilter!): Int!
 }
 
@@ -324,11 +324,11 @@ input NumberFieldComparisonBetween {
   lower: Float!
   upper: Float!
 }
-"
+
 `;
 
 exports[`filter types FilterType allowedComparisons option should only expose allowed comparisons 1`] = `
-"type Query {
+type Query {
   test(input: TestComparisonDtoFilter!): Int!
 }
 
@@ -385,9 +385,9 @@ input TestAllowedComparisonDateFieldFilterComparison {
   neq: DateTime
 }
 
-\\"\\"\\"
+"""
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-\\"\\"\\"
+"""
 scalar DateTime
 
 input TestAllowedComparisonFloatFieldFilterComparison {
@@ -413,11 +413,11 @@ input TestAllowedComparisonStringFieldFilterComparison {
   like: String
   notLike: String
 }
-"
+
 `;
 
 exports[`filter types FilterType filterRequired option should only expose allowed comparisons 1`] = `
-"type Query {
+type Query {
   test(input: TestComparisonDtoFilter!): Int!
 }
 
@@ -479,20 +479,20 @@ input DateFieldComparison {
   notBetween: DateFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-\\"\\"\\"
+"""
 scalar DateTime
 
 input DateFieldComparisonBetween {
   lower: DateTime!
   upper: DateTime!
 }
-"
+
 `;
 
 exports[`filter types FilterType should create the correct filter graphql schema 1`] = `
-"type Query {
+type Query {
   test(input: TestDtoFilter!): Int!
 }
 
@@ -574,9 +574,9 @@ input DateFieldComparison {
   notBetween: DateFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-\\"\\"\\"
+"""
 scalar DateTime
 
 input DateFieldComparisonBetween {
@@ -704,9 +704,9 @@ input TimestampFieldComparison {
   notBetween: TimestampFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-\\"\\"\\"
+"""
 scalar Timestamp
 
 input TimestampFieldComparisonBetween {
@@ -721,11 +721,11 @@ input TestFilterDtoFilterTestRelationDtoFilter {
   relationName: StringFieldComparison
   relationAge: NumberFieldComparison
 }
-"
+
 `;
 
 exports[`filter types SubscriptionFilterType should create the correct filter graphql schema 1`] = `
-"type Query {
+type Query {
   test(input: TestDtoFilter!): Int!
 }
 
@@ -799,9 +799,9 @@ input DateFieldComparison {
   notBetween: DateFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-\\"\\"\\"
+"""
 scalar DateTime
 
 input DateFieldComparisonBetween {
@@ -929,20 +929,20 @@ input TimestampFieldComparison {
   notBetween: TimestampFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-\\"\\"\\"
+"""
 scalar Timestamp
 
 input TimestampFieldComparisonBetween {
   lower: Timestamp!
   upper: Timestamp!
 }
-"
+
 `;
 
 exports[`filter types UpdateFilterType should create the correct filter graphql schema 1`] = `
-"type Query {
+type Query {
   test(input: TestDtoFilter!): Int!
 }
 
@@ -1016,9 +1016,9 @@ input DateFieldComparison {
   notBetween: DateFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-\\"\\"\\"
+"""
 scalar DateTime
 
 input DateFieldComparisonBetween {
@@ -1146,14 +1146,14 @@ input TimestampFieldComparison {
   notBetween: TimestampFieldComparisonBetween
 }
 
-\\"\\"\\"
+"""
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-\\"\\"\\"
+"""
 scalar Timestamp
 
 input TimestampFieldComparisonBetween {
   lower: Timestamp!
   upper: Timestamp!
 }
-"
+
 `;

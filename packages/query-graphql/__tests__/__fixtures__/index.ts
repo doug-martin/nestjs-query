@@ -18,7 +18,7 @@ export { TestRelationDTO } from './test-relation.dto';
 
 const getOrCreateSchemaFactory = async (): Promise<GraphQLSchemaFactory> => {
   const moduleRef = await Test.createTestingModule({
-    imports: [GraphQLSchemaBuilderModule],
+    imports: [GraphQLSchemaBuilderModule]
   }).compile();
   return moduleRef.get(GraphQLSchemaFactory);
 };
@@ -39,7 +39,7 @@ interface ResolverMock<T> {
 
 export const createResolverFromNest = async <T>(
   ResolverClass: Class<T>,
-  DTOClass: Class<unknown> = TestResolverDTO,
+  DTOClass: Class<unknown> = TestResolverDTO
 ): Promise<ResolverMock<T>> => {
   const mockService = mock(TestService);
   const mockPubSub = mock(PubSub);
@@ -49,11 +49,12 @@ export const createResolverFromNest = async <T>(
       ResolverClass,
       TestService,
       { provide: getAuthorizerToken(DTOClass), useValue: instance(mockAuthorizer) },
-      { provide: pubSubToken(), useValue: instance(mockPubSub) },
-    ],
+      { provide: pubSubToken(), useValue: instance(mockPubSub) }
+    ]
   })
     .overrideProvider(TestService)
     .useValue(instance(mockService))
     .compile();
+
   return { resolver: moduleRef.get(ResolverClass), mockService, mockPubSub, mockAuthorizer };
 };

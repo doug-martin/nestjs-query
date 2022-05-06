@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CreateResolver #createMany should not create a new type if the CreateManyArgs is supplied 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -16,7 +16,7 @@ type Mutation {
 }
 
 input CreateOneTestResolverDTOInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   testResolverDTO: CreateTestResolverDTO!
 }
 
@@ -26,7 +26,7 @@ input CreateTestResolverDTO {
 }
 
 input CreateManyInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolvers: [TestResolverInputDTO!]!
 }
 
@@ -34,11 +34,11 @@ input TestResolverInputDTO {
   id: ID!
   stringField: String!
 }
-"
+
 `;
 
 exports[`CreateResolver #createMany should not expose create many method if disabled 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -52,7 +52,7 @@ type Mutation {
 }
 
 input CreateOneTestResolverDTOInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   testResolverDTO: CreateTestResolverDTO!
 }
 
@@ -60,11 +60,11 @@ input CreateTestResolverDTO {
   id: ID
   stringField: String
 }
-"
+
 `;
 
 exports[`CreateResolver #createOne should not expose create one method if disabled 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -78,7 +78,7 @@ type Mutation {
 }
 
 input CreateManyTestResolverDTOSInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolverDTOS: [CreateTestResolverDTO!]!
 }
 
@@ -86,11 +86,11 @@ input CreateTestResolverDTO {
   id: ID
   stringField: String
 }
-"
+
 `;
 
 exports[`CreateResolver #createOne should use the provided CreateOneInput type 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -105,7 +105,7 @@ type Mutation {
 }
 
 input CreateOneInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   createResolverDTO: TestResolverInputDTO!
 }
 
@@ -115,7 +115,7 @@ input TestResolverInputDTO {
 }
 
 input CreateManyTestResolverDTOSInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolverDTOS: [CreateTestResolverDTO!]!
 }
 
@@ -123,11 +123,11 @@ input CreateTestResolverDTO {
   id: ID
   stringField: String
 }
-"
+
 `;
 
 exports[`CreateResolver created subscription should add subscription types if enableSubscriptions is true 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -142,7 +142,7 @@ type Mutation {
 }
 
 input CreateOneTestResolverDTOInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   testResolverDTO: CreateTestResolverDTO!
 }
 
@@ -152,7 +152,7 @@ input CreateTestResolverDTO {
 }
 
 input CreateManyTestResolverDTOSInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolverDTOS: [CreateTestResolverDTO!]!
 }
 
@@ -161,7 +161,7 @@ type Subscription {
 }
 
 input CreateTestResolverDTOSubscriptionFilterInput {
-  \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
+  """Specify to filter the records returned."""
   filter: TestResolverDTOSubscriptionFilter!
 }
 
@@ -205,11 +205,11 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-"
+
 `;
 
 exports[`CreateResolver created subscription should not expose subscriptions if enableSubscriptions is false 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -224,7 +224,7 @@ type Mutation {
 }
 
 input CreateOneTestResolverDTOInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   testResolverDTO: CreateTestResolverDTO!
 }
 
@@ -234,14 +234,14 @@ input CreateTestResolverDTO {
 }
 
 input CreateManyTestResolverDTOSInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolverDTOS: [CreateTestResolverDTO!]!
 }
-"
+
 `;
 
 exports[`CreateResolver should create a CreateResolver for the DTO 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -256,7 +256,7 @@ type Mutation {
 }
 
 input CreateOneTestResolverDTOInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   testResolverDTO: CreateTestResolverDTO!
 }
 
@@ -266,14 +266,14 @@ input CreateTestResolverDTO {
 }
 
 input CreateManyTestResolverDTOSInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolverDTOS: [CreateTestResolverDTO!]!
 }
-"
+
 `;
 
 exports[`CreateResolver should not expose create methods if disabled 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -281,11 +281,11 @@ exports[`CreateResolver should not expose create methods if disabled 1`] = `
 type Query {
   test: TestResolverDTO!
 }
-"
+
 `;
 
 exports[`CreateResolver should use the CreateDTOClass if provided 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -300,7 +300,7 @@ type Mutation {
 }
 
 input CreateOneTestResolverDTOInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   testResolverDTO: TestResolverInputDTO!
 }
 
@@ -310,14 +310,14 @@ input TestResolverInputDTO {
 }
 
 input CreateManyTestResolverDTOSInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolverDTOS: [TestResolverInputDTO!]!
 }
-"
+
 `;
 
 exports[`CreateResolver should use the dtoName if provided 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -332,7 +332,7 @@ type Mutation {
 }
 
 input CreateOneTestInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   test: CreateTest!
 }
 
@@ -342,14 +342,14 @@ input CreateTest {
 }
 
 input CreateManyTestsInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   tests: [CreateTest!]!
 }
-"
+
 `;
 
 exports[`CreateResolver should use the many.name option for the createMany if provided 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -364,7 +364,7 @@ type Mutation {
 }
 
 input CreateOneTestResolverDTOInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   testResolverDTO: CreateTestResolverDTO!
 }
 
@@ -374,14 +374,14 @@ input CreateTestResolverDTO {
 }
 
 input CreateManyTestResolverDTOSInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolverDTOS: [CreateTestResolverDTO!]!
 }
-"
+
 `;
 
 exports[`CreateResolver should use the one.name option for the createOne if provided 1`] = `
-"type TestResolverDTO {
+type TestResolverDTO {
   id: ID!
   stringField: String!
 }
@@ -396,7 +396,7 @@ type Mutation {
 }
 
 input CreateOneTestResolverDTOInput {
-  \\"\\"\\"The record to create\\"\\"\\"
+  """The record to create"""
   testResolverDTO: CreateTestResolverDTO!
 }
 
@@ -406,8 +406,8 @@ input CreateTestResolverDTO {
 }
 
 input CreateManyTestResolverDTOSInput {
-  \\"\\"\\"Array of records to create\\"\\"\\"
+  """Array of records to create"""
   testResolverDTOS: [CreateTestResolverDTO!]!
 }
-"
+
 `;

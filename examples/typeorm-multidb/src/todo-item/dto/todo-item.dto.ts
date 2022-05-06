@@ -1,4 +1,4 @@
-import { FilterableField } from "@ptc-org/nestjs-query-graphql";
+import { FilterableField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')

@@ -12,5 +12,9 @@ module.exports = {
     '!**/*.test.js',
     '!**/index.ts',
     '!**/*.json'
-  ]
+  ],
+
+  testEnvironment: 'node',
+  setupFilesAfterEnv: ['jest-extended'],
+  snapshotSerializers: ['jest-snapshot-serializer-raw/always']
 };

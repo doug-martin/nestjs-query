@@ -1,5 +1,5 @@
 import { Filter, InjectAssemblerQueryService, mergeFilter, mergeQuery, QueryService } from '@ptc-org/nestjs-query-core';
-import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType, OperationGroup } from "@ptc-org/nestjs-query-graphql";
+import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType, OperationGroup } from '@ptc-org/nestjs-query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
