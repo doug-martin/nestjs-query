@@ -1,5 +1,5 @@
-import { AggregateResponse, getQueryServiceToken, QueryService } from '@nestjs-query/core';
-import { CursorConnectionType } from '@nestjs-query/query-graphql';
+import { AggregateResponse, getQueryServiceToken, QueryService } from '@ptc-org/nestjs-query-core';
+import { CursorConnectionType } from "@ptc-org/nestjs-query-graphql";
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';

@@ -11,7 +11,7 @@
   },
   "workspaceLayout": {
     "libsDir": "packages",
-    "appsDir": "packages"
+    "appsDir": ""
   },
   "targetDependencies": {
     "build": [
@@ -40,5 +40,9 @@
     "@nrwl/js": {
       "analyzeSourceFiles": false
     }
-  }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/node"
+  },
+  "defaultProject": "examples"
 }

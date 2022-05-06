@@ -1,4 +1,4 @@
-import { FilterableField, FilterableRelation, KeySet } from '@nestjs-query/query-graphql';
+import { FilterableField, FilterableRelation, KeySet } from "@ptc-org/nestjs-query-graphql";
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Cursor paging strategy QueryArgsType with manual options create a query for string fields 1`] = `
-type TestQuery {
+"type TestQuery {
   idField: ID!
   idFieldOption: ID
   stringField: String!
@@ -20,65 +20,65 @@ type TestQuery {
   dateOptional: DateTime
 }
 
-"""
+\\"\\"\\"
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
+\\"\\"\\"
 scalar Timestamp
 
-"""
+\\"\\"\\"
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
+\\"\\"\\"
 scalar DateTime
 
 type TestQueryEdge {
-  """The node containing the TestQuery"""
+  \\"\\"\\"The node containing the TestQuery\\"\\"\\"
   node: TestQuery!
 
-  """Cursor for this node."""
+  \\"\\"\\"Cursor for this node.\\"\\"\\"
   cursor: ConnectionCursor!
 }
 
-"""Cursor for paging through collections"""
+\\"\\"\\"Cursor for paging through collections\\"\\"\\"
 scalar ConnectionCursor
 
 type PageInfo {
-  """true if paging forward and there are more records."""
+  \\"\\"\\"true if paging forward and there are more records.\\"\\"\\"
   hasNextPage: Boolean
 
-  """true if paging backwards and there are more records."""
+  \\"\\"\\"true if paging backwards and there are more records.\\"\\"\\"
   hasPreviousPage: Boolean
 
-  """The cursor of the first returned record."""
+  \\"\\"\\"The cursor of the first returned record.\\"\\"\\"
   startCursor: ConnectionCursor
 
-  """The cursor of the last returned record."""
+  \\"\\"\\"The cursor of the last returned record.\\"\\"\\"
   endCursor: ConnectionCursor
 }
 
 type Query {
   test(
-    """Limit or page results."""
+    \\"\\"\\"Limit or page results.\\"\\"\\"
     paging: CursorPaging = {first: 10}
 
-    """Specify to filter the records returned."""
+    \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
     filter: TestQueryFilter = {}
 
-    """Specify to sort results."""
+    \\"\\"\\"Specify to sort results.\\"\\"\\"
     sorting: [TestQuerySort!] = []
   ): String!
 }
 
 input CursorPaging {
-  """Paginate before opaque cursor"""
+  \\"\\"\\"Paginate before opaque cursor\\"\\"\\"
   before: ConnectionCursor
 
-  """Paginate after opaque cursor"""
+  \\"\\"\\"Paginate after opaque cursor\\"\\"\\"
   after: ConnectionCursor
 
-  """Paginate first"""
+  \\"\\"\\"Paginate first\\"\\"\\"
   first: Int
 
-  """Paginate last"""
+  \\"\\"\\"Paginate last\\"\\"\\"
   last: Int
 }
 
@@ -267,22 +267,22 @@ enum TestQuerySortFields {
   dateOptional
 }
 
-"""Sort Directions"""
+\\"\\"\\"Sort Directions\\"\\"\\"
 enum SortDirection {
   ASC
   DESC
 }
 
-"""Sort Nulls Options"""
+\\"\\"\\"Sort Nulls Options\\"\\"\\"
 enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
+"
 `;
 
 exports[`Cursor paging strategy QueryArgsType with manual options options allow apply the options to the generated SDL 1`] = `
-type TestQuery {
+"type TestQuery {
   idField: ID!
   idFieldOption: ID
   stringField: String!
@@ -301,14 +301,14 @@ type TestQuery {
   dateOptional: DateTime
 }
 
-"""
+\\"\\"\\"
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
+\\"\\"\\"
 scalar Timestamp
 
-"""
+\\"\\"\\"
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
+\\"\\"\\"
 scalar DateTime
 
 type TestFilterRequiredDto {
@@ -316,62 +316,62 @@ type TestFilterRequiredDto {
 }
 
 type TestQueryEdge {
-  """The node containing the TestQuery"""
+  \\"\\"\\"The node containing the TestQuery\\"\\"\\"
   node: TestQuery!
 
-  """Cursor for this node."""
+  \\"\\"\\"Cursor for this node.\\"\\"\\"
   cursor: ConnectionCursor!
 }
 
-"""Cursor for paging through collections"""
+\\"\\"\\"Cursor for paging through collections\\"\\"\\"
 scalar ConnectionCursor
 
 type PageInfo {
-  """true if paging forward and there are more records."""
+  \\"\\"\\"true if paging forward and there are more records.\\"\\"\\"
   hasNextPage: Boolean
 
-  """true if paging backwards and there are more records."""
+  \\"\\"\\"true if paging backwards and there are more records.\\"\\"\\"
   hasPreviousPage: Boolean
 
-  """The cursor of the first returned record."""
+  \\"\\"\\"The cursor of the first returned record.\\"\\"\\"
   startCursor: ConnectionCursor
 
-  """The cursor of the last returned record."""
+  \\"\\"\\"The cursor of the last returned record.\\"\\"\\"
   endCursor: ConnectionCursor
 }
 
 type TestFilterRequiredDtoEdge {
-  """The node containing the TestFilterRequiredDto"""
+  \\"\\"\\"The node containing the TestFilterRequiredDto\\"\\"\\"
   node: TestFilterRequiredDto!
 
-  """Cursor for this node."""
+  \\"\\"\\"Cursor for this node.\\"\\"\\"
   cursor: ConnectionCursor!
 }
 
 type Query {
   test(
-    """Limit or page results."""
+    \\"\\"\\"Limit or page results.\\"\\"\\"
     paging: CursorPaging = {first: 2}
 
-    """Specify to filter the records returned."""
+    \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
     filter: TestQueryFilter = {booleanField: {is: true}}
 
-    """Specify to sort results."""
+    \\"\\"\\"Specify to sort results.\\"\\"\\"
     sorting: [TestQuerySort!] = [{field: booleanField, direction: DESC}]
   ): String!
 }
 
 input CursorPaging {
-  """Paginate before opaque cursor"""
+  \\"\\"\\"Paginate before opaque cursor\\"\\"\\"
   before: ConnectionCursor
 
-  """Paginate after opaque cursor"""
+  \\"\\"\\"Paginate after opaque cursor\\"\\"\\"
   after: ConnectionCursor
 
-  """Paginate first"""
+  \\"\\"\\"Paginate first\\"\\"\\"
   first: Int
 
-  """Paginate last"""
+  \\"\\"\\"Paginate last\\"\\"\\"
   last: Int
 }
 
@@ -560,22 +560,22 @@ enum TestQuerySortFields {
   dateOptional
 }
 
-"""Sort Directions"""
+\\"\\"\\"Sort Directions\\"\\"\\"
 enum SortDirection {
   ASC
   DESC
 }
 
-"""Sort Nulls Options"""
+\\"\\"\\"Sort Nulls Options\\"\\"\\"
 enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
+"
 `;
 
 exports[`Cursor paging strategy QueryArgsType with manual options should make the filter required if there is a filterRequired field 1`] = `
-type TestQuery {
+"type TestQuery {
   idField: ID!
   idFieldOption: ID
   stringField: String!
@@ -594,14 +594,14 @@ type TestQuery {
   dateOptional: DateTime
 }
 
-"""
+\\"\\"\\"
 \`Date\` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
+\\"\\"\\"
 scalar Timestamp
 
-"""
+\\"\\"\\"
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
+\\"\\"\\"
 scalar DateTime
 
 type TestFilterRequiredDto {
@@ -609,62 +609,62 @@ type TestFilterRequiredDto {
 }
 
 type TestQueryEdge {
-  """The node containing the TestQuery"""
+  \\"\\"\\"The node containing the TestQuery\\"\\"\\"
   node: TestQuery!
 
-  """Cursor for this node."""
+  \\"\\"\\"Cursor for this node.\\"\\"\\"
   cursor: ConnectionCursor!
 }
 
-"""Cursor for paging through collections"""
+\\"\\"\\"Cursor for paging through collections\\"\\"\\"
 scalar ConnectionCursor
 
 type PageInfo {
-  """true if paging forward and there are more records."""
+  \\"\\"\\"true if paging forward and there are more records.\\"\\"\\"
   hasNextPage: Boolean
 
-  """true if paging backwards and there are more records."""
+  \\"\\"\\"true if paging backwards and there are more records.\\"\\"\\"
   hasPreviousPage: Boolean
 
-  """The cursor of the first returned record."""
+  \\"\\"\\"The cursor of the first returned record.\\"\\"\\"
   startCursor: ConnectionCursor
 
-  """The cursor of the last returned record."""
+  \\"\\"\\"The cursor of the last returned record.\\"\\"\\"
   endCursor: ConnectionCursor
 }
 
 type TestFilterRequiredDtoEdge {
-  """The node containing the TestFilterRequiredDto"""
+  \\"\\"\\"The node containing the TestFilterRequiredDto\\"\\"\\"
   node: TestFilterRequiredDto!
 
-  """Cursor for this node."""
+  \\"\\"\\"Cursor for this node.\\"\\"\\"
   cursor: ConnectionCursor!
 }
 
 type Query {
   test(
-    """Limit or page results."""
+    \\"\\"\\"Limit or page results.\\"\\"\\"
     paging: CursorPaging = {first: 10}
 
-    """Specify to filter the records returned."""
+    \\"\\"\\"Specify to filter the records returned.\\"\\"\\"
     filter: TestFilterRequiredDtoFilter!
 
-    """Specify to sort results."""
+    \\"\\"\\"Specify to sort results.\\"\\"\\"
     sorting: [TestFilterRequiredDtoSort!] = []
   ): String!
 }
 
 input CursorPaging {
-  """Paginate before opaque cursor"""
+  \\"\\"\\"Paginate before opaque cursor\\"\\"\\"
   before: ConnectionCursor
 
-  """Paginate after opaque cursor"""
+  \\"\\"\\"Paginate after opaque cursor\\"\\"\\"
   after: ConnectionCursor
 
-  """Paginate first"""
+  \\"\\"\\"Paginate first\\"\\"\\"
   first: Int
 
-  """Paginate last"""
+  \\"\\"\\"Paginate last\\"\\"\\"
   last: Int
 }
 
@@ -701,16 +701,16 @@ enum TestFilterRequiredDtoSortFields {
   requiredFilterableField
 }
 
-"""Sort Directions"""
+\\"\\"\\"Sort Directions\\"\\"\\"
 enum SortDirection {
   ASC
   DESC
 }
 
-"""Sort Nulls Options"""
+\\"\\"\\"Sort Nulls Options\\"\\"\\"
 enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
+"
 `;

@@ -75,6 +75,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
       }
       return super.queryRelations(RelationClass, relationName, dto, query);
     }
+
     const { query: qf, service } = serviceRelation;
     if (Array.isArray(dto)) {
       const map = new Map<DTO, Relation[]>();

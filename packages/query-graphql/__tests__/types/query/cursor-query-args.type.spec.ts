@@ -201,12 +201,17 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
 
     it('should ignore a maxResultsSize for paging.first and paging.last if maxResultSize === -1', () => {
       class NoMaxQueryArgsTpe extends QueryArgsType(TestDto, { maxResultsSize: -1 }) {}
+
       const queryObjFirst: NoMaxQueryArgsTpe = {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         paging: { first: 1000 },
       };
       expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObjFirst))).toEqual([]);
 
       const queryObjLast: NoMaxQueryArgsTpe = {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         paging: { last: 1000, before: 'abc' },
       };
       const queryInstance = plainToClass(NoMaxQueryArgsTpe, queryObjLast);

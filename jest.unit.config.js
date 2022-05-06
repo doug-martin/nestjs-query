@@ -6,8 +6,10 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.spec.ts'],
   testEnvironment: 'node',
   moduleNameMapper: {
-    '^@nestjs-query/(.*)$': '<rootDir>/packages/$1/src',
+    '^@ptc-org/nestjs-query-core$': '<rootDir>/packages/core/src',
+    '^@ptc-org/nestjs-query-graphql$': '<rootDir>/packages/query-graphql/src',
+    '^@ptc-org/nestjs-query-typeorm': '<rootDir>/packages/query-typeorm/src'
   },
-  "setupFilesAfterEnv": ["jest-extended"],
+  setupFilesAfterEnv: ['jest-extended'],
   snapshotSerializers: ['jest-snapshot-serializer-raw/always']
 };

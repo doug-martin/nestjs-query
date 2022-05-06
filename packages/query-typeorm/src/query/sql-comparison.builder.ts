@@ -34,15 +34,14 @@ export class SQLComparisonBuilder<Entity> {
     like: 'LIKE',
     notlike: 'NOT LIKE',
     ilike: 'ILIKE',
-    notilike: 'NOT ILIKE',
+    notilike: 'NOT ILIKE'
   };
 
-  constructor(readonly comparisonMap: Record<string, string> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
+  constructor(readonly comparisonMap: Record<string, string> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {
+  }
 
   private get paramName(): string {
-    const id = randomString();
-    const param = `param${id}`;
-    return param;
+    return `param${randomString()}`;
   }
 
   /**
@@ -57,7 +56,7 @@ export class SQLComparisonBuilder<Entity> {
     field: F,
     cmp: FilterComparisonOperators<Entity[F]>,
     val: EntityComparisonField<Entity, F>,
-    alias?: string,
+    alias?: string
   ): CmpSQLType {
     const col = alias ? `${alias}.${field as string}` : `${field as string}`;
     const normalizedCmp = (cmp as string).toLowerCase();
@@ -95,7 +94,7 @@ export class SQLComparisonBuilder<Entity> {
   private createComparisonSQL<F extends keyof Entity>(
     cmp: string,
     col: string,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): CmpSQLType {
     const operator = this.comparisonMap[cmp];
     const { paramName } = this;
@@ -133,7 +132,7 @@ export class SQLComparisonBuilder<Entity> {
     const { paramName } = this;
     return {
       sql: `${col} IN (:...${paramName})`,
-      params: { [paramName]: val },
+      params: { [paramName]: val }
     };
   }
 
@@ -142,7 +141,7 @@ export class SQLComparisonBuilder<Entity> {
     const { paramName } = this;
     return {
       sql: `${col} NOT IN (:...${paramName})`,
-      params: { [paramName]: val },
+      params: { [paramName]: val }
     };
   }
 
@@ -163,8 +162,8 @@ export class SQLComparisonBuilder<Entity> {
         sql: `${col} BETWEEN :${lowerParamName} AND :${upperParamName}`,
         params: {
           [lowerParamName]: val.lower,
-          [upperParamName]: val.upper,
-        },
+          [upperParamName]: val.upper
+        }
       };
     }
     throw new Error(`Invalid value for between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
@@ -172,7 +171,7 @@ export class SQLComparisonBuilder<Entity> {
 
   private notBetweenComparisonSQL<F extends keyof Entity>(
     col: string,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): CmpSQLType {
     if (this.isBetweenVal(val)) {
       const { paramName: lowerParamName } = this;
@@ -181,15 +180,15 @@ export class SQLComparisonBuilder<Entity> {
         sql: `${col} NOT BETWEEN :${lowerParamName} AND :${upperParamName}`,
         params: {
           [lowerParamName]: val.lower,
-          [upperParamName]: val.upper,
-        },
+          [upperParamName]: val.upper
+        }
       };
     }
     throw new Error(`Invalid value for not between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
   }
 
   private isBetweenVal<F extends keyof Entity>(
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): val is CommonFieldComparisonBetweenType<Entity[F]> {
     return val !== null && typeof val === 'object' && 'lower' in val && 'upper' in val;
   }

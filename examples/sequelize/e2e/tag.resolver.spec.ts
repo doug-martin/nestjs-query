@@ -1,5 +1,5 @@
-import { AggregateResponse } from '@nestjs-query/core';
-import { CursorConnectionType } from '@nestjs-query/query-graphql';
+import { AggregateResponse } from '@ptc-org/nestjs-query-core';
+import { CursorConnectionType } from "@ptc-org/nestjs-query-graphql";
 import { Test } from '@nestjs/testing';
 import { Sequelize } from 'sequelize-typescript';
 import request from 'supertest';

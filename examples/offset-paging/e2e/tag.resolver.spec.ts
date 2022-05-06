@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import { OffsetConnectionType } from '@nestjs-query/query-graphql';
+import { OffsetConnectionType } from "@ptc-org/nestjs-query-graphql";
 import { AppModule } from '../src/app.module';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';

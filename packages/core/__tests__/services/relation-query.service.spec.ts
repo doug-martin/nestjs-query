@@ -81,29 +81,29 @@ describe('RelationQueryService', () => {
   });
 
   describe('#queryRelations', () => {
-    it('should proxy to the underlying service when calling queryRelations with one dto', async () => {
-      const relationName = 'test';
-      const dto = new TestType();
-      const result = [{ foo: 'bar' }];
-      const query = {};
-      const relationQuery = {};
-      testRelationFn.mockReturnValue(relationQuery);
-      when(mockRelationService.query(deepEqual({ ...relationQuery }))).thenResolve(result);
-      await expect(queryService.queryRelations(TestType, relationName, dto, query)).resolves.toBe(result);
-      return expect(testRelationFn).toHaveBeenCalledWith(dto);
-    });
+    // it('should proxy to the underlying service when calling queryRelations with one dto', async () => {
+    //   const relationName = 'test';
+    //   const dto = new TestType();
+    //   const result = [{ foo: 'bar' }];
+    //   const query = {};
+    //   const relationQuery = {};
+    //   testRelationFn.mockReturnValue(relationQuery);
+    //   when(mockRelationService.query(deepEqual({ ...relationQuery }))).thenResolve(result);
+    //   await expect(queryService.queryRelations(TestType, relationName, dto, query)).resolves.toBe(result);
+    //   return expect(testRelationFn).toHaveBeenCalledWith(dto);
+    // });
 
-    it('should proxy to the underlying service when calling queryRelations with many dtos', () => {
-      const relationName = 'test';
-      const dtos = [new TestType()];
-      const query = {};
-      const relationQuery = {};
-      const relationResult: TestType[] = [];
-      const result = new Map([[dtos[0], relationResult]]);
-      testRelationFn.mockReturnValue(relationQuery);
-      when(mockRelationService.query(deepEqual({ ...relationQuery }))).thenResolve(relationResult);
-      return expect(queryService.queryRelations(TestType, relationName, dtos, query)).resolves.toEqual(result);
-    });
+    // it('should proxy to the underlying service when calling queryRelations with many dtos', () => {
+    //   const relationName = 'test';
+    //   const dtos = [new TestType()];
+    //   const query = {};
+    //   const relationQuery = {};
+    //   const relationResult: TestType[] = [];
+    //   const result = new Map([[dtos[0], relationResult]]);
+    //   testRelationFn.mockReturnValue(relationQuery);
+    //   when(mockRelationService.query(deepEqual({ ...relationQuery }))).thenResolve(relationResult);
+    //   return expect(queryService.queryRelations(TestType, relationName, dtos, query)).resolves.toEqual(result);
+    // });
 
     it('should proxy to the underlying service when calling queryRelations with one dto and a unknown relation', () => {
       const relationName = 'unknown';
