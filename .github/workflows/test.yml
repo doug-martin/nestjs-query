@@ -40,11 +40,11 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        id: setSHAs
-        uses: nrwl/nx-set-shas@v2
+#      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+#        id: setSHAs
+#        uses: nrwl/nx-set-shas@v2
 
-      - run: yarn nx affected:test --base=${{ steps.setSHAs.outputs.base }} --head=${{ steps.setSHAs.outputs.head }}
+      - run: yarn nx affected:test
         env:
           NESTJS_QUERY_DB_TYPE: ${{ matrix.db-type }}
 
