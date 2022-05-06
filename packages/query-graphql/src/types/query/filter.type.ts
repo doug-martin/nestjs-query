@@ -32,6 +32,9 @@ function getOrCreateFilterType<T>(
   return reflector.memoize(TClass, name, () => {
     const { allowedBooleanExpressions }: FilterTypeOptions = getQueryOptions(TClass) ?? {};
     const fields = getFilterableFields(TClass);
+    if (!fields.length) {
+      throw new Error(`No fields found to create GraphQLFilter for ${TClass.name}`);
+    }
     const hasRequiredFilters = fields.some((f) => f.advancedOptions?.filterRequired === true);
     const isNotAllowedComparison = (val: 'and' | 'or') => !isInAllowedList(allowedBooleanExpressions, val);
 

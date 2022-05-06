@@ -53,6 +53,11 @@ export function AggregateResponseType<DTO>(
   const aggName = `${prefix}AggregateResponse`;
   return reflector.memoize(DTOClass, aggName, () => {
     const fields = getFilterableFields(DTOClass);
+    if (!fields.length) {
+      throw new Error(
+        `No fields found to create AggregationResponseType for ${DTOClass.name}. Ensure fields are annotated with @FilterableField`,
+      );
+    }
     const numberFields = fields.filter(({ target }) => target === Number);
     const minMaxFields = fields.filter(({ target }) => target !== Boolean);
     const GroupType = AggregateGroupByType(`${prefix}AggregateGroupBy`, fields);
