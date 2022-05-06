@@ -1,5 +1,5 @@
 {
-  "name": "@ptc/nestjs-query-typeorm",
+  "name": "@ptc-org/nestjs-query-typeorm",
   "version": "0.32.0",
   "description": "Typeorm adapter for @nestjs-query/core",
   "author": "doug-martin <doug@dougamartin.com>",
@@ -48,12 +48,6 @@
     "type": "git",
     "url": "git+https://github.com/doug-martin/nestjs-query.git",
     "directory": "packages/query-typeorm"
-  },
-  "scripts": {
-    "prepublishOnly": "npm run build",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo"
   },
   "bugs": {
     "url": "https://github.com/doug-martin/nestjs-query/issues"

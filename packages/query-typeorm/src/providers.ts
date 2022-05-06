@@ -1,4 +1,4 @@
-import { Class, getQueryServiceToken } from '@ptc/nestjs-query-core';
+import { Class, getQueryServiceToken } from '@ptc-org/nestjs-query-core';
 import { FactoryProvider } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, Connection, ConnectionOptions } from 'typeorm';

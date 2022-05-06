@@ -2,7 +2,7 @@
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Args, Query, Resolver, Int, InputType, ObjectType } from '@nestjs/graphql';
-import { FilterableField, IDField, RelationsInputType } from '@ptc/nestjs-query-graphql';
+import { FilterableField, IDField, RelationsInputType } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../__fixtures__';
 
 describe('RelationsInputType', (): void => {

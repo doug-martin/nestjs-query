@@ -1,4 +1,4 @@
-import { Query } from '@ptc/nestjs-query-core';
+import { Query } from '@ptc-org/nestjs-query-core';
 import { CursorPagingOpts, OffsetPagingOpts, PagerStrategy } from './strategies';
 import { Count, EdgeType, Pager, QueryMany } from '../../interfaces';
 import { CursorQueryArgsType } from '../../../query';

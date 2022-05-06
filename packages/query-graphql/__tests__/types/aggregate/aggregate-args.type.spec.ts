@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Resolver, Query, ObjectType, GraphQLISODateTime, Args, Int, ArgsType } from '@nestjs/graphql';
-import { FilterableField, AggregateArgsType } from '@ptc/nestjs-query-graphql';
+import { FilterableField, AggregateArgsType } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../../__fixtures__';
 
 describe('AggregateArgsType', (): void => {

@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
 import { ArgsType, Field, Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when } from 'ts-mockito';
-import { Filter } from '@ptc/nestjs-query-core';
+import { Filter } from '@ptc-org/nestjs-query-core';
 import {
   CursorQueryArgsType,
   NonePagingQueryArgsType,
@@ -10,7 +10,7 @@ import {
   QueryArgsType,
   ReadResolver,
   ReadResolverOpts,
-} from '@ptc/nestjs-query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import { createResolverFromNest, TestResolverDTO, TestService, generateSchema } from '../__fixtures__';
 
 describe('ReadResolver', () => {

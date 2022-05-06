@@ -7,7 +7,7 @@ import {
   mergeFilter,
   QueryService,
   UpdateManyResponse,
-} from '@ptc/nestjs-query-core';
+} from '@ptc-org/nestjs-query-core';
 import { Args, ArgsType, InputType, PartialType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { HookTypes } from '../hooks';

@@ -1,4 +1,4 @@
-import { Class, MetaValue, ValueReflector } from '@ptc/nestjs-query-core';
+import { Class, MetaValue, ValueReflector } from '@ptc-org/nestjs-query-core';
 import { QueryArgsTypeOpts } from '../types';
 import { QUERY_OPTIONS_KEY } from './constants';
 

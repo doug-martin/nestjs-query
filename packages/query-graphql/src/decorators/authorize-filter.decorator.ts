@@ -1,4 +1,4 @@
-import { ModifyRelationOptions } from '@ptc/nestjs-query-core';
+import { ModifyRelationOptions } from '@ptc-org/nestjs-query-core';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthorizationContext, OperationGroup } from '../auth';

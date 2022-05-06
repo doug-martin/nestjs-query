@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as nestGraphql from '@nestjs/graphql';
 import { QueryOptions, ReturnTypeFunc } from '@nestjs/graphql';
-import { Class } from '@ptc/nestjs-query-core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import * as resolverDecorator from '../../src/decorators/resolver-method.decorator';
 import { ResolverQuery } from '../../src/decorators';
 

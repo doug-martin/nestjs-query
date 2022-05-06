@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AggregateQuery, Class, Query } from '@ptc/nestjs-query-core';
+import { AggregateQuery, Class, Query } from '@ptc-org/nestjs-query-core';
 import { Repository, SelectQueryBuilder, ObjectLiteral, Brackets } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 import { DriverUtils } from 'typeorm/driver/DriverUtils';

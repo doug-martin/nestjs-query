@@ -44,7 +44,7 @@ jobs:
 #        id: setSHAs
 #        uses: nrwl/nx-set-shas@v2
 
-      - run: yarn nx affected:test
+      - run: yarn nx affected:test --all
         env:
           NESTJS_QUERY_DB_TYPE: ${{ matrix.db-type }}
 

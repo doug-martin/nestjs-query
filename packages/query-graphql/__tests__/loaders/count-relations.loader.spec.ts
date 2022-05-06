@@ -1,4 +1,4 @@
-import { QueryService } from '@ptc/nestjs-query-core';
+import { QueryService } from '@ptc-org/nestjs-query-core';
 import { mock, instance, when, deepEqual } from 'ts-mockito';
 import { CountRelationsLoader } from '../../src/loader';
 

@@ -1,4 +1,4 @@
-import { Class, MetaValue, ValueReflector } from '@ptc/nestjs-query-core';
+import { Class, MetaValue, ValueReflector } from '@ptc-org/nestjs-query-core';
 import { Field, FieldOptions, ReturnTypeFunc } from '@nestjs/graphql';
 import { ID_FIELD_KEY } from './constants';
 import { FilterableField, FilterableFieldOptions } from './filterable-field.decorator';

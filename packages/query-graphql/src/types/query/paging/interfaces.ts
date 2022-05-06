@@ -1,4 +1,4 @@
-import { Paging } from '@ptc/nestjs-query-core';
+import { Paging } from '@ptc-org/nestjs-query-core';
 import { PagingStrategies } from './constants';
 import { ConnectionCursorType } from '../../cursor.scalar';
 

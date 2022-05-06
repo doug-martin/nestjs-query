@@ -1,4 +1,4 @@
-import { Class, QueryService } from '@ptc/nestjs-query-core';
+import { Class, QueryService } from '@ptc-org/nestjs-query-core';
 import { ServiceResolver } from '../resolver.interface';
 import { AggregateRelationsMixin } from './aggregate-relations.resolver';
 import { ReadRelationsMixin } from './read-relations.resolver';

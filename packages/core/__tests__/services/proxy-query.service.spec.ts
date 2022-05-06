@@ -1,5 +1,5 @@
 import { mock, reset, instance, when } from 'ts-mockito';
-import { QueryService, AggregateQuery } from '@ptc/nestjs-query-core';
+import { QueryService, AggregateQuery } from '@ptc-org/nestjs-query-core';
 import { ProxyQueryService } from '../../src/services/proxy-query.service';
 
 describe('ProxyQueryService', () => {

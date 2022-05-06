@@ -1,4 +1,4 @@
-import { Class, SortDirection, SortField, SortNulls, ValueReflector } from '@ptc/nestjs-query-core';
+import { Class, SortDirection, SortField, SortNulls, ValueReflector } from '@ptc-org/nestjs-query-core';
 import { Field, InputType, registerEnumType } from '@nestjs/graphql';
 import { IsEnum, IsIn } from 'class-validator';
 import { IsUndefined } from '../validators';

@@ -1,4 +1,4 @@
-import { Class, UpdateManyResponse } from '@ptc/nestjs-query-core';
+import { Class, UpdateManyResponse } from '@ptc-org/nestjs-query-core';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 /** @internal */

@@ -1,7 +1,7 @@
 import { LazyMetadataStorage } from '@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage';
 import { ObjectTypeMetadata } from '@nestjs/graphql/dist/schema-builder/metadata/object-type.metadata';
 import { EnumMetadata } from '@nestjs/graphql/dist/schema-builder/metadata';
-import { Class } from '@ptc/nestjs-query-core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { TypeMetadataStorage } from '@nestjs/graphql';
 import { UnregisteredObjectType } from '../types/type.errors';
 

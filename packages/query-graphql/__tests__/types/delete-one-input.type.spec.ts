@@ -2,7 +2,7 @@
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Resolver, Query, Args, Int, InputType, ObjectType } from '@nestjs/graphql';
-import { DeleteOneInputType, FilterableField, IDField } from '@ptc/nestjs-query-graphql';
+import { DeleteOneInputType, FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../__fixtures__';
 
 describe('DeleteOneInputType', (): void => {

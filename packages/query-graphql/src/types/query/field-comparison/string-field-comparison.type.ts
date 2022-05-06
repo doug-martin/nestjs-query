@@ -1,4 +1,4 @@
-import { Class, FilterFieldComparison } from '@ptc/nestjs-query-core';
+import { Class, FilterFieldComparison } from '@ptc-org/nestjs-query-core';
 import { Field, InputType } from '@nestjs/graphql';
 import { IsBoolean, IsString, IsOptional } from 'class-validator';
 import { IsUndefined } from '../../validators';

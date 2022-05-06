@@ -1,4 +1,4 @@
-import { Class } from '@ptc/nestjs-query-core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { Inject } from '@nestjs/common';
 import { getCustomAuthorizerToken } from '../auth';
 

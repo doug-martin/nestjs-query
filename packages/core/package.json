@@ -1,5 +1,5 @@
 {
-  "name": "@ptc/nestjs-query-core",
+  "name": "@ptc-org/nestjs-query-core",
   "version": "0.30.1",
   "description": "Base query package",
   "author": "doug-martin <doug@dougamartin.com>",

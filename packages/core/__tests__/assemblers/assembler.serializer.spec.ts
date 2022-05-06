@@ -1,5 +1,5 @@
 import { getAssemblerSerializer } from '../../src/assemblers/assembler.serializer';
-import { AssemblerSerializer } from '@ptc/nestjs-query-core';
+import { AssemblerSerializer } from '@ptc-org/nestjs-query-core';
 
 describe('AssemblerSerializer decorator', () => {
   it('should register a serializer', () => {

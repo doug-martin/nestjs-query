@@ -1,6 +1,6 @@
-import { Filter } from '@ptc/nestjs-query-core';
+import { Filter } from '@ptc-org/nestjs-query-core';
 import { Injectable } from '@nestjs/common';
-import { Authorizer } from '@ptc/nestjs-query-graphql';
+import { Authorizer } from '@ptc-org/nestjs-query-graphql';
 import { TestResolverDTO } from './test-resolver.dto';
 
 @Injectable()

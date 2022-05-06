@@ -1,4 +1,4 @@
-import { ArrayReflector, Class, getPrototypeChain } from '@ptc/nestjs-query-core';
+import { ArrayReflector, Class, getPrototypeChain } from '@ptc-org/nestjs-query-core';
 import { RelationsOpts, ResolverRelation } from '../resolvers/relations';
 import { PagingStrategies } from '../types/query/paging';
 import { RELATION_KEY } from './constants';

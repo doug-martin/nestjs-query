@@ -1,7 +1,7 @@
-import { AggregateQuery, AggregateResponse } from '@ptc/nestjs-query-core';
+import { AggregateQuery, AggregateResponse } from '@ptc-org/nestjs-query-core';
 import { Query, Resolver } from '@nestjs/graphql';
 import { when, deepEqual, objectContaining } from 'ts-mockito';
-import { AggregateArgsType } from '@ptc/nestjs-query-graphql';
+import { AggregateArgsType } from '@ptc-org/nestjs-query-graphql';
 import { AggregateResolver, AggregateResolverOpts } from '../../src/resolvers/aggregate.resolver';
 import { generateSchema, createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
 

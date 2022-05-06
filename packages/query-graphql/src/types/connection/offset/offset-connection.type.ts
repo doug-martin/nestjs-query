@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Class, MapReflector, Query } from '@ptc/nestjs-query-core';
+import { Class, MapReflector, Query } from '@ptc-org/nestjs-query-core';
 import { NotImplementedException } from '@nestjs/common';
 import { PagingStrategies } from '../../query';
 import { SkipIf } from '../../../decorators';

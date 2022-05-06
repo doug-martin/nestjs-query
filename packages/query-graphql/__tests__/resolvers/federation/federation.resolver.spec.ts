@@ -1,4 +1,4 @@
-import { Class } from '@ptc/nestjs-query-core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { ObjectType, Query, Resolver, ID } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when } from 'ts-mockito';
 import {
@@ -10,7 +10,7 @@ import {
   OffsetQueryArgsType,
   Relation,
   UnPagedRelation,
-} from '@ptc/nestjs-query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import {
   generateSchema,
   createResolverFromNest,

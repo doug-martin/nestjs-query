@@ -14,7 +14,7 @@ import {
   DeleteOneOptions,
   Filterable,
   DeleteManyOptions,
-} from '@ptc/nestjs-query-core';
+} from '@ptc-org/nestjs-query-core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { MethodNotAllowedException, NotFoundException } from '@nestjs/common';

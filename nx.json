@@ -1,6 +1,6 @@
 {
   "extends": "nx/presets/npm.json",
-  "npmScope": "ptc",
+  "npmScope": "ptc-org",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",

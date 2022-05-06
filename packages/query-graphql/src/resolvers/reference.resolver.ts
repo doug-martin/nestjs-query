@@ -1,4 +1,4 @@
-import { Class, QueryService } from '@ptc/nestjs-query-core';
+import { Class, QueryService } from '@ptc-org/nestjs-query-core';
 import { Resolver, ResolveReference } from '@nestjs/graphql';
 import { BadRequestException } from '@nestjs/common';
 import { getDTONames } from '../common';

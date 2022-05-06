@@ -1,4 +1,4 @@
-import { Filter, Paging, Query, SortField, getFilterFields, AggregateQuery } from '@ptc/nestjs-query-core';
+import { Filter, Paging, Query, SortField, getFilterFields, AggregateQuery } from '@ptc-org/nestjs-query-core';
 import {
   DeleteQueryBuilder,
   QueryBuilder,

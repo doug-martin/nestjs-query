@@ -1,5 +1,5 @@
 {
-  "name": "@ptc/nestjs-query-graphql",
+  "name": "@ptc-org/nestjs-query-graphql",
   "version": "0.30.1",
   "description": "Nestjs graphql query adapter",
   "author": "doug-martin <doug@dougamartin.com>",

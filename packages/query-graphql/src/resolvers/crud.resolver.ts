@@ -1,4 +1,4 @@
-import { Class, DeepPartial, QueryService } from '@ptc/nestjs-query-core';
+import { Class, DeepPartial, QueryService } from '@ptc-org/nestjs-query-core';
 import { ConnectionOptions, PagingStrategies } from '../types';
 import { Aggregateable, AggregateResolverOpts, AggregateResolver } from './aggregate.resolver';
 import { Relatable } from './relations';

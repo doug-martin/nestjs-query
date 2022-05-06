@@ -1,10 +1,10 @@
 import { printSchema } from 'graphql';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchemaBuilderModule, GraphQLSchemaFactory } from '@nestjs/graphql';
-import { Class } from '@ptc/nestjs-query-core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { instance, mock } from 'ts-mockito';
 import { PubSub } from 'graphql-subscriptions';
-import { Authorizer, pubSubToken } from '@ptc/nestjs-query-graphql';
+import { Authorizer, pubSubToken } from '@ptc-org/nestjs-query-graphql';
 import { TestService } from './test-resolver.service';
 import { TestResolverDTO } from './test-resolver.dto';
 import { TestResolverAuthorizer } from './test-resolver.authorizer';

@@ -1,5 +1,5 @@
 import { when, objectContaining, anything, verify, deepEqual, mock, instance } from 'ts-mockito';
-import { Filter, UpdateManyResponse } from '@ptc/nestjs-query-core';
+import { Filter, UpdateManyResponse } from '@ptc-org/nestjs-query-core';
 import { Resolver, Query, Field, InputType } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import {
@@ -9,7 +9,7 @@ import {
   UpdateResolver,
   UpdateResolverOpts,
   InjectPubSub,
-} from '@ptc/nestjs-query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import { UpdatedEvent } from '../../src/resolvers/update.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
 import {

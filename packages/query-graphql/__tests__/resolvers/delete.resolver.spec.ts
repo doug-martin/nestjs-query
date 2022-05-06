@@ -1,8 +1,8 @@
-import { DeleteManyResponse, Filter } from '@ptc/nestjs-query-core';
+import { DeleteManyResponse, Filter } from '@ptc-org/nestjs-query-core';
 import { Field, InputType, Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when, verify, anything, mock, instance } from 'ts-mockito';
 import { PubSub } from 'graphql-subscriptions';
-import { DeleteManyInputType, DeleteOneInputType, DeleteResolver, DeleteResolverOpts, InjectPubSub } from '@ptc/nestjs-query-graphql';
+import { DeleteManyInputType, DeleteOneInputType, DeleteResolver, DeleteResolverOpts, InjectPubSub } from '@ptc-org/nestjs-query-graphql';
 import { DeletedEvent } from '../../src/resolvers/delete.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
 import { generateSchema, createResolverFromNest, TestService, TestResolverDTO } from '../__fixtures__';

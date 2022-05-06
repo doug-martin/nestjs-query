@@ -2,7 +2,7 @@
 import { plainToClass } from 'class-transformer';
 import { validateSync, MinLength } from 'class-validator';
 import { InputType, Resolver, Args, Field, Query, Int, ID, ObjectType } from '@nestjs/graphql';
-import { IDField, UpdateOneInputType } from '@ptc/nestjs-query-graphql';
+import { IDField, UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../__fixtures__';
 
 describe('UpdateOneInputType', (): void => {
