@@ -49,6 +49,7 @@ describe('TypeOrmQueryService', (): void => {
       ],
       providers: [TestEntityService, TestRelationService, TestSoftDeleteEntityService]
     }).compile();
+
     await refresh();
   });
 
@@ -659,7 +660,8 @@ describe('TypeOrmQueryService', (): void => {
         });
 
         expect(queryResult.size).toBe(3);
-        entities.forEach((e) => expect(queryResult.get(e)).toHaveLength(2));
+        // Only the first entity will have results as we did limit 2
+        entities.forEach((e, index) => expect(queryResult.get(e)).toHaveLength(index === 0 ? 2 : 0));
       });
 
       it('should return an empty array if no results are found.', async () => {
@@ -669,9 +671,9 @@ describe('TypeOrmQueryService', (): void => {
           filter: { relationName: { isNot: null } }
         });
 
-        expect(queryResult.size).toBe(1);
+        expect(queryResult.size).toBe(2);
         expect(queryResult.get(entities[0])).toHaveLength(3);
-        expect(queryResult.get(entities[1])).toBeUndefined();
+        expect(queryResult.get(entities[1])).toHaveLength(0);
       });
     });
   });
@@ -1172,6 +1174,7 @@ describe('TypeOrmQueryService', (): void => {
         expect(adaptedQueryResult).toEqual(
           new Map([
             [entities[0], TEST_RELATIONS[0]],
+            [entities[1], undefined],
             [entities[2], TEST_RELATIONS[6]]
           ])
         );
@@ -1182,11 +1185,16 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities);
         const adaptedQueryResult = new Map();
+
         queryResult.forEach((entry, key) => {
           delete entry?.relationOfTestRelationId;
           adaptedQueryResult.set(key, entry);
         });
-        expect(adaptedQueryResult).toEqual(new Map([[entities[0], TEST_RELATIONS[0]]]));
+
+        expect(adaptedQueryResult).toEqual(new Map([
+          [entities[0], TEST_RELATIONS[0]],
+          [entities[1], undefined]
+        ]));
       });
     });
   });

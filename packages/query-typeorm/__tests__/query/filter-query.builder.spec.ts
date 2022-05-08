@@ -5,6 +5,7 @@ import { closeTestConnection, createTestConnection, getTestConnection } from '..
 import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { FilterQueryBuilder, WhereBuilder } from '../../src/query';
+import { format as formatSql } from 'sql-formatter';
 
 describe('FilterQueryBuilder', (): void => {
   beforeEach(createTestConnection);
@@ -17,8 +18,8 @@ describe('FilterQueryBuilder', (): void => {
 
   const expectSQLSnapshot = <Entity>(query: QueryBuilder<Entity>): void => {
     const [sql, params] = query.getQueryAndParameters();
-    expect(sql).toMatchSnapshot();
-    expect(params).toMatchSnapshot();
+
+    expect(formatSql(sql, { params })).toMatchSnapshot();
   };
 
   describe('#getReferencedRelationsRecursive', () => {

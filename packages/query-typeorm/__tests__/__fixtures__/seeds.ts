@@ -6,6 +6,7 @@ import { RelationOfTestRelationEntity } from './relation-of-test-relation.entity
 
 export const TEST_ENTITIES: TestEntity[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
   const testEntityPk = `test-entity-${i}`;
+
   return {
     testEntityPk,
     boolType: i % 2 === 0,
@@ -80,9 +81,11 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
         // eslint-disable-next-line no-param-reassign
         te.manyToManyUniDirectional = testRelations.filter((tr) => tr.relationName.endsWith('three'));
       }
+
       return testEntityRepo.save(te);
     }),
   );
+
   await Promise.all(
     testRelations.map(async (te) => {
       const relationOfTestRelationEntity = TEST_RELATIONS_OF_RELATION.find(

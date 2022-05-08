@@ -1,4 +1,5 @@
 import { Class, Query, SortDirection, SortNulls } from '@nestjs-query/core';
+import { format as formatSql } from 'sql-formatter';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
@@ -10,7 +11,7 @@ describe('RelationQueryBuilder', (): void => {
 
   const getRelationQueryBuilder = <Entity, Relation>(
     EntityClass: Class<Entity>,
-    relationName: string,
+    relationName: string
   ): RelationQueryBuilder<Entity, Relation> =>
     new RelationQueryBuilder(getTestConnection().getRepository(EntityClass), relationName);
 
@@ -18,12 +19,24 @@ describe('RelationQueryBuilder', (): void => {
     EntityClass: Class<Entity>,
     entity: Entity,
     relation: string,
-    query: Query<Relation>,
+    query: Query<Relation>
   ): void => {
     const selectQueryBuilder = getRelationQueryBuilder<Entity, Relation>(EntityClass, relation).select(entity, query);
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
-    expect(sql).toMatchSnapshot();
-    expect(params).toMatchSnapshot();
+
+    expect(formatSql(sql, { params })).toMatchSnapshot();
+  };
+
+  const expectBatchSQLSnapshot = <Entity, Relation>(
+    EntityClass: Class<Entity>,
+    entities: Entity[],
+    relation: string,
+    query: Query<Relation>
+  ): void => {
+    const selectQueryBuilder = getRelationQueryBuilder<Entity, Relation>(EntityClass, relation).batchSelect(entities, query);
+    const [sql, params] = selectQueryBuilder.getQueryAndParameters();
+
+    expect(formatSql(sql, { params })).toMatchSnapshot();
   };
 
   describe('#select', () => {
@@ -32,18 +45,18 @@ describe('RelationQueryBuilder', (): void => {
       dateType: new Date(),
       boolType: true,
       numberType: 1,
-      stringType: 'str',
+      stringType: 'str'
     };
 
     const testRelation: TestRelation = {
       testRelationPk: 'test-relation-id-1',
-      relationName: 'relation-name',
+      relationName: 'relation-name'
     };
 
     it('should throw an error if there is no relation with that name', () => {
       expect(() => {
         expectSQLSnapshot(TestEntity, testEntity, 'badRelations', {});
-      }).toThrow("Unable to find entity for relation 'badRelations'");
+      }).toThrow('Unable to find entity for relation \'badRelations\'');
     });
 
     describe('one to many', () => {
@@ -118,37 +131,37 @@ describe('RelationQueryBuilder', (): void => {
     describe('with sorting', () => {
       it('should apply ASC sorting', () => {
         expectSQLSnapshot(TestEntity, testEntity, 'testRelations', {
-          sorting: [{ field: 'relationName', direction: SortDirection.ASC }],
+          sorting: [{ field: 'relationName', direction: SortDirection.ASC }]
         });
       });
 
       it('should apply ASC NULLS_FIRST sorting', () => {
         expectSQLSnapshot(TestEntity, testEntity, 'testRelations', {
-          sorting: [{ field: 'relationName', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }],
+          sorting: [{ field: 'relationName', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }]
         });
       });
 
       it('should apply ASC NULLS_LAST sorting', () => {
         expectSQLSnapshot(TestEntity, testEntity, 'testRelations', {
-          sorting: [{ field: 'relationName', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
+          sorting: [{ field: 'relationName', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }]
         });
       });
 
       it('should apply DESC sorting', () => {
         expectSQLSnapshot(TestEntity, testEntity, 'testRelations', {
-          sorting: [{ field: 'relationName', direction: SortDirection.DESC }],
+          sorting: [{ field: 'relationName', direction: SortDirection.DESC }]
         });
       });
 
       it('should apply DESC NULLS_FIRST sorting', () => {
         expectSQLSnapshot(TestEntity, testEntity, 'testRelations', {
-          sorting: [{ field: 'relationName', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }],
+          sorting: [{ field: 'relationName', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }]
         });
       });
 
       it('should apply DESC NULLS_LAST sorting', () => {
         expectSQLSnapshot(TestEntity, testEntity, 'testRelations', {
-          sorting: [{ field: 'relationName', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }],
+          sorting: [{ field: 'relationName', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }]
         });
       });
 
@@ -156,10 +169,41 @@ describe('RelationQueryBuilder', (): void => {
         expectSQLSnapshot(TestEntity, testEntity, 'testRelations', {
           sorting: [
             { field: 'relationName', direction: SortDirection.ASC },
-            { field: 'testRelationPk', direction: SortDirection.DESC },
-          ],
+            { field: 'testRelationPk', direction: SortDirection.DESC }
+          ]
         });
       });
     });
   });
+
+  describe('#batchSelect', () => {
+    const testEntities: TestEntity[] = [
+      {
+        testEntityPk: 'test-entity-id-1',
+        dateType: new Date(),
+        boolType: true,
+        numberType: 1,
+        stringType: 'str',
+        manyToOneRelation: 'test-relation-id-1' as any
+      },
+      {
+        testEntityPk: 'test-entity-id-2',
+        dateType: new Date(),
+        boolType: false,
+        numberType: 2,
+        stringType: 'str',
+        manyToOneRelation: 'test-relation-id-2' as any
+      }
+    ];
+
+    describe('many to one', () => {
+      // TODO:: SQL is updated, now make sure that batchQueryRelations keeps working
+
+      it('should query with with multiple entities', () => {
+        expectBatchSQLSnapshot(TestEntity, testEntities, 'manyToOneRelation', {});
+      });
+
+    });
+  });
+
 });

@@ -1,4 +1,14 @@
-import { Column, Entity, OneToMany, ManyToMany, JoinTable, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+  OneToOne,
+  JoinColumn,
+  PrimaryColumn,
+  ManyToOne
+} from 'typeorm';
 import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestRelation } from './test-relation.entity';
 
@@ -21,6 +31,12 @@ export class TestEntity {
 
   @OneToMany('TestRelation', 'testEntity')
   testRelations?: TestRelation[];
+
+  @ManyToOne(() => TestRelation, {
+    nullable: true
+  })
+  @JoinColumn({ name: 'many_to_one_relation_id' })
+  manyToOneRelation?: TestRelation;
 
   @ManyToMany(() => TestRelation, (tr) => tr.manyTestEntities, { onDelete: 'CASCADE', nullable: false })
   @JoinTable()

@@ -113,6 +113,7 @@
     "jest-snapshot-serializer-raw": "1.2.0",
     "nx": "14.1.4",
     "prettier": "2.4.1",
+    "sql-formatter": "^4.0.2",
     "sqlite3": "5.0.2",
     "supertest": "6.1.6",
     "ts-jest": "27.0.7",

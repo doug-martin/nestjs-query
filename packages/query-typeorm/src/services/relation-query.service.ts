@@ -7,7 +7,7 @@ import {
   AggregateResponse,
   ModifyRelationOptions,
   FindRelationOptions,
-  GetByIdOptions,
+  GetByIdOptions
 } from '@ptc-org/nestjs-query-core';
 import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder, ObjectLiteral } from 'typeorm';
 import lodashFilter from 'lodash.filter';
@@ -41,11 +41,11 @@ export abstract class RelationQueryService<Entity> {
    * @param entities - the dtos to find relations for.
    * @param query - A query to use to filter, page, and sort relations.
    */
-  async queryRelations<Relation>(
+  public async queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Map<Entity, Relation[]>>;
 
   /**
@@ -55,82 +55,84 @@ export abstract class RelationQueryService<Entity> {
    * @param relationName - The name of relation to query for.
    * @param query - A query to filter, page and sort relations.
    */
-  async queryRelations<Relation>(
+  public async queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity,
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Relation[]>;
 
-  async queryRelations<Relation>(
+  public async queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Relation[] | Map<Entity, Relation[]>> {
     if (Array.isArray(dto)) {
       return this.batchQueryRelations(RelationClass, relationName, dto, query);
     }
+
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     return assembler.convertAsyncToDTOs(relationQueryBuilder.select(dto, assembler.convertQuery(query)).getMany());
   }
 
-  async aggregateRelations<Relation>(
+  public async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<Map<Entity, AggregateResponse<Relation>[]>>;
 
-  async aggregateRelations<Relation>(
+  public async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity,
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[]>;
 
-  async aggregateRelations<Relation>(
+  public async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[] | Map<Entity, AggregateResponse<Relation>[]>> {
     if (Array.isArray(dto)) {
       return this.batchAggregateRelations(RelationClass, relationName, dto, filter, aggregate);
     }
+
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const aggResponse = await AggregateBuilder.asyncConvertToAggregateResponse(
       relationQueryBuilder
         .aggregate(dto, assembler.convertQuery({ filter }), assembler.convertAggregateQuery(aggregate))
-        .getRawMany<Record<string, unknown>>(),
+        .getRawMany<Record<string, unknown>>()
     );
     return aggResponse.map((agg) => assembler.convertAggregateResponse(agg));
   }
 
-  async countRelations<Relation>(
+  public async countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<Map<Entity, number>>;
 
-  async countRelations<Relation>(
+  public async countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity,
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<number>;
 
-  async countRelations<Relation>(
+  public async countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<number | Map<Entity, number>> {
     if (Array.isArray(dto)) {
       return this.batchCountRelations(RelationClass, relationName, dto, filter);
@@ -148,11 +150,11 @@ export abstract class RelationQueryService<Entity> {
    * @param dtos - the dtos to find the relation for.
    * @param opts - Additional options
    */
-  async findRelation<Relation>(
+  public async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: Entity[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Map<Entity, Relation | undefined>>;
 
   /**
@@ -162,27 +164,31 @@ export abstract class RelationQueryService<Entity> {
    * @param relationName - The name of the relation to query for.
    * @param opts - Additional options
    */
-  async findRelation<Relation>(
+  public async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity,
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Relation | undefined>;
 
-  async findRelation<Relation>(
+  public async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
     if (Array.isArray(dto)) {
       return this.batchFindRelations(RelationClass, relationName, dto, opts);
     }
+
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationEntity = await this.getRelationQueryBuilder(relationName)
       .select(dto, { filter: opts?.filter, paging: { limit: 1 } })
       .getOne();
-    return relationEntity ? assembler.convertToDTO(relationEntity) : undefined;
+
+    return relationEntity
+      ? assembler.convertToDTO(relationEntity)
+      : undefined;
   }
 
   /**
@@ -192,11 +198,11 @@ export abstract class RelationQueryService<Entity> {
    * @param relationIds - The ids of relations to add.
    * @param opts - Addition options
    */
-  async addRelations<Relation>(
+  public async addRelations<Relation>(
     relationName: string,
     id: string | number,
     relationIds: (string | number)[],
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     const entity = await this.getById(id, opts);
     const relations = await this.getRelations(relationName, relationIds, opts?.relationFilter);
@@ -220,7 +226,7 @@ export abstract class RelationQueryService<Entity> {
     relationName: string,
     id: string | number,
     relationIds: (string | number)[],
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     const entity = await this.getById(id, opts);
     const relations = await this.getRelations(relationName, relationIds, opts?.relationFilter);
@@ -247,7 +253,7 @@ export abstract class RelationQueryService<Entity> {
     relationName: string,
     id: string | number,
     relationId: string | number,
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     const entity = await this.getById(id, opts);
     const relation = (await this.getRelations(relationName, [relationId], opts?.relationFilter))[0];
@@ -269,7 +275,7 @@ export abstract class RelationQueryService<Entity> {
     relationName: string,
     id: string | number,
     relationIds: (string | number)[],
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     const entity = await this.getById(id, opts);
     const relations = await this.getRelations(relationName, relationIds, opts?.relationFilter);
@@ -291,7 +297,7 @@ export abstract class RelationQueryService<Entity> {
     relationName: string,
     id: string | number,
     relationId: string | number,
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     const entity = await this.getById(id, opts);
     const relation = (await this.getRelations(relationName, [relationId], opts?.relationFilter))[0];
@@ -308,7 +314,7 @@ export abstract class RelationQueryService<Entity> {
     return entity;
   }
 
-  getRelationQueryBuilder<Relation>(name: string): RelationQueryBuilder<Entity, Relation> {
+  public getRelationQueryBuilder<Relation>(name: string): RelationQueryBuilder<Entity, Relation> {
     return new RelationQueryBuilder(this.repo, name);
   }
 
@@ -323,21 +329,18 @@ export abstract class RelationQueryService<Entity> {
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Map<Entity, Relation[]>> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const convertedQuery = assembler.convertQuery(query);
+
     const entityRelations = await relationQueryBuilder.batchSelect(entities, convertedQuery).getRawAndEntities();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return entityRelations.raw.reduce((results: Map<Entity, Relation[]>, rawRelation: EntityIndexRelation<unknown>) => {
-      // eslint-disable-next-line no-underscore-dangle
-      const index: number = rawRelation.__nestjsQuery__entityIndex__;
-      const e = entities[index];
-      const relationDtos = assembler.convertToDTOs(
-        this.getRelationsFromPrimaryKeys(relationQueryBuilder, rawRelation, entityRelations.entities),
-      );
-      return results.set(e, [...(results.get(e) ?? []), ...relationDtos]);
+
+    return entities.reduce((results, entity) => {
+      const relations = relationQueryBuilder.relationMeta.mapRelations(entity, entityRelations.entities, entityRelations.raw);
+
+      return results.set(entity, assembler.convertToDTOs(relations));
     }, new Map<Entity, Relation[]>());
   }
 
@@ -353,14 +356,16 @@ export abstract class RelationQueryService<Entity> {
     relationName: string,
     entities: Entity[],
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    query: AggregateQuery<Relation>
   ): Promise<Map<Entity, AggregateResponse<Relation>[]>> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder<Relation>(relationName);
     const convertedQuery = assembler.convertQuery({ filter });
+
     const rawAggregates = await relationQueryBuilder
-      .batchAggregate(entities, convertedQuery, aggregate)
+      .batchAggregate(entities, convertedQuery, query)
       .getRawMany<EntityIndexRelation<Record<string, unknown>>>();
+
     return rawAggregates.reduce((results, relationAgg) => {
       // eslint-disable-next-line no-underscore-dangle
       const index = relationAgg.__nestjsQuery__entityIndex__;
@@ -369,8 +374,8 @@ export abstract class RelationQueryService<Entity> {
       results.set(e, [
         ...resultingAgg,
         ...AggregateBuilder.convertToAggregateResponse([
-          lodashOmit(relationAgg, relationQueryBuilder.entityIndexColName),
-        ]),
+          lodashOmit(relationAgg, relationQueryBuilder.entityIndexColName)
+        ])
       ]);
       return results;
     }, new Map<Entity, AggregateResponse<Relation>[]>());
@@ -387,14 +392,16 @@ export abstract class RelationQueryService<Entity> {
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<Map<Entity, number>> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const convertedQuery = assembler.convertQuery({ filter });
+
     const entityRelations = await Promise.all(
-      entities.map((e) => relationQueryBuilder.select(e, convertedQuery).getCount()),
+      entities.map((e) => relationQueryBuilder.select(e, convertedQuery).getCount())
     );
+
     return entityRelations.reduce((results, relationCount, index) => {
       const e = entities[index];
       results.set(e, relationCount);
@@ -407,23 +414,25 @@ export abstract class RelationQueryService<Entity> {
    * @param RelationClass - The class to serialize the relations into.
    * @param dtos - The dto to query relations for.
    * @param relationName - The name of relation to query for.
-   * @param query - A query to filter, page or sort relations.
+   * @param opts - A query to filter, page or sort relations.
    */
   private async batchFindRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: Entity[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Map<Entity, Relation | undefined>> {
     const batchResults = await this.batchQueryRelations(RelationClass, relationName, dtos, {
-      paging: { limit: 1 },
-      filter: opts?.filter,
+      paging: { limit: dtos.length },
+      filter: opts?.filter
     });
+
     const results = new Map<Entity, Relation>();
     batchResults.forEach((relation, dto) => {
       // get just the first one.
       results.set(dto, relation[0]);
     });
+
     return results;
   }
 
@@ -441,23 +450,25 @@ export abstract class RelationQueryService<Entity> {
 
   private getRelationEntity(relationName: string): Class<unknown> {
     const relationMeta = this.getRelationMeta(relationName);
+
     if (typeof relationMeta.type === 'string') {
       return this.repo.manager.getRepository(relationMeta.type).target as Class<unknown>;
     }
+
     return relationMeta.type as Class<unknown>;
   }
 
   private getRelationsFromPrimaryKeys<Relation>(
     relationBuilder: RelationQueryBuilder<Entity, Relation>,
     rawResult: ObjectLiteral,
-    relations: Relation[],
+    relations: Relation[]
   ): Relation[] {
     const pks = relationBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName();
     const filter = pks.reduce(
       (keys, key) =>
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         ({ ...keys, [key.propertyName]: rawResult[key.columnName] }),
-      {} as Partial<Entity>,
+      {} as Partial<Entity>
     );
     return lodashFilter(relations, filter) as Relation[];
   }
@@ -465,7 +476,7 @@ export abstract class RelationQueryService<Entity> {
   private getRelations<Relation>(
     relationName: string,
     ids: (string | number)[],
-    filter?: Filter<Relation>,
+    filter?: Filter<Relation>
   ): Promise<Relation[]> {
     const relationQueryBuilder = this.getRelationQueryBuilder<Relation>(relationName).filterQueryBuilder;
     return relationQueryBuilder.selectById(ids, { filter }).getMany();

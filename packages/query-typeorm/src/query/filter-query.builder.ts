@@ -248,7 +248,7 @@ export class FilterQueryBuilder<Entity> {
    *
    * @returns true if there are any referenced relations
    */
-  filterHasRelations(filter?: Filter<Entity>): boolean {
+  public filterHasRelations(filter?: Filter<Entity>): boolean {
     if (!filter) {
       return false;
     }

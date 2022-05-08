@@ -2,6 +2,7 @@ import { Filter } from '@nestjs-query/core';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { WhereBuilder } from '../../src/query';
+import { format as formatSql } from 'sql-formatter';
 
 describe('WhereBuilder', (): void => {
   beforeEach(createTestConnection);
@@ -14,8 +15,8 @@ describe('WhereBuilder', (): void => {
   const expectSQLSnapshot = (filter: Filter<TestEntity>): void => {
     const selectQueryBuilder = createWhereBuilder().build(getQueryBuilder(), filter, {}, 'TestEntity');
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
-    expect(sql).toMatchSnapshot();
-    expect(params).toMatchSnapshot();
+
+    expect(formatSql(sql, { params })).toMatchSnapshot();
   };
 
   it('should accept a empty filter', (): void => {

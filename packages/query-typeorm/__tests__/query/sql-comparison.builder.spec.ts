@@ -17,6 +17,7 @@ describe('SQLComparisonBuilder', (): void => {
   });
 
   it('should throw an error for an invalid comparison type', () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(() => createSQLComparisonBuilder().build('stringType', 'bad', 'foo', 'TestEntity')).toThrow(
       'unknown operator "bad"',

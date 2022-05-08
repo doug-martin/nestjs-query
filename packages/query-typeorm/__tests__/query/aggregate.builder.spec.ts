@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { AggregateQuery } from '@nestjs-query/core';
+import { format as formatSql } from 'sql-formatter';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { AggregateBuilder } from '../../src/query';
@@ -15,8 +16,8 @@ describe('AggregateBuilder', (): void => {
   const expectSQLSnapshot = (agg: AggregateQuery<TestEntity>): void => {
     const selectQueryBuilder = createAggregateBuilder().build(getQueryBuilder(), agg, 'TestEntity');
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
-    expect(sql).toMatchSnapshot();
-    expect(params).toMatchSnapshot();
+
+    expect(formatSql(sql, { params })).toMatchSnapshot();
   };
 
   it('should throw an error if no selects are generated', (): void => {
