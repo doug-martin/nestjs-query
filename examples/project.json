@@ -1,0 +1,27 @@
+{
+  "sourceRoot": "examples/src",
+  "projectType": "application",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "examples/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/examples"
+      ],
+      "options": {
+        "jestConfig": "examples/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
