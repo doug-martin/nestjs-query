@@ -48,12 +48,13 @@ jobs:
         env:
           NESTJS_QUERY_DB_TYPE: ${{ matrix.db-type }}
 
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@master
+      - name: Codecov
+        uses: codecov/codecov-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.node-version }}-${{ matrix.db-type }}
-          parallel: true
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          directory: ./coverage
+          fail_ci_if_error: true
+          name: run-${{ matrix.node-version }}-${{ matrix.db-type }}
 
   finish:
     needs: test
@@ -64,5 +65,5 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           directory: ./coverage
-          fail_ci_if_error: true # optional (default = false)
-          verbose: true # optional (default = false)
+          fail_ci_if_error: true
+
