@@ -5,14 +5,10 @@
     "packages/*"
   ],
   "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "build": "lerna run build",
-    "clean": "lerna run clean",
-    "compile": "lerna run compile",
     "coverage": "cat ./coverage/lcov.info | coveralls",
     "jest": "jest --runInBand --coverage",
     "jest:e2e": "jest --runInBand --config=./jest.e2e.config.js",
-    "jest:unit": "jest --coverage --config=./jest.unit.config.js",
+    "jest:unit": "jest --coverage --config=./jest.config.js",
     "lerna:pub": "lerna publish from-git",
     "lerna:version": "lerna version",
     "lint": "eslint --cache --ext=.ts .",
