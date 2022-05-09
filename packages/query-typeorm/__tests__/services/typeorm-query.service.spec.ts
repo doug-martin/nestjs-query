@@ -1553,6 +1553,25 @@ describe('TypeOrmQueryService', (): void => {
       expect(found).toBeUndefined();
     });
 
+    it('return undefined if deleted', async () => {
+      const entity = TEST_SOFT_DELETE_ENTITIES[0];
+      const queryService = moduleRef.get(TestSoftDeleteEntityService);
+      await queryService.deleteOne(entity.testEntityPk, { useSoftDelete: true });
+      const found = await queryService.findById(entity.testEntityPk);
+      expect(found).toBeUndefined();
+    });
+
+    it('return the entity if deleted and "withDeleted" is on', async () => {
+      const entity = TEST_SOFT_DELETE_ENTITIES[0];
+      const queryService = moduleRef.get(TestSoftDeleteEntityService);
+      await queryService.deleteOne(entity.testEntityPk, { useSoftDelete: true });
+      const found = await queryService.findById(entity.testEntityPk, { withDeleted: true });
+      expect(found).toEqual({
+        ...entity,
+        deletedAt: expect.any(Date)
+      });
+    });
+
     describe('with filter', () => {
       it('should return an entity if all filters match', async () => {
         const entity = TEST_ENTITIES[0];
@@ -1563,7 +1582,7 @@ describe('TypeOrmQueryService', (): void => {
         expect(found).toEqual(entity);
       });
 
-      it('should return an undefined if an entitity with the pk and filter is not found', async () => {
+      it('should return an undefined if an entity with the pk and filter is not found', async () => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const found = await queryService.findById(entity.testEntityPk, {
@@ -1665,6 +1684,8 @@ describe('TypeOrmQueryService', (): void => {
       const allCount = await queryService.count({});
       expect(allCount).toBe(5);
     });
+
+    // TODO:: Test Delete many when query contains relations
   });
 
   describe('#deleteOne', () => {
