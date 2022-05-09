@@ -59,8 +59,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
+      - name: Codecov
+        uses: codecov/codecov-action@v2
         with:
-          github-token: ${{ secrets.github_token }}
-          parallel-finished: true
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          directory: ./coverage
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
