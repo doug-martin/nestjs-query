@@ -194,10 +194,32 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    */
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
-    const updateResult = await this.filterQueryBuilder
-      .update({ filter })
-      .set({ ...(update as QueryDeepPartialEntity<Entity>) })
-      .execute();
+    let updateResult;
+
+    // If the update has relations then fetch all the id's and then do an update on the ids returned
+    if (this.filterQueryBuilder.filterHasRelations(filter)) {
+      const builder = this.filterQueryBuilder.select({ filter })
+        .distinct(true);
+
+      const distinctRecords = await builder
+        .addSelect(`${builder.alias}.id`)
+        .getRawMany();
+
+      const ids = distinctRecords.map(({ id }) => id);
+      const idsFilter = { id: { in: ids } } as Filter<Entity>;
+
+      updateResult = await this.filterQueryBuilder
+        .update({ filter: idsFilter })
+        .set({ ...(update as QueryDeepPartialEntity<Entity>) })
+        .execute();
+
+    } else {
+      updateResult = await this.filterQueryBuilder
+        .update({ filter })
+        .set({ ...(update as QueryDeepPartialEntity<Entity>) })
+        .execute();
+    }
+
     return { updatedCount: updateResult.affected || 0 };
   }
 
@@ -237,9 +259,11 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * ```
    *
    * @param filter - A `Filter` to find records to delete.
+   * @param opts - Additional delete many options
    */
   async deleteMany(filter: Filter<Entity>, opts?: DeleteManyOptions<Entity>): Promise<DeleteManyResponse> {
     let deleteResult = {} as DeleteResult;
+
     if (this.filterQueryBuilder.filterHasRelations(filter)) {
       const builder = this.filterQueryBuilder.select({ filter })
         .distinct(true);
@@ -254,6 +278,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
       if (ids.length > 0) {
         if (this.useSoftDelete || opts?.useSoftDelete) {
           deleteResult = await this.filterQueryBuilder.softDelete({ filter: idsFilter }).execute();
+
         } else {
           deleteResult = await this.filterQueryBuilder.delete({ filter: idsFilter }).execute();
         }
@@ -261,6 +286,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
     } else {
       if (this.useSoftDelete || opts?.useSoftDelete) {
         deleteResult = await this.filterQueryBuilder.softDelete({ filter }).execute();
+
       } else {
         deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
       }
