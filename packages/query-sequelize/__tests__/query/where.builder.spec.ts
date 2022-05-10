@@ -1,4 +1,4 @@
-import { Filter } from '@nestjs-query/core';
+import { Filter } from '@ptc-org/nestjs-query-core';
 import { WhereOptions, Op } from 'sequelize';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { WhereBuilder } from '../../src/query';

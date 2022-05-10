@@ -1,5 +1,5 @@
 import { WhereOptions, Op, Association } from 'sequelize';
-import { Filter, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
+import { Filter, FilterComparisons, FilterFieldComparison } from '@ptc-org/nestjs-query-core';
 import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
 
 /**

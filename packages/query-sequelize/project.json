@@ -1,0 +1,33 @@
+{
+  "sourceRoot": "packages/query-sequelize/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/query-sequelize/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/query-sequelize"],
+      "options": {
+        "jestConfig": "packages/query-sequelize/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/query-sequelize",
+        "tsConfig": "packages/query-sequelize/tsconfig.lib.json",
+        "packageJson": "packages/query-sequelize/package.json",
+        "main": "packages/query-sequelize/src/index.ts",
+        "assets": ["packages/query-sequelize/*.md"]
+      }
+    }
+  },
+  "tags": []
+}

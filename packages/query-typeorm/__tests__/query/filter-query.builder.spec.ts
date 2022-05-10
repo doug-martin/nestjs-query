@@ -1,6 +1,6 @@
 import { anything, instance, mock, verify, when, deepEqual } from 'ts-mockito';
 import { QueryBuilder, WhereExpression } from 'typeorm';
-import { Class, Filter, Query, SortDirection, SortNulls } from '@nestjs-query/core';
+import { Class, Filter, Query, SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
 import { TestEntity } from '../__fixtures__/test.entity';

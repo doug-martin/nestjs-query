@@ -1,4 +1,4 @@
-import { Class, Query, SortDirection, SortNulls } from '@nestjs-query/core';
+import { Class, Query, SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import { format as formatSql } from 'sql-formatter';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestRelation } from '../__fixtures__/test-relation.entity';

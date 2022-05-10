@@ -1,4 +1,4 @@
-import { getQueryServiceToken } from '@nestjs-query/core';
+import { getQueryServiceToken } from '@ptc-org/nestjs-query-core';
 import { getModelToken } from '@nestjs/sequelize';
 import { Model, Sequelize, Table, Column } from 'sequelize-typescript';
 import { createSequelizeQueryServiceProviders } from '../src/providers';

@@ -11,7 +11,7 @@ import {
   GetByIdOptions,
   UpdateOneOptions,
   DeleteOneOptions,
-} from '@nestjs-query/core';
+} from '@ptc-org/nestjs-query-core';
 import lodashPick from 'lodash.pick';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { WhereOptions } from 'sequelize';

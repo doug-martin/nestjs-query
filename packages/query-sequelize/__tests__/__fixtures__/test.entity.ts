@@ -1,4 +1,4 @@
-import { AssemblerDeserializer, AssemblerSerializer } from '@nestjs-query/core';
+import { AssemblerDeserializer, AssemblerSerializer } from '@ptc-org/nestjs-query-core';
 import { Table, PrimaryKey, Column, BelongsToMany, HasMany, HasOne, Model } from 'sequelize-typescript';
 import { TestEntityTestRelationEntity } from './test-entity-test-relation.entity';
 import { TestRelation } from './test-relation.entity';

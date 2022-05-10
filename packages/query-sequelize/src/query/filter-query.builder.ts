@@ -1,4 +1,4 @@
-import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@nestjs-query/core';
+import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@ptc-org/nestjs-query-core';
 import sequelize, {
   FindOptions,
   Filterable,

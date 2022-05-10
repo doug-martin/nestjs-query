@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { AggregateQuery } from '@nestjs-query/core';
+import { AggregateQuery } from '@ptc-org/nestjs-query-core';
 import { format as formatSql } from 'sql-formatter';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestEntity } from '../__fixtures__/test.entity';

@@ -24,7 +24,7 @@ export interface FilterableFieldDescriptor {
  * In the following DTO `id`, `title` and `completed` are filterable.
  *
  * ```ts
- * import { FilterableField } from '@nestjs-query/query-graphql';
+ * import { FilterableField } from '@ptc-org/nestjs-query-graphql';
  * import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
  *
  * @ObjectType('TodoItem')
