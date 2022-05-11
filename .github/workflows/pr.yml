@@ -1,7 +1,11 @@
 name: PR
 
-# Run on all pull requests
-on: [ pull_request ]
+on:
+  push:
+    branches:
+      - master
+      - releases/*
+  pull_request:
 
 env:
   NX_BRANCH: ${{ github.event.number }}
