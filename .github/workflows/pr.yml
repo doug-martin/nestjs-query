@@ -157,6 +157,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install
 
+      - name: docker compose
+        run: docker-compose -f ./examples/docker-compose.yml up -d
+
       - name: nx affected:e2e
         run: node ./tools/scripts/run-many.js e2e origin/${{ needs.prepare-env.outputs.GITHUB_HEAD_REF }} ${{ needs.prepare-env.outputs.GITHUB_BASE_REF }}
         env:
