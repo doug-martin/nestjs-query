@@ -140,10 +140,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
           }
         }`
         })
-        .expect(200, {
-          data: {
-            todoItem: null
-          }
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
 
