@@ -161,9 +161,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getReferenceEntity(relationName));
     const filterQuery = referenceQueryBuilder.buildFilterQuery(assembler.convertQuery({ filter: opts?.filter }).filter);
     const populated = await foundEntity.populate({ path: relationName, match: filterQuery });
-    console.log(populated);
-    console.log(populated.get(relationName));
-    console.log(assembler.convertToDTO(populated.get(relationName)));
+
     const populatedRef: unknown = populated.get(relationName);
     return populatedRef ? assembler.convertToDTO(populatedRef) : undefined;
   }
@@ -207,6 +205,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getReferenceEntity(relationName));
     const { filterQuery, options } = referenceQueryBuilder.buildQuery(assembler.convertQuery(query));
     const populated = await foundEntity.populate({ path: relationName, match: filterQuery, options });
+
     return assembler.convertToDTOs(populated.get(relationName) as unknown[]);
   }
 

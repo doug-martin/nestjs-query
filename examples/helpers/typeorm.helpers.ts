@@ -4,7 +4,7 @@ import { dbType } from './db-test.helpers';
 export const typeormMysqlOptions = (
   username: string,
   database: string,
-  overrides?: Partial<TypeOrmModuleOptions>,
+  overrides?: Partial<TypeOrmModuleOptions>
 ): TypeOrmModuleOptions =>
   ({
     type: 'mysql',
@@ -14,13 +14,14 @@ export const typeormMysqlOptions = (
     database,
     autoLoadEntities: true,
     synchronize: true,
-    ...overrides,
+    dropSchema: true,
+    ...overrides
   } as TypeOrmModuleOptions);
 
 export const typeormPostgresOptions = (
   username: string,
   database: string,
-  overrides?: Partial<TypeOrmModuleOptions>,
+  overrides?: Partial<TypeOrmModuleOptions>
 ): TypeOrmModuleOptions =>
   ({
     type: 'postgres',
@@ -30,13 +31,14 @@ export const typeormPostgresOptions = (
     database,
     autoLoadEntities: true,
     synchronize: true,
-    ...overrides,
+    dropSchema: true,
+    ...overrides
   } as TypeOrmModuleOptions);
 
 export const typeormOrmConfig = (
   username: string,
   database: string = username,
-  overrides?: Partial<TypeOrmModuleOptions>,
+  overrides?: Partial<TypeOrmModuleOptions>
 ): TypeOrmModuleOptions => {
   if (dbType === 'postgres') {
     return typeormPostgresOptions(username, database, overrides);

@@ -182,6 +182,7 @@ export class MongooseQueryService<Entity extends Document>
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
     }
+
     return doc;
   }
 

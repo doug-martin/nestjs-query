@@ -39,8 +39,11 @@ interface RelationQuery<Relation, Entity> {
   fromAlias: string;
   fromPrimaryKeys: PrimaryKey[];
   joins: JoinColumn[];
-  mapRelations?<RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[];
-  batchSelect?(qb: SelectQueryBuilder<Relation>, entities: Entity[]): SelectQueryBuilder<Relation>;
+
+  mapRelations<RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[];
+
+  batchSelect(qb: SelectQueryBuilder<Relation>, entities: Entity[]): SelectQueryBuilder<Relation>;
+
   whereCondition(entity: Entity): SQLFragment;
 }
 
@@ -77,20 +80,21 @@ export class RelationQueryBuilder<Entity, Relation> {
 
   public select(entity: Entity, query: Query<Relation>): SelectQueryBuilder<Relation> {
     const hasRelations = this.filterQueryBuilder.filterHasRelations(query.filter);
+
     let relationBuilder = this.createRelationQueryBuilder(entity);
     relationBuilder = hasRelations
       ? this.filterQueryBuilder.applyRelationJoinsRecursive(relationBuilder, this.filterQueryBuilder.getReferencedRelationsRecursive(this.relationRepo.metadata, query.filter))
       : relationBuilder;
+
     relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
     relationBuilder = this.filterQueryBuilder.applyPaging(relationBuilder, query.paging);
+
     return this.filterQueryBuilder.applySorting(relationBuilder, query.sorting, relationBuilder.alias);
   }
 
   public batchSelect(entities: Entity[], query: Query<Relation>): SelectQueryBuilder<Relation> {
-    const { fromAlias, batchSelect } = this.relationMeta;
-
     const hasRelations = this.filterQueryBuilder.filterHasRelations(query.filter);
-    let qb = this.relationRepo.createQueryBuilder(fromAlias);
+    let qb = this.relationRepo.createQueryBuilder(this.relationMeta.fromAlias);
     qb = hasRelations
       ? this.filterQueryBuilder.applyRelationJoinsRecursive(qb, this.filterQueryBuilder.getReferencedRelationsRecursive(this.relationRepo.metadata, query.filter))
       : qb;
@@ -98,7 +102,7 @@ export class RelationQueryBuilder<Entity, Relation> {
     qb = this.filterQueryBuilder.applySorting(qb, query.sorting, qb.alias);
     qb = this.filterQueryBuilder.applyPaging(qb, query.paging);
 
-    return batchSelect(qb, entities);
+    return this.relationMeta.batchSelect(qb, entities);
   }
 
   public batchAggregate(
@@ -368,16 +372,62 @@ export class RelationQueryBuilder<Entity, Relation> {
       fromAlias: mainAlias,
       fromPrimaryKeys,
       joins,
+
+      mapRelations<RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[] {
+        const rawFilter = relation.joinColumns.reduce((columns, column) => ({
+          ...columns,
+
+          [`${joinAlias}_${column.propertyName}`]: column.referencedColumn.getEntityValue(entity)
+        }), {} as Partial<Entity>);
+
+        // First filter the raw relations with the PK of the entity, then filter the relations
+        // with the PK of the raw relation
+        return lodashFilter(rawRelations, rawFilter).reduce((entityRelations, rawRelation) => {
+          const filter = relation.inverseJoinColumns.reduce((columns, column) => ({
+            ...columns,
+
+            [column.referencedColumn.propertyName]: rawRelation[`${joinAlias}_${column.propertyName}`]
+          }), {} as Partial<Entity>);
+
+          return entityRelations.concat(lodashFilter(relations, filter) as any);
+        }, [] as Relation[]);
+      },
+
+      batchSelect: (qb, entities: Entity[]) => {
+        const params = {};
+        const andSelect = [];
+
+        const sql = relation.joinColumns.map((column) => {
+          const paramName = this.getParamName(column.propertyName);
+          params[paramName] = entities.map((entity) => column.referencedColumn!.getEntityValue(entity));
+
+          // We also want to select the field, so we can map them back in the mapper
+          andSelect.push(`${joinAlias}.${column.propertyName}`);
+          return `${joinAlias}.${column.propertyName} IN (:...${paramName})`;
+        }).join(' AND ');
+
+        // Add the needed joins
+        return joins.reduce((qb, join) => {
+          const conditions = join.conditions.map(({ leftHand, rightHand }) => `${leftHand} = ${rightHand}`);
+
+          return qb.innerJoin(join.target, join.alias, conditions.join(' AND '));
+        }, qb)
+          .addSelect(andSelect)
+          .andWhere(sql, params);
+      },
+
       whereCondition: (entity: Entity): SQLFragment => {
         const params: ObjectLiteral = {};
+
         const sql = relation.joinColumns
           .map((joinColumn) => {
             const paramName = this.getParamName(joinColumn.propertyName);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
             params[paramName] = joinColumn.referencedColumn!.getEntityValue(entity);
             return `${joinAlias}.${joinColumn.propertyName} = :${paramName}`;
           })
           .join(' AND ');
+
         return { sql, params };
       }
     };
@@ -409,6 +459,50 @@ export class RelationQueryBuilder<Entity, Relation> {
       fromAlias: mainAlias,
       fromPrimaryKeys,
       joins,
+
+      mapRelations<RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[] {
+        const rawFilter = relation.inverseRelation!.inverseJoinColumns.reduce((columns, column) => ({
+          ...columns,
+
+          [`${joinAlias}_${column.propertyName}`]: column.referencedColumn.getEntityValue(entity)
+        }), {} as Partial<Entity>);
+
+        // First filter the raw relations with the PK of the entity, then filter the relations
+        // with the PK of the raw relation
+        return lodashFilter(rawRelations, rawFilter).reduce((entityRelations, rawRelation) => {
+          const filter = relation.inverseRelation.joinColumns.reduce((columns, column) => ({
+            ...columns,
+
+            [column.referencedColumn.propertyName]: rawRelation[`${joinAlias}_${column.propertyName}`]
+          }), {} as Partial<Entity>);
+
+          return entityRelations.concat(lodashFilter(relations, filter) as any);
+        }, [] as Relation[]);
+      },
+
+      batchSelect: (qb, entities: Entity[]) => {
+        const params = {};
+        const andSelect = [];
+
+        const sql = relation.inverseRelation!.inverseJoinColumns.map((column) => {
+          const paramName = this.getParamName(column.propertyName);
+          params[paramName] = entities.map((entity) => column.referencedColumn!.getEntityValue(entity));
+
+          // We also want to select the field, so we can map them back in the mapper
+          andSelect.push(`${joinAlias}.${column.propertyName}`);
+          return `${joinAlias}.${column.propertyName} IN (:...${paramName})`;
+        }).join(' AND ');
+
+        // Add the needed joins
+        return joins.reduce((qb, join) => {
+          const conditions = join.conditions.map(({ leftHand, rightHand }) => `${leftHand} = ${rightHand}`);
+
+          return qb.innerJoin(join.target, join.alias, conditions.join(' AND '));
+        }, qb)
+          .addSelect(andSelect)
+          .andWhere(sql, params);
+      },
+
       whereCondition: (entity: Entity): SQLFragment => {
         const params: ObjectLiteral = {};
 

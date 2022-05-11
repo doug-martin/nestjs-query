@@ -14,10 +14,11 @@ import { TagEntity } from './tag.entity';
           DTOClass: TagDTO,
           EntityClass: TagEntity,
           CreateDTOClass: TagInputDTO,
-          UpdateDTOClass: TagInputDTO,
-        },
-      ],
-    }),
-  ],
+          UpdateDTOClass: TagInputDTO
+        }
+      ]
+    })
+  ]
 })
-export class TagModule {}
+export class TagModule {
+}

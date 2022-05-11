@@ -74,6 +74,7 @@ export abstract class RelationQueryService<Entity> {
 
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
+
     return assembler.convertAsyncToDTOs(relationQueryBuilder.select(dto, assembler.convertQuery(query)).getMany());
   }
 
@@ -349,6 +350,7 @@ export abstract class RelationQueryService<Entity> {
    * @param RelationClass - The class to serialize the relations into.
    * @param entities - The entities to query relations for.
    * @param relationName - The name of relation to query for.
+   * @param filter - Filter.
    * @param query - A query to filter, page or sort relations.
    */
   private async batchAggregateRelations<Relation>(

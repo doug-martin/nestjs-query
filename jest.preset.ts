@@ -16,5 +16,6 @@ module.exports = {
 
   testEnvironment: 'node',
   setupFilesAfterEnv: ['jest-extended'],
-  snapshotSerializers: ['jest-snapshot-serializer-raw/always']
+  snapshotSerializers: ['jest-snapshot-serializer-raw/always'],
+  testTimeout: 20000
 };

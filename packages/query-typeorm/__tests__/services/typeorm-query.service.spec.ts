@@ -105,6 +105,7 @@ describe('TypeOrmQueryService', (): void => {
           expect(queryResult).toEqual([entity]);
         });
       });
+
       describe('oneToOne', () => {
         it('should allow filtering on a one to one relation', async () => {
           const entity = TEST_ENTITIES[0];
@@ -276,6 +277,7 @@ describe('TypeOrmQueryService', (): void => {
           });
           expect(queryResult).toEqual([TEST_ENTITIES[2], TEST_ENTITIES[5], TEST_ENTITIES[8]]);
         });
+
         it('should allow filtering on a many to many relation with paging', async () => {
           const queryService = moduleRef.get(TestEntityService);
           const queryResult = await queryService.query({
@@ -591,6 +593,19 @@ describe('TypeOrmQueryService', (): void => {
         ]);
       });
 
+      // it('call select and return the result for many to many', async () => {
+      //   const queryService = moduleRef.get(TestEntityService);
+      //   const queryResult = await queryService.queryRelations(TestEntity, 'manyTestRelations', TEST_ENTITIES[0], {});
+      //   expect(queryResult.map((r) => r.manyTestRelations)).toEqual([]);
+      //
+      //   const queryResult2 = await queryService.queryRelations(TestEntity, 'manyTestRelations', TEST_ENTITIES[1], {});
+      //   expect(queryResult2.map((r) => r.manyTestRelations)).toEqual([
+      //     TEST_RELATIONS[0],
+      //     TEST_RELATIONS[1],
+      //     TEST_RELATIONS[2]
+      //   ]);
+      // });
+
       it('should apply a filter', async () => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', TEST_ENTITIES[0], {
@@ -674,6 +689,40 @@ describe('TypeOrmQueryService', (): void => {
         expect(queryResult.size).toBe(2);
         expect(queryResult.get(entities[0])).toHaveLength(3);
         expect(queryResult.get(entities[1])).toHaveLength(0);
+      });
+
+      describe('manyToMany', () => {
+        it('call select and return the with owning side of the relations', async () => {
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.queryRelations(TestEntity, 'manyTestRelations', [TEST_ENTITIES[1]], {});
+
+          const adaptedQueryResult = new Map();
+          queryResult.forEach((relations, key) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            adaptedQueryResult.set(key, relations.map(({ relationOfTestRelationId, ...relation }) => ({
+              ...relation
+            })));
+          });
+
+          const expectRelations = TEST_RELATIONS.filter((tr) => tr.relationName.endsWith('two'));
+          expect(adaptedQueryResult.get(TEST_ENTITIES[1]).length).toEqual(expectRelations.length);
+          expect(adaptedQueryResult.get(TEST_ENTITIES[1])).toEqual(expect.arrayContaining(expectRelations));
+        });
+
+        it('call select and return the with non owning side of the relations', async () => {
+          const entities = TEST_RELATIONS.slice(0, 2);
+
+          const queryService = moduleRef.get(TestRelationService);
+          const queryResult = await queryService.queryRelations(TestRelation, 'manyTestEntities', entities, {});
+
+          const expectRelations = TEST_ENTITIES.filter((te) => te.numberType % 2 === 0);
+
+          expect(queryResult.get(entities[0]).length).toEqual(0);
+          expect(queryResult.get(entities[0])).toEqual([]);
+          expect(queryResult.get(entities[1]).length).toEqual(expectRelations.length);
+          expect(queryResult.get(entities[1])).toEqual(expect.arrayContaining(expectRelations));
+        });
       });
     });
   });
