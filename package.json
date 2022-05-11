@@ -48,6 +48,7 @@
     "typeorm-seeding": "1.6.1"
   },
   "devDependencies": {
+    "@actions/core": "^1.8.0",
     "@apollo/gateway": "0.42.0",
     "@commitlint/cli": "15.0.0",
     "@commitlint/config-angular": "15.0.0",

@@ -1,0 +1,14 @@
+name: 'Set the correct master variables'
+description: 'Sets the correct master environment variables'
+author: 'Tycho Bokdam'
+runs:
+  using: 'node12'
+  main: 'src/index.js'
+
+outputs:
+  tag:
+    description: 'The latest tag'
+  tagHash:
+    description: 'The hash of the latest tag'
+  headRef:
+    description: 'The correct head ref to use'

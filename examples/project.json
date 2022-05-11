@@ -13,7 +13,7 @@
         ]
       }
     },
-    "test": {
+    "e2e": {
       "executor": "@nrwl/jest:jest",
       "outputs": [
         "coverage/examples"
