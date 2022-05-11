@@ -1,6 +1,6 @@
 import { Connection } from 'typeorm';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
-import { executeTruncate } from '../../../examples/helpers';
+import { executeTruncate } from '../../helpers';
 
 const tables = ['todo_item'];
 export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables);

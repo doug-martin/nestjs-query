@@ -72,11 +72,10 @@ describe('TagResolver (hooks - e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: null,
-          errors: [{
-            message: 'Unable to find TagEntity with id: 100'
-          }]
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
     it(`should return todoItems as a connection`, () =>

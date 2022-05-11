@@ -55,7 +55,7 @@ describe('TagResolver (noPaging - e2e)', () => {
         })
         .expect(200, { data: { tag: tags[0] } }));
 
-    it(`should return null if the tag is not found`, () =>
+    it(`should throw item not found on non existing tag`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({

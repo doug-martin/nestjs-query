@@ -58,7 +58,7 @@ describe('Federated - TagResolver (e2e)', () => {
         })
         .expect(200, { data: { tag: tags[0] } }));
 
-    it(`should return null if the tag is not found`, () =>
+    it(`should throw item not found on non existing tag`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -70,10 +70,10 @@ describe('Federated - TagResolver (e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: {
-            tag: null,
-          },
+                .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
     it(`should return tagTodoItems as a connection`, () =>

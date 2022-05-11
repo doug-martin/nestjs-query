@@ -132,7 +132,7 @@ describe('Federated - SubTaskResolver (e2e)', () => {
           });
         }));
 
-    it(`should return null if the sub task is not found`, () =>
+    it(`should throw item not found on non existing sub task`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -144,10 +144,10 @@ describe('Federated - SubTaskResolver (e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: {
-            subTask: null,
-          },
+                .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
     it(`should return a todo item`, () =>
