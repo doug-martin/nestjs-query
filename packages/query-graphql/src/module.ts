@@ -1,4 +1,4 @@
-import { Assembler, NestjsQueryCoreModule, Class } from '@nestjs-query/core';
+import { Assembler, NestjsQueryCoreModule, Class } from '@ptc-org/nestjs-query-core';
 import { DynamicModule, ForwardReference, Provider } from '@nestjs/common';
 import { AutoResolverOpts, createAuthorizerProviders, createHookProviders, createResolvers } from './providers';
 import { ReadResolverOpts } from './resolvers';
@@ -31,7 +31,7 @@ export class NestjsQueryGraphQLModule {
       module: NestjsQueryGraphQLModule,
       imports: [...opts.imports, coreModule],
       providers: [...providers],
-      exports: [...providers, ...opts.imports, coreModule],
+      exports: [...providers, ...opts.imports, coreModule]
     };
   }
 
@@ -42,7 +42,7 @@ export class NestjsQueryGraphQLModule {
   private static getCoreModule(opts: NestjsQueryGraphqlModuleOpts): DynamicModule {
     return NestjsQueryCoreModule.forFeature({
       assemblers: opts.assemblers,
-      imports: opts.imports,
+      imports: opts.imports
     });
   }
 
@@ -52,7 +52,7 @@ export class NestjsQueryGraphQLModule {
       ...this.getPubSubProviders(opts),
       ...this.getAuthorizerProviders(opts),
       ...this.getHookProviders(opts),
-      ...this.getResolverProviders(opts),
+      ...this.getResolverProviders(opts)
     ];
   }
 

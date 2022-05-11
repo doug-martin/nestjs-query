@@ -12,7 +12,7 @@ import {
   FindByIdOptions,
   FindRelationOptions,
   GetByIdOptions,
-  UpdateOneOptions,
+  UpdateOneOptions, DeleteManyOptions
 } from '../interfaces';
 import { QueryService } from './query.service';
 import { DeepPartial, Class } from '../common';
@@ -45,7 +45,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     return Promise.reject(new NotImplementedException('createOne is not implemented'));
   }
 
-  deleteMany(filter: Filter<DTO>): Promise<DeleteManyResponse> {
+  deleteMany(filter: Filter<DTO>, opts?: DeleteManyOptions<DTO>): Promise<DeleteManyResponse> {
     return Promise.reject(new NotImplementedException('deleteMany is not implemented'));
   }
 

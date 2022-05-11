@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { IsInt } from 'class-validator';
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsUndefined } from '../../validators';

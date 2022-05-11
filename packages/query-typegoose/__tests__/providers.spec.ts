@@ -1,4 +1,4 @@
-import { getQueryServiceToken } from '@nestjs-query/core';
+import { getQueryServiceToken } from '@ptc-org/nestjs-query-core';
 import { getModelToken } from 'nestjs-typegoose';
 import { TypegooseQueryService } from '../src/services';
 import { createTypegooseQueryServiceProviders } from '../src/providers';

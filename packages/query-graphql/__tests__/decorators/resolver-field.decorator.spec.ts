@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Class } from '@nestjs-query/core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import * as nestGraphql from '@nestjs/graphql';
 import { ResolveFieldOptions, ReturnTypeFunc } from '@nestjs/graphql';
 import { ResolverField } from '../../src/decorators';
@@ -30,7 +30,7 @@ describe('ResolverField decorator', (): void => {
     const opts: resolverDecorator.ResolverMethodOpts[] = [{}];
     createTestResolver('test', () => Boolean, { nullable: true }, ...opts);
     const [n, rt, ao] = propertySpy.mock.calls[0]!;
-    expect(n).toEqual('test');
+    expect(n).toBe('test');
     expect(rt ? rt() : null).toEqual(Boolean);
     expect(ao).toEqual({ nullable: true });
   });

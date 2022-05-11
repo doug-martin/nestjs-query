@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Class, getClassMetadata, MetaValue } from '@nestjs-query/core';
+import { Class, getClassMetadata, MetaValue } from '@ptc-org/nestjs-query-core';
 import {
   BeforeCreateManyHook,
   BeforeCreateOneHook,

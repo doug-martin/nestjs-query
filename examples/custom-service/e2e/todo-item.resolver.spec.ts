@@ -1,4 +1,4 @@
-import { CursorConnectionType } from '@nestjs-query/query-graphql';
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -55,7 +55,7 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
           });
         }));
 
-    it(`should return null if the todo item is not found`, () =>
+    it(`should throw item not found on non existing todo item`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -67,10 +67,10 @@ describe('TodoItemResolver (custom-service - e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: {
-            todoItem: null,
-          },
+                .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
   });
 

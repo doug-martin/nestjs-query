@@ -1,10 +1,11 @@
 import { anything, instance, mock, verify, when, deepEqual } from 'ts-mockito';
 import { QueryBuilder, WhereExpression } from 'typeorm';
-import { Class, Filter, Query, SortDirection, SortNulls } from '@nestjs-query/core';
+import { Class, Filter, Query, SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import { closeTestConnection, createTestConnection, getTestConnection } from '../__fixtures__/connection.fixture';
 import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { FilterQueryBuilder, WhereBuilder } from '../../src/query';
+import { format as formatSql } from 'sql-formatter';
 
 describe('FilterQueryBuilder', (): void => {
   beforeEach(createTestConnection);
@@ -17,8 +18,8 @@ describe('FilterQueryBuilder', (): void => {
 
   const expectSQLSnapshot = <Entity>(query: QueryBuilder<Entity>): void => {
     const [sql, params] = query.getQueryAndParameters();
-    expect(sql).toMatchSnapshot();
-    expect(params).toMatchSnapshot();
+
+    expect(formatSql(sql, { params })).toMatchSnapshot();
   };
 
   describe('#getReferencedRelationsRecursive', () => {

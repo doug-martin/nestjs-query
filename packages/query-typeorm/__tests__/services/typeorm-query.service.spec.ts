@@ -1,4 +1,4 @@
-import { Filter, SortDirection } from '@nestjs-query/core';
+import { Filter, SortDirection } from '@ptc-org/nestjs-query-core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
@@ -10,7 +10,7 @@ import {
   CONNECTION_OPTIONS,
   getTestConnection,
   refresh,
-  truncate,
+  truncate
 } from '../__fixtures__/connection.fixture';
 import { TEST_ENTITIES, TEST_RELATIONS, TEST_SOFT_DELETE_ENTITIES } from '../__fixtures__/seeds';
 import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
@@ -45,10 +45,11 @@ describe('TypeOrmQueryService', (): void => {
     moduleRef = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(CONNECTION_OPTIONS),
-        TypeOrmModule.forFeature([TestEntity, TestRelation, TestEntityRelationEntity, TestSoftDeleteEntity]),
+        TypeOrmModule.forFeature([TestEntity, TestRelation, TestEntityRelationEntity, TestSoftDeleteEntity])
       ],
-      providers: [TestEntityService, TestRelationService, TestSoftDeleteEntityService],
+      providers: [TestEntityService, TestRelationService, TestSoftDeleteEntityService]
     }).compile();
+
     await refresh();
   });
 
@@ -77,11 +78,11 @@ describe('TypeOrmQueryService', (): void => {
               oneTestRelation: {
                 relationsOfTestRelation: {
                   testRelationId: {
-                    eq: relationEntity?.testRelationPk,
-                  },
-                },
-              },
-            },
+                    eq: relationEntity?.testRelationPk
+                  }
+                }
+              }
+            }
           });
           expect(queryResult).toEqual([entity]);
         });
@@ -95,15 +96,16 @@ describe('TypeOrmQueryService', (): void => {
               oneTestRelation: {
                 relationOfTestRelation: {
                   testRelationId: {
-                    eq: relationEntity?.testRelationPk,
-                  },
-                },
-              },
-            },
+                    eq: relationEntity?.testRelationPk
+                  }
+                }
+              }
+            }
           });
           expect(queryResult).toEqual([entity]);
         });
       });
+
       describe('oneToOne', () => {
         it('should allow filtering on a one to one relation', async () => {
           const entity = TEST_ENTITIES[0];
@@ -112,10 +114,10 @@ describe('TypeOrmQueryService', (): void => {
             filter: {
               oneTestRelation: {
                 testRelationPk: {
-                  in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
-                },
-              },
-            },
+                  in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`]
+                }
+              }
+            }
           });
           expect(queryResult).toEqual([entity]);
         });
@@ -130,14 +132,14 @@ describe('TypeOrmQueryService', (): void => {
                 {
                   oneTestRelation: {
                     testRelationPk: {
-                      in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
-                    },
-                  },
-                },
-              ],
+                      in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`]
+                    }
+                  }
+                }
+              ]
             },
             sorting: [{ field: 'testEntityPk', direction: SortDirection.ASC }],
-            paging: { limit: 2 },
+            paging: { limit: 2 }
           });
           expect(queryResult).toEqual([entity, TEST_ENTITIES[1]]);
         });
@@ -150,12 +152,12 @@ describe('TypeOrmQueryService', (): void => {
             filter: {
               testEntity: {
                 testEntityPk: {
-                  in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk],
-                },
-              },
-            },
+                  in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk]
+                }
+              }
+            }
           });
-          expect(queryResults).toBeArrayOfSize(6);
+          expect(queryResults.length).toEqual(6);
           queryResults.map((e, idx) => {
             expect(e).toMatchObject(TEST_RELATIONS[idx]);
           });
@@ -167,12 +169,12 @@ describe('TypeOrmQueryService', (): void => {
             filter: {
               testEntityUniDirectional: {
                 testEntityPk: {
-                  in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk],
-                },
-              },
-            },
+                  in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk]
+                }
+              }
+            }
           });
-          expect(queryResults).toBeArrayOfSize(6);
+          expect(queryResults.length).toEqual(6);
           queryResults.map((e, idx) => {
             expect(e).toMatchObject(TEST_RELATIONS[idx]);
           });
@@ -187,16 +189,16 @@ describe('TypeOrmQueryService', (): void => {
                 {
                   testEntity: {
                     testEntityPk: {
-                      in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk],
-                    },
-                  },
-                },
-              ],
+                      in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[1].testEntityPk]
+                    }
+                  }
+                }
+              ]
             },
             sorting: [{ field: 'testRelationPk', direction: SortDirection.ASC }],
-            paging: { limit: 3 },
+            paging: { limit: 3 }
           });
-          expect(queryResults).toBeArrayOfSize(3);
+          expect(queryResults.length).toEqual(3);
           queryResults.map((e, idx) => {
             expect(e).toMatchObject(TEST_RELATIONS[idx]);
           });
@@ -211,10 +213,10 @@ describe('TypeOrmQueryService', (): void => {
             filter: {
               testRelations: {
                 relationName: {
-                  in: [TEST_RELATIONS[0].relationName, TEST_RELATIONS[1].relationName],
-                },
-              },
-            },
+                  in: [TEST_RELATIONS[0].relationName, TEST_RELATIONS[1].relationName]
+                }
+              }
+            }
           });
           expect(queryResult).toEqual([entity]);
         });
@@ -228,14 +230,14 @@ describe('TypeOrmQueryService', (): void => {
                 {
                   testRelations: {
                     testRelationPk: {
-                      in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
-                    },
-                  },
-                },
-              ],
+                      in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`]
+                    }
+                  }
+                }
+              ]
             },
             sorting: [{ field: 'testEntityPk', direction: SortDirection.ASC }],
-            paging: { limit: 2 },
+            paging: { limit: 2 }
           });
           expect(queryResult).toEqual([entity, TEST_ENTITIES[1]]);
         });
@@ -248,17 +250,17 @@ describe('TypeOrmQueryService', (): void => {
             filter: {
               manyTestRelations: {
                 relationName: {
-                  in: [TEST_RELATIONS[1].relationName, TEST_RELATIONS[4].relationName],
-                },
-              },
-            },
+                  in: [TEST_RELATIONS[1].relationName, TEST_RELATIONS[4].relationName]
+                }
+              }
+            }
           });
           expect(queryResult).toEqual([
             TEST_ENTITIES[1],
             TEST_ENTITIES[3],
             TEST_ENTITIES[5],
             TEST_ENTITIES[7],
-            TEST_ENTITIES[9],
+            TEST_ENTITIES[9]
           ]);
         });
 
@@ -268,13 +270,14 @@ describe('TypeOrmQueryService', (): void => {
             filter: {
               manyToManyUniDirectional: {
                 relationName: {
-                  in: [TEST_RELATIONS[2].relationName, TEST_RELATIONS[5].relationName],
-                },
-              },
-            },
+                  in: [TEST_RELATIONS[2].relationName, TEST_RELATIONS[5].relationName]
+                }
+              }
+            }
           });
           expect(queryResult).toEqual([TEST_ENTITIES[2], TEST_ENTITIES[5], TEST_ENTITIES[8]]);
         });
+
         it('should allow filtering on a many to many relation with paging', async () => {
           const queryService = moduleRef.get(TestEntityService);
           const queryResult = await queryService.query({
@@ -284,14 +287,14 @@ describe('TypeOrmQueryService', (): void => {
                 {
                   manyTestRelations: {
                     relationName: {
-                      in: [TEST_RELATIONS[1].relationName, TEST_RELATIONS[4].relationName],
-                    },
-                  },
-                },
-              ],
+                      in: [TEST_RELATIONS[1].relationName, TEST_RELATIONS[4].relationName]
+                    }
+                  }
+                }
+              ]
             },
             sorting: [{ field: 'numberType', direction: SortDirection.ASC }],
-            paging: { limit: 6 },
+            paging: { limit: 6 }
           });
           expect(queryResult).toEqual([
             TEST_ENTITIES[1],
@@ -299,7 +302,7 @@ describe('TypeOrmQueryService', (): void => {
             TEST_ENTITIES[3],
             TEST_ENTITIES[5],
             TEST_ENTITIES[7],
-            TEST_ENTITIES[9],
+            TEST_ENTITIES[9]
           ]);
         });
       });
@@ -316,33 +319,33 @@ describe('TypeOrmQueryService', (): void => {
           avg: ['numberType'],
           sum: ['numberType'],
           max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-        },
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType']
+        }
       );
       return expect(queryResult).toEqual([
         {
           avg: {
-            numberType: 5.5,
+            numberType: 5.5
           },
           count: {
-            testEntityPk: 10,
+            testEntityPk: 10
           },
           max: {
             dateType: expect.stringMatching('2020-02-10'),
             numberType: 10,
             stringType: 'foo9',
-            testEntityPk: 'test-entity-9',
+            testEntityPk: 'test-entity-9'
           },
           min: {
             dateType: expect.stringMatching('2020-02-01'),
             numberType: 1,
             stringType: 'foo1',
-            testEntityPk: 'test-entity-1',
+            testEntityPk: 'test-entity-1'
           },
           sum: {
-            numberType: 55,
-          },
-        },
+            numberType: 55
+          }
+        }
       ]);
     });
 
@@ -356,62 +359,62 @@ describe('TypeOrmQueryService', (): void => {
           avg: ['numberType'],
           sum: ['numberType'],
           max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-        },
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType']
+        }
       );
       return expect(queryResult).toEqual([
         {
           groupBy: {
-            boolType: 0,
+            boolType: 0
           },
           avg: {
-            numberType: 5,
+            numberType: 5
           },
           count: {
-            testEntityPk: 5,
+            testEntityPk: 5
           },
           max: {
             dateType: expect.stringMatching('2020-02-09'),
             numberType: 9,
             stringType: 'foo9',
-            testEntityPk: 'test-entity-9',
+            testEntityPk: 'test-entity-9'
           },
           min: {
             dateType: expect.stringMatching('2020-02-01'),
             numberType: 1,
             stringType: 'foo1',
-            testEntityPk: 'test-entity-1',
+            testEntityPk: 'test-entity-1'
           },
           sum: {
-            numberType: 25,
-          },
+            numberType: 25
+          }
         },
         {
           groupBy: {
-            boolType: 1,
+            boolType: 1
           },
           avg: {
-            numberType: 6,
+            numberType: 6
           },
           count: {
-            testEntityPk: 5,
+            testEntityPk: 5
           },
           max: {
             dateType: expect.stringMatching('2020-02-10'),
             numberType: 10,
             stringType: 'foo8',
-            testEntityPk: 'test-entity-8',
+            testEntityPk: 'test-entity-8'
           },
           min: {
             dateType: expect.stringMatching('2020-02-02'),
             numberType: 2,
             stringType: 'foo10',
-            testEntityPk: 'test-entity-10',
+            testEntityPk: 'test-entity-10'
           },
           sum: {
-            numberType: 30,
-          },
-        },
+            numberType: 30
+          }
+        }
       ]);
     });
 
@@ -424,33 +427,33 @@ describe('TypeOrmQueryService', (): void => {
           avg: ['numberType'],
           sum: ['numberType'],
           max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-        },
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType']
+        }
       );
       return expect(queryResult).toEqual([
         {
           avg: {
-            numberType: 2,
+            numberType: 2
           },
           count: {
-            testEntityPk: 3,
+            testEntityPk: 3
           },
           max: {
             dateType: expect.stringMatching('2020-02-03'),
             numberType: 3,
             stringType: 'foo3',
-            testEntityPk: 'test-entity-3',
+            testEntityPk: 'test-entity-3'
           },
           min: {
             dateType: expect.stringMatching('2020-02-01'),
             numberType: 1,
             stringType: 'foo1',
-            testEntityPk: 'test-entity-1',
+            testEntityPk: 'test-entity-1'
           },
           sum: {
-            numberType: 6,
-          },
-        },
+            numberType: 6
+          }
+        }
       ]);
     });
 
@@ -464,62 +467,62 @@ describe('TypeOrmQueryService', (): void => {
           avg: ['numberType'],
           sum: ['numberType'],
           max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-        },
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType']
+        }
       );
       return expect(queryResult).toEqual([
         {
           groupBy: {
-            boolType: 0,
+            boolType: 0
           },
           avg: {
-            numberType: 2,
+            numberType: 2
           },
           count: {
-            testEntityPk: 2,
+            testEntityPk: 2
           },
           max: {
             dateType: expect.stringMatching('2020-02-03'),
             numberType: 3,
             stringType: 'foo3',
-            testEntityPk: 'test-entity-3',
+            testEntityPk: 'test-entity-3'
           },
           min: {
             dateType: expect.stringMatching('2020-02-01'),
             numberType: 1,
             stringType: 'foo1',
-            testEntityPk: 'test-entity-1',
+            testEntityPk: 'test-entity-1'
           },
           sum: {
-            numberType: 4,
-          },
+            numberType: 4
+          }
         },
         {
           groupBy: {
-            boolType: 1,
+            boolType: 1
           },
           avg: {
-            numberType: 2,
+            numberType: 2
           },
           count: {
-            testEntityPk: 1,
+            testEntityPk: 1
           },
           max: {
             dateType: expect.stringMatching('2020-02-02'),
             numberType: 2,
             stringType: 'foo2',
-            testEntityPk: 'test-entity-2',
+            testEntityPk: 'test-entity-2'
           },
           min: {
             dateType: expect.stringMatching('2020-02-02'),
             numberType: 2,
             stringType: 'foo2',
-            testEntityPk: 'test-entity-2',
+            testEntityPk: 'test-entity-2'
           },
           sum: {
-            numberType: 2,
-          },
-        },
+            numberType: 2
+          }
+        }
       ]);
     });
   });
@@ -539,11 +542,11 @@ describe('TypeOrmQueryService', (): void => {
           const count = await queryService.count({
             oneTestRelation: {
               testRelationPk: {
-                in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
-              },
-            },
+                in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`]
+              }
+            }
           });
-          expect(count).toEqual(1);
+          expect(count).toBe(1);
         });
       });
 
@@ -553,11 +556,11 @@ describe('TypeOrmQueryService', (): void => {
           const count = await queryService.count({
             testEntity: {
               testEntityPk: {
-                in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[2].testEntityPk],
-              },
-            },
+                in: [TEST_ENTITIES[0].testEntityPk, TEST_ENTITIES[2].testEntityPk]
+              }
+            }
           });
-          expect(count).toEqual(6);
+          expect(count).toBe(6);
         });
       });
 
@@ -568,11 +571,11 @@ describe('TypeOrmQueryService', (): void => {
           const count = await queryService.count({
             testRelations: {
               testEntityId: {
-                in: [relation.testEntityId as string],
-              },
-            },
+                in: [relation.testEntityId as string]
+              }
+            }
           });
-          expect(count).toEqual(1);
+          expect(count).toBe(1);
         });
       });
     });
@@ -586,29 +589,42 @@ describe('TypeOrmQueryService', (): void => {
         return expect(queryResult.map((r) => r.testEntityId)).toEqual([
           TEST_ENTITIES[0].testEntityPk,
           TEST_ENTITIES[0].testEntityPk,
-          TEST_ENTITIES[0].testEntityPk,
+          TEST_ENTITIES[0].testEntityPk
         ]);
       });
+
+      // it('call select and return the result for many to many', async () => {
+      //   const queryService = moduleRef.get(TestEntityService);
+      //   const queryResult = await queryService.queryRelations(TestEntity, 'manyTestRelations', TEST_ENTITIES[0], {});
+      //   expect(queryResult.map((r) => r.manyTestRelations)).toEqual([]);
+      //
+      //   const queryResult2 = await queryService.queryRelations(TestEntity, 'manyTestRelations', TEST_ENTITIES[1], {});
+      //   expect(queryResult2.map((r) => r.manyTestRelations)).toEqual([
+      //     TEST_RELATIONS[0],
+      //     TEST_RELATIONS[1],
+      //     TEST_RELATIONS[2]
+      //   ]);
+      // });
 
       it('should apply a filter', async () => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', TEST_ENTITIES[0], {
-          filter: { testRelationPk: { notLike: '%-1' } },
+          filter: { testRelationPk: { notLike: '%-1' } }
         });
         return expect(queryResult.map((r) => r.testRelationPk)).toEqual([
           TEST_RELATIONS[1].testRelationPk,
-          TEST_RELATIONS[2].testRelationPk,
+          TEST_RELATIONS[2].testRelationPk
         ]);
       });
 
       it('should apply a paging', async () => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', TEST_ENTITIES[0], {
-          paging: { limit: 2, offset: 1 },
+          paging: { limit: 2, offset: 1 }
         });
         return expect(queryResult.map((r) => r.testRelationPk)).toEqual([
           TEST_RELATIONS[1].testRelationPk,
-          TEST_RELATIONS[2].testRelationPk,
+          TEST_RELATIONS[2].testRelationPk
         ]);
       });
 
@@ -644,7 +660,7 @@ describe('TypeOrmQueryService', (): void => {
         const entities = TEST_ENTITIES.slice(0, 3);
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', entities, {
-          filter: { testRelationPk: { notLike: '%-1' } },
+          filter: { testRelationPk: { notLike: '%-1' } }
         });
 
         expect(queryResult.size).toBe(3);
@@ -655,23 +671,58 @@ describe('TypeOrmQueryService', (): void => {
         const entities = TEST_ENTITIES.slice(0, 3);
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', entities, {
-          paging: { limit: 2, offset: 1 },
+          paging: { limit: 2, offset: 1 }
         });
 
         expect(queryResult.size).toBe(3);
-        entities.forEach((e) => expect(queryResult.get(e)).toHaveLength(2));
+        // Only the first entity will have results as we did limit 2
+        entities.forEach((e, index) => expect(queryResult.get(e)).toHaveLength(index === 0 ? 2 : 0));
       });
 
       it('should return an empty array if no results are found.', async () => {
         const entities: TestEntity[] = [TEST_ENTITIES[0], { testEntityPk: 'does-not-exist' } as TestEntity];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', entities, {
-          filter: { relationName: { isNot: null } },
+          filter: { relationName: { isNot: null } }
         });
 
-        expect(queryResult.size).toBe(1);
+        expect(queryResult.size).toBe(2);
         expect(queryResult.get(entities[0])).toHaveLength(3);
-        expect(queryResult.get(entities[1])).toBeUndefined();
+        expect(queryResult.get(entities[1])).toHaveLength(0);
+      });
+
+      describe('manyToMany', () => {
+        it('call select and return the with owning side of the relations', async () => {
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.queryRelations(TestEntity, 'manyTestRelations', [TEST_ENTITIES[1]], {});
+
+          const adaptedQueryResult = new Map();
+          queryResult.forEach((relations, key) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            adaptedQueryResult.set(key, relations.map(({ relationOfTestRelationId, ...relation }) => ({
+              ...relation
+            })));
+          });
+
+          const expectRelations = TEST_RELATIONS.filter((tr) => tr.relationName.endsWith('two'));
+          expect(adaptedQueryResult.get(TEST_ENTITIES[1]).length).toEqual(expectRelations.length);
+          expect(adaptedQueryResult.get(TEST_ENTITIES[1])).toEqual(expect.arrayContaining(expectRelations));
+        });
+
+        it('call select and return the with non owning side of the relations', async () => {
+          const entities = TEST_RELATIONS.slice(0, 2);
+
+          const queryService = moduleRef.get(TestRelationService);
+          const queryResult = await queryService.queryRelations(TestRelation, 'manyTestEntities', entities, {});
+
+          const expectRelations = TEST_ENTITIES.filter((te) => te.numberType % 2 === 0);
+
+          expect(queryResult.get(entities[0]).length).toEqual(0);
+          expect(queryResult.get(entities[0])).toEqual([]);
+          expect(queryResult.get(entities[1]).length).toEqual(expectRelations.length);
+          expect(queryResult.get(entities[1])).toEqual(expect.arrayContaining(expectRelations));
+        });
       });
     });
   });
@@ -685,14 +736,14 @@ describe('TypeOrmQueryService', (): void => {
           'testRelations',
           TEST_ENTITIES[0],
           {},
-          { count: ['testRelationPk'] },
+          { count: ['testRelationPk'] }
         );
         return expect(aggResult).toEqual([
           {
             count: {
-              testRelationPk: 3,
-            },
-          },
+              testRelationPk: 3
+            }
+          }
         ]);
       });
 
@@ -703,14 +754,14 @@ describe('TypeOrmQueryService', (): void => {
           'testRelations',
           TEST_ENTITIES[0],
           { testRelationPk: { notLike: '%-1' } },
-          { count: ['testRelationPk'] },
+          { count: ['testRelationPk'] }
         );
         return expect(aggResult).toEqual([
           {
             count: {
-              testRelationPk: 2,
-            },
-          },
+              testRelationPk: 2
+            }
+          }
         ]);
       });
     });
@@ -727,8 +778,8 @@ describe('TypeOrmQueryService', (): void => {
           {
             count: ['testRelationPk', 'relationName', 'testEntityId'],
             min: ['testRelationPk', 'relationName', 'testEntityId'],
-            max: ['testRelationPk', 'relationName', 'testEntityId'],
-          },
+            max: ['testRelationPk', 'relationName', 'testEntityId']
+          }
         );
 
         expect(queryResult.size).toBe(3);
@@ -741,20 +792,20 @@ describe('TypeOrmQueryService', (): void => {
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo1-test-relation-two',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-3',
+                    testRelationPk: 'test-relations-test-entity-1-3'
                   },
                   min: {
                     relationName: 'foo1-test-relation-one',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-1-1'
+                  }
+                }
+              ]
             ],
             [
               entities[1],
@@ -763,20 +814,20 @@ describe('TypeOrmQueryService', (): void => {
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo2-test-relation-two',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-3',
+                    testRelationPk: 'test-relations-test-entity-2-3'
                   },
                   min: {
                     relationName: 'foo2-test-relation-one',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-2-1'
+                  }
+                }
+              ]
             ],
             [
               entities[2],
@@ -785,22 +836,22 @@ describe('TypeOrmQueryService', (): void => {
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo3-test-relation-two',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-3',
+                    testRelationPk: 'test-relations-test-entity-3-3'
                   },
                   min: {
                     relationName: 'foo3-test-relation-one',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-1',
-                  },
-                },
-              ],
-            ],
-          ]),
+                    testRelationPk: 'test-relations-test-entity-3-1'
+                  }
+                }
+              ]
+            ]
+          ])
         );
       });
 
@@ -816,8 +867,8 @@ describe('TypeOrmQueryService', (): void => {
             groupBy: ['testEntityId'],
             count: ['testRelationPk', 'relationName', 'testEntityId'],
             min: ['testRelationPk', 'relationName', 'testEntityId'],
-            max: ['testRelationPk', 'relationName', 'testEntityId'],
-          },
+            max: ['testRelationPk', 'relationName', 'testEntityId']
+          }
         );
 
         expect(queryResult.size).toBe(3);
@@ -828,77 +879,77 @@ describe('TypeOrmQueryService', (): void => {
               [
                 {
                   groupBy: {
-                    testEntityId: 'test-entity-1',
+                    testEntityId: 'test-entity-1'
                   },
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo1-test-relation-two',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-3',
+                    testRelationPk: 'test-relations-test-entity-1-3'
                   },
                   min: {
                     relationName: 'foo1-test-relation-one',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-1-1'
+                  }
+                }
+              ]
             ],
             [
               entities[1],
               [
                 {
                   groupBy: {
-                    testEntityId: 'test-entity-2',
+                    testEntityId: 'test-entity-2'
                   },
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo2-test-relation-two',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-3',
+                    testRelationPk: 'test-relations-test-entity-2-3'
                   },
                   min: {
                     relationName: 'foo2-test-relation-one',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-2-1'
+                  }
+                }
+              ]
             ],
             [
               entities[2],
               [
                 {
                   groupBy: {
-                    testEntityId: 'test-entity-3',
+                    testEntityId: 'test-entity-3'
                   },
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo3-test-relation-two',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-3',
+                    testRelationPk: 'test-relations-test-entity-3-3'
                   },
                   min: {
                     relationName: 'foo3-test-relation-one',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-1',
-                  },
-                },
-              ],
-            ],
-          ]),
+                    testRelationPk: 'test-relations-test-entity-3-1'
+                  }
+                }
+              ]
+            ]
+          ])
         );
       });
 
@@ -913,8 +964,8 @@ describe('TypeOrmQueryService', (): void => {
           {
             count: ['testRelationPk', 'relationName', 'testEntityId'],
             min: ['testRelationPk', 'relationName', 'testEntityId'],
-            max: ['testRelationPk', 'relationName', 'testEntityId'],
-          },
+            max: ['testRelationPk', 'relationName', 'testEntityId']
+          }
         );
 
         expect(queryResult.size).toBe(3);
@@ -927,20 +978,20 @@ describe('TypeOrmQueryService', (): void => {
                   count: {
                     relationName: 2,
                     testEntityId: 2,
-                    testRelationPk: 2,
+                    testRelationPk: 2
                   },
                   max: {
                     relationName: 'foo1-test-relation-two',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-3',
+                    testRelationPk: 'test-relations-test-entity-1-3'
                   },
                   min: {
                     relationName: 'foo1-test-relation-three',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-2',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-1-2'
+                  }
+                }
+              ]
             ],
             [
               entities[1],
@@ -949,20 +1000,20 @@ describe('TypeOrmQueryService', (): void => {
                   count: {
                     relationName: 2,
                     testEntityId: 2,
-                    testRelationPk: 2,
+                    testRelationPk: 2
                   },
                   max: {
                     relationName: 'foo2-test-relation-two',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-3',
+                    testRelationPk: 'test-relations-test-entity-2-3'
                   },
                   min: {
                     relationName: 'foo2-test-relation-three',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-2',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-2-2'
+                  }
+                }
+              ]
             ],
             [
               entities[2],
@@ -971,22 +1022,22 @@ describe('TypeOrmQueryService', (): void => {
                   count: {
                     relationName: 2,
                     testEntityId: 2,
-                    testRelationPk: 2,
+                    testRelationPk: 2
                   },
                   max: {
                     relationName: 'foo3-test-relation-two',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-3',
+                    testRelationPk: 'test-relations-test-entity-3-3'
                   },
                   min: {
                     relationName: 'foo3-test-relation-three',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-2',
-                  },
-                },
-              ],
-            ],
-          ]),
+                    testRelationPk: 'test-relations-test-entity-3-2'
+                  }
+                }
+              ]
+            ]
+          ])
         );
       });
 
@@ -1001,8 +1052,8 @@ describe('TypeOrmQueryService', (): void => {
           {
             count: ['testRelationPk', 'relationName', 'testEntityId'],
             min: ['testRelationPk', 'relationName', 'testEntityId'],
-            max: ['testRelationPk', 'relationName', 'testEntityId'],
-          },
+            max: ['testRelationPk', 'relationName', 'testEntityId']
+          }
         );
 
         expect(queryResult).toEqual(
@@ -1014,20 +1065,20 @@ describe('TypeOrmQueryService', (): void => {
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo1-test-relation-two',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-3',
+                    testRelationPk: 'test-relations-test-entity-1-3'
                   },
                   min: {
                     relationName: 'foo1-test-relation-one',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-1-1'
+                  }
+                }
+              ]
             ],
             [
               { testEntityPk: 'does-not-exist' } as TestEntity,
@@ -1036,22 +1087,22 @@ describe('TypeOrmQueryService', (): void => {
                   count: {
                     relationName: 0,
                     testEntityId: 0,
-                    testRelationPk: 0,
+                    testRelationPk: 0
                   },
                   max: {
                     relationName: null,
                     testEntityId: null,
-                    testRelationPk: null,
+                    testRelationPk: null
                   },
                   min: {
                     relationName: null,
                     testEntityId: null,
-                    testRelationPk: null,
-                  },
-                },
-              ],
-            ],
-          ]),
+                    testRelationPk: null
+                  }
+                }
+              ]
+            ]
+          ])
         );
       });
     });
@@ -1062,9 +1113,9 @@ describe('TypeOrmQueryService', (): void => {
       it('call count and return the result', async () => {
         const queryService = moduleRef.get(TestEntityService);
         const countResult = await queryService.countRelations(TestRelation, 'testRelations', TEST_ENTITIES[0], {
-          relationName: { isNot: null },
+          relationName: { isNot: null }
         });
-        return expect(countResult).toEqual(3);
+        return expect(countResult).toBe(3);
       });
     });
 
@@ -1073,15 +1124,15 @@ describe('TypeOrmQueryService', (): void => {
         const entities = TEST_ENTITIES.slice(0, 3);
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.countRelations(TestRelation, 'testRelations', entities, {
-          relationName: { isNot: null },
+          relationName: { isNot: null }
         });
 
         expect(queryResult).toEqual(
           new Map([
             [entities[0], 3],
             [entities[1], 3],
-            [entities[2], 3],
-          ]),
+            [entities[2], 3]
+          ])
         );
       });
     });
@@ -1101,12 +1152,12 @@ describe('TypeOrmQueryService', (): void => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult1 = await queryService.findRelation(TestRelation, 'oneTestRelation', entity, {
-          filter: { relationName: { eq: TEST_RELATIONS[0].relationName } },
+          filter: { relationName: { eq: TEST_RELATIONS[0].relationName } }
         });
         expect(queryResult1).toMatchObject(TEST_RELATIONS[0]);
 
         const queryResult2 = await queryService.findRelation(TestRelation, 'oneTestRelation', entity, {
-          filter: { relationName: { eq: TEST_RELATIONS[1].relationName } },
+          filter: { relationName: { eq: TEST_RELATIONS[1].relationName } }
         });
         expect(queryResult2).toBeUndefined();
       });
@@ -1122,7 +1173,7 @@ describe('TypeOrmQueryService', (): void => {
       it('throw an error if a relation with that name is not found.', async () => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(queryService.findRelation(TestRelation, 'badRelation', TEST_ENTITIES[0])).rejects.toThrow(
-          'Unable to find relation badRelation on TestEntity',
+          'Unable to find relation badRelation on TestEntity'
         );
       });
 
@@ -1153,8 +1204,8 @@ describe('TypeOrmQueryService', (): void => {
           new Map([
             [entities[0], TEST_RELATIONS[0]],
             [entities[1], TEST_RELATIONS[3]],
-            [entities[2], TEST_RELATIONS[6]],
-          ]),
+            [entities[2], TEST_RELATIONS[6]]
+          ])
         );
       });
 
@@ -1162,7 +1213,7 @@ describe('TypeOrmQueryService', (): void => {
         const entities = TEST_ENTITIES.slice(0, 3);
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities, {
-          filter: { testRelationPk: { in: [TEST_RELATIONS[0].testRelationPk, TEST_RELATIONS[6].testRelationPk] } },
+          filter: { testRelationPk: { in: [TEST_RELATIONS[0].testRelationPk, TEST_RELATIONS[6].testRelationPk] } }
         });
         const adaptedQueryResult = new Map();
         queryResult.forEach((entry, key) => {
@@ -1172,8 +1223,9 @@ describe('TypeOrmQueryService', (): void => {
         expect(adaptedQueryResult).toEqual(
           new Map([
             [entities[0], TEST_RELATIONS[0]],
-            [entities[2], TEST_RELATIONS[6]],
-          ]),
+            [entities[1], undefined],
+            [entities[2], TEST_RELATIONS[6]]
+          ])
         );
       });
 
@@ -1182,11 +1234,16 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities);
         const adaptedQueryResult = new Map();
+
         queryResult.forEach((entry, key) => {
           delete entry?.relationOfTestRelationId;
           adaptedQueryResult.set(key, entry);
         });
-        expect(adaptedQueryResult).toEqual(new Map([[entities[0], TEST_RELATIONS[0]]]));
+
+        expect(adaptedQueryResult).toEqual(new Map([
+          [entities[0], TEST_RELATIONS[0]],
+          [entities[1], undefined]
+        ]));
       });
     });
   });
@@ -1198,7 +1255,7 @@ describe('TypeOrmQueryService', (): void => {
       const queryResult = await queryService.addRelations(
         'testRelations',
         entity.testEntityPk,
-        TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
+        TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk)
       );
       expect(queryResult).toEqual(entity);
 
@@ -1226,9 +1283,9 @@ describe('TypeOrmQueryService', (): void => {
             entity.testEntityPk,
             TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-            },
-          ),
+              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+            }
+          )
         ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
       });
 
@@ -1241,9 +1298,9 @@ describe('TypeOrmQueryService', (): void => {
             entity.testEntityPk,
             TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              relationFilter: { relationName: { like: '%-one' } },
-            },
-          ),
+              relationFilter: { relationName: { like: '%-one' } }
+            }
+          )
         ).rejects.toThrow('Unable to find all testRelations to add to TestEntity');
       });
     });
@@ -1281,9 +1338,9 @@ describe('TypeOrmQueryService', (): void => {
             entity.testEntityPk,
             TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-            },
-          ),
+              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+            }
+          )
         ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
       });
 
@@ -1296,9 +1353,9 @@ describe('TypeOrmQueryService', (): void => {
             entity.testEntityPk,
             TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              relationFilter: { relationName: { like: '%-one' } },
-            },
-          ),
+              relationFilter: { relationName: { like: '%-one' } }
+            }
+          )
         ).rejects.toThrow('Unable to find all testRelations to set on TestEntity');
       });
     });
@@ -1311,7 +1368,7 @@ describe('TypeOrmQueryService', (): void => {
       const queryResult = await queryService.setRelation(
         'oneTestRelation',
         entity.testEntityPk,
-        TEST_RELATIONS[1].testRelationPk,
+        TEST_RELATIONS[1].testRelationPk
       );
       expect(queryResult).toEqual(entity);
 
@@ -1325,8 +1382,8 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(
           queryService.setRelation('oneTestRelation', entity.testEntityPk, TEST_RELATIONS[1].testRelationPk, {
-            filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-          }),
+            filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+          })
         ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
       });
 
@@ -1339,9 +1396,9 @@ describe('TypeOrmQueryService', (): void => {
             entity.testEntityPk,
             TEST_RELATIONS[1].testRelationPk,
             {
-              relationFilter: { relationName: { like: '%-one' } },
-            },
-          ),
+              relationFilter: { relationName: { like: '%-one' } }
+            }
+          )
         ).rejects.toThrow('Unable to find oneTestRelation to set on TestEntity');
       });
     });
@@ -1354,7 +1411,7 @@ describe('TypeOrmQueryService', (): void => {
       const queryResult = await queryService.removeRelations(
         'testRelations',
         entity.testEntityPk,
-        TEST_RELATIONS.slice(0, 3).map((r) => r.testRelationPk),
+        TEST_RELATIONS.slice(0, 3).map((r) => r.testRelationPk)
       );
       expect(queryResult).toEqual(entity);
 
@@ -1382,9 +1439,9 @@ describe('TypeOrmQueryService', (): void => {
             entity.testEntityPk,
             TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-            },
-          ),
+              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+            }
+          )
         ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
       });
 
@@ -1397,9 +1454,9 @@ describe('TypeOrmQueryService', (): void => {
             entity.testEntityPk,
             TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              relationFilter: { relationName: { like: '%-one' } },
-            },
-          ),
+              relationFilter: { relationName: { like: '%-one' } }
+            }
+          )
         ).rejects.toThrow('Unable to find all testRelations to remove from TestEntity');
       });
     });
@@ -1413,7 +1470,7 @@ describe('TypeOrmQueryService', (): void => {
         const queryResult = await queryService.removeRelation(
           'oneTestRelation',
           entity.testEntityPk,
-          TEST_RELATIONS[0].testRelationPk,
+          TEST_RELATIONS[0].testRelationPk
         );
         expect(queryResult).toEqual(entity);
 
@@ -1427,8 +1484,8 @@ describe('TypeOrmQueryService', (): void => {
           const queryService = moduleRef.get(TestEntityService);
           return expect(
             queryService.removeRelation('oneTestRelation', entity.testEntityPk, TEST_RELATIONS[1].testRelationPk, {
-              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-            }),
+              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+            })
           ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
         });
 
@@ -1441,9 +1498,9 @@ describe('TypeOrmQueryService', (): void => {
               entity.testEntityPk,
               TEST_RELATIONS[1].testRelationPk,
               {
-                relationFilter: { relationName: { like: '%-one' } },
-              },
-            ),
+                relationFilter: { relationName: { like: '%-one' } }
+              }
+            )
           ).rejects.toThrow('Unable to find oneTestRelation to remove from TestEntity');
         });
       });
@@ -1456,7 +1513,7 @@ describe('TypeOrmQueryService', (): void => {
         const queryResult = await queryService.removeRelation(
           'testEntity',
           relation.testRelationPk,
-          TEST_ENTITIES[0].testEntityPk,
+          TEST_ENTITIES[0].testEntityPk
         );
         expect(queryResult).toMatchObject(relation);
 
@@ -1470,8 +1527,8 @@ describe('TypeOrmQueryService', (): void => {
           const queryService = moduleRef.get(TestRelationService);
           return expect(
             queryService.removeRelation('testEntity', relation.testRelationPk, TEST_ENTITIES[1].testEntityPk, {
-              filter: { relationName: { eq: TEST_RELATIONS[1].relationName } },
-            }),
+              filter: { relationName: { eq: TEST_RELATIONS[1].relationName } }
+            })
           ).rejects.toThrow('Unable to find TestRelation with id: test-relations-test-entity-1-1');
         });
 
@@ -1480,8 +1537,8 @@ describe('TypeOrmQueryService', (): void => {
           const queryService = moduleRef.get(TestRelationService);
           return expect(
             queryService.removeRelation('testEntity', relation.testRelationPk, TEST_ENTITIES[0].testEntityPk, {
-              relationFilter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-            }),
+              relationFilter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+            })
           ).rejects.toThrow('Unable to find testEntity to remove from TestRelation');
         });
       });
@@ -1494,7 +1551,7 @@ describe('TypeOrmQueryService', (): void => {
         const queryResult = await queryService.removeRelation(
           'testRelations',
           entity.testEntityPk,
-          TEST_RELATIONS[0].testRelationPk,
+          TEST_RELATIONS[0].testRelationPk
         );
         expect(queryResult).toEqual(entity);
 
@@ -1508,8 +1565,8 @@ describe('TypeOrmQueryService', (): void => {
           const queryService = moduleRef.get(TestEntityService);
           return expect(
             queryService.removeRelation('testRelations', entity.testEntityPk, TEST_RELATIONS[4].testRelationPk, {
-              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-            }),
+              filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+            })
           ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
         });
 
@@ -1522,9 +1579,9 @@ describe('TypeOrmQueryService', (): void => {
               entity.testEntityPk,
               TEST_RELATIONS[4].testRelationPk,
               {
-                relationFilter: { relationName: { like: '%-one' } },
-              },
-            ),
+                relationFilter: { relationName: { like: '%-one' } }
+              }
+            )
           ).rejects.toThrow('Unable to find testRelations to remove from TestEntity');
         });
       });
@@ -1545,21 +1602,40 @@ describe('TypeOrmQueryService', (): void => {
       expect(found).toBeUndefined();
     });
 
+    it('return undefined if deleted', async () => {
+      const entity = TEST_SOFT_DELETE_ENTITIES[0];
+      const queryService = moduleRef.get(TestSoftDeleteEntityService);
+      await queryService.deleteOne(entity.testEntityPk, { useSoftDelete: true });
+      const found = await queryService.findById(entity.testEntityPk);
+      expect(found).toBeUndefined();
+    });
+
+    it('return the entity if deleted and "withDeleted" is on', async () => {
+      const entity = TEST_SOFT_DELETE_ENTITIES[0];
+      const queryService = moduleRef.get(TestSoftDeleteEntityService);
+      await queryService.deleteOne(entity.testEntityPk, { useSoftDelete: true });
+      const found = await queryService.findById(entity.testEntityPk, { withDeleted: true });
+      expect(found).toEqual({
+        ...entity,
+        deletedAt: expect.any(Date)
+      });
+    });
+
     describe('with filter', () => {
       it('should return an entity if all filters match', async () => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const found = await queryService.findById(entity.testEntityPk, {
-          filter: { stringType: { eq: entity.stringType } },
+          filter: { stringType: { eq: entity.stringType } }
         });
         expect(found).toEqual(entity);
       });
 
-      it('should return an undefined if an entitity with the pk and filter is not found', async () => {
+      it('should return an undefined if an entity with the pk and filter is not found', async () => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const found = await queryService.findById(entity.testEntityPk, {
-          filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
+          filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
         });
         expect(found).toBeUndefined();
       });
@@ -1584,7 +1660,7 @@ describe('TypeOrmQueryService', (): void => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const found = await queryService.getById(entity.testEntityPk, {
-          filter: { stringType: { eq: entity.stringType } },
+          filter: { stringType: { eq: entity.stringType } }
         });
         expect(found).toEqual(entity);
       });
@@ -1594,8 +1670,8 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(
           queryService.getById(entity.testEntityPk, {
-            filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-          }),
+            filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+          })
         ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
       });
     });
@@ -1651,12 +1727,14 @@ describe('TypeOrmQueryService', (): void => {
     it('delete all records that match the query', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const { deletedCount } = await queryService.deleteMany({
-        testEntityPk: { in: TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) },
+        testEntityPk: { in: TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) }
       });
       expect(deletedCount).toEqual(expect.any(Number));
       const allCount = await queryService.count({});
       expect(allCount).toBe(5);
     });
+
+    // TODO:: Test Delete many when query contains relations
   });
 
   describe('#deleteOne', () => {
@@ -1676,7 +1754,7 @@ describe('TypeOrmQueryService', (): void => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const deleted = await queryService.deleteOne(entity.testEntityPk, {
-          filter: { stringType: { eq: entity.stringType } },
+          filter: { stringType: { eq: entity.stringType } }
         });
         expect(deleted).toEqual({ ...TEST_ENTITIES[0], testEntityPk: undefined });
       });
@@ -1686,8 +1764,8 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(
           queryService.deleteOne(entity.testEntityPk, {
-            filter: { stringType: { eq: TEST_ENTITIES[1].stringType } },
-          }),
+            filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
+          })
         ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
       });
     });
@@ -1697,7 +1775,7 @@ describe('TypeOrmQueryService', (): void => {
     it('update all entities in the filter', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const filter = {
-        testEntityPk: { in: TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) },
+        testEntityPk: { in: TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) }
       };
       await queryService.updateMany({ stringType: 'updated' }, filter);
       const entities = await queryService.query({ filter });
@@ -1708,7 +1786,7 @@ describe('TypeOrmQueryService', (): void => {
     it('should reject if the update contains a primary key', () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.updateMany({ testEntityPk: 'updated' }, {})).rejects.toThrow(
-        'Id cannot be specified when updating',
+        'Id cannot be specified when updating'
       );
     });
   });
@@ -1723,14 +1801,14 @@ describe('TypeOrmQueryService', (): void => {
     it('should reject if the update contains a primary key', async () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.updateOne(TEST_ENTITIES[0].testEntityPk, { testEntityPk: 'bad-id' })).rejects.toThrow(
-        'Id cannot be specified when updating',
+        'Id cannot be specified when updating'
       );
     });
 
     it('call fail if the entity is not found', async () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.updateOne('bad-id', { stringType: 'updated' })).rejects.toThrow(
-        'Unable to find TestEntity with id: bad-id',
+        'Unable to find TestEntity with id: bad-id'
       );
     });
 
@@ -1741,7 +1819,7 @@ describe('TypeOrmQueryService', (): void => {
         const updated = await queryService.updateOne(
           entity.testEntityPk,
           { stringType: 'updated' },
-          { filter: { stringType: { eq: entity.stringType } } },
+          { filter: { stringType: { eq: entity.stringType } } }
         );
         expect(updated).toEqual({ ...entity, stringType: 'updated' });
       });
@@ -1753,8 +1831,8 @@ describe('TypeOrmQueryService', (): void => {
           queryService.updateOne(
             entity.testEntityPk,
             { stringType: 'updated' },
-            { filter: { stringType: { eq: TEST_ENTITIES[1].stringType } } },
-          ),
+            { filter: { stringType: { eq: TEST_ENTITIES[1].stringType } } }
+          )
         ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
       });
     });
@@ -1779,9 +1857,11 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestSoftDeleteEntityService);
         const entity = TEST_SOFT_DELETE_ENTITIES[0];
         const deleted = await queryService.deleteOne(entity.testEntityPk);
-        expect(deleted).toEqual({ ...entity, deletedAt: null });
+        expect(deleted).toEqual({ ...entity, deletedAt: expect.any(Date) });
+
         const foundEntity = await queryService.findById(entity.testEntityPk);
         expect(foundEntity).toBeUndefined();
+
         const deletedEntity = await queryService.repo.findOne(entity.testEntityPk, { withDeleted: true });
         expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) });
       });
@@ -1789,7 +1869,7 @@ describe('TypeOrmQueryService', (): void => {
       it('should fail if the entity is not found', async () => {
         const queryService = moduleRef.get(TestSoftDeleteEntityService);
         return expect(queryService.deleteOne('bad-id')).rejects.toThrow(
-          'Unable to find TestSoftDeleteEntity with id: bad-id',
+          'Unable to find TestSoftDeleteEntity with id: bad-id'
         );
       });
     });
@@ -1808,14 +1888,14 @@ describe('TypeOrmQueryService', (): void => {
       it('should fail if the entity is not found', async () => {
         const queryService = moduleRef.get(TestSoftDeleteEntityService);
         return expect(queryService.restoreOne('bad-id')).rejects.toThrow(
-          'Unable to find TestSoftDeleteEntity with id: bad-id',
+          'Unable to find TestSoftDeleteEntity with id: bad-id'
         );
       });
 
       it('should fail if the useSoftDelete is not enabled', async () => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(queryService.restoreOne(TEST_ENTITIES[0].testEntityPk)).rejects.toThrow(
-          'Restore not allowed for non soft deleted entity TestEntity.',
+          'Restore not allowed for non soft deleted entity TestEntity.'
         );
       });
 
@@ -1825,7 +1905,7 @@ describe('TypeOrmQueryService', (): void => {
           const entity = TEST_SOFT_DELETE_ENTITIES[0];
           await queryService.deleteOne(entity.testEntityPk);
           const restored = await queryService.restoreOne(entity.testEntityPk, {
-            filter: { stringType: { eq: entity.stringType } },
+            filter: { stringType: { eq: entity.stringType } }
           });
           expect(restored).toEqual({ ...entity, deletedAt: null });
           const foundEntity = await queryService.findById(entity.testEntityPk);
@@ -1838,8 +1918,8 @@ describe('TypeOrmQueryService', (): void => {
           await queryService.deleteOne(entity.testEntityPk);
           return expect(
             queryService.restoreOne(entity.testEntityPk, {
-              filter: { stringType: { eq: TEST_SOFT_DELETE_ENTITIES[1].stringType } },
-            }),
+              filter: { stringType: { eq: TEST_SOFT_DELETE_ENTITIES[1].stringType } }
+            })
           ).rejects.toThrow(`Unable to find TestSoftDeleteEntity with id: ${entity.testEntityPk}`);
         });
       });
@@ -1859,7 +1939,7 @@ describe('TypeOrmQueryService', (): void => {
       it('should fail if the useSoftDelete is not enabled', async () => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(queryService.restoreMany({ stringType: { eq: 'foo' } })).rejects.toThrow(
-          'Restore not allowed for non soft deleted entity TestEntity.',
+          'Restore not allowed for non soft deleted entity TestEntity.'
         );
       });
     });

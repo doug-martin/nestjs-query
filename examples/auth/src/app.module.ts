@@ -4,13 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
-import { typeormOrmConfig } from '../../helpers';
+import { formatGraphqlError, typeormOrmConfig } from '../../helpers';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 
 interface HeadersContainer {
   headers?: Record<string, string>;
 }
+
 interface ContextArgs {
   req?: HeadersContainer;
   connection?: { context: HeadersContainer };
@@ -24,16 +25,18 @@ interface ContextArgs {
       installSubscriptionHandlers: true,
       subscriptions: {
         'subscriptions-transport-ws': {
-          onConnect: (connectionParams: unknown) => ({ headers: connectionParams }),
-        },
+          onConnect: (connectionParams: unknown) => ({ headers: connectionParams })
+        }
       },
       context: ({ req, connection }: ContextArgs) => ({ req: { ...req, ...connection?.context } }),
+      formatError: formatGraphqlError
     }),
     AuthModule,
     UserModule,
     TodoItemModule,
     SubTaskModule,
-    TagModule,
-  ],
+    TagModule
+  ]
 })
-export class AppModule {}
+export class AppModule {
+}

@@ -2,7 +2,7 @@ import merge from 'lodash.merge';
 import { Paging, Query, SortDirection, SortField, SortNulls } from '../interfaces';
 import { SortBuilder } from './sort.builder';
 import { PageBuilder } from './page.builder';
-import { transformFilter, applyFilter } from './filter.helpers';
+import { transformFilter, applyFilter, mergeFilter } from './filter.helpers';
 
 export type QueryFieldMap<From, To, T extends keyof To = keyof To> = {
   [F in keyof From]?: T;
@@ -30,7 +30,13 @@ export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFiel
   sorting: transformSort(query.sorting, fieldMap),
 });
 
-export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => merge(base, source);
+export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
+  const { filter: baseFilter = {}, ...restBase } = base;
+  const { filter: sourceFilter = {}, ...restSource } = source;
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  return merge(restBase, restSource, { filter: mergeFilter(baseFilter, sourceFilter) }) as Query<T>;
+};
 
 export const applySort = <DTO>(dtos: DTO[], sortFields: SortField<DTO>[]): DTO[] => SortBuilder.build(sortFields)(dtos);
 

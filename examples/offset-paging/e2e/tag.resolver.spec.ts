@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import { OffsetConnectionType } from '@nestjs-query/query-graphql';
+import { OffsetConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { AppModule } from '../src/app.module';
 import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
@@ -56,7 +56,7 @@ describe('TagResolver (limitOffset - e2e)', () => {
         })
         .expect(200, { data: { tag: tags[0] } }));
 
-    it(`should return null if the tag is not found`, () =>
+    it(`should throw item not found on non existing tag`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -68,10 +68,10 @@ describe('TagResolver (limitOffset - e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: {
-            tag: null,
-          },
+                .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
     it(`should return todoItems as a connection`, () =>

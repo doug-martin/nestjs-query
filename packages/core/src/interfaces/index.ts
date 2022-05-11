@@ -13,4 +13,5 @@ export * from './find-by-id-options.interface';
 export * from './get-by-id-options.interface';
 export * from './update-one-options.interface';
 export * from './delete-one-options.interface';
+export * from './delete-many-options.interface';
 export * from './filterable.interface';

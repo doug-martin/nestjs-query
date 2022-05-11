@@ -1,0 +1,34 @@
+{
+  "sourceRoot": "packages/query-typeorm/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/query-typeorm",
+        "tsConfig": "packages/query-typeorm/tsconfig.lib.json",
+        "packageJson": "packages/query-typeorm/package.json",
+        "main": "packages/query-typeorm/src/index.ts",
+        "assets": ["packages/query-typeorm/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/query-typeorm/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/query-typeorm"],
+      "options": {
+        "jestConfig": "packages/query-typeorm/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["core"]
+}

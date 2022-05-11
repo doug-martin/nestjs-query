@@ -1,14 +1,14 @@
 {
-  "name": "@nestjs-query/query-sequelize",
-  "version": "0.30.0",
-  "description": "Sequelize adapter for @nestjs-query/core",
+  "name": "@ptc-org/nestjs-query-sequelize",
+  "version": "1.0.0-alpha.1",
+  "description": "Sequelize adapter for @ptc-org/nestjs-query-core",
   "author": "doug-martin <doug@dougamartin.com>",
-  "homepage": "https://github.com/doug-martin/nestjs-query#readme",
+  "homepage": "https://github.com/tripss/nestjs-query#readme",
   "license": "MIT",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "directories": {
-    "lib": "dist/src",
+    "lib": "src",
     "test": "__tests__"
   },
   "files": [
@@ -18,7 +18,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.30.0",
     "camel-case": "^4.1.2",
     "lodash.pick": "4.4.0",
     "tslib": "^2.1.0"
@@ -29,29 +28,12 @@
     "sequelize": "^6.5.0",
     "sequelize-typescript": "^1.1.0 || ^2.0.0"
   },
-  "devDependencies": {
-    "@nestjs/common": "8.1.2",
-    "@nestjs/sequelize": "8.0.0",
-    "@nestjs/testing": "8.1.2",
-    "@types/lodash.pick": "4.4.6",
-    "sequelize": "6.8.0",
-    "sequelize-typescript": "2.1.1",
-    "sqlite3": "5.0.2",
-    "ts-mockito": "2.6.1",
-    "typescript": "4.4.4"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/doug-martin/nestjs-query.git",
+    "url": "git+https://github.com/tripss/nestjs-query.git",
     "directory": "packages/query-sequelize"
   },
-  "scripts": {
-    "prepublishOnly": "npm run build",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo"
-  },
   "bugs": {
-    "url": "https://github.com/doug-martin/nestjs-query/issues"
+    "url": "https://github.com/tripss/nestjs-query/issues"
   }
 }

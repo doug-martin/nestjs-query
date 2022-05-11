@@ -1,5 +1,5 @@
-import { AggregateResponse } from '@nestjs-query/core';
-import { CursorConnectionType } from '@nestjs-query/query-graphql';
+import { AggregateResponse } from '@ptc-org/nestjs-query-core';
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -135,7 +135,7 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           });
         }));
 
-    it(`should return null if the sub task is not found`, () =>
+    it(`should throw item not found on non existing sub task`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -147,10 +147,10 @@ describe('SubTaskResolver (typeorm - e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: {
-            subTask: null,
-          },
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
     it(`should return a todo item`, () =>

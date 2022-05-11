@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
-import { AggregateResponse } from '@nestjs-query/core';
+import { AggregateResponse } from '@ptc-org/nestjs-query-core';
 import { Resolver, Query, ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
-import { AggregateResponseType, FilterableField } from '../../../src';
+import { AggregateResponseType, FilterableField } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../../__fixtures__';
 
 describe('AggregateResponseType', (): void => {

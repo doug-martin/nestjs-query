@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Class } from '@nestjs-query/core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import * as nestGraphql from '@nestjs/graphql';
 import { ReturnTypeFunc, MutationOptions } from '@nestjs/graphql';
 import { ResolverMutation } from '../../src/decorators';

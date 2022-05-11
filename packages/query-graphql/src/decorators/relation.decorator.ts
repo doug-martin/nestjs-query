@@ -1,4 +1,4 @@
-import { ArrayReflector, Class, getPrototypeChain } from '@nestjs-query/core';
+import { ArrayReflector, Class, getPrototypeChain } from '@ptc-org/nestjs-query-core';
 import { RelationsOpts, ResolverRelation } from '../resolvers/relations';
 import { PagingStrategies } from '../types/query/paging';
 import { RELATION_KEY } from './constants';
@@ -29,16 +29,18 @@ function getRelationsDescriptors<DTO>(DTOClass: Class<DTO>): RelationDescriptor<
 
 function convertRelationsToOpts(
   relations: RelationDescriptor<unknown>[],
-  baseOpts?: BaseResolverOptions,
+  baseOpts?: BaseResolverOptions
 ): RelationsOpts {
   const relationOpts: RelationsOpts = {};
-  relations.forEach((r) => {
-    const DTO = r.relationTypeFunc();
-    const opts = mergeBaseResolverOpts({ ...r.relationOpts, DTO }, baseOpts ?? {});
-    if (r.isMany) {
-      relationOpts.many = { ...relationOpts.many, [r.name]: opts };
+  relations.forEach((relation) => {
+    const DTO = relation.relationTypeFunc();
+    const opts = mergeBaseResolverOpts({ ...relation.relationOpts, DTO }, baseOpts ?? {});
+
+    if (relation.isMany) {
+      relationOpts.many = { ...relationOpts.many, [relation.name]: opts };
+
     } else {
-      relationOpts.one = { ...relationOpts.one, [r.name]: opts };
+      relationOpts.one = { ...relationOpts.one, [relation.name]: opts };
     }
   });
   return relationOpts;
@@ -51,20 +53,20 @@ export function getRelations<DTO>(DTOClass: Class<DTO>, opts?: BaseResolverOptio
 
 const relationDecorator =
   (isMany: boolean, allowFiltering: boolean, pagingStrategy?: PagingStrategies) =>
-  <DTO, Relation>(
-    name: string,
-    relationTypeFunc: RelationTypeFunc<Relation>,
-    options?: RelationDecoratorOpts<Relation>,
-  ): RelationClassDecorator<DTO> =>
-  <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-    reflector.append(DTOClass, {
-      name,
-      isMany,
-      relationOpts: { pagingStrategy, allowFiltering, ...options },
-      relationTypeFunc,
-    });
-    return DTOClass;
-  };
+    <DTO, Relation>(
+      name: string,
+      relationTypeFunc: RelationTypeFunc<Relation>,
+      options?: RelationDecoratorOpts<Relation>
+    ): RelationClassDecorator<DTO> =>
+      <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
+        reflector.append(DTOClass, {
+          name,
+          isMany,
+          relationOpts: { pagingStrategy, allowFiltering, ...options },
+          relationTypeFunc
+        });
+        return DTOClass;
+      };
 
 export const Relation = relationDecorator(false, false);
 export const FilterableRelation = relationDecorator(false, true);

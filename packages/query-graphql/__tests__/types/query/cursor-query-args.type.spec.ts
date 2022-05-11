@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { SortDirection, SortNulls } from '@nestjs-query/core';
+import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import {
   Args,
   ArgsType,
@@ -14,7 +14,7 @@ import {
 } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { FilterableField, PagingStrategies, QueryArgsType } from '../../../src';
+import { FilterableField, PagingStrategies, QueryArgsType } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../../__fixtures__';
 
 describe('Cursor paging strategy QueryArgsType with manual options', (): void => {
@@ -201,12 +201,17 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
 
     it('should ignore a maxResultsSize for paging.first and paging.last if maxResultSize === -1', () => {
       class NoMaxQueryArgsTpe extends QueryArgsType(TestDto, { maxResultsSize: -1 }) {}
+
       const queryObjFirst: NoMaxQueryArgsTpe = {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         paging: { first: 1000 },
       };
       expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObjFirst))).toEqual([]);
 
       const queryObjLast: NoMaxQueryArgsTpe = {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         paging: { last: 1000, before: 'abc' },
       };
       const queryInstance = plainToClass(NoMaxQueryArgsTpe, queryObjLast);

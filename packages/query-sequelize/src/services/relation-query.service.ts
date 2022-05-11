@@ -8,7 +8,7 @@ import {
   ModifyRelationOptions,
   GetByIdOptions,
   FindRelationOptions,
-} from '@nestjs-query/core';
+} from '@ptc-org/nestjs-query-core';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { ModelCtor as SequelizeModelCtor } from 'sequelize';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';

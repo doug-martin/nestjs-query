@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { Type } from 'class-transformer';
 import { ValidateNested, ArrayNotEmpty } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';

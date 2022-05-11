@@ -1,4 +1,4 @@
-import { Class, Filter, invertSort, mergeFilter, Query, SortDirection, SortField } from '@nestjs-query/core';
+import { Class, Filter, invertSort, mergeFilter, Query, SortDirection, SortField } from '@ptc-org/nestjs-query-core';
 import { plainToClass } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
 import { KeySetCursorPayload, KeySetPagingOpts, PagerStrategy } from './pager-strategy';

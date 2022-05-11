@@ -1,4 +1,4 @@
-import { Filter, Paging, Query, SortField, getFilterFields, AggregateQuery } from '@nestjs-query/core';
+import { Filter, Paging, Query, SortField, getFilterFields, AggregateQuery } from '@ptc-org/nestjs-query-core';
 import {
   DeleteQueryBuilder,
   QueryBuilder,
@@ -41,19 +41,11 @@ interface Pageable<Entity> extends QueryBuilder<Entity> {
 /**
  * @internal
  *
- * Workaround for nested record types, see
- * https://github.com/microsoft/TypeScript/pull/33050#issuecomment-714348057
- */
-interface R<T> {
-  [keys: string]: T;
-}
-
-/**
- * @internal
- *
  * Nested record type
  */
-export type NestedRecord = R<NestedRecord>;
+export interface NestedRecord<E = unknown> {
+  [keys: string]: NestedRecord<E>;
+}
 
 /**
  * @internal
@@ -256,7 +248,7 @@ export class FilterQueryBuilder<Entity> {
    *
    * @returns true if there are any referenced relations
    */
-  filterHasRelations(filter?: Filter<Entity>): boolean {
+  public filterHasRelations(filter?: Filter<Entity>): boolean {
     if (!filter) {
       return false;
     }

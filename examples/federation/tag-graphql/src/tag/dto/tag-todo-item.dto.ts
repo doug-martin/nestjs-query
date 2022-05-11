@@ -1,5 +1,5 @@
 import { ObjectType, GraphQLISODateTime, ID } from '@nestjs/graphql';
-import { FilterableField, Relation, Reference } from '@nestjs-query/query-graphql';
+import { FilterableField, Relation, Reference } from '@ptc-org/nestjs-query-graphql';
 import { TagDTO } from './tag.dto';
 import { TodoItemReferenceDTO } from './todo-item-reference.dto';
 

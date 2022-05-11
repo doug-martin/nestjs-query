@@ -1,4 +1,4 @@
-import { Assembler, AssemblerFactory, ClassTransformerAssembler, DefaultAssembler } from '../../src';
+import { Assembler, AssemblerFactory, ClassTransformerAssembler, DefaultAssembler } from '@ptc-org/nestjs-query-core';
 
 describe('AssemblerFactory', () => {
   class TestDTO {

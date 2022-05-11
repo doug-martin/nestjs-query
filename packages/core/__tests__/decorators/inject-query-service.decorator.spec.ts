@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { Injectable } from '@nestjs/common';
-import { QueryService, InjectQueryService, getQueryServiceToken, NoOpQueryService } from '../../src';
+import { QueryService, InjectQueryService, getQueryServiceToken, NoOpQueryService } from '@ptc-org/nestjs-query-core';
 
 describe('@InjectQueryService', () => {
   class TestEntity {}

@@ -1,4 +1,4 @@
-import { Class, Query, ValueReflector } from '@nestjs-query/core';
+import { Class, Query, ValueReflector } from '@ptc-org/nestjs-query-core';
 import { PagingStrategies } from '../query';
 import { QueryMany, StaticConnectionType } from './interfaces';
 

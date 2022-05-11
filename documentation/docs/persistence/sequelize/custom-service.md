@@ -17,7 +17,7 @@ export class TodoItemService extends SequelizeQueryService<TodoItemEntity> {
   }
 
   async markAllAsCompleted(): Promise<number> {
-    const entities = await this.query({ filter: { completed: { is: true } } });
+    const entities = await this.query({ filter: { completed: { is: false } } });
 
     const { updatedCount } = await this.updateMany(
       { completed: true }, // update

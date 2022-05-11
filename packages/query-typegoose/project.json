@@ -1,0 +1,34 @@
+{
+  "sourceRoot": "packages/query-typegoose/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/query-typegoose/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/query-typegoose"],
+      "options": {
+        "jestConfig": "packages/query-typegoose/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/query-typegoose",
+        "tsConfig": "packages/query-typegoose/tsconfig.lib.json",
+        "packageJson": "packages/query-typegoose/package.json",
+        "main": "packages/query-typegoose/src/index.ts",
+        "assets": ["packages/query-typegoose/*.md"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["core"]
+}

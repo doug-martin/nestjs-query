@@ -13,7 +13,8 @@ import {
   UpdateOneOptions,
   DeleteOneOptions,
   Filterable,
-} from '@nestjs-query/core';
+  DeleteManyOptions
+} from '@ptc-org/nestjs-query-core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { MethodNotAllowedException, NotFoundException } from '@nestjs/common';
@@ -41,16 +42,14 @@ export interface TypeOrmQueryServiceOpts<Entity> {
  * }
  * ```
  */
-export class TypeOrmQueryService<Entity>
-  extends RelationQueryService<Entity>
-  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
-{
+export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
   readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   readonly useSoftDelete: boolean;
 
   constructor(readonly repo: Repository<Entity>, opts?: TypeOrmQueryServiceOpts<Entity>) {
     super();
+
     this.filterQueryBuilder = opts?.filterQueryBuilder ?? new FilterQueryBuilder<Entity>(this.repo);
     this.useSoftDelete = opts?.useSoftDelete ?? false;
   }
@@ -61,7 +60,7 @@ export class TypeOrmQueryService<Entity>
   }
 
   /**
-   * Query for multiple entities, using a Query from `@nestjs-query/core`.
+   * Query for multiple entities, using a Query from `@ptc-org/nestjs-query-core`.
    *
    * @example
    * ```ts
@@ -79,7 +78,7 @@ export class TypeOrmQueryService<Entity>
 
   async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>[]> {
     return AggregateBuilder.asyncConvertToAggregateResponse(
-      this.filterQueryBuilder.aggregate({ filter }, aggregate).getRawMany<Record<string, unknown>>(),
+      this.filterQueryBuilder.aggregate({ filter }, aggregate).getRawMany<Record<string, unknown>>()
     );
   }
 
@@ -97,7 +96,11 @@ export class TypeOrmQueryService<Entity>
    * @param id - The id of the record to find.
    */
   async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
-    return this.filterQueryBuilder.selectById(id, opts ?? {}).getOne();
+    const qb = this.filterQueryBuilder.selectById(id, opts ?? {});
+    if (opts?.withDeleted) {
+      qb.withDeleted();
+    }
+    return qb.getOne();
   }
 
   /**
@@ -132,6 +135,9 @@ export class TypeOrmQueryService<Entity>
    */
   async createOne(record: DeepPartial<Entity>): Promise<Entity> {
     const entity = await this.ensureIsEntityAndDoesNotExist(record);
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return this.repo.save(entity);
   }
 
@@ -149,6 +155,8 @@ export class TypeOrmQueryService<Entity>
    */
   async createMany(records: DeepPartial<Entity>[]): Promise<Entity[]> {
     const entities = await Promise.all(records.map((r) => this.ensureIsEntityAndDoesNotExist(r)));
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return this.repo.save(entities);
   }
 
@@ -166,11 +174,13 @@ export class TypeOrmQueryService<Entity>
   async updateOne(id: number | string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
     const entity = await this.getById(id, opts);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return this.repo.save(this.repo.merge(entity, update));
   }
 
   /**
-   * Update multiple entities with a `@nestjs-query/core` Filter.
+   * Update multiple entities with a `@ptc-org/nestjs-query-core` Filter.
    *
    * @example
    * ```ts
@@ -184,10 +194,32 @@ export class TypeOrmQueryService<Entity>
    */
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
-    const updateResult = await this.filterQueryBuilder
-      .update({ filter })
-      .set({ ...(update as QueryDeepPartialEntity<Entity>) })
-      .execute();
+    let updateResult;
+
+    // If the update has relations then fetch all the id's and then do an update on the ids returned
+    if (this.filterQueryBuilder.filterHasRelations(filter)) {
+      const builder = this.filterQueryBuilder.select({ filter })
+        .distinct(true);
+
+      const distinctRecords = await builder
+        .addSelect(`${builder.alias}.id`)
+        .getRawMany();
+
+      const ids = distinctRecords.map(({ id }) => id);
+      const idsFilter = { id: { in: ids } } as Filter<Entity>;
+
+      updateResult = await this.filterQueryBuilder
+        .update({ filter: idsFilter })
+        .set({ ...(update as QueryDeepPartialEntity<Entity>) })
+        .execute();
+
+    } else {
+      updateResult = await this.filterQueryBuilder
+        .update({ filter })
+        .set({ ...(update as QueryDeepPartialEntity<Entity>) })
+        .execute();
+    }
+
     return { updatedCount: updateResult.affected || 0 };
   }
 
@@ -202,17 +234,21 @@ export class TypeOrmQueryService<Entity>
    *
    * @param id - The `id` of the entity to delete.
    * @param filter Additional filter to use when finding the entity to delete.
+   * @param opts - Additional options.
    */
   async deleteOne(id: string | number, opts?: DeleteOneOptions<Entity>): Promise<Entity> {
     const entity = await this.getById(id, opts);
-    if (this.useSoftDelete) {
+    if (this.useSoftDelete || opts?.useSoftDelete) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       return this.repo.softRemove(entity);
     }
+
     return this.repo.remove(entity);
   }
 
   /**
-   * Delete multiple records with a `@nestjs-query/core` `Filter`.
+   * Delete multiple records with a `@ptc-org/nestjs-query-core` `Filter`.
    *
    * @example
    *
@@ -223,15 +259,40 @@ export class TypeOrmQueryService<Entity>
    * ```
    *
    * @param filter - A `Filter` to find records to delete.
+   * @param opts - Additional delete many options
    */
-  async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
-    let deleteResult: DeleteResult;
-    if (this.useSoftDelete) {
-      deleteResult = await this.filterQueryBuilder.softDelete({ filter }).execute();
+  async deleteMany(filter: Filter<Entity>, opts?: DeleteManyOptions<Entity>): Promise<DeleteManyResponse> {
+    let deleteResult = {} as DeleteResult;
+
+    if (this.filterQueryBuilder.filterHasRelations(filter)) {
+      const builder = this.filterQueryBuilder.select({ filter })
+        .distinct(true);
+
+      const distinctRecords = await builder
+        .addSelect(`${builder.alias}.id`)
+        .getRawMany();
+
+      const ids = distinctRecords.map(({ id }) => id);
+      const idsFilter = { id: { in: ids } } as Filter<Entity>;
+
+      if (ids.length > 0) {
+        if (this.useSoftDelete || opts?.useSoftDelete) {
+          deleteResult = await this.filterQueryBuilder.softDelete({ filter: idsFilter }).execute();
+
+        } else {
+          deleteResult = await this.filterQueryBuilder.delete({ filter: idsFilter }).execute();
+        }
+      }
     } else {
-      deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
+      if (this.useSoftDelete || opts?.useSoftDelete) {
+        deleteResult = await this.filterQueryBuilder.softDelete({ filter }).execute();
+
+      } else {
+        deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
+      }
     }
-    return { deletedCount: deleteResult.affected || 0 };
+
+    return { deletedCount: deleteResult?.affected || 0 };
   }
 
   /**
@@ -253,7 +314,7 @@ export class TypeOrmQueryService<Entity>
   }
 
   /**
-   * Restores multiple records with a `@nestjs-query/core` `Filter`.
+   * Restores multiple records with a `@ptc-org/nestjs-query-core` `Filter`.
    *
    * @example
    *
@@ -271,16 +332,18 @@ export class TypeOrmQueryService<Entity>
     return { updatedCount: result.affected || 0 };
   }
 
-  private async ensureIsEntityAndDoesNotExist(e: DeepPartial<Entity>): Promise<Entity> {
-    if (!(e instanceof this.EntityClass)) {
-      return this.ensureEntityDoesNotExist(this.repo.create(e));
+  private async ensureIsEntityAndDoesNotExist(entity: DeepPartial<Entity>): Promise<Entity> {
+    if (!(entity instanceof this.EntityClass)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return this.ensureEntityDoesNotExist(this.repo.create(entity));
     }
-    return this.ensureEntityDoesNotExist(e);
+    return this.ensureEntityDoesNotExist(entity);
   }
 
   private async ensureEntityDoesNotExist(e: Entity): Promise<Entity> {
     if (this.repo.hasId(e)) {
-      const found = await this.repo.findOne(this.repo.getId(e));
+      const found = await this.repo.findOne(this.repo.getId(e) as string | number);
       if (found) {
         throw new Error('Entity already exists');
       }

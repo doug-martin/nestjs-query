@@ -141,7 +141,7 @@ enum SortNulls {
 
 `;
 
-exports[`ReadResolver query many should not create a new type if the QueryArgs is supplied 1`] = `
+exports[`ReadResolver #queryMany should not create a new type if the QueryArgs is supplied 1`] = `
 type TestResolverDTO {
   id: ID!
   stringField: String!
@@ -192,7 +192,7 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   testResolverDTOS(
     other: String!
 
@@ -288,7 +288,7 @@ enum SortNulls {
 
 `;
 
-exports[`ReadResolver query many should not expose query method if disabled 1`] = `
+exports[`ReadResolver #queryMany should not expose query method if disabled 1`] = `
 type TestResolverDTO {
   id: ID!
   stringField: String!
@@ -331,13 +331,13 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   test: TestResolverDTO!
 }
 
 `;
 
-exports[`ReadResolver query many should not use a connection if pagingStrategy is OFFSET 1`] = `
+exports[`ReadResolver #queryMany should not use a connection if pagingStrategy is OFFSET 1`] = `
 type TestResolverDTO {
   id: ID!
   stringField: String!
@@ -388,7 +388,7 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   testResolverDTOS(
     """Limit or page results."""
     paging: OffsetPaging = {limit: 10}
@@ -476,7 +476,7 @@ enum SortNulls {
 
 `;
 
-exports[`ReadResolver query many should use a connection if custom QueryArgs is a cursor 1`] = `
+exports[`ReadResolver #queryMany should use a connection if custom QueryArgs is a cursor 1`] = `
 type TestResolverDTO {
   id: ID!
   stringField: String!
@@ -527,7 +527,7 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   testResolverDTOS(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}
@@ -621,7 +621,7 @@ enum SortNulls {
 
 `;
 
-exports[`ReadResolver query many should use an offset connection if custom QueryArgs is a limit offset 1`] = `
+exports[`ReadResolver #queryMany should use an offset connection if custom QueryArgs is a limit offset 1`] = `
 type TestResolverDTO {
   id: ID!
   stringField: String!
@@ -672,7 +672,7 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   testResolverDTOS(
     """Limit or page results."""
     paging: OffsetPaging = {limit: 10}
@@ -811,7 +811,7 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   testResolverDTOS(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}
@@ -956,7 +956,7 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   testResolverDTOS(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}
@@ -1101,7 +1101,7 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   testResolverDTOS(
     """Limit or page results."""
     paging: OffsetPaging = {limit: 10}
@@ -1426,7 +1426,7 @@ type Query {
   testResolverDTO(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   read_many_test(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}
@@ -1571,7 +1571,7 @@ type Query {
   read_one_test(
     """The id of the record to find."""
     id: ID!
-  ): TestResolverDTO
+  ): TestResolverDTO!
   testResolverDTOS(
     """Limit or page results."""
     paging: CursorPaging = {first: 10}

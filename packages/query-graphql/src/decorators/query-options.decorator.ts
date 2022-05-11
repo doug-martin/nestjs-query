@@ -1,4 +1,4 @@
-import { Class, MetaValue, ValueReflector } from '@nestjs-query/core';
+import { Class, MetaValue, ValueReflector } from '@ptc-org/nestjs-query-core';
 import { QueryArgsTypeOpts } from '../types';
 import { QUERY_OPTIONS_KEY } from './constants';
 
@@ -12,5 +12,5 @@ export function QueryOptions(opts: QueryOptionsDecoratorOpts<any>) {
     valueReflector.set(target, opts);
   };
 }
-export const getQueryOptions = <DTO>(DTOClass: Class<DTO>): MetaValue<QueryArgsTypeOpts<DTO>> =>
-  valueReflector.get(DTOClass);
+
+export const getQueryOptions = <DTO>(DTOClass: Class<DTO>): MetaValue<QueryArgsTypeOpts<DTO>> => valueReflector.get(DTOClass);

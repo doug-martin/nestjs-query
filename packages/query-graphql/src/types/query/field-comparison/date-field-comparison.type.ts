@@ -1,4 +1,4 @@
-import { Class, FilterFieldComparison } from '@nestjs-query/core';
+import { Class, FilterFieldComparison } from '@ptc-org/nestjs-query-core';
 import { Field, GraphQLISODateTime, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsDate, IsOptional, ValidateNested } from 'class-validator';

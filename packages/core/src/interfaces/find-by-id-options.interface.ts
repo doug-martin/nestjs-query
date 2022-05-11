@@ -1,3 +1,8 @@
 import { Filterable } from './filterable.interface';
 
-export type FindByIdOptions<DTO> = Filterable<DTO>;
+export interface FindByIdOptions<DTO> extends Filterable<DTO> {
+  /**
+   * Allow also deleted records to be get
+   */
+  withDeleted?: boolean;
+}

@@ -1,6 +1,6 @@
 import { Min, Validate, IsPositive } from 'class-validator';
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { Class } from '@nestjs-query/core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
 import { CannotUseWith, CannotUseWithout, IsUndefined } from '../../validators';
 import { PagingStrategies } from './constants';

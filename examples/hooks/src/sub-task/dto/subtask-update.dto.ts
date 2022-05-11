@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsOptional, IsBoolean, IsString, IsNotEmpty } from 'class-validator';
-import { BeforeUpdateMany, BeforeUpdateOne } from '@nestjs-query/query-graphql';
+import { BeforeUpdateMany, BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql';
 import { UpdatedByHook } from '../../hooks';
 
 @InputType('SubTaskUpdate')

@@ -1,4 +1,4 @@
-import { Class, Filter, Query, SortField } from '@nestjs-query/core';
+import { Class, Filter, Query, SortField } from '@ptc-org/nestjs-query-core';
 import { PagingStrategies, InferPagingTypeFromStrategy } from '../paging';
 import { FilterTypeOptions } from '../filter.type';
 import {
@@ -36,11 +36,11 @@ export interface CursorQueryArgsTypeOpts<DTO> extends BaseQueryArgsTypeOpts<DTO>
 }
 
 export interface OffsetQueryArgsTypeOpts<DTO> extends BaseQueryArgsTypeOpts<DTO>, OffsetConnectionOptions {
-  pagingStrategy: PagingStrategies.OFFSET;
+  pagingStrategy?: PagingStrategies.OFFSET;
 }
 
 export interface NonePagingQueryArgsTypeOpts<DTO> extends BaseQueryArgsTypeOpts<DTO>, ArrayConnectionOptions {
-  pagingStrategy: PagingStrategies.NONE;
+  pagingStrategy?: PagingStrategies.NONE;
 }
 
 export type QueryArgsTypeOpts<DTO> =

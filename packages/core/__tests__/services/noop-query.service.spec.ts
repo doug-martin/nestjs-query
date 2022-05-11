@@ -1,5 +1,5 @@
 import { NoOpQueryService } from '../../src/services/noop-query.service';
-import { QueryService } from '../../src';
+import { QueryService } from '@ptc-org/nestjs-query-core';
 import { DeepPartial } from '../../src/common';
 
 describe('NoOpQueryService', () => {

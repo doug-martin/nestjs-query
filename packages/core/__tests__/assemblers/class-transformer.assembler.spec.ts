@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import * as classTransformer from 'class-transformer';
-import { Assembler, AssemblerDeserializer, AssemblerSerializer, ClassTransformerAssembler } from '../../src';
+import { Assembler, AssemblerDeserializer, AssemblerSerializer, ClassTransformerAssembler } from '@ptc-org/nestjs-query-core';
 
 describe('ClassTransformerAssembler', () => {
   const plainToClassSpy = jest.spyOn(classTransformer, 'plainToClass');

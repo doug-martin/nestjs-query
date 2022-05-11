@@ -1,4 +1,4 @@
-import { Filter } from '@nestjs-query/core';
+import { Filter } from '@ptc-org/nestjs-query-core';
 
 export enum OperationGroup {
   READ = 'read',

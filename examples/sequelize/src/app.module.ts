@@ -5,7 +5,7 @@ import { GqlContext } from './auth.guard';
 import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
-import { sequelizeOrmConfig } from '../../helpers';
+import { formatGraphqlError, sequelizeOrmConfig } from '../../helpers';
 
 @Module({
   imports: [
@@ -13,6 +13,7 @@ import { sequelizeOrmConfig } from '../../helpers';
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
       context: ({ req }: { req: { headers: Record<string, string> } }): GqlContext => ({ request: req }),
+      formatError: formatGraphqlError
     }),
     SubTaskModule,
     TodoItemModule,

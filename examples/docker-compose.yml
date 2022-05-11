@@ -12,7 +12,9 @@ services:
       - "5432"
     ports:
       - "5436:5432"
+
   mysql:
+    platform: linux/x86_64
     image: "mysql:8"
     volumes:
       - ./init-scripts/mysql:/docker-entrypoint-initdb.d/
@@ -27,6 +29,7 @@ services:
     image: "redis:6"
     ports:
       - "6379:6379"
+
   mongo:
     image: "mongo:5.0"
     restart: always
@@ -34,6 +37,7 @@ services:
       - "27017:27017"
     volumes:
       - ./init/-scripts/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
   mongo-express:
     image: "mongo-express:latest"
     restart: always

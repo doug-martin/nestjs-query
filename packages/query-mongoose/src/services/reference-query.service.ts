@@ -9,15 +9,15 @@ import {
   mergeFilter,
   ModifyRelationOptions,
   Query,
-  AssemblerFactory,
-} from '@nestjs-query/core';
-import { Document, Model as MongooseModel, UpdateQuery } from 'mongoose';
+  AssemblerFactory
+} from '@ptc-org/nestjs-query-core';
+import { Document, Model as MongooseModel, PipelineStage, UpdateQuery } from 'mongoose';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import {
   isEmbeddedSchemaTypeOptions,
   isSchemaTypeWithReferenceOptions,
   isVirtualTypeWithReferenceOptions,
-  VirtualTypeWithOptions,
+  VirtualTypeWithOptions
 } from '../mongoose-types.helper';
 
 export abstract class ReferenceQueryService<Entity extends Document> {
@@ -30,7 +30,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationName: string,
     entities: Entity[],
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<Map<Entity, AggregateResponse<Relation>[]>>;
 
   aggregateRelations<Relation extends Document>(
@@ -38,7 +38,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationName: string,
     dto: Entity,
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[]>;
 
   async aggregateRelations<Relation extends Document>(
@@ -46,7 +46,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationName: string,
     dto: Entity | Entity[],
     filter: Filter<Relation>,
-    aggregateQuery: AggregateQuery<Relation>,
+    aggregateQuery: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[] | Map<Entity, AggregateResponse<Relation>[]>> {
     this.checkForReference('AggregateRelations', relationName);
     const relationModel = this.getReferenceModel(relationName);
@@ -65,16 +65,14 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     }
     const { filterQuery, aggregate, options } = referenceQueryBuilder.buildAggregateQuery(
       assembler.convertAggregateQuery(aggregateQuery),
-      refFilter,
+      refFilter
     );
-    const aggPipeline: unknown[] = [{ $match: filterQuery }, { $group: aggregate }];
+    const aggPipeline: PipelineStage[] = [{ $match: filterQuery }, { $group: aggregate }];
     if (options.sort) {
       aggPipeline.push({ $sort: options.sort ?? {} });
     }
-    const aggResult = (await relationModel.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<
-      string,
-      unknown
-    >[];
+    const aggResult = (await relationModel.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<string,
+      unknown>[];
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 
@@ -82,21 +80,21 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<Map<Entity, number>>;
 
   countRelations<Relation extends Document>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity,
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<number>;
 
   async countRelations<Relation extends Document>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<number | Map<Entity, number>> {
     this.checkForReference('CountRelations', relationName);
     if (Array.isArray(dto)) {
@@ -120,22 +118,25 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: Entity[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Map<Entity, Relation | undefined>>;
+
   findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity,
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Relation | undefined>;
+
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<(Relation | undefined) | Map<Entity, Relation | undefined>> {
     this.checkForReference('FindRelation', relationName);
     const referenceQueryBuilder = this.getReferenceQueryBuilder(relationName);
+
     if (Array.isArray(dto)) {
       return dto.reduce(async (prev, curr) => {
         const map = await prev;
@@ -143,34 +144,41 @@ export abstract class ReferenceQueryService<Entity extends Document> {
         return map.set(curr, ref);
       }, Promise.resolve(new Map<Entity, Relation | undefined>()));
     }
+
     const foundEntity = await this.Model.findById(dto._id ?? dto.id);
     if (!foundEntity) {
       return undefined;
     }
+
     const assembler = AssemblerFactory.getAssembler(RelationClass, Document);
     const filterQuery = referenceQueryBuilder.buildFilterQuery(assembler.convertQuery({ filter: opts?.filter }).filter);
-    const populated = await foundEntity.populate({ path: relationName, match: filterQuery }).execPopulate();
+    const populated = await foundEntity.populate({ path: relationName, match: filterQuery });
     const populatedRef: unknown = populated.get(relationName);
-    return populatedRef ? assembler.convertToDTO(populatedRef as Document) : undefined;
+
+    return populatedRef
+      ? assembler.convertToDTO(populatedRef as Document)
+      : undefined;
   }
 
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Map<Entity, Relation[]>>;
+
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity,
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Relation[]>;
+
   async queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Relation[] | Map<Entity, Relation[]>> {
     this.checkForReference('QueryRelations', relationName);
     const referenceQueryBuilder = this.getReferenceQueryBuilder(relationName);
@@ -181,13 +189,15 @@ export abstract class ReferenceQueryService<Entity extends Document> {
         return map.set(entity, refs);
       }, Promise.resolve(new Map<Entity, Relation[]>()));
     }
+
     const foundEntity = await this.Model.findById(dto._id ?? dto.id);
     if (!foundEntity) {
       return [];
     }
+
     const assembler = AssemblerFactory.getAssembler(RelationClass, Document);
     const { filterQuery, options } = referenceQueryBuilder.buildQuery(assembler.convertQuery(query));
-    const populated = await foundEntity.populate({ path: relationName, match: filterQuery, options }).execPopulate();
+    const populated = await foundEntity.populate({ path: relationName, match: filterQuery, options });
     return assembler.convertToDTOs(populated.get(relationName) as Document[]);
   }
 
@@ -195,7 +205,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationName: string,
     id: string,
     relationIds: (string | number)[],
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     this.checkForReference('AddRelations', relationName, false);
     const entity = await this.getById(id, opts);
@@ -212,7 +222,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationName: string,
     id: string,
     relationIds: (string | number)[],
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     this.checkForReference('AddRelations', relationName, false);
     const entity = await this.getById(id, opts);
@@ -229,7 +239,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationName: string,
     id: string | number,
     relationId: string | number,
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     this.checkForReference('SetRelation', relationName, false);
     const entity = await this.getById(id, opts);
@@ -246,7 +256,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationName: string,
     id: string | number,
     relationId: string | number,
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     this.checkForReference('RemoveRelation', relationName, false);
     const entity = await this.getById(id, opts);
@@ -256,7 +266,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     }
     await entity
       .updateOne({
-        $unset: { [relationName]: relationId },
+        $unset: { [relationName]: relationId }
       } as UpdateQuery<Entity>)
       .exec();
     // reload the document
@@ -267,7 +277,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     relationName: string,
     id: string | number,
     relationIds: string[] | number[],
-    opts?: ModifyRelationOptions<Entity, Relation>,
+    opts?: ModifyRelationOptions<Entity, Relation>
   ): Promise<Entity> {
     this.checkForReference('RemoveRelations', relationName, false);
     const entity = await this.getById(id, opts);
@@ -280,7 +290,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     }
     await entity
       .updateOne({
-        $pullAll: { [relationName]: relationIds },
+        $pullAll: { [relationName]: relationIds }
       } as UpdateQuery<Entity>)
       .exec();
     // reload the document
@@ -334,7 +344,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
   private getReferenceFilter<Relation extends Document>(
     refName: string,
     entity: Entity,
-    filter?: Filter<Relation>,
+    filter?: Filter<Relation>
   ): Filter<Relation> | undefined {
     if (this.isReferencePath(refName)) {
       return this.getObjectIdReferenceFilter(refName, entity, filter);
@@ -352,11 +362,11 @@ export abstract class ReferenceQueryService<Entity extends Document> {
   private getObjectIdReferenceFilter<Ref extends Document>(
     refName: string,
     entity: Entity,
-    filter?: Filter<Ref>,
+    filter?: Filter<Ref>
   ): Filter<Ref> {
     const referenceIds = entity[refName as keyof Entity];
     const refFilter = {
-      _id: { [Array.isArray(referenceIds) ? 'in' : 'eq']: referenceIds },
+      _id: { [Array.isArray(referenceIds) ? 'in' : 'eq']: referenceIds }
     } as unknown as Filter<Ref>;
     return mergeFilter(filter ?? ({} as Filter<Ref>), refFilter);
   }
@@ -364,13 +374,13 @@ export abstract class ReferenceQueryService<Entity extends Document> {
   private getVirtualReferenceFilter<Ref extends Document>(
     virtualType: VirtualTypeWithOptions,
     entity: Entity,
-    filter?: Filter<Ref>,
+    filter?: Filter<Ref>
   ): Filter<Ref> {
     const { foreignField, localField } = virtualType.options;
     const refVal = entity[localField as keyof Entity];
     const isArray = Array.isArray(refVal);
     const lookupFilter = {
-      [foreignField as keyof Ref]: { [isArray ? 'in' : 'eq']: refVal },
+      [foreignField as keyof Ref]: { [isArray ? 'in' : 'eq']: refVal }
     } as unknown as Filter<Ref>;
     return mergeFilter(filter ?? ({} as Filter<Ref>), lookupFilter);
   }
@@ -378,7 +388,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
   private getRefCount<Relation extends Document>(
     relationName: string,
     relationIds: (string | number)[],
-    filter?: Filter<Relation>,
+    filter?: Filter<Relation>
   ): Promise<number> {
     const referenceModel = this.getReferenceModel<Relation>(relationName);
     const referenceQueryBuilder = this.getReferenceQueryBuilder<Relation>(relationName);

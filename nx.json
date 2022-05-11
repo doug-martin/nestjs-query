@@ -1,0 +1,48 @@
+{
+  "extends": "nx/presets/npm.json",
+  "npmScope": "ptc-org",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "test", "lint", "package", "prepare"]
+      }
+    }
+  },
+  "workspaceLayout": {
+    "libsDir": "packages",
+    "appsDir": ""
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ],
+    "prepare": [
+      {
+        "target": "prepare",
+        "projects": "dependencies"
+      }
+    ],
+    "package": [
+      {
+        "target": "package",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "affected": {
+    "defaultBase": "master"
+  },
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": false
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/node"
+  },
+  "defaultProject": "examples"
+}

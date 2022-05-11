@@ -20,7 +20,7 @@ import {
   getFilterFields,
   getFilterComparisons,
   mergeFilter,
-} from '../src';
+} from '@ptc-org/nestjs-query-core';
 import { AggregateQuery } from '../src/interfaces/aggregate-query.interface';
 
 class TestDTO {

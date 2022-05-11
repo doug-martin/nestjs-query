@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { InjectAuthorizer } from '../decorators';

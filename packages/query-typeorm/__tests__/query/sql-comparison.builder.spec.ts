@@ -1,4 +1,4 @@
-import { CommonFieldComparisonBetweenType } from '@nestjs-query/core';
+import { CommonFieldComparisonBetweenType } from '@ptc-org/nestjs-query-core';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { SQLComparisonBuilder } from '../../src/query';
 import { randomString } from '../../src/common';
@@ -17,6 +17,7 @@ describe('SQLComparisonBuilder', (): void => {
   });
 
   it('should throw an error for an invalid comparison type', () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     expect(() => createSQLComparisonBuilder().build('stringType', 'bad', 'foo', 'TestEntity')).toThrow(
       'unknown operator "bad"',

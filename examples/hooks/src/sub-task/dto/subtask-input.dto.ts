@@ -1,6 +1,6 @@
 import { Field, InputType, ID } from '@nestjs/graphql';
 import { IsOptional, IsString, IsBoolean, IsNotEmpty } from 'class-validator';
-import { BeforeCreateMany, BeforeCreateOne } from '@nestjs-query/query-graphql';
+import { BeforeCreateMany, BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
 import { CreatedByHook } from '../../hooks';
 
 @InputType('SubTaskInput')

@@ -1,4 +1,4 @@
-import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@nestjs-query/core';
+import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@ptc-org/nestjs-query-core';
 import sequelize, {
   FindOptions,
   Filterable,
@@ -128,8 +128,8 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    *
    * @param query - the query to apply.
    */
-  updateOptions(query: Query<Entity>): UpdateOptions {
-    let opts: UpdateOptions = { where: {} };
+  updateOptions(query: Query<Entity>): UpdateOptions<Entity['_attributes']> {
+    let opts: UpdateOptions<Entity> = { where: {} };
     opts = this.applyFilter(opts, query.filter);
     opts = this.applyPaging(opts, query.paging);
     return opts;

@@ -2,9 +2,9 @@
   <a href="https://doug-martin.github.io/nestjs-query" target="blank"><img src="https://doug-martin.github.io/nestjs-query/img/logo.svg" width="120" alt="Nestjs-query Logo" /></a>
 </p>
 
-[![Test](https://github.com/doug-martin/nestjs-query/workflows/Test/badge.svg?branch=master)](https://github.com/doug-martin/nestjs-query/actions?query=workflow%3ATest+and+branch%3Amaster+)
-[![Coverage Status](https://coveralls.io/repos/github/doug-martin/nestjs-query/badge.svg?branch=master)](https://coveralls.io/github/doug-martin/nestjs-query?branch=master)
-[![Known Vulnerabilities](https://snyk.io/test/github/doug-martin/nestjs-query/badge.svg?targetFile=package.json)](https://snyk.io/test/github/doug-martin/nestjs-query?targetFile=package.json)
+[![Test](https://github.com/tripss/nestjs-query/workflows/Test/badge.svg?branch=master)](https://github.com/doug-martin/nestjs-query/actions?query=workflow%3ATest+and+branch%3Amaster+)
+[![codecov](https://codecov.io/gh/TriPSs/nestjs-query/branch/master/graph/badge.svg?token=29EX71ID2P)](https://codecov.io/gh/TriPSs/nestjs-query)
+[![Known Vulnerabilities](https://snyk.io/test/github/tripss/nestjs-query/badge.svg?targetFile=package.json)](https://snyk.io/test/github/doug-martin/nestjs-query?targetFile=package.json)
 
 # nestjs-query
 

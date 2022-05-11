@@ -1,14 +1,14 @@
 {
-  "name": "@nestjs-query/query-mongoose",
-  "version": "0.30.0",
-  "description": "Mongoose adapter for @nestjs-query/core",
+  "name": "@ptc-org/nestjs-query-mongoose",
+  "version": "1.0.0-alpha.1",
+  "description": "Mongoose adapter for @ptc-org/nestjs-query-core",
   "author": "doug-martin <doug@dougamartin.com>",
-  "homepage": "https://github.com/doug-martin/nestjs-query#readme",
+  "homepage": "https://github.com/tripss/nestjs-query#readme",
   "license": "MIT",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "directories": {
-    "lib": "dist/src",
+    "lib": "src",
     "test": "__tests__"
   },
   "files": [
@@ -18,7 +18,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.30.0",
     "camel-case": "^4.1.2",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.merge": "^4.6.2",
@@ -29,31 +28,12 @@
     "@nestjs/mongoose": "^8.0.0 || ^9.0.0",
     "mongoose": "^5.10.0"
   },
-  "devDependencies": {
-    "@nestjs/common": "8.1.2",
-    "@nestjs/mongoose": "9.0.0",
-    "@nestjs/testing": "8.1.2",
-    "@types/lodash.escaperegexp": "4.1.6",
-    "@types/lodash.merge": "4.6.6",
-    "@types/mongodb": "4.0.6",
-    "class-transformer": "0.4.0",
-    "mongodb-memory-server": "6.9.6",
-    "mongoose": "5.12.0",
-    "ts-mockito": "2.6.1",
-    "typescript": "4.4.4"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/doug-martin/nestjs-query.git",
+    "url": "git+https://github.com/tripss/nestjs-query.git",
     "directory": "packages/query-typeorm-mongo"
   },
-  "scripts": {
-    "prepublishOnly": "npm run build",
-    "prebuild": "npm run clean",
-    "build": "tsc -p tsconfig.json",
-    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo"
-  },
   "bugs": {
-    "url": "https://github.com/doug-martin/nestjs-query/issues"
+    "url": "https://github.com/tripss/nestjs-query/issues"
   }
 }

@@ -1,5 +1,5 @@
-import { AggregateResponse, getQueryServiceToken, QueryService } from '@nestjs-query/core';
-import { CursorConnectionType } from '@nestjs-query/query-graphql';
+import { AggregateResponse, getQueryServiceToken, QueryService } from '@ptc-org/nestjs-query-core';
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -19,7 +19,7 @@ import {
   todoItemFields,
   todoItemAggregateFields,
   tagAggregateFields,
-  subTaskAggregateFields,
+  subTaskAggregateFields
 } from './graphql-fragments';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
 
@@ -28,7 +28,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -38,8 +38,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -59,7 +59,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItem(id: 1) {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -70,13 +70,13 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 title: 'Create Nest App',
                 completed: true,
                 description: null,
-                age: expect.any(Number),
-              },
-            },
+                age: expect.any(Number)
+              }
+            }
           });
         }));
 
-    it(`should return null if the todo item is not found`, () =>
+    it(`should throw item not found on non existing todo item`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -86,12 +86,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItem(id: 100) {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
-        .expect(200, {
-          data: {
-            todoItem: null,
-          },
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
     it(`should return subTasks as a connection`, () =>
@@ -108,7 +108,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               totalCount
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -117,7 +117,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -136,7 +136,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               ${subTaskAggregateFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -147,8 +147,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               count: { completed: 3, description: 0, id: 3, title: 3, todoItemId: 3 },
               max: { description: null, id: '3', title: 'Create Nest App - Sub Task 3', todoItemId: '1' },
               min: { description: null, id: '1', title: 'Create Nest App - Sub Task 1', todoItemId: '1' },
-              sum: { id: 6 },
-            },
+              sum: { id: 6 }
+            }
           ]);
         }));
 
@@ -166,7 +166,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               totalCount
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -175,7 +175,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
@@ -194,7 +194,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               ${tagAggregateFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -205,8 +205,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               count: { created: 2, id: 2, name: 2, updated: 2 },
               max: { id: '2', name: 'Urgent' },
               min: { id: '1', name: 'Home' },
-              sum: { id: 3 },
-            },
+              sum: { id: 3 }
+            }
           ]);
         }));
   });
@@ -224,7 +224,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -233,7 +233,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -247,8 +247,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
-              age: expect.any(Number),
-            },
+              age: expect.any(Number)
+            }
           ]);
         }));
 
@@ -264,7 +264,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -273,14 +273,14 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
+            { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) }
           ]);
         }));
 
@@ -296,7 +296,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -305,14 +305,14 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) }
           ]);
         }));
 
@@ -328,7 +328,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -337,14 +337,14 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
+            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) }
           ]);
         }));
 
@@ -360,7 +360,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -369,7 +369,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -379,12 +379,12 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
             { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) }
           ]);
         }));
 
@@ -401,7 +401,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -410,13 +410,13 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
               { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-              { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+              { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) }
             ]);
           }));
 
@@ -432,7 +432,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -441,7 +441,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0='
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
@@ -452,8 +452,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 title: 'Add Todo Item Resolver',
                 completed: false,
                 description: null,
-                age: expect.any(Number),
-              },
+                age: expect.any(Number)
+              }
             ]);
           }));
     });
@@ -470,7 +470,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             todoItemAggregate {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -488,7 +488,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItemAggregate {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -499,8 +499,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               count: { completed: 5, created: 5, description: 0, id: 5, title: 5, updated: 5 },
               max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
               min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
-              sum: { id: 15 },
-            },
+              sum: { id: 15 }
+            }
           ]);
         }));
 
@@ -518,7 +518,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               }
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -530,7 +530,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               count: { completed: 4, created: 4, description: 0, id: 4, title: 4, updated: 4 },
               max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
               min: { description: null, id: '2', title: 'Add Todo Item Resolver' },
-              sum: { id: 14 },
+              sum: { id: 14 }
             },
             {
               groupBy: { completed: true },
@@ -538,8 +538,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               count: { completed: 1, created: 1, description: 0, id: 1, title: 1, updated: 1 },
               max: { description: null, id: '1', title: 'Create Nest App' },
               min: { description: null, id: '1', title: 'Create Nest App' },
-              sum: { id: 1 },
-            },
+              sum: { id: 1 }
+            }
           ]);
         }));
 
@@ -554,7 +554,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
           todoItemAggregate(filter: { completed: { is: false } }) {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -565,8 +565,8 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               sum: { id: 14 },
               avg: { id: 3.5 },
               min: { id: '2', title: 'Add Todo Item Resolver', description: null },
-              max: { id: '5', title: 'How to create item With Sub Tasks', description: null },
-            },
+              max: { id: '5', title: 'How to create item With Sub Tasks', description: null }
+            }
           ]);
         }));
   });
@@ -588,7 +588,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -611,16 +611,16 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTodoItem: {
               id: '6',
               title: 'Test Todo',
-              completed: false,
-            },
-          },
+              completed: false
+            }
+          }
         }));
 
     it('should call the beforeCreateOne hook', () =>
@@ -628,7 +628,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
+          [USER_HEADER_NAME]: 'E2E Test'
         })
         .send({
           operationName: null,
@@ -644,7 +644,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               completed
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -652,9 +652,9 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               id: '7',
               title: 'Create One Hook Todo',
               completed: false,
-              createdBy: 'E2E Test',
-            },
-          },
+              createdBy: 'E2E Test'
+            }
+          }
         }));
 
     it('should validate a todoItem', () =>
@@ -674,7 +674,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -700,7 +700,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -728,15 +728,15 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTodoItems: [
               { id: '8', title: 'Many Test Todo 1', completed: false },
-              { id: '9', title: 'Many Test Todo 2', completed: true },
-            ],
-          },
+              { id: '9', title: 'Many Test Todo 2', completed: true }
+            ]
+          }
         }));
 
     it('should call the beforeCreateMany hook when creating multiple todoItems', () =>
@@ -744,7 +744,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
+          [USER_HEADER_NAME]: 'E2E Test'
         })
         .send({
           operationName: null,
@@ -763,15 +763,15 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               completed
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTodoItems: [
               { id: '10', title: 'Many Create Hook 1', completed: false, createdBy: 'E2E Test' },
-              { id: '11', title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' },
-            ],
-          },
+              { id: '11', title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' }
+            ]
+          }
         }));
 
     it('should validate a todoItem', () =>
@@ -791,7 +791,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -818,7 +818,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -842,16 +842,16 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTodoItem: {
               id: '6',
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
+              completed: true
+            }
+          }
         }));
 
     it('should call the beforeUpdateOne hook', () =>
@@ -859,7 +859,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
+          [USER_HEADER_NAME]: 'E2E Test'
         })
         .send({
           operationName: null,
@@ -876,7 +876,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               completed
               updatedBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -884,9 +884,9 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               id: '7',
               title: 'Update One Hook Todo',
               completed: true,
-              updatedBy: 'E2E Test',
-            },
-          },
+              updatedBy: 'E2E Test'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -906,13 +906,13 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.',
+            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.'
           );
         }));
 
@@ -934,7 +934,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -959,7 +959,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -981,14 +981,14 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTodoItems: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should call the beforeUpdateMany hook when updating todoItem', () =>
@@ -996,7 +996,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
+          [USER_HEADER_NAME]: 'E2E Test'
         })
         .send({
           operationName: null,
@@ -1010,14 +1010,14 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTodoItems: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         })
         .then(async () => {
           const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
@@ -1027,11 +1027,11 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               id: ti.id,
               title: ti.title,
               completed: ti.completed,
-              updatedBy: ti.updatedBy,
-            })),
+              updatedBy: ti.updatedBy
+            }))
           ).toEqual([
             { id: 10, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
-            { id: 11, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
+            { id: 11, title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' }
           ]);
         }));
 
@@ -1050,13 +1050,13 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.',
+            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
           );
         }));
 
@@ -1076,7 +1076,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1100,7 +1100,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -1121,16 +1121,16 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTodoItem: {
               id: null,
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
+              completed: true
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -1148,13 +1148,13 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.',
+            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.'
           );
         }));
   });
@@ -1174,7 +1174,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -1195,14 +1195,14 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTodoItems: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -1218,13 +1218,13 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.',
+            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
           );
         }));
 
@@ -1243,7 +1243,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1275,7 +1275,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1286,7 +1286,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(6);
           expect(edges).toHaveLength(6);
@@ -1317,7 +1317,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1327,7 +1327,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -1358,7 +1358,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1368,7 +1368,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
@@ -1399,7 +1399,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1409,7 +1409,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -1438,7 +1438,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1448,7 +1448,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
             endCursor: null,
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: null,
+            startCursor: null
           });
           expect(totalCount).toBe(0);
           expect(edges).toHaveLength(0);

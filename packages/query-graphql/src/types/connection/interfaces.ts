@@ -1,4 +1,4 @@
-import { Class, Filter, Query } from '@nestjs-query/core';
+import { Class, Filter, Query } from '@ptc-org/nestjs-query-core';
 import { ReturnTypeFuncValue } from '@nestjs/graphql';
 import { ConnectionCursorType } from '../cursor.scalar';
 import { PagingStrategies } from '../query';
@@ -14,11 +14,11 @@ export interface CursorConnectionOptions extends BaseConnectionOptions {
 }
 
 export interface OffsetConnectionOptions extends BaseConnectionOptions {
-  pagingStrategy: PagingStrategies.OFFSET;
+  pagingStrategy?: PagingStrategies.OFFSET;
 }
 
 export interface ArrayConnectionOptions extends BaseConnectionOptions {
-  pagingStrategy: PagingStrategies.NONE;
+  pagingStrategy?: PagingStrategies.NONE;
 }
 export type ConnectionOptions = CursorConnectionOptions | OffsetConnectionOptions | ArrayConnectionOptions;
 

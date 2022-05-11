@@ -1,17 +1,13 @@
 {
-  "extends": "../tsconfig.build.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "."
-  },
-  "include": [
-    "./helpers",
-    "**/src",
-    "**/e2e",
-    "**/ormconfig.json"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
+  "extends": "../tsconfig.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
   ]
 }

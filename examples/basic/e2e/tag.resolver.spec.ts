@@ -1,4 +1,4 @@
-import { CursorConnectionType } from '@nestjs-query/query-graphql';
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -14,7 +14,7 @@ describe('TagResolver (basic - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -24,8 +24,8 @@ describe('TagResolver (basic - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -39,7 +39,7 @@ describe('TagResolver (basic - e2e)', () => {
     { id: '2', name: 'Home' },
     { id: '3', name: 'Work' },
     { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
+    { id: '5', name: 'Blocked' }
   ];
 
   describe('find one', () => {
@@ -57,7 +57,7 @@ describe('TagResolver (basic - e2e)', () => {
         })
         .expect(200, { data: { tag: tags[0] } }));
 
-    it(`should return null if the tag is not found`, () =>
+    it(`should throw item not found on non existing tag`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -69,10 +69,10 @@ describe('TagResolver (basic - e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: {
-            tag: null,
-          },
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
     it(`should return todoItems as a connection`, () =>
@@ -88,7 +88,7 @@ describe('TagResolver (basic - e2e)', () => {
               ${edgeNodes('id')}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -97,7 +97,7 @@ describe('TagResolver (basic - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);

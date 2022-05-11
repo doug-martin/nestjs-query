@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Args, GqlExecutionContext } from '@nestjs/graphql';
-import { Class } from '@nestjs-query/core';
+import { Class } from '@ptc-org/nestjs-query-core';
 import { plainToClass } from 'class-transformer';
 import { MutationArgsType } from '../types';
 import { composeDecorators } from './decorator.utils';
@@ -28,20 +28,18 @@ function createArgsDecorator<T, C = unknown>(fn: (arg: T, context: C) => T | Pro
   return composeDecorators(Args(), dec as ParameterDecorator);
 }
 
-export const HookArgs = <T>(): ParameterDecorator =>
-  createArgsDecorator(async (data: T, context: HookContext<Hook<unknown>>) => {
-    if (context.hook) {
-      const hookedArgs = await context.hook.run(data, context);
-      return hookedArgs as T;
-    }
-    return data;
-  });
+export const HookArgs = <T>(): ParameterDecorator => createArgsDecorator(async (data: T, context: HookContext<Hook<unknown>>) => {
+  if (context.hook) {
+    const hookedArgs = await context.hook.run(data, context);
+    return hookedArgs as T;
+  }
+  return data;
+});
 
-export const MutationHookArgs = <T extends MutationArgsType<unknown>>(): ParameterDecorator =>
-  createArgsDecorator(async (data: T, context: HookContext<Hook<unknown>>) => {
-    if (context.hook) {
-      const { input } = data;
-      return { input: await context.hook.run(input, context) } as T;
-    }
-    return data;
-  });
+export const MutationHookArgs = <T extends MutationArgsType<unknown>>(): ParameterDecorator => createArgsDecorator(async (data: T, context: HookContext<Hook<unknown>>) => {
+  if (context.hook) {
+    const { input } = data;
+    return { input: await context.hook.run(input, context) } as T;
+  }
+  return data;
+});

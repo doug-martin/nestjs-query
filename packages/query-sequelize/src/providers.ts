@@ -1,4 +1,4 @@
-import { AssemblerSerializer, AssemblerDeserializer, getQueryServiceToken } from '@nestjs-query/core';
+import { AssemblerSerializer, AssemblerDeserializer, getQueryServiceToken } from '@ptc-org/nestjs-query-core';
 import { FactoryProvider } from '@nestjs/common';
 import { ModelCtor, Model, SequelizeOptions } from 'sequelize-typescript';
 import { getModelToken } from '@nestjs/sequelize';

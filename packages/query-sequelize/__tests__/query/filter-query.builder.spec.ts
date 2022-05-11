@@ -1,6 +1,6 @@
 import { FindOptions, Op, UpdateOptions, DestroyOptions } from 'sequelize';
 import { anything, instance, mock, verify, when, deepEqual } from 'ts-mockito';
-import { Query, SortDirection, SortNulls } from '@nestjs-query/core';
+import { Query, SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { FilterQueryBuilder, WhereBuilder } from '../../src/query';
 

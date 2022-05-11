@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "projects": {
+    "core": "packages/core",
+    "examples": "examples",
+    "query-graphql": "packages/query-graphql",
+    "query-mongoose": "packages/query-mongoose",
+    "query-sequelize": "packages/query-sequelize",
+    "query-typegoose": "packages/query-typegoose",
+    "query-typeorm": "packages/query-typeorm"
+  }
+}

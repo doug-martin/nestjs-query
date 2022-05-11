@@ -1,4 +1,4 @@
-import { Class, FilterFieldComparison, FilterComparisonOperators, isNamed } from '@nestjs-query/core';
+import { Class, FilterFieldComparison, FilterComparisonOperators, isNamed } from '@ptc-org/nestjs-query-core';
 import { IsBoolean, IsOptional } from 'class-validator';
 import { upperCaseFirst } from 'upper-case-first';
 import {
@@ -10,7 +10,7 @@ import {
   Float,
   ID,
   GraphQLTimestamp,
-  GraphQLISODateTime,
+  GraphQLISODateTime
 } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsUndefined } from '../../validators';
@@ -45,7 +45,7 @@ const knownTypes: Set<ReturnTypeFuncValue> = new Set([
   ID,
   Date,
   GraphQLISODateTime,
-  GraphQLTimestamp,
+  GraphQLTimestamp
 ]);
 
 /** @internal */
@@ -85,11 +85,13 @@ export function createFilterComparisonType<T>(options: FilterComparisonOptions<T
   const fieldType = returnTypeFunc ? returnTypeFunc() : FieldType;
   const inputName = getComparisonTypeName(fieldType, options);
   const generator = filterComparisonMap.get(inputName);
+
   if (generator) {
     return generator() as Class<FilterFieldComparison<T>>;
   }
-  const isNotAllowed = (val: FilterComparisonOperators<unknown>) => () =>
-    !isInAllowedList(options.allowedComparisons, val as unknown);
+
+  const isNotAllowed = (val: FilterComparisonOperators<unknown>) => () => !isInAllowedList(options.allowedComparisons, val as unknown);
+
   @InputType(inputName)
   class Fc {
     @SkipIf(isNotAllowed('is'), Field(() => Boolean, { nullable: true }))

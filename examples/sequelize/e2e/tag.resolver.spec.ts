@@ -1,5 +1,5 @@
-import { AggregateResponse } from '@nestjs-query/core';
-import { CursorConnectionType } from '@nestjs-query/query-graphql';
+import { AggregateResponse } from '@ptc-org/nestjs-query-core';
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { Test } from '@nestjs/testing';
 import { Sequelize } from 'sequelize-typescript';
 import request from 'supertest';
@@ -65,7 +65,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200, { data: { tag: tags[0] } }));
 
-    it(`should return null if the tag is not found`, () =>
+    it(`should throw item not found on non existing tag`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -77,10 +77,10 @@ describe('TagResolver (sequelize - e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: {
-            tag: null,
-          },
+                .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
 
     it(`should return todoItems as a connection`, () =>

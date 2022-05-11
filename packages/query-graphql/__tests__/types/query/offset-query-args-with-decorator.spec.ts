@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { SortDirection } from '@nestjs-query/core';
+import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
   Args,
   ArgsType,
@@ -14,7 +14,7 @@ import {
 } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '../../../src';
+import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../../__fixtures__';
 
 describe('Offset paging strategy QueryArgsType with decorator options', (): void => {

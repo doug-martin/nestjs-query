@@ -5,7 +5,7 @@ import {
   BeforeCreateOne,
   CreateManyInputType,
   CreateOneInputType,
-} from '@nestjs-query/query-graphql';
+} from '@ptc-org/nestjs-query-graphql';
 import { UserContext } from '../../auth/auth.interfaces';
 
 @InputType('TodoItemInput')

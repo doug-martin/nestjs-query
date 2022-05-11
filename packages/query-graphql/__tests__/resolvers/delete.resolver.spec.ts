@@ -1,8 +1,14 @@
-import { DeleteManyResponse, Filter } from '@nestjs-query/core';
+import { DeleteManyResponse, Filter } from '@ptc-org/nestjs-query-core';
 import { Field, InputType, Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when, verify, anything, mock, instance } from 'ts-mockito';
 import { PubSub } from 'graphql-subscriptions';
-import { DeleteManyInputType, DeleteOneInputType, DeleteResolver, DeleteResolverOpts, InjectPubSub } from '../../src';
+import {
+  DeleteManyInputType,
+  DeleteOneInputType,
+  DeleteResolver,
+  DeleteResolverOpts,
+  InjectPubSub
+} from '../../src';
 import { DeletedEvent } from '../../src/resolvers/delete.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
 import { generateSchema, createResolverFromNest, TestService, TestResolverDTO } from '../__fixtures__';
@@ -54,6 +60,7 @@ describe('DeleteResolver', () => {
         @Field()
         foo!: string;
       }
+
       return expectResolverSDL({ DeleteOneInput: CustomDeleteOneInput });
     });
 
@@ -62,13 +69,13 @@ describe('DeleteResolver', () => {
     it('should call the service deleteOne with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
       const input: DeleteOneInputType = {
-        id: 'id-1',
+        id: 'id-1'
       };
       const output: TestResolverDTO = {
         id: 'id-1',
-        stringField: 'foo',
+        stringField: 'foo'
       };
-      when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
+      when(mockService.deleteOne(input.id, objectContaining({ filter: {}, useSoftDelete: false }))).thenResolve(output);
       const result = await resolver.deleteOne({ input });
       return expect(result).toEqual(output);
     });
@@ -76,14 +83,35 @@ describe('DeleteResolver', () => {
     it('should call the service deleteOne with the provided input and authorizer filter', async () => {
       const { resolver, mockService } = await createTestResolver();
       const input: DeleteOneInputType = {
-        id: 'id-1',
+        id: 'id-1'
       };
       const output: TestResolverDTO = {
         id: 'id-1',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
-      when(mockService.deleteOne(input.id, deepEqual({ filter: authorizeFilter }))).thenResolve(output);
+      when(mockService.deleteOne(input.id, objectContaining({
+        filter: authorizeFilter,
+        useSoftDelete: false
+      }))).thenResolve(output);
+      const result = await resolver.deleteOne({ input }, authorizeFilter);
+      return expect(result).toEqual(output);
+    });
+
+    it('should call the service deleteOne with soft delete on when enabled', async () => {
+      const { resolver, mockService } = await createTestResolver({ useSoftDelete: true });
+      const input: DeleteOneInputType = {
+        id: 'id-1'
+      };
+      const output: TestResolverDTO = {
+        id: 'id-1',
+        stringField: 'foo'
+      };
+      const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
+      when(mockService.deleteOne(input.id, objectContaining({
+        filter: authorizeFilter,
+        useSoftDelete: true
+      }))).thenResolve(output);
       const result = await resolver.deleteOne({ input }, authorizeFilter);
       return expect(result).toEqual(output);
     });
@@ -96,6 +124,7 @@ describe('DeleteResolver', () => {
         @Field()
         foo!: string;
       }
+
       return expectResolverSDL({ DeleteManyInput: CustomDeleteManyInput });
     });
 
@@ -104,10 +133,10 @@ describe('DeleteResolver', () => {
     it('should call the service deleteMany with the provided input', async () => {
       const { resolver, mockService } = await createTestResolver();
       const input: DeleteManyInputType<TestResolverDTO> = {
-        filter: { id: { eq: 'id-1' } },
+        filter: { id: { eq: 'id-1' } }
       };
       const output: DeleteManyResponse = { deletedCount: 1 };
-      when(mockService.deleteMany(objectContaining(input.filter))).thenResolve(output);
+      when(mockService.deleteMany(objectContaining(input.filter), objectContaining({ useSoftDelete: false }))).thenResolve(output);
       const result = await resolver.deleteMany({ input });
       return expect(result).toEqual(output);
     });
@@ -115,12 +144,23 @@ describe('DeleteResolver', () => {
     it('should call the service deleteMany with the provided input and auth filter', async () => {
       const { resolver, mockService } = await createTestResolver();
       const input: DeleteManyInputType<TestResolverDTO> = {
-        filter: { id: { eq: 'id-1' } },
+        filter: { id: { eq: 'id-1' } }
       };
       const output: DeleteManyResponse = { deletedCount: 1 };
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
-      when(mockService.deleteMany(objectContaining({ and: [authorizeFilter, input.filter] }))).thenResolve(output);
+      when(mockService.deleteMany(objectContaining({ and: [authorizeFilter, input.filter] }), objectContaining({ useSoftDelete: false }))).thenResolve(output);
       const result = await resolver.deleteMany({ input }, authorizeFilter);
+      return expect(result).toEqual(output);
+    });
+
+    it('should call the service deleteMany with soft delete on when enabled', async () => {
+      const { resolver, mockService } = await createTestResolver({ useSoftDelete: true });
+      const input: DeleteManyInputType<TestResolverDTO> = {
+        filter: { id: { eq: 'id-1' } }
+      };
+      const output: DeleteManyResponse = { deletedCount: 1 };
+      when(mockService.deleteMany(objectContaining({}), objectContaining({ useSoftDelete: true }))).thenResolve(output);
+      const result = await resolver.deleteMany({ input });
       return expect(result).toEqual(output);
     });
   });
@@ -141,18 +181,18 @@ describe('DeleteResolver', () => {
     describe('delete one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
-          enableSubscriptions: true,
+          enableSubscriptions: true
         });
         const input: DeleteOneInputType = {
-          id: 'id-1',
+          id: 'id-1'
         };
         const output: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const eventName = getDTOEventName(EventType.DELETED_ONE, TestResolverDTO);
         const event = { [eventName]: output };
-        when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
+        when(mockService.deleteOne(input.id, deepEqual({ filter: {}, useSoftDelete: false }))).thenResolve(output);
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.deleteOne({ input });
         verify(mockPubSub.publish(eventName, deepEqual(event))).once();
@@ -161,18 +201,18 @@ describe('DeleteResolver', () => {
 
       it('should publish events for create one when enableSubscriptions is set to true for createOne', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
-          one: { enableSubscriptions: true },
+          one: { enableSubscriptions: true }
         });
         const input: DeleteOneInputType = {
-          id: 'id-1',
+          id: 'id-1'
         };
         const output: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const eventName = getDTOEventName(EventType.DELETED_ONE, TestResolverDTO);
         const event = { [eventName]: output };
-        when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
+        when(mockService.deleteOne(input.id, deepEqual({ filter: {}, useSoftDelete: false }))).thenResolve(output);
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.deleteOne({ input });
         verify(mockPubSub.publish(eventName, deepEqual(event))).once();
@@ -181,16 +221,16 @@ describe('DeleteResolver', () => {
 
       it('should not publish an event if enableSubscriptions is false', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
-          enableSubscriptions: false,
+          enableSubscriptions: false
         });
         const input: DeleteOneInputType = {
-          id: 'id-1',
+          id: 'id-1'
         };
         const output: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
-        when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
+        when(mockService.deleteOne(input.id, deepEqual({ filter: {}, useSoftDelete: false }))).thenResolve(output);
         const result = await resolver.deleteOne({ input });
         verify(mockPubSub.publish(anything(), anything())).never();
         return expect(result).toEqual(output);
@@ -199,16 +239,16 @@ describe('DeleteResolver', () => {
       it('should not publish an event if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
           enableSubscriptions: true,
-          one: { enableSubscriptions: false },
+          one: { enableSubscriptions: false }
         });
         const input: DeleteOneInputType = {
-          id: 'id-1',
+          id: 'id-1'
         };
         const output: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
-        when(mockService.deleteOne(input.id, deepEqual({ filter: {} }))).thenResolve(output);
+        when(mockService.deleteOne(input.id, deepEqual({ filter: {}, useSoftDelete: false }))).thenResolve(output);
         const result = await resolver.deleteOne({ input });
         verify(mockPubSub.publish(anything(), anything())).never();
         return expect(result).toEqual(output);
@@ -219,27 +259,30 @@ describe('DeleteResolver', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({ enableSubscriptions: true });
         const input: DeleteManyInputType<TestResolverDTO> = {
-          filter: { id: { eq: 'id-1' } },
+          filter: { id: { eq: 'id-1' } }
         };
         const output: DeleteManyResponse = { deletedCount: 1 };
         const eventName = getDTOEventName(EventType.DELETED_MANY, TestResolverDTO);
         const event = { [eventName]: output };
-        when(mockService.deleteMany(objectContaining(input.filter))).thenResolve(output);
+
+        when(mockService.deleteMany(objectContaining(input.filter), objectContaining({}))).thenResolve(output);
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
+
         const result = await resolver.deleteMany({ input });
+
         verify(mockPubSub.publish(eventName, deepEqual(event))).once();
         return expect(result).toEqual(output);
       });
 
-      it('should publish events for create manhy when many.enableSubscriptions is true', async () => {
+      it('should publish events for create many when many.enableSubscriptions is true', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({ many: { enableSubscriptions: true } });
         const input: DeleteManyInputType<TestResolverDTO> = {
-          filter: { id: { eq: 'id-1' } },
+          filter: { id: { eq: 'id-1' } }
         };
         const output: DeleteManyResponse = { deletedCount: 1 };
         const eventName = getDTOEventName(EventType.DELETED_MANY, TestResolverDTO);
         const event = { [eventName]: output };
-        when(mockService.deleteMany(objectContaining(input.filter))).thenResolve(output);
+        when(mockService.deleteMany(objectContaining(input.filter), objectContaining({}))).thenResolve(output);
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.deleteMany({ input });
         verify(mockPubSub.publish(eventName, deepEqual(event))).once();
@@ -249,10 +292,10 @@ describe('DeleteResolver', () => {
       it('should not publish an event if enableSubscriptions is false', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({ enableSubscriptions: false });
         const input: DeleteManyInputType<TestResolverDTO> = {
-          filter: { id: { eq: 'id-1' } },
+          filter: { id: { eq: 'id-1' } }
         };
         const output: DeleteManyResponse = { deletedCount: 1 };
-        when(mockService.deleteMany(objectContaining(input.filter))).thenResolve(output);
+        when(mockService.deleteMany(objectContaining(input.filter), objectContaining({}))).thenResolve(output);
         const result = await resolver.deleteMany({ input });
         verify(mockPubSub.publish(anything(), anything())).never();
         return expect(result).toEqual(output);
@@ -261,13 +304,13 @@ describe('DeleteResolver', () => {
       it('should not publish an event if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
           enableSubscriptions: true,
-          many: { enableSubscriptions: false },
+          many: { enableSubscriptions: false }
         });
         const input: DeleteManyInputType<TestResolverDTO> = {
-          filter: { id: { eq: 'id-1' } },
+          filter: { id: { eq: 'id-1' } }
         };
         const output: DeleteManyResponse = { deletedCount: 1 };
-        when(mockService.deleteMany(objectContaining(input.filter))).thenResolve(output);
+        when(mockService.deleteMany(objectContaining(input.filter), objectContaining({}))).thenResolve(output);
         const result = await resolver.deleteMany({ input });
         verify(mockPubSub.publish(anything(), anything())).never();
         return expect(result).toEqual(output);
@@ -277,30 +320,34 @@ describe('DeleteResolver', () => {
     describe('deletedOneSubscription', () => {
       it('should propagate events if enableSubscriptions is true', async () => {
         const { resolver, mockPubSub } = await createTestResolver({
-          enableSubscriptions: true,
+          enableSubscriptions: true
         });
         const eventName = getDTOEventName(EventType.DELETED_ONE, TestResolverDTO);
 
         const event: DeletedEvent<TestResolverDTO> = {
           [eventName]: {
             id: 'id-1',
-            stringField: 'foo',
-          },
+            stringField: 'foo'
+          }
         };
         const mockIterator = mock<AsyncIterator<DeletedEvent<TestResolverDTO>>>();
+
         when(mockPubSub.asyncIterator(eventName)).thenReturn(instance(mockIterator));
         when(mockIterator.next()).thenResolve({ done: false, value: event });
+
         const result = await resolver.deletedOneSubscription().next();
+
         verify(mockPubSub.asyncIterator(eventName)).once();
+
         return expect(result).toEqual({
           done: false,
-          value: event,
+          value: event
         });
       });
 
       it('should not propagate events if enableSubscriptions is false', async () => {
         const { resolver } = await createTestResolver({
-          enableSubscriptions: false,
+          enableSubscriptions: false
         });
         const eventName = getDTOEventName(EventType.DELETED_ONE, TestResolverDTO);
         return expect(() => resolver.deletedOneSubscription()).toThrow(`Unable to subscribe to ${eventName}`);
@@ -309,7 +356,7 @@ describe('DeleteResolver', () => {
       it('should not propagate events if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
         const { resolver } = await createTestResolver({
           enableSubscriptions: true,
-          one: { enableSubscriptions: false },
+          one: { enableSubscriptions: false }
         });
         const eventName = getDTOEventName(EventType.DELETED_ONE, TestResolverDTO);
         return expect(() => resolver.deletedOneSubscription()).toThrow(`Unable to subscribe to ${eventName}`);
@@ -322,19 +369,23 @@ describe('DeleteResolver', () => {
         const eventName = getDTOEventName(EventType.DELETED_MANY, TestResolverDTO);
         const event: DeleteManyResponse = { deletedCount: 1 };
         const mockIterator = mock<AsyncIterator<DeleteManyResponse>>();
+
         when(mockPubSub.asyncIterator(eventName)).thenReturn(instance(mockIterator));
         when(mockIterator.next()).thenResolve({ done: false, value: event });
+
         const result = await resolver.deletedManySubscription().next();
+
         verify(mockPubSub.asyncIterator(eventName)).once();
+
         return expect(result).toEqual({
           done: false,
-          value: event,
+          value: event
         });
       });
 
       it('should not propagate events if enableSubscriptions is false', async () => {
         const { resolver } = await createTestResolver({
-          enableSubscriptions: false,
+          enableSubscriptions: false
         });
         const eventName = getDTOEventName(EventType.DELETED_MANY, TestResolverDTO);
         return expect(() => resolver.deletedManySubscription()).toThrow(`Unable to subscribe to ${eventName}`);
@@ -343,7 +394,7 @@ describe('DeleteResolver', () => {
       it('should not propagate events if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
         const { resolver } = await createTestResolver({
           enableSubscriptions: true,
-          many: { enableSubscriptions: false },
+          many: { enableSubscriptions: false }
         });
         const eventName = getDTOEventName(EventType.DELETED_MANY, TestResolverDTO);
         return expect(() => resolver.deletedManySubscription()).toThrow(`Unable to subscribe to ${eventName}`);

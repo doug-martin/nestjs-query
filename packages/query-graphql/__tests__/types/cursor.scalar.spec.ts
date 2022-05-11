@@ -1,22 +1,22 @@
 import { Kind } from 'graphql';
-import { ConnectionCursorScalar } from '../../src';
+import { ConnectionCursorScalar } from '@ptc-org/nestjs-query-graphql';
 
 describe('ConnectionCursorScalar', (): void => {
   describe('#parseValue', () => {
     it('should parse a value', () => {
-      expect(ConnectionCursorScalar.parseValue('aaa')).toEqual('aaa');
+      expect(ConnectionCursorScalar.parseValue('aaa')).toBe('aaa');
     });
   });
 
   describe('#serialize', () => {
     it('should serialize a value', () => {
-      expect(ConnectionCursorScalar.serialize('aaa')).toEqual('aaa');
+      expect(ConnectionCursorScalar.serialize('aaa')).toBe('aaa');
     });
   });
 
   describe('#parseLiteral', () => {
     it('should parse a literal', () => {
-      expect(ConnectionCursorScalar.parseLiteral({ kind: Kind.STRING, value: 'aaa' }, {})).toEqual('aaa');
+      expect(ConnectionCursorScalar.parseLiteral({ kind: Kind.STRING, value: 'aaa' }, {})).toBe('aaa');
     });
 
     it('should return null if the ast.kind is not a string', () => {

@@ -7,7 +7,7 @@ import {
   FilterableUnPagedRelation,
   OffsetConnection,
   FilterableRelation,
-} from '../../src';
+} from '@ptc-org/nestjs-query-graphql';
 import {
   CursorConnection,
   FilterableCursorConnection,

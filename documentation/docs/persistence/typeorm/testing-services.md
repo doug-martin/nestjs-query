@@ -32,7 +32,7 @@ export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
 
 ```
 
-Now lets writ a some tests! 
+Now lets write some tests! 
 
 ```ts title="todo-item.service.spec.ts"
 import { Test, TestingModule } from '@nestjs/testing';
