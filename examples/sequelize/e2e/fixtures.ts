@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 import { SubTaskEntity } from '../src/sub-task/sub-task.entity';
 import { TagEntity } from '../src/tag/tag.entity';
 import { TodoItemEntity } from '../src/todo-item/entity/todo-item.entity';
-import { executeTruncate } from '../../../examples/helpers';
+import { executeTruncate } from '../../helpers';
 
 const tables = ['TodoItemEntities', 'SubTaskEntities', 'TagEntities'];
 export const truncate = async (sequelize: Sequelize): Promise<void> => executeTruncate(sequelize, tables);

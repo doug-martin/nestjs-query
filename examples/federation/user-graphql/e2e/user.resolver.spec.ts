@@ -59,7 +59,7 @@ describe('Federated - UserResolver (e2e)', () => {
           });
         }));
 
-    it(`should return null if the user is not found`, () =>
+    it(`should throw item not found on non existing user`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -71,10 +71,10 @@ describe('Federated - UserResolver (e2e)', () => {
           }
         }`,
         })
-        .expect(200, {
-          data: {
-            user: null,
-          },
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.errors).toHaveLength(1);
+          expect(body.errors[0].message).toContain('Unable to find');
         }));
   });
 

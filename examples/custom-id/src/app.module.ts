@@ -1,24 +1,23 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommonModule } from './common/common.module';
 import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
-import { formatGraphqlError, typeormOrmConfig } from '../../../examples/helpers';
+import { formatGraphqlError, typeormOrmConfig } from '../../helpers';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(typeormOrmConfig('subscription')),
+    TypeOrmModule.forRoot(typeormOrmConfig('basic')),
     GraphQLModule.forRoot({
-      subscriptions: {
-        'graphql-ws': true,
-      },
       autoSchemaFile: 'schema.gql',
       formatError: formatGraphqlError
     }),
     SubTaskModule,
     TodoItemModule,
     TagModule,
+    CommonModule,
   ],
 })
 export class AppModule {}
