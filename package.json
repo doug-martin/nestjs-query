@@ -5,9 +5,6 @@
     "packages/*"
   ],
   "scripts": {
-    "jest": "jest --runInBand --coverage",
-    "jest:e2e": "jest --runInBand --config=./jest.e2e.config.js",
-    "jest:unit": "jest --coverage --config=./jest.config.js",
     "lint": "eslint --cache --ext=.ts .",
     "lint:fix": "eslint --fix --ext=.ts .",
     "lint:no-cache": "eslint --ext=.ts .",

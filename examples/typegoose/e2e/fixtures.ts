@@ -1,9 +1,6 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-assignment */
 import { Connection, Types } from 'mongoose';
-import { SubTaskEntity } from '../src/sub-task/sub-task.entity';
-import { TagEntity } from '../src/tag/tag.entity';
-import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
-import { asyncLoop } from '../../../examples/helpers';
+import { asyncLoop } from '../../helpers';
 
 const { ObjectId } = Types;
 
@@ -161,18 +158,21 @@ export const SUB_TASKS = [
   },
 ];
 
-const documents = [TodoItemEntity.name, SubTaskEntity.name, TagEntity.name];
+const documents = ['TodoItemEntity', 'SubTaskEntity', 'TagEntity'];
+
 export const truncate = async (connection: Connection): Promise<void> =>
-  asyncLoop(documents, (document) => connection.model(document).remove({}).exec());
+  asyncLoop(documents, (document) => connection.model(document).deleteMany({}).exec());
 
 export const refresh = async (connection: Connection): Promise<void> => {
   await truncate(connection);
 
-  const TodoModel = connection.model<TodoItemEntity>(TodoItemEntity.name);
-  const TagsModel = connection.model<TagEntity>(TagEntity.name);
-  const SubTaskModel = connection.model<SubTaskEntity>(SubTaskEntity.name);
+  const TodoModel = connection.model('TodoItemEntity');
+  const TagsModel = connection.model('TagEntity');
+  const SubTaskModel = connection.model('SubTaskEntity');
+
+  await Promise.all(TODO_ITEMS.map(({ id, ...rest }) => new TodoModel({ _id: new ObjectId(id), ...rest }).save()));
+
+  await Promise.all(SUB_TASKS.map(({ id, ...rest }) => new SubTaskModel({ _id: new ObjectId(id), ...rest }).save()));
 
   await Promise.all(TAGS.map(({ id, ...rest }) => new TagsModel({ _id: new ObjectId(id), ...rest }).save()));
-  await Promise.all(TODO_ITEMS.map(({ id, ...rest }) => new TodoModel({ _id: new ObjectId(id), ...rest }).save()));
-  await Promise.all(SUB_TASKS.map(({ id, ...rest }) => new SubTaskModel({ _id: new ObjectId(id), ...rest }).save()));
 };
