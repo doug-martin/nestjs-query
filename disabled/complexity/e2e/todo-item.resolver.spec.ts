@@ -10,6 +10,8 @@ import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
 
+jest.setTimeout(20000)
+
 describe('TodoItemResolver (complexity - e2e)', () => {
   let app: INestApplication;
 
