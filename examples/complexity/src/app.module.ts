@@ -5,7 +5,7 @@ import { ComplexityPlugin } from './complexity.plugin';
 import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
-import { formatGraphqlError, typeormOrmConfig } from '../../../examples/helpers';
+import { formatGraphqlError, typeormOrmConfig } from '../../helpers';
 
 @Module({
   providers: [ComplexityPlugin],

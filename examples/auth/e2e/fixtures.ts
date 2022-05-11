@@ -2,7 +2,7 @@ import { Connection } from 'typeorm';
 import { SubTaskEntity } from '../src/sub-task/sub-task.entity';
 import { TagEntity } from '../src/tag/tag.entity';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
-import { executeTruncate } from '../../../examples/helpers';
+import { executeTruncate } from '../../helpers';
 import { UserEntity } from '../src/user/user.entity';
 
 const tables = ['todo_item', 'sub_task', 'tag', 'user'];
