@@ -60,7 +60,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
   }
 
   /**
-   * Query for multiple entities, using a Query from `@nestjs-query/core`.
+   * Query for multiple entities, using a Query from `@ptc-org/nestjs-query-core`.
    *
    * @example
    * ```ts
@@ -180,7 +180,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
   }
 
   /**
-   * Update multiple entities with a `@nestjs-query/core` Filter.
+   * Update multiple entities with a `@ptc-org/nestjs-query-core` Filter.
    *
    * @example
    * ```ts
@@ -248,7 +248,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
   }
 
   /**
-   * Delete multiple records with a `@nestjs-query/core` `Filter`.
+   * Delete multiple records with a `@ptc-org/nestjs-query-core` `Filter`.
    *
    * @example
    *
@@ -314,7 +314,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
   }
 
   /**
-   * Restores multiple records with a `@nestjs-query/core` `Filter`.
+   * Restores multiple records with a `@ptc-org/nestjs-query-core` `Filter`.
    *
    * @example
    *

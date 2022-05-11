@@ -1,4 +1,4 @@
-import { Filter } from '@nestjs-query/core';
+import { Filter } from '@ptc-org/nestjs-query-core';
 import { FilterQuery, model } from 'mongoose';
 import { TestEntity, TestEntitySchema } from '../__fixtures__/test.entity';
 import { WhereBuilder } from '../../src/query';

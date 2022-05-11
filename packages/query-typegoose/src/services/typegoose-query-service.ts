@@ -10,11 +10,12 @@ import {
   DeleteOneOptions,
   UpdateManyResponse,
   UpdateOneOptions,
-  QueryService,
-} from '@nestjs-query/core';
+  QueryService
+} from '@ptc-org/nestjs-query-core';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { ReturnModelType, DocumentType, mongoose } from '@typegoose/typegoose';
 import { NotFoundException } from '@nestjs/common';
+import { PipelineStage } from 'mongoose';
 import { ReferenceQueryService } from './reference-query.service';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { UpdateArrayQuery } from '../typegoose-types.helper';
@@ -23,19 +24,17 @@ export interface TypegooseQueryServiceOpts {
   toObjectOptions?: mongoose.ToObjectOptions;
 }
 
-export class TypegooseQueryService<Entity extends Base>
-  extends ReferenceQueryService<Entity>
-  implements QueryService<Entity>
-{
+export class TypegooseQueryService<Entity extends Base> extends ReferenceQueryService<Entity> implements QueryService<Entity> {
+
   constructor(
     readonly Model: ReturnModelType<new () => Entity>,
-    readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model),
+    readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model)
   ) {
     super(Model);
   }
 
   /**
-   * Query for multiple entities, using a Query from `@nestjs-query/core`.
+   * Query for multiple entities, using a Query from `@ptc-org/nestjs-query-core`.
    *
    * @example
    * ```ts
@@ -55,17 +54,14 @@ export class TypegooseQueryService<Entity extends Base>
 
   async aggregate(
     filter: Filter<Entity>,
-    aggregateQuery: AggregateQuery<Entity>,
+    aggregateQuery: AggregateQuery<Entity>
   ): Promise<AggregateResponse<Entity>[]> {
     const { aggregate, filterQuery, options } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter);
-    const aggPipeline: unknown[] = [{ $match: filterQuery }, { $group: aggregate }];
+    const aggPipeline: PipelineStage[] = [{ $match: filterQuery }, { $group: aggregate }];
     if (options.sort) {
       aggPipeline.push({ $sort: options.sort ?? {} });
     }
-    const aggResult = (await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<
-      string,
-      unknown
-    >[];
+    const aggResult = (await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<string, unknown>[];
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 
@@ -162,12 +158,12 @@ export class TypegooseQueryService<Entity extends Base>
   async updateOne(
     id: string,
     update: DeepPartial<Entity>,
-    opts?: UpdateOneOptions<Entity>,
+    opts?: UpdateOneOptions<Entity>
   ): Promise<DocumentType<Entity>> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
     const doc = await this.Model.findOneAndUpdate(filterQuery, this.getUpdateQuery(update as DocumentType<Entity>), {
-      new: true,
+      new: true
     });
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
@@ -176,7 +172,7 @@ export class TypegooseQueryService<Entity extends Base>
   }
 
   /**
-   * Update multiple entities with a `@nestjs-query/core` Filter.
+   * Update multiple entities with a `@ptc-org/nestjs-query-core` Filter.
    *
    * @example
    * ```ts
@@ -192,7 +188,7 @@ export class TypegooseQueryService<Entity extends Base>
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
     const res = await this.Model.updateMany(filterQuery, this.getUpdateQuery(update as DocumentType<Entity>)).exec();
-    return { updatedCount: res.nModified || 0 };
+    return { updatedCount: res.modifiedCount || 0 };
   }
 
   /**
@@ -217,7 +213,7 @@ export class TypegooseQueryService<Entity extends Base>
   }
 
   /**
-   * Delete multiple records with a `@nestjs-query/core` `Filter`.
+   * Delete multiple records with a `@ptc-org/nestjs-query-core` `Filter`.
    *
    * @example
    *
@@ -247,7 +243,7 @@ export class TypegooseQueryService<Entity extends Base>
         (update: mongoose.UpdateQuery<DocumentType<Entity>>, k) =>
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           ({ ...update, [k]: entity.get(k) }),
-        {},
+        {}
       );
     }
     const arrayUpdateQuery: mongoose.UpdateQuery<unknown> = this.buildArrayUpdateQuery(entity as DeepPartial<Entity>);
@@ -258,7 +254,7 @@ export class TypegooseQueryService<Entity extends Base>
     // eslint-disable-next-line prefer-const
     let query = {
       $addToSet: {},
-      $pull: {},
+      $pull: {}
     } as UpdateArrayQuery<Entity>;
 
     Object.keys(entity).forEach((key) => {

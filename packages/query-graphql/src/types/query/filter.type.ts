@@ -3,7 +3,7 @@ import { InputType, Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { upperCaseFirst } from 'upper-case-first';
-import { ResolverRelation } from '../../resolvers/relations';
+import { ResolverRelation } from '../../resolvers';
 import { createFilterComparisonType } from './field-comparison';
 import { getDTONames, getGraphqlObjectName } from '../../common';
 import { getFilterableFields, getQueryOptions, getRelations, SkipIf } from '../../decorators';
@@ -14,10 +14,13 @@ const reflector = new MapReflector('nestjs-query:filter-type');
 export type FilterTypeOptions = {
   allowedBooleanExpressions?: ('and' | 'or')[];
 };
+
 export type FilterableRelations = Record<string, Class<unknown>>;
+
 export interface FilterConstructor<T> {
   hasRequiredFilters: boolean;
-  new (): Filter<T>;
+
+  new(): Filter<T>;
 }
 
 function getObjectTypeName<DTO>(DTOClass: Class<DTO>): string {
@@ -27,20 +30,24 @@ function getObjectTypeName<DTO>(DTOClass: Class<DTO>): string {
 function getOrCreateFilterType<T>(
   TClass: Class<T>,
   name: string,
-  filterableRelations: FilterableRelations = {},
+  filterableRelations: FilterableRelations = {}
 ): FilterConstructor<T> {
   return reflector.memoize(TClass, name, () => {
     const { allowedBooleanExpressions }: FilterTypeOptions = getQueryOptions(TClass) ?? {};
     const fields = getFilterableFields(TClass);
+
     if (!fields.length) {
       throw new Error(`No fields found to create GraphQLFilter for ${TClass.name}`);
     }
+
     const hasRequiredFilters = fields.some((f) => f.advancedOptions?.filterRequired === true);
     const isNotAllowedComparison = (val: 'and' | 'or') => !isInAllowedList(allowedBooleanExpressions, val);
 
     @InputType(name)
     class GraphQLFilter {
       static hasRequiredFilters: boolean = hasRequiredFilters;
+
+      // TODO:: Add the required fields also in here and validate they are set!
 
       @ValidateNested()
       @SkipIf(() => isNotAllowedComparison('and'), Field(() => [GraphQLFilter], { nullable: true }))
@@ -59,13 +66,14 @@ function getOrCreateFilterType<T>(
         FieldType: target,
         fieldName: `${baseName}${upperCaseFirst(propertyName)}`,
         allowedComparisons: advancedOptions?.allowedComparisons,
-        returnTypeFunc,
+        returnTypeFunc
       });
       const nullable = advancedOptions?.filterRequired !== true;
       ValidateNested()(GraphQLFilter.prototype, propertyName);
       Field(() => FC, { nullable })(GraphQLFilter.prototype, propertyName);
       Type(() => FC)(GraphQLFilter.prototype, propertyName);
     });
+
     Object.keys(filterableRelations).forEach((field) => {
       const FieldType = filterableRelations[field];
       if (FieldType) {
@@ -75,6 +83,7 @@ function getOrCreateFilterType<T>(
         Type(() => FC)(GraphQLFilter.prototype, field);
       }
     });
+
     return GraphQLFilter as FilterConstructor<T>;
   });
 }

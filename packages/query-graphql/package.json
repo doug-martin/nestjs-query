@@ -3,7 +3,7 @@
   "version": "0.33.0",
   "description": "Nestjs graphql query adapter",
   "author": "doug-martin <doug@dougamartin.com>",
-  "homepage": "https://github.com/doug-martin/nestjs-query#readme",
+  "homepage": "https://github.com/tripss/nestjs-query#readme",
   "keywords": [
     "graphql",
     "crud",
@@ -25,11 +25,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/doug-martin/nestjs-query.git",
+    "url": "git+https://github.com/tripss/nestjs-query.git",
     "directory": "packages/query-graphql"
   },
   "bugs": {
-    "url": "https://github.com/doug-martin/nestjs-query/issues"
+    "url": "https://github.com/tripss/nestjs-query/issues"
   },
   "dependencies": {
     "graphql-fields": "^2.0.3",

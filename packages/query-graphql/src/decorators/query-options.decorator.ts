@@ -12,5 +12,5 @@ export function QueryOptions(opts: QueryOptionsDecoratorOpts<any>) {
     valueReflector.set(target, opts);
   };
 }
-export const getQueryOptions = <DTO>(DTOClass: Class<DTO>): MetaValue<QueryArgsTypeOpts<DTO>> =>
-  valueReflector.get(DTOClass);
+
+export const getQueryOptions = <DTO>(DTOClass: Class<DTO>): MetaValue<QueryArgsTypeOpts<DTO>> => valueReflector.get(DTOClass);

@@ -1,4 +1,4 @@
-import { AggregateQuery, Filter, Query, SortDirection, SortField } from '@nestjs-query/core';
+import { AggregateQuery, Filter, Query, SortDirection, SortField } from '@ptc-org/nestjs-query-core';
 import { DocumentType, ReturnModelType, mongoose } from '@typegoose/typegoose';
 import { AggregateBuilder, TypegooseGroupAndAggregate } from './aggregate.builder';
 import { getSchemaKey } from './helpers';
@@ -6,7 +6,7 @@ import { WhereBuilder } from './where.builder';
 
 const TYPEGOOSE_SORT_DIRECTION: Record<SortDirection, 1 | -1> = {
   [SortDirection.ASC]: 1,
-  [SortDirection.DESC]: -1,
+  [SortDirection.DESC]: -1
 };
 type TypegooseSort = Record<string, 1 | -1>;
 
@@ -18,6 +18,7 @@ type TypegooseQuery<Entity> = {
 type TypegooseAggregateQuery<Entity> = TypegooseQuery<Entity> & {
   aggregate: TypegooseGroupAndAggregate;
 };
+
 /**
  * @internal
  *
@@ -27,43 +28,44 @@ export class FilterQueryBuilder<Entity> {
   constructor(
     readonly Model: ReturnModelType<new () => Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(Model),
-    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(),
-  ) {}
+    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>()
+  ) {
+  }
 
-  buildQuery({ filter, paging, sorting }: Query<Entity>): TypegooseQuery<Entity> {
+  public buildQuery({ filter, paging, sorting }: Query<Entity>): TypegooseQuery<Entity> {
     return {
       filterQuery: this.buildFilterQuery(filter),
-      options: { limit: paging?.limit, skip: paging?.offset, sort: this.buildSorting(sorting) },
+      options: { limit: paging?.limit, skip: paging?.offset, sort: this.buildSorting(sorting) }
     };
   }
 
-  buildAggregateQuery(
+  public buildAggregateQuery(
     aggregate: AggregateQuery<DocumentType<Entity>>,
-    filter?: Filter<Entity>,
+    filter?: Filter<Entity>
   ): TypegooseAggregateQuery<Entity> {
     return {
       filterQuery: this.buildFilterQuery(filter),
       aggregate: this.aggregateBuilder.build(aggregate),
-      options: { sort: this.buildAggregateSorting(aggregate) },
+      options: { sort: this.buildAggregateSorting(aggregate) }
     };
   }
 
-  buildIdAggregateQuery(
+  public buildIdAggregateQuery(
     id: unknown | unknown[],
     filter: Filter<Entity>,
-    aggregate: AggregateQuery<Entity>,
+    aggregate: AggregateQuery<Entity>
   ): TypegooseAggregateQuery<Entity> {
     return {
       filterQuery: this.buildIdFilterQuery(id, filter),
       aggregate: this.aggregateBuilder.build(aggregate),
-      options: { sort: this.buildAggregateSorting(aggregate) },
+      options: { sort: this.buildAggregateSorting(aggregate) }
     };
   }
 
-  buildIdFilterQuery(id: unknown | unknown[], filter?: Filter<Entity>): mongoose.FilterQuery<new () => Entity> {
+  public buildIdFilterQuery(id: unknown | unknown[], filter?: Filter<Entity>): mongoose.FilterQuery<new () => Entity> {
     return {
       ...this.buildFilterQuery(filter),
-      _id: Array.isArray(id) ? { $in: id } : id,
+      _id: Array.isArray(id) ? { $in: id } : id
     };
   }
 
@@ -72,10 +74,11 @@ export class FilterQueryBuilder<Entity> {
    *
    * @param filter - the filter.
    */
-  buildFilterQuery(filter?: Filter<Entity>): mongoose.FilterQuery<new () => Entity> {
+  public buildFilterQuery(filter?: Filter<Entity>): mongoose.FilterQuery<new () => Entity> {
     if (!filter) {
       return {};
     }
+
     return this.whereBuilder.build(filter);
   }
 
@@ -83,7 +86,7 @@ export class FilterQueryBuilder<Entity> {
    * Applies the ORDER BY clause to a `typeorm` QueryBuilder.
    * @param sorts - an array of SortFields to create the ORDER BY clause.
    */
-  buildSorting(sorts?: SortField<Entity>[]): TypegooseSort | undefined {
+  public buildSorting(sorts?: SortField<Entity>[]): TypegooseSort | undefined {
     if (!sorts) {
       return undefined;
     }

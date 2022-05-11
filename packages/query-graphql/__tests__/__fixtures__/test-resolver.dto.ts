@@ -10,4 +10,5 @@ export class TestResolverDTO {
 
   @FilterableField()
   stringField!: string;
+
 }

@@ -1,4 +1,4 @@
-import { AssemblerDeserializer, AssemblerSerializer, Class, getQueryServiceToken } from '@nestjs-query/core';
+import { AssemblerDeserializer, AssemblerSerializer, Class, getQueryServiceToken } from '@ptc-org/nestjs-query-core';
 import { FactoryProvider } from '@nestjs/common';
 import { getModelToken, ModelDefinition } from '@nestjs/mongoose';
 import { Model, Document } from 'mongoose';

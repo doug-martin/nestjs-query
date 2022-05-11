@@ -56,14 +56,3 @@ jobs:
           fail_ci_if_error: true
           name: run-${{ matrix.node-version }}-${{ matrix.db-type }}
 
-  finish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          directory: ./coverage
-          fail_ci_if_error: true
-

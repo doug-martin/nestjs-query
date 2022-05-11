@@ -11,10 +11,10 @@ import {
   Query,
   QueryService,
   UpdateManyResponse,
-  UpdateOneOptions,
-} from '@nestjs-query/core';
+  UpdateOneOptions
+} from '@ptc-org/nestjs-query-core';
 import { NotFoundException } from '@nestjs/common';
-import { Document, Model as MongooseModel, UpdateQuery } from 'mongoose';
+import { Document, Model as MongooseModel, PipelineStage, UpdateQuery } from 'mongoose';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
 import { ReferenceQueryService } from './reference-query.service';
 
@@ -25,6 +25,7 @@ type MongoDBUpdatedOutput = {
 type MongoDBDeletedOutput = {
   deletedCount: number;
 };
+
 /**
  * Base class for all query services that use Typegoose.
  *
@@ -43,17 +44,16 @@ type MongoDBDeletedOutput = {
  */
 export class MongooseQueryService<Entity extends Document>
   extends ReferenceQueryService<Entity>
-  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
-{
+  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
   constructor(
     readonly Model: MongooseModel<Entity>,
-    readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model),
+    readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model)
   ) {
     super();
   }
 
   /**
-   * Query for multiple entities, using a Query from `@nestjs-query/core`.
+   * Query for multiple entities, using a Query from `@ptc-org/nestjs-query-core`.
    *
    * @example
    * ```ts
@@ -72,17 +72,14 @@ export class MongooseQueryService<Entity extends Document>
 
   async aggregate(
     filter: Filter<Entity>,
-    aggregateQuery: AggregateQuery<Entity>,
+    aggregateQuery: AggregateQuery<Entity>
   ): Promise<AggregateResponse<Entity>[]> {
     const { aggregate, filterQuery, options } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter);
-    const aggPipeline: unknown[] = [{ $match: filterQuery }, { $group: aggregate }];
+    const aggPipeline: PipelineStage[] = [{ $match: filterQuery }, { $group: aggregate }];
     if (options.sort) {
       aggPipeline.push({ $sort: options.sort ?? {} });
     }
-    const aggResult = (await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<
-      string,
-      unknown
-    >[];
+    const aggResult = (await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<string, unknown>[];
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 
@@ -177,9 +174,11 @@ export class MongooseQueryService<Entity extends Document>
   async updateOne(id: string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
+
     const doc = await this.Model.findOneAndUpdate(filterQuery, this.getUpdateQuery(update), {
-      new: true,
+      new: true
     });
+
     if (!doc) {
       throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
     }
@@ -187,7 +186,7 @@ export class MongooseQueryService<Entity extends Document>
   }
 
   /**
-   * Update multiple entities with a `@nestjs-query/core` Filter.
+   * Update multiple entities with a `@ptc-org/nestjs-query-core` Filter.
    *
    * @example
    * ```ts
@@ -202,8 +201,8 @@ export class MongooseQueryService<Entity extends Document>
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    const res = (await this.Model.updateMany(filterQuery, this.getUpdateQuery(update)).exec()) as MongoDBUpdatedOutput;
-    return { updatedCount: res.nModified || 0 };
+    const res = (await this.Model.updateMany(filterQuery, this.getUpdateQuery(update)).exec());
+    return { updatedCount: res.modifiedCount || 0 };
   }
 
   /**
@@ -228,7 +227,7 @@ export class MongooseQueryService<Entity extends Document>
   }
 
   /**
-   * Delete multiple records with a `@nestjs-query/core` `Filter`.
+   * Delete multiple records with a `@ptc-org/nestjs-query-core` `Filter`.
    *
    * @example
    *
@@ -258,7 +257,7 @@ export class MongooseQueryService<Entity extends Document>
         (update: UpdateQuery<Entity>, k) =>
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           ({ ...update, [k]: entity.get(k) }),
-        {},
+        {}
       );
     }
     return entity as UpdateQuery<Entity>;

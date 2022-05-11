@@ -20,7 +20,10 @@
     "paths": {
       "@ptc-org/nestjs-query-core": ["packages/core/src/index.ts"],
       "@ptc-org/nestjs-query-graphql": ["packages/query-graphql/src/index.ts"],
-      "@ptc-org/nestjs-query-typeorm": ["packages/query-typeorm/src/index.ts"]
+      "@ptc-org/nestjs-query-typeorm": ["packages/query-typeorm/src/index.ts"],
+      "@ptc-org/nestjs-query-mongoose": ["packages/query-mongoose/src/index.ts"],
+      "@ptc-org/nestjs-query-sequelize": ["packages/query-sequelize/src/index.ts"],
+      "@ptc-org/nestjs-query-typegoose": ["packages/query-typegoose/src/index.ts"]
     }
   },
   "files": []

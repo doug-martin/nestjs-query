@@ -60,7 +60,7 @@ describe('TagResolver (hooks - e2e)', () => {
         })
         .expect(200, { data: { tag: tags[0] } }));
 
-    it(`should return null if the tag is not found`, () =>
+    it(`should throw item not found on non existing tag`, () =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -73,9 +73,10 @@ describe('TagResolver (hooks - e2e)', () => {
         }`,
         })
         .expect(200, {
-          data: {
-            tag: null,
-          },
+          data: null,
+          errors: [{
+            message: 'Unable to find TagEntity with id: 100'
+          }]
         }));
 
     it(`should return todoItems as a connection`, () =>

@@ -1,4 +1,4 @@
-import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
+import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@ptc-org/nestjs-query-core';
 import escapeRegExp from 'lodash.escaperegexp';
 import { BadRequestException } from '@nestjs/common';
 import { ReturnModelType, mongoose } from '@typegoose/typegoose';
@@ -60,6 +60,7 @@ export class ComparisonBuilder<Entity> {
       } as mongoose.FilterQuery<Entity[F]>;
     }
     if (normalizedCmp.includes('like')) {
+      // @ts-ignore
       querySelector = this.likeComparison(normalizedCmp, val);
     }
     if (normalizedCmp.includes('between')) {
@@ -94,7 +95,7 @@ export class ComparisonBuilder<Entity> {
   private likeComparison<F extends keyof Entity>(
     cmp: string,
     val: EntityComparisonField<Entity, F>,
-  ): mongoose.FilterQuery<string> {
+  ): mongoose.FilterQuery<RegExp> {
     const regExpStr = escapeRegExp(`${String(val)}`).replace(/%/g, '.*');
     const regExp = new RegExp(regExpStr, cmp.includes('ilike') ? 'i' : undefined);
     if (cmp.startsWith('not')) {
@@ -120,7 +121,7 @@ export class ComparisonBuilder<Entity> {
     }
     if (typeof val === 'string' || typeof val === 'number') {
       if (mongoose.Types.ObjectId.isValid(val)) {
-        return mongoose.Types.ObjectId(val);
+        return new mongoose.Types.ObjectId(val);
       }
     }
     return val;

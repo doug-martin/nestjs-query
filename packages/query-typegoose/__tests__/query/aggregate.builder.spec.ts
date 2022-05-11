@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { AggregateQuery } from '@nestjs-query/core';
-import { TestEntity } from '../__fixtures__/test.entity';
+import { AggregateQuery } from '@ptc-org/nestjs-query-core';
+import { TestEntity } from '../__fixtures__';
 import { AggregateBuilder } from '../../src/query';
 
 describe('AggregateBuilder', (): void => {

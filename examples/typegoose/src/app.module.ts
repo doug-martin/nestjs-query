@@ -5,7 +5,7 @@ import { GqlContext } from './auth.guard';
 import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
-import { mongooseConfig } from '../../helpers';
+import { formatGraphqlError, mongooseConfig } from '../../helpers';
 
 const { uri, ...options } = mongooseConfig('typegoose', {
   useNewUrlParser: true,
@@ -21,6 +21,7 @@ const { uri, ...options } = mongooseConfig('typegoose', {
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
       context: ({ req }: { req: { headers: Record<string, string> } }): GqlContext => ({ request: req }),
+      formatError: formatGraphqlError
     }),
     SubTaskModule,
     TodoItemModule,

@@ -1,6 +1,6 @@
-import { CommonFieldComparisonBetweenType } from '@nestjs-query/core';
+import { CommonFieldComparisonBetweenType } from '@ptc-org/nestjs-query-core';
 import { getModelForClass, mongoose } from '@typegoose/typegoose';
-import { TestEntity } from '../__fixtures__/test.entity';
+import { TestEntity } from '../__fixtures__';
 import { ComparisonBuilder } from '../../src/query';
 
 describe('ComparisonBuilder', (): void => {
@@ -23,7 +23,7 @@ describe('ComparisonBuilder', (): void => {
     it('should convert query fields to objectIds if the field is an objectId', (): void => {
       expect(createComparisonBuilder().build('testReference', 'eq', '5f74af112fae2b251510e3ad')).toEqual({
         testReference: {
-          $eq: mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
+          $eq: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
         },
       });
     });
@@ -166,7 +166,7 @@ describe('ComparisonBuilder', (): void => {
     it('should convert query fields to objectIds if the field is an objectId', (): void => {
       expect(createComparisonBuilder().build('testReference', 'in', ['5f74af112fae2b251510e3ad'])).toEqual({
         testReference: {
-          $in: [mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')],
+          $in: [new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')],
         },
       });
     });
@@ -185,7 +185,7 @@ describe('ComparisonBuilder', (): void => {
     it('should convert query fields to objectIds if the field is an objectId', (): void => {
       expect(createComparisonBuilder().build('testReference', 'notIn', ['5f74af112fae2b251510e3ad'])).toEqual({
         testReference: {
-          $nin: [mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')],
+          $nin: [new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')],
         },
       });
     });
@@ -207,8 +207,8 @@ describe('ComparisonBuilder', (): void => {
         }),
       ).toEqual({
         testReference: {
-          $gte: mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
-          $lte: mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
+          $gte: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
+          $lte: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
         },
       });
     });
@@ -237,8 +237,8 @@ describe('ComparisonBuilder', (): void => {
         }),
       ).toEqual({
         testReference: {
-          $lt: mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
-          $gt: mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
+          $lt: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
+          $gt: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
         },
       });
     });

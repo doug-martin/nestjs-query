@@ -1,4 +1,4 @@
-import { getQueryServiceToken } from '@nestjs-query/core';
+import { getQueryServiceToken } from '@ptc-org/nestjs-query-core';
 import { instance } from 'ts-mockito';
 import { Document } from 'mongoose';
 import { createMongooseQueryServiceProviders } from '../src/providers';

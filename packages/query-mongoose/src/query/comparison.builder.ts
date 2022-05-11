@@ -1,4 +1,4 @@
-import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@nestjs-query/core';
+import { CommonFieldComparisonBetweenType, FilterComparisonOperators } from '@ptc-org/nestjs-query-core';
 import escapeRegExp from 'lodash.escaperegexp';
 import { Model as MongooseModel, FilterQuery, Document, Types, Schema } from 'mongoose';
 import { BadRequestException } from '@nestjs/common';
@@ -30,13 +30,14 @@ export class ComparisonBuilder<Entity extends Document> {
     in: '$in',
     notin: '$nin',
     is: '$eq',
-    isnot: '$ne',
+    isnot: '$ne'
   };
 
   constructor(
     readonly Model: MongooseModel<Entity>,
-    readonly comparisonMap: Record<string, string> = ComparisonBuilder.DEFAULT_COMPARISON_MAP,
-  ) {}
+    readonly comparisonMap: Record<string, string> = ComparisonBuilder.DEFAULT_COMPARISON_MAP
+  ) {
+  }
 
   /**
    * Creates a valid SQL fragment with parameters.
@@ -48,7 +49,7 @@ export class ComparisonBuilder<Entity extends Document> {
   build<F extends keyof Entity>(
     field: F,
     cmp: FilterComparisonOperators<Entity[F]>,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): FilterQuery<Entity> {
     const schemaKey = getSchemaKey(`${String(field)}`);
     const normalizedCmp = (cmp as string).toLowerCase();
@@ -56,10 +57,11 @@ export class ComparisonBuilder<Entity extends Document> {
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)
       querySelector = {
-        [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F]),
+        [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F])
       } as FilterQuery<Entity[F]>;
     }
     if (normalizedCmp.includes('like')) {
+      // @ts-ignore
       querySelector = this.likeComparison(normalizedCmp, val);
     }
     if (normalizedCmp.includes('between')) {
@@ -74,7 +76,7 @@ export class ComparisonBuilder<Entity extends Document> {
   private betweenComparison<F extends keyof Entity>(
     cmp: string,
     field: F,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): FilterQuery<Entity[F]> {
     if (!this.isBetweenVal(val)) {
       throw new Error(`Invalid value for ${cmp} expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
@@ -86,20 +88,22 @@ export class ComparisonBuilder<Entity extends Document> {
   }
 
   private isBetweenVal<F extends keyof Entity>(
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): val is CommonFieldComparisonBetweenType<Entity[F]> {
     return val !== null && typeof val === 'object' && 'lower' in val && 'upper' in val;
   }
 
   private likeComparison<F extends keyof Entity>(
     cmp: string,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): FilterQuery<RegExp> {
     const regExpStr = escapeRegExp(`${String(val)}`).replace(/%/g, '.*');
     const regExp = new RegExp(regExpStr, cmp.includes('ilike') ? 'i' : undefined);
+
     if (cmp.startsWith('not')) {
       return { $not: { $regex: regExp } };
     }
+
     return { $regex: regExp };
   }
 
@@ -120,7 +124,7 @@ export class ComparisonBuilder<Entity extends Document> {
     }
     if (typeof val === 'string' || typeof val === 'number') {
       if (Types.ObjectId.isValid(val)) {
-        return Types.ObjectId(val);
+        return new Types.ObjectId(val);
       }
     }
     return val;

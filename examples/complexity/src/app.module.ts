@@ -5,7 +5,7 @@ import { ComplexityPlugin } from './complexity.plugin';
 import { TagModule } from './tag/tag.module';
 import { TodoItemModule } from './todo-item/todo-item.module';
 import { SubTaskModule } from './sub-task/sub-task.module';
-import { typeormOrmConfig } from '../../helpers';
+import { formatGraphqlError, typeormOrmConfig } from '../../helpers';
 
 @Module({
   providers: [ComplexityPlugin],
@@ -13,6 +13,7 @@ import { typeormOrmConfig } from '../../helpers';
     TypeOrmModule.forRoot(typeormOrmConfig('complexity')),
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
+      formatError: formatGraphqlError
     }),
     SubTaskModule,
     TodoItemModule,
