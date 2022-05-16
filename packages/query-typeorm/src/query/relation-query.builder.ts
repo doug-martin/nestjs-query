@@ -373,7 +373,7 @@ export class RelationQueryBuilder<Entity, Relation> {
       fromPrimaryKeys,
       joins,
 
-      mapRelations<RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[] {
+      mapRelations: <RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[] => {
         const rawFilter = relation.joinColumns.reduce((columns, column) => ({
           ...columns,
 
@@ -459,7 +459,7 @@ export class RelationQueryBuilder<Entity, Relation> {
       fromPrimaryKeys,
       joins,
 
-      mapRelations<RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[] {
+      mapRelations: <RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[] => {
         const rawFilter = relation.inverseRelation!.inverseJoinColumns.reduce((columns, column) => ({
           ...columns,
 
