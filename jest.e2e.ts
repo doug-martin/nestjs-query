@@ -3,7 +3,7 @@ module.exports = {
   preset: './jest.preset.ts',
   globals: {
     'ts-jest': {
-      tsconfig: './examples/tsconfig.spec.json'
+      tsconfig: process.cwd() + '/examples/tsconfig.spec.json'
     }
   },
   testEnvironment: 'node',
@@ -11,10 +11,8 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest'
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  testMatch: ['**/e2e/**/*.spec.ts'],
-
+  testMatch: ['**/examples/**/e2e/**/*.spec.ts'],
   setupFilesAfterEnv: ['jest-extended'],
   snapshotSerializers: ['jest-snapshot-serializer-raw/always'],
-
-  coverageDirectory: '../coverage/examples'
+  coverageDirectory: './coverage/examples'
 };
