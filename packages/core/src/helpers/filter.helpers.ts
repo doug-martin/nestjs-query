@@ -23,7 +23,7 @@ export const isBooleanComparisonOperators = (op: unknown): op is BooleanComparis
   op === 'eq' || op === 'neq' || op === 'is' || op === 'isNot';
 
 export const isComparison = <DTO, K extends keyof DTO>(
-  maybeComparison?: FilterFieldComparison<DTO[K]> | Filter<DTO[K]>,
+  maybeComparison?: FilterFieldComparison<DTO[K]> | Filter<DTO[K]>
 ): maybeComparison is FilterFieldComparison<DTO[K]> => {
   if (!maybeComparison) {
     return false;
@@ -35,19 +35,19 @@ export const isComparison = <DTO, K extends keyof DTO>(
       isInComparisonOperators(op) ||
       isBetweenComparisonOperators(op) ||
       isRangeComparisonOperators(op) ||
-      isBooleanComparisonOperators(op),
+      isBooleanComparisonOperators(op)
   );
 };
 
 // TODO: test
 export const getFilterFieldComparison = <DTO, K extends keyof FilterComparisons<DTO>>(
   obj: FilterComparisons<DTO>,
-  field: K,
+  field: K
 ): FilterFieldComparison<DTO[K]> & Filter<DTO[K]> => obj[field] as FilterFieldComparison<DTO[K]> & Filter<DTO[K]>;
 
 export const transformFilter = <From, To>(
   filter: Filter<From> | undefined,
-  fieldMap: QueryFieldMap<From, To>,
+  fieldMap: QueryFieldMap<From, To>
 ): Filter<To> | undefined => {
   if (!filter) {
     return undefined;
@@ -79,33 +79,40 @@ export const getFilterFields = <DTO>(filter: Filter<DTO>): string[] => {
   const fieldSet: Set<string> = Object.keys(filter).reduce((fields: Set<string>, filterField: string): Set<string> => {
     if (filterField === 'and' || filterField === 'or') {
       const andOrFilters = filter[filterField];
+
       if (andOrFilters !== undefined) {
         return andOrFilters.reduce(
           (andOrFields, andOrFilter) => new Set<string>([...andOrFields, ...getFilterFields(andOrFilter)]),
-          fields,
+          fields
         );
       }
+
     } else {
       fields.add(filterField);
     }
+
     return fields;
   }, new Set<string>());
+
   return [...fieldSet];
 };
 
 export const getFilterComparisons = <DTO, K extends keyof FilterComparisons<DTO>>(
   filter: Filter<DTO>,
-  key: K,
+  key: K
 ): FilterFieldComparison<DTO[K]>[] => {
   const results: FilterFieldComparison<DTO[K]>[] = [];
+
   if (filter.and || filter.or) {
     const filters = [...(filter.and ?? []), ...(filter.or ?? [])];
     filters.forEach((f) => getFilterComparisons(f, key).forEach((comparison) => results.push(comparison)));
   }
+
   const comparison = getFilterFieldComparison(filter as FilterComparisons<DTO>, key);
   if (isComparison(comparison)) {
     results.push(comparison);
   }
+
   return [...results];
 };
 

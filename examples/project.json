@@ -19,7 +19,8 @@
         "coverage/examples"
       ],
       "options": {
-        "jestConfig": "examples/jest.config.ts"
+        "jestConfig": "jest.e2e.ts",
+        "runInBand": true
       }
     }
   },

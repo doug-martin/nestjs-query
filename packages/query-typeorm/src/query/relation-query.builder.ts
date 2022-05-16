@@ -383,10 +383,9 @@ export class RelationQueryBuilder<Entity, Relation> {
         // First filter the raw relations with the PK of the entity, then filter the relations
         // with the PK of the raw relation
         return lodashFilter(rawRelations, rawFilter).reduce((entityRelations, rawRelation) => {
-          const filter = relation.inverseJoinColumns.reduce((columns, column) => ({
+          const filter = this.getRelationPrimaryKeysPropertyNameAndColumnsName().reduce((columns, column) => ({
             ...columns,
-
-            [column.referencedColumn.propertyName]: rawRelation[`${joinAlias}_${column.propertyName}`]
+            [column.propertyName]: rawRelation[column.columnName]
           }), {} as Partial<Entity>);
 
           return entityRelations.concat(lodashFilter(relations, filter) as any);
@@ -402,7 +401,7 @@ export class RelationQueryBuilder<Entity, Relation> {
           params[paramName] = entities.map((entity) => column.referencedColumn!.getEntityValue(entity));
 
           // We also want to select the field, so we can map them back in the mapper
-          andSelect.push(`${joinAlias}.${column.propertyName}`);
+          andSelect.push(`${joinAlias}.${column.propertyName} AS ${joinAlias}_${column.propertyName}`);
           return `${joinAlias}.${column.propertyName} IN (:...${paramName})`;
         }).join(' AND ');
 
@@ -489,7 +488,7 @@ export class RelationQueryBuilder<Entity, Relation> {
           params[paramName] = entities.map((entity) => column.referencedColumn!.getEntityValue(entity));
 
           // We also want to select the field, so we can map them back in the mapper
-          andSelect.push(`${joinAlias}.${column.propertyName}`);
+          andSelect.push(`${joinAlias}.${column.propertyName} AS ${joinAlias}_${column.propertyName}`);
           return `${joinAlias}.${column.propertyName} IN (:...${paramName})`;
         }).join(' AND ');
 
