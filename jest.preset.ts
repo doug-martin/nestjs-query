@@ -5,7 +5,13 @@ module.exports = {
 
   collectCoverage: true,
   coverageReporters: ['html', 'clover'],
-  collectCoverageFrom: ['packages/**/*.ts', '!**/__tests__/**', '!**/dist/**', '!**/node_modules/**'],
+  collectCoverageFrom: [
+    'packages/**/*.ts',
+    '!**/__tests__/**',
+    '!**/dist/**',
+    '!**/node_modules/**',
+    '!**/jest.config.ts',
+  ],
   moduleNameMapper: {
     '@ptc-org/nestjs-query-core': process.cwd() + '/packages/core/src',
     '@ptc-org/nestjs-query-graphql': process.cwd() + '/packages/query-graphql/src',
