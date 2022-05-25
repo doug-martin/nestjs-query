@@ -7,12 +7,28 @@ SELECT
   "manyToOneRelation"."test_entity_id" AS "manyToOneRelation_test_entity_id",
   "manyToOneRelation"."uni_directional_test_entity_id" AS "manyToOneRelation_uni_directional_test_entity_id",
   "manyToOneRelation"."uni_directional_relation_test_entity_id" AS "manyToOneRelation_uni_directional_relation_test_entity_id",
-  "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk"
+  "test_entity"."test_entity_pk" AS "test_entity_testEntityPk"
 FROM
   "test_relation" "manyToOneRelation"
-  LEFT JOIN "test_entity" "TestEntity" ON "TestEntity"."many_to_one_relation_id" = "manyToOneRelation"."test_relation_pk"
+  INNER JOIN "test_entity" "test_entity" ON "test_entity"."many_to_one_relation_id" = "manyToOneRelation"."test_relation_pk"
 WHERE
-  "TestEntity"."test_entity_pk" IN (test-entity-id-1, test-entity-id-2)
+  "test_entity"."test_entity_pk" IN (test-entity-id-1, test-entity-id-2)
+`;
+
+exports[`RelationQueryBuilder #batchSelect should reuse existing join alias if there is one 1`] = `
+SELECT
+  "manyToOneRelation"."test_relation_pk" AS "manyToOneRelation_test_relation_pk",
+  "manyToOneRelation"."relation_name" AS "manyToOneRelation_relation_name",
+  "manyToOneRelation"."test_entity_id" AS "manyToOneRelation_test_entity_id",
+  "manyToOneRelation"."uni_directional_test_entity_id" AS "manyToOneRelation_uni_directional_test_entity_id",
+  "manyToOneRelation"."uni_directional_relation_test_entity_id" AS "manyToOneRelation_uni_directional_relation_test_entity_id",
+  "testEntity"."test_entity_pk" AS "testEntity_testEntityPk"
+FROM
+  "test_relation" "manyToOneRelation"
+  LEFT JOIN "test_entity" "testEntity" ON "testEntity"."test_entity_pk" = "manyToOneRelation"."test_entity_id"
+WHERE
+  (("testEntity"."test_entity_pk" = test))
+  AND "testEntity"."test_entity_pk" IN (test-entity-1)
 `;
 
 exports[`RelationQueryBuilder #select many to many many-to-many custom join table should work with a many-to-many through a join table 1`] = `
@@ -86,9 +102,9 @@ SELECT
   "testEntityUniDirectional"."oneTestRelationTestRelationPk" AS "testEntityUniDirectional_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "testEntityUniDirectional"
-  INNER JOIN "test_relation" "TestRelation" ON "TestRelation"."uni_directional_test_entity_id" = "testEntityUniDirectional"."test_entity_pk"
+  INNER JOIN "test_relation" "test_relation" ON "test_relation"."uni_directional_test_entity_id" = "testEntityUniDirectional"."test_entity_pk"
 WHERE
-  ("TestRelation"."test_relation_pk" = test-relation-id-1)
+  ("test_relation"."test_relation_pk" = test-relation-id-1)
 `;
 
 exports[`RelationQueryBuilder #select many to one should work with one entity 1`] = `
@@ -102,9 +118,9 @@ SELECT
   "testEntity"."oneTestRelationTestRelationPk" AS "testEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "testEntity"
-  INNER JOIN "test_relation" "TestRelation" ON "TestRelation"."test_entity_id" = "testEntity"."test_entity_pk"
+  INNER JOIN "test_relation" "test_relation" ON "test_relation"."test_entity_id" = "testEntity"."test_entity_pk"
 WHERE
-  ("TestRelation"."test_relation_pk" = test-relation-id-1)
+  ("test_relation"."test_relation_pk" = test-relation-id-1)
 `;
 
 exports[`RelationQueryBuilder #select one to many should query with a single entity 1`] = `
@@ -146,9 +162,9 @@ SELECT
   "oneTestRelation"."uni_directional_relation_test_entity_id" AS "oneTestRelation_uni_directional_relation_test_entity_id"
 FROM
   "test_relation" "oneTestRelation"
-  INNER JOIN "test_entity" "TestEntity" ON "TestEntity"."oneTestRelationTestRelationPk" = "oneTestRelation"."test_relation_pk"
+  INNER JOIN "test_entity" "test_entity" ON "test_entity"."oneTestRelationTestRelationPk" = "oneTestRelation"."test_relation_pk"
 WHERE
-  ("TestEntity"."test_entity_pk" = test-entity-id-1)
+  ("test_entity"."test_entity_pk" = test-entity-id-1)
 `;
 
 exports[`RelationQueryBuilder #select with filter should call whereBuilder#build if there is a filter 1`] = `

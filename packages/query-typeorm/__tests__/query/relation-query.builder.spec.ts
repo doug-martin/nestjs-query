@@ -4,6 +4,8 @@ import { closeTestConnection, createTestConnection, getTestConnection } from '..
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { RelationQueryBuilder } from '../../src/query';
+import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
+import { TEST_ENTITIES, TEST_RELATIONS } from '../__fixtures__/seeds';
 
 describe('RelationQueryBuilder', (): void => {
   beforeEach(createTestConnection);
@@ -196,13 +198,17 @@ describe('RelationQueryBuilder', (): void => {
       }
     ];
 
-    describe('many to one', () => {
-      // TODO:: SQL is updated, now make sure that batchQueryRelations keeps working
+    it('should reuse existing join alias if there is one', () => {
+      const query: Query<TestRelation> = { filter: { testEntity: { testEntityPk: { eq: 'test' } } } };
 
+      const entities = TEST_ENTITIES.slice(0, 1);
+      expectBatchSQLSnapshot(TestEntity, entities, 'manyToOneRelation', query);
+    });
+
+    describe('many to one', () => {
       it('should query with with multiple entities', () => {
         expectBatchSQLSnapshot(TestEntity, testEntities, 'manyToOneRelation', {});
       });
-
     });
   });
 

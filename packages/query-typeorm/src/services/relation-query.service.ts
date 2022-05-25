@@ -333,9 +333,9 @@ export abstract class RelationQueryService<Entity> {
     query: Query<Relation>
   ): Promise<Map<Entity, Relation[]>> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const convertedQuery = assembler.convertQuery(query);
 
+    const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const entityRelations = await relationQueryBuilder.batchSelect(entities, convertedQuery).getRawAndEntities();
 
     return entities.reduce((results, entity) => {
@@ -458,21 +458,6 @@ export abstract class RelationQueryService<Entity> {
     }
 
     return relationMeta.type as Class<unknown>;
-  }
-
-  private getRelationsFromPrimaryKeys<Relation>(
-    relationBuilder: RelationQueryBuilder<Entity, Relation>,
-    rawResult: ObjectLiteral,
-    relations: Relation[]
-  ): Relation[] {
-    const pks = relationBuilder.getRelationPrimaryKeysPropertyNameAndColumnsName();
-    const filter = pks.reduce(
-      (keys, key) =>
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        ({ ...keys, [key.propertyName]: rawResult[key.columnName] }),
-      {} as Partial<Entity>
-    );
-    return lodashFilter(relations, filter) as Relation[];
   }
 
   private getRelations<Relation>(
