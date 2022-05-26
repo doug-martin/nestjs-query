@@ -1,0 +1,25 @@
+name: Setup Environment
+
+on:
+  workflow_call:
+
+jobs:
+  prepare-env:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/Cypress
+            **/node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: yarn install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
