@@ -2,6 +2,12 @@ name: 'Setup Step'
 description: 'Setup Step'
 author: 'Tycho Bokdam'
 
+inputs:
+  set_shas:
+    description: 'Should the shas be set for nx affected:* commands'
+    required: false
+    default: 'true'
+
 runs:
   using: "composite"
   steps:
@@ -16,5 +22,6 @@ runs:
 
     - name: Derive appropriate SHAs for base and head for `nx affected` commands
       uses: nrwl/nx-set-shas@v2
+      if: ${{ inputs.set_shas == 'true' }}
       with:
         main-branch-name: master

@@ -23,6 +23,8 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup-step
+        with:
+          set_shas: false
 
       - name: Build docs
         run: npx nx build documentation
