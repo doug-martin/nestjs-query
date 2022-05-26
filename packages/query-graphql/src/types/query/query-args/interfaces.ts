@@ -5,7 +5,7 @@ import {
   ArrayConnectionOptions,
   CursorConnectionOptions,
   OffsetConnectionOptions,
-  StaticConnectionType,
+  StaticConnectionType
 } from '../../connection';
 
 export type BaseQueryArgsTypeOpts<DTO> = {

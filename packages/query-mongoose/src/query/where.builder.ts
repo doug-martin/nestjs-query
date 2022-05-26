@@ -9,7 +9,7 @@ import { EntityComparisonField, ComparisonBuilder } from './comparison.builder';
 export class WhereBuilder<Entity extends Document> {
   constructor(
     readonly Model: MongooseModel<Entity>,
-    readonly comparisonBuilder: ComparisonBuilder<Entity> = new ComparisonBuilder(Model),
+    readonly comparisonBuilder: ComparisonBuilder<Entity> = new ComparisonBuilder(Model)
   ) {}
 
   /**
@@ -59,14 +59,14 @@ export class WhereBuilder<Entity extends Document> {
 
   private getField<K extends keyof FilterComparisons<Entity>>(
     obj: FilterComparisons<Entity>,
-    field: K,
+    field: K
   ): FilterFieldComparison<Entity[K]> {
     return obj[field] as FilterFieldComparison<Entity[K]>;
   }
 
   private withFilterComparison<T extends keyof Entity>(
     field: T,
-    cmp: FilterFieldComparison<Entity[T]>,
+    cmp: FilterFieldComparison<Entity[T]>
   ): FilterQuery<Entity> {
     const opts = Object.keys(cmp) as (keyof FilterFieldComparison<Entity[T]>)[];
     if (opts.length === 1) {
@@ -75,8 +75,8 @@ export class WhereBuilder<Entity extends Document> {
     }
     return {
       $or: opts.map((cmpType) =>
-        this.comparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>),
-      ),
+        this.comparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>)
+      )
     } as FilterQuery<Entity>;
   }
 }

@@ -18,10 +18,10 @@ import { TodoItemEntity } from './todo-item.entity';
           UpdateDTOClass: TodoItemUpdateDTO,
           enableSubscriptions: true,
           update: { many: { enableSubscriptions: false } },
-          delete: { many: { enableSubscriptions: false } },
-        },
-      ],
-    }),
-  ],
+          delete: { many: { enableSubscriptions: false } }
+        }
+      ]
+    })
+  ]
 })
 export class TodoItemModule {}

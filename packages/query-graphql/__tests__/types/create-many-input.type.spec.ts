@@ -55,24 +55,24 @@ describe('CreateManyInputType', (): void => {
                 {
                   children: [],
                   constraints: {
-                    minLength: 'field must be longer than or equal to 5 characters',
+                    minLength: 'field must be longer than or equal to 5 characters'
                   },
                   property: 'field',
                   target: input[0],
-                  value: input[0].field,
-                },
+                  value: input[0].field
+                }
               ],
               property: '0',
               target: input,
-              value: input[0],
-            },
+              value: input[0]
+            }
           ],
           property: 'input',
           target: {
-            input,
+            input
           },
-          value: input,
-        },
+          value: input
+        }
       ]);
     });
 
@@ -88,24 +88,24 @@ describe('CreateManyInputType', (): void => {
                 {
                   children: [],
                   constraints: {
-                    minLength: 'field must be longer than or equal to 5 characters',
+                    minLength: 'field must be longer than or equal to 5 characters'
                   },
                   property: 'field',
                   target: input[0],
-                  value: input[0].field,
-                },
+                  value: input[0].field
+                }
               ],
               property: '0',
               target: input,
-              value: input[0],
-            },
+              value: input[0]
+            }
           ],
           property: 'input',
           target: {
-            input,
+            input
           },
-          value: input,
-        },
+          value: input
+        }
       ]);
     });
   });

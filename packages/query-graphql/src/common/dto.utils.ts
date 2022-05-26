@@ -28,13 +28,13 @@ export const getDTONames = <DTO>(DTOClass: Class<DTO>, opts?: DTONamesOpts): DTO
     baseName,
     baseNameLower,
     pluralBaseName,
-    pluralBaseNameLower,
+    pluralBaseNameLower
   };
 };
 
 export const getDTOIdTypeOrDefault = (
   DTOS: Class<unknown>[],
-  defaultType: ReturnTypeFuncValue = ID,
+  defaultType: ReturnTypeFuncValue = ID
 ): ReturnTypeFuncValue => {
   const dtoWithIDField = DTOS.find((dto) => !!getIDField(dto));
   if (dtoWithIDField) {

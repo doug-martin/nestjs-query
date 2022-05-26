@@ -10,7 +10,7 @@ import {
   Int,
   ObjectType,
   Query,
-  Resolver,
+  Resolver
 } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
@@ -26,7 +26,7 @@ describe('QueryArgsType with decorator options', (): void => {
     defaultResultSize: 2,
     maxResultsSize: 5,
     defaultFilter: { booleanField: { is: true } },
-    defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
+    defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }]
   })
   class TestDto {
     @FilterableField(() => ID)
@@ -97,37 +97,37 @@ describe('QueryArgsType with decorator options', (): void => {
   describe('max result size', () => {
     it('should validate a maxResultsSize for paging.first', () => {
       const queryObj: CursorQueryOptionsArgs = {
-        paging: { first: 10 },
+        paging: { first: 10 }
       };
       const queryInstance = plainToClass(CursorQueryOptionsArgs, queryObj);
       expect(validateSync(queryInstance)).toEqual([
         {
           children: [],
           constraints: {
-            PropertyMax: 'Field paging.first max allowed value is `5`.',
+            PropertyMax: 'Field paging.first max allowed value is `5`.'
           },
           property: 'paging',
           target: queryObj,
-          value: queryObj.paging,
-        },
+          value: queryObj.paging
+        }
       ]);
     });
 
     it('should validate a maxResultsSize for paging.last', () => {
       const queryObj: CursorQueryOptionsArgs = {
-        paging: { last: 10, before: 'abc' },
+        paging: { last: 10, before: 'abc' }
       };
       const queryInstance = plainToClass(CursorQueryOptionsArgs, queryObj);
       expect(validateSync(queryInstance)).toEqual([
         {
           children: [],
           constraints: {
-            PropertyMax: 'Field paging.last max allowed value is `5`.',
+            PropertyMax: 'Field paging.last max allowed value is `5`.'
           },
           property: 'paging',
           target: queryObj,
-          value: queryObj.paging,
-        },
+          value: queryObj.paging
+        }
       ]);
     });
   });

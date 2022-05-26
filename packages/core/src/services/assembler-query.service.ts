@@ -17,13 +17,13 @@ import {
 } from '../interfaces';
 import { QueryService } from './query.service';
 
-export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepPartial<Entity>, U = C, UE = CE> implements QueryService<DTO, C, U> {
-
+export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepPartial<Entity>, U = C, UE = CE>
+  implements QueryService<DTO, C, U>
+{
   constructor(
     readonly assembler: Assembler<DTO, Entity, C, CE, U, UE>,
     readonly queryService: QueryService<Entity, CE, UE>
-  ) {
-  }
+  ) {}
 
   addRelations<Relation>(
     relationName: string,
@@ -49,7 +49,7 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
 
   async deleteMany(filter: Filter<DTO>): Promise<DeleteManyResponse> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.queryService.deleteMany(this.assembler.convertQuery({ filter }).filter!);
+    return this.queryService.deleteMany(this.assembler.convertQuery({ filter }).filter);
   }
 
   deleteOne(id: number | string, opts?: DeleteOneOptions<DTO>): Promise<DTO> {
@@ -259,7 +259,7 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
     return this.queryService.updateMany(
       this.assembler.convertToUpdateEntity(update),
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.assembler.convertQuery({ filter }).filter!
+      this.assembler.convertQuery({ filter }).filter
     );
   }
 

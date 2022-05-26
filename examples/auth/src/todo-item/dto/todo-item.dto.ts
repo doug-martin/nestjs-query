@@ -4,7 +4,7 @@ import {
   Relation,
   FilterableCursorConnection,
   QueryOptions,
-  AuthorizationContext,
+  AuthorizationContext
 } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { UnauthorizedException } from '@nestjs/common';
@@ -27,7 +27,7 @@ import { UserContext } from '../../auth/auth.interfaces';
       throw new UnauthorizedException();
     }
     return { ownerId: { eq: context.req.user.id } };
-  },
+  }
 })
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
 @FilterableCursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true })

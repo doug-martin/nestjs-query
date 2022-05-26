@@ -35,7 +35,7 @@ export {
   KeySet,
   QueryOptions,
   IDField,
-  IDFieldOptions,
+  IDFieldOptions
 } from './decorators';
 export * from './resolvers';
 export * from './federation';
@@ -54,6 +54,6 @@ export {
   BeforeDeleteOneHook,
   BeforeDeleteManyHook,
   BeforeQueryManyHook,
-  BeforeFindOneHook,
+  BeforeFindOneHook
 } from './hooks';
 export { AuthorizerInterceptor, AuthorizerContext, HookInterceptor, HookContext } from './interceptors';

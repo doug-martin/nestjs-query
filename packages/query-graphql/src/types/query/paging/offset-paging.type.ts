@@ -17,7 +17,7 @@ export const getOrCreateOffsetPagingType = (): Class<OffsetPagingType> => {
 
     @Field(() => Int, {
       nullable: true,
-      description: 'Limit the number of records returned',
+      description: 'Limit the number of records returned'
     })
     @IsUndefined()
     @IsInt()
@@ -25,7 +25,7 @@ export const getOrCreateOffsetPagingType = (): Class<OffsetPagingType> => {
 
     @Field(() => Int, {
       nullable: true,
-      description: 'Offset to start returning records from',
+      description: 'Offset to start returning records from'
     })
     @IsUndefined()
     @IsInt()

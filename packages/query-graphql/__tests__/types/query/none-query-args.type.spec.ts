@@ -10,7 +10,7 @@ import {
   Int,
   ObjectType,
   Query,
-  Resolver,
+  Resolver
 } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
@@ -94,18 +94,18 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
 
   it('should sorting to the correct instance of sorting', () => {
     const queryObj: TestNoPagingQuery = {
-      sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
+      sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }]
     };
     const queryInstance = plainToClass(TestNoPagingQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.sorting![0]).toBeInstanceOf(TestNoPagingQuery.SortType);
+    expect(queryInstance.sorting[0]).toBeInstanceOf(TestNoPagingQuery.SortType);
   });
 
   it('should make filter to the correct instance of sorting', () => {
     const queryObj: CursorQueryArgsType<TestDto> = {
       filter: {
-        stringField: { eq: 'foo' },
-      },
+        stringField: { eq: 'foo' }
+      }
     };
     const queryInstance = plainToClass(TestNoPagingQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
@@ -115,7 +115,7 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
   it('should make the filter required if there is a filterRequired field', async () => {
     @ArgsType()
     class TestFilterRequiredQuery extends QueryArgsType(TestFilterRequiredDto, {
-      pagingStrategy: PagingStrategies.NONE,
+      pagingStrategy: PagingStrategies.NONE
     }) {}
 
     @Resolver()
@@ -139,7 +139,7 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
       defaultResultSize: 2,
       maxResultsSize: 5,
       defaultFilter: { booleanField: { is: true } },
-      defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
+      defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }]
     }) {}
 
     it('allow apply the options to the generated SDL', async () => {

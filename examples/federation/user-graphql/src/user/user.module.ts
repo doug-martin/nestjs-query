@@ -16,10 +16,10 @@ import { UserEntity } from './user.entity';
           EntityClass: UserEntity,
           CreateDTOClass: UserInputDTO,
           UpdateDTOClass: UserUpdateDTO,
-          referenceBy: { key: 'id' },
-        },
-      ],
-    }),
-  ],
+          referenceBy: { key: 'id' }
+        }
+      ]
+    })
+  ]
 })
 export class UserModule {}

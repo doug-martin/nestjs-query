@@ -6,7 +6,7 @@ import {
   NoOpQueryService,
   Query,
   QueryService,
-  UpdateManyResponse,
+  UpdateManyResponse
 } from '@ptc-org/nestjs-query-core';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemDTO } from './dto/todo-item.dto';

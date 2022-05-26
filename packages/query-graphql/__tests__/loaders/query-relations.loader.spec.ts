@@ -27,14 +27,14 @@ describe('QueryRelationsLoader', () => {
       when(service.queryRelations(RelationDTO, 'relation', deepEqual(dtos), deepEqual({}))).thenResolve(
         new Map([
           [dtos[0], dto1Relations],
-          [dtos[1], dto2Relations],
-        ]),
+          [dtos[1], dto2Relations]
+        ])
       );
       return expect(
         queryRelationsLoader([
           { dto: dtos[0], query: {} },
-          { dto: dtos[1], query: {} },
-        ]),
+          { dto: dtos[1], query: {} }
+        ])
       ).resolves.toEqual([dto1Relations, dto2Relations]);
     });
 
@@ -44,13 +44,13 @@ describe('QueryRelationsLoader', () => {
       const dtos = [{ id: 'dto-1' }, { id: 'dto-2' }];
       const dto1Relations = [{ id: 'relation-1' }, { id: 'relation-2' }];
       when(service.queryRelations(RelationDTO, 'relation', deepEqual(dtos), deepEqual({}))).thenResolve(
-        new Map([[dtos[0], dto1Relations]]),
+        new Map([[dtos[0], dto1Relations]])
       );
       return expect(
         queryRelationsLoader([
           { dto: dtos[0], query: {} },
-          { dto: dtos[1], query: {} },
-        ]),
+          { dto: dtos[1], query: {} }
+        ])
       ).resolves.toEqual([dto1Relations, []]);
     });
 
@@ -67,27 +67,27 @@ describe('QueryRelationsLoader', () => {
           RelationDTO,
           'relation',
           deepEqual([dtos[0], dtos[2]]),
-          deepEqual({ paging: { limit: 10 } }),
-        ),
+          deepEqual({ paging: { limit: 10 } })
+        )
       ).thenResolve(
         new Map([
           [dtos[0], dto1Relations],
-          [dtos[2], dto3Relations],
-        ]),
+          [dtos[2], dto3Relations]
+        ])
       );
       when(service.queryRelations(RelationDTO, 'relation', deepEqual([dtos[1], dtos[3]]), deepEqual({}))).thenResolve(
         new Map([
           [dtos[1], dto2Relations],
-          [dtos[3], dto4Relations],
-        ]),
+          [dtos[3], dto4Relations]
+        ])
       );
       return expect(
         queryRelationsLoader([
           { dto: dtos[0], query: { paging: { limit: 10 } } },
           { dto: dtos[1], query: {} },
           { dto: dtos[2], query: { paging: { limit: 10 } } },
-          { dto: dtos[3], query: {} },
-        ]),
+          { dto: dtos[3], query: {} }
+        ])
       ).resolves.toEqual([dto1Relations, dto2Relations, dto3Relations, dto4Relations]);
     });
   });

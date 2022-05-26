@@ -30,15 +30,15 @@ const UpdateOneRelationMixin =
     @Resolver(() => DTOClass, { isAbstract: true })
     class UpdateOneMixin extends Base {
       @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
-        interceptors: [AuthorizerInterceptor(DTOClass)],
+        interceptors: [AuthorizerInterceptor(DTOClass)]
       })
       async [`set${baseName}On${dtoNames.baseName}`](
         @Args() setArgs: SetArgs,
         @ModifyRelationAuthorizerFilter(baseNameLower, {
           operationGroup: OperationGroup.UPDATE,
-          many: false,
+          many: false
         })
-        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>
       ): Promise<DTO> {
         const { input } = await transformAndValidate(SetArgs, setArgs);
         return this.service.setRelation(relationName, input.id, input.relationId, modifyRelationsFilter);
@@ -71,30 +71,30 @@ const UpdateManyRelationMixin =
     @Resolver(() => DTOClass, { isAbstract: true })
     class UpdateManyMixin extends Base {
       @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
-        interceptors: [AuthorizerInterceptor(DTOClass)],
+        interceptors: [AuthorizerInterceptor(DTOClass)]
       })
       async [`add${pluralBaseName}To${dtoNames.baseName}`](
         @Args() addArgs: AddArgs,
         @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
           operationGroup: OperationGroup.UPDATE,
-          many: true,
+          many: true
         })
-        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>
       ): Promise<DTO> {
         const { input } = await transformAndValidate(AddArgs, addArgs);
         return this.service.addRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
       }
 
       @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
-        interceptors: [AuthorizerInterceptor(DTOClass)],
+        interceptors: [AuthorizerInterceptor(DTOClass)]
       })
       async [`set${pluralBaseName}On${dtoNames.baseName}`](
         @Args() addArgs: SetArgs,
         @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
           operationGroup: OperationGroup.UPDATE,
-          many: true,
+          many: true
         })
-        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>
       ): Promise<DTO> {
         const { input } = await transformAndValidate(AddArgs, addArgs);
         return this.service.setRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
@@ -115,8 +115,8 @@ export const UpdateRelationsMixin =
 
 export const UpdateRelationsResolver = <
   DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
 >(
   DTOClass: Class<DTO>,
-  relations: RelationsOpts,
+  relations: RelationsOpts
 ): Class<ServiceResolver<DTO, QS>> => UpdateRelationsMixin(DTOClass, relations)(BaseServiceResolver);

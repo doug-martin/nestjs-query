@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToMany,
-  JoinTable,
+  JoinTable
 } from 'typeorm';
 import { TodoItemEntity } from '../todo-item/todo-item.entity';
 

@@ -15,7 +15,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -25,8 +25,8 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -46,14 +46,14 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
           todoItem(id: "aWQ6MQ==") {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual({
             data: {
-              todoItem: { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
-            },
+              todoItem: { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null }
+            }
           });
         }));
 
@@ -67,9 +67,9 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
           todoItem(id: "aWQ6MTAwCg==") {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -86,7 +86,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               ${todoItemFields}
               created
             }
-          }`,
+          }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -107,7 +107,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               ${edgeNodes(subTaskFields)}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -117,7 +117,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
 
           edges.forEach((e) => expect(e.node.todoItemId).toBe('aWQ6MQ=='));
@@ -136,7 +136,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               ${edgeNodes(tagFields)}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -145,7 +145,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(2);
 
@@ -165,7 +165,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -174,7 +174,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
 
@@ -183,7 +183,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null },
             { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
             { id: 'aWQ6NA==', title: 'Add Todo Item Resolver', completed: false, description: null },
-            { id: 'aWQ6NQ==', title: 'How to create item With Sub Tasks', completed: false, description: null },
+            { id: 'aWQ6NQ==', title: 'How to create item With Sub Tasks', completed: false, description: null }
           ]);
         }));
 
@@ -198,7 +198,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -207,14 +207,14 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(3);
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
             { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null },
-            { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
+            { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null }
           ]);
         }));
 
@@ -224,14 +224,14 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         .send({
           operationName: null,
           variables: {
-            now: new Date().toISOString(),
+            now: new Date().toISOString()
           },
           query: `query ($now: DateTime!) {
             todoItems(filter: { created: { lt: $now } }) {
               ${pageInfoField}
               ${edgeNodes(todoItemFields)}
             }
-          }`,
+          }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -240,7 +240,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
 
@@ -249,7 +249,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null },
             { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
             { id: 'aWQ6NA==', title: 'Add Todo Item Resolver', completed: false, description: null },
-            { id: 'aWQ6NQ==', title: 'How to create item With Sub Tasks', completed: false, description: null },
+            { id: 'aWQ6NQ==', title: 'How to create item With Sub Tasks', completed: false, description: null }
           ]);
         }));
 
@@ -264,7 +264,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -273,7 +273,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
 
@@ -282,7 +282,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             { id: 'aWQ6NA==', title: 'Add Todo Item Resolver', completed: false, description: null },
             { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
             { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null },
-            { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
+            { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null }
           ]);
         }));
 
@@ -298,7 +298,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -307,13 +307,13 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
             });
             expect(edges).toHaveLength(2);
 
             expect(edges.map((e) => e.node)).toEqual([
               { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
-              { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null },
+              { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null }
             ]);
           }));
 
@@ -328,7 +328,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(todoItemFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -337,13 +337,13 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
             });
             expect(edges).toHaveLength(2);
 
             expect(edges.map((e) => e.node)).toEqual([
               { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
-              { id: 'aWQ6NA==', title: 'Add Todo Item Resolver', completed: false, description: null },
+              { id: 'aWQ6NA==', title: 'Add Todo Item Resolver', completed: false, description: null }
             ]);
           }));
     });
@@ -366,16 +366,16 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTodoItem: {
               id: 'aWQ6Ng==',
               title: 'Test Todo',
-              completed: false,
-            },
-          },
+              completed: false
+            }
+          }
         }));
 
     it('should validate a todoItem', () =>
@@ -394,7 +394,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -423,15 +423,15 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTodoItems: [
               { id: 'aWQ6Nw==', title: 'Many Test Todo 1', completed: false },
-              { id: 'aWQ6OA==', title: 'Many Test Todo 2', completed: true },
-            ],
-          },
+              { id: 'aWQ6OA==', title: 'Many Test Todo 2', completed: true }
+            ]
+          }
         }));
 
     it('should validate a todoItem', () =>
@@ -450,7 +450,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -477,16 +477,16 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTodoItem: {
               id: 'aWQ6Ng==',
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
+              completed: true
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -505,13 +505,13 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "CustomID!" was not provided.',
+            'Field "UpdateOneTodoItemInput.id" of required type "CustomID!" was not provided.'
           );
         }));
 
@@ -532,7 +532,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -557,14 +557,14 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTodoItems: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -581,13 +581,13 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.',
+            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
           );
         }));
 
@@ -606,7 +606,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -630,16 +630,16 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTodoItem: {
               id: null,
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
+              completed: true
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -656,13 +656,13 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteOneTodoItemInput.id" of required type "CustomID!" was not provided.',
+            'Field "DeleteOneTodoItemInput.id" of required type "CustomID!" was not provided.'
           );
         }));
   });
@@ -682,14 +682,14 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTodoItems: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -704,13 +704,13 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.',
+            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
           );
         }));
 
@@ -728,7 +728,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -758,7 +758,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
                 ${edgeNodes(subTaskFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -769,7 +769,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           edges.forEach((e) => expect(e.node.todoItemId).toBe('aWQ6MQ=='));
         }));
@@ -796,7 +796,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
                 ${edgeNodes(tagFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -807,7 +807,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
         }));
@@ -834,7 +834,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
                 ${edgeNodes(tagFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -845,7 +845,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
         }));

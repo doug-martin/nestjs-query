@@ -16,7 +16,7 @@ export class TestReference {
     ref: 'TestEntity',
     localField: 'testEntity',
     foreignField: '_id',
-    justOne: true,
+    justOne: true
   })
   virtualTestEntity?: Ref<TestEntity>;
 }

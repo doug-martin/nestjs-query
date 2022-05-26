@@ -12,7 +12,7 @@ import {
   createDefaultHook,
   Hook,
   HookTypes,
-  isHookClass,
+  isHookClass
 } from '../hooks';
 
 export type HookMetaValue<H extends Hook<unknown>> = MetaValue<Class<H>>;
@@ -46,5 +46,5 @@ export const BeforeFindOne = hookDecorator<BeforeFindOneHook>(HookTypes.BEFORE_F
 
 export const getHookForType = <H extends Hook<unknown>>(
   hookType: HookTypes,
-  DTOClass: Class<unknown>,
+  DTOClass: Class<unknown>
 ): HookMetaValue<H> => getClassMetadata(DTOClass, hookMetaDataKey(hookType), true);

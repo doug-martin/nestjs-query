@@ -38,8 +38,8 @@ describe('WhereBuilder', (): void => {
           { numberType: { gt: 10 } },
           { numberType: { lt: 20 } },
           { numberType: { gte: 30 } },
-          { numberType: { lte: 40 } },
-        ],
+          { numberType: { lte: 40 } }
+        ]
       });
     });
 
@@ -47,8 +47,8 @@ describe('WhereBuilder', (): void => {
       expectSQLSnapshot({
         and: [
           { numberType: { gt: 10 }, stringType: { like: 'foo%' } },
-          { numberType: { lt: 20 }, stringType: { like: '%bar' } },
-        ],
+          { numberType: { lt: 20 }, stringType: { like: '%bar' } }
+        ]
       });
     });
 
@@ -56,8 +56,8 @@ describe('WhereBuilder', (): void => {
       expectSQLSnapshot({
         and: [
           { or: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }] },
-          { or: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] },
-        ],
+          { or: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] }
+        ]
       });
     });
 
@@ -73,8 +73,8 @@ describe('WhereBuilder', (): void => {
           { numberType: { gt: 10 } },
           { numberType: { lt: 20 } },
           { numberType: { gte: 30 } },
-          { numberType: { lte: 40 } },
-        ],
+          { numberType: { lte: 40 } }
+        ]
       });
     });
 
@@ -82,8 +82,8 @@ describe('WhereBuilder', (): void => {
       expectSQLSnapshot({
         or: [
           { numberType: { gt: 10 }, stringType: { like: 'foo%' } },
-          { numberType: { lt: 20 }, stringType: { like: '%bar' } },
-        ],
+          { numberType: { lt: 20 }, stringType: { like: '%bar' } }
+        ]
       });
     });
 
@@ -91,8 +91,8 @@ describe('WhereBuilder', (): void => {
       expectSQLSnapshot({
         or: [
           { and: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }] },
-          { and: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] },
-        ],
+          { and: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] }
+        ]
       });
     });
 

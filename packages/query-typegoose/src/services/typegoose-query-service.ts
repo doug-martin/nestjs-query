@@ -24,8 +24,10 @@ export interface TypegooseQueryServiceOpts {
   toObjectOptions?: mongoose.ToObjectOptions;
 }
 
-export class TypegooseQueryService<Entity extends Base> extends ReferenceQueryService<Entity> implements QueryService<Entity> {
-
+export class TypegooseQueryService<Entity extends Base>
+  extends ReferenceQueryService<Entity>
+  implements QueryService<Entity>
+{
   constructor(
     readonly Model: ReturnModelType<new () => Entity>,
     readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model)
@@ -61,7 +63,7 @@ export class TypegooseQueryService<Entity extends Base> extends ReferenceQuerySe
     if (options.sort) {
       aggPipeline.push({ $sort: options.sort ?? {} });
     }
-    const aggResult = (await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<string, unknown>[];
+    const aggResult = await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec();
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 

@@ -45,11 +45,11 @@ describe('UpdateManyInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmptyObject: 'filter must be a non-empty object',
+            isNotEmptyObject: 'filter must be a non-empty object'
           },
           property: 'filter',
-          target: input,
-        },
+          target: input
+        }
       ]);
     });
 
@@ -63,16 +63,16 @@ describe('UpdateManyInputType', (): void => {
             {
               children: [],
               constraints: {
-                minLength: 'name must be longer than or equal to 5 characters',
+                minLength: 'name must be longer than or equal to 5 characters'
               },
               property: 'name',
-              target: {},
-            },
+              target: {}
+            }
           ],
           property: 'update',
           target: input,
-          value: input.update,
-        },
+          value: input.update
+        }
       ]);
     });
   });

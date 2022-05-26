@@ -42,14 +42,14 @@ describe('SortingType', (): void => {
   it('should throw an error if the class is not annotated with @ObjectType', () => {
     class BadTestSort {}
     expect(() => getOrCreateSortType(BadTestSort)).toThrow(
-      'Unable to make SortType. Ensure BadTestSort is annotated with @nestjs/graphql @ObjectType',
+      'Unable to make SortType. Ensure BadTestSort is annotated with @nestjs/graphql @ObjectType'
     );
   });
   it('should throw an error if no fields are found', () => {
     @ObjectType()
     class BadTestSort {}
     expect(() => getOrCreateSortType(BadTestSort)).toThrow(
-      'No fields found to create SortType for BadTestSort. Ensure fields are annotated with @FilterableField',
+      'No fields found to create SortType for BadTestSort. Ensure fields are annotated with @FilterableField'
     );
   });
 });

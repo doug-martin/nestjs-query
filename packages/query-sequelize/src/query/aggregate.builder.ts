@@ -9,7 +9,7 @@ enum AggregateFuncs {
   SUM = 'SUM',
   COUNT = 'COUNT',
   MAX = 'MAX',
-  MIN = 'MIN',
+  MIN = 'MIN'
 }
 
 const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN|GROUP_BY)_(.*)/;
@@ -34,7 +34,7 @@ export class AggregateBuilder<Entity extends Model<Entity, Partial<Entity>>> {
         return {
           ...agg,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          [aggResponseKey]: { ...aggResult, [fieldName]: aggregate[resultField] },
+          [aggResponseKey]: { ...aggResult, [fieldName]: aggregate[resultField] }
         };
       }, {} as AggregateResponse<Entity>);
     });
@@ -53,13 +53,13 @@ export class AggregateBuilder<Entity extends Model<Entity, Partial<Entity>>> {
       ...this.createAggSelect(AggregateFuncs.SUM, aggregate.sum),
       ...this.createAggSelect(AggregateFuncs.AVG, aggregate.avg),
       ...this.createAggSelect(AggregateFuncs.MAX, aggregate.max),
-      ...this.createAggSelect(AggregateFuncs.MIN, aggregate.min),
+      ...this.createAggSelect(AggregateFuncs.MIN, aggregate.min)
     ];
     if (!selects.length) {
       throw new BadRequestException('No aggregate fields found.');
     }
     return {
-      attributes: selects,
+      attributes: selects
     };
   }
 

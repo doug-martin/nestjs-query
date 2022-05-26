@@ -11,7 +11,7 @@ import { TodoItemModule } from './todo-item/todo-item.module';
       autoSchemaFile: 'schema.gql',
       formatError: formatGraphqlError
     }),
-    TodoItemModule,
-  ],
+    TodoItemModule
+  ]
 })
 export class AppModule {}

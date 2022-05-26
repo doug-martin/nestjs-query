@@ -21,7 +21,7 @@ describe('AggregateRelationsLoader', () => {
     it('should try to load the relations with the query args', () => {
       const service = mock<QueryService<DTO>>();
       const aggregateRelationsLoader = new AggregateRelationsLoader(RelationDTO, 'relation').createLoader(
-        instance(service),
+        instance(service)
       );
       const filter = {};
       const aggregate: AggregateQuery<RelationDTO> = { count: ['id'] };
@@ -29,45 +29,45 @@ describe('AggregateRelationsLoader', () => {
       const dto1Aggregate = [{ count: { id: 2 } }];
       const dto2Aggregate = [{ count: { id: 3 } }];
       when(
-        service.aggregateRelations(RelationDTO, 'relation', deepEqual(dtos), deepEqual(filter), deepEqual(aggregate)),
+        service.aggregateRelations(RelationDTO, 'relation', deepEqual(dtos), deepEqual(filter), deepEqual(aggregate))
       ).thenResolve(
         new Map([
           [dtos[0], dto1Aggregate],
-          [dtos[1], dto2Aggregate],
-        ]),
+          [dtos[1], dto2Aggregate]
+        ])
       );
       return expect(
         aggregateRelationsLoader([
           { dto: dtos[0], filter, aggregate },
-          { dto: dtos[1], filter, aggregate },
-        ]),
+          { dto: dtos[1], filter, aggregate }
+        ])
       ).resolves.toEqual([dto1Aggregate, dto2Aggregate]);
     });
 
     it('should try return an empty aggregate result for each dto if no results are found', () => {
       const service = mock<QueryService<DTO>>();
       const aggregateRelationsLoader = new AggregateRelationsLoader(RelationDTO, 'relation').createLoader(
-        instance(service),
+        instance(service)
       );
       const filter = {};
       const aggregate: AggregateQuery<RelationDTO> = { count: ['id'] };
       const dtos = [{ id: 'dto-1' }, { id: 'dto-2' }];
       const dto1Aggregate = [{ count: { id: 2 } }];
       when(
-        service.aggregateRelations(RelationDTO, 'relation', deepEqual(dtos), deepEqual(filter), deepEqual(aggregate)),
+        service.aggregateRelations(RelationDTO, 'relation', deepEqual(dtos), deepEqual(filter), deepEqual(aggregate))
       ).thenResolve(new Map([[dtos[0], dto1Aggregate]]));
       return expect(
         aggregateRelationsLoader([
           { dto: dtos[0], filter, aggregate },
-          { dto: dtos[1], filter, aggregate },
-        ]),
+          { dto: dtos[1], filter, aggregate }
+        ])
       ).resolves.toEqual([dto1Aggregate, {}]);
     });
 
     it('should group queryRelations calls by filter and return in the correct order', () => {
       const service = mock<QueryService<DTO>>();
       const queryRelationsLoader = new AggregateRelationsLoader(RelationDTO, 'relation').createLoader(
-        instance(service),
+        instance(service)
       );
       const filter1 = { id: { gt: 'a' } };
       const filter2 = {};
@@ -83,13 +83,13 @@ describe('AggregateRelationsLoader', () => {
           'relation',
           deepEqual([dtos[0], dtos[2]]),
           deepEqual(filter1),
-          deepEqual(aggregate),
-        ),
+          deepEqual(aggregate)
+        )
       ).thenResolve(
         new Map([
           [dtos[0], dto1Aggregate],
-          [dtos[2], dto3Aggregate],
-        ]),
+          [dtos[2], dto3Aggregate]
+        ])
       );
       when(
         service.aggregateRelations(
@@ -97,28 +97,28 @@ describe('AggregateRelationsLoader', () => {
           'relation',
           deepEqual([dtos[1], dtos[3]]),
           deepEqual(filter2),
-          deepEqual(aggregate),
-        ),
+          deepEqual(aggregate)
+        )
       ).thenResolve(
         new Map([
           [dtos[1], dto2Aggregate],
-          [dtos[3], dto4Aggregate],
-        ]),
+          [dtos[3], dto4Aggregate]
+        ])
       );
       return expect(
         queryRelationsLoader([
           { dto: dtos[0], filter: filter1, aggregate },
           { dto: dtos[1], filter: filter2, aggregate },
           { dto: dtos[2], filter: filter1, aggregate },
-          { dto: dtos[3], filter: filter2, aggregate },
-        ]),
+          { dto: dtos[3], filter: filter2, aggregate }
+        ])
       ).resolves.toEqual([dto1Aggregate, dto2Aggregate, dto3Aggregate, dto4Aggregate]);
     });
 
     it('should group queryRelations calls by aggregate and return in the correct order', () => {
       const service = mock<QueryService<DTO>>();
       const queryRelationsLoader = new AggregateRelationsLoader(RelationDTO, 'relation').createLoader(
-        instance(service),
+        instance(service)
       );
       const filter = {};
       const aggregate1: AggregateQuery<RelationDTO> = { count: ['id'] };
@@ -134,13 +134,13 @@ describe('AggregateRelationsLoader', () => {
           'relation',
           deepEqual([dtos[0], dtos[2]]),
           deepEqual(filter),
-          deepEqual(aggregate1),
-        ),
+          deepEqual(aggregate1)
+        )
       ).thenResolve(
         new Map([
           [dtos[0], dto1Aggregate],
-          [dtos[2], dto3Aggregate],
-        ]),
+          [dtos[2], dto3Aggregate]
+        ])
       );
       when(
         service.aggregateRelations(
@@ -148,21 +148,21 @@ describe('AggregateRelationsLoader', () => {
           'relation',
           deepEqual([dtos[1], dtos[3]]),
           deepEqual(filter),
-          deepEqual(aggregate2),
-        ),
+          deepEqual(aggregate2)
+        )
       ).thenResolve(
         new Map([
           [dtos[1], dto2Aggregate],
-          [dtos[3], dto4Aggregate],
-        ]),
+          [dtos[3], dto4Aggregate]
+        ])
       );
       return expect(
         queryRelationsLoader([
           { dto: dtos[0], filter, aggregate: aggregate1 },
           { dto: dtos[1], filter, aggregate: aggregate2 },
           { dto: dtos[2], filter, aggregate: aggregate1 },
-          { dto: dtos[3], filter, aggregate: aggregate2 },
-        ]),
+          { dto: dtos[3], filter, aggregate: aggregate2 }
+        ])
       ).resolves.toEqual([dto1Aggregate, dto2Aggregate, dto3Aggregate, dto4Aggregate]);
     });
   });

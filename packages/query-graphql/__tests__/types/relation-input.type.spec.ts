@@ -110,11 +110,11 @@ describe('RelationInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmpty: 'id should not be empty',
+            isNotEmpty: 'id should not be empty'
           },
           property: 'id',
-          target: input,
-        },
+          target: input
+        }
       ]);
     });
 
@@ -126,12 +126,12 @@ describe('RelationInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmpty: 'id should not be empty',
+            isNotEmpty: 'id should not be empty'
           },
           property: 'id',
           target: input,
-          value: '',
-        },
+          value: ''
+        }
       ]);
     });
 
@@ -143,11 +143,11 @@ describe('RelationInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmpty: 'relationId should not be empty',
+            isNotEmpty: 'relationId should not be empty'
           },
           property: 'relationId',
-          target: input,
-        },
+          target: input
+        }
       ]);
     });
 
@@ -159,12 +159,12 @@ describe('RelationInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmpty: 'relationId should not be empty',
+            isNotEmpty: 'relationId should not be empty'
           },
           property: 'relationId',
           target: input,
-          value: input.relationId,
-        },
+          value: input.relationId
+        }
       ]);
     });
   });

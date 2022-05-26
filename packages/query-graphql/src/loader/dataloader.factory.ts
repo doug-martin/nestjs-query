@@ -19,7 +19,7 @@ export class DataLoaderFactory {
   static getOrCreateLoader<K, V>(
     context: NestjsQueryExecutionContext,
     name: string,
-    handler: Dataloader.BatchLoadFn<K, V>,
+    handler: Dataloader.BatchLoadFn<K, V>
   ): Dataloader<K, V> {
     const nestjsQueryLoaders = this.initializeContext(context);
     if (!nestjsQueryLoaders[name]) {

@@ -19,10 +19,10 @@ import { TodoItemService } from './todo-item.service';
           DTOClass: TodoItemDTO,
           ServiceClass: TodoItemService,
           CreateDTOClass: TodoItemInputDTO,
-          UpdateDTOClass: TodoItemUpdateDTO,
-        },
-      ],
-    }),
-  ],
+          UpdateDTOClass: TodoItemUpdateDTO
+        }
+      ]
+    })
+  ]
 })
 export class TodoItemModule {}

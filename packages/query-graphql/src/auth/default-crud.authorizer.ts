@@ -18,12 +18,12 @@ const createRelationAuthorizer = (opts: AuthorizerOptions<unknown>): Authorizer<
   },
   authorizeRelation(): Promise<Filter<unknown>> {
     return Promise.reject(new Error('Not implemented'));
-  },
+  }
 });
 
 export function createDefaultAuthorizer<DTO>(
   DTOClass: Class<DTO>,
-  opts?: CustomAuthorizer<DTO> | AuthorizerOptions<DTO>, // instance of class or authorizer options
+  opts?: CustomAuthorizer<DTO> | AuthorizerOptions<DTO> // instance of class or authorizer options
 ): Class<Authorizer<DTO>> {
   @Injectable()
   class DefaultAuthorizer implements Authorizer<DTO> {
@@ -35,7 +35,7 @@ export function createDefaultAuthorizer<DTO>(
 
     constructor(
       private readonly moduleRef: ModuleRef,
-      @Optional() @Inject(getCustomAuthorizerToken(DTOClass)) private readonly customAuthorizer?: CustomAuthorizer<DTO>,
+      @Optional() @Inject(getCustomAuthorizerToken(DTOClass)) private readonly customAuthorizer?: CustomAuthorizer<DTO>
     ) {
       this.relationsAuthorizers = new Map<string, Authorizer<unknown> | undefined>();
       this.relations = this.getRelations();
@@ -54,13 +54,13 @@ export function createDefaultAuthorizer<DTO>(
       relationName: string,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       context: any,
-      authorizationContext: AuthorizationContext,
+      authorizationContext: AuthorizationContext
     ): Promise<Filter<unknown>> {
       if (this.customAuthorizer && typeof this.customAuthorizer.authorizeRelation === 'function') {
         const filterFromCustomAuthorizer = await this.customAuthorizer.authorizeRelation(
           relationName,
           context,
-          authorizationContext,
+          authorizationContext
         );
         if (filterFromCustomAuthorizer) return filterFromCustomAuthorizer;
       }
@@ -77,7 +77,7 @@ export function createDefaultAuthorizer<DTO>(
         } else if (getAuthorizer(relation.DTO)) {
           this.relationsAuthorizers.set(
             relationName,
-            this.moduleRef.get(getAuthorizerToken(relation.DTO), { strict: false }),
+            this.moduleRef.get(getAuthorizerToken(relation.DTO), { strict: false })
           );
         }
       }

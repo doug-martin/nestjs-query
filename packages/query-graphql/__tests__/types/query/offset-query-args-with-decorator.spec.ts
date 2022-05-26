@@ -10,11 +10,17 @@ import {
   Int,
   ObjectType,
   Query,
-  Resolver,
+  Resolver
 } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '@ptc-org/nestjs-query-graphql';
+import {
+  CursorQueryArgsType,
+  FilterableField,
+  PagingStrategies,
+  QueryArgsType,
+  QueryOptions
+} from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../../__fixtures__';
 
 describe('Offset paging strategy QueryArgsType with decorator options', (): void => {
@@ -26,7 +32,7 @@ describe('Offset paging strategy QueryArgsType with decorator options', (): void
     defaultResultSize: 2,
     maxResultsSize: 5,
     defaultFilter: { booleanField: { is: true } },
-    defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
+    defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }]
   })
   class TestDto {
     @FilterableField(() => ID)
@@ -96,19 +102,19 @@ describe('Offset paging strategy QueryArgsType with decorator options', (): void
 
   it('should validate a maxResultsSize for paging.limit', () => {
     const queryObj: CursorQueryArgsType<TestDto> = {
-      paging: { limit: 10 },
+      paging: { limit: 10 }
     };
     const queryInstance = plainToClass(OffsetQueryOptionsArgs, queryObj);
     expect(validateSync(queryInstance)).toEqual([
       {
         children: [],
         constraints: {
-          PropertyMax: 'Field paging.limit max allowed value is `5`.',
+          PropertyMax: 'Field paging.limit max allowed value is `5`.'
         },
         property: 'paging',
         target: queryObj,
-        value: queryObj.paging,
-      },
+        value: queryObj.paging
+      }
     ]);
   });
 });

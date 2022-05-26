@@ -52,17 +52,17 @@ describe('CreateOneInputType', (): void => {
             {
               children: [],
               constraints: {
-                minLength: 'field must be longer than or equal to 5 characters',
+                minLength: 'field must be longer than or equal to 5 characters'
               },
               property: 'field',
               target: input,
-              value: input.field,
-            },
+              value: input.field
+            }
           ],
           property: 'input',
           target: { input },
-          value: input,
-        },
+          value: input
+        }
       ]);
     });
 
@@ -76,17 +76,17 @@ describe('CreateOneInputType', (): void => {
             {
               children: [],
               constraints: {
-                minLength: 'field must be longer than or equal to 5 characters',
+                minLength: 'field must be longer than or equal to 5 characters'
               },
               property: 'field',
               target: input,
-              value: input.field,
-            },
+              value: input.field
+            }
           ],
           property: 'input',
           target: { input },
-          value: input,
-        },
+          value: input
+        }
       ]);
     });
   });

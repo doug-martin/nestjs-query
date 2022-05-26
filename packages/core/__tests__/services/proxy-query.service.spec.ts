@@ -123,7 +123,7 @@ describe('ProxyQueryService', () => {
     const result = new Map([[{ foo: 'bar' }, [{ count: { foo: 1 } }]]]);
     when(mockQueryService.aggregateRelations(TestType, relationName, dtos, filter, aggQuery)).thenResolve(result);
     return expect(queryService.aggregateRelations(TestType, relationName, dtos, filter, aggQuery)).resolves.toBe(
-      result,
+      result
     );
   });
 

@@ -14,6 +14,6 @@ export const refresh = async (connection: Connection): Promise<void> => {
     { title: 'Create Entity', completed: false, assigneeId: 2 },
     { title: 'Create Entity Service', completed: false, assigneeId: 3 },
     { title: 'Add Todo Item Resolver', completed: false },
-    { title: 'How to create item With Sub Tasks', completed: false },
+    { title: 'How to create item With Sub Tasks', completed: false }
   ]);
 };

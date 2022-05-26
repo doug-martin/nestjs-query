@@ -4,7 +4,7 @@ import {
   BeforeUpdateMany,
   BeforeUpdateOne,
   UpdateManyInputType,
-  UpdateOneInputType,
+  UpdateOneInputType
 } from '@ptc-org/nestjs-query-graphql';
 import { GqlContext } from '../../auth.guard';
 import { getUserName } from '../../helpers';

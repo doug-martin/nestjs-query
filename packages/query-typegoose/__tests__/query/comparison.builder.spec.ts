@@ -15,16 +15,16 @@ describe('ComparisonBuilder', (): void => {
     it('should build an unqualified eq sql fragment', (): void => {
       expect(createComparisonBuilder().build('stringType', 'eq', 'foo')).toEqual({
         stringType: {
-          $eq: 'foo',
-        },
+          $eq: 'foo'
+        }
       });
     });
 
     it('should convert query fields to objectIds if the field is an objectId', (): void => {
       expect(createComparisonBuilder().build('testReference', 'eq', '5f74af112fae2b251510e3ad')).toEqual({
         testReference: {
-          $eq: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
-        },
+          $eq: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')
+        }
       });
     });
   });
@@ -32,72 +32,72 @@ describe('ComparisonBuilder', (): void => {
   it('should build neq sql fragment', (): void => {
     expect(createComparisonBuilder().build('numberType', 'neq', 1)).toEqual({
       numberType: {
-        $ne: 1,
-      },
+        $ne: 1
+      }
     });
   });
 
   it('should build gt sql fragment', (): void => {
     expect(createComparisonBuilder().build('numberType', 'gt', 1)).toEqual({
       numberType: {
-        $gt: 1,
-      },
+        $gt: 1
+      }
     });
   });
 
   it('should build gte sql fragment', (): void => {
     expect(createComparisonBuilder().build('numberType', 'gte', 1)).toEqual({
       numberType: {
-        $gte: 1,
-      },
+        $gte: 1
+      }
     });
   });
 
   it('should build lt sql fragment', (): void => {
     expect(createComparisonBuilder().build('numberType', 'lt', 1)).toEqual({
       numberType: {
-        $lt: 1,
-      },
+        $lt: 1
+      }
     });
   });
 
   it('should build lte sql fragment', (): void => {
     expect(createComparisonBuilder().build('numberType', 'lte', 1)).toEqual({
       numberType: {
-        $lte: 1,
-      },
+        $lte: 1
+      }
     });
   });
 
   it('should build like sql fragment', (): void => {
     expect(createComparisonBuilder().build('stringType', 'like', '%hello%')).toEqual({
       stringType: {
-        $regex: /.*hello.*/,
-      },
+        $regex: /.*hello.*/
+      }
     });
   });
 
   it('should build notLike sql fragment', (): void => {
     expect(createComparisonBuilder().build('stringType', 'notLike', '%hello%')).toEqual({
       stringType: {
-        $not: { $regex: /.*hello.*/ },
-      },
+        $not: { $regex: /.*hello.*/ }
+      }
     });
   });
 
   it('should build iLike sql fragment', (): void => {
     expect(createComparisonBuilder().build('stringType', 'iLike', '%hello%')).toEqual({
       stringType: {
-        $regex: /.*hello.*/i,
-      },
+        $regex: /.*hello.*/i
+      }
     });
   });
 
   it('should build notILike sql fragment', (): void => {
     expect(createComparisonBuilder().build('stringType', 'notILike', '%hello%')).toEqual({
       stringType: {
-        $not: { $regex: /.*hello.*/i },
-      },
+        $not: { $regex: /.*hello.*/i }
+      }
     });
   });
 
@@ -105,24 +105,24 @@ describe('ComparisonBuilder', (): void => {
     it('should build is true', (): void => {
       expect(createComparisonBuilder().build('boolType', 'is', true)).toEqual({
         boolType: {
-          $eq: true,
-        },
+          $eq: true
+        }
       });
     });
 
     it('should build is false', (): void => {
       expect(createComparisonBuilder().build('boolType', 'is', false)).toEqual({
         boolType: {
-          $eq: false,
-        },
+          $eq: false
+        }
       });
     });
 
     it('should build is null', (): void => {
       expect(createComparisonBuilder().build('boolType', 'is', null)).toEqual({
         boolType: {
-          $eq: null,
-        },
+          $eq: null
+        }
       });
     });
   });
@@ -131,24 +131,24 @@ describe('ComparisonBuilder', (): void => {
     it('should build is true', (): void => {
       expect(createComparisonBuilder().build('boolType', 'isNot', true)).toEqual({
         boolType: {
-          $ne: true,
-        },
+          $ne: true
+        }
       });
     });
 
     it('should build is false', (): void => {
       expect(createComparisonBuilder().build('boolType', 'isNot', false)).toEqual({
         boolType: {
-          $ne: false,
-        },
+          $ne: false
+        }
       });
     });
 
     it('should build is null', (): void => {
       expect(createComparisonBuilder().build('boolType', 'isNot', null)).toEqual({
         boolType: {
-          $ne: null,
-        },
+          $ne: null
+        }
       });
     });
   });
@@ -158,16 +158,16 @@ describe('ComparisonBuilder', (): void => {
       const arr = [1, 2, 3];
       expect(createComparisonBuilder().build('numberType', 'in', arr)).toEqual({
         numberType: {
-          $in: arr,
-        },
+          $in: arr
+        }
       });
     });
 
     it('should convert query fields to objectIds if the field is an objectId', (): void => {
       expect(createComparisonBuilder().build('testReference', 'in', ['5f74af112fae2b251510e3ad'])).toEqual({
         testReference: {
-          $in: [new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')],
-        },
+          $in: [new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')]
+        }
       });
     });
   });
@@ -177,16 +177,16 @@ describe('ComparisonBuilder', (): void => {
       const arr = ['a', 'b', 'c'];
       expect(createComparisonBuilder().build('stringType', 'notIn', arr)).toEqual({
         stringType: {
-          $nin: arr,
-        },
+          $nin: arr
+        }
       });
     });
 
     it('should convert query fields to objectIds if the field is an objectId', (): void => {
       expect(createComparisonBuilder().build('testReference', 'notIn', ['5f74af112fae2b251510e3ad'])).toEqual({
         testReference: {
-          $nin: [new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')],
-        },
+          $nin: [new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')]
+        }
       });
     });
   });
@@ -195,7 +195,7 @@ describe('ComparisonBuilder', (): void => {
     it('should build between comparisons', (): void => {
       const between: CommonFieldComparisonBetweenType<number> = { lower: 1, upper: 10 };
       expect(createComparisonBuilder().build('numberType', 'between', between)).toEqual({
-        numberType: { $gte: between.lower, $lte: between.upper },
+        numberType: { $gte: between.lower, $lte: between.upper }
       });
     });
 
@@ -203,20 +203,20 @@ describe('ComparisonBuilder', (): void => {
       expect(
         createComparisonBuilder().build('testReference', 'between', {
           lower: '5f74af112fae2b251510e3ad',
-          upper: '5f74af112fae2b251510e3ad',
-        }),
+          upper: '5f74af112fae2b251510e3ad'
+        })
       ).toEqual({
         testReference: {
           $gte: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
-          $lte: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
-        },
+          $lte: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')
+        }
       });
     });
 
     it('should throw an error if the comparison is not a between comparison', (): void => {
       const between = [1, 10];
       expect(() => createComparisonBuilder().build('numberType', 'between', between)).toThrow(
-        'Invalid value for between expected {lower: val, upper: val} got [1,10]',
+        'Invalid value for between expected {lower: val, upper: val} got [1,10]'
       );
     });
   });
@@ -225,7 +225,7 @@ describe('ComparisonBuilder', (): void => {
     it('should build not between comparisons', (): void => {
       const between: CommonFieldComparisonBetweenType<number> = { lower: 1, upper: 10 };
       expect(createComparisonBuilder().build('numberType', 'notBetween', between)).toEqual({
-        numberType: { $lt: between.lower, $gt: between.upper },
+        numberType: { $lt: between.lower, $gt: between.upper }
       });
     });
 
@@ -233,20 +233,20 @@ describe('ComparisonBuilder', (): void => {
       expect(
         createComparisonBuilder().build('testReference', 'notBetween', {
           lower: '5f74af112fae2b251510e3ad',
-          upper: '5f74af112fae2b251510e3ad',
-        }),
+          upper: '5f74af112fae2b251510e3ad'
+        })
       ).toEqual({
         testReference: {
           $lt: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
-          $gt: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad'),
-        },
+          $gt: new mongoose.Types.ObjectId('5f74af112fae2b251510e3ad')
+        }
       });
     });
 
     it('should throw an error if the comparison is not a between comparison', (): void => {
       const between = [1, 10];
       expect(() => createComparisonBuilder().build('numberType', 'notBetween', between)).toThrow(
-        'Invalid value for notbetween expected {lower: val, upper: val} got [1,10]',
+        'Invalid value for notbetween expected {lower: val, upper: val} got [1,10]'
       );
     });
   });

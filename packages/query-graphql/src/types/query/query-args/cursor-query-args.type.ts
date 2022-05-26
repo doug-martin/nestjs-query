@@ -13,7 +13,7 @@ import { getOrCreateCursorConnectionType } from '../../connection';
 export type CursorQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.CURSOR>;
 export function createCursorQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: CursorQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR },
+  opts: CursorQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR }
 ): StaticQueryType<DTO, PagingStrategies.CURSOR> {
   const F = FilterType(DTOClass);
   const S = getOrCreateSortType(DTOClass);
@@ -32,7 +32,7 @@ export function createCursorQueryArgsType<DTO>(
 
     @Field(() => P, {
       defaultValue: { first: opts.defaultResultSize ?? DEFAULT_QUERY_OPTS.defaultResultSize },
-      description: 'Limit or page results.',
+      description: 'Limit or page results.'
     })
     @ValidateNested()
     @Validate(PropertyMax, ['first', opts.maxResultsSize ?? DEFAULT_QUERY_OPTS.maxResultsSize])
@@ -43,7 +43,7 @@ export function createCursorQueryArgsType<DTO>(
     @Field(() => F, {
       defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
       description: 'Specify to filter the records returned.',
-      nullable: false,
+      nullable: false
     })
     @ValidateNested()
     @Type(() => F)
@@ -51,7 +51,7 @@ export function createCursorQueryArgsType<DTO>(
 
     @Field(() => [S], {
       defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
-      description: 'Specify to sort results.',
+      description: 'Specify to sort results.'
     })
     @ValidateNested()
     @Type(() => S)

@@ -146,7 +146,6 @@ describe('TodoItemResolver (auth - e2e)', () => {
           expect(body.errors[0].message).toContain('Unable to find');
         }));
 
-
     it(`should return subTasks as a connection`, () =>
       request(app.getHttpServer())
         .post('/graphql')

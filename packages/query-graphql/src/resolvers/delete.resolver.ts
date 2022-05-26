@@ -57,8 +57,7 @@ const defaultDeleteManyInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): 
   const { pluralBaseName } = dtoNames;
 
   @InputType(`DeleteMany${pluralBaseName}Input`)
-  class DM extends DeleteManyInputType(DTOClass) {
-  }
+  class DM extends DeleteManyInputType(DTOClass) {}
 
   return DM;
 };
@@ -68,8 +67,7 @@ const defaultDeleteOneInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): C
   const { baseName } = dtoNames;
 
   @InputType(`DeleteOne${baseName}Input`)
-  class DM extends DeleteOneInputType(DTOClass) {
-  }
+  class DM extends DeleteOneInputType(DTOClass) {}
 
   return DM;
 };
@@ -78,7 +76,8 @@ const defaultDeleteOneInput = <DTO>(dtoNames: DTONames, DTOClass: Class<DTO>): C
  * @internal
  * Mixin to add `delete` graphql endpoints.
  */
-export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DTO>) =>
+export const Deletable =
+  <DTO, QS extends QueryService<DTO, unknown, unknown>>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DTO>) =>
   <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<DeleteResolver<DTO, QS>> & B => {
     const dtoNames = getDTONames(DTOClass, opts);
     const { baseName, pluralBaseName } = dtoNames;
@@ -95,29 +94,32 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(D
     const deleteManyMutationName = opts.many?.name ?? `deleteMany${pluralBaseName}`;
     const DMR = DeleteManyResponseType();
 
-    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput', 'useSoftDelete');
+    const commonResolverOpts = omit(
+      opts,
+      'dtoName',
+      'one',
+      'many',
+      'DeleteOneInput',
+      'DeleteManyInput',
+      'useSoftDelete'
+    );
 
     @ObjectType(`${baseName}DeleteResponse`)
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-    class DeleteOneResponse extends PartialType(DTOClass, ObjectType) {
-    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    class DeleteOneResponse extends PartialType(DTOClass, ObjectType) {}
 
     @ArgsType()
-    class DO extends MutationArgsType(DeleteOneInput) {
-    }
+    class DO extends MutationArgsType(DeleteOneInput) {}
 
     @ArgsType()
-    class DM extends MutationArgsType(DeleteManyInput) {
-    }
+    class DM extends MutationArgsType(DeleteManyInput) {}
 
     @InputType(`DeleteOne${baseName}SubscriptionFilterInput`)
-    class SI extends SubscriptionFilterInputType(DTOClass) {
-    }
+    class SI extends SubscriptionFilterInputType(DTOClass) {}
 
     @ArgsType()
-    class DOSA extends SubscriptionArgsType(SI) {
-    }
+    class DOSA extends SubscriptionArgsType(SI) {}
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const deleteOneSubscriptionFilter = createSubscriptionFilter(SI, deletedOneEvent);
@@ -137,7 +139,7 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(D
           operationGroup: OperationGroup.DELETE,
           many: false
         })
-          authorizeFilter?: Filter<DTO>
+        authorizeFilter?: Filter<DTO>
       ): Promise<Partial<DTO>> {
         const deletedResponse = await this.service.deleteOne(input.input.id, {
           filter: authorizeFilter ?? {},
@@ -162,7 +164,7 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(D
           operationGroup: OperationGroup.DELETE,
           many: true
         })
-          authorizeFilter?: Filter<DTO>
+        authorizeFilter?: Filter<DTO>
       ): Promise<DeleteManyResponse> {
         const deleteManyResponse = await this.service.deleteMany(
           mergeFilter(input.input.filter, authorizeFilter ?? {}),
@@ -203,7 +205,7 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(D
       deletedOneSubscription(
         @Args() input?: DOSA,
         @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: false })
-          authorizeFilter?: Filter<DTO>
+        authorizeFilter?: Filter<DTO>
       ): AsyncIterator<DeletedEvent<DeleteOneResponse>> {
         if (!enableOneSubscriptions || !this.pubSub) {
           throw new Error(`Unable to subscribe to ${deletedOneEvent}`);
@@ -217,7 +219,7 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(D
       })
       deletedManySubscription(
         @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: true })
-          authorizeFilter?: Filter<DTO>
+        authorizeFilter?: Filter<DTO>
       ): AsyncIterator<DeletedEvent<DeleteManyResponse>> {
         if (!enableManySubscriptions || !this.pubSub) {
           throw new Error(`Unable to subscribe to ${deletedManyEvent}`);
@@ -230,9 +232,10 @@ export const Deletable = <DTO, QS extends QueryService<DTO, unknown, unknown>>(D
     return DeleteResolverBase;
   };
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export const DeleteResolver = <DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
-  >(
+export const DeleteResolver = <
+  DTO,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
+>(
   DTOClass: Class<DTO>,
   opts: DeleteResolverOpts<DTO> = {}
 ): ResolverClass<DTO, QS, DeleteResolver<DTO, QS>> => Deletable<DTO, QS>(DTOClass, opts)(BaseServiceResolver);

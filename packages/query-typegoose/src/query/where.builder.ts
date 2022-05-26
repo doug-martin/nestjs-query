@@ -7,12 +7,10 @@ import { EntityComparisonField, ComparisonBuilder } from './comparison.builder';
  * Builds a WHERE clause from a Filter.
  */
 export class WhereBuilder<Entity> {
-
   constructor(
     readonly Model: ReturnModelType<new () => Entity>,
     readonly comparisonBuilder: ComparisonBuilder<Entity> = new ComparisonBuilder<Entity>(Model)
-  ) {
-  }
+  ) {}
 
   /**
    * Builds a WHERE clause from a Filter.
@@ -89,5 +87,4 @@ export class WhereBuilder<Entity> {
       )
     } as mongoose.FilterQuery<Entity>;
   }
-
 }

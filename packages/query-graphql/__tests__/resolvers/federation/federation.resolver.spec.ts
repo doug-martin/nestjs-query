@@ -9,14 +9,14 @@ import {
   OffsetConnection,
   OffsetQueryArgsType,
   Relation,
-  UnPagedRelation,
+  UnPagedRelation
 } from '@ptc-org/nestjs-query-graphql';
 import {
   generateSchema,
   createResolverFromNest,
   TestResolverDTO,
   TestService,
-  TestRelationDTO,
+  TestRelationDTO
 } from '../../__fixtures__';
 
 describe('FederationResolver', () => {
@@ -69,14 +69,14 @@ describe('FederationResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
         const dto: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const output: TestRelationDTO = {
           id: 'id-2',
-          testResolverId: dto.id,
+          testResolverId: dto.id
         };
         when(
-          mockService.findRelation(TestRelationDTO, 'relation', deepEqual([dto]), deepEqual({ filter: undefined })),
+          mockService.findRelation(TestRelationDTO, 'relation', deepEqual([dto]), deepEqual({ filter: undefined }))
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -88,14 +88,14 @@ describe('FederationResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
         const dto: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const output: TestRelationDTO = {
           id: 'id-2',
-          testResolverId: dto.id,
+          testResolverId: dto.id
         };
         when(
-          mockService.findRelation(TestRelationDTO, 'other', deepEqual([dto]), deepEqual({ filter: undefined })),
+          mockService.findRelation(TestRelationDTO, 'other', deepEqual([dto]), deepEqual({ filter: undefined }))
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -111,25 +111,25 @@ describe('FederationResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
         const dto: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const query: CursorQueryArgsType<TestRelationDTO> = {
           filter: { id: { eq: 'id-2' } },
-          paging: { first: 1 },
+          paging: { first: 1 }
         };
         const output: TestRelationDTO[] = [
           {
             id: 'id-2',
-            testResolverId: dto.id,
-          },
+            testResolverId: dto.id
+          }
         ];
         when(
           mockService.queryRelations(
             TestRelationDTO,
             'relationCursorConnections',
             deepEqual([dto]),
-            objectContaining({ ...query, paging: { limit: 2, offset: 0 } }),
-          ),
+            objectContaining({ ...query, paging: { limit: 2, offset: 0 } })
+          )
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -140,17 +140,17 @@ describe('FederationResolver', () => {
               cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
               node: {
                 id: output[0].id,
-                testResolverId: dto.id,
-              },
-            },
+                testResolverId: dto.id
+              }
+            }
           ],
           pageInfo: {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           },
-          totalCountFn: expect.any(Function),
+          totalCountFn: expect.any(Function)
         });
       });
     });
@@ -161,25 +161,25 @@ describe('FederationResolver', () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
       const dto: TestResolverDTO = {
         id: 'id-1',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       const query: OffsetQueryArgsType<TestRelationDTO> = {
         filter: { id: { eq: 'id-2' } },
-        paging: { limit: 1 },
+        paging: { limit: 1 }
       };
       const output: TestRelationDTO[] = [
         {
           id: 'id-2',
-          testResolverId: dto.id,
-        },
+          testResolverId: dto.id
+        }
       ];
       when(
         mockService.queryRelations(
           TestRelationDTO,
           'relationOffsetConnections',
           deepEqual([dto]),
-          objectContaining({ ...query, paging: { limit: 2 } }),
-        ),
+          objectContaining({ ...query, paging: { limit: 2 } })
+        )
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -187,7 +187,7 @@ describe('FederationResolver', () => {
       return expect(result).toEqual({
         nodes: output,
         pageInfo: { hasNextPage: false, hasPreviousPage: false },
-        totalCountFn: expect.any(Function),
+        totalCountFn: expect.any(Function)
       });
     });
   });
@@ -197,25 +197,25 @@ describe('FederationResolver', () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver, TestFederatedDTO);
       const dto: TestResolverDTO = {
         id: 'id-1',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       const query: OffsetQueryArgsType<TestRelationDTO> = {
         filter: { id: { eq: 'id-2' } },
-        paging: { limit: 1 },
+        paging: { limit: 1 }
       };
       const output: TestRelationDTO[] = [
         {
           id: 'id-2',
-          testResolverId: dto.id,
-        },
+          testResolverId: dto.id
+        }
       ];
       when(
         mockService.queryRelations(
           TestRelationDTO,
           'unPagedRelations',
           deepEqual([dto]),
-          objectContaining({ filter: query.filter }),
-        ),
+          objectContaining({ filter: query.filter })
+        )
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call

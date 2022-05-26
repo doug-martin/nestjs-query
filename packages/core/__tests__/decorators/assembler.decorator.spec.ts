@@ -31,7 +31,7 @@ describe('@Assembler', () => {
       }
     }
     expect(() => Assembler(TestFrom, TestTo)(TestAssembler)).toThrow(
-      'Assembler already registered for TestFrom TestTo',
+      'Assembler already registered for TestFrom TestTo'
     );
   });
 });

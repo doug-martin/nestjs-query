@@ -33,19 +33,17 @@ export class FilterBuilder {
     return this.andFilterFn(
       ...Object.keys(filter)
         .filter((k) => k !== 'and' && k !== 'or')
-        .map((fieldOrNested) => this.withComparison(filter, fieldOrNested as keyof DTO)),
+        .map((fieldOrNested) => this.withComparison(filter, fieldOrNested as keyof DTO))
     );
   }
 
   private static withFilterComparison<DTO, T extends keyof DTO>(
     field: T,
-    cmp: FilterFieldComparison<DTO[T]>,
+    cmp: FilterFieldComparison<DTO[T]>
   ): FilterFn<DTO> {
     const operators = Object.keys(cmp) as (keyof FilterFieldComparison<DTO[T]>)[];
     return this.orFilterFn(
-      ...operators.map((operator) =>
-        ComparisonBuilder.build(field, operator, cmp[operator] as ComparisonField<DTO, T>),
-      ),
+      ...operators.map((operator) => ComparisonBuilder.build(field, operator, cmp[operator] as ComparisonField<DTO, T>))
     );
   }
 

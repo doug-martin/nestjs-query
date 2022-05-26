@@ -16,10 +16,10 @@ import { SubTaskEntity } from './sub-task.entity';
           EntityClass: SubTaskEntity,
           CreateDTOClass: CreateSubTaskDTO,
           UpdateDTOClass: SubTaskUpdateDTO,
-          enableSubscriptions: true,
-        },
-      ],
-    }),
-  ],
+          enableSubscriptions: true
+        }
+      ]
+    })
+  ]
 })
 export class SubTaskModule {}

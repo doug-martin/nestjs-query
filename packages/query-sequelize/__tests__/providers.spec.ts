@@ -15,7 +15,7 @@ describe('createSequelizeQueryServiceProviders', () => {
     new Sequelize({
       dialect: 'sqlite',
       database: ':memory:',
-      models: [TestEntity],
+      models: [TestEntity]
     });
     const providers = createSequelizeQueryServiceProviders([TestEntity]);
     expect(providers).toHaveLength(1);

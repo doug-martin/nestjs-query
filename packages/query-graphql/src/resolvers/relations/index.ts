@@ -9,5 +9,5 @@ export {
   ReferencesOpts,
   ResolverRelationReference,
   RelationsOpts,
-  ResolverRelation,
+  ResolverRelation
 } from './relations.interface';

@@ -28,7 +28,7 @@ function ensureProperInput(item: TypegooseInput): ClassOrDiscriminator | undefin
 }
 
 function createTypegooseQueryServiceProvider<Entity extends Base>(
-  model: TypegooseClass | TypegooseClassWithOptions,
+  model: TypegooseClass | TypegooseClassWithOptions
 ): FactoryProvider {
   const inputModel = ensureProperInput(model);
   if (!inputModel) {
@@ -46,10 +46,10 @@ function createTypegooseQueryServiceProvider<Entity extends Base>(
 
       return new TypegooseQueryService(ModelClass);
     },
-    inject: [getModelToken(modelName)],
+    inject: [getModelToken(modelName)]
   };
 }
 
 export const createTypegooseQueryServiceProviders = (
-  models: (TypegooseClass | TypegooseClassWithOptions)[],
+  models: (TypegooseClass | TypegooseClassWithOptions)[]
 ): FactoryProvider[] => models.map((model) => createTypegooseQueryServiceProvider(model));

@@ -13,7 +13,7 @@ export const CONNECTION_OPTIONS: ConnectionOptions = {
   dropSchema: true,
   entities: [TestEntity, TestSoftDeleteEntity, TestRelation, TestEntityRelationEntity, RelationOfTestRelationEntity],
   synchronize: true,
-  logging: false,
+  logging: false
 };
 
 export function createTestConnection(): Promise<Connection> {
@@ -34,7 +34,7 @@ const tables = [
   'test_relation',
   'test_entity_relation_entity',
   'test_soft_delete_entity',
-  'test_entity_many_test_relations_test_relation',
+  'test_entity_many_test_relations_test_relation'
 ];
 export const truncate = async (connection: Connection): Promise<void> => {
   await tables.reduce(async (prev, table) => {

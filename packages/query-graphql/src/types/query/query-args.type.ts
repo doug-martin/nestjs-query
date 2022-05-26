@@ -9,7 +9,7 @@ import {
   StaticQueryType,
   createOffsetQueryArgs,
   createNonePagingQueryArgsType,
-  createCursorQueryArgsType,
+  createCursorQueryArgsType
 } from './query-args';
 import { getQueryOptions } from '../../decorators';
 import { removeUndefinedValues } from '../../common';
@@ -20,7 +20,7 @@ const getMergedQueryOpts = <DTO>(DTOClass: Class<DTO>, opts?: QueryArgsTypeOpts<
     ...DEFAULT_QUERY_OPTS,
     pagingStrategy: PagingStrategies.CURSOR,
     ...removeUndefinedValues(decoratorOpts ?? {}),
-    ...removeUndefinedValues(opts ?? {}),
+    ...removeUndefinedValues(opts ?? {})
   };
 };
 
@@ -31,23 +31,23 @@ export const isStaticQueryArgsType = <DTO>(obj: any): obj is StaticQueryType<DTO
 
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: OffsetQueryArgsTypeOpts<DTO>,
+  opts: OffsetQueryArgsTypeOpts<DTO>
 ): StaticQueryType<DTO, PagingStrategies.OFFSET>;
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: NonePagingQueryArgsTypeOpts<DTO>,
+  opts: NonePagingQueryArgsTypeOpts<DTO>
 ): StaticQueryType<DTO, PagingStrategies.NONE>;
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: CursorQueryArgsTypeOpts<DTO>,
+  opts: CursorQueryArgsTypeOpts<DTO>
 ): StaticQueryType<DTO, PagingStrategies.CURSOR>;
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts?: QueryArgsTypeOpts<DTO>,
+  opts?: QueryArgsTypeOpts<DTO>
 ): StaticQueryType<DTO, PagingStrategies>;
 export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts?: QueryArgsTypeOpts<DTO>,
+  opts?: QueryArgsTypeOpts<DTO>
 ): StaticQueryType<DTO, PagingStrategies> {
   // override any options from the DTO with the options passed in
   const mergedOpts = getMergedQueryOpts(DTOClass, opts);

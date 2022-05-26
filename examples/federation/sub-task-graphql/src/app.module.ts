@@ -8,9 +8,9 @@ import { typeormOrmConfig } from '../../../helpers';
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('federation_sub_task')),
     GraphQLFederationModule.forRoot({
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: 'schema.gql'
     }),
-    SubTaskModule,
-  ],
+    SubTaskModule
+  ]
 })
 export class AppModule {}

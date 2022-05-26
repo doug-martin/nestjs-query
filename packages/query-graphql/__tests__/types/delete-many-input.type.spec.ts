@@ -37,11 +37,11 @@ describe('DeleteManyInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmptyObject: 'filter must be a non-empty object',
+            isNotEmptyObject: 'filter must be a non-empty object'
           },
           property: 'filter',
-          target: input,
-        },
+          target: input
+        }
       ]);
     });
 
@@ -53,12 +53,12 @@ describe('DeleteManyInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmptyObject: 'filter must be a non-empty object',
+            isNotEmptyObject: 'filter must be a non-empty object'
           },
           property: 'filter',
           target: input,
-          value: input.filter,
-        },
+          value: input.filter
+        }
       ]);
     });
   });

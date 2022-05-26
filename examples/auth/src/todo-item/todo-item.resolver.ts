@@ -19,9 +19,9 @@ export class TodoItemResolver {
     @Args() query: TodoItemQuery,
     @AuthorizerFilter({
       operationGroup: OperationGroup.READ,
-      many: true,
+      many: true
     })
-    authFilter: Filter<TodoItemDTO>,
+    authFilter: Filter<TodoItemDTO>
   ): Promise<ConnectionType<TodoItemDTO>> {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: true } });
@@ -29,7 +29,7 @@ export class TodoItemResolver {
     return TodoItemConnection.createFromPromise(
       (q) => this.service.query(q),
       completedQuery,
-      (q) => this.service.count(q),
+      (q) => this.service.count(q)
     );
   }
 
@@ -41,9 +41,9 @@ export class TodoItemResolver {
       operationName: 'queryUncompletedTodoItems',
       operationGroup: OperationGroup.READ,
       readonly: true,
-      many: true,
+      many: true
     })
-    authFilter: Filter<TodoItemDTO>,
+    authFilter: Filter<TodoItemDTO>
   ): Promise<ConnectionType<TodoItemDTO>> {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: false } });
@@ -51,7 +51,7 @@ export class TodoItemResolver {
     return TodoItemConnection.createFromPromise(
       (q) => this.service.query(q),
       uncompletedQuery,
-      (q) => this.service.count(q),
+      (q) => this.service.count(q)
     );
   }
 
@@ -59,7 +59,7 @@ export class TodoItemResolver {
   async failingTodoItems(
     @Args() query: TodoItemQuery,
     @AuthorizerFilter() // Intentionally left out argument to test error
-    authFilter: Filter<TodoItemDTO>,
+    authFilter: Filter<TodoItemDTO>
   ): Promise<ConnectionType<TodoItemDTO>> {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: false } });
@@ -67,7 +67,7 @@ export class TodoItemResolver {
     return TodoItemConnection.createFromPromise(
       (q) => this.service.query(q),
       uncompletedQuery,
-      (q) => this.service.count(q),
+      (q) => this.service.count(q)
     );
   }
 }

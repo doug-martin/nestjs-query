@@ -26,5 +26,5 @@ export const TestEntitySchema = SchemaFactory.createForClass(TestEntity);
 TestEntitySchema.virtual('virtualTestReferences', {
   ref: 'TestReference',
   localField: '_id',
-  foreignField: 'testEntity',
+  foreignField: 'testEntity'
 });

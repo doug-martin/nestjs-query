@@ -19,7 +19,7 @@ export const refresh = async (connection: Connection): Promise<void> => {
   const users = await userRepo.save([
     { username: 'nestjs-query', password: '123' },
     { username: 'nestjs-query-2', password: '123' },
-    { username: 'nestjs-query-3', password: '123' },
+    { username: 'nestjs-query-3', password: '123' }
   ]);
 
   const urgentTag = await tagsRepo.save({ name: 'Urgent' });
@@ -40,8 +40,8 @@ export const refresh = async (connection: Connection): Promise<void> => {
         completed: false,
         priority: 4,
         tags: [questionTag, blockedTag],
-        owner: user,
-      },
+        owner: user
+      }
     ]);
     return [...allTodos, ...userTodos];
   }, Promise.resolve([] as TodoItemEntity[]));
@@ -52,9 +52,9 @@ export const refresh = async (connection: Connection): Promise<void> => {
         ...subTasks,
         { completed: true, title: `${todo.title} - Sub Task 1`, todoItem: todo, ownerId: todo.ownerId },
         { completed: false, title: `${todo.title} - Sub Task 2`, todoItem: todo, ownerId: todo.ownerId },
-        { completed: false, title: `${todo.title} - Sub Task 3`, todoItem: todo, ownerId: todo.ownerId },
+        { completed: false, title: `${todo.title} - Sub Task 3`, todoItem: todo, ownerId: todo.ownerId }
       ],
-      [] as Partial<SubTaskEntity>[],
-    ),
+      [] as Partial<SubTaskEntity>[]
+    )
   );
 };

@@ -14,7 +14,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -24,8 +24,8 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -37,7 +37,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
     { id: '2', title: 'Create Entity', completed: false, description: null },
     { id: '3', title: 'Create Entity Service', completed: false, description: null },
     { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
-    { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null },
+    { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null }
   ];
 
   afterAll(() => refresh(app.get(Connection)));
@@ -53,7 +53,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           todoItem(id: 1) {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
         .expect(200, { data: { todoItem: todoItems[0] } }));
 
@@ -67,9 +67,9 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           todoItem(id: 100) {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -87,7 +87,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               ${offsetConnection(subTaskFields)}
             }
           }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -99,30 +99,30 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
                     description: null,
                     id: '1',
                     title: 'Create Nest App - Sub Task 1',
-                    todoItemId: '1',
+                    todoItemId: '1'
                   },
                   {
                     completed: false,
                     description: null,
                     id: '2',
                     title: 'Create Nest App - Sub Task 2',
-                    todoItemId: '1',
+                    todoItemId: '1'
                   },
                   {
                     completed: false,
                     description: null,
                     id: '3',
                     title: 'Create Nest App - Sub Task 3',
-                    todoItemId: '1',
-                  },
+                    todoItemId: '1'
+                  }
                 ],
                 pageInfo: {
                   hasNextPage: false,
-                  hasPreviousPage: false,
-                },
-              },
-            },
-          },
+                  hasPreviousPage: false
+                }
+              }
+            }
+          }
         }));
 
     it(`should return tags as a connection`, () =>
@@ -137,7 +137,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               ${offsetConnection(tagFields)}
             }
           }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -145,12 +145,12 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               tags: {
                 nodes: [
                   { id: '1', name: 'Urgent' },
-                  { id: '2', name: 'Home' },
+                  { id: '2', name: 'Home' }
                 ],
-                pageInfo: { hasNextPage: false, hasPreviousPage: false },
-              },
-            },
-          },
+                pageInfo: { hasNextPage: false, hasPreviousPage: false }
+              }
+            }
+          }
         }));
   });
 
@@ -165,10 +165,10 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           todoItems {
             ${offsetConnection(todoItemFields)}
           }
-        }`,
+        }`
         })
         .expect(200, {
-          data: { todoItems: { nodes: todoItems, pageInfo: { hasNextPage: false, hasPreviousPage: false } } },
+          data: { todoItems: { nodes: todoItems, pageInfo: { hasNextPage: false, hasPreviousPage: false } } }
         }));
 
     it(`should allow querying`, () =>
@@ -181,12 +181,12 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           todoItems(filter: { id: { in: [1, 2, 3] } }) {
             ${offsetConnection(todoItemFields)}
           }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
-            todoItems: { nodes: todoItems.slice(0, 3), pageInfo: { hasNextPage: false, hasPreviousPage: false } },
-          },
+            todoItems: { nodes: todoItems.slice(0, 3), pageInfo: { hasNextPage: false, hasPreviousPage: false } }
+          }
         }));
 
     it(`should allow sorting`, () =>
@@ -199,12 +199,12 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           todoItems(sorting: [{field: id, direction: DESC}]) {
             ${offsetConnection(todoItemFields)}
           }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
-            todoItems: { nodes: todoItems.slice().reverse(), pageInfo: { hasNextPage: false, hasPreviousPage: false } },
-          },
+            todoItems: { nodes: todoItems.slice().reverse(), pageInfo: { hasNextPage: false, hasPreviousPage: false } }
+          }
         }));
 
     describe('paging', () => {
@@ -218,12 +218,12 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           todoItems(paging: {limit: 2}) {
             ${offsetConnection(todoItemFields)}
           }
-        }`,
+        }`
           })
           .expect(200, {
             data: {
-              todoItems: { nodes: todoItems.slice(0, 2), pageInfo: { hasNextPage: true, hasPreviousPage: false } },
-            },
+              todoItems: { nodes: todoItems.slice(0, 2), pageInfo: { hasNextPage: true, hasPreviousPage: false } }
+            }
           }));
 
       it(`should allow paging with the 'limit' field and 'offset'`, () =>
@@ -236,12 +236,12 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           todoItems(paging: {limit: 2, offset: 2}) {
             ${offsetConnection(todoItemFields)}
           }
-        }`,
+        }`
           })
           .expect(200, {
             data: {
-              todoItems: { nodes: todoItems.slice(2, 4), pageInfo: { hasNextPage: true, hasPreviousPage: true } },
-            },
+              todoItems: { nodes: todoItems.slice(2, 4), pageInfo: { hasNextPage: true, hasPreviousPage: true } }
+            }
           }));
     });
   });
@@ -263,16 +263,16 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTodoItem: {
               id: '6',
               title: 'Test Todo',
-              completed: false,
-            },
-          },
+              completed: false
+            }
+          }
         }));
 
     it('should validate a todoItem', () =>
@@ -291,7 +291,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -320,15 +320,15 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTodoItems: [
               { id: '7', title: 'Many Test Todo 1', completed: false },
-              { id: '8', title: 'Many Test Todo 2', completed: true },
-            ],
-          },
+              { id: '8', title: 'Many Test Todo 2', completed: true }
+            ]
+          }
         }));
 
     it('should validate a todoItem', () =>
@@ -347,7 +347,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -374,16 +374,16 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTodoItem: {
               id: '6',
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
+              completed: true
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -402,13 +402,13 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.',
+            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.'
           );
         }));
 
@@ -429,7 +429,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -454,14 +454,14 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTodoItems: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -478,13 +478,13 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.',
+            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
           );
         }));
 
@@ -503,7 +503,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -527,16 +527,16 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTodoItem: {
               id: null,
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
+              completed: true
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -553,13 +553,13 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.',
+            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.'
           );
         }));
   });
@@ -579,14 +579,14 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTodoItems: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -601,13 +601,13 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.',
+            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
           );
         }));
 
@@ -625,7 +625,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -654,7 +654,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
                 ${offsetConnection(subTaskFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -686,7 +686,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
                 ${offsetConnection(tagFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -717,7 +717,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
                 ${offsetConnection(tagFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {

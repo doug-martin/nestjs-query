@@ -52,8 +52,7 @@ describe('ReadResolver', () => {
 
     it('should use a connection if custom QueryArgs is a cursor', () => {
       @ArgsType()
-      class CustomQueryArgs extends QueryArgsType(TestResolverDTO, { pagingStrategy: PagingStrategies.CURSOR }) {
-      }
+      class CustomQueryArgs extends QueryArgsType(TestResolverDTO, { pagingStrategy: PagingStrategies.CURSOR }) {}
 
       return expectResolverSDL({ QueryArgs: CustomQueryArgs });
     });
@@ -66,8 +65,7 @@ describe('ReadResolver', () => {
       class CustomQueryArgs extends QueryArgsType(TestResolverDTO, {
         pagingStrategy: PagingStrategies.OFFSET,
         connectionName: 'TestResolverDTOConnection'
-      }) {
-      }
+      }) {}
 
       return expectResolverSDL({ QueryArgs: CustomQueryArgs });
     });
@@ -127,16 +125,20 @@ describe('ReadResolver', () => {
           paging: { first: 1 }
         };
 
-        const output: TestResolverDTO[] = [{
-          id: 'id-1',
-          stringField: 'foo'
-        }];
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo'
+          }
+        ];
 
         const authorizeFilter = { id: { eq: '1' } };
 
-        when(mockService.query(
-          objectContaining({ filter: { and: [input.filter, authorizeFilter] }, paging: { limit: 2, offset: 0 } })
-        )).thenResolve(output);
+        when(
+          mockService.query(
+            objectContaining({ filter: { and: [input.filter, authorizeFilter] }, paging: { limit: 2, offset: 0 } })
+          )
+        ).thenResolve(output);
 
         const result = await resolver.queryMany(input, authorizeFilter);
         return expect(result).toEqual({
@@ -175,7 +177,7 @@ describe('ReadResolver', () => {
         ];
         when(mockService.query(objectContaining({ ...input, paging: { limit: 2, offset: 0 } }))).thenResolve(output);
         const result = await resolver.queryMany(input);
-        when(mockService.count(objectContaining(input.filter!))).thenResolve(10);
+        when(mockService.count(objectContaining(input.filter))).thenResolve(10);
         return expect(result.totalCount).resolves.toBe(10);
       });
 
@@ -188,15 +190,19 @@ describe('ReadResolver', () => {
           paging: { first: 1 }
         };
 
-        const output: TestResolverDTO[] = [{
-          id: 'id-1',
-          stringField: 'foo'
-        }];
+        const output: TestResolverDTO[] = [
+          {
+            id: 'id-1',
+            stringField: 'foo'
+          }
+        ];
         const authorizeFilter = { id: { eq: '1' } };
 
-        when(mockService.query(
-          objectContaining({ filter: { and: [input.filter, authorizeFilter] }, paging: { limit: 2, offset: 0 } })
-        )).thenResolve(output);
+        when(
+          mockService.query(
+            objectContaining({ filter: { and: [input.filter, authorizeFilter] }, paging: { limit: 2, offset: 0 } })
+          )
+        ).thenResolve(output);
 
         const result = await resolver.queryMany(input, authorizeFilter);
         when(mockService.count(objectContaining({ and: [input.filter, authorizeFilter] }))).thenResolve(10);
@@ -303,7 +309,7 @@ describe('ReadResolver', () => {
 
     it('should call the service getById with soft delete on when enabled', async () => {
       @Resolver(() => TestResolverDTO)
-      class TestResolver extends ReadResolver(TestResolverDTO, {
+      class TestResolverTwo extends ReadResolver(TestResolverDTO, {
         one: { withDeleted: true }
       }) {
         constructor(service: TestService) {
@@ -311,7 +317,7 @@ describe('ReadResolver', () => {
         }
       }
 
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
+      const { resolver, mockService } = await createResolverFromNest(TestResolverTwo);
       const input = { id: 'id-1' };
       const output: TestResolverDTO = {
         id: 'id-1',
@@ -351,5 +357,4 @@ describe('ReadResolver', () => {
     const schema = await generateSchema([TestTotalCountSDLResolver]);
     expect(schema).toMatchSnapshot();
   });
-
 });

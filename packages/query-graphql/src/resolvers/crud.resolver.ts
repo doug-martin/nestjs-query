@@ -17,7 +17,7 @@ export interface CRUDResolverOpts<
   C = DeepPartial<DTO>,
   U = DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
-  PS extends PagingStrategies = PagingStrategies.CURSOR,
+  PS extends PagingStrategies = PagingStrategies.CURSOR
 > extends BaseResolverOptions,
     Pick<ConnectionOptions, 'enableTotalCount'> {
   /**
@@ -44,7 +44,7 @@ export interface CRUDResolver<
   C,
   U,
   R extends ReadResolverOpts<DTO>,
-  QS extends QueryService<DTO, C, U> = QueryService<DTO, C, U>,
+  QS extends QueryService<DTO, C, U> = QueryService<DTO, C, U>
 > extends CreateResolver<DTO, C, QS>,
     ReadResolverFromOpts<DTO, R, QS>,
     UpdateResolver<DTO, U, QS>,
@@ -52,45 +52,45 @@ export interface CRUDResolver<
     AggregateResolver<DTO, QS> {}
 
 function extractRelatableOpts<DTO>(
-  opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>,
+  opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>
 ): RelatableOpts {
   const { enableTotalCount, enableAggregate } = opts;
   return mergeBaseResolverOpts<RelatableOpts>({ enableAggregate, enableTotalCount }, opts);
 }
 
 function extractAggregateResolverOpts<DTO>(
-  opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>,
+  opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>
 ): AggregateResolverOpts {
   const { enableAggregate, aggregate } = opts;
   return mergeBaseResolverOpts<AggregateResolverOpts>({ enabled: enableAggregate, ...aggregate }, opts);
 }
 
 function extractCreateResolverOpts<DTO, C>(
-  opts: CRUDResolverOpts<DTO, C, unknown, ReadResolverOpts<DTO>, PagingStrategies>,
+  opts: CRUDResolverOpts<DTO, C, unknown, ReadResolverOpts<DTO>, PagingStrategies>
 ): CreateResolverOpts<DTO, C> {
   const { CreateDTOClass, enableSubscriptions, create } = opts;
   return mergeBaseResolverOpts<CreateResolverOpts<DTO, C>>({ CreateDTOClass, enableSubscriptions, ...create }, opts);
 }
 
 function extractReadResolverOpts<DTO, R extends ReadResolverOpts<DTO>, PS extends PagingStrategies>(
-  opts: CRUDResolverOpts<DTO, unknown, unknown, R, PagingStrategies>,
+  opts: CRUDResolverOpts<DTO, unknown, unknown, R, PagingStrategies>
 ): MergePagingStrategyOpts<DTO, R, PS> {
   const { enableTotalCount, pagingStrategy, read } = opts;
   return mergeBaseResolverOpts(
     { enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<DTO, R, PS>,
-    opts,
+    opts
   );
 }
 
 function extractUpdateResolverOpts<DTO, U>(
-  opts: CRUDResolverOpts<DTO, unknown, U, ReadResolverOpts<DTO>, PagingStrategies>,
+  opts: CRUDResolverOpts<DTO, unknown, U, ReadResolverOpts<DTO>, PagingStrategies>
 ): UpdateResolverOpts<DTO, U> {
   const { UpdateDTOClass, enableSubscriptions, update } = opts;
   return mergeBaseResolverOpts<UpdateResolverOpts<DTO, U>>({ UpdateDTOClass, enableSubscriptions, ...update }, opts);
 }
 
 function extractDeleteResolverOpts<DTO>(
-  opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>,
+  opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>
 ): DeleteResolverOpts<DTO> {
   const { enableSubscriptions, delete: deleteArgs } = opts;
   return mergeBaseResolverOpts<DeleteResolverOpts<DTO>>({ enableSubscriptions, ...deleteArgs }, opts);
@@ -122,10 +122,10 @@ export const CRUDResolver = <
   C = DeepPartial<DTO>,
   U = DeepPartial<DTO>,
   R extends ReadResolverOpts<DTO> = ReadResolverOpts<DTO>,
-  PS extends PagingStrategies = PagingStrategies.CURSOR,
+  PS extends PagingStrategies = PagingStrategies.CURSOR
 >(
   DTOClass: Class<DTO>,
-  opts: CRUDResolverOpts<DTO, C, U, R, PS> = {},
+  opts: CRUDResolverOpts<DTO, C, U, R, PS> = {}
 ): ResolverClass<DTO, QueryService<DTO, C, U>, CRUDResolver<DTO, C, U, MergePagingStrategyOpts<DTO, R, PS>>> => {
   const referencable = Referenceable(DTOClass, opts.referenceBy ?? {});
   const relatable = Relatable(DTOClass, extractRelatableOpts(opts));

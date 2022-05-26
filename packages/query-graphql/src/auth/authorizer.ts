@@ -5,7 +5,7 @@ export enum OperationGroup {
   AGGREGATE = 'aggregate',
   CREATE = 'create',
   UPDATE = 'update',
-  DELETE = 'delete',
+  DELETE = 'delete'
 }
 
 export interface AuthorizationContext {
@@ -30,7 +30,7 @@ export interface CustomAuthorizer<DTO> {
     relationName: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: any,
-    authorizerContext: AuthorizationContext,
+    authorizerContext: AuthorizationContext
   ): Promise<Filter<unknown> | undefined>;
 }
 
@@ -42,6 +42,6 @@ export interface Authorizer<DTO> extends CustomAuthorizer<DTO> {
     relationName: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: any,
-    authorizerContext: AuthorizationContext,
+    authorizerContext: AuthorizationContext
   ): Promise<Filter<unknown | undefined>>;
 }

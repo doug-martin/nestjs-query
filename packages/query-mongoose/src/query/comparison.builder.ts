@@ -36,8 +36,7 @@ export class ComparisonBuilder<Entity extends Document> {
   constructor(
     readonly Model: MongooseModel<Entity>,
     readonly comparisonMap: Record<string, string> = ComparisonBuilder.DEFAULT_COMPARISON_MAP
-  ) {
-  }
+  ) {}
 
   /**
    * Creates a valid SQL fragment with parameters.
@@ -60,16 +59,19 @@ export class ComparisonBuilder<Entity extends Document> {
         [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F])
       } as FilterQuery<Entity[F]>;
     }
+
     if (normalizedCmp.includes('like')) {
-      // @ts-ignore
       querySelector = this.likeComparison(normalizedCmp, val);
     }
+
     if (normalizedCmp.includes('between')) {
       querySelector = this.betweenComparison(normalizedCmp, field, val);
     }
+
     if (!querySelector) {
       throw new BadRequestException(`unknown operator ${JSON.stringify(cmp)}`);
     }
+
     return { [schemaKey]: querySelector } as FilterQuery<Entity>;
   }
 

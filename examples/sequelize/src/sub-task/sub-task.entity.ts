@@ -8,7 +8,7 @@ import {
   UpdatedAt,
   Model,
   AutoIncrement,
-  PrimaryKey,
+  PrimaryKey
 } from 'sequelize-typescript';
 import { TodoItemEntity } from '../todo-item/entity/todo-item.entity';
 

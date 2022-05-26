@@ -6,19 +6,19 @@ import { OffsetPagerResult, OffsetPagingMeta, OffsetPagingOpts, QueryResults } f
 const EMPTY_PAGING_RESULTS = <DTO>(): OffsetPagerResult<DTO> => ({
   nodes: [],
   pageInfo: { hasNextPage: false, hasPreviousPage: false },
-  totalCount: () => Promise.resolve(0),
+  totalCount: () => Promise.resolve(0)
 });
 
 const DEFAULT_PAGING_META = <DTO>(query: Query<DTO>): OffsetPagingMeta<DTO> => ({
   opts: { offset: 0, limit: 0 },
-  query,
+  query
 });
 
 export class OffsetPager<DTO> implements Pager<DTO, OffsetPagerResult<DTO>> {
   async page<Q extends Query<DTO>>(
     queryMany: QueryMany<DTO, Q>,
     query: Q,
-    count: Count<DTO>,
+    count: Count<DTO>
   ): Promise<OffsetPagerResult<DTO>> {
     const pagingMeta = this.getPageMeta(query);
     if (!this.isValidPaging(pagingMeta)) {
@@ -35,7 +35,7 @@ export class OffsetPager<DTO> implements Pager<DTO, OffsetPagerResult<DTO>> {
   private async runQuery<Q extends Query<DTO>>(
     queryMany: QueryMany<DTO, Q>,
     query: Q,
-    pagingMeta: OffsetPagingMeta<DTO>,
+    pagingMeta: OffsetPagingMeta<DTO>
   ): Promise<QueryResults<DTO>> {
     const windowedQuery = this.createQuery(query, pagingMeta);
     const nodes = await queryMany(windowedQuery);
@@ -55,13 +55,13 @@ export class OffsetPager<DTO> implements Pager<DTO, OffsetPagerResult<DTO>> {
   private createPagingResult(
     results: QueryResults<DTO>,
     pagingMeta: OffsetPagingMeta<DTO>,
-    totalCount: () => Promise<number>,
+    totalCount: () => Promise<number>
   ): OffsetPagerResult<DTO> {
     const { nodes, hasExtraNode } = results;
     const pageInfo = {
       hasNextPage: hasExtraNode,
       // we have a previous page if we are going backwards and have an extra node.
-      hasPreviousPage: pagingMeta.opts.offset > 0,
+      hasPreviousPage: pagingMeta.opts.offset > 0
     };
 
     return { nodes, pageInfo, totalCount };

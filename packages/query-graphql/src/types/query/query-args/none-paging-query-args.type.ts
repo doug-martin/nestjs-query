@@ -12,7 +12,7 @@ import { getOrCreateSortType } from '../sorting.type';
 export type NonePagingQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.NONE>;
 export function createNonePagingQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
-  opts: NonePagingQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.NONE },
+  opts: NonePagingQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.NONE }
 ): StaticQueryType<DTO, PagingStrategies.NONE> {
   const F = FilterType(DTOClass);
   const S = getOrCreateSortType(DTOClass);
@@ -32,7 +32,7 @@ export function createNonePagingQueryArgsType<DTO>(
     @Field(() => F, {
       defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
       description: 'Specify to filter the records returned.',
-      nullable: false,
+      nullable: false
     })
     @ValidateNested()
     @Type(() => F)
@@ -40,7 +40,7 @@ export function createNonePagingQueryArgsType<DTO>(
 
     @Field(() => [S], {
       defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
-      description: 'Specify to sort results.',
+      description: 'Specify to sort results.'
     })
     @ValidateNested()
     @Type(() => S)

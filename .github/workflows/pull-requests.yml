@@ -16,7 +16,7 @@ jobs:
   setup:
     uses: ./.github/workflows/shared.setup-env.yml
 
-  build:
+  check:
     needs: setup
     runs-on: ubuntu-latest
     strategy:

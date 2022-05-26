@@ -13,7 +13,7 @@ import { getOrCreateOffsetConnectionType } from '../../connection';
 export type OffsetQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.OFFSET>;
 export function createOffsetQueryArgs<DTO>(
   DTOClass: Class<DTO>,
-  opts: OffsetQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.OFFSET },
+  opts: OffsetQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.OFFSET }
 ): StaticQueryType<DTO, PagingStrategies.OFFSET> {
   const F = FilterType(DTOClass);
   const S = getOrCreateSortType(DTOClass);
@@ -32,7 +32,7 @@ export function createOffsetQueryArgs<DTO>(
 
     @Field(() => P, {
       defaultValue: { limit: opts.defaultResultSize ?? DEFAULT_QUERY_OPTS.defaultResultSize },
-      description: 'Limit or page results.',
+      description: 'Limit or page results.'
     })
     @ValidateNested()
     @Validate(PropertyMax, ['limit', opts.maxResultsSize ?? DEFAULT_QUERY_OPTS.maxResultsSize])
@@ -42,7 +42,7 @@ export function createOffsetQueryArgs<DTO>(
     @Field(() => F, {
       defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
       description: 'Specify to filter the records returned.',
-      nullable: false,
+      nullable: false
     })
     @ValidateNested()
     @Type(() => F)
@@ -50,7 +50,7 @@ export function createOffsetQueryArgs<DTO>(
 
     @Field(() => [S], {
       defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
-      description: 'Specify to sort results.',
+      description: 'Specify to sort results.'
     })
     @ValidateNested()
     @Type(() => S)

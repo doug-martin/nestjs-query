@@ -9,24 +9,24 @@ export const TEST_ENTITIES: TestEntity[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
       boolType: i % 2 === 0,
       dateType: new Date(`2020-02-${i} 12:00`),
       numberType: i,
-      stringType: `foo${i}`,
-    } as TestEntity),
+      stringType: `foo${i}`
+    } as TestEntity)
 );
 
 export const TEST_REFERENCES: TestReference[] = TEST_ENTITIES.reduce(
   (relations, te) => [
     ...relations,
     {
-      referenceName: `${te.stringType}-test-reference-1-one`,
+      referenceName: `${te.stringType}-test-reference-1-one`
     } as TestReference,
     {
-      referenceName: `${te.stringType}-test-reference-2-two`,
+      referenceName: `${te.stringType}-test-reference-2-two`
     } as TestReference,
     {
-      referenceName: `${te.stringType}-test-reference-3-three`,
-    } as TestReference,
+      referenceName: `${te.stringType}-test-reference-3-three`
+    } as TestReference
   ],
-  [] as TestReference[],
+  [] as TestReference[]
 );
 
 export const seed = async (connection: Connection): Promise<void> => {
@@ -51,8 +51,8 @@ export const seed = async (connection: Connection): Promise<void> => {
           TEST_REFERENCES.find((tr) => tr._id.toString() === r._id.toString())!.testEntity = te._id;
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           return r.update({ $set: { testEntity: te._id } });
-        }),
+        })
       );
-    }),
+    })
   );
 };

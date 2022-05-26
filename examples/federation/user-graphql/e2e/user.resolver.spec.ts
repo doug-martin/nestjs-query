@@ -13,7 +13,7 @@ describe('Federated - UserResolver (e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -23,8 +23,8 @@ describe('Federated - UserResolver (e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -44,7 +44,7 @@ describe('Federated - UserResolver (e2e)', () => {
           user(id: 1) {
             ${userFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -53,9 +53,9 @@ describe('Federated - UserResolver (e2e)', () => {
               user: {
                 id: '1',
                 name: 'User 1',
-                email: 'user1@example.com',
-              },
-            },
+                email: 'user1@example.com'
+              }
+            }
           });
         }));
 
@@ -69,7 +69,7 @@ describe('Federated - UserResolver (e2e)', () => {
           user(id: 100) {
             ${userFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -90,7 +90,7 @@ describe('Federated - UserResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(userFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -99,13 +99,13 @@ describe('Federated - UserResolver (e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', name: 'User 1', email: 'user1@example.com' },
             { id: '2', name: 'User 2', email: 'user2@example.com' },
-            { id: '3', name: 'User 3', email: 'user3@example.com' },
+            { id: '3', name: 'User 3', email: 'user3@example.com' }
           ]);
         }));
 
@@ -120,7 +120,7 @@ describe('Federated - UserResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(userFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -129,12 +129,12 @@ describe('Federated - UserResolver (e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', name: 'User 1', email: 'user1@example.com' },
-            { id: '2', name: 'User 2', email: 'user2@example.com' },
+            { id: '2', name: 'User 2', email: 'user2@example.com' }
           ]);
         }));
 
@@ -149,7 +149,7 @@ describe('Federated - UserResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(userFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -158,13 +158,13 @@ describe('Federated - UserResolver (e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
             { id: '3', name: 'User 3', email: 'user3@example.com' },
             { id: '2', name: 'User 2', email: 'user2@example.com' },
-            { id: '1', name: 'User 1', email: 'user1@example.com' },
+            { id: '1', name: 'User 1', email: 'user1@example.com' }
           ]);
         }));
 
@@ -180,7 +180,7 @@ describe('Federated - UserResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(userFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -189,12 +189,12 @@ describe('Federated - UserResolver (e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
               { id: '1', name: 'User 1', email: 'user1@example.com' },
-              { id: '2', name: 'User 2', email: 'user2@example.com' },
+              { id: '2', name: 'User 2', email: 'user2@example.com' }
             ]);
           }));
 
@@ -209,7 +209,7 @@ describe('Federated - UserResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(userFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -218,12 +218,12 @@ describe('Federated - UserResolver (e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
               hasNextPage: false,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjE='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
               { id: '2', name: 'User 2', email: 'user2@example.com' },
-              { id: '3', name: 'User 3', email: 'user3@example.com' },
+              { id: '3', name: 'User 3', email: 'user3@example.com' }
             ]);
           }));
     });
@@ -246,16 +246,16 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneUser: {
               id: '4',
               name: 'User 4',
-              email: 'user4@example.com',
-            },
-          },
+              email: 'user4@example.com'
+            }
+          }
         }));
 
     it('should validate a user', () =>
@@ -274,7 +274,7 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -303,15 +303,15 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyUsers: [
               { id: '5', name: 'User 5', email: 'user5@example.com' },
-              { id: '6', name: 'User 6', email: 'user6@example.com' },
-            ],
-          },
+              { id: '6', name: 'User 6', email: 'user6@example.com' }
+            ]
+          }
         }));
 
     it('should validate a user', () =>
@@ -330,7 +330,7 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -357,16 +357,16 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneUser: {
               id: '6',
               name: 'User 6a',
-              email: 'user6a@example.com',
-            },
-          },
+              email: 'user6a@example.com'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -385,7 +385,7 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -410,7 +410,7 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -435,14 +435,14 @@ describe('Federated - UserResolver (e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyUsers: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -459,13 +459,13 @@ describe('Federated - UserResolver (e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyUsersInput.filter" of required type "UserUpdateFilter!" was not provided.',
+            'Field "UpdateManyUsersInput.filter" of required type "UserUpdateFilter!" was not provided.'
           );
         }));
 
@@ -484,7 +484,7 @@ describe('Federated - UserResolver (e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -508,16 +508,16 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneUser: {
               id: null,
               name: 'New Users',
-              email: 'user6a@example.com',
-            },
-          },
+              email: 'user6a@example.com'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -534,7 +534,7 @@ describe('Federated - UserResolver (e2e)', () => {
               name
               email
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -558,14 +558,14 @@ describe('Federated - UserResolver (e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyUsers: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -580,13 +580,13 @@ describe('Federated - UserResolver (e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyUsersInput.filter" of required type "UserDeleteFilter!" was not provided.',
+            'Field "DeleteManyUsersInput.filter" of required type "UserDeleteFilter!" was not provided.'
           );
         }));
 
@@ -604,7 +604,7 @@ describe('Federated - UserResolver (e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {

@@ -44,7 +44,8 @@ type MongoDBDeletedOutput = {
  */
 export class MongooseQueryService<Entity extends Document>
   extends ReferenceQueryService<Entity>
-  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
+  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
+{
   constructor(
     readonly Model: MongooseModel<Entity>,
     readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model)
@@ -79,7 +80,7 @@ export class MongooseQueryService<Entity extends Document>
     if (options.sort) {
       aggPipeline.push({ $sort: options.sort ?? {} });
     }
-    const aggResult = (await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<string, unknown>[];
+    const aggResult = await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec();
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 
@@ -202,7 +203,7 @@ export class MongooseQueryService<Entity extends Document>
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    const res = (await this.Model.updateMany(filterQuery, this.getUpdateQuery(update)).exec());
+    const res = await this.Model.updateMany(filterQuery, this.getUpdateQuery(update)).exec();
     return { updatedCount: res.modifiedCount || 0 };
   }
 

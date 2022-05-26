@@ -7,6 +7,6 @@ export interface Config {
 
 export const config: Config = {
   auth: {
-    header: 'super-secret',
-  },
+    header: 'super-secret'
+  }
 };

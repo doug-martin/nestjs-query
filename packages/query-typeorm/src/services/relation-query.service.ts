@@ -187,9 +187,7 @@ export abstract class RelationQueryService<Entity> {
       .select(dto, { filter: opts?.filter, paging: { limit: 1 } })
       .getOne();
 
-    return relationEntity
-      ? assembler.convertToDTO(relationEntity)
-      : undefined;
+    return relationEntity ? assembler.convertToDTO(relationEntity) : undefined;
   }
 
   /**
@@ -339,7 +337,11 @@ export abstract class RelationQueryService<Entity> {
     const entityRelations = await relationQueryBuilder.batchSelect(entities, convertedQuery).getRawAndEntities();
 
     return entities.reduce((results, entity) => {
-      const relations = relationQueryBuilder.relationMeta.mapRelations(entity, entityRelations.entities, entityRelations.raw);
+      const relations = relationQueryBuilder.relationMeta.mapRelations(
+        entity,
+        entityRelations.entities,
+        entityRelations.raw
+      );
 
       return results.set(entity, assembler.convertToDTOs(relations));
     }, new Map<Entity, Relation[]>());

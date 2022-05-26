@@ -24,11 +24,9 @@ import {
 } from '../typegoose-types.helper';
 
 export abstract class ReferenceQueryService<Entity extends Base> {
-
   abstract readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
-  protected constructor(readonly Model: ReturnModelType<new () => Entity>) {
-  }
+  protected constructor(readonly Model: ReturnModelType<new () => Entity>) {}
 
   abstract getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<DocumentType<Entity>>;
 
@@ -54,7 +52,9 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     dto: DocumentType<Entity> | DocumentType<Entity>[],
     filter: Filter<Relation>,
     aggregateQuery: AggregateQuery<Relation>
-  ): Promise<AggregateResponse<DocumentType<Relation>>[] | Map<DocumentType<Entity>, AggregateResponse<DocumentType<Relation>>[]>> {
+  ): Promise<
+    AggregateResponse<DocumentType<Relation>>[] | Map<DocumentType<Entity>, AggregateResponse<DocumentType<Relation>>[]>
+  > {
     this.checkForReference('AggregateRelations', relationName);
     const relationModel = this.getReferenceModel(relationName);
     const referenceQueryBuilder = this.getReferenceQueryBuilder(relationName);
@@ -78,7 +78,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     if (options.sort) {
       aggPipeline.push({ $sort: options.sort ?? {} });
     }
-    const aggResult = (await relationModel.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<string, unknown>[];
+    const aggResult = await relationModel.aggregate<Record<string, unknown>>(aggPipeline).exec();
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 
@@ -221,11 +221,9 @@ export abstract class ReferenceQueryService<Entity extends Base> {
       throw new Error(`Unable to find all ${relationName} to add to ${this.Model.modelName}`);
     }
 
-    return this.findAndUpdate(
-      id,
-      opts?.filter as Filter<Entity>,
-      { $push: { [relationName]: { $each: relationIds } } } as mongoose.UpdateQuery<DocumentType<Entity>>
-    );
+    return this.findAndUpdate(id, opts?.filter, {
+      $push: { [relationName]: { $each: relationIds } }
+    } as mongoose.UpdateQuery<DocumentType<Entity>>);
   }
 
   public async setRelations<Relation>(
@@ -241,11 +239,9 @@ export abstract class ReferenceQueryService<Entity extends Base> {
       throw new Error(`Unable to find all ${relationName} to set on ${this.Model.modelName}`);
     }
 
-    return this.findAndUpdate(
-      id,
-      opts?.filter as Filter<Entity>,
-      { [relationName]: relationIds } as mongoose.UpdateQuery<DocumentType<Entity>>
-    );
+    return this.findAndUpdate(id, opts?.filter, { [relationName]: relationIds } as mongoose.UpdateQuery<
+      DocumentType<Entity>
+    >);
   }
 
   public async setRelation<Relation>(
@@ -260,11 +256,9 @@ export abstract class ReferenceQueryService<Entity extends Base> {
       throw new Error(`Unable to find ${relationName} to set on ${this.Model.modelName}`);
     }
 
-    return this.findAndUpdate(
-      id,
-      opts?.filter as Filter<Entity>,
-      { [relationName]: relationId } as mongoose.UpdateQuery<DocumentType<Entity>>
-    );
+    return this.findAndUpdate(id, opts?.filter, { [relationName]: relationId } as mongoose.UpdateQuery<
+      DocumentType<Entity>
+    >);
   }
 
   public async removeRelation<Relation>(
@@ -279,11 +273,9 @@ export abstract class ReferenceQueryService<Entity extends Base> {
       throw new Error(`Unable to find ${relationName} to remove from ${this.Model.modelName}`);
     }
 
-    await this.findAndUpdate(
-      id,
-      opts?.filter as Filter<Entity>,
-      { $unset: { [relationName]: relationId } } as mongoose.UpdateQuery<DocumentType<Entity>>
-    );
+    await this.findAndUpdate(id, opts?.filter, { $unset: { [relationName]: relationId } } as mongoose.UpdateQuery<
+      DocumentType<Entity>
+    >);
 
     // reload the document
     return this.getById(id);
@@ -303,11 +295,9 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     if (this.isVirtualPath(relationName)) {
       throw new Error(`RemoveRelations not supported for virtual relation ${relationName}`);
     }
-    await this.findAndUpdate(
-      id,
-      opts?.filter as Filter<Entity>,
-      { $pullAll: { [relationName]: relationIds } } as mongoose.UpdateQuery<DocumentType<Entity>>
-    );
+    await this.findAndUpdate(id, opts?.filter, { $pullAll: { [relationName]: relationIds } } as mongoose.UpdateQuery<
+      DocumentType<Entity>
+    >);
 
     // reload the document
     return this.getById(id);

@@ -18,15 +18,15 @@ import { TodoItemService } from './todo-item.service';
           DTOClass: SubTaskDTO,
           EntityClass: SubTaskEntity,
           CreateDTOClass: CreateSubTaskDTO,
-          UpdateDTOClass: SubTaskUpdateDTO,
+          UpdateDTOClass: SubTaskUpdateDTO
         },
         {
           type: 'federated',
           DTOClass: TodoItemReferenceDTO,
-          Service: TodoItemService,
-        },
-      ],
-    }),
-  ],
+          Service: TodoItemService
+        }
+      ]
+    })
+  ]
 })
 export class SubTaskModule {}

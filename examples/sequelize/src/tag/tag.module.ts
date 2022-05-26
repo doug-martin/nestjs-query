@@ -15,10 +15,10 @@ import { TagEntity } from './tag.entity';
           EntityClass: TagEntity,
           CreateDTOClass: TagInputDTO,
           UpdateDTOClass: TagInputDTO,
-          enableAggregate: true,
-        },
-      ],
-    }),
-  ],
+          enableAggregate: true
+        }
+      ]
+    })
+  ]
 })
 export class TagModule {}

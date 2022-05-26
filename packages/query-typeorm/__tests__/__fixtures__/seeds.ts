@@ -12,7 +12,7 @@ export const TEST_ENTITIES: TestEntity[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((
     boolType: i % 2 === 0,
     dateType: new Date(`2020-02-${i} 12:00`),
     numberType: i,
-    stringType: `foo${i}`,
+    stringType: `foo${i}`
   };
 });
 
@@ -20,7 +20,7 @@ export const TEST_SOFT_DELETE_ENTITIES: TestSoftDeleteEntity[] = [1, 2, 3, 4, 5,
   const testEntityPk = `test-entity-${i}`;
   return {
     testEntityPk,
-    stringType: `foo${i}`,
+    stringType: `foo${i}`
   };
 });
 
@@ -31,28 +31,28 @@ export const TEST_RELATIONS: TestRelation[] = TEST_ENTITIES.reduce(
       testRelationPk: `test-relations-${te.testEntityPk}-1`,
       relationName: `${te.stringType}-test-relation-one`,
       testEntityId: te.testEntityPk,
-      uniDirectionalTestEntityId: te.testEntityPk,
+      uniDirectionalTestEntityId: te.testEntityPk
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-2`,
       relationName: `${te.stringType}-test-relation-two`,
       testEntityId: te.testEntityPk,
-      uniDirectionalTestEntityId: te.testEntityPk,
+      uniDirectionalTestEntityId: te.testEntityPk
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-3`,
       relationName: `${te.stringType}-test-relation-three`,
       testEntityId: te.testEntityPk,
-      uniDirectionalTestEntityId: te.testEntityPk,
-    },
+      uniDirectionalTestEntityId: te.testEntityPk
+    }
   ],
-  [] as TestRelation[],
+  [] as TestRelation[]
 );
 
 export const TEST_RELATIONS_OF_RELATION = TEST_RELATIONS.map<Partial<RelationOfTestRelationEntity>>((testRelation) => ({
   relationName: `test-relation-of-${testRelation.relationName}`,
   id: `relation-of-test-relation-${testRelation.relationName}`,
-  testRelationId: testRelation.testRelationPk,
+  testRelationId: testRelation.testRelationPk
 })) as RelationOfTestRelationEntity[];
 
 export const seed = async (connection: Connection = getConnection()): Promise<void> => {
@@ -66,7 +66,7 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
   const testRelations = await testRelationRepo.save(TEST_RELATIONS.map((r: TestRelation) => ({ ...r })));
 
   await relationOfTestRelationRepo.save(
-    TEST_RELATIONS_OF_RELATION.map((r: RelationOfTestRelationEntity) => ({ ...r })),
+    TEST_RELATIONS_OF_RELATION.map((r: RelationOfTestRelationEntity) => ({ ...r }))
   );
 
   await Promise.all(
@@ -83,17 +83,17 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
       }
 
       return testEntityRepo.save(te);
-    }),
+    })
   );
 
   await Promise.all(
     testRelations.map(async (te) => {
       const relationOfTestRelationEntity = TEST_RELATIONS_OF_RELATION.find(
-        (r) => r.testRelationId === te.testRelationPk,
+        (r) => r.testRelationId === te.testRelationPk
       );
       te.relationOfTestRelationId = relationOfTestRelationEntity?.id;
       return testRelationRepo.save(te);
-    }),
+    })
   );
 
   await testSoftDeleteRepo.save(TEST_SOFT_DELETE_ENTITIES.map((e: TestSoftDeleteEntity) => ({ ...e })));

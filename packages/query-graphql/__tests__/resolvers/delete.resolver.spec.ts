@@ -2,13 +2,7 @@ import { DeleteManyResponse, Filter } from '@ptc-org/nestjs-query-core';
 import { Field, InputType, Query, Resolver } from '@nestjs/graphql';
 import { deepEqual, objectContaining, when, verify, anything, mock, instance } from 'ts-mockito';
 import { PubSub } from 'graphql-subscriptions';
-import {
-  DeleteManyInputType,
-  DeleteOneInputType,
-  DeleteResolver,
-  DeleteResolverOpts,
-  InjectPubSub
-} from '../../src';
+import { DeleteManyInputType, DeleteOneInputType, DeleteResolver, DeleteResolverOpts, InjectPubSub } from '../../src';
 import { DeletedEvent } from '../../src/resolvers/delete.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
 import { generateSchema, createResolverFromNest, TestService, TestResolverDTO } from '../__fixtures__';
@@ -90,10 +84,15 @@ describe('DeleteResolver', () => {
         stringField: 'foo'
       };
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
-      when(mockService.deleteOne(input.id, objectContaining({
-        filter: authorizeFilter,
-        useSoftDelete: false
-      }))).thenResolve(output);
+      when(
+        mockService.deleteOne(
+          input.id,
+          objectContaining({
+            filter: authorizeFilter,
+            useSoftDelete: false
+          })
+        )
+      ).thenResolve(output);
       const result = await resolver.deleteOne({ input }, authorizeFilter);
       return expect(result).toEqual(output);
     });
@@ -108,10 +107,15 @@ describe('DeleteResolver', () => {
         stringField: 'foo'
       };
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
-      when(mockService.deleteOne(input.id, objectContaining({
-        filter: authorizeFilter,
-        useSoftDelete: true
-      }))).thenResolve(output);
+      when(
+        mockService.deleteOne(
+          input.id,
+          objectContaining({
+            filter: authorizeFilter,
+            useSoftDelete: true
+          })
+        )
+      ).thenResolve(output);
       const result = await resolver.deleteOne({ input }, authorizeFilter);
       return expect(result).toEqual(output);
     });
@@ -136,7 +140,9 @@ describe('DeleteResolver', () => {
         filter: { id: { eq: 'id-1' } }
       };
       const output: DeleteManyResponse = { deletedCount: 1 };
-      when(mockService.deleteMany(objectContaining(input.filter), objectContaining({ useSoftDelete: false }))).thenResolve(output);
+      when(
+        mockService.deleteMany(objectContaining(input.filter), objectContaining({ useSoftDelete: false }))
+      ).thenResolve(output);
       const result = await resolver.deleteMany({ input });
       return expect(result).toEqual(output);
     });
@@ -148,7 +154,12 @@ describe('DeleteResolver', () => {
       };
       const output: DeleteManyResponse = { deletedCount: 1 };
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
-      when(mockService.deleteMany(objectContaining({ and: [authorizeFilter, input.filter] }), objectContaining({ useSoftDelete: false }))).thenResolve(output);
+      when(
+        mockService.deleteMany(
+          objectContaining({ and: [authorizeFilter, input.filter] }),
+          objectContaining({ useSoftDelete: false })
+        )
+      ).thenResolve(output);
       const result = await resolver.deleteMany({ input }, authorizeFilter);
       return expect(result).toEqual(output);
     });

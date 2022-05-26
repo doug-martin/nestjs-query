@@ -18,7 +18,7 @@ export class FindRelationsLoader<DTO, Relation>
 
   private async loadResults(
     service: QueryService<DTO, unknown, unknown>,
-    findRelationsMap: FindRelationsMap<DTO, Relation>,
+    findRelationsMap: FindRelationsMap<DTO, Relation>
   ): Promise<(Relation | undefined)[]> {
     const results: (Relation | undefined)[] = [];
     await Promise.all(
@@ -30,7 +30,7 @@ export class FindRelationsLoader<DTO, Relation>
         dtoRelations.forEach((relation, index) => {
           results[args[index].index] = relation;
         });
-      }),
+      })
     );
     return results;
   }

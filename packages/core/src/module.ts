@@ -18,7 +18,7 @@ export class NestjsQueryCoreModule {
       module: NestjsQueryCoreModule,
       imports: [...imports],
       providers: [...assemblers, ...assemblerServiceProviders],
-      exports: [...imports, ...assemblers, ...assemblerServiceProviders],
+      exports: [...imports, ...assemblers, ...assemblerServiceProviders]
     };
   }
 }

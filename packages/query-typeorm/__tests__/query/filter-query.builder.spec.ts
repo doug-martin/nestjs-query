@@ -13,7 +13,7 @@ describe('FilterQueryBuilder', (): void => {
 
   const getEntityQueryBuilder = <Entity>(
     entity: Class<Entity>,
-    whereBuilder: WhereBuilder<Entity>,
+    whereBuilder: WhereBuilder<Entity>
   ): FilterQueryBuilder<Entity> => new FilterQueryBuilder(getTestConnection().getRepository(entity), whereBuilder);
 
   const expectSQLSnapshot = <Entity>(query: QueryBuilder<Entity>): void => {
@@ -30,23 +30,23 @@ describe('FilterQueryBuilder', (): void => {
             or: [
               { and: [{ stringType: { eq: '123' } }] },
               {
-                and: [{ stringType: { eq: '123' } }, { id: { gt: '123' } }],
-              },
-            ],
+                and: [{ stringType: { eq: '123' } }, { id: { gt: '123' } }]
+              }
+            ]
           },
           {
             stringType: { eq: '345' },
             or: [
               { oneTestRelation: { relationName: { eq: '123' } } },
-              { oneTestRelation: { relationOfTestRelation: { testRelationId: { eq: 'e1' } } } },
-            ],
-          },
-        ],
+              { oneTestRelation: { relationOfTestRelation: { testRelationId: { eq: 'e1' } } } }
+            ]
+          }
+        ]
       };
       const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
       const qb = getEntityQueryBuilder(TestEntity, instance(mockWhereBuilder));
       expect(qb.getReferencedRelationsRecursive(qb.repo.metadata, complexQuery)).toEqual({
-        oneTestRelation: { relationOfTestRelation: {} },
+        oneTestRelation: { relationOfTestRelation: {} }
       });
     });
     it('with nested and / or', () => {
@@ -57,34 +57,34 @@ describe('FilterQueryBuilder', (): void => {
           test: '123',
           and: [
             {
-              boolType: { is: true },
+              boolType: { is: true }
             },
             {
               testRelations: {
-                relationName: { eq: '123' },
-              },
-            },
+                relationName: { eq: '123' }
+              }
+            }
           ],
           or: [
             {
-              boolType: { is: true },
+              boolType: { is: true }
             },
             {
               oneTestRelation: {
-                testRelationPk: { eq: '123' },
-              },
+                testRelationPk: { eq: '123' }
+              }
             },
             {
               oneTestRelation: {
                 relationsOfTestRelation: {
                   testRelationId: {
-                    eq: '123',
-                  },
-                },
-              },
-            },
-          ],
-        } as Filter<TestEntity>),
+                    eq: '123'
+                  }
+                }
+              }
+            }
+          ]
+        } as Filter<TestEntity>)
       ).toEqual({ testRelations: {}, oneTestRelation: { relationsOfTestRelation: {} } });
     });
   });
@@ -107,7 +107,7 @@ describe('FilterQueryBuilder', (): void => {
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), 'TestEntity')).thenCall(
           (where: WhereExpression, field: Filter<TestEntity>, relationNames: string[], alias: string) =>
-            where.andWhere(`${alias}.stringType = 'foo'`),
+            where.andWhere(`${alias}.stringType = 'foo'`)
         );
         expectSelectSQLSnapshot(query, instance(mockWhereBuilder));
       });
@@ -138,7 +138,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectSelectSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.ASC }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), {}, 'TestEntity')).never();
       });
@@ -147,7 +147,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectSelectSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), {}, 'TestEntity')).never();
       });
@@ -156,7 +156,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectSelectSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), {}, 'TestEntity')).never();
       });
@@ -165,7 +165,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectSelectSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.DESC }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), {}, 'TestEntity')).never();
       });
@@ -174,7 +174,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectSelectSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
       });
 
@@ -182,7 +182,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectSelectSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), {}, 'TestEntity')).never();
       });
@@ -195,10 +195,10 @@ describe('FilterQueryBuilder', (): void => {
               { field: 'numberType', direction: SortDirection.ASC },
               { field: 'boolType', direction: SortDirection.DESC },
               { field: 'stringType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST },
-              { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST },
-            ],
+              { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }
+            ]
           },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), {}, 'TestEntity')).never();
       });
@@ -216,7 +216,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall(
-          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`),
+          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`)
         );
         expectUpdateSQLSnapshot(query, instance(mockWhereBuilder));
       });
@@ -234,7 +234,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectUpdateSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.ASC }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
@@ -243,7 +243,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectUpdateSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
@@ -252,7 +252,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectUpdateSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
@@ -261,7 +261,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectUpdateSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.DESC }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
@@ -270,7 +270,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectUpdateSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
@@ -279,7 +279,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectUpdateSQLSnapshot(
           { sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }] },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
@@ -292,10 +292,10 @@ describe('FilterQueryBuilder', (): void => {
               { field: 'numberType', direction: SortDirection.ASC },
               { field: 'boolType', direction: SortDirection.DESC },
               { field: 'stringType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST },
-              { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST },
-            ],
+              { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }
+            ]
           },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
@@ -313,7 +313,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall(
-          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`),
+          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`)
         );
         expectDeleteSQLSnapshot(query, instance(mockWhereBuilder));
       });
@@ -335,10 +335,10 @@ describe('FilterQueryBuilder', (): void => {
               { field: 'numberType', direction: SortDirection.ASC },
               { field: 'boolType', direction: SortDirection.DESC },
               { field: 'stringType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST },
-              { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST },
-            ],
+              { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }
+            ]
           },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
@@ -348,7 +348,7 @@ describe('FilterQueryBuilder', (): void => {
   describe('#softDelete', () => {
     const expectSoftDeleteSQLSnapshot = (
       query: Query<TestSoftDeleteEntity>,
-      whereBuilder: WhereBuilder<TestSoftDeleteEntity>,
+      whereBuilder: WhereBuilder<TestSoftDeleteEntity>
     ): void => {
       const selectQueryBuilder = getEntityQueryBuilder(TestSoftDeleteEntity, whereBuilder).softDelete(query);
       expectSQLSnapshot(selectQueryBuilder);
@@ -359,7 +359,7 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestSoftDeleteEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall(
-          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`),
+          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`)
         );
         expectSoftDeleteSQLSnapshot(query, instance(mockWhereBuilder));
       });
@@ -379,10 +379,10 @@ describe('FilterQueryBuilder', (): void => {
           {
             sorting: [
               { field: 'stringType', direction: SortDirection.ASC },
-              { field: 'testEntityPk', direction: SortDirection.DESC },
-            ],
+              { field: 'testEntityPk', direction: SortDirection.DESC }
+            ]
           },
-          instance(mockWhereBuilder),
+          instance(mockWhereBuilder)
         );
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });

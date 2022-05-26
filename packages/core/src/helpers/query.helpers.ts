@@ -10,7 +10,7 @@ export type QueryFieldMap<From, To, T extends keyof To = keyof To> = {
 
 export const transformSort = <From, To>(
   sorting: SortField<From>[] | undefined,
-  fieldMap: QueryFieldMap<From, To>,
+  fieldMap: QueryFieldMap<From, To>
 ): SortField<To>[] | undefined => {
   if (!sorting) {
     return undefined;
@@ -27,7 +27,7 @@ export const transformSort = <From, To>(
 export const transformQuery = <From, To>(query: Query<From>, fieldMap: QueryFieldMap<From, To>): Query<To> => ({
   filter: transformFilter(query.filter, fieldMap),
   paging: query.paging,
-  sorting: transformSort(query.sorting, fieldMap),
+  sorting: transformSort(query.sorting, fieldMap)
 });
 
 export const mergeQuery = <T>(base: Query<T>, source: Query<T>): Query<T> => {
@@ -51,7 +51,7 @@ export const applyQuery = <DTO>(dtos: DTO[], query: Query<DTO>): DTO[] => {
 export function invertSort<DTO>(sortFields: SortField<DTO>[]): SortField<DTO>[] {
   return sortFields.map((sf) => {
     const direction = sf.direction === SortDirection.ASC ? SortDirection.DESC : SortDirection.ASC;
-    let nulls;
+    let nulls: SortNulls;
     if (sf.nulls === SortNulls.NULLS_LAST) {
       nulls = SortNulls.NULLS_FIRST;
     } else if (sf.nulls === SortNulls.NULLS_FIRST) {

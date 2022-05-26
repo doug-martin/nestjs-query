@@ -25,109 +25,109 @@ describe('PagingType', (): void => {
   it('throw a validation error if first is defined with before', () => {
     const paging = plainToClass(CursorPaging, {
       first: 10,
-      before: 'YXJyYXljb25uZWN0aW9uOjEx',
+      before: 'YXJyYXljb25uZWN0aW9uOjEx'
     });
     expect(validateSync(paging)).toEqual([
       {
         children: [],
         constraints: {
           CannotUseWith: 'Cannot be used with `after` , `first`.',
-          CannotUseWithout: 'Cannot be used without `last`.',
+          CannotUseWithout: 'Cannot be used without `last`.'
         },
         property: 'before',
         target: {
           before: 'YXJyYXljb25uZWN0aW9uOjEx',
-          first: 10,
+          first: 10
         },
-        value: 'YXJyYXljb25uZWN0aW9uOjEx',
+        value: 'YXJyYXljb25uZWN0aW9uOjEx'
       },
       {
         children: [],
         constraints: {
-          CannotUseWith: 'Cannot be used with `before` , `last`.',
+          CannotUseWith: 'Cannot be used with `before` , `last`.'
         },
         property: 'first',
         target: {
           before: 'YXJyYXljb25uZWN0aW9uOjEx',
-          first: 10,
+          first: 10
         },
-        value: 10,
-      },
+        value: 10
+      }
     ]);
   });
 
   it('throw a validation error if last is defined with after', () => {
     const paging = plainToClass(CursorPaging, {
       last: 10,
-      after: 'YXJyYXljb25uZWN0aW9uOjEx',
+      after: 'YXJyYXljb25uZWN0aW9uOjEx'
     });
     expect(validateSync(paging)).toEqual([
       {
         children: [],
         constraints: {
           CannotUseWith: 'Cannot be used with `before` , `last`.',
-          CannotUseWithout: 'Cannot be used without `first`.',
+          CannotUseWithout: 'Cannot be used without `first`.'
         },
         property: 'after',
         target: {
           after: 'YXJyYXljb25uZWN0aW9uOjEx',
-          last: 10,
+          last: 10
         },
-        value: 'YXJyYXljb25uZWN0aW9uOjEx',
+        value: 'YXJyYXljb25uZWN0aW9uOjEx'
       },
       {
         children: [],
         constraints: {
           CannotUseWith: 'Cannot be used with `after` , `first`.',
-          CannotUseWithout: 'Cannot be used without `before`.',
+          CannotUseWithout: 'Cannot be used without `before`.'
         },
         property: 'last',
         target: {
           after: 'YXJyYXljb25uZWN0aW9uOjEx',
-          last: 10,
+          last: 10
         },
-        value: 10,
-      },
+        value: 10
+      }
     ]);
   });
 
   it('throw a validation error if after is defined without first', () => {
     const paging = plainToClass(CursorPaging, {
-      after: 'YXJyYXljb25uZWN0aW9uOjEx',
+      after: 'YXJyYXljb25uZWN0aW9uOjEx'
     });
     const validateErrors = validateSync(paging);
     expect(validateErrors).toEqual([
       {
         children: [],
         constraints: {
-          CannotUseWithout: 'Cannot be used without `first`.',
+          CannotUseWithout: 'Cannot be used without `first`.'
         },
         property: 'after',
         target: {
-          after: 'YXJyYXljb25uZWN0aW9uOjEx',
+          after: 'YXJyYXljb25uZWN0aW9uOjEx'
         },
-        value: 'YXJyYXljb25uZWN0aW9uOjEx',
-      },
+        value: 'YXJyYXljb25uZWN0aW9uOjEx'
+      }
     ]);
   });
 
   it('throw a validation before if after is defined without last', () => {
     const paging = plainToClass(CursorPaging, {
-      before: 'YXJyYXljb25uZWN0aW9uOjEx',
+      before: 'YXJyYXljb25uZWN0aW9uOjEx'
     });
     const validateErrors = validateSync(paging);
     expect(validateErrors).toEqual([
       {
         children: [],
         constraints: {
-          CannotUseWithout: 'Cannot be used without `last`.',
+          CannotUseWithout: 'Cannot be used without `last`.'
         },
         property: 'before',
         target: {
-          before: 'YXJyYXljb25uZWN0aW9uOjEx',
+          before: 'YXJyYXljb25uZWN0aW9uOjEx'
         },
-        value: 'YXJyYXljb25uZWN0aW9uOjEx',
-      },
+        value: 'YXJyYXljb25uZWN0aW9uOjEx'
+      }
     ]);
   });
 });

@@ -7,12 +7,12 @@ import { CursorPagerResult, PagingMeta, QueryResults } from './interfaces';
 const EMPTY_PAGING_RESULTS = <DTO>(): CursorPagerResult<DTO> => ({
   edges: [],
   pageInfo: { hasNextPage: false, hasPreviousPage: false },
-  totalCount: () => Promise.resolve(0),
+  totalCount: () => Promise.resolve(0)
 });
 
 const DEFAULT_PAGING_META = <DTO>(query: Query<DTO>): PagingMeta<DTO, OffsetPagingOpts> => ({
   opts: { offset: 0, limit: 0, isBackward: false, isForward: true, hasBefore: false },
-  query,
+  query
 });
 
 export class CursorPager<DTO> implements Pager<DTO, CursorPagerResult<DTO>> {
@@ -21,7 +21,7 @@ export class CursorPager<DTO> implements Pager<DTO, CursorPagerResult<DTO>> {
   async page<Q extends CursorQueryArgsType<DTO>>(
     queryMany: QueryMany<DTO, Q>,
     query: Q,
-    count: Count<DTO>,
+    count: Count<DTO>
   ): Promise<CursorPagerResult<DTO>> {
     const pagingMeta = this.getPageMeta(query);
     if (!this.isValidPaging(pagingMeta)) {
@@ -44,7 +44,7 @@ export class CursorPager<DTO> implements Pager<DTO, CursorPagerResult<DTO>> {
   private async runQuery<Q extends Query<DTO>>(
     queryMany: QueryMany<DTO, Q>,
     query: Q,
-    pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>,
+    pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>
   ): Promise<QueryResults<DTO>> {
     const { opts } = pagingMeta;
     const windowedQuery = this.strategy.createQuery(query, opts, true);
@@ -65,13 +65,13 @@ export class CursorPager<DTO> implements Pager<DTO, CursorPagerResult<DTO>> {
   private createPagingResult(
     results: QueryResults<DTO>,
     pagingMeta: PagingMeta<DTO, CursorPagingOpts<DTO>>,
-    totalCount: () => Promise<number>,
+    totalCount: () => Promise<number>
   ): CursorPagerResult<DTO> {
     const { nodes, hasExtraNode } = results;
     const { isForward, hasBefore } = pagingMeta.opts;
     const edges: EdgeType<DTO>[] = nodes.map((node, i) => ({
       node,
-      cursor: this.strategy.toCursor(node, i, pagingMeta.opts, pagingMeta.query),
+      cursor: this.strategy.toCursor(node, i, pagingMeta.opts, pagingMeta.query)
     }));
     const pageInfo = {
       startCursor: edges[0]?.cursor,
@@ -79,7 +79,7 @@ export class CursorPager<DTO> implements Pager<DTO, CursorPagerResult<DTO>> {
       // if we have are going forward and have an extra node or there was a before cursor
       hasNextPage: isForward ? hasExtraNode : hasBefore,
       // we have a previous page if we are going backwards and have an extra node.
-      hasPreviousPage: this.hasPreviousPage(results, pagingMeta),
+      hasPreviousPage: this.hasPreviousPage(results, pagingMeta)
     };
 
     return { edges, pageInfo, totalCount };

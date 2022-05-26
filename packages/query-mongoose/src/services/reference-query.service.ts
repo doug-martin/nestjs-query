@@ -71,8 +71,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     if (options.sort) {
       aggPipeline.push({ $sort: options.sort ?? {} });
     }
-    const aggResult = (await relationModel.aggregate<Record<string, unknown>>(aggPipeline).exec()) as Record<string,
-      unknown>[];
+    const aggResult = await relationModel.aggregate<Record<string, unknown>>(aggPipeline).exec();
     return AggregateBuilder.convertToAggregateResponse(aggResult);
   }
 
@@ -155,9 +154,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     const populated = await foundEntity.populate({ path: relationName, match: filterQuery });
     const populatedRef: unknown = populated.get(relationName);
 
-    return populatedRef
-      ? assembler.convertToDTO(populatedRef as Document)
-      : undefined;
+    return populatedRef ? assembler.convertToDTO(populatedRef as Document) : undefined;
   }
 
   queryRelations<Relation>(

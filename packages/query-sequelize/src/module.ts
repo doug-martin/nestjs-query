@@ -11,7 +11,7 @@ export class NestjsQuerySequelizeModule {
       module: NestjsQuerySequelizeModule,
       imports: [nestjsSequelize],
       providers: [...queryServiceProviders],
-      exports: [...queryServiceProviders, nestjsSequelize],
+      exports: [...queryServiceProviders, nestjsSequelize]
     };
   }
 }

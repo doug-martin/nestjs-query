@@ -50,11 +50,11 @@ export function FilterableField(): PropertyDecorator & MethodDecorator;
 export function FilterableField(options: FilterableFieldOptions): PropertyDecorator & MethodDecorator;
 export function FilterableField(
   returnTypeFunction?: ReturnTypeFunc,
-  options?: FilterableFieldOptions,
+  options?: FilterableFieldOptions
 ): PropertyDecorator & MethodDecorator;
 export function FilterableField(
   returnTypeFuncOrOptions?: ReturnTypeFunc | FilterableFieldOptions,
-  maybeOptions?: FilterableFieldOptions,
+  maybeOptions?: FilterableFieldOptions
 ): MethodDecorator | PropertyDecorator {
   let returnTypeFunc: ReturnTypeFunc | undefined;
   let advancedOptions: FilterableFieldOptions | undefined;
@@ -70,14 +70,14 @@ export function FilterableField(
     // eslint-disable-next-line @typescript-eslint/ban-types
     target: Object,
     propertyName: string | symbol,
-    descriptor: TypedPropertyDescriptor<D>,
+    descriptor: TypedPropertyDescriptor<D>
   ): TypedPropertyDescriptor<D> | void => {
     const Ctx = Reflect.getMetadata('design:type', target, propertyName) as Class<unknown>;
     reflector.append(target.constructor as Class<unknown>, {
       propertyName: propertyName.toString(),
       target: Ctx,
       returnTypeFunc,
-      advancedOptions,
+      advancedOptions
     });
 
     if (advancedOptions?.filterOnly) {

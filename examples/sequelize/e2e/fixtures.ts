@@ -15,7 +15,7 @@ export const refresh = async (connection: Sequelize): Promise<void> => {
     { name: 'Home' },
     { name: 'Work' },
     { name: 'Question' },
-    { name: 'Blocked' },
+    { name: 'Blocked' }
   ]);
   const todoItems = await TodoItemEntity.bulkCreate([
     { title: 'Create Nest App', completed: true, tags: [urgentTag, homeTag] },
@@ -25,8 +25,8 @@ export const refresh = async (connection: Sequelize): Promise<void> => {
     {
       title: 'How to create item With Sub Tasks',
       completed: false,
-      tags: [questionTag, blockedTag],
-    },
+      tags: [questionTag, blockedTag]
+    }
   ]);
   await todoItems[0].$set('tags', [urgentTag, homeTag]);
   await todoItems[1].$set('tags', [urgentTag, workTag]);
@@ -39,7 +39,7 @@ export const refresh = async (connection: Sequelize): Promise<void> => {
     const subTasks = await SubTaskEntity.bulkCreate([
       { completed: true, title: `${todo.title} - Sub Task 1` },
       { completed: false, title: `${todo.title} - Sub Task 2` },
-      { completed: false, title: `${todo.title} - Sub Task 3` },
+      { completed: false, title: `${todo.title} - Sub Task 3` }
     ]);
     await todo.$set('subTasks', subTasks);
   }, Promise.resolve());

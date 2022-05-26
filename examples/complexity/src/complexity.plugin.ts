@@ -24,16 +24,16 @@ export class ComplexityPlugin implements ApolloServerPlugin {
           operationName: request.operationName,
           query: document,
           variables: request.variables,
-          estimators: [fieldExtensionsEstimator(), simpleEstimator({ defaultComplexity: 1 })],
+          estimators: [fieldExtensionsEstimator(), simpleEstimator({ defaultComplexity: 1 })]
         });
         if (complexity >= this.maxComplexity) {
           return Promise.reject(
-            new GraphQLError(`Query is too complex: ${complexity}. Maximum allowed complexity: ${this.maxComplexity}`),
+            new GraphQLError(`Query is too complex: ${complexity}. Maximum allowed complexity: ${this.maxComplexity}`)
           );
         }
         this.logger.log(`Query Complexity: ${complexity}`);
         return Promise.resolve();
-      },
+      }
     });
   }
 }

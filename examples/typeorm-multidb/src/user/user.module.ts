@@ -15,10 +15,10 @@ import { UserEntity } from './user.entity';
           DTOClass: UserDTO,
           EntityClass: UserEntity,
           CreateDTOClass: UserInputDTO,
-          UpdateDTOClass: UserInputDTO,
-        },
-      ],
-    }),
-  ],
+          UpdateDTOClass: UserInputDTO
+        }
+      ]
+    })
+  ]
 })
 export class UserModule {}

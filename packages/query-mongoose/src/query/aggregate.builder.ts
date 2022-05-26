@@ -9,7 +9,7 @@ enum AggregateFuncs {
   SUM = 'sum',
   COUNT = 'count',
   MAX = 'max',
-  MIN = 'min',
+  MIN = 'min'
 }
 type Aggregate = Record<string, Record<string, unknown>>;
 type Group = { _id: Record<string, string> | null };
@@ -46,7 +46,7 @@ export class AggregateBuilder<Entity extends Document> {
       return {
         ...agg,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [aggFunc]: { ...aggResult, [fieldName]: response[resultField] },
+        [aggFunc]: { ...aggResult, [fieldName]: response[resultField] }
       };
     }, {} as AggregateResponse<Entity>);
   }
@@ -61,7 +61,7 @@ export class AggregateBuilder<Entity extends Document> {
       ...this.createAggSelect(AggregateFuncs.SUM, aggregate.sum),
       ...this.createAggSelect(AggregateFuncs.AVG, aggregate.avg),
       ...this.createAggSelect(AggregateFuncs.MAX, aggregate.max),
-      ...this.createAggSelect(AggregateFuncs.MIN, aggregate.min),
+      ...this.createAggSelect(AggregateFuncs.MIN, aggregate.min)
     };
     if (!Object.keys(aggSelect).length) {
       throw new BadRequestException('No aggregate fields found.');
@@ -84,10 +84,10 @@ export class AggregateBuilder<Entity extends Document> {
               $cond: {
                 if: { $in: [{ $type: fieldAlias }, ['missing', 'null']] },
                 then: 0,
-                else: 1,
-              },
-            },
-          },
+                else: 1
+              }
+            }
+          }
         };
       }
       return { ...agg, [aggAlias]: { [`$${func}`]: fieldAlias } };

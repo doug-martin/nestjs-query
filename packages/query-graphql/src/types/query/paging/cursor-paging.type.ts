@@ -20,7 +20,7 @@ export const getOrCreateCursorPagingType = (): Class<CursorPagingType> => {
 
     @Field(() => ConnectionCursorScalar, {
       nullable: true,
-      description: 'Paginate before opaque cursor',
+      description: 'Paginate before opaque cursor'
     })
     @IsUndefined()
     @Validate(CannotUseWithout, ['last'])
@@ -29,7 +29,7 @@ export const getOrCreateCursorPagingType = (): Class<CursorPagingType> => {
 
     @Field(() => ConnectionCursorScalar, {
       nullable: true,
-      description: 'Paginate after opaque cursor',
+      description: 'Paginate after opaque cursor'
     })
     @IsUndefined()
     @Validate(CannotUseWithout, ['first'])

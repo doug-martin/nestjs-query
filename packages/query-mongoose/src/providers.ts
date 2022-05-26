@@ -13,7 +13,7 @@ export type NestjsQueryModelDefinition<Entity extends Document> = {
 AssemblerSerializer((obj: Document) => obj.toObject({ virtuals: true }))(Document);
 
 function createMongooseQueryServiceProvider<Entity extends Document>(
-  model: NestjsQueryModelDefinition<Entity>,
+  model: NestjsQueryModelDefinition<Entity>
 ): FactoryProvider {
   return {
     provide: getQueryServiceToken(model.document),
@@ -23,10 +23,10 @@ function createMongooseQueryServiceProvider<Entity extends Document>(
       // eslint-disable-next-line @typescript-eslint/ban-types
       return new MongooseQueryService<Entity>(ModelClass);
     },
-    inject: [getModelToken(model.name)],
+    inject: [getModelToken(model.name)]
   };
 }
 
 export const createMongooseQueryServiceProviders = (
-  models: NestjsQueryModelDefinition<Document>[],
+  models: NestjsQueryModelDefinition<Document>[]
 ): FactoryProvider[] => models.map((model) => createMongooseQueryServiceProvider(model));

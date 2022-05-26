@@ -29,8 +29,8 @@ export const refresh = async (connection: Connection): Promise<void> => {
       title: 'How to create item With Sub Tasks',
       completed: false,
       priority: 4,
-      tags: [questionTag, blockedTag],
-    },
+      tags: [questionTag, blockedTag]
+    }
   ]);
 
   await subTaskRepo.save(
@@ -39,9 +39,9 @@ export const refresh = async (connection: Connection): Promise<void> => {
         ...subTasks,
         { completed: true, title: `${todo.title} - Sub Task 1`, todoItem: todo },
         { completed: false, title: `${todo.title} - Sub Task 2`, todoItem: todo },
-        { completed: false, title: `${todo.title} - Sub Task 3`, todoItem: todo },
+        { completed: false, title: `${todo.title} - Sub Task 3`, todoItem: todo }
       ],
-      [] as Partial<SubTaskEntity>[],
-    ),
+      [] as Partial<SubTaskEntity>[]
+    )
   );
 };

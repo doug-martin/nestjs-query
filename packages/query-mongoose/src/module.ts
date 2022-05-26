@@ -11,7 +11,7 @@ export class NestjsQueryMongooseModule {
       imports: [mongooseModule],
       module: NestjsQueryMongooseModule,
       providers: [...queryServiceProviders],
-      exports: [...queryServiceProviders, mongooseModule],
+      exports: [...queryServiceProviders, mongooseModule]
     };
   }
 }

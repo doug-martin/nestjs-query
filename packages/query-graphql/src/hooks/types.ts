@@ -6,5 +6,5 @@ export enum HookTypes {
   BEFORE_DELETE_ONE = 'BeforeDeleteOne',
   BEFORE_DELETE_MANY = 'BeforeDeleteMany',
   BEFORE_QUERY_MANY = 'BeforeQueryMany',
-  BEFORE_FIND_ONE = 'BeforeFindOne',
+  BEFORE_FIND_ONE = 'BeforeFindOne'
 }

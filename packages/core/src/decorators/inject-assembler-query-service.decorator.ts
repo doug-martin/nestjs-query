@@ -9,7 +9,7 @@ export const InjectAssemblerQueryService = <
   C = DeepPartial<DTO>,
   CE = DeepPartial<Entity>,
   U = C,
-  UE = CE,
+  UE = CE
 >(
-  AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>,
+  AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>
 ): ReturnType<typeof Inject> => Inject(getAssemblerQueryServiceToken(AssemblerClass));

@@ -16,9 +16,9 @@ describe('@InjectQueryService', () => {
         TestService,
         {
           provide: getQueryServiceToken(TestEntity),
-          useValue: noopQueryService,
-        },
-      ],
+          useValue: noopQueryService
+        }
+      ]
     }).compile();
     const testService = moduleRef.get(TestService);
     expect(testService).toBeInstanceOf(TestService);

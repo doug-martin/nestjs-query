@@ -16,14 +16,14 @@ describe('AggregateBuilder', (): void => {
       avg: ['numberType'],
       sum: ['numberType'],
       max: ['stringType', 'dateType', 'numberType'],
-      min: ['stringType', 'dateType', 'numberType'],
+      min: ['stringType', 'dateType', 'numberType']
     };
     expect(createAggregateBuilder().build(agg)).toEqual({
       _id: null,
       avg_numberType: { $avg: '$numberType' },
       count_id: { $sum: { $cond: { else: 1, if: { $in: [{ $type: '$_id' }, ['missing', 'null']] }, then: 0 } } },
       count_stringType: {
-        $sum: { $cond: { else: 1, if: { $in: [{ $type: '$stringType' }, ['missing', 'null']] }, then: 0 } },
+        $sum: { $cond: { else: 1, if: { $in: [{ $type: '$stringType' }, ['missing', 'null']] }, then: 0 } }
       },
       max_dateType: { $max: '$dateType' },
       max_numberType: { $max: '$numberType' },
@@ -31,7 +31,7 @@ describe('AggregateBuilder', (): void => {
       min_dateType: { $min: '$dateType' },
       min_numberType: { $min: '$numberType' },
       min_stringType: { $min: '$stringType' },
-      sum_numberType: { $sum: '$numberType' },
+      sum_numberType: { $sum: '$numberType' }
     });
   });
 
@@ -46,8 +46,8 @@ describe('AggregateBuilder', (): void => {
           max_stringType: 'z',
           max_numberType: 10,
           min_stringType: 'a',
-          min_numberType: 1,
-        },
+          min_numberType: 1
+        }
       ];
       expect(AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toEqual([
         {
@@ -56,19 +56,19 @@ describe('AggregateBuilder', (): void => {
           sum: { numberType: 55 },
           avg: { numberType: 5 },
           max: { stringType: 'z', numberType: 10 },
-          min: { stringType: 'a', numberType: 1 },
-        },
+          min: { stringType: 'a', numberType: 1 }
+        }
       ]);
     });
 
     it('should throw an error if a column is not expected', () => {
       const dbResult = [
         {
-          COUNTtestEntityPk: 10,
-        },
+          COUNTtestEntityPk: 10
+        }
       ];
       expect(() => AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toThrow(
-        'Unknown aggregate column encountered.',
+        'Unknown aggregate column encountered.'
       );
     });
   });

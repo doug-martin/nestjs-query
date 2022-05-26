@@ -8,13 +8,14 @@ import { getAssemblerDeserializer } from './assembler.deserializer';
 /**
  * Base assembler that uses class-transformer to transform to and from the DTO/Entity.
  */
-export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAssembler<DTO,
+export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAssembler<
+  DTO,
   Entity,
   DeepPartial<DTO>,
   DeepPartial<Entity>,
   DeepPartial<DTO>,
-  DeepPartial<Entity>> {
-
+  DeepPartial<Entity>
+> {
   convertToDTO(entity: Entity): DTO {
     return this.convert(this.DTOClass, this.toPlain(entity));
   }
@@ -66,7 +67,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
       }
     } else if ('constructor' in entityOrDto) {
       // eslint-disable-next-line @typescript-eslint/ban-types
-      const serializer = getAssemblerSerializer((entityOrDto).constructor as Class<unknown>);
+      const serializer = getAssemblerSerializer(entityOrDto.constructor as Class<unknown>);
 
       if (serializer) {
         return serializer(entityOrDto);

@@ -8,7 +8,7 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
-  applyDecorators,
+  applyDecorators
 } from '@nestjs/common';
 import { Class } from '@ptc-org/nestjs-query-core';
 
@@ -65,6 +65,6 @@ export function ResolverMethod(...opts: ResolverMethodOpts[]): MethodDecorator {
     UseInterceptors(...createSetArray<Class<NestInterceptor>>(...opts.map((o) => o.interceptors ?? []))),
     UsePipes(...createSetArray<Class<PipeTransform>>(...opts.map((o) => o.pipes ?? []))),
     UseFilters(...createSetArray<Class<ExceptionFilter>>(...opts.map((o) => o.filters ?? []))),
-    ...createSetArray<PropertyDecorator | MethodDecorator>(...opts.map((o) => o.decorators ?? [])),
+    ...createSetArray<PropertyDecorator | MethodDecorator>(...opts.map((o) => o.decorators ?? []))
   );
 }

@@ -12,7 +12,8 @@ import {
   FindByIdOptions,
   FindRelationOptions,
   GetByIdOptions,
-  UpdateOneOptions, DeleteManyOptions
+  UpdateOneOptions,
+  DeleteManyOptions
 } from '../interfaces';
 import { QueryService } from './query.service';
 import { DeepPartial, Class } from '../common';
@@ -32,7 +33,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     relationName: string,
     id: string | number,
     relationIds: (string | number)[],
-    opts?: ModifyRelationOptions<DTO, Relation>,
+    opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('addRelations is not implemented'));
   }
@@ -61,21 +62,21 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Relation | undefined>;
 
   findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Map<DTO, Relation | undefined>>;
 
   findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<(Relation | undefined) | Map<DTO, Relation | undefined>> {
     return Promise.reject(new NotImplementedException('findRelation is not implemented'));
   }
@@ -100,21 +101,21 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Relation[]>;
 
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Map<DTO, Relation[]>>;
 
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Relation[] | Map<DTO, Relation[]>> {
     return Promise.reject(new NotImplementedException('queryRelations is not implemented'));
   }
@@ -123,21 +124,21 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<number>;
 
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<Map<DTO, number>>;
 
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<number | Map<DTO, number>> {
     return Promise.reject(new NotImplementedException('countRelations is not implemented'));
   }
@@ -146,7 +147,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     relationName: string,
     id: string | number,
     relationId: string | number,
-    opts?: ModifyRelationOptions<DTO, Relation>,
+    opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('removeRelation is not implemented'));
   }
@@ -155,7 +156,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     relationName: string,
     id: string | number,
     relationIds: (string | number)[],
-    opts?: ModifyRelationOptions<DTO, Relation>,
+    opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('removeRelations is not implemented'));
   }
@@ -164,7 +165,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     relationName: string,
     id: string | number,
     relationId: (string | number)[],
-    opts?: ModifyRelationOptions<DTO, Relation>,
+    opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('setRelations is not implemented'));
   }
@@ -173,7 +174,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     relationName: string,
     id: string | number,
     relationId: string | number,
-    opts?: ModifyRelationOptions<DTO, Relation>,
+    opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
     return Promise.reject(new NotImplementedException('setRelation is not implemented'));
   }
@@ -191,7 +192,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     relationName: string,
     dto: DTO,
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[]>;
 
   aggregateRelations<Relation>(
@@ -199,7 +200,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     relationName: string,
     dtos: DTO[],
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<Map<DTO, AggregateResponse<Relation>[]>>;
 
   aggregateRelations<Relation>(
@@ -207,7 +208,7 @@ export class NoOpQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> i
     relationName: string,
     dto: DTO | DTO[],
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[] | Map<DTO, AggregateResponse<Relation>[]>> {
     return Promise.reject(new NotImplementedException('aggregateRelations is not implemented'));
   }

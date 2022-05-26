@@ -8,7 +8,7 @@ export {
   RelationQueryService,
   NoOpQueryService,
   QueryServiceRelation,
-  ProxyQueryService,
+  ProxyQueryService
 } from './services';
 export {
   transformFilter,
@@ -26,7 +26,7 @@ export {
   mergeFilter,
   invertSort,
   getFilterComparisons,
-  getFilterOmitting,
+  getFilterOmitting
 } from './helpers';
 export {
   ClassTransformerAssembler,
@@ -35,6 +35,6 @@ export {
   Assembler,
   AssemblerSerializer,
   AssemblerDeserializer,
-  AssemblerFactory,
+  AssemblerFactory
 } from './assemblers';
 export { NestjsQueryCoreModule, NestjsQueryCoreModuleOpts } from './module';

@@ -19,7 +19,7 @@ export function SubscriptionFilterInputType<DTO>(DTOClass: Class<DTO>): Class<Su
   @InputType({ isAbstract: true })
   class SubscriptionFilterInput implements SubscriptionFilterInputType<DTO> {
     @Field(() => F, {
-      description: 'Specify to filter the records returned.',
+      description: 'Specify to filter the records returned.'
     })
     @ValidateNested()
     @Type(() => F)

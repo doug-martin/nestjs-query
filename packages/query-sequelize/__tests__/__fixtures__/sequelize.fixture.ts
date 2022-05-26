@@ -9,7 +9,7 @@ export const CONNECTION_OPTIONS: SequelizeOptions = {
   dialect: 'sqlite',
   database: ':memory:',
   logging: false,
-  models: [TestEntity, TestEntityTestRelationEntity, TestRelation],
+  models: [TestEntity, TestEntityTestRelationEntity, TestRelation]
 };
 
 export const truncate = async (sequelize: Sequelize): Promise<void> => {

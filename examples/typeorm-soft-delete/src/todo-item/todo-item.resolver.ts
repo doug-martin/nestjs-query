@@ -15,7 +15,7 @@ export class TodoItemResolver {
 
   @Mutation(() => UpdateManyResponseType())
   restoreManyTodoItems(
-    @Args('input', { type: () => FilterType(TodoItemDTO) }) filter: Filter<TodoItemDTO>,
+    @Args('input', { type: () => FilterType(TodoItemDTO) }) filter: Filter<TodoItemDTO>
   ): Promise<UpdateManyResponse> {
     return this.service.restoreMany(filter);
   }

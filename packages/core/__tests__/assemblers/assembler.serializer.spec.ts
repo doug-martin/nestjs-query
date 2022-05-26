@@ -19,7 +19,7 @@ describe('AssemblerSerializer decorator', () => {
     }
 
     expect(() => AssemblerSerializer(serializer)(TestSerializer)).toThrow(
-      'Assembler Serializer already registered for TestSerializer',
+      'Assembler Serializer already registered for TestSerializer'
     );
   });
 });

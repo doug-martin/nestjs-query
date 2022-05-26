@@ -4,7 +4,7 @@ import {
   BeforeCreateMany,
   BeforeCreateOne,
   CreateManyInputType,
-  CreateOneInputType,
+  CreateOneInputType
 } from '@ptc-org/nestjs-query-graphql';
 import { UserContext } from '../../auth/auth.interfaces';
 

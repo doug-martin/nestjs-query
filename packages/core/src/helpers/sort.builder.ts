@@ -68,7 +68,7 @@ export class SortBuilder {
 
   static fieldValueComparator<DTO, Field extends keyof DTO>(
     field: keyof DTO,
-    direction: SortDirection,
+    direction: SortDirection
   ): SortComparator<DTO[Field]> {
     if (direction === SortDirection.ASC) {
       return (a, b) => ascSort(a, b);

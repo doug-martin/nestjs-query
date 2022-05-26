@@ -15,7 +15,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = module.createNestApplication();
@@ -25,8 +25,8 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -47,64 +47,64 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
       title: 'Create Entity Service - Sub Task 1',
       completed: true,
       description: null,
-      todoItemId: 3,
+      todoItemId: 3
     },
     {
       id: '8',
       title: 'Create Entity Service - Sub Task 2',
       completed: false,
       description: null,
-      todoItemId: 3,
+      todoItemId: 3
     },
     {
       id: '9',
       title: 'Create Entity Service - Sub Task 3',
       completed: false,
       description: null,
-      todoItemId: 3,
+      todoItemId: 3
     },
     {
       id: '10',
       title: 'Add Todo Item Resolver - Sub Task 1',
       completed: true,
       description: null,
-      todoItemId: 4,
+      todoItemId: 4
     },
     {
       completed: false,
       description: null,
       id: '11',
       title: 'Add Todo Item Resolver - Sub Task 2',
-      todoItemId: 4,
+      todoItemId: 4
     },
     {
       completed: false,
       description: null,
       id: '12',
       title: 'Add Todo Item Resolver - Sub Task 3',
-      todoItemId: 4,
+      todoItemId: 4
     },
     {
       completed: true,
       description: null,
       id: '13',
       title: 'How to create item With Sub Tasks - Sub Task 1',
-      todoItemId: 5,
+      todoItemId: 5
     },
     {
       completed: false,
       description: null,
       id: '14',
       title: 'How to create item With Sub Tasks - Sub Task 2',
-      todoItemId: 5,
+      todoItemId: 5
     },
     {
       completed: false,
       description: null,
       id: '15',
       title: 'How to create item With Sub Tasks - Sub Task 3',
-      todoItemId: 5,
-    },
+      todoItemId: 5
+    }
   ];
 
   describe('find one', () => {
@@ -118,7 +118,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
           subTask(id: 1) {
             ${subTaskFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -129,9 +129,9 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
                 title: 'Create Nest App - Sub Task 1',
                 completed: true,
                 description: null,
-                todoItemId: 1,
-              },
-            },
+                todoItemId: 1
+              }
+            }
           });
         }));
 
@@ -145,9 +145,9 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
           subTask(id: 100) {
             ${subTaskFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -165,7 +165,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -177,10 +177,10 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
                   title: 'Create Nest App',
                   completed: true,
                   description: null,
-                  age: expect.any(Number),
-                },
-              },
-            },
+                  age: expect.any(Number)
+                }
+              }
+            }
           });
         }));
   });
@@ -198,7 +198,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -207,7 +207,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjEwfV19',
             hasNextPage: true,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(15);
           expect(edges).toHaveLength(10);
@@ -226,7 +226,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -235,7 +235,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -254,7 +254,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -263,7 +263,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjl9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0='
           });
           expect(totalCount).toBe(6);
           expect(edges).toHaveLength(6);
@@ -282,7 +282,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -291,7 +291,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjZ9XX0=',
             hasNextPage: true,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjE1fV19',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjE1fV19'
           });
           expect(totalCount).toBe(15);
           expect(edges).toHaveLength(10);
@@ -311,7 +311,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -320,7 +320,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
             });
             expect(totalCount).toBe(15);
             expect(edges).toHaveLength(2);
@@ -339,7 +339,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -348,7 +348,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0='
             });
             expect(totalCount).toBe(15);
             expect(edges).toHaveLength(2);
@@ -368,7 +368,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
           subTaskAggregate {
               ${subTaskAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -383,9 +383,9 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
                 id: '15',
                 title: 'How to create item With Sub Tasks - Sub Task 3',
                 description: null,
-                todoItemId: 5,
-              },
-            },
+                todoItemId: 5
+              }
+            }
           ]);
         }));
 
@@ -399,7 +399,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
           subTaskAggregate(filter: {completed: {is: true}}) {
               ${subTaskAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -414,9 +414,9 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
                 id: '13',
                 title: 'How to create item With Sub Tasks - Sub Task 1',
                 description: null,
-                todoItemId: 5,
-              },
-            },
+                todoItemId: 5
+              }
+            }
           ]);
         }));
   });
@@ -436,7 +436,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -445,9 +445,9 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               title: 'Test SubTask',
               description: null,
               completed: false,
-              todoItemId: 1,
-            },
-          },
+              todoItemId: 1
+            }
+          }
         }));
 
     it('should validate a subTask', () =>
@@ -464,7 +464,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -491,15 +491,15 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManySubTasks: [
               { id: '17', title: 'Test Create Many SubTask - 1', description: null, completed: false, todoItemId: 2 },
-              { id: '18', title: 'Test Create Many SubTask - 2', description: null, completed: true, todoItemId: 2 },
-            ],
-          },
+              { id: '18', title: 'Test Create Many SubTask - 2', description: null, completed: true, todoItemId: 2 }
+            ]
+          }
         }));
 
     it('should validate a subTask', () =>
@@ -516,7 +516,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -541,7 +541,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -550,9 +550,9 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               title: 'Update Test Sub Task',
               description: null,
               completed: true,
-              todoItemId: 1,
-            },
-          },
+              todoItemId: 1
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -571,13 +571,13 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateOneSubTaskInput.id" of required type "ID!" was not provided.',
+            'Field "UpdateOneSubTaskInput.id" of required type "ID!" was not provided.'
           );
         }));
 
@@ -598,7 +598,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -623,14 +623,14 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManySubTasks: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -647,13 +647,13 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.',
+            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.'
           );
         }));
 
@@ -672,7 +672,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -694,7 +694,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -703,9 +703,9 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               title: 'Update Test Sub Task',
               completed: true,
               description: null,
-              todoItemId: 1,
-            },
-          },
+              todoItemId: 1
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -720,13 +720,13 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteOneSubTaskInput.id" of required type "ID!" was not provided.',
+            'Field "DeleteOneSubTaskInput.id" of required type "ID!" was not provided.'
           );
         }));
   });
@@ -746,14 +746,14 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManySubTasks: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -768,13 +768,13 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.',
+            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.'
           );
         }));
 
@@ -792,7 +792,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -816,7 +816,7 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -830,10 +830,10 @@ describe('SubTaskResolver (sequelize - e2e)', () => {
                   title: 'Create Entity',
                   completed: false,
                   description: null,
-                  age: expect.any(Number),
-                },
-              },
-            },
+                  age: expect.any(Number)
+                }
+              }
+            }
           });
         }));
   });

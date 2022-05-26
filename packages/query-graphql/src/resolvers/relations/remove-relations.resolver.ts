@@ -34,9 +34,9 @@ const RemoveOneRelationMixin =
         @Args() setArgs: SetArgs,
         @ModifyRelationAuthorizerFilter(baseNameLower, {
           operationGroup: OperationGroup.UPDATE,
-          many: false,
+          many: false
         })
-        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>
       ): Promise<DTO> {
         const { input } = await transformAndValidate(SetArgs, setArgs);
         return this.service.removeRelation(relationName, input.id, input.relationId, modifyRelationsFilter);
@@ -68,9 +68,9 @@ const RemoveManyRelationsMixin =
         @Args() addArgs: AddArgs,
         @ModifyRelationAuthorizerFilter(pluralBaseNameLower, {
           operationGroup: OperationGroup.UPDATE,
-          many: true,
+          many: true
         })
-        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>,
+        modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>
       ): Promise<DTO> {
         const { input } = await transformAndValidate(AddArgs, addArgs);
         return this.service.removeRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
@@ -91,8 +91,8 @@ export const RemoveRelationsMixin =
 
 export const RemoveRelationsResolver = <
   DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
 >(
   DTOClass: Class<DTO>,
-  relations: RelationsOpts,
+  relations: RelationsOpts
 ): Class<ServiceResolver<DTO, QS>> => RemoveRelationsMixin(DTOClass, relations)(BaseServiceResolver);

@@ -6,7 +6,7 @@ import { SequelizeQueryService } from './services';
 
 function createSequelizeQueryServiceProvider<Entity extends Model>(
   EntityClass: ModelCtor<Entity>,
-  connection?: SequelizeOptions | string,
+  connection?: SequelizeOptions | string
 ): FactoryProvider {
   return {
     provide: getQueryServiceToken(EntityClass),
@@ -16,11 +16,11 @@ function createSequelizeQueryServiceProvider<Entity extends Model>(
       AssemblerDeserializer<Entity>((obj: object) => entity.build(obj))(entity);
       return new SequelizeQueryService(entity);
     },
-    inject: [getModelToken(EntityClass, connection)],
+    inject: [getModelToken(EntityClass, connection)]
   };
 }
 
 export const createSequelizeQueryServiceProviders = (
   entities: ModelCtor[],
-  connection?: SequelizeOptions | string,
+  connection?: SequelizeOptions | string
 ): FactoryProvider[] => entities.map((entity) => createSequelizeQueryServiceProvider(entity, connection));

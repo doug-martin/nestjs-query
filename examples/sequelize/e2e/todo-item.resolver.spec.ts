@@ -12,7 +12,7 @@ import {
   pageInfoField,
   subTaskFields,
   tagFields,
-  todoItemFields,
+  todoItemFields
 } from './graphql-fragments';
 import { AppModule } from '../src/app.module';
 import { config } from '../src/config';
@@ -27,7 +27,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -37,8 +37,8 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -58,7 +58,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
           todoItem(id: 1) {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -69,9 +69,9 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
                 title: 'Create Nest App',
                 completed: true,
                 description: null,
-                age: expect.any(Number),
-              },
-            },
+                age: expect.any(Number)
+              }
+            }
           });
         }));
 
@@ -85,9 +85,9 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
           todoItem(id: 100) {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -107,7 +107,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               totalCount
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -116,7 +116,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -135,7 +135,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               ${subTaskAggregateFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -146,8 +146,8 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               count: { completed: 3, description: 0, id: 3, title: 3, todoItemId: 3 },
               max: { description: null, id: '3', title: 'Create Nest App - Sub Task 3', todoItemId: 1 },
               min: { description: null, id: '1', title: 'Create Nest App - Sub Task 1', todoItemId: 1 },
-              sum: { id: 6 },
-            },
+              sum: { id: 6 }
+            }
           ]);
         }));
 
@@ -165,7 +165,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               totalCount
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -174,7 +174,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
@@ -193,7 +193,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               ${tagAggregateFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -204,8 +204,8 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               count: { created: 2, id: 2, name: 2, updated: 2 },
               max: { id: '2', name: 'Urgent' },
               min: { id: '1', name: 'Home' },
-              sum: { id: 3 },
-            },
+              sum: { id: 3 }
+            }
           ]);
         }));
   });
@@ -223,7 +223,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -232,7 +232,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -246,8 +246,8 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
-              age: expect.any(Number),
-            },
+              age: expect.any(Number)
+            }
           ]);
         }));
 
@@ -263,7 +263,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -272,14 +272,14 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
+            { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) }
           ]);
         }));
 
@@ -295,7 +295,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -304,14 +304,14 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+            { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) }
           ]);
         }));
 
@@ -327,7 +327,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -336,14 +336,14 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
+            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) }
           ]);
         }));
 
@@ -359,7 +359,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -368,7 +368,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -378,12 +378,12 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) },
             { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
-            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
+            { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) }
           ]);
         }));
 
@@ -400,7 +400,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -409,13 +409,13 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual([
               { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
-              { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
+              { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) }
             ]);
           }));
 
@@ -431,7 +431,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -440,7 +440,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0='
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
@@ -451,8 +451,8 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
                 title: 'Add Todo Item Resolver',
                 completed: false,
                 description: null,
-                age: expect.any(Number),
-              },
+                age: expect.any(Number)
+              }
             ]);
           }));
     });
@@ -469,7 +469,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             todoItemAggregate {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -487,7 +487,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
           todoItemAggregate {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -498,8 +498,8 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               count: { completed: 5, created: 5, description: 0, id: 5, title: 5, updated: 5 },
               max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
               min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
-              sum: { id: 15 },
-            },
+              sum: { id: 15 }
+            }
           ]);
         }));
 
@@ -517,7 +517,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               }
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -529,7 +529,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               count: { completed: 4, created: 4, description: 0, id: 4, title: 4, updated: 4 },
               max: { description: null, id: '5', title: 'How to create item With Sub Tasks' },
               min: { description: null, id: '2', title: 'Add Todo Item Resolver' },
-              sum: { id: 14 },
+              sum: { id: 14 }
             },
             {
               groupBy: { completed: true },
@@ -537,8 +537,8 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               count: { completed: 1, created: 1, description: 0, id: 1, title: 1, updated: 1 },
               max: { description: null, id: '1', title: 'Create Nest App' },
               min: { description: null, id: '1', title: 'Create Nest App' },
-              sum: { id: 1 },
-            },
+              sum: { id: 1 }
+            }
           ]);
         }));
 
@@ -553,7 +553,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
           todoItemAggregate(filter: { completed: { is: false } }) {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -564,8 +564,8 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               sum: { id: 14 },
               avg: { id: 3.5 },
               min: { id: '2', title: 'Add Todo Item Resolver', description: null },
-              max: { id: '5', title: 'How to create item With Sub Tasks', description: null },
-            },
+              max: { id: '5', title: 'How to create item With Sub Tasks', description: null }
+            }
           ]);
         }));
   });
@@ -587,7 +587,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -610,16 +610,16 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTodoItem: {
               id: '6',
               title: 'Test Todo',
-              completed: false,
-            },
-          },
+              completed: false
+            }
+          }
         }));
 
     it('should validate a todoItem', () =>
@@ -639,7 +639,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -665,7 +665,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -693,15 +693,15 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTodoItems: [
               { id: '7', title: 'Many Test Todo 1', completed: false },
-              { id: '8', title: 'Many Test Todo 2', completed: true },
-            ],
-          },
+              { id: '8', title: 'Many Test Todo 2', completed: true }
+            ]
+          }
         }));
 
     it('should validate a todoItem', () =>
@@ -721,7 +721,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -748,7 +748,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -772,16 +772,16 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTodoItem: {
               id: '6',
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
+              completed: true
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -801,13 +801,13 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.',
+            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.'
           );
         }));
 
@@ -829,7 +829,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -854,7 +854,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -876,14 +876,14 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTodoItems: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -901,13 +901,13 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.',
+            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
           );
         }));
 
@@ -927,7 +927,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -951,7 +951,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -972,16 +972,16 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTodoItem: {
               id: '6',
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
+              completed: true
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -999,13 +999,13 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.',
+            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.'
           );
         }));
   });
@@ -1025,7 +1025,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
@@ -1046,14 +1046,14 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTodoItems: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -1069,13 +1069,13 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.',
+            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
           );
         }));
 
@@ -1094,7 +1094,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1126,7 +1126,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1137,7 +1137,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(6);
           expect(edges).toHaveLength(6);
@@ -1168,7 +1168,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1178,7 +1178,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -1209,7 +1209,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1219,7 +1219,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
@@ -1250,7 +1250,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1260,7 +1260,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -1289,7 +1289,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1299,7 +1299,7 @@ describe('TodoItemResolver (sequelize - e2e)', () => {
             endCursor: null,
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: null,
+            startCursor: null
           });
           expect(totalCount).toBe(0);
           expect(edges).toHaveLength(0);

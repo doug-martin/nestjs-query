@@ -10,7 +10,7 @@ import {
   PrimaryKey,
   AutoIncrement,
   DataType,
-  Default,
+  Default
 } from 'sequelize-typescript';
 import { SubTaskEntity } from '../../sub-task/sub-task.entity';
 import { TagEntity } from '../../tag/tag.entity';
@@ -45,7 +45,7 @@ export class TodoItemEntity extends Model<TodoItemEntity, Partial<TodoItemEntity
   @BelongsToMany(
     () => TagEntity,
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    () => TodoItemEntityTags,
+    () => TodoItemEntityTags
   )
   tags!: TagEntity[];
 

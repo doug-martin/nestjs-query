@@ -1,4 +1,11 @@
-import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@ptc-org/nestjs-query-core';
+import {
+  AggregateQuery,
+  AggregateResponse,
+  Class,
+  Filter,
+  mergeFilter,
+  QueryService
+} from '@ptc-org/nestjs-query-core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { OperationGroup } from '../../auth';
@@ -33,7 +40,7 @@ const AggregateRelationMixin =
     const relationDTO = relation.DTO;
     const dtoName = getDTONames(DTOClass).baseName;
     const { baseNameLower, pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, {
-      dtoName: relation.dtoName,
+      dtoName: relation.dtoName
     });
     const relationName = relation.relationName ?? pluralBaseNameLower;
     const aggregateRelationLoaderName = `aggregate${pluralBaseName}For${dtoName}`;
@@ -45,7 +52,7 @@ const AggregateRelationMixin =
     @Resolver(() => DTOClass, { isAbstract: true })
     class AggregateMixin extends Base {
       @ResolverField(`${pluralBaseNameLower}Aggregate`, () => [AR], {}, commonResolverOpts, {
-        interceptors: [AuthorizerInterceptor(DTOClass)],
+        interceptors: [AuthorizerInterceptor(DTOClass)]
       })
       async [`aggregate${pluralBaseName}`](
         @Parent() dto: DTO,
@@ -54,20 +61,20 @@ const AggregateRelationMixin =
         @Context() context: ExecutionContext,
         @RelationAuthorizerFilter(baseNameLower, {
           operationGroup: OperationGroup.AGGREGATE,
-          many: true,
+          many: true
         })
-        relationFilter?: Filter<Relation>,
+        relationFilter?: Filter<Relation>
       ): Promise<AggregateResponse<Relation>> {
         const qa = await transformAndValidate(RelationQA, q);
         const loader = DataLoaderFactory.getOrCreateLoader(
           context,
           aggregateRelationLoaderName,
-          aggregateLoader.createLoader(this.service),
+          aggregateLoader.createLoader(this.service)
         );
         return loader.load({
           dto,
           filter: mergeFilter(qa.filter ?? {}, relationFilter ?? {}),
-          aggregate: aggregateQuery,
+          aggregate: aggregateQuery
         });
       }
     }
@@ -84,6 +91,6 @@ export const AggregateRelationsMixin =
 
 export const AggregateRelationsResolver = <DTO>(
   DTOClass: Class<DTO>,
-  relations: AggregateRelationsResolverOpts,
+  relations: AggregateRelationsResolverOpts
 ): Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>> =>
   AggregateRelationsMixin(DTOClass, relations)(BaseServiceResolver);

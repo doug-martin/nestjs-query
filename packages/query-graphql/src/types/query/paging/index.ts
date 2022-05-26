@@ -7,5 +7,5 @@ export {
   NonePagingType,
   CursorPagingType,
   PagingTypes,
-  InferPagingTypeFromStrategy,
+  InferPagingTypeFromStrategy
 } from './interfaces';

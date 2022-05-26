@@ -7,13 +7,13 @@ import {
   createResolverFromNest,
   TestResolverDTO,
   TestService,
-  TestRelationDTO,
+  TestRelationDTO
 } from '../../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends UpdateRelationsResolver(TestResolverDTO, {
   one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
-  many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
+  many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } }
 }) {
   constructor(service: TestService) {
     super(service);
@@ -49,11 +49,11 @@ describe('UpdateRelationsResolver', () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationInputType = {
         id: 'record-id',
-        relationId: 'relation-id',
+        relationId: 'relation-id'
       };
       const output: TestResolverDTO = {
         id: 'record-id',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.setRelation('relation', input.id, input.relationId, undefined)).thenResolve(output);
       // @ts-ignore
@@ -66,11 +66,11 @@ describe('UpdateRelationsResolver', () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationInputType = {
         id: 'record-id',
-        relationId: 'relation-id',
+        relationId: 'relation-id'
       };
       const output: TestResolverDTO = {
         id: 'record-id',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.setRelation('other', input.id, input.relationId, undefined)).thenResolve(output);
       // @ts-ignore
@@ -94,14 +94,14 @@ describe('UpdateRelationsResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
         const input: RelationsInputType = {
           id: 'id-1',
-          relationIds: ['relation-id-1', 'relation-id-2'],
+          relationIds: ['relation-id-1', 'relation-id-2']
         };
         const output: TestResolverDTO = {
           id: 'record-id',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         when(mockService.addRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-          output,
+          output
         );
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -113,11 +113,11 @@ describe('UpdateRelationsResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
         const input: RelationsInputType = {
           id: 'id-1',
-          relationIds: ['relation-id-1', 'relation-id-2'],
+          relationIds: ['relation-id-1', 'relation-id-2']
         };
         const output: TestResolverDTO = {
           id: 'record-id',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         when(mockService.addRelations('others', input.id, deepEqual(input.relationIds), undefined)).thenResolve(output);
         // @ts-ignore
@@ -132,14 +132,14 @@ describe('UpdateRelationsResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
         const input: RelationsInputType = {
           id: 'id-1',
-          relationIds: ['relation-id-1', 'relation-id-2'],
+          relationIds: ['relation-id-1', 'relation-id-2']
         };
         const output: TestResolverDTO = {
           id: 'record-id',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         when(mockService.setRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-          output,
+          output
         );
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -151,14 +151,14 @@ describe('UpdateRelationsResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
         const input: RelationsInputType = {
           id: 'id-1',
-          relationIds: [],
+          relationIds: []
         };
         const output: TestResolverDTO = {
           id: 'record-id',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         when(mockService.setRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-          output,
+          output
         );
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -170,11 +170,11 @@ describe('UpdateRelationsResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
         const input: RelationsInputType = {
           id: 'id-1',
-          relationIds: ['relation-id-1', 'relation-id-2'],
+          relationIds: ['relation-id-1', 'relation-id-2']
         };
         const output: TestResolverDTO = {
           id: 'record-id',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         when(mockService.setRelations('others', input.id, deepEqual(input.relationIds), undefined)).thenResolve(output);
         // @ts-ignore

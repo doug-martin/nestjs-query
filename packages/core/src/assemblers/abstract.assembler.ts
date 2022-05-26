@@ -27,7 +27,7 @@ export abstract class AbstractAssembler<DTO, Entity, C = DeepPartial<DTO>, CE = 
     if (!DTOClas || !EntityClas) {
       // the DTO and entity classes were not provided and we didnt find them in the metadata storage.
       throw new Error(
-        `Unable to determine DTO or Entity types for ${this.constructor.name}. Did you annotate your assembler with @Assembler`,
+        `Unable to determine DTO or Entity types for ${this.constructor.name}. Did you annotate your assembler with @Assembler`
       );
     }
     this.DTOClass = DTOClas;

@@ -18,7 +18,7 @@ describe('WhereBuilder', (): void => {
   it('or multiple operators for a single field together', (): void => {
     expectWhereQuery(
       {
-        numberType: { gt: 10, lt: 20, gte: 21, lte: 31 },
+        numberType: { gt: 10, lt: 20, gte: 21, lte: 31 }
       },
       {
         [Op.and]: [
@@ -27,11 +27,11 @@ describe('WhereBuilder', (): void => {
               { numberType: { [Op.gt]: 10 } },
               { numberType: { [Op.lt]: 20 } },
               { numberType: { [Op.gte]: 21 } },
-              { numberType: { [Op.lte]: 31 } },
-            ],
-          },
-        ],
-      },
+              { numberType: { [Op.lte]: 31 } }
+            ]
+          }
+        ]
+      }
     );
   });
 
@@ -39,15 +39,15 @@ describe('WhereBuilder', (): void => {
     expectWhereQuery(
       {
         numberType: { gt: 1 },
-        stringType: { like: 'foo%' },
+        stringType: { like: 'foo%' }
       },
       {
         [Op.and]: [
           {
-            [Op.and]: [{ numberType: { [Op.gt]: 1 } }, { stringType: { [Op.like]: 'foo%' } }],
-          },
-        ],
-      },
+            [Op.and]: [{ numberType: { [Op.gt]: 1 } }, { stringType: { [Op.like]: 'foo%' } }]
+          }
+        ]
+      }
     );
   });
 
@@ -59,17 +59,17 @@ describe('WhereBuilder', (): void => {
             { numberType: { gt: 10 } },
             { numberType: { lt: 20 } },
             { numberType: { gte: 30 } },
-            { numberType: { lte: 40 } },
-          ],
+            { numberType: { lte: 40 } }
+          ]
         },
         {
           [Op.and]: [
             { [Op.and]: [{ numberType: { [Op.gt]: 10 } }] },
             { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] },
             { [Op.and]: [{ numberType: { [Op.gte]: 30 } }] },
-            { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] },
-          ],
-        },
+            { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] }
+          ]
+        }
       );
     });
 
@@ -78,15 +78,15 @@ describe('WhereBuilder', (): void => {
         {
           and: [
             { numberType: { gt: 10 }, stringType: { like: 'foo%' } },
-            { numberType: { lt: 20 }, stringType: { like: '%bar' } },
-          ],
+            { numberType: { lt: 20 }, stringType: { like: '%bar' } }
+          ]
         },
         {
           [Op.and]: [
             { [Op.and]: [{ [Op.and]: [{ numberType: { [Op.gt]: 10 } }, { stringType: { [Op.like]: 'foo%' } }] }] },
-            { [Op.and]: [{ [Op.and]: [{ numberType: { [Op.lt]: 20 } }, { stringType: { [Op.like]: '%bar' } }] }] },
-          ],
-        },
+            { [Op.and]: [{ [Op.and]: [{ numberType: { [Op.lt]: 20 } }, { stringType: { [Op.like]: '%bar' } }] }] }
+          ]
+        }
       );
     });
 
@@ -95,25 +95,25 @@ describe('WhereBuilder', (): void => {
         {
           and: [
             { or: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }] },
-            { or: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] },
-          ],
+            { or: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] }
+          ]
         },
         {
           [Op.and]: [
             {
               [Op.or]: [
                 { [Op.and]: [{ numberType: { [Op.gt]: 10 } }] },
-                { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] },
-              ],
+                { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] }
+              ]
             },
             {
               [Op.or]: [
                 { [Op.and]: [{ numberType: { [Op.gte]: 30 } }] },
-                { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] },
-              ],
-            },
-          ],
-        },
+                { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] }
+              ]
+            }
+          ]
+        }
       );
     });
   });
@@ -126,17 +126,17 @@ describe('WhereBuilder', (): void => {
             { numberType: { gt: 10 } },
             { numberType: { lt: 20 } },
             { numberType: { gte: 30 } },
-            { numberType: { lte: 40 } },
-          ],
+            { numberType: { lte: 40 } }
+          ]
         },
         {
           [Op.or]: [
             { [Op.and]: [{ numberType: { [Op.gt]: 10 } }] },
             { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] },
             { [Op.and]: [{ numberType: { [Op.gte]: 30 } }] },
-            { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] },
-          ],
-        },
+            { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] }
+          ]
+        }
       );
     });
 
@@ -145,27 +145,27 @@ describe('WhereBuilder', (): void => {
         {
           or: [
             { numberType: { gt: 10 }, stringType: { like: 'foo%' } },
-            { numberType: { lt: 20 }, stringType: { like: '%bar' } },
-          ],
+            { numberType: { lt: 20 }, stringType: { like: '%bar' } }
+          ]
         },
         {
           [Op.or]: [
             {
               [Op.and]: [
                 {
-                  [Op.and]: [{ numberType: { [Op.gt]: 10 } }, { stringType: { [Op.like]: 'foo%' } }],
-                },
-              ],
+                  [Op.and]: [{ numberType: { [Op.gt]: 10 } }, { stringType: { [Op.like]: 'foo%' } }]
+                }
+              ]
             },
             {
               [Op.and]: [
                 {
-                  [Op.and]: [{ numberType: { [Op.lt]: 20 } }, { stringType: { [Op.like]: '%bar' } }],
-                },
-              ],
-            },
-          ],
-        },
+                  [Op.and]: [{ numberType: { [Op.lt]: 20 } }, { stringType: { [Op.like]: '%bar' } }]
+                }
+              ]
+            }
+          ]
+        }
       );
     });
 
@@ -174,25 +174,25 @@ describe('WhereBuilder', (): void => {
         {
           or: [
             { and: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }] },
-            { and: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] },
-          ],
+            { and: [{ numberType: { gte: 30 } }, { numberType: { lte: 40 } }] }
+          ]
         },
         {
           [Op.or]: [
             {
               [Op.and]: [
                 { [Op.and]: [{ numberType: { [Op.gt]: 10 } }] },
-                { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] },
-              ],
+                { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] }
+              ]
             },
             {
               [Op.and]: [
                 { [Op.and]: [{ numberType: { [Op.gte]: 30 } }] },
-                { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] },
-              ],
-            },
-          ],
-        },
+                { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] }
+              ]
+            }
+          ]
+        }
       );
     });
   });

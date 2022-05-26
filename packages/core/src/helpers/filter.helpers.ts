@@ -86,7 +86,6 @@ export const getFilterFields = <DTO>(filter: Filter<DTO>): string[] => {
           fields
         );
       }
-
     } else {
       fields.add(filterField);
     }

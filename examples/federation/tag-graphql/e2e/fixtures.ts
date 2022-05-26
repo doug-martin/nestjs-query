@@ -28,6 +28,6 @@ export const refresh = async (connection: Connection): Promise<void> => {
     { tag: questionTag, todoItemId: 5 },
     { tag: blockedTag, todoItemId: 3 },
     { tag: blockedTag, todoItemId: 4 },
-    { tag: blockedTag, todoItemId: 5 },
+    { tag: blockedTag, todoItemId: 5 }
   ]);
 };

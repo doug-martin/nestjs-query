@@ -11,7 +11,7 @@ export class NestjsQueryTypegooseModule {
       imports: [typegooseModule],
       module: NestjsQueryTypegooseModule,
       providers: [...queryServiceProviders],
-      exports: [...queryServiceProviders, typegooseModule],
+      exports: [...queryServiceProviders, typegooseModule]
     };
   }
 }

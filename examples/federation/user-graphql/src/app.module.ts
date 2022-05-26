@@ -8,9 +8,9 @@ import { UserModule } from './user/user.module';
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('federation_user')),
     GraphQLFederationModule.forRoot({
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: 'schema.gql'
     }),
-    UserModule,
-  ],
+    UserModule
+  ]
 })
 export class AppModule {}

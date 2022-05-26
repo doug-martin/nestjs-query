@@ -23,7 +23,7 @@ describe('AssemblerDeserializer decorator', () => {
     }
 
     expect(() => AssemblerDeserializer(deserializer)(TestSerializer)).toThrow(
-      'Assembler Deserializer already registered for TestSerializer',
+      'Assembler Deserializer already registered for TestSerializer'
     );
   });
 });

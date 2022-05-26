@@ -14,7 +14,7 @@ import {
   tagFields,
   todoItemFields,
   tagAggregateFields,
-  todoItemAggregateFields,
+  todoItemAggregateFields
 } from './graphql-fragments';
 import { TagEntity } from '../src/tag/tag.entity';
 import { AuthService } from '../src/auth/auth.service';
@@ -25,7 +25,7 @@ describe('TagResolver (auth - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -35,8 +35,8 @@ describe('TagResolver (auth - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -55,7 +55,7 @@ describe('TagResolver (auth - e2e)', () => {
     { id: '2', name: 'Home' },
     { id: '3', name: 'Work' },
     { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
+    { id: '5', name: 'Blocked' }
   ];
 
   describe('find one', () => {
@@ -69,7 +69,7 @@ describe('TagResolver (auth - e2e)', () => {
           tag(id: 1) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -85,7 +85,7 @@ describe('TagResolver (auth - e2e)', () => {
           tag(id: 1) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200, { data: { tag: tags[0] } }));
 
@@ -100,9 +100,9 @@ describe('TagResolver (auth - e2e)', () => {
           tag(id: 100) {
             ${tagFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -123,7 +123,7 @@ describe('TagResolver (auth - e2e)', () => {
               totalCount
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -132,7 +132,7 @@ describe('TagResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
@@ -152,7 +152,7 @@ describe('TagResolver (auth - e2e)', () => {
               ${todoItemAggregateFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -163,8 +163,8 @@ describe('TagResolver (auth - e2e)', () => {
               count: { completed: 2, created: 2, description: 0, id: 2, title: 2, updated: 2 },
               max: { description: null, id: '2', title: 'Create Nest App' },
               min: { description: null, id: '1', title: 'Create Entity' },
-              sum: { id: 3 },
-            },
+              sum: { id: 3 }
+            }
           ]);
         }));
   });
@@ -182,7 +182,7 @@ describe('TagResolver (auth - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -200,7 +200,7 @@ describe('TagResolver (auth - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -209,7 +209,7 @@ describe('TagResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -229,7 +229,7 @@ describe('TagResolver (auth - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -238,7 +238,7 @@ describe('TagResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -258,7 +258,7 @@ describe('TagResolver (auth - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -267,7 +267,7 @@ describe('TagResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -287,7 +287,7 @@ describe('TagResolver (auth - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -296,7 +296,7 @@ describe('TagResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -317,7 +317,7 @@ describe('TagResolver (auth - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -326,7 +326,7 @@ describe('TagResolver (auth - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
@@ -346,7 +346,7 @@ describe('TagResolver (auth - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -355,7 +355,7 @@ describe('TagResolver (auth - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
@@ -375,7 +375,7 @@ describe('TagResolver (auth - e2e)', () => {
           tagAggregate {
               ${tagAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -391,7 +391,7 @@ describe('TagResolver (auth - e2e)', () => {
           tagAggregate {
               ${tagAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -402,8 +402,8 @@ describe('TagResolver (auth - e2e)', () => {
               sum: { id: 15 },
               avg: { id: 3 },
               min: { id: '1', name: 'Blocked' },
-              max: { id: '5', name: 'Work' },
-            },
+              max: { id: '5', name: 'Work' }
+            }
           ]);
         }));
 
@@ -418,7 +418,7 @@ describe('TagResolver (auth - e2e)', () => {
           tagAggregate(filter: { name: { in: ["Urgent", "Blocked", "Work"] } }) {
               ${tagAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -429,8 +429,8 @@ describe('TagResolver (auth - e2e)', () => {
               sum: { id: 9 },
               avg: { id: 3 },
               min: { id: '1', name: 'Blocked' },
-              max: { id: '5', name: 'Work' },
-            },
+              max: { id: '5', name: 'Work' }
+            }
           ]);
         }));
   });
@@ -450,7 +450,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -470,15 +470,15 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: '6',
-              name: 'Test Tag',
-            },
-          },
+              name: 'Test Tag'
+            }
+          }
         }));
 
     it('should call beforeCreateOne hook when creating a tag', () =>
@@ -497,16 +497,16 @@ describe('TagResolver (auth - e2e)', () => {
               ${tagFields}
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: '7',
               name: 'Before Create One Tag',
-              createdBy: 'nestjs-query',
-            },
-          },
+              createdBy: 'nestjs-query'
+            }
+          }
         }));
 
     it('should validate a tag', () =>
@@ -524,7 +524,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -551,7 +551,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -574,15 +574,15 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: '8', name: 'Create Many Tag - 1' },
-              { id: '9', name: 'Create Many Tag - 2' },
-            ],
-          },
+              { id: '9', name: 'Create Many Tag - 2' }
+            ]
+          }
         }));
 
     it('should call beforeCreateMany hook when creating multiple tags', () =>
@@ -604,15 +604,15 @@ describe('TagResolver (auth - e2e)', () => {
               ${tagFields}
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: '10', name: 'Before Create Many Tag - 1', createdBy: 'nestjs-query' },
-              { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'nestjs-query' },
-            ],
-          },
+              { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'nestjs-query' }
+            ]
+          }
         }));
 
     it('should validate a tag', () =>
@@ -630,7 +630,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -655,7 +655,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -676,15 +676,15 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: '6',
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should call beforeUpdateOne hook when updating a tag', () =>
@@ -704,16 +704,16 @@ describe('TagResolver (auth - e2e)', () => {
               ${tagFields}
               updatedBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: '7',
               name: 'Before Update One Test Tag',
-              updatedBy: 'nestjs-query',
-            },
-          },
+              updatedBy: 'nestjs-query'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -731,7 +731,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -755,7 +755,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -780,7 +780,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -801,14 +801,14 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should call beforeUpdateMany hook when updating multiple tags', () =>
@@ -827,14 +827,14 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         })
         .then(async () => {
           const queryService = app.get<QueryService<TagEntity>>(getQueryServiceToken(TagEntity));
@@ -843,11 +843,11 @@ describe('TagResolver (auth - e2e)', () => {
             todoItems.map((ti) => ({
               id: ti.id,
               name: ti.name,
-              updatedBy: ti.updatedBy,
-            })),
+              updatedBy: ti.updatedBy
+            }))
           ).toEqual([
             { id: 10, name: 'Before Update Many Tag', updatedBy: 'nestjs-query' },
-            { id: 11, name: 'Before Update Many Tag', updatedBy: 'nestjs-query' },
+            { id: 11, name: 'Before Update Many Tag', updatedBy: 'nestjs-query' }
           ]);
         }));
 
@@ -866,13 +866,13 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
+            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
           );
         }));
 
@@ -892,7 +892,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -914,7 +914,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -931,15 +931,15 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTag: {
               id: null,
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -955,7 +955,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -979,7 +979,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -999,14 +999,14 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTags: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -1022,13 +1022,13 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
+            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
           );
         }));
 
@@ -1047,7 +1047,7 @@ describe('TagResolver (auth - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1077,7 +1077,7 @@ describe('TagResolver (auth - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -1103,7 +1103,7 @@ describe('TagResolver (auth - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1114,7 +1114,7 @@ describe('TagResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -1123,7 +1123,7 @@ describe('TagResolver (auth - e2e)', () => {
             'Create Entity',
             'Create Entity Service',
             'Create Nest App',
-            'How to create item With Sub Tasks',
+            'How to create item With Sub Tasks'
           ]);
         }));
   });
@@ -1149,7 +1149,7 @@ describe('TagResolver (auth - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -1174,7 +1174,7 @@ describe('TagResolver (auth - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1185,7 +1185,7 @@ describe('TagResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);

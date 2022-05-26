@@ -67,11 +67,11 @@ describe('UpdateOneInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmpty: 'id should not be empty',
+            isNotEmpty: 'id should not be empty'
           },
           property: 'id',
-          target: input,
-        },
+          target: input
+        }
       ]);
     });
 
@@ -84,12 +84,12 @@ describe('UpdateOneInputType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmpty: 'id should not be empty',
+            isNotEmpty: 'id should not be empty'
           },
           property: 'id',
           target: input,
-          value: input.id,
-        },
+          value: input.id
+        }
       ]);
     });
 
@@ -104,16 +104,16 @@ describe('UpdateOneInputType', (): void => {
             {
               children: [],
               constraints: {
-                minLength: 'name must be longer than or equal to 5 characters',
+                minLength: 'name must be longer than or equal to 5 characters'
               },
               property: 'name',
-              target: {},
-            },
+              target: {}
+            }
           ],
           property: 'update',
           target: it,
-          value: it.update,
-        },
+          value: it.update
+        }
       ]);
     });
   });

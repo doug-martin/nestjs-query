@@ -37,11 +37,11 @@ export function IDField(returnTypeFunc: ReturnTypeFunc, options?: IDFieldOptions
     // eslint-disable-next-line @typescript-eslint/ban-types
     target: Object,
     propertyName: string | symbol,
-    descriptor?: TypedPropertyDescriptor<D>,
+    descriptor?: TypedPropertyDescriptor<D>
   ): TypedPropertyDescriptor<D> | void => {
     reflector.set(target.constructor as Class<unknown>, {
       propertyName: propertyName.toString(),
-      returnTypeFunc,
+      returnTypeFunc
     });
     const disableFilter = options && 'disableFilter' in options;
     const FieldDecorator = disableFilter ? Field : FilterableField;

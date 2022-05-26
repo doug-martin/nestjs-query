@@ -27,7 +27,7 @@ export const Referenceable =
         const id = representation[key];
         if (id === undefined) {
           throw new BadRequestException(
-            `Unable to resolve reference, missing required key ${key} for ${getDTONames(DTOClass).baseName}`,
+            `Unable to resolve reference, missing required key ${key} for ${getDTONames(DTOClass).baseName}`
           );
         }
         return this.service.getById(representation[key] as string | number);
@@ -38,8 +38,8 @@ export const Referenceable =
 
 export const ReferenceResolver = <
   DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
 >(
   DTOClass: Class<DTO>,
-  opts: ReferenceResolverOpts = {},
+  opts: ReferenceResolverOpts = {}
 ): ResolverClass<DTO, QS, ServiceResolver<DTO, QS>> => Referenceable<DTO, QS>(DTOClass, opts)(BaseServiceResolver);

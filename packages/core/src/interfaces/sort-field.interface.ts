@@ -3,7 +3,7 @@
  */
 export enum SortDirection {
   ASC = 'ASC',
-  DESC = 'DESC',
+  DESC = 'DESC'
 }
 
 /**
@@ -17,7 +17,7 @@ export enum SortNulls {
   /**
    * All nulls will be last.
    */
-  NULLS_LAST = 'NULLS LAST',
+  NULLS_LAST = 'NULLS LAST'
 }
 
 /**

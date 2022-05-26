@@ -29,8 +29,7 @@ export class FilterQueryBuilder<Entity> {
     readonly Model: ReturnModelType<new () => Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(Model),
     readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>()
-  ) {
-  }
+  ) {}
 
   public buildQuery({ filter, paging, sorting }: Query<Entity>): TypegooseQuery<Entity> {
     return {

@@ -17,7 +17,7 @@ import { formatGraphqlError, typeormOrmConfig } from '../../helpers';
     SubTaskModule,
     TodoItemModule,
     TagModule,
-    CommonModule,
-  ],
+    CommonModule
+  ]
 })
 export class AppModule {}

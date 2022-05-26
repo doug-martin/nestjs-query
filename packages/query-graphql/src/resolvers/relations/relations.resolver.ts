@@ -17,7 +17,7 @@ export interface RelatableOpts extends BaseResolverOptions {
 export const Relatable =
   <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
     DTOClass: Class<DTO>,
-    opts: RelatableOpts,
+    opts: RelatableOpts
   ) =>
   <B extends Class<ServiceResolver<DTO, QS>>>(Base: B): B => {
     const { enableTotalCount, enableAggregate } = opts;
@@ -30,8 +30,6 @@ export const Relatable =
     const updateRelationsMixin = UpdateRelationsMixin(DTOClass, relations);
 
     return referencesMixin(
-      aggregateRelationsMixin(
-        readRelationsMixin(updateRelationsMixin(RemoveRelationsMixin(DTOClass, relations)(Base))),
-      ),
+      aggregateRelationsMixin(readRelationsMixin(updateRelationsMixin(RemoveRelationsMixin(DTOClass, relations)(Base))))
     );
   };

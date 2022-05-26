@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ObjectType,
-  ManyToMany,
+  ManyToMany
 } from 'typeorm';
 import { TodoItemEntity } from '../todo-item/todo-item.entity';
 

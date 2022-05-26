@@ -8,7 +8,7 @@ describe('createTypegooseQueryServiceProviders', () => {
   it('should create a provider for the entity', () => {
     class TestEntity extends Document {}
     const providers = createMongooseQueryServiceProviders([
-      { document: TestEntity, name: TestEntity.name, schema: null },
+      { document: TestEntity, name: TestEntity.name, schema: null }
     ]);
     expect(providers).toHaveLength(1);
     expect(providers[0].provide).toBe(getQueryServiceToken(TestEntity));

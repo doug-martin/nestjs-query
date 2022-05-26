@@ -12,11 +12,11 @@ describe('FilterQueryBuilder', (): void => {
     const expectFindOptions = (
       query: Query<TestEntity>,
       whereBuilder: WhereBuilder<TestEntity>,
-      expectedFindOptions: FindOptions,
+      expectedFindOptions: FindOptions
     ): void => {
       expect(getEntityQueryBuilder(whereBuilder).findOptions(query)).toEqual({
         ...expectedFindOptions,
-        subQuery: false,
+        subQuery: false
       });
     };
 
@@ -31,10 +31,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => ({
-          [Op.and]: { stringType: 'foo' },
+          [Op.and]: { stringType: 'foo' }
         }));
         expectFindOptions(query, instance(mockWhereBuilder), {
-          where: { [Op.and]: { stringType: 'foo' } },
+          where: { [Op.and]: { stringType: 'foo' } }
         });
       });
     });
@@ -52,11 +52,11 @@ describe('FilterQueryBuilder', (): void => {
           {
             paging: {
               limit: 10,
-              offset: 11,
-            },
+              offset: 11
+            }
           },
           instance(mockWhereBuilder),
-          { limit: 10, offset: 11 },
+          { limit: 10, offset: 11 }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -67,11 +67,11 @@ describe('FilterQueryBuilder', (): void => {
           {
             paging: {
               limit: 10,
-              offset: 10,
-            },
+              offset: 10
+            }
           },
           instance(mockWhereBuilder),
-          { limit: 10, offset: 10 },
+          { limit: 10, offset: 10 }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -81,11 +81,11 @@ describe('FilterQueryBuilder', (): void => {
         expectFindOptions(
           {
             paging: {
-              limit: 10,
-            },
+              limit: 10
+            }
           },
           instance(mockWhereBuilder),
-          { limit: 10 },
+          { limit: 10 }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -95,11 +95,11 @@ describe('FilterQueryBuilder', (): void => {
         expectFindOptions(
           {
             paging: {
-              offset: 10,
-            },
+              offset: 10
+            }
           },
           instance(mockWhereBuilder),
-          { offset: 10 },
+          { offset: 10 }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -110,10 +110,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectFindOptions(
           {
-            sorting: [{ field: 'numberType', direction: SortDirection.ASC }],
+            sorting: [{ field: 'numberType', direction: SortDirection.ASC }]
           },
           instance(mockWhereBuilder),
-          { order: [['numberType', 'ASC']] },
+          { order: [['numberType', 'ASC']] }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -122,10 +122,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectFindOptions(
           {
-            sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }],
+            sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }]
           },
           instance(mockWhereBuilder),
-          { order: [['numberType', 'ASC NULLS FIRST']] },
+          { order: [['numberType', 'ASC NULLS FIRST']] }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -134,10 +134,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectFindOptions(
           {
-            sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
+            sorting: [{ field: 'numberType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }]
           },
           instance(mockWhereBuilder),
-          { order: [['numberType', 'ASC NULLS LAST']] },
+          { order: [['numberType', 'ASC NULLS LAST']] }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -146,10 +146,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectFindOptions(
           {
-            sorting: [{ field: 'numberType', direction: SortDirection.DESC }],
+            sorting: [{ field: 'numberType', direction: SortDirection.DESC }]
           },
           instance(mockWhereBuilder),
-          { order: [['numberType', 'DESC']] },
+          { order: [['numberType', 'DESC']] }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -158,10 +158,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectFindOptions(
           {
-            sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }],
+            sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }]
           },
           instance(mockWhereBuilder),
-          { order: [['numberType', 'DESC NULLS FIRST']] },
+          { order: [['numberType', 'DESC NULLS FIRST']] }
         );
       });
 
@@ -169,10 +169,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         expectFindOptions(
           {
-            sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }],
+            sorting: [{ field: 'numberType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }]
           },
           instance(mockWhereBuilder),
-          { order: [['numberType', 'DESC NULLS LAST']] },
+          { order: [['numberType', 'DESC NULLS LAST']] }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -185,8 +185,8 @@ describe('FilterQueryBuilder', (): void => {
               { field: 'numberType', direction: SortDirection.ASC },
               { field: 'boolType', direction: SortDirection.DESC },
               { field: 'stringType', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST },
-              { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST },
-            ],
+              { field: 'dateType', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }
+            ]
           },
           instance(mockWhereBuilder),
           {
@@ -194,9 +194,9 @@ describe('FilterQueryBuilder', (): void => {
               ['numberType', 'ASC'],
               ['boolType', 'DESC'],
               ['stringType', 'ASC NULLS FIRST'],
-              ['dateType', 'DESC NULLS LAST'],
-            ],
-          },
+              ['dateType', 'DESC NULLS LAST']
+            ]
+          }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -207,7 +207,7 @@ describe('FilterQueryBuilder', (): void => {
     const expectUpdateOptions = (
       query: Query<TestEntity>,
       whereBuilder: WhereBuilder<TestEntity>,
-      expectedUpdateOptions: UpdateOptions,
+      expectedUpdateOptions: UpdateOptions
     ): void => {
       expect(getEntityQueryBuilder(whereBuilder).updateOptions(query)).toEqual(expectedUpdateOptions);
     };
@@ -217,10 +217,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => ({
-          [Op.and]: { stringType: 'foo' },
+          [Op.and]: { stringType: 'foo' }
         }));
         expectUpdateOptions(query, instance(mockWhereBuilder), {
-          where: { [Op.and]: { stringType: 'foo' } },
+          where: { [Op.and]: { stringType: 'foo' } }
         });
       });
     });
@@ -230,11 +230,11 @@ describe('FilterQueryBuilder', (): void => {
         expectUpdateOptions(
           {
             paging: {
-              limit: 10,
-            },
+              limit: 10
+            }
           },
           instance(mockWhereBuilder),
-          { where: {}, limit: 10 },
+          { where: {}, limit: 10 }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });
@@ -245,7 +245,7 @@ describe('FilterQueryBuilder', (): void => {
     const expectDestroyOptions = (
       query: Query<TestEntity>,
       whereBuilder: WhereBuilder<TestEntity>,
-      expectedDestroyOptions: DestroyOptions,
+      expectedDestroyOptions: DestroyOptions
     ): void => {
       expect(getEntityQueryBuilder(whereBuilder).destroyOptions(query)).toEqual(expectedDestroyOptions);
     };
@@ -255,10 +255,10 @@ describe('FilterQueryBuilder', (): void => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
         when(mockWhereBuilder.build(query.filter, deepEqual(new Map()))).thenCall(() => ({
-          [Op.and]: { stringType: 'foo' },
+          [Op.and]: { stringType: 'foo' }
         }));
         expectDestroyOptions(query, instance(mockWhereBuilder), {
-          where: { [Op.and]: { stringType: 'foo' } },
+          where: { [Op.and]: { stringType: 'foo' } }
         });
       });
     });
@@ -268,11 +268,11 @@ describe('FilterQueryBuilder', (): void => {
         expectDestroyOptions(
           {
             paging: {
-              limit: 10,
-            },
+              limit: 10
+            }
           },
           instance(mockWhereBuilder),
-          { limit: 10 },
+          { limit: 10 }
         );
         verify(mockWhereBuilder.build(anything(), anything())).never();
       });

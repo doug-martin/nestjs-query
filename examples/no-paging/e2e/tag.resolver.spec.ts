@@ -12,7 +12,7 @@ describe('TagResolver (noPaging - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -22,8 +22,8 @@ describe('TagResolver (noPaging - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -37,7 +37,7 @@ describe('TagResolver (noPaging - e2e)', () => {
     { id: '2', name: 'Home' },
     { id: '3', name: 'Work' },
     { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
+    { id: '5', name: 'Blocked' }
   ];
 
   describe('find one', () => {
@@ -51,7 +51,7 @@ describe('TagResolver (noPaging - e2e)', () => {
           tag(id: 1) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200, { data: { tag: tags[0] } }));
 
@@ -65,7 +65,7 @@ describe('TagResolver (noPaging - e2e)', () => {
           tag(id: 100) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -85,7 +85,7 @@ describe('TagResolver (noPaging - e2e)', () => {
               id
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .expect({ data: { tag: { todoItems: [{ id: '1' }, { id: '2' }] } } }));
@@ -102,7 +102,7 @@ describe('TagResolver (noPaging - e2e)', () => {
           tags {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .expect({ data: { tags } }));
@@ -117,7 +117,7 @@ describe('TagResolver (noPaging - e2e)', () => {
           tags(filter: { id: { in: [1, 2, 3] } }) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .expect({ data: { tags: tags.slice(0, 3) } }));
@@ -132,7 +132,7 @@ describe('TagResolver (noPaging - e2e)', () => {
           tags(sorting: [{field: id, direction: DESC}]) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .expect({ data: { tags: tags.slice().reverse() } }));
@@ -148,7 +148,7 @@ describe('TagResolver (noPaging - e2e)', () => {
           tags(paging: {limit: 2}) {
             ${tagFields}
           }
-        }`,
+        }`
           })
           .expect(400)
           .expect(({ body }) => expect(JSON.stringify(body)).toContain('Unknown argument \\"paging\\"')));
@@ -170,15 +170,15 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: '6',
-              name: 'Test Tag',
-            },
-          },
+              name: 'Test Tag'
+            }
+          }
         }));
 
     it('should validate a tag', () =>
@@ -195,7 +195,7 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -222,15 +222,15 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: '7', name: 'Create Many Tag - 1' },
-              { id: '8', name: 'Create Many Tag - 2' },
-            ],
-          },
+              { id: '8', name: 'Create Many Tag - 2' }
+            ]
+          }
         }));
 
     it('should validate a tag', () =>
@@ -247,7 +247,7 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -272,15 +272,15 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: '6',
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -297,7 +297,7 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -320,7 +320,7 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -345,14 +345,14 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -369,13 +369,13 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
+            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
           );
         }));
 
@@ -394,7 +394,7 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -416,15 +416,15 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTag: {
               id: null,
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -439,7 +439,7 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -463,14 +463,14 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTags: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -485,13 +485,13 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
+            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
           );
         }));
 
@@ -509,7 +509,7 @@ describe('TagResolver (noPaging - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -537,7 +537,7 @@ describe('TagResolver (noPaging - e2e)', () => {
                 ${todoItemFields}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -549,7 +549,7 @@ describe('TagResolver (noPaging - e2e)', () => {
             'Create Entity',
             'Create Entity Service',
             'Create Nest App',
-            'How to create item With Sub Tasks',
+            'How to create item With Sub Tasks'
           ]);
         }));
   });
@@ -573,7 +573,7 @@ describe('TagResolver (noPaging - e2e)', () => {
                 ${todoItemFields}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {

@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   ObjectType,
   ManyToOne,
-  JoinColumn,
+  JoinColumn
 } from 'typeorm';
 import { TodoItemEntity } from '../todo-item/todo-item.entity';
 import { UserEntity } from '../user/user.entity';
@@ -30,7 +30,7 @@ export class SubTaskEntity {
 
   @ManyToOne(() => UserEntity, (u) => u.todoItems, {
     onDelete: 'CASCADE',
-    nullable: false,
+    nullable: false
   })
   owner!: UserEntity;
 
@@ -39,7 +39,7 @@ export class SubTaskEntity {
 
   @ManyToOne((): ObjectType<TodoItemEntity> => TodoItemEntity, (td) => td.subTasks, {
     onDelete: 'CASCADE',
-    nullable: false,
+    nullable: false
   })
   @JoinColumn({ name: 'todo_item_id' })
   todoItem!: TodoItemEntity;

@@ -37,8 +37,7 @@ export class SQLComparisonBuilder<Entity> {
     notilike: 'NOT ILIKE'
   };
 
-  constructor(readonly comparisonMap: Record<string, string> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {
-  }
+  constructor(readonly comparisonMap: Record<string, string> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
 
   private get paramName(): string {
     return `param${randomString()}`;
