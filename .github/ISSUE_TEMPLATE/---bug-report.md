@@ -10,7 +10,7 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-### Have you read the [Contributing Guidelines](https://github.com/doug-martin/nestjs-query/blob/master/CONTRIBUTING.md)?
+### Have you read the [Contributing Guidelines](https://github.com/tripss/nestjs-query/blob/master/CONTRIBUTING.md)?
 
 (Write your answer here.)
 
