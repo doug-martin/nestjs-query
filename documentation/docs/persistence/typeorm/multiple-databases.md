@@ -6,7 +6,7 @@ title: Multiple Databases
 
 Further, the official `@nestjs/typeorm` package also provides functionality to support multiple databases within the application. For details, consider the [official documentation](https://docs.nestjs.com/techniques/database#multiple-databases).
 
-Therefore, `@nestjs-query/query-typeorm` also offers this functionality. This section will walk you through a short example indicating how to connect your application to multiple databases. Further, this will assume, that you **already have a working application with a configured database**. Please note that only key aspects are shown here:
+Therefore, `@ptc-org/nestjs-query-typeorm` also offers this functionality. This section will walk you through a short example indicating how to connect your application to multiple databases. Further, this will assume, that you **already have a working application with a configured database**. Please note that only key aspects are shown here:
 
 ## Defining multiple connections
 
@@ -105,8 +105,8 @@ The only difference is you need to pass the name of the `Connection` when import
 
 ```ts title="secret/secret.module.ts"
 import { Module } from '@nestjs/common';
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm'; 
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm'; 
 import { SECRET_DB_CONNECTION } from '../constants';
 import { SecretEntity } from './secret.entity';
 import { SecretDTO } from './secret.dto'
@@ -138,8 +138,8 @@ Now the `NestjsQueryGraphQLModule` will create a `Resolver` for the `SecretDTO` 
 If you want to create a custom `SecretService` responsible for the database access, a custom [QueryService](../services.mdx), you need to pass an additional argument to the `@InjectRepository()` decorator that indicates the `Connection` you are using. This string has to match the `name` property in the `TypeOrmModule` options!
 
 ```ts title="secret/secret.service.ts"
-import { QueryService } from '@nestjs-query/core';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { QueryService } from '@ptc-org/nestjs-query-core';
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SECRET_DB_CONNECTION } from '../constants';
@@ -157,4 +157,4 @@ export class SecretService extends TypeOrmQueryService<SecretEntity> {
 
 For the sake of brevity, the `AssemblerService` is not covered here, as it should not directly interact with the database itself. Therefore, no further adaptations are required. This also applies to the `Resolver`!
 
-For a full example see the [examples](https://github.com/doug-martin/nestjs-query/tree/master/examples/typeorm-multidb).
+For a full example see the [examples](https://github.com/tripss/nestjs-query/tree/master/examples/typeorm-multidb).

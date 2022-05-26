@@ -5,8 +5,8 @@ title: Queries
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-The core of `nestjs-query` is the `Query`, it is used by `@nestjs-query/query-graphql`, `@nestjs-query/query-typeorm`
-`@nestjs-query/query-sequelize`, `@nestjs-query/query-mongoose` and `@nestjs-query/query-typegoose`.
+The core of `nestjs-query` is the `Query`, it is used by `@ptc-org/nestjs-query-graphql`, `@ptc-org/nestjs-query-typeorm`
+`@ptc-org/nestjs-query-sequelize`, `@ptc-org/nestjs-query-mongoose` and `@ptc-org/nestjs-query-typegoose`.
 
 The query interface contains three optional fields.
 
@@ -39,7 +39,7 @@ Lets create a simple filter that would allow us to filter for titles equal to `'
 ### Simple
 
 ```ts
-import { Query } from '@nestjs-query/core';
+import { Query } from '@ptc-org/nestjs-query-core';
 
 const q: Query<MyClass> = {
   filter: {
@@ -53,7 +53,7 @@ const q: Query<MyClass> = {
 You can also filter on multiple fields.
 
 ```ts
-import { Query } from '@nestjs-query/core';
+import { Query } from '@ptc-org/nestjs-query-core';
 
 const q: Query<MyClass> = {
   filter: {
@@ -70,7 +70,7 @@ const q: Query<MyClass> = {
 If you include multiple comparisons for a single field they will be ORed together.
 
 ```ts
-import { Query } from '@nestjs-query/core';
+import { Query } from '@ptc-org/nestjs-query-core';
 
 const q: Query<MyClass> = {
   filter: {
@@ -172,7 +172,7 @@ const q: Query<MyClass> = {
 
 :::note
 When using filters on relations with `typeorm` in combination with paging, performance can be degraded on large result
-sets. For more info see this [issue](https://github.com/doug-martin/nestjs-query/issues/954)
+sets. For more info see this [issue](https://github.com/tripss/nestjs-query/issues/954)
 
 In short two queries will be executed:
 * The first one fetching a distinct list of primary keys with paging applied.
@@ -201,7 +201,7 @@ The `sorting` field is an array of object containing:
 <TabItem value="single">
 
 ```ts
-// import { SortDirection } from '@nestjs-query/core';
+// import { SortDirection } from '@ptc-org/nestjs-query-core';
 
 const q: Query<MyClass> = {
   sorting: [{ field: 'title', direction: SortDirection.DESC }],
@@ -212,7 +212,7 @@ const q: Query<MyClass> = {
 <TabItem value="multi">
 
 ```ts
-// import { SortDirection } from '@nestjs-query/core';
+// import { SortDirection } from '@ptc-org/nestjs-query-core';
 
 const q: Query<MyClass> = {
   sorting: [

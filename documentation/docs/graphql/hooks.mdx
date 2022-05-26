@@ -51,7 +51,7 @@ context.
 In this example we set the createdBy field based on the context.
 
 ```ts {7-10}
-import { FilterableField, BeforeCreateOne, CreateOneInputType } from '@nestjs-query/query-graphql';
+import { FilterableField, BeforeCreateOne, CreateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { GqlContext } from '../../interfaces';
 import { getUserName } from '../../helpers';
@@ -83,7 +83,7 @@ You can also provide a custom `Hook` class that can leverage `nestjs` dependency
 In this example we create a simple Hook that works with any type that has a `createdBy` property.
 ```ts
 import { Injectable } from '@nestjs/common';
-import { BeforeCreateOneHook, CreateOneInputType,} from '@nestjs-query/query-graphql';
+import { BeforeCreateOneHook, CreateOneInputType,} from '@ptc-org/nestjs-query-graphql';
 import { GqlContext } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
 
@@ -106,7 +106,7 @@ export class CreatedByHook<T extends CreatedBy> implements BeforeCreateOneHook<T
 Now we just provide the hook to the `BeforeCreateOne` decorator.
 
 ```ts {6}
-import { FilterableField, BeforeCreateOne } from '@nestjs-query/query-graphql';
+import { FilterableField, BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { CreatedByHook } from '../../hooks';
 
@@ -138,7 +138,7 @@ graphql context.
 In this example we set the createdBy field on each record based on the context.
 
 ```ts {7-11}
-import { FilterableField, BeforeCreateMany, CreateManyInputType } from '@nestjs-query/query-graphql';
+import { FilterableField, BeforeCreateMany, CreateManyInputType } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { GqlContext } from '../../interfaces';
 import { getUserName } from '../../helpers';
@@ -171,7 +171,7 @@ You can also provide a custom `Hook` class that can leverage `nestjs` dependency
 In this example we create a simple Hook that works with any type that has a `createdBy` property.
 ```ts
 import { Injectable } from '@nestjs/common';
-import { BeforeCreateManyHook, CreateManyInputType,} from '@nestjs-query/query-graphql';
+import { BeforeCreateManyHook, CreateManyInputType,} from '@ptc-org/nestjs-query-graphql';
 import { GqlContext } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
 
@@ -194,7 +194,7 @@ export class CreatedByHook<T extends CreatedBy> implements BeforeCreateManyHook<
 Now we just provide the hook to the `BeforeCreateMany` decorator.
 
 ```ts {6}
-import { FilterableField, BeforeCreateMany } from '@nestjs-query/query-graphql';
+import { FilterableField, BeforeCreateMany } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { CreatedByHook } from '../../hooks';
 
@@ -226,7 +226,7 @@ context.
 In this example we set the updatedBy field in the update.
 
 ```ts {7-10}
-import { FilterableField, BeforeUpdateOne, UpdateOneInputType } from '@nestjs-query/query-graphql';
+import { FilterableField, BeforeUpdateOne, UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { GqlContext } from '../../interfaces';
 import { getUserName } from '../../helpers';
@@ -257,7 +257,7 @@ You can also provide a custom `Hook` class that can leverage `nestjs` dependency
 
 In this example we create a simple Hook that works with any type that has a `updatedBy` property.
 ```ts
-import { BeforeUpdateOneHook, UpdateOneInputType } from '@nestjs-query/query-graphql';
+import { BeforeUpdateOneHook, UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { Injectable } from '@nestjs/common';
 import { GqlContext } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -281,7 +281,7 @@ export class UpdatedByHook<T extends UpdatedBy> implements BeforeUpdateOneHook<T
 Now we just provide the hook to the `BeforeUpdateOne` decorator.
 
 ```ts {6}
-import { FilterableField, BeforeUpdateOne } from '@nestjs-query/query-graphql';
+import { FilterableField, BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { CreatedByHook } from '../../hooks';
 
@@ -312,7 +312,7 @@ graphql context.
 In this example we set the updatedBy field in the update.
 
 ```ts {7-10}
-import { FilterableField, BeforeUpdateMany, UpdateManyInputType } from '@nestjs-query/query-graphql';
+import { FilterableField, BeforeUpdateMany, UpdateManyInputType } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { GqlContext } from '../../interfaces';
 import { getUserName } from '../../helpers';
@@ -343,7 +343,7 @@ You can also provide a custom `Hook` class that can leverage `nestjs` dependency
 
 In this example we create a simple Hook that works with any type that has a `updatedBy` property.
 ```ts
-import { BeforeUpdateManyHook, UpdateManyInputType } from '@nestjs-query/query-graphql';
+import { BeforeUpdateManyHook, UpdateManyInputType } from '@ptc-org/nestjs-query-graphql';
 import { Injectable } from '@nestjs/common';
 import { GqlContext } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -367,7 +367,7 @@ export class UpdatedByHook<T extends UpdatedBy> implements BeforeUpdateManyHook<
 Now we just provide the hook to the `BeforeUpdateMany` decorator.
 
 ```ts {6}
-import { FilterableField, BeforeUpdateMany } from '@nestjs-query/query-graphql';
+import { FilterableField, BeforeUpdateMany } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { CreatedByHook } from '../../hooks';
 
@@ -406,7 +406,7 @@ There are two types that are created
  ensuring that the argument provided to the mutation is named `input`.
 
 ```ts title="todo-item/types.ts"
-import { MutationArgsType, UpdateManyInputType } from '@nestjs-query/query-graphql';
+import { MutationArgsType, UpdateManyInputType } from '@ptc-org/nestjs-query-graphql';
 import { ArgsType, InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
@@ -423,8 +423,8 @@ export class MarkTodoItemsAsCompletedArgs extends MutationArgsType(UpdateManyTod
 Now we can use our new types in the resolver.
 
 ```ts title="todo-item/todo-item.resolver.ts" {16,17}
-import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@nestjs-query/core';
-import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@nestjs-query/query-graphql';
+import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@ptc-org/nestjs-query-core';
+import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@ptc-org/nestjs-query-graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';

@@ -1,12 +1,12 @@
 module.exports = {
   title: 'Nestjs-query',
   tagline: 'Easy CRUD for GraphQL.',
-  url: 'https://doug-martin.github.io', // Your website URL
+  url: 'https://tripss.github.io', // Your website URL
   baseUrl: '/nestjs-query/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'doug-martin', // Usually your GitHub org/user name.
+  organizationName: 'tripss', // Usually your GitHub org/user name.
   projectName: 'nestjs-query', // Usually your repo name.
   themeConfig: {
     hideableSidebar: true,
@@ -22,7 +22,7 @@ module.exports = {
         { to: 'docs/contributing', label: 'Contributing', position: 'left' },
         { to: 'blog', label: 'Blog', position: 'left' },
         {
-          href: 'https://github.com/doug-martin/nestjs-query',
+          href: 'https://github.com/tripss/nestjs-query',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
@@ -58,7 +58,7 @@ module.exports = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/doug-martin/nestjs-query',
+              href: 'https://github.com/tripss/nestjs-query',
             },
           ],
         },
@@ -71,12 +71,12 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/doug-martin/nestjs-query/edit/master/documentation/',
+          editUrl: 'https://github.com/tripss/nestjs-query/edit/master/documentation/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl: 'https://github.com/doug-martin/nestjs-query/edit/master/documentation/blog',
+          editUrl: 'https://github.com/tripss/nestjs-query/edit/master/documentation/blog',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

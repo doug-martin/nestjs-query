@@ -11,7 +11,7 @@ cover the different paging strategies and their applicable use cases.
 The following examples are based on the following `TodoItemDTO`
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -101,7 +101,7 @@ is a set of fields that uniquely identify a record (e.g. `id`).
 To enable key set based paging all you need to do is decorate your `DTO` with the `@KeySet` decorator.
 
 ```ts
-import { FilterableField, IDField, KeySet } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -498,7 +498,7 @@ type TodoItem {
 To enable OFFSET based paging all you need to do is set the `pagingStrategy` option using the `@QueryOptions` decorator.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -672,7 +672,7 @@ To disable paging all you can set the `pagingStrategy` option using the `@QueryO
 `PagingStrategies.NONE`.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')

@@ -17,7 +17,7 @@ QueryArgsType.
 ### Old
 
 ```ts
-import { ConnectionType, SortType } from '@nestjs-query/query-graphql';
+import { ConnectionType, SortType } from '@ptc-org/nestjs-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 export const TodoItemConnection = ConnectionType(TodoItemDTO);
@@ -27,7 +27,7 @@ export const TodoItemSort = SortType(TodoItemDTO);
 ### New
 
 ```ts
-import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@ptc-org/nestjs-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
@@ -46,8 +46,8 @@ In previous versions you had to specify options for querying and connections in 
 ### Old
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -74,7 +74,7 @@ export class TodoItemModule {}
 ### New
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, QueryOptions, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')

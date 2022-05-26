@@ -212,7 +212,7 @@ npx nest g cl todo-item.dto todo-item
 Now lets fill out the DTO. Add the following to `src/todo-item/todo-item.dto.ts`.
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, GraphQLISODateTime, Field, ID } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -236,7 +236,7 @@ export class TodoItemDTO {
 
 ```
 
-Notice the use of `@FilterableField` this will let `@nestjs-query/query-graphql` know to allow filtering on the
+Notice the use of `@FilterableField` this will let `@ptc-org/nestjs-query-graphql` know to allow filtering on the
 corresponding field. If you just use `@Field` then you will not be able to filter on the corresponding field.
 
 ## Wire everything up.
@@ -272,8 +272,8 @@ The `NestjsQueryGraphQLModule` will automatically create a Resolver that will ex
 <TabItem value="typeorm">
 
 ```ts {9-15}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -296,8 +296,8 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts {9-15}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQuerySequelizeModule } from '@ptc-org/nestjs-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -320,8 +320,8 @@ export class TodoItemModule {}
 <TabItem value="mongoose">
 
 ```ts {9-19}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryMongooseModule } from '@nestjs-query/query-mongoose';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryMongooseModule } from '@ptc-org/nestjs-query-mongoose';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity, TodoItemEntitySchema } from './todo-item.entity';
@@ -348,9 +348,9 @@ export class TodoItemModule {}
 <TabItem value="typegoose">
 
 ```ts {9-19}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
-import { NestjsQueryTypegooseModule } from '@nestjs-query/query-typegoose';
+import { NestjsQueryTypegooseModule } from '@ptc-org/nestjs-query-typegoose';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
@@ -501,7 +501,7 @@ export class AppModule {}
 
 
 ```
-**NOTE** For the sake of brevity, the `options` object in the Mongoose and Typegoose examples aren't defined. If you'd like to see full examples of all of the persistence services, please refer to the `./examples` directory in the [source code](https://github.com/doug-martin/nestjs-query/tree/master/examples).
+**NOTE** For the sake of brevity, the `options` object in the Mongoose and Typegoose examples aren't defined. If you'd like to see full examples of all of the persistence services, please refer to the `./examples` directory in the [source code](https://github.com/tripss/nestjs-query/tree/master/examples).
 
 </TabItem>
 </Tabs>

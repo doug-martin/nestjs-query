@@ -151,8 +151,8 @@ In the latest version, we have transitioned to a interceptor/param decorator pat
 Old way
 
 ```ts
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@ptc-org/nestjs-query-core';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -182,8 +182,8 @@ export class TodoItemResolver {
 New
 
 ```ts
-import { Filter, InjectQueryService, mergeFilter, mergeQuery, QueryService } from '@nestjs-query/core';
-import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@nestjs-query/query-graphql';
+import { Filter, InjectQueryService, mergeFilter, mergeQuery, QueryService } from '@ptc-org/nestjs-query-core';
+import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -224,8 +224,8 @@ As a demonstration of the flexibility of the new hooks implementation, lets use 
 would not have been possible previously)
 
 ```ts {14-15}
-import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@nestjs-query/core';
-import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@nestjs-query/query-graphql';
+import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@ptc-org/nestjs-query-core';
+import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@ptc-org/nestjs-query-graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -314,14 +314,14 @@ export class TodoItemInputDTO {
 In previous versions of `nestjs-query` you could extend `CRUDResolver` but there was not a way to set up the
 appropriate providers for many of the newer features (hooks, authorizers etc.).
 
-In the latest version you now have the option to register your DTOs with `@nestjs-query/query-graphql` without it
+In the latest version you now have the option to register your DTOs with `@ptc-org/nestjs-query-graphql` without it
 generating a resolver automatically.
 
 In this example we create a custom resolver that extends `CRUDResolver`.
 
 ```ts title="todo-item.resolver.ts"
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@ptc-org/nestjs-query-core';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -342,8 +342,8 @@ Because the `TodoItemResolver` extends `CRUDResolver` there is no need to have `
  set up all of additional providers to hooks, authorizers and other features.
 
 ```ts title="todo-item.module.ts" {9,13}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

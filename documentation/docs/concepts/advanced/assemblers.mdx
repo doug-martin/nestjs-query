@@ -58,7 +58,7 @@ If you find yourself in a scenario where you need to compute values and you dont
 Lets take a simple example, where we have `TodoItemDTO` and we want to compute the `age`.
 
 ```ts title="todo-item.assembler.ts"
-import { Assembler, ClassTransformerAssembler } from '@nestjs-query/core';
+import { Assembler, ClassTransformerAssembler } from '@ptc-org/nestjs-query-core';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
@@ -84,7 +84,7 @@ To create your own `Assembler` extend the `AbstractAssembler`.
 Lets assume we have the following `UserDTO`.
 
 ```ts title="user.dto.ts"
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType('User')
@@ -186,7 +186,7 @@ import {
   transformQuery,
   transformAggregateQuery,
   transformAggregateResponse
-} from '@nestjs-query/core';
+} from '@ptc-org/nestjs-query-core';
 import { UserDTO } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 
@@ -269,7 +269,7 @@ convertQuery(query: Query<UserDTO>): Query<UserEntity> {
 }
 ```
 
-This method leverages the `transformQuery` function from `@nestjs-query/core`. This method will remap all fields specified in the field map to correct field name.
+This method leverages the `transformQuery` function from `@ptc-org/nestjs-query-core`. This method will remap all fields specified in the field map to correct field name.
 
 In this example
 
@@ -390,7 +390,7 @@ Before using the decorator you need to register your Assembler with `nestjs-quer
 ### Module
 
 ```ts title="user.module.ts" {10}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
 import { UserDTO } from './user.dto';
 
@@ -413,7 +413,7 @@ export class UserModule {}
 If you want your assembler to be used by the auto-generated resolver you can specify the `AssemblerClass` option.
 
 ```ts title="user.module.ts" {10,14}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
 import { UserDTO } from './user.dto';
 
@@ -442,7 +442,7 @@ export class UserModule {}
 If you are manually defining you resolver or want to use the `AssemblerQueryService` in another service use the `@InjectAssemblerQueryService` decorator.
 
 ```ts title="user.resolver.ts" {8}
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { UserDTO } from './user.dto';
 import { UserAssembler } from './user.assembler'

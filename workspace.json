@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "core": "packages/core",
+    "documentation": "documentation",
     "examples": "examples",
     "query-graphql": "packages/query-graphql",
     "query-mongoose": "packages/query-mongoose",

@@ -16,7 +16,7 @@ All examples will be based on the following `TodoItem` DTO. All fields except `a
  `@FilterableField` or `@IDField`, will be exposed in aggregate queries.
 
 ```ts  title="todo-item/dto/todo-item.dto.ts"
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -53,8 +53,8 @@ export class TodoItemDTO {
 To enable aggregate queries you can set the `enableAggregate` option in your resolver
 
 ```ts title="todo-item/todo-item.module.ts" {19}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
@@ -802,8 +802,8 @@ This example will aggregate all related `subTasks` that are not completed.
 When using the `enableAggregate` option it will enable aggregates on the root type as well as all relations. If you only want to expose aggregate functionality on the root type you can specify the `aggregate` option.
 
 ```ts {19}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
@@ -834,7 +834,7 @@ export class TodoItemModule {}
 You can also selectively disable aggregates on an individual relation by specifying the enableAggregate option when defining the relation.
 
 ```ts {7}
-import { FilterableField, FilterableConnection, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, FilterableConnection, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { AuthGuard } from '../../auth.guard';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';

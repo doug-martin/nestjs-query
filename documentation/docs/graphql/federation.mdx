@@ -35,7 +35,7 @@ To reference a type in `nestjs-query` you must first create DTO that defines the
 The base type in its own service must be decorated with federated directives specifying its key.
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Directive } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -51,7 +51,7 @@ export class TodoItemDTO {
 When using the `NestjsQueryGraphQLModule` module add the `referenceBy` option that `nestjs-query` will use to automatically expose add a `@ResolveReference` decorator and method that the gateway can use.
 
 ```ts title="todo-item/todo-item.module.ts" {14-15}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -157,7 +157,7 @@ To reference a type defined in another service you can use the `@Reference` deco
 When using the `@Reference` decorator `nestjs-query` will **NOT** look up the relation through the `QueryService`, instead return a reference type like the one described above.
 
 ```ts title="sub-task/sub-task.dto.ts" {5-6}
-import { FilterableField, Reference } from '@nestjs-query/query-graphql';
+import { FilterableField, Reference } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('SubTask')
@@ -220,7 +220,7 @@ Now that we have added the decorator the `nestjs-query` resolver will automatica
 <TabItem value="module">
 
 ```ts title="sub-task/sub-task.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
 import { SubTaskDTO } from './dto/sub-task.dto';
 import { SubTaskEntity } from './sub-task.entity';
@@ -242,8 +242,8 @@ export class SubTaskModule {}
 
 
 ```ts title="sub-task/sub-task.resolver.ts"
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@ptc-org/nestjs-query-core';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { SubTaskDTO } from './sub-task.dto';
 import { TodoItemReferenceDTO } from './dto/todo-item-reference.dto';
@@ -271,7 +271,7 @@ Lets continue with the `SubTask` example used above. We have add a `todoItem` re
 The first step is to create a `RelationQueryService`. The `RelationQueryService` is a special type of `QueryService` that allows looking up relations without defining them in your entity.
 
 ```ts title="todo-item.service.ts"
-import { InjectQueryService, QueryService, RelationQueryService } from '@nestjs-query/core';
+import { InjectQueryService, QueryService, RelationQueryService } from '@ptc-org/nestjs-query-core';
 import { TodoItemReferenceDTO } from './todo-item-reference.dto';
 import { SubTaskEntity } from './sub-task.entity';
 
@@ -318,7 +318,7 @@ The same pattern applies when you have a single relation and use the `@Relation`
 :::
 
 ```ts title='sub-task/todo-item-reference.dto.ts'
-import { Connection } from '@nestjs-query/query-graphql';
+import { Connection } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, Directive, Field, ID } from '@nestjs/graphql';
 import { SubTaskDTO } from './sub-task.dto';
 
@@ -352,7 +352,7 @@ When using the `NestjsQueryGraphQLModule` set the `type` of the resolver to `fed
 Also, add the `TodoItemService` to the `services` option to make it available for nest to inject the service into the auto-generated resolver.
 
 ```ts title="sub-task/sub-task.module.ts" {12,18-22}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
 import { SubTaskDTO } from './dto/sub-task.dto';
 import { SubTaskEntity } from './sub-task.entity';
@@ -391,7 +391,7 @@ The `FederationResolver` this will not set up any queries or mutations in the gr
 
 
 ```ts title="sub-task/todo-item.resolver.ts"
-import { FederationResolver } from '@nestjs-query/query-graphql';
+import { FederationResolver } from '@ptc-org/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemReferenceDTO } from './todo-item-reference.dto';
 import { TodoItemService } from './todo-item.service';
@@ -409,7 +409,7 @@ export class TodoItemResolver extends FederationResolver(TodoItemReferenceDTO) {
 
 ## Complete Example
 
-To see a complete example checkout https://github.com/doug-martin/nestjs-query/tree/master/examples/federation
+To see a complete example checkout https://github.com/tripss/nestjs-query/tree/master/examples/federation
 
 
 

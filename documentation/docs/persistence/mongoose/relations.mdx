@@ -122,7 +122,7 @@ Now that we have the relationship defined we can add the `@Relation` and `@Curso
 <TabItem value="todoitem">
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, IDField, KeySet, CursorConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, CursorConnection } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 
@@ -168,7 +168,7 @@ export class TodoItemDTO {
 <TabItem value="subtask">
 
 ```ts title="sub-task/sub-task.dto.ts"
-import { FilterableField, IDField, KeySet, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Relation } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
@@ -307,7 +307,7 @@ Now that we have the relationship defined we can add the `@CursorConnection` to 
 <TabItem value="todoitem">
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, IDField, KeySet, CursorConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, CursorConnection } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { TagDTO } from '../../tag/dto/tag.dto';
 
@@ -351,7 +351,7 @@ export class TodoItemDTO {
 <TabItem value="tag">
 
 ```ts title="tag/tag.dto.ts"
-import { FilterableField, IDField, KeySet, CursorConnection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, CursorConnection } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 

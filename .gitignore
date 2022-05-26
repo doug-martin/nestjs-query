@@ -79,3 +79,7 @@ schema.gql
 
 documentation/.docusaurus
 /**/package-lock.json
+
+# Generated Docusaurus files
+.docusaurus/
+.cache-loader/

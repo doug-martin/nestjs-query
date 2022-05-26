@@ -32,7 +32,7 @@ In addition to the normal field options you can also specify the following optio
 In the following example we allow `id`, `title`, and `completed` to be used in queries.
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -64,7 +64,7 @@ For the `id` field only `eq`, `neq`, `in`, and `notIn` comparisons will be expos
 The `title` field will only allow `eq`, `like`, and `notLike`.
 
 ```ts title="todo-item.dto.ts" {6,9}
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -92,7 +92,7 @@ export class TodoItemDTO {
 In the following example the `filterRequired` option is applied to the `completed` field, ensuring that all endpoints that use a filter will require a comparison on the `completed` field.
 
 ```ts title="todo-item.dto.ts" {12}
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -120,7 +120,7 @@ In the following example the `filterOnly` option is applied to the `assigneeId` 
  by the id of an assigned user but won't return the `assigneeId` as field.
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -214,7 +214,7 @@ export class CommonModule {}
 Once your `CustomIDScalar` is registered you can use it in your `DTOS`.
 
 ```ts title="todo-item/dto/todo-item.dto.ts" {7}
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
 import { CustomIDScalar } from '../../common/custom-id.scalar';
 
@@ -248,7 +248,7 @@ type for the input.
 If you want to disable filtering and sorting on the `id` field you can use the `disableFilter` option.
 
 ```ts title="todo-item/dto/todo-item.dto.ts" {7}
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
 import { CustomIDScalar } from '../../common/custom-id.scalar';
 
@@ -291,7 +291,7 @@ The default filter is only used when a filter is not provided in a query.
 In this example we specify the default filter to be `completed IS TRUE`.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -327,7 +327,7 @@ In this example we specify the `defaultResultSize` to 5 which means if a page si
 returned.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -364,7 +364,7 @@ You can disable `maxResultSize` by setting the option to `-1`.
 In this example we specify limit the max number of records an end user can request to 20.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -405,7 +405,7 @@ When using the `OFFSET` strategy your the paging arguments for a many query will
 This will also change the return type from a `CursorConnection` to an `OffsetConnection`.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -432,7 +432,7 @@ export class TodoItemDTO {
 To disable paging entirely you can use the `NONE` `pagingStrategy`. When using `NONE` an `ArrayConnection` will be returned.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -475,7 +475,7 @@ To enable the `totalCount` field for connections set the `enableTotalCount` opti
 `@QueryOptions` decorator.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -600,8 +600,8 @@ When querying the default is based on the persistence layer. You can override th
 In this example we specify the default sort to be by `title`.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
-import { SortDirection } from '@nestjs-query/core';
+import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
+import { SortDirection } from '@ptc-org/nestjs-query-core';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -633,7 +633,7 @@ using the `allowedBooleanExpressions` option.
 In this example we will only allow `and` expressions.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -663,7 +663,7 @@ only allow filtering on certain fields and you want to disable all complex filte
 In this example we will only allow `eq` comparisons on the id field and disable all `and`/`or` boolean expressions.
 
 ```ts title="todo-item.dto.ts" {5,7}
-import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')

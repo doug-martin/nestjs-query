@@ -2,7 +2,7 @@
 title: v0.11.2
 author: Doug Martin
 author_title: Creator
-author_url: https://github.com/doug-martin
+author_url: https://github.com/tripss
 author_image_url: https://avatars1.githubusercontent.com/u/361261?v=4
 tags: [releases, patch]
 ---
@@ -19,7 +19,7 @@ In `v0.11.1` a new `@InjectAssemblerQueryService` decorator has been introduced 
 Define your assembler
 
 ```ts title="todo-item.assembler.ts"
-import { Assembler, ClassTransformerAssembler } from '@nestjs-query/core';
+import { Assembler, ClassTransformerAssembler } from '@ptc-org/nestjs-query-core';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
@@ -37,8 +37,8 @@ export class TodoItemAssembler extends ClassTransformerAssembler<TodoItemDTO, To
 Now, instead of defining an `AssemblerQueryService` you can use the decorator.
 
 ```ts title="todo-item.resolver.ts" {8}
-import { QueryService, InjectAssemblerQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectAssemblerQueryService } from '@ptc-org/nestjs-query-core';
+import { CRUDResolver } from '@ptc-org/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -59,8 +59,8 @@ When using the AssemblerClass option you don't need to specify the entity.
 :::
 
 ```ts title="todo-item.module.ts" {12-13,17-18}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -95,8 +95,8 @@ When using the ServiceClass option you don't need to specify the entity.
 :::
 
 ```ts title="todo-item.module.ts" {12-13,17-18}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

@@ -5,8 +5,8 @@ title: Custom Service
 To create a custom query service to add your own methods to you can extend the `TypeOrmQueryService`.
 
 ```ts title="todo-item.service.ts"
-import { QueryService } from '@nestjs-query/core'
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { QueryService } from '@ptc-org/nestjs-query-core'
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoItemEntity } from './todo-item.entity';
@@ -35,8 +35,8 @@ export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
 To use the custom service in the auto-generated resolver you can specify the `ServiceClass` option.
 
 ```ts title="todo-item.module.ts" {12,16}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

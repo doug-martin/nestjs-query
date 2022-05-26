@@ -10,7 +10,7 @@ For all feature, bug and pull requests please adhere to the following **golden r
 
 ## Development Process 
 
-We use [github issues](https://github.com/doug-martin/nestjs-query/issues) and [pull requests](https://github.com/doug-martin/nestjs-query/pulls) to track all bugs and feature. All changes should be reflected in an issue or pull request.
+We use [github issues](https://github.com/tripss/nestjs-query/issues) and [pull requests](https://github.com/tripss/nestjs-query/pulls) to track all bugs and feature. All changes should be reflected in an issue or pull request.
 
 As such, you must adhere to the following guidelines.
 
@@ -102,11 +102,11 @@ To add a new example follow these steps
   * The name should be short but enough to describe the use case.
 * Add your example to the `examples/nest-cli.json` `projects` array.
   * If your example requires `typeorm` or `sequelize` add your init scripts to:
-    * `examples/init-scripts/mysql` - See the [basic example](https://github.com/doug-martin/nestjs-query/blob/master/examples/init-scripts/mysql/init-basic.sql)
-    * `examples/init-scripts/postgres` - See the [basic example](https://github.com/doug-martin/nestjs-query/blob/master/examples/init-scripts/postgres/init-basic.sql)
+    * `examples/init-scripts/mysql` - See the [basic example](https://github.com/tripss/nestjs-query/blob/master/examples/init-scripts/mysql/init-basic.sql)
+    * `examples/init-scripts/postgres` - See the [basic example](https://github.com/tripss/nestjs-query/blob/master/examples/init-scripts/postgres/init-basic.sql)
   * All files should match the following format `init-{example-name}.sql`
     * Your init script should create a `USER`, `DATABASE` and `GRANT PRIVELAGES` to the user for the database.
-    * Be sure to use the user you created in your `app.module.ts` file. See [the basic example](https://github.com/doug-martin/nestjs-query/blob/master/examples/basic/src/app.module.ts) 
+    * Be sure to use the user you created in your `app.module.ts` file. See [the basic example](https://github.com/tripss/nestjs-query/blob/master/examples/basic/src/app.module.ts) 
 * Add your modules and tests.
 
 To run your tests follow [these instructions](#running-e2e-tests)

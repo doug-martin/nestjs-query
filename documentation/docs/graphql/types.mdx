@@ -5,13 +5,13 @@ title: Types
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-`@nestjs-query/query-graphql` provides a number of types. Most will be automatically generated for you when you create a
+`@ptc-org/nestjs-query-graphql` provides a number of types. Most will be automatically generated for you when you create a
  resolver. However, you can use many of the types in your own code for custom endpoints.
 
 The following examples are based on the following `TodoItemDTO`
 
 ```ts
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -48,7 +48,7 @@ The `QueryArgsType` will generate an `ArgsType` that will require the user to pr
 #### Usage
 
 ```ts
-import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@ptc-org/nestjs-query-graphql';
 import { ArgsType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -76,7 +76,7 @@ where the end user should be able to page through the results.
 <TabItem value="code">
 
 ```ts
-import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@ptc-org/nestjs-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
@@ -130,7 +130,7 @@ Response from `updateMany` mutations.
 <TabItem value="code">
 
 ```ts
-import { UpdateManyResponseType } from '@nestjs-query/query-graphql';
+import { UpdateManyResponseType } from '@ptc-org/nestjs-query-graphql';
 
 export const UpdateManyResponse = UpdateManyResponseType()
 ```
@@ -167,7 +167,7 @@ Response from `deleteMany` mutations.
 <TabItem value="code">
 
 ```ts
-import { DeleteManyResponseType } from '@nestjs-query/query-graphql';
+import { DeleteManyResponseType } from '@ptc-org/nestjs-query-graphql';
 
 export const UpdateManyResponse = DeleteManyResponseType()
 ```
@@ -192,7 +192,7 @@ type DeleteManyResponse {
 
 ### FilterType
 
-GraphQL implementation of the `@nestjs-query/core` `Filter` type.
+GraphQL implementation of the `@ptc-org/nestjs-query-core` `Filter` type.
 
 The `FilterType` is dynamically created based on the fields in the `DTO` annotated with [@FilterableField](./dtos.mdx#filterablefield).
 
@@ -238,7 +238,7 @@ Along with the dynamically create fields filter also has the following static fi
 <TabItem value="code">
 
 ```ts
-import { FilterType } from '@nestjs-query/query-graphql';
+import { FilterType } from '@ptc-org/nestjs-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 export const TodoItemFilter = FilterType(TodoItemDTO)
@@ -341,7 +341,7 @@ For more comprehensive examples take a look at the [Sorting Docs](./queries.mdx#
 <TabItem value="code">
 
 ```ts
-import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@ptc-org/nestjs-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
@@ -396,7 +396,7 @@ specify the `created` or `updated` fields so you would create a new DTO just for
 #### Usage
 
 ```ts
-import { CreateOneInputType } from '@nestjs-query/query-graphql';
+import { CreateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -428,7 +428,7 @@ specify the `created` or `updated` fields so you would create a new DTO just for
 #### Usage
 
 ```ts
-import { CreateManyInputType } from '@nestjs-query/query-graphql';
+import { CreateManyInputType } from '@ptc-org/nestjs-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -467,7 +467,7 @@ update the `created` or `updated` fields so you would create a new DTO just for 
 #### Usage
 
 ```ts
-import { UpdateOneInputType } from '@nestjs-query/query-graphql';
+import { UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -507,7 +507,7 @@ specify the `created` or `updated` fields so you would create a new DTO just for
 In this example we use the read DTO for the FilterType, and a different update DTO.
 
 ```ts
-import { CreateOneInputType, FilterType } from '@nestjs-query/query-graphql';
+import { CreateOneInputType, FilterType } from '@ptc-org/nestjs-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -541,7 +541,7 @@ The `DeleteOneInputType` will generate an `InputType` that will require the user
 #### Usage
 
 ```ts
-import { DeleteOneInputType } from '@nestjs-query/query-graphql';
+import { DeleteOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -560,7 +560,7 @@ The `DeleteManyInputType` will generate an `InputType` that will require the use
 #### Usage
 
 ```ts
-import { CreateOneInputType, FilterType } from '@nestjs-query/query-graphql';
+import { CreateOneInputType, FilterType } from '@ptc-org/nestjs-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 

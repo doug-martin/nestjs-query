@@ -7,8 +7,8 @@ It is possible to test services that use `TypeOrmQueryService`. The process is s
 Let's assume we have the following `TodoItem` service. For the sake of completeness, let's also add a dependency on another service (let's pretend that the todos have subTasks; we are not using relationships here):
 
 ```ts title="todo-item.service.ts"
-import { InjectQueryService, QueryService } from '@nestjs-query/core';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { InjectQueryService, QueryService } from '@ptc-org/nestjs-query-core';
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
@@ -36,7 +36,7 @@ Now lets write some tests!
 
 ```ts title="todo-item.service.spec.ts"
 import { Test, TestingModule } from '@nestjs/testing';
-import { getQueryServiceToken } from '@nestjs-query/core';
+import { getQueryServiceToken } from '@ptc-org/nestjs-query-core';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
@@ -73,7 +73,7 @@ describe('TodosItemService', () => {
           provide: getRepositoryToken(TodoItemEntity),
           useValue: mockedRepo,
         },
-        // Mock the SubTask QueryService using the `getQueryServiceToken` from @nestjs-query/core
+        // Mock the SubTask QueryService using the `getQueryServiceToken` from @ptc-org/nestjs-query-core
         {
           provide: getQueryServiceToken(SubTaskEntity),
           useValue: mockedSubTaskService,
