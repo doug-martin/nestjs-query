@@ -703,10 +703,10 @@ describe('TypeOrmQueryService', (): void => {
 
           const adaptedQueryResult = new Map();
           queryResult.forEach((relations, key) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             adaptedQueryResult.set(
               key,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               relations.map(({ relationOfTestRelationId, ...relation }) => ({
                 ...relation
               }))
