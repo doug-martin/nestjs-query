@@ -1,5 +1,5 @@
 import { Class, FilterFieldComparison, FilterComparisonOperators, isNamed } from '@ptc-org/nestjs-query-core';
-import { IsBoolean, IsOptional } from 'class-validator';
+import { IsBoolean, IsDate, IsOptional, ValidateNested } from 'class-validator';
 import { upperCaseFirst } from 'upper-case-first';
 import {
   Field,
@@ -48,6 +48,15 @@ const knownTypes: Set<ReturnTypeFuncValue> = new Set([
   GraphQLTimestamp
 ]);
 
+const allowedBetweenTypes: Set<ReturnTypeFuncValue> = new Set([
+  Number,
+  Int,
+  Float,
+  Date,
+  GraphQLISODateTime,
+  GraphQLTimestamp
+]);
+
 /** @internal */
 const getTypeName = (SomeType: ReturnTypeFuncValue): string => {
   if (knownTypes.has(SomeType) || isNamed(SomeType)) {
@@ -90,7 +99,26 @@ export function createFilterComparisonType<T>(options: FilterComparisonOptions<T
     return generator() as Class<FilterFieldComparison<T>>;
   }
 
-  const isNotAllowed = (val: FilterComparisonOperators<unknown>) => () => !isInAllowedList(options.allowedComparisons, val as unknown);
+  const isNotAllowed = (val: FilterComparisonOperators<unknown>, mustBeType?: Set<ReturnTypeFuncValue>) => () => {
+    const comparisonAllowed = isInAllowedList(options.allowedComparisons, val as unknown);
+
+    if (comparisonAllowed) {
+      return mustBeType && !mustBeType.has(fieldType);
+    }
+
+    return true;
+  };
+
+  @InputType(`${inputName}Between`)
+  class FcBetween {
+    @Field(() => fieldType, { nullable: false })
+    @IsDate()
+    lower!: T;
+
+    @Field(() => fieldType, { nullable: false })
+    @IsDate()
+    upper!: T;
+  }
 
   @InputType(inputName)
   class Fc {
@@ -163,6 +191,16 @@ export function createFilterComparisonType<T>(options: FilterComparisonOptions<T
     @IsUndefined()
     @Type(() => FieldType)
     notIn?: T[];
+
+    @SkipIf(isNotAllowed('between', allowedBetweenTypes), Field(() => FcBetween, { nullable: true }))
+    @ValidateNested()
+    @Type(() => FcBetween)
+    between?: T;
+
+    @SkipIf(isNotAllowed('notBetween', allowedBetweenTypes), Field(() => FcBetween, { nullable: true }))
+    @ValidateNested()
+    @Type(() => FcBetween)
+    notBetween?: T;
   }
 
   filterComparisonMap.set(inputName, () => Fc);
