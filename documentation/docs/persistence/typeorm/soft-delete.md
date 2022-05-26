@@ -2,7 +2,7 @@
 title: Soft Delete
 ---
 
-`TypeOrm` supports [soft deletes](https://typeorm.io/#/delete-query-builder/soft-delete). This feature does not delete records but instead updates the column decorated with `@DeletedDateColumn`. 
+`TypeOrm` supports [soft deletes](https://typeorm.io/#/delete-query-builder/soft-delete). This feature does not delete records but instead updates the column decorated with `@DeleteDateColumn`. 
 
 Before continuing it is recommended that you read the following.
 * https://typeorm.io/#/decorator-reference/deletedatecolumn
@@ -10,7 +10,7 @@ Before continuing it is recommended that you read the following.
   
 ## Setting up your entity.
 
-Before enabling soft deletes you must add the DeletedDateColumn to your entity.
+Before enabling soft deletes you must add the DeleteDateColumn to your entity.
 
 ```ts title="todo-item.entity.ts"
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
