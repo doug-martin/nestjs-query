@@ -1,9 +1,9 @@
-import { AggregateQuery, AggregateResponse } from '@ptc-org/nestjs-query-core';
 import { Query, Resolver } from '@nestjs/graphql';
-import { when, deepEqual, objectContaining } from 'ts-mockito';
+import { AggregateQuery, AggregateResponse } from '@ptc-org/nestjs-query-core';
 import { AggregateArgsType } from '@ptc-org/nestjs-query-graphql';
+import { deepEqual, objectContaining, when } from 'ts-mockito';
 import { AggregateResolver, AggregateResolverOpts } from '../../src/resolvers/aggregate.resolver';
-import { generateSchema, createResolverFromNest, TestResolverDTO, TestService } from '../__fixtures__';
+import { createResolverFromNest, generateSchema, TestResolverDTO, TestService } from '../__fixtures__';
 
 describe('AggregateResolver', () => {
   const expectResolverSDL = async (opts?: AggregateResolverOpts) => {
@@ -17,20 +17,23 @@ describe('AggregateResolver', () => {
     const schema = await generateSchema([TestSDLResolver]);
     expect(schema).toMatchSnapshot();
   };
+  it('should not expose read methods if not enabled', () => expectResolverSDL());
 
   it('should create a AggregateResolver for the DTO', () => expectResolverSDL({ enabled: true }));
 
-  it('should not expose read methods if not enabled', () => expectResolverSDL());
 
   describe('#aggregate', () => {
-    @Resolver(() => TestResolverDTO)
-    class TestResolver extends AggregateResolver(TestResolverDTO, { enabled: true }) {
-      constructor(service: TestService) {
-        super(service);
+    const createResolver = () => {
+      @Resolver(() => TestResolverDTO)
+      class TestResolver extends AggregateResolver(TestResolverDTO, { enabled: true }) {
+        constructor(service: TestService) {
+          super(service);
+        }
       }
+      return TestResolver;
     }
     it('should call the service query with the provided input', async () => {
-      const { resolver, mockService } = await createResolverFromNest(TestResolver);
+      const { resolver, mockService } = await createResolverFromNest(createResolver());
       const input: AggregateArgsType<TestResolverDTO> = {
         filter: {
           stringField: { eq: 'foo' },

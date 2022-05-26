@@ -90,26 +90,6 @@ type TestResolverDTO {
   stringField: String!
 }
 
-type TestResolverDTOAggregateGroupBy {
-  id: ID
-  stringField: String
-}
-
-type TestResolverDTOCountAggregate {
-  id: Int
-  stringField: Int
-}
-
-type TestResolverDTOMinAggregate {
-  id: ID
-  stringField: String
-}
-
-type TestResolverDTOMaxAggregate {
-  id: ID
-  stringField: String
-}
-
 type Query {
   test: TestResolverDTO!
 }
