@@ -25,6 +25,5 @@
       "@ptc-org/nestjs-query-typegoose": ["packages/query-typegoose/src/index.ts"],
       "@ptc-org/nestjs-query-typeorm": ["packages/query-typeorm/src/index.ts"]
     }
-  },
-  "files": []
+  }
 }

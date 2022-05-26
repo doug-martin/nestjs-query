@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "eslint --cache --ext=.ts .",
+    "lint": "nx run-many --target=lint --all",
     "lint:fix": "eslint --fix --ext=.ts .",
     "lint:no-cache": "eslint --ext=.ts .",
     "prepare": "husky install",
