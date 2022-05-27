@@ -14,5 +14,4 @@ import { typeormOrmConfig, formatGraphqlError } from '../../helpers';
     TodoItemModule
   ]
 })
-export class AppModule {
-}
+export class AppModule {}

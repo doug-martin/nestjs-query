@@ -17,5 +17,4 @@ import { TodoItemEntity } from './todo-item.entity';
     })
   ]
 })
-export class TodoItemModule {
-}
+export class TodoItemModule {}

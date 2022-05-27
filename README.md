@@ -34,7 +34,15 @@ Nestjs-query is composed of multiple packages
 
 * [`@nestjs-query/core`](https://github.com/tripss/nestjs-query/tree/master/packages/core) - Defines all interfaces and utility types implemented by the other packages.
 * [`@nestjs-query/query-graphql`](https://github.com/tripss/nestjs-query/tree/master/packages/query-graphql) - Package that provides the graphql resolver and decorators for crud endpoints.
+* [`@nestjs-query/query-mongoose`](https://github.com/tripss/nestjs-query/tree/master/packages/query-typeorm) - Package that implements a Mongoose service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
+* [`@nestjs-query/query-sequelize`](https://github.com/tripss/nestjs-query/tree/master/packages/query-sequelize) - Package that implements a Sequelize service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
+* [`@nestjs-query/query-typegoose`](https://github.com/tripss/nestjs-query/tree/master/packages/query-typegoose) - Package that implements a Typegoos service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
 * [`@nestjs-query/query-typeorm`](https://github.com/tripss/nestjs-query/tree/master/packages/query-typeorm) - Package that implements a Typeorm service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
 * [`@nestjs-query/query-sequelize`](https://github.com/tripss/nestjs-query/tree/master/packages/query-sequelize) - Package that implements a Sequelize service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
 
 
+
+
+## Collaboration
+
+If you have questions or [issues](https://github.com/TriPSs/nestjs-query/issues), please [open an issue](https://github.com/TriPSs/nestjs-query/issues/new)!
