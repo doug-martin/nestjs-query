@@ -95,10 +95,7 @@ export class ComparisonBuilder<Entity extends Document> {
     return val !== null && typeof val === 'object' && 'lower' in val && 'upper' in val;
   }
 
-  private likeComparison<F extends keyof Entity>(
-    cmp: string,
-    val: EntityComparisonField<Entity, F>
-  ): FilterQuery<RegExp> {
+  private likeComparison<F extends keyof Entity>(cmp: string, val: EntityComparisonField<Entity, F>): FilterQuery<RegExp> {
     const regExpStr = escapeRegExp(`${String(val)}`).replace(/%/g, '.*');
     const regExp = new RegExp(regExpStr, cmp.includes('ilike') ? 'i' : undefined);
 

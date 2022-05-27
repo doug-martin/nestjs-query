@@ -78,9 +78,7 @@ describe('TodoItemResolver (filters - e2e)', () => {
           });
           expect(edges).toHaveLength(1);
 
-          expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null }
-          ]);
+          expect(edges.map((e) => e.node)).toEqual([{ id: '1', title: 'Create Nest App', completed: true, description: null }]);
         }));
 
     it(`should not accepted empty "completed" filter`, () =>
@@ -98,9 +96,7 @@ describe('TodoItemResolver (filters - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors[0].extensions.response.message[0]).toBe(
-            'filter.There was no filter provided for "completed"!'
-          );
+          expect(body.errors[0].extensions.response.message[0]).toBe('filter.There was no filter provided for "completed"!');
         }));
   });
 

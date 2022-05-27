@@ -4,18 +4,14 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthorizationContext, OperationGroup } from '../auth';
 import { AuthorizerContext } from '../interceptors';
 
-type PartialAuthorizationContext = Partial<AuthorizationContext> &
-  Pick<AuthorizationContext, 'operationGroup' | 'many'>;
+type PartialAuthorizationContext = Partial<AuthorizationContext> & Pick<AuthorizationContext, 'operationGroup' | 'many'>;
 
 function getContext<C>(executionContext: ExecutionContext): C {
   const gqlExecutionContext = GqlExecutionContext.create(executionContext);
   return gqlExecutionContext.getContext<C>();
 }
 
-function getAuthorizerFilter<C extends AuthorizerContext<unknown>>(
-  context: C,
-  authorizationContext: AuthorizationContext
-) {
+function getAuthorizerFilter<C extends AuthorizerContext<unknown>>(context: C, authorizationContext: AuthorizationContext) {
   if (!context.authorizer) {
     return undefined;
   }
@@ -49,8 +45,7 @@ function getAuthorizationContext(
   return {
     operationName: methodName.toString(),
     readonly:
-      partialAuthContext.operationGroup === OperationGroup.READ ||
-      partialAuthContext.operationGroup === OperationGroup.AGGREGATE,
+      partialAuthContext.operationGroup === OperationGroup.READ || partialAuthContext.operationGroup === OperationGroup.AGGREGATE,
     ...partialAuthContext
   };
 }

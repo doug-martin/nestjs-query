@@ -63,11 +63,7 @@ export type VirtualReferenceOptions = {
 
 export function isVirtualReferenceOptions(options: unknown): options is VirtualReferenceOptions {
   return (
-    typeof options === 'object' &&
-    options !== null &&
-    'ref' in options &&
-    'localField' in options &&
-    'foreignField' in options
+    typeof options === 'object' && options !== null && 'ref' in options && 'localField' in options && 'foreignField' in options
   );
 }
 

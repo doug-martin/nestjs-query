@@ -168,10 +168,7 @@ export class SQLComparisonBuilder<Entity> {
     throw new Error(`Invalid value for between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
   }
 
-  private notBetweenComparisonSQL<F extends keyof Entity>(
-    col: string,
-    val: EntityComparisonField<Entity, F>
-  ): CmpSQLType {
+  private notBetweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): CmpSQLType {
     if (this.isBetweenVal(val)) {
       const { paramName: lowerParamName } = this;
       const { paramName: upperParamName } = this;

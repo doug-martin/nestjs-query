@@ -11,13 +11,7 @@ import {
   Relation,
   UnPagedRelation
 } from '@ptc-org/nestjs-query-graphql';
-import {
-  generateSchema,
-  createResolverFromNest,
-  TestResolverDTO,
-  TestService,
-  TestRelationDTO
-} from '../../__fixtures__';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestService, TestRelationDTO } from '../../__fixtures__';
 
 describe('FederationResolver', () => {
   const generateSDL = <DTO extends TestResolverDTO>(DTOClass: Class<DTO>): Promise<string> => {

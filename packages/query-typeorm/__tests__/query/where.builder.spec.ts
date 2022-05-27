@@ -34,12 +34,7 @@ describe('WhereBuilder', (): void => {
   describe('and', (): void => {
     it('and multiple expressions together', (): void => {
       expectSQLSnapshot({
-        and: [
-          { numberType: { gt: 10 } },
-          { numberType: { lt: 20 } },
-          { numberType: { gte: 30 } },
-          { numberType: { lte: 40 } }
-        ]
+        and: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }, { numberType: { gte: 30 } }, { numberType: { lte: 40 } }]
       });
     });
 
@@ -69,12 +64,7 @@ describe('WhereBuilder', (): void => {
   describe('or', (): void => {
     it('or multiple expressions together', (): void => {
       expectSQLSnapshot({
-        or: [
-          { numberType: { gt: 10 } },
-          { numberType: { lt: 20 } },
-          { numberType: { gte: 30 } },
-          { numberType: { lte: 40 } }
-        ]
+        or: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }, { numberType: { gte: 30 } }, { numberType: { lte: 40 } }]
       });
     });
 

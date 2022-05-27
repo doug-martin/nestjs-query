@@ -4,10 +4,9 @@ import { truncate } from './sequelize.fixture';
 import { TestRelation } from './test-relation.entity';
 import { TestEntity } from './test.entity';
 
-export const PLAIN_TEST_ENTITIES: Pick<
-  TestEntity,
-  'testEntityPk' | 'boolType' | 'dateType' | 'numberType' | 'stringType'
->[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
+export const PLAIN_TEST_ENTITIES: Pick<TestEntity, 'testEntityPk' | 'boolType' | 'dateType' | 'numberType' | 'stringType'>[] = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+].map((i) => {
   const testEntityPk = `test-entity-${i}`;
   return {
     testEntityPk,

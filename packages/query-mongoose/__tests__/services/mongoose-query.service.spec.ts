@@ -424,9 +424,7 @@ describe('MongooseQueryService', () => {
 
     it('should reject if the entities already exist', async () => {
       const queryService = moduleRef.get(TestEntityService);
-      return expect(queryService.createMany(TEST_ENTITIES)).rejects.toThrow(
-        'Id cannot be specified when updating or creating'
-      );
+      return expect(queryService.createMany(TEST_ENTITIES)).rejects.toThrow('Id cannot be specified when updating or creating');
     });
   });
 
@@ -448,9 +446,7 @@ describe('MongooseQueryService', () => {
     it('should reject if the entity contains an id', async () => {
       const entity = TEST_ENTITIES[0];
       const queryService = moduleRef.get(TestEntityService);
-      return expect(queryService.createOne({ ...entity })).rejects.toThrow(
-        'Id cannot be specified when updating or creating'
-      );
+      return expect(queryService.createOne({ ...entity })).rejects.toThrow('Id cannot be specified when updating or creating');
     });
   });
 
@@ -550,9 +546,9 @@ describe('MongooseQueryService', () => {
 
     it('should reject if the update contains the ID', async () => {
       const queryService = moduleRef.get(TestEntityService);
-      return expect(
-        queryService.updateOne(TEST_ENTITIES[0]._id, { id: new Types.ObjectId().toHexString() })
-      ).rejects.toThrow('Id cannot be specified when updating');
+      return expect(queryService.updateOne(TEST_ENTITIES[0]._id, { id: new Types.ObjectId().toHexString() })).rejects.toThrow(
+        'Id cannot be specified when updating'
+      );
     });
 
     it('call fail if the entity is not found', async () => {
@@ -749,42 +745,27 @@ describe('MongooseQueryService', () => {
     describe('with virtual entity', () => {
       it('call select and return the result', async () => {
         const queryService = moduleRef.get(TestEntityService);
-        const queryResult = await queryService.queryRelations(
-          TestReference,
-          'virtualTestReferences',
-          TEST_ENTITIES[0],
-          {
-            filter: { referenceName: { isNot: null } }
-          }
-        );
+        const queryResult = await queryService.queryRelations(TestReference, 'virtualTestReferences', TEST_ENTITIES[0], {
+          filter: { referenceName: { isNot: null } }
+        });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_REFERENCES.slice(0, 3)));
       });
 
       it('should apply a filter', async () => {
         const queryService = moduleRef.get(TestEntityService);
-        const queryResult = await queryService.queryRelations(
-          TestReference,
-          'virtualTestReferences',
-          TEST_ENTITIES[0],
-          {
-            filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } }
-          }
-        );
+        const queryResult = await queryService.queryRelations(TestReference, 'virtualTestReferences', TEST_ENTITIES[0], {
+          filter: { referenceName: { eq: TEST_REFERENCES[1].referenceName } }
+        });
         expect(convertDocuments(queryResult)).toEqual([TEST_REFERENCES[1]]);
       });
 
       it('should apply paging', async () => {
         const queryService = moduleRef.get(TestEntityService);
-        const queryResult = await queryService.queryRelations(
-          TestReference,
-          'virtualTestReferences',
-          TEST_ENTITIES[0],
-          {
-            paging: { limit: 2, offset: 1 },
-            sorting: [{ field: 'referenceName', direction: SortDirection.ASC }]
-          }
-        );
+        const queryResult = await queryService.queryRelations(TestReference, 'virtualTestReferences', TEST_ENTITIES[0], {
+          paging: { limit: 2, offset: 1 },
+          sorting: [{ field: 'referenceName', direction: SortDirection.ASC }]
+        });
         expect(convertDocuments(queryResult)).toEqual(TEST_REFERENCES.slice(1, 3));
       });
     });

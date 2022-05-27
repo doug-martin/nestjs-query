@@ -50,6 +50,5 @@ function createTypegooseQueryServiceProvider<Entity extends Base>(
   };
 }
 
-export const createTypegooseQueryServiceProviders = (
-  models: (TypegooseClass | TypegooseClassWithOptions)[]
-): FactoryProvider[] => models.map((model) => createTypegooseQueryServiceProvider(model));
+export const createTypegooseQueryServiceProviders = (models: (TypegooseClass | TypegooseClassWithOptions)[]): FactoryProvider[] =>
+  models.map((model) => createTypegooseQueryServiceProvider(model));

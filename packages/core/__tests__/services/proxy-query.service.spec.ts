@@ -122,9 +122,7 @@ describe('ProxyQueryService', () => {
     const aggQuery: AggregateQuery<TestType> = { count: ['foo'] };
     const result = new Map([[{ foo: 'bar' }, [{ count: { foo: 1 } }]]]);
     when(mockQueryService.aggregateRelations(TestType, relationName, dtos, filter, aggQuery)).thenResolve(result);
-    return expect(queryService.aggregateRelations(TestType, relationName, dtos, filter, aggQuery)).resolves.toBe(
-      result
-    );
+    return expect(queryService.aggregateRelations(TestType, relationName, dtos, filter, aggQuery)).resolves.toBe(result);
   });
 
   it('should proxy to the underlying service when calling countRelations with one dto', () => {

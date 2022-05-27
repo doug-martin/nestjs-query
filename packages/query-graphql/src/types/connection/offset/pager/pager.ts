@@ -15,11 +15,7 @@ const DEFAULT_PAGING_META = <DTO>(query: Query<DTO>): OffsetPagingMeta<DTO> => (
 });
 
 export class OffsetPager<DTO> implements Pager<DTO, OffsetPagerResult<DTO>> {
-  async page<Q extends Query<DTO>>(
-    queryMany: QueryMany<DTO, Q>,
-    query: Q,
-    count: Count<DTO>
-  ): Promise<OffsetPagerResult<DTO>> {
+  async page<Q extends Query<DTO>>(queryMany: QueryMany<DTO, Q>, query: Q, count: Count<DTO>): Promise<OffsetPagerResult<DTO>> {
     const pagingMeta = this.getPageMeta(query);
     if (!this.isValidPaging(pagingMeta)) {
       return EMPTY_PAGING_RESULTS();

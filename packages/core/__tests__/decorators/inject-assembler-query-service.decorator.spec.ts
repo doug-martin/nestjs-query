@@ -1,11 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { Injectable } from '@nestjs/common';
-import {
-  QueryService,
-  InjectAssemblerQueryService,
-  DefaultAssembler,
-  NoOpQueryService
-} from '@ptc-org/nestjs-query-core';
+import { QueryService, InjectAssemblerQueryService, DefaultAssembler, NoOpQueryService } from '@ptc-org/nestjs-query-core';
 import { getAssemblerQueryServiceToken } from '../../src/decorators/helpers';
 
 describe('@InjectAssemblerQueryService', () => {

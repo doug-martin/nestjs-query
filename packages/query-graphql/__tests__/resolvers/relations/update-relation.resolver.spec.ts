@@ -2,13 +2,7 @@ import { when, deepEqual } from 'ts-mockito';
 import { Resolver, Query } from '@nestjs/graphql';
 import { RelationsOpts, UpdateRelationsResolver } from '../../../src/resolvers/relations';
 import { RelationInputType, RelationsInputType } from '../../../src/types';
-import {
-  generateSchema,
-  createResolverFromNest,
-  TestResolverDTO,
-  TestService,
-  TestRelationDTO
-} from '../../__fixtures__';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestService, TestRelationDTO } from '../../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends UpdateRelationsResolver(TestResolverDTO, {
@@ -100,9 +94,7 @@ describe('UpdateRelationsResolver', () => {
           id: 'record-id',
           stringField: 'foo'
         };
-        when(mockService.addRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-          output
-        );
+        when(mockService.addRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(output);
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.addRelationsToTestResolverDTO({ input });
@@ -138,9 +130,7 @@ describe('UpdateRelationsResolver', () => {
           id: 'record-id',
           stringField: 'foo'
         };
-        when(mockService.setRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-          output
-        );
+        when(mockService.setRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(output);
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.setRelationsOnTestResolverDTO({ input });
@@ -157,9 +147,7 @@ describe('UpdateRelationsResolver', () => {
           id: 'record-id',
           stringField: 'foo'
         };
-        when(mockService.setRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-          output
-        );
+        when(mockService.setRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(output);
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.setRelationsOnTestResolverDTO({ input });

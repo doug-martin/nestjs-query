@@ -911,9 +911,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.'
-          );
+          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.');
         }));
 
     it('should validate an update', () =>
@@ -1153,9 +1151,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.'
-          );
+          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.');
         }));
   });
 
@@ -1279,8 +1275,7 @@ describe('TodoItemResolver (typeorm - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> =
-            body.data.addSubTasksToTodoItem.subTasks;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
           expect(body.data.addSubTasksToTodoItem.id).toBe('1');
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',

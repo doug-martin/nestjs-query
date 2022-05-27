@@ -11,10 +11,8 @@ describe('FilterQueryBuilder', (): void => {
   beforeEach(createTestConnection);
   afterEach(closeTestConnection);
 
-  const getEntityQueryBuilder = <Entity>(
-    entity: Class<Entity>,
-    whereBuilder: WhereBuilder<Entity>
-  ): FilterQueryBuilder<Entity> => new FilterQueryBuilder(getTestConnection().getRepository(entity), whereBuilder);
+  const getEntityQueryBuilder = <Entity>(entity: Class<Entity>, whereBuilder: WhereBuilder<Entity>): FilterQueryBuilder<Entity> =>
+    new FilterQueryBuilder(getTestConnection().getRepository(entity), whereBuilder);
 
   const expectSQLSnapshot = <Entity>(query: QueryBuilder<Entity>): void => {
     const [sql, params] = query.getQueryAndParameters();
@@ -136,10 +134,7 @@ describe('FilterQueryBuilder', (): void => {
     describe('with sorting', () => {
       it('should apply ASC sorting', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
-        expectSelectSQLSnapshot(
-          { sorting: [{ field: 'numberType', direction: SortDirection.ASC }] },
-          instance(mockWhereBuilder)
-        );
+        expectSelectSQLSnapshot({ sorting: [{ field: 'numberType', direction: SortDirection.ASC }] }, instance(mockWhereBuilder));
         verify(mockWhereBuilder.build(anything(), anything(), {}, 'TestEntity')).never();
       });
 
@@ -215,8 +210,8 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall(
-          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`)
+        when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall((where: WhereExpression) =>
+          where.andWhere(`stringType = 'foo'`)
         );
         expectUpdateSQLSnapshot(query, instance(mockWhereBuilder));
       });
@@ -232,10 +227,7 @@ describe('FilterQueryBuilder', (): void => {
     describe('with sorting', () => {
       it('should apply ASC sorting', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
-        expectUpdateSQLSnapshot(
-          { sorting: [{ field: 'numberType', direction: SortDirection.ASC }] },
-          instance(mockWhereBuilder)
-        );
+        expectUpdateSQLSnapshot({ sorting: [{ field: 'numberType', direction: SortDirection.ASC }] }, instance(mockWhereBuilder));
         verify(mockWhereBuilder.build(anything(), anything(), anything())).never();
       });
 
@@ -312,8 +304,8 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall(
-          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`)
+        when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall((where: WhereExpression) =>
+          where.andWhere(`stringType = 'foo'`)
         );
         expectDeleteSQLSnapshot(query, instance(mockWhereBuilder));
       });
@@ -358,8 +350,8 @@ describe('FilterQueryBuilder', (): void => {
       it('should call whereBuilder#build if there is a filter', () => {
         const mockWhereBuilder = mock<WhereBuilder<TestSoftDeleteEntity>>(WhereBuilder);
         const query = { filter: { stringType: { eq: 'foo' } } };
-        when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall(
-          (where: WhereExpression) => where.andWhere(`stringType = 'foo'`)
+        when(mockWhereBuilder.build(anything(), query.filter, deepEqual({}), undefined)).thenCall((where: WhereExpression) =>
+          where.andWhere(`stringType = 'foo'`)
         );
         expectSoftDeleteSQLSnapshot(query, instance(mockWhereBuilder));
       });

@@ -409,10 +409,7 @@ describe('SequelizeQueryService', (): void => {
       });
 
       it('should return an empty array if no results are found.', async () => {
-        const entities: TestEntity[] = [
-          PLAIN_TEST_ENTITIES[0] as TestEntity,
-          { testEntityPk: 'does-not-exist' } as TestEntity
-        ];
+        const entities: TestEntity[] = [PLAIN_TEST_ENTITIES[0] as TestEntity, { testEntityPk: 'does-not-exist' } as TestEntity];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', entities, {
           filter: { relationName: { isNot: null } }
@@ -634,10 +631,7 @@ describe('SequelizeQueryService', (): void => {
       });
 
       it('should return an empty array if no results are found.', async () => {
-        const entities: TestEntity[] = [
-          PLAIN_TEST_ENTITIES[0] as TestEntity,
-          { testEntityPk: 'does-not-exist' } as TestEntity
-        ];
+        const entities: TestEntity[] = [PLAIN_TEST_ENTITIES[0] as TestEntity, { testEntityPk: 'does-not-exist' } as TestEntity];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.aggregateRelations(
           TestRelation,
@@ -807,10 +801,7 @@ describe('SequelizeQueryService', (): void => {
       });
 
       it('should return undefined select if no results are found.', async () => {
-        const entities: TestEntity[] = [
-          PLAIN_TEST_ENTITIES[0] as TestEntity,
-          { testEntityPk: 'does-not-exist' } as TestEntity
-        ];
+        const entities: TestEntity[] = [PLAIN_TEST_ENTITIES[0] as TestEntity, { testEntityPk: 'does-not-exist' } as TestEntity];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities);
 
@@ -962,14 +953,9 @@ describe('SequelizeQueryService', (): void => {
         const entity = PLAIN_TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         return expect(
-          queryService.setRelation<TestRelation>(
-            'oneTestRelation',
-            entity.testEntityPk,
-            PLAIN_TEST_RELATIONS[1].testRelationPk,
-            {
-              relationFilter: { relationName: { like: '%-one' } }
-            }
-          )
+          queryService.setRelation<TestRelation>('oneTestRelation', entity.testEntityPk, PLAIN_TEST_RELATIONS[1].testRelationPk, {
+            relationFilter: { relationName: { like: '%-one' } }
+          })
         ).rejects.toThrow('Unable to find oneTestRelation to set on TestEntity');
       });
     });
@@ -1054,14 +1040,9 @@ describe('SequelizeQueryService', (): void => {
           const entity = PLAIN_TEST_ENTITIES[0];
           const queryService = moduleRef.get(TestEntityService);
           return expect(
-            queryService.removeRelation(
-              'oneTestRelation',
-              entity.testEntityPk,
-              PLAIN_TEST_RELATIONS[1].testRelationPk,
-              {
-                filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
-              }
-            )
+            queryService.removeRelation('oneTestRelation', entity.testEntityPk, PLAIN_TEST_RELATIONS[1].testRelationPk, {
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+            })
           ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
         });
 
@@ -1355,9 +1336,9 @@ describe('SequelizeQueryService', (): void => {
 
     it('should reject if the update contains a primary key', async () => {
       const queryService = moduleRef.get(TestEntityService);
-      return expect(
-        queryService.updateOne(PLAIN_TEST_ENTITIES[0].testEntityPk, { testEntityPk: 'bad-id' })
-      ).rejects.toThrow('Id cannot be specified when updating');
+      return expect(queryService.updateOne(PLAIN_TEST_ENTITIES[0].testEntityPk, { testEntityPk: 'bad-id' })).rejects.toThrow(
+        'Id cannot be specified when updating'
+      );
     });
 
     it('call fail if the entity is not found', async () => {

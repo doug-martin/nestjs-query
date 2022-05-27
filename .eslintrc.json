@@ -42,7 +42,6 @@
       "rules": {
         // airbnb default is 1
         "max-classes-per-file": ["error", 5],
-        "max-len": ["error", { "code": 130 }],
         // never allow default export
         "import/prefer-default-export": "off",
         // never allow default export

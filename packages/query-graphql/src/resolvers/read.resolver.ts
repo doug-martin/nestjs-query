@@ -12,13 +12,7 @@ import {
   InferConnectionTypeFromStrategy
 } from '../types';
 import { CursorQueryArgsTypeOpts, QueryType, StaticQueryType } from '../types/query';
-import {
-  BaseServiceResolver,
-  ExtractPagingStrategy,
-  ResolverClass,
-  ResolverOpts,
-  ServiceResolver
-} from './resolver.interface';
+import { BaseServiceResolver, ExtractPagingStrategy, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
 import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
 import { HookTypes } from '../hooks';
 import { OperationGroup } from '../auth';

@@ -6,10 +6,7 @@ import { WhereBuilder } from '../../src/query';
 describe('WhereBuilder', (): void => {
   const createWhereBuilder = () => new WhereBuilder<TestEntity>(getModelForClass(TestEntity));
 
-  const expectFilterQuery = (
-    filter: Filter<TestEntity>,
-    expectedFilterQuery: mongoose.FilterQuery<TestEntity>
-  ): void => {
+  const expectFilterQuery = (filter: Filter<TestEntity>, expectedFilterQuery: mongoose.FilterQuery<TestEntity>): void => {
     const actual = createWhereBuilder().build(filter);
     expect(actual).toEqual(expectedFilterQuery);
   };
@@ -59,12 +56,7 @@ describe('WhereBuilder', (): void => {
     it('and multiple expressions together', (): void => {
       expectFilterQuery(
         {
-          and: [
-            { numberType: { gt: 10 } },
-            { numberType: { lt: 20 } },
-            { numberType: { gte: 30 } },
-            { numberType: { lte: 40 } }
-          ]
+          and: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }, { numberType: { gte: 30 } }, { numberType: { lte: 40 } }]
         },
         {
           $and: [
@@ -120,12 +112,7 @@ describe('WhereBuilder', (): void => {
     it('or multiple expressions together', (): void => {
       expectFilterQuery(
         {
-          or: [
-            { numberType: { gt: 10 } },
-            { numberType: { lt: 20 } },
-            { numberType: { gte: 30 } },
-            { numberType: { lte: 40 } }
-          ]
+          or: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }, { numberType: { gte: 30 } }, { numberType: { lte: 40 } }]
         },
         {
           $or: [

@@ -2,13 +2,7 @@ import { when, deepEqual } from 'ts-mockito';
 import { Resolver, Query } from '@nestjs/graphql';
 import { RelationsOpts, RemoveRelationsResolver } from '../../../src/resolvers/relations';
 import { RelationInputType, RelationsInputType } from '../../../src/types';
-import {
-  generateSchema,
-  createResolverFromNest,
-  TestResolverDTO,
-  TestService,
-  TestRelationDTO
-} from '../../__fixtures__';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestService, TestRelationDTO } from '../../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends RemoveRelationsResolver(TestResolverDTO, {
@@ -98,9 +92,7 @@ describe('RemoveRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo'
       };
-      when(mockService.removeRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-        output
-      );
+      when(mockService.removeRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(output);
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeRelationsFromTestResolverDTO({ input });
@@ -117,9 +109,7 @@ describe('RemoveRelationsResolver', () => {
         id: 'record-id',
         stringField: 'foo'
       };
-      when(mockService.removeRelations('others', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-        output
-      );
+      when(mockService.removeRelations('others', input.id, deepEqual(input.relationIds), undefined)).thenResolve(output);
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.removeCustomsFromTestResolverDTO({ input });

@@ -1,12 +1,6 @@
 import { Resolver, Query } from '@nestjs/graphql';
 import { ReferencesOpts, ReferencesRelationsResolver } from '../../../src/resolvers/relations';
-import {
-  generateSchema,
-  createResolverFromNest,
-  TestResolverDTO,
-  TestService,
-  TestRelationDTO
-} from '../../__fixtures__';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestService, TestRelationDTO } from '../../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends ReferencesRelationsResolver(TestResolverDTO, {

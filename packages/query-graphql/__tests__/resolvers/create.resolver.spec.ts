@@ -12,13 +12,7 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import { CreatedEvent } from '../../src/resolvers/create.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
-import {
-  generateSchema,
-  createResolverFromNest,
-  TestResolverDTO,
-  TestResolverInputDTO,
-  TestService
-} from '../__fixtures__';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestResolverInputDTO, TestService } from '../__fixtures__';
 
 describe('CreateResolver', () => {
   const expectResolverSDL = async (opts?: CreateResolverOpts<TestResolverDTO>) => {
@@ -118,8 +112,7 @@ describe('CreateResolver', () => {
   });
 
   describe('created subscription', () => {
-    it('should add subscription types if enableSubscriptions is true', () =>
-      expectResolverSDL({ enableSubscriptions: true }));
+    it('should add subscription types if enableSubscriptions is true', () => expectResolverSDL({ enableSubscriptions: true }));
 
     it('should not expose subscriptions if enableSubscriptions is false', () =>
       expectResolverSDL({ enableSubscriptions: false }));

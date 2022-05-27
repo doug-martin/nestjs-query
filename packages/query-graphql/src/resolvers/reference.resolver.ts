@@ -36,10 +36,7 @@ export const Referenceable =
     return ResolveReferenceResolverBase;
   };
 
-export const ReferenceResolver = <
-  DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
->(
+export const ReferenceResolver = <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
   DTOClass: Class<DTO>,
   opts: ReferenceResolverOpts = {}
 ): ResolverClass<DTO, QS, ServiceResolver<DTO, QS>> => Referenceable<DTO, QS>(DTOClass, opts)(BaseServiceResolver);

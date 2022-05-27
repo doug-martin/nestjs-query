@@ -24,10 +24,7 @@ export interface TypegooseQueryServiceOpts {
   toObjectOptions?: mongoose.ToObjectOptions;
 }
 
-export class TypegooseQueryService<Entity extends Base>
-  extends ReferenceQueryService<Entity>
-  implements QueryService<Entity>
-{
+export class TypegooseQueryService<Entity extends Base> extends ReferenceQueryService<Entity> implements QueryService<Entity> {
   constructor(
     readonly Model: ReturnModelType<new () => Entity>,
     readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model)
@@ -54,10 +51,7 @@ export class TypegooseQueryService<Entity extends Base>
     return entities;
   }
 
-  async aggregate(
-    filter: Filter<Entity>,
-    aggregateQuery: AggregateQuery<Entity>
-  ): Promise<AggregateResponse<Entity>[]> {
+  async aggregate(filter: Filter<Entity>, aggregateQuery: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>[]> {
     const { aggregate, filterQuery, options } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter);
     const aggPipeline: PipelineStage[] = [{ $match: filterQuery }, { $group: aggregate }];
     if (options.sort) {
@@ -157,11 +151,7 @@ export class TypegooseQueryService<Entity extends Base>
    * @param update - A `Partial` of the entity with fields to update.
    * @param opts - Additional options
    */
-  async updateOne(
-    id: string,
-    update: DeepPartial<Entity>,
-    opts?: UpdateOneOptions<Entity>
-  ): Promise<DocumentType<Entity>> {
+  async updateOne(id: string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<DocumentType<Entity>> {
     this.ensureIdIsNotPresent(update);
     const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
     const doc = await this.Model.findOneAndUpdate(filterQuery, this.getUpdateQuery(update as DocumentType<Entity>), {
@@ -260,10 +250,7 @@ export class TypegooseQueryService<Entity extends Base>
     } as UpdateArrayQuery<Entity>;
 
     Object.keys(entity).forEach((key) => {
-      if (
-        this.Model.schema.path(key) instanceof mongoose.Schema.Types.Array &&
-        typeof entity[key as keyof Entity] === 'object'
-      ) {
+      if (this.Model.schema.path(key) instanceof mongoose.Schema.Types.Array && typeof entity[key as keyof Entity] === 'object') {
         // Converting the type of the object as it has the custom array input type.
         const convert = entity[key as keyof Entity] as unknown as { push: Entity[]; pull: Entity[] };
 

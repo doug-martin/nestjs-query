@@ -44,7 +44,5 @@ export const BeforeDeleteMany = hookDecorator<BeforeDeleteManyHook<any>>(HookTyp
 export const BeforeQueryMany = hookDecorator<BeforeQueryManyHook<any>>(HookTypes.BEFORE_QUERY_MANY);
 export const BeforeFindOne = hookDecorator<BeforeFindOneHook>(HookTypes.BEFORE_FIND_ONE);
 
-export const getHookForType = <H extends Hook<unknown>>(
-  hookType: HookTypes,
-  DTOClass: Class<unknown>
-): HookMetaValue<H> => getClassMetadata(DTOClass, hookMetaDataKey(hookType), true);
+export const getHookForType = <H extends Hook<unknown>>(hookType: HookTypes, DTOClass: Class<unknown>): HookMetaValue<H> =>
+  getClassMetadata(DTOClass, hookMetaDataKey(hookType), true);

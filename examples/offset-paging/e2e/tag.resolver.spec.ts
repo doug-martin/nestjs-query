@@ -569,8 +569,7 @@ describe('TagResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { id, todoItems }: { id: string; todoItems: OffsetConnectionType<TodoItemDTO> } =
-            body.data.addTodoItemsToTag;
+          const { id, todoItems }: { id: string; todoItems: OffsetConnectionType<TodoItemDTO> } = body.data.addTodoItemsToTag;
           expect(id).toBe('1');
           expect(todoItems.nodes).toHaveLength(5);
           expect(todoItems.nodes.map((e) => e.title).sort()).toEqual([

@@ -17,12 +17,7 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  build<Where extends WhereExpression>(
-    where: Where,
-    filter: Filter<Entity>,
-    relationNames: NestedRecord,
-    alias?: string
-  ): Where {
+  build<Where extends WhereExpression>(where: Where, filter: Filter<Entity>, relationNames: NestedRecord, alias?: string): Where {
     const { and, or } = filter;
     if (and && and.length) {
       this.filterAnd(where, and, relationNames, alias);

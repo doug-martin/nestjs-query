@@ -222,10 +222,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     return qb;
   }
 
-  private applyAssociationIncludes<Opts extends FindOptions | CountOptions>(
-    findOpts: Opts,
-    filter?: Filter<Entity>
-  ): Opts {
+  private applyAssociationIncludes<Opts extends FindOptions | CountOptions>(findOpts: Opts, filter?: Filter<Entity>): Opts {
     if (!filter) {
       return findOpts;
     }
@@ -242,10 +239,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     const { relationNames } = this;
     const referencedFields = getFilterFields(filter);
     const referencedRelations = referencedFields.filter((f) => relationNames.includes(f));
-    return referencedRelations.reduce(
-      (map, r) => map.set(r, this.model.associations[r]),
-      new Map<string, Association>()
-    );
+    return referencedRelations.reduce((map, r) => map.set(r, this.model.associations[r]), new Map<string, Association>());
   }
 
   private get relationNames(): string[] {

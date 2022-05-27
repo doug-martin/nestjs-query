@@ -14,9 +14,7 @@ export const TEST_ENTITIES: DocumentType<TestEntity>[] = [1, 2, 3, 4, 5, 6, 7, 8
     } as DocumentType<TestEntity>)
 );
 
-export const TEST_DISCRIMINATED_ENTITIES: DocumentType<TestDiscriminatedEntity>[] = [
-  11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-].map(
+export const TEST_DISCRIMINATED_ENTITIES: DocumentType<TestDiscriminatedEntity>[] = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(
   (i) =>
     ({
       boolType: i % 2 === 0,

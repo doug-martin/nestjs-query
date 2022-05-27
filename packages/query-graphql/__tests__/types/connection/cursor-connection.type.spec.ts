@@ -2,12 +2,7 @@
 import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { SortDirection } from '@ptc-org/nestjs-query-core';
-import {
-  CursorConnectionType,
-  CursorPagingType,
-  PagingStrategies,
-  StaticConnectionType
-} from '@ptc-org/nestjs-query-graphql';
+import { CursorConnectionType, CursorPagingType, PagingStrategies, StaticConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../../__fixtures__';
 import { KeySet } from '../../../src/decorators';
 import { getOrCreateCursorConnectionType } from '../../../src/types/connection';
@@ -32,8 +27,7 @@ describe('CursorConnectionType', (): void => {
     stringField!: string;
   }
 
-  const createPage = (paging: CursorPagingType): CursorPagingType =>
-    plainToClass(getOrCreateCursorPagingType(), paging);
+  const createPage = (paging: CursorPagingType): CursorPagingType => plainToClass(getOrCreateCursorPagingType(), paging);
 
   const createTestDTO = (index: number): TestDto => ({
     stringField: `foo${index}`,
@@ -313,8 +307,7 @@ describe('CursorConnectionType', (): void => {
               }
             ],
             pageInfo: {
-              startCursor:
-                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28xIn1dfQ==',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28xIn1dfQ==',
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
               hasNextPage: false,
               hasPreviousPage: false
@@ -346,8 +339,7 @@ describe('CursorConnectionType', (): void => {
               }
             ],
             pageInfo: {
-              startCursor:
-                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28xIn1dfQ==',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28xIn1dfQ==',
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
               hasNextPage: true,
               hasPreviousPage: false
@@ -384,8 +376,7 @@ describe('CursorConnectionType', (): void => {
               }
             ],
             pageInfo: {
-              startCursor:
-                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
               hasNextPage: true,
               hasPreviousPage: true
@@ -415,21 +406,17 @@ describe('CursorConnectionType', (): void => {
             expect(response).toEqual({
               edges: [
                 {
-                  cursor:
-                    'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
+                  cursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
                   node: dtos[0]
                 },
                 {
-                  cursor:
-                    'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
+                  cursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
                   node: dtos[1]
                 }
               ],
               pageInfo: {
-                startCursor:
-                  'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
-                endCursor:
-                  'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
+                startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
+                endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
                 hasNextPage: true,
                 hasPreviousPage: true
               },
@@ -526,8 +513,7 @@ describe('CursorConnectionType', (): void => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28xIn1dfQ==',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor:
-                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28xIn1dfQ=='
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28xIn1dfQ=='
             },
             totalCountFn: expect.any(Function)
           });
@@ -561,8 +547,7 @@ describe('CursorConnectionType', (): void => {
               }
             ],
             pageInfo: {
-              startCursor:
-                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
               hasNextPage: true,
               hasPreviousPage: true
@@ -592,21 +577,17 @@ describe('CursorConnectionType', (): void => {
             expect(response).toEqual({
               edges: [
                 {
-                  cursor:
-                    'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
+                  cursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
                   node: dtos[1]
                 },
                 {
-                  cursor:
-                    'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
+                  cursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
                   node: dtos[2]
                 }
               ],
               pageInfo: {
-                startCursor:
-                  'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
-                endCursor:
-                  'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
+                startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28yIn1dfQ==',
+                endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6InN0cmluZ0ZpZWxkIiwidmFsdWUiOiJmb28zIn1dfQ==',
                 hasNextPage: true,
                 hasPreviousPage: true
               },

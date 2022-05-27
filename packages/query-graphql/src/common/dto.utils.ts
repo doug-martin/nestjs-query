@@ -32,10 +32,7 @@ export const getDTONames = <DTO>(DTOClass: Class<DTO>, opts?: DTONamesOpts): DTO
   };
 };
 
-export const getDTOIdTypeOrDefault = (
-  DTOS: Class<unknown>[],
-  defaultType: ReturnTypeFuncValue = ID
-): ReturnTypeFuncValue => {
+export const getDTOIdTypeOrDefault = (DTOS: Class<unknown>[], defaultType: ReturnTypeFuncValue = ID): ReturnTypeFuncValue => {
   const dtoWithIDField = DTOS.find((dto) => !!getIDField(dto));
   if (dtoWithIDField) {
     return getIDField(dtoWithIDField)?.returnTypeFunc() ?? defaultType;

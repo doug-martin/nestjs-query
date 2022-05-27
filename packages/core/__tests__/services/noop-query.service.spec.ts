@@ -7,11 +7,7 @@ describe('NoOpQueryService', () => {
     foo!: string;
   }
 
-  const instance: QueryService<TestType> = NoOpQueryService.getInstance<
-    TestType,
-    DeepPartial<TestType>,
-    DeepPartial<TestType>
-  >();
+  const instance: QueryService<TestType> = NoOpQueryService.getInstance<TestType, DeepPartial<TestType>, DeepPartial<TestType>>();
 
   it('should throw a NotImplementedException when calling addRelations', () =>
     expect(instance.addRelations('test', 1, [1, 2, 3])).rejects.toThrow('addRelations is not implemented'));
@@ -47,14 +43,10 @@ describe('NoOpQueryService', () => {
     expect(instance.count({})).rejects.toThrow('count is not implemented'));
 
   it('should throw a NotImplementedException when calling queryRelations', () =>
-    expect(instance.queryRelations(TestType, 'test', new TestType(), {})).rejects.toThrow(
-      'queryRelations is not implemented'
-    ));
+    expect(instance.queryRelations(TestType, 'test', new TestType(), {})).rejects.toThrow('queryRelations is not implemented'));
 
   it('should throw a NotImplementedException when calling countRelations', () =>
-    expect(instance.countRelations(TestType, 'test', new TestType(), {})).rejects.toThrow(
-      'countRelations is not implemented'
-    ));
+    expect(instance.countRelations(TestType, 'test', new TestType(), {})).rejects.toThrow('countRelations is not implemented'));
 
   it('should throw a NotImplementedException when calling removeRelation', () =>
     expect(instance.removeRelation('test', 1, 2)).rejects.toThrow('removeRelation is not implemented'));

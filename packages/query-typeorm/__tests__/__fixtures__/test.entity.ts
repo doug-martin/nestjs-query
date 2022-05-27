@@ -1,14 +1,4 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-  OneToOne,
-  JoinColumn,
-  PrimaryColumn,
-  ManyToOne
-} from 'typeorm';
+import { Column, Entity, OneToMany, ManyToMany, JoinTable, OneToOne, JoinColumn, PrimaryColumn, ManyToOne } from 'typeorm';
 import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestRelation } from './test-relation.entity';
 import { TestSoftDeleteRelation } from './test-soft-delete.relation';

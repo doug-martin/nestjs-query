@@ -62,11 +62,7 @@ export class ComparisonBuilder {
     return (dto?: DTO): boolean => (dto ? dto[field] : null) == val;
   }
 
-  private static rangeComparison<DTO, F extends keyof DTO>(
-    cmp: RangeComparisonOperators,
-    field: F,
-    val: DTO[F]
-  ): FilterFn<DTO> {
+  private static rangeComparison<DTO, F extends keyof DTO>(cmp: RangeComparisonOperators, field: F, val: DTO[F]): FilterFn<DTO> {
     if (cmp === 'gt') {
       return compare((dto) => dto[field] > val, false);
     }
@@ -79,11 +75,7 @@ export class ComparisonBuilder {
     return compare((dto) => dto[field] <= val, false);
   }
 
-  private static likeComparison<DTO, F extends keyof DTO>(
-    cmp: LikeComparisonOperators,
-    field: F,
-    val: string
-  ): FilterFn<DTO> {
+  private static likeComparison<DTO, F extends keyof DTO>(cmp: LikeComparisonOperators, field: F, val: string): FilterFn<DTO> {
     if (cmp === 'like') {
       const likeRegexp = this.likeSearchToRegexp(val);
       return compare((dto) => likeRegexp.test(dto[field] as unknown as string), false);
@@ -100,11 +92,7 @@ export class ComparisonBuilder {
     return compare((dto) => !likeRegexp.test(dto[field] as unknown as string), true);
   }
 
-  private static inComparison<DTO, F extends keyof DTO>(
-    cmp: InComparisonOperators,
-    field: F,
-    val: DTO[F][]
-  ): FilterFn<DTO> {
+  private static inComparison<DTO, F extends keyof DTO>(cmp: InComparisonOperators, field: F, val: DTO[F][]): FilterFn<DTO> {
     if (cmp === 'notIn') {
       return compare((dto) => !val.includes(dto[field]), true);
     }

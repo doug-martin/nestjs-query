@@ -417,9 +417,7 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateOneSubTaskInput.id" of required type "ID!" was not provided.'
-          );
+          expect(body.errors[0].message).toBe('Field "UpdateOneSubTaskInput.id" of required type "ID!" was not provided.');
         }));
 
     it('should validate an update', () =>
@@ -566,9 +564,7 @@ describe('SubTaskResolver (limitOffset - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "DeleteOneSubTaskInput.id" of required type "ID!" was not provided.'
-          );
+          expect(body.errors[0].message).toBe('Field "DeleteOneSubTaskInput.id" of required type "ID!" was not provided.');
         }));
   });
 

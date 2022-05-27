@@ -55,12 +55,7 @@ describe('WhereBuilder', (): void => {
     it('and multiple expressions together', (): void => {
       expectWhereQuery(
         {
-          and: [
-            { numberType: { gt: 10 } },
-            { numberType: { lt: 20 } },
-            { numberType: { gte: 30 } },
-            { numberType: { lte: 40 } }
-          ]
+          and: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }, { numberType: { gte: 30 } }, { numberType: { lte: 40 } }]
         },
         {
           [Op.and]: [
@@ -101,16 +96,10 @@ describe('WhereBuilder', (): void => {
         {
           [Op.and]: [
             {
-              [Op.or]: [
-                { [Op.and]: [{ numberType: { [Op.gt]: 10 } }] },
-                { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] }
-              ]
+              [Op.or]: [{ [Op.and]: [{ numberType: { [Op.gt]: 10 } }] }, { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] }]
             },
             {
-              [Op.or]: [
-                { [Op.and]: [{ numberType: { [Op.gte]: 30 } }] },
-                { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] }
-              ]
+              [Op.or]: [{ [Op.and]: [{ numberType: { [Op.gte]: 30 } }] }, { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] }]
             }
           ]
         }
@@ -122,12 +111,7 @@ describe('WhereBuilder', (): void => {
     it('or multiple expressions together', (): void => {
       expectWhereQuery(
         {
-          or: [
-            { numberType: { gt: 10 } },
-            { numberType: { lt: 20 } },
-            { numberType: { gte: 30 } },
-            { numberType: { lte: 40 } }
-          ]
+          or: [{ numberType: { gt: 10 } }, { numberType: { lt: 20 } }, { numberType: { gte: 30 } }, { numberType: { lte: 40 } }]
         },
         {
           [Op.or]: [
@@ -180,16 +164,10 @@ describe('WhereBuilder', (): void => {
         {
           [Op.or]: [
             {
-              [Op.and]: [
-                { [Op.and]: [{ numberType: { [Op.gt]: 10 } }] },
-                { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] }
-              ]
+              [Op.and]: [{ [Op.and]: [{ numberType: { [Op.gt]: 10 } }] }, { [Op.and]: [{ numberType: { [Op.lt]: 20 } }] }]
             },
             {
-              [Op.and]: [
-                { [Op.and]: [{ numberType: { [Op.gte]: 30 } }] },
-                { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] }
-              ]
+              [Op.and]: [{ [Op.and]: [{ numberType: { [Op.gte]: 30 } }] }, { [Op.and]: [{ numberType: { [Op.lte]: 40 } }] }]
             }
           ]
         }

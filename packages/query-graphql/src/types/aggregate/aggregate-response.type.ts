@@ -44,10 +44,7 @@ function AggregatedType<DTO>(name: string, fields: FilterableFieldDescriptor[]):
 
 export type AggregateResponseOpts = { prefix: string };
 
-export function AggregateResponseType<DTO>(
-  DTOClass: Class<DTO>,
-  opts?: AggregateResponseOpts
-): Class<AggregateResponse<DTO>> {
+export function AggregateResponseType<DTO>(DTOClass: Class<DTO>, opts?: AggregateResponseOpts): Class<AggregateResponse<DTO>> {
   const objName = getGraphqlObjectName(DTOClass, 'Unable to make AggregationResponseType.');
   const prefix = opts?.prefix ?? objName;
   const aggName = `${prefix}AggregateResponse`;

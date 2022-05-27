@@ -47,10 +47,7 @@ export interface CreateResolver<DTO, C, QS extends QueryService<DTO, C, unknown>
 
   createMany(input: MutationArgsType<CreateManyInputType<C>>, authorizeFilter?: Filter<DTO>): Promise<DTO[]>;
 
-  createdSubscription(
-    input?: SubscriptionArgsType<DTO>,
-    authorizeFilter?: Filter<DTO>
-  ): AsyncIterator<CreatedEvent<DTO>>;
+  createdSubscription(input?: SubscriptionArgsType<DTO>, authorizeFilter?: Filter<DTO>): AsyncIterator<CreatedEvent<DTO>>;
 }
 
 /** @internal */
@@ -99,15 +96,7 @@ export const Creatable =
     } = opts;
     const createOneMutationName = opts.one?.name ?? `createOne${baseName}`;
     const createManyMutationName = opts.many?.name ?? `createMany${pluralBaseName}`;
-    const commonResolverOpts = omit(
-      opts,
-      'dtoName',
-      'one',
-      'many',
-      'CreateDTOClass',
-      'CreateOneInput',
-      'CreateManyInput'
-    );
+    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'CreateDTOClass', 'CreateOneInput', 'CreateManyInput');
 
     @ArgsType()
     class CO extends MutationArgsType(CreateOneInput) {}
@@ -131,10 +120,7 @@ export const Creatable =
         { name: createOneMutationName, description: opts?.one?.description },
         commonResolverOpts,
         {
-          interceptors: [
-            HookInterceptor(HookTypes.BEFORE_CREATE_ONE, CreateDTOClass, DTOClass),
-            AuthorizerInterceptor(DTOClass)
-          ]
+          interceptors: [HookInterceptor(HookTypes.BEFORE_CREATE_ONE, CreateDTOClass, DTOClass), AuthorizerInterceptor(DTOClass)]
         },
         opts.one ?? {}
       )
@@ -159,10 +145,7 @@ export const Creatable =
         { name: createManyMutationName, description: opts?.many?.description },
         { ...commonResolverOpts },
         {
-          interceptors: [
-            HookInterceptor(HookTypes.BEFORE_CREATE_MANY, CreateDTOClass, DTOClass),
-            AuthorizerInterceptor(DTOClass)
-          ]
+          interceptors: [HookInterceptor(HookTypes.BEFORE_CREATE_MANY, CreateDTOClass, DTOClass), AuthorizerInterceptor(DTOClass)]
         },
         opts.many ?? {}
       )

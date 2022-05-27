@@ -48,14 +48,7 @@ const knownTypes: Set<ReturnTypeFuncValue> = new Set([
   GraphQLTimestamp
 ]);
 
-const allowedBetweenTypes: Set<ReturnTypeFuncValue> = new Set([
-  Number,
-  Int,
-  Float,
-  Date,
-  GraphQLISODateTime,
-  GraphQLTimestamp
-]);
+const allowedBetweenTypes: Set<ReturnTypeFuncValue> = new Set([Number, Int, Float, Date, GraphQLISODateTime, GraphQLTimestamp]);
 
 /** @internal */
 const getTypeName = (SomeType: ReturnTypeFuncValue): string => {

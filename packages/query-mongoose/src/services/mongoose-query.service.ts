@@ -71,10 +71,7 @@ export class MongooseQueryService<Entity extends Document>
     return this.Model.find(filterQuery, {}, options).exec();
   }
 
-  async aggregate(
-    filter: Filter<Entity>,
-    aggregateQuery: AggregateQuery<Entity>
-  ): Promise<AggregateResponse<Entity>[]> {
+  async aggregate(filter: Filter<Entity>, aggregateQuery: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>[]> {
     const { aggregate, filterQuery, options } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter);
     const aggPipeline: PipelineStage[] = [{ $match: filterQuery }, { $group: aggregate }];
     if (options.sort) {

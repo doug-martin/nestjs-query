@@ -76,10 +76,7 @@ function extractReadResolverOpts<DTO, R extends ReadResolverOpts<DTO>, PS extend
   opts: CRUDResolverOpts<DTO, unknown, unknown, R, PagingStrategies>
 ): MergePagingStrategyOpts<DTO, R, PS> {
   const { enableTotalCount, pagingStrategy, read } = opts;
-  return mergeBaseResolverOpts(
-    { enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<DTO, R, PS>,
-    opts
-  );
+  return mergeBaseResolverOpts({ enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<DTO, R, PS>, opts);
 }
 
 function extractUpdateResolverOpts<DTO, U>(

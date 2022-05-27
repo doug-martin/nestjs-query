@@ -182,10 +182,7 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    */
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
-    const [count] = await this.model.update(
-      this.getChangedValues(update),
-      this.filterQueryBuilder.updateOptions({ filter })
-    );
+    const [count] = await this.model.update(this.getChangedValues(update), this.filterQueryBuilder.updateOptions({ filter }));
     return { updatedCount: count };
   }
 

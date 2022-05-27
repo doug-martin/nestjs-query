@@ -37,10 +37,7 @@ export class FilterBuilder {
     );
   }
 
-  private static withFilterComparison<DTO, T extends keyof DTO>(
-    field: T,
-    cmp: FilterFieldComparison<DTO[T]>
-  ): FilterFn<DTO> {
+  private static withFilterComparison<DTO, T extends keyof DTO>(field: T, cmp: FilterFieldComparison<DTO[T]>): FilterFn<DTO> {
     const operators = Object.keys(cmp) as (keyof FilterFieldComparison<DTO[T]>)[];
     return this.orFilterFn(
       ...operators.map((operator) => ComparisonBuilder.build(field, operator, cmp[operator] as ComparisonField<DTO, T>))

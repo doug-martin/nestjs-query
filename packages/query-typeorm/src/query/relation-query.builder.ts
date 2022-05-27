@@ -156,11 +156,7 @@ export class RelationQueryBuilder<Entity, Relation> {
       aggregateQuery.groupBy,
       relationBuilder.alias
     );
-    relationBuilder = this.filterQueryBuilder.applyGroupBy(
-      relationBuilder,
-      aggregateQuery.groupBy,
-      relationBuilder.alias
-    );
+    relationBuilder = this.filterQueryBuilder.applyGroupBy(relationBuilder, aggregateQuery.groupBy, relationBuilder.alias);
     return relationBuilder;
   }
 
@@ -424,13 +420,7 @@ export class RelationQueryBuilder<Entity, Relation> {
       joins,
 
       mapRelations: <RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[] => {
-        return this.batchMapRelationsManyToMany<RawRelation>(
-          joinAlias,
-          relation.joinColumns,
-          entity,
-          relations,
-          rawRelations
-        );
+        return this.batchMapRelationsManyToMany<RawRelation>(joinAlias, relation.joinColumns, entity, relations, rawRelations);
       },
 
       batchSelect: (qb, entities: Entity[]) => {
