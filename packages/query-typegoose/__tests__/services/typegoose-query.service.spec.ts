@@ -340,7 +340,7 @@ describe('TypegooseQueryService', () => {
       const entity = TEST_ENTITIES[0];
       const queryService = moduleRef.get(TestEntityService);
       const found = await queryService.findById(entity._id.toHexString());
-      expect(convertDocument(found!)).toEqual(entity);
+      expect(convertDocument(found)).toEqual(entity);
     });
 
     it('return undefined if not found', async () => {
@@ -356,7 +356,7 @@ describe('TypegooseQueryService', () => {
         const found = await queryService.findById(entity._id.toHexString(), {
           filter: { stringType: { eq: entity.stringType } }
         });
-        expect(convertDocument(found!)).toEqual(entity);
+        expect(convertDocument(found)).toEqual(entity);
       });
 
       it('should return an undefined if an entity with the pk and filter is not found', async () => {
