@@ -8,9 +8,9 @@ import { typeormOrmConfig } from '../../../helpers';
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('federation_todo_item')),
     GraphQLFederationModule.forRoot({
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: 'schema.gql'
     }),
-    TodoItemModule,
-  ],
+    TodoItemModule
+  ]
 })
 export class AppModule {}

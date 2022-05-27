@@ -19,7 +19,7 @@ export class TodoItemResolver {
   markTodoItemsAsCompleted(@MutationHookArgs() { input }: MarkTodoItemsAsCompletedArgs): Promise<UpdateManyResponse> {
     return this.service.updateMany(
       { ...input.update, completed: true },
-      mergeFilter(input.filter, { completed: { is: false } }),
+      mergeFilter(input.filter, { completed: { is: false } })
     );
   }
 }

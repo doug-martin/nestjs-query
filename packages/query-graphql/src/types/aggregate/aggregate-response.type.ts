@@ -8,7 +8,7 @@ const reflector = new MapReflector('nestjs-query:aggregate-response-type');
 function NumberAggregatedType<DTO>(
   name: string,
   fields: FilterableFieldDescriptor[],
-  NumberType: GraphQLScalarType,
+  NumberType: GraphQLScalarType
 ): Class<NumberAggregate<DTO>> {
   const fieldNames = fields.map((f) => f.propertyName);
   @ObjectType(name)
@@ -46,7 +46,7 @@ export type AggregateResponseOpts = { prefix: string };
 
 export function AggregateResponseType<DTO>(
   DTOClass: Class<DTO>,
-  opts?: AggregateResponseOpts,
+  opts?: AggregateResponseOpts
 ): Class<AggregateResponse<DTO>> {
   const objName = getGraphqlObjectName(DTOClass, 'Unable to make AggregationResponseType.');
   const prefix = opts?.prefix ?? objName;
@@ -55,7 +55,7 @@ export function AggregateResponseType<DTO>(
     const fields = getFilterableFields(DTOClass);
     if (!fields.length) {
       throw new Error(
-        `No fields found to create AggregationResponseType for ${DTOClass.name}. Ensure fields are annotated with @FilterableField`,
+        `No fields found to create AggregationResponseType for ${DTOClass.name}. Ensure fields are annotated with @FilterableField`
       );
     }
     const numberFields = fields.filter(({ target }) => target === Number);

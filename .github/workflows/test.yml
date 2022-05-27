@@ -1,0 +1,97 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+      - releases/*
+  pull_request:
+
+env:
+  NX_BRANCH: ${{ github.event.number }}
+  NX_RUN_GROUP: ${{ github.run_id }}
+
+jobs:
+
+  setup:
+    uses: ./.github/workflows/shared.setup-env.yml
+
+  check:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [ 14.x ]
+        target: [ 'build', 'test', 'lint' ]
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: ./.github/actions/setup-step
+
+      - name: GIT config
+        if: matrix.target == 'build'
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: nx affected:version
+        if: matrix.target == 'build'
+        run: node ./tools/scripts/run-many.js version
+
+      - name: nx affected:${{ matrix.target }}
+        run: node ./tools/scripts/run-many.js ${{ matrix.target }}
+
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        if: matrix.target == 'test'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage
+          fail_ci_if_error: false
+          name: run-unit-test-${{ matrix.node-version }}
+
+  e2e-test:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [ 14.x ]
+        db-type: ['postgres', 'mysql']
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: ./.github/actions/setup-step
+
+      - name: docker compose
+        run: docker-compose -f ./examples/docker-compose.yml up -d
+
+      - name: nx affected:e2e
+        run: npx nx affected:e2e
+        env:
+          NESTJS_QUERY_DB_TYPE: ${{ matrix.db-type }}
+
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage
+          fail_ci_if_error: false
+          name: run-e2e-${{ matrix.node-version }}-${{ matrix.db-type }}

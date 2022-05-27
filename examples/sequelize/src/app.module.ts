@@ -17,7 +17,7 @@ import { formatGraphqlError, sequelizeOrmConfig } from '../../helpers';
     }),
     SubTaskModule,
     TodoItemModule,
-    TagModule,
-  ],
+    TagModule
+  ]
 })
 export class AppModule {}

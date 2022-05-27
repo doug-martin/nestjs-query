@@ -6,7 +6,7 @@ const convertAggregateQueryFields = <From, To>(
   fields?: (keyof From)[]
 ): (keyof To)[] | undefined => {
   if (!fields) {
-    return undefined
+    return undefined;
   }
 
   return fields.map((fromField) => {

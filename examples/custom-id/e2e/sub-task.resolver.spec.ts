@@ -13,7 +13,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -23,8 +23,8 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -39,21 +39,21 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
       title: 'Create Nest App - Sub Task 1',
       completed: true,
       description: null,
-      todoItemId: 'aWQ6MQ==',
+      todoItemId: 'aWQ6MQ=='
     },
     {
       id: 'aWQ6Mg==',
       title: 'Create Nest App - Sub Task 2',
       completed: false,
       description: null,
-      todoItemId: 'aWQ6MQ==',
+      todoItemId: 'aWQ6MQ=='
     },
     {
       id: 'aWQ6Mw==',
       title: 'Create Nest App - Sub Task 3',
       completed: false,
       description: null,
-      todoItemId: 'aWQ6MQ==',
+      todoItemId: 'aWQ6MQ=='
     },
     { id: 'aWQ6NA==', title: 'Create Entity - Sub Task 1', completed: true, description: null, todoItemId: 'aWQ6Mg==' },
     {
@@ -61,78 +61,78 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
       title: 'Create Entity - Sub Task 2',
       completed: false,
       description: null,
-      todoItemId: 'aWQ6Mg==',
+      todoItemId: 'aWQ6Mg=='
     },
     {
       id: 'aWQ6Ng==',
       title: 'Create Entity - Sub Task 3',
       completed: false,
       description: null,
-      todoItemId: 'aWQ6Mg==',
+      todoItemId: 'aWQ6Mg=='
     },
     {
       id: 'aWQ6Nw==',
       title: 'Create Entity Service - Sub Task 1',
       completed: true,
       description: null,
-      todoItemId: 'aWQ6Mw==',
+      todoItemId: 'aWQ6Mw=='
     },
     {
       id: 'aWQ6OA==',
       title: 'Create Entity Service - Sub Task 2',
       completed: false,
       description: null,
-      todoItemId: 'aWQ6Mw==',
+      todoItemId: 'aWQ6Mw=='
     },
     {
       id: 'aWQ6OQ==',
       title: 'Create Entity Service - Sub Task 3',
       completed: false,
       description: null,
-      todoItemId: 'aWQ6Mw==',
+      todoItemId: 'aWQ6Mw=='
     },
     {
       id: 'aWQ6MTA=',
       title: 'Add Todo Item Resolver - Sub Task 1',
       completed: true,
       description: null,
-      todoItemId: 'aWQ6NA==',
+      todoItemId: 'aWQ6NA=='
     },
     {
       completed: false,
       description: null,
       id: 'aWQ6MTE=',
       title: 'Add Todo Item Resolver - Sub Task 2',
-      todoItemId: 'aWQ6NA==',
+      todoItemId: 'aWQ6NA=='
     },
     {
       completed: false,
       description: null,
       id: 'aWQ6MTI=',
       title: 'Add Todo Item Resolver - Sub Task 3',
-      todoItemId: 'aWQ6NA==',
+      todoItemId: 'aWQ6NA=='
     },
     {
       completed: true,
       description: null,
       id: 'aWQ6MTM=',
       title: 'How to create item With Sub Tasks - Sub Task 1',
-      todoItemId: 'aWQ6NQ==',
+      todoItemId: 'aWQ6NQ=='
     },
     {
       completed: false,
       description: null,
       id: 'aWQ6MTQ=',
       title: 'How to create item With Sub Tasks - Sub Task 2',
-      todoItemId: 'aWQ6NQ==',
+      todoItemId: 'aWQ6NQ=='
     },
     {
       completed: false,
       description: null,
       id: 'aWQ6MTU=',
       title: 'How to create item With Sub Tasks - Sub Task 3',
-      todoItemId: 'aWQ6NQ==',
-    },
+      todoItemId: 'aWQ6NQ=='
+    }
   ];
 
   describe('find one', () => {
@@ -146,7 +146,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
           subTask(id: "aWQ6MQ==") {
             ${subTaskFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -157,9 +157,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
                 title: 'Create Nest App - Sub Task 1',
                 completed: true,
                 description: null,
-                todoItemId: 'aWQ6MQ==',
-              },
-            },
+                todoItemId: 'aWQ6MQ=='
+              }
+            }
           });
         }));
 
@@ -173,9 +173,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
           subTask(id: "aWQ6MTAw") {
             ${subTaskFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -193,16 +193,16 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual({
             data: {
               subTask: {
-                todoItem: { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
-              },
-            },
+                todoItem: { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null }
+              }
+            }
           });
         }));
   });
@@ -219,7 +219,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -228,7 +228,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(10);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 10));
@@ -245,7 +245,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -254,7 +254,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 3));
@@ -271,7 +271,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -280,7 +280,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(10);
           expect(edges.map((e) => e.node)).toEqual(subTasks.slice().reverse().slice(0, 10));
@@ -298,7 +298,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -307,7 +307,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 2));
@@ -324,7 +324,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(subTaskFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -333,7 +333,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(subTasks.slice(2, 4));
@@ -356,7 +356,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -365,9 +365,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               title: 'Test SubTask',
               description: null,
               completed: false,
-              todoItemId: 'aWQ6MQ==',
-            },
-          },
+              todoItemId: 'aWQ6MQ=='
+            }
+          }
         }));
 
     it('should validate a subTask', () =>
@@ -384,7 +384,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -411,7 +411,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -421,17 +421,17 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
                 title: 'Test Create Many SubTask - 1',
                 description: null,
                 completed: false,
-                todoItemId: 'aWQ6Mg==',
+                todoItemId: 'aWQ6Mg=='
               },
               {
                 id: 'aWQ6MTg=',
                 title: 'Test Create Many SubTask - 2',
                 description: null,
                 completed: true,
-                todoItemId: 'aWQ6Mg==',
-              },
-            ],
-          },
+                todoItemId: 'aWQ6Mg=='
+              }
+            ]
+          }
         }));
 
     it('should validate a subTask', () =>
@@ -448,7 +448,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -473,7 +473,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -482,9 +482,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               title: 'Update Test Sub Task',
               description: null,
               completed: true,
-              todoItemId: 'aWQ6MQ==',
-            },
-          },
+              todoItemId: 'aWQ6MQ=='
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -503,13 +503,13 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateOneSubTaskInput.id" of required type "CustomID!" was not provided.',
+            'Field "UpdateOneSubTaskInput.id" of required type "CustomID!" was not provided.'
           );
         }));
 
@@ -530,7 +530,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -555,14 +555,14 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManySubTasks: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -579,13 +579,13 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.',
+            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.'
           );
         }));
 
@@ -604,7 +604,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -626,7 +626,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -635,9 +635,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               title: 'Update Test Sub Task',
               completed: true,
               description: null,
-              todoItemId: 'aWQ6MQ==',
-            },
-          },
+              todoItemId: 'aWQ6MQ=='
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -652,13 +652,13 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteOneSubTaskInput.id" of required type "CustomID!" was not provided.',
+            'Field "DeleteOneSubTaskInput.id" of required type "CustomID!" was not provided.'
           );
         }));
   });
@@ -678,14 +678,14 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManySubTasks: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -700,13 +700,13 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.',
+            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.'
           );
         }));
 
@@ -724,7 +724,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -748,7 +748,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -757,9 +757,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               setTodoItemOnSubTask: {
                 id: 'aWQ6MQ==',
                 title: 'Create Nest App - Sub Task 1',
-                todoItem: { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null },
-              },
-            },
+                todoItem: { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null }
+              }
+            }
           });
         }));
   });

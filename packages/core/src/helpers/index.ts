@@ -6,7 +6,7 @@ export {
   applySort,
   applyPaging,
   applyQuery,
-  invertSort,
+  invertSort
 } from './query.helpers';
 export { transformAggregateQuery, transformAggregateResponse } from './aggregate.helpers';
 export * from './filter.helpers';

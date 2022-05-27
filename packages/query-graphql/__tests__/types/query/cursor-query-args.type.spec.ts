@@ -10,7 +10,7 @@ import {
   Int,
   ObjectType,
   Query,
-  Resolver,
+  Resolver
 } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
@@ -96,8 +96,8 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
     const queryObj: TestCursorQuery = {
       paging: {
         first: 10,
-        after: 'YXJyYXljb25uZWN0aW9uOjEw',
-      },
+        after: 'YXJyYXljb25uZWN0aW9uOjEw'
+      }
     };
     const queryInstance = plainToClass(TestCursorQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
@@ -106,18 +106,18 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
 
   it('should sorting to the correct instance of sorting', () => {
     const queryObj: TestCursorQuery = {
-      sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
+      sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }]
     };
     const queryInstance = plainToClass(TestCursorQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.sorting![0]).toBeInstanceOf(TestCursorQuery.SortType);
+    expect(queryInstance.sorting[0]).toBeInstanceOf(TestCursorQuery.SortType);
   });
 
   it('should make filter to the correct instance of sorting', () => {
     const queryObj: TestCursorQuery = {
       filter: {
-        stringField: { eq: 'foo' },
-      },
+        stringField: { eq: 'foo' }
+      }
     };
     const queryInstance = plainToClass(TestCursorQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
@@ -147,7 +147,7 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
       defaultResultSize: 2,
       maxResultsSize: 5,
       defaultFilter: { booleanField: { is: true } },
-      defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
+      defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }]
     }) {}
 
     it('allow apply the options to the generated SDL', async () => {
@@ -165,37 +165,37 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
 
     it('should validate a maxResultsSize for paging.first', () => {
       const queryObj: TestCursorQuery = {
-        paging: { first: 10 },
+        paging: { first: 10 }
       };
       const queryInstance = plainToClass(CursorQueryOptionsArgs, queryObj);
       expect(validateSync(queryInstance)).toEqual([
         {
           children: [],
           constraints: {
-            PropertyMax: 'Field paging.first max allowed value is `5`.',
+            PropertyMax: 'Field paging.first max allowed value is `5`.'
           },
           property: 'paging',
           target: queryObj,
-          value: queryObj.paging,
-        },
+          value: queryObj.paging
+        }
       ]);
     });
 
     it('should validate a maxResultsSize for paging.last', () => {
       const queryObj: TestCursorQuery = {
-        paging: { last: 10, before: 'abc' },
+        paging: { last: 10, before: 'abc' }
       };
       const queryInstance = plainToClass(CursorQueryOptionsArgs, queryObj);
       expect(validateSync(queryInstance)).toEqual([
         {
           children: [],
           constraints: {
-            PropertyMax: 'Field paging.last max allowed value is `5`.',
+            PropertyMax: 'Field paging.last max allowed value is `5`.'
           },
           property: 'paging',
           target: queryObj,
-          value: queryObj.paging,
-        },
+          value: queryObj.paging
+        }
       ]);
     });
 
@@ -205,14 +205,14 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
       const queryObjFirst: NoMaxQueryArgsTpe = {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        paging: { first: 1000 },
+        paging: { first: 1000 }
       };
       expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObjFirst))).toEqual([]);
 
       const queryObjLast: NoMaxQueryArgsTpe = {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        paging: { last: 1000, before: 'abc' },
+        paging: { last: 1000, before: 'abc' }
       };
       const queryInstance = plainToClass(NoMaxQueryArgsTpe, queryObjLast);
       expect(validateSync(queryInstance)).toEqual([]);

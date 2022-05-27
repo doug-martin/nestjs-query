@@ -10,7 +10,7 @@ import {
   BeforeDeleteMany,
   BeforeQueryMany,
   BeforeFindOne,
-  Hook,
+  Hook
 } from '@ptc-org/nestjs-query-graphql';
 import { getHookForType } from '../../src/decorators';
 import { createDefaultHook, HookTypes } from '../../src/hooks';

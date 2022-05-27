@@ -17,7 +17,7 @@ export const refresh = async (connection: Connection): Promise<void> => {
     { title: 'Add Todo Item Resolver', completed: false },
     {
       title: 'How to create item With Sub Tasks',
-      completed: false,
-    },
+      completed: false
+    }
   ]);
 };

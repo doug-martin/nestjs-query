@@ -10,7 +10,7 @@ import {
   Int,
   ObjectType,
   Query,
-  Resolver,
+  Resolver
 } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
@@ -97,8 +97,8 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
     const queryObj: TestOffsetQuery = {
       paging: {
         limit: 10,
-        offset: 2,
-      },
+        offset: 2
+      }
     };
     const queryInstance = plainToClass(TestOffsetQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
@@ -107,18 +107,18 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
 
   it('should sorting to the correct instance of sorting', () => {
     const queryObj: TestOffsetQuery = {
-      sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
+      sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }]
     };
     const queryInstance = plainToClass(TestOffsetQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.sorting![0]).toBeInstanceOf(TestOffsetQuery.SortType);
+    expect(queryInstance.sorting[0]).toBeInstanceOf(TestOffsetQuery.SortType);
   });
 
   it('should make filter to the correct instance of sorting', () => {
     const queryObj: CursorQueryArgsType<TestDto> = {
       filter: {
-        stringField: { eq: 'foo' },
-      },
+        stringField: { eq: 'foo' }
+      }
     };
     const queryInstance = plainToClass(TestOffsetQuery, queryObj);
     expect(validateSync(queryInstance)).toEqual([]);
@@ -128,7 +128,7 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
   it('should make the filter required if there is a filterRequired field', async () => {
     @ArgsType()
     class TestFilterRequiredQuery extends QueryArgsType(TestFilterRequiredDto, {
-      pagingStrategy: PagingStrategies.OFFSET,
+      pagingStrategy: PagingStrategies.OFFSET
     }) {}
 
     @Resolver()
@@ -152,7 +152,7 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
       defaultResultSize: 2,
       maxResultsSize: 5,
       defaultFilter: { booleanField: { is: true } },
-      defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
+      defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }]
     }) {}
 
     it('allow apply the options to the generated SDL', async () => {
@@ -170,7 +170,7 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
 
     it('should validate a maxResultsSize for paging.limit', () => {
       const queryObj: CursorQueryArgsType<TestDto> = {
-        paging: { limit: 10 },
+        paging: { limit: 10 }
       };
       const QT = QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET, maxResultsSize: 5 });
       const queryInstance = plainToClass(QT, queryObj);
@@ -178,22 +178,22 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
         {
           children: [],
           constraints: {
-            PropertyMax: 'Field paging.limit max allowed value is `5`.',
+            PropertyMax: 'Field paging.limit max allowed value is `5`.'
           },
           property: 'paging',
           target: queryObj,
-          value: queryObj.paging,
-        },
+          value: queryObj.paging
+        }
       ]);
     });
 
     it('should ignore a maxResultsSize for paging.limit if maxResultSize === -1', () => {
       class NoMaxQueryArgsTpe extends QueryArgsType(TestDto, {
         pagingStrategy: PagingStrategies.OFFSET,
-        maxResultsSize: -1,
+        maxResultsSize: -1
       }) {}
       const queryObj: NoMaxQueryArgsTpe = {
-        paging: { limit: 1000 },
+        paging: { limit: 1000 }
       };
       expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObj))).toEqual([]);
     });

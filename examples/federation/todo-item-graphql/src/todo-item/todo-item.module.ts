@@ -16,10 +16,10 @@ import { TodoItemEntity } from './todo-item.entity';
           EntityClass: TodoItemEntity,
           CreateDTOClass: TodoItemInputDTO,
           UpdateDTOClass: TodoItemUpdateDTO,
-          referenceBy: { key: 'id' },
-        },
-      ],
-    }),
-  ],
+          referenceBy: { key: 'id' }
+        }
+      ]
+    })
+  ]
 })
 export class TodoItemModule {}

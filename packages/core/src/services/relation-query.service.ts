@@ -23,11 +23,11 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
 
   constructor(
     queryService: QueryService<DTO, C, U> | Record<string, QueryServiceRelation<DTO, unknown>>,
-    relations?: Record<string, QueryServiceRelation<DTO, unknown>>,
+    relations?: Record<string, QueryServiceRelation<DTO, unknown>>
   ) {
     if (typeof queryService.query === 'function') {
       super(queryService as QueryService<DTO, C, U>);
-      this.relations = relations as Record<string, QueryServiceRelation<DTO, unknown>>;
+      this.relations = relations;
     } else {
       super(NoOpQueryService.getInstance());
       this.relations = queryService as Record<string, QueryServiceRelation<DTO, unknown>>;
@@ -45,7 +45,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Map<DTO, Relation[]>>;
 
   /**
@@ -59,14 +59,14 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Relation[]>;
 
   async queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
-    query: Query<Relation>,
+    query: Query<Relation>
   ): Promise<Relation[] | Map<DTO, Relation[]>> {
     const serviceRelation = this.getRelation<Relation>(relationName);
     if (!serviceRelation) {
@@ -83,7 +83,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
         dto.map(async (d) => {
           const relations = await service.query(mergeQuery(query, qf(d)));
           map.set(d, relations);
-        }),
+        })
       );
       return map;
     }
@@ -95,7 +95,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     relationName: string,
     dto: DTO,
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[]>;
 
   async aggregateRelations<Relation>(
@@ -103,7 +103,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     relationName: string,
     dtos: DTO[],
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<Map<DTO, AggregateResponse<Relation>[]>>;
 
   async aggregateRelations<Relation>(
@@ -111,7 +111,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     relationName: string,
     dto: DTO | DTO[],
     filter: Filter<Relation>,
-    aggregate: AggregateQuery<Relation>,
+    aggregate: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[] | Map<DTO, AggregateResponse<Relation>[]>> {
     const serviceRelation = this.getRelation<Relation>(relationName);
     if (!serviceRelation) {
@@ -127,7 +127,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
         dto.map(async (d) => {
           const relations = await service.aggregate(mergeQuery({ filter }, qf(d)).filter ?? {}, aggregate);
           map.set(d, relations);
-        }),
+        })
       );
       return map;
     }
@@ -138,21 +138,21 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<Map<DTO, number>>;
 
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<number>;
 
   async countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
-    filter: Filter<Relation>,
+    filter: Filter<Relation>
   ): Promise<number | Map<DTO, number>> {
     const serviceRelation = this.getRelation<Relation>(relationName);
     if (!serviceRelation) {
@@ -168,7 +168,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
         dto.map(async (d) => {
           const count = await service.count(mergeQuery({ filter }, qf(d)).filter || {});
           map.set(d, count);
-        }),
+        })
       );
       return map;
     }
@@ -186,7 +186,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Map<DTO, Relation | undefined>>;
 
   /**
@@ -200,14 +200,14 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<Relation | undefined>;
 
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO | DTO[],
-    opts?: FindRelationOptions<Relation>,
+    opts?: FindRelationOptions<Relation>
   ): Promise<(Relation | undefined) | Map<DTO, Relation | undefined>> {
     const serviceRelation = this.getRelation<Relation>(relationName);
     if (!serviceRelation) {
@@ -223,7 +223,7 @@ export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO
         dto.map(async (d) => {
           const relation = await service.query(mergeQuery(qf(d), { paging: { limit: 1 }, filter: opts?.filter }));
           map.set(d, relation[0]);
-        }),
+        })
       );
       return map;
     }

@@ -8,7 +8,7 @@ export interface PageInfoTypeConstructor {
     hasNextPage: boolean,
     hasPreviousPage: boolean,
     startCursor: ConnectionCursorType | undefined,
-    endCursor: ConnectionCursorType | undefined,
+    endCursor: ConnectionCursorType | undefined
   ): PageInfoType;
 }
 
@@ -26,7 +26,7 @@ export const getOrCreatePageInfoType = (): PageInfoTypeConstructor => {
       hasNextPage: boolean,
       hasPreviousPage: boolean,
       startCursor: ConnectionCursorType | undefined,
-      endCursor: ConnectionCursorType | undefined,
+      endCursor: ConnectionCursorType | undefined
     ) {
       this.hasNextPage = hasNextPage;
       this.hasPreviousPage = hasPreviousPage;
@@ -45,7 +45,7 @@ export const getOrCreatePageInfoType = (): PageInfoTypeConstructor => {
 
     @Field(() => ConnectionCursorScalar, {
       nullable: true,
-      description: 'The cursor of the last returned record.',
+      description: 'The cursor of the last returned record.'
     })
     endCursor?: ConnectionCursorType | undefined;
   }

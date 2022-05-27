@@ -6,14 +6,22 @@ import { TestSoftDeleteEntity } from './test-soft-delete.entity';
 import { TestEntity } from './test.entity';
 import { seed } from './seeds';
 import { RelationOfTestRelationEntity } from './relation-of-test-relation.entity';
+import { TestSoftDeleteRelation } from './test-soft-delete.relation';
 
 export const CONNECTION_OPTIONS: ConnectionOptions = {
   type: 'sqlite',
   database: ':memory:',
   dropSchema: true,
-  entities: [TestEntity, TestSoftDeleteEntity, TestRelation, TestEntityRelationEntity, RelationOfTestRelationEntity],
+  entities: [
+    TestEntity,
+    TestSoftDeleteEntity,
+    TestRelation,
+    TestEntityRelationEntity,
+    RelationOfTestRelationEntity,
+    TestSoftDeleteRelation
+  ],
   synchronize: true,
-  logging: false,
+  logging: false
 };
 
 export function createTestConnection(): Promise<Connection> {
@@ -34,12 +42,14 @@ const tables = [
   'test_relation',
   'test_entity_relation_entity',
   'test_soft_delete_entity',
-  'test_entity_many_test_relations_test_relation',
+  'test_soft_delete_relation',
+  'test_entity_many_test_relations_test_relation'
 ];
 export const truncate = async (connection: Connection): Promise<void> => {
   await tables.reduce(async (prev, table) => {
     await prev;
-    await connection.query(`DELETE FROM ${table}`);
+    await connection.query(`DELETE
+                            FROM ${table}`);
   }, Promise.resolve());
 };
 

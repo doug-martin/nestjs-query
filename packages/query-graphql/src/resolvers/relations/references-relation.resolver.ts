@@ -19,7 +19,7 @@ const pluckFields = <DTO, Relation>(dto: DTO, fieldMap: ReferencesKeys<DTO, Rela
 const allFieldsAreNull = <Relation>(fields: Partial<Relation>): boolean => {
   return Object.values(fields).reduce<boolean>(
     (previousNull, value) => previousNull && (value === null || value === undefined),
-    true,
+    true
   );
 };
 
@@ -36,7 +36,7 @@ const ReferencesMixin =
         baseNameLower,
         () => relationDTO,
         { nullable: reference.nullable, complexity: reference.complexity },
-        commonResolverOpts,
+        commonResolverOpts
       )
       [`${baseNameLower}Reference`](@Parent() dto: DTO): RepresentationType | null {
         const fields = pluckFields<DTO, Relation>(dto, reference.keys);
@@ -61,8 +61,8 @@ export const ReferencesRelationMixin =
 
 export const ReferencesRelationsResolver = <
   DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
 >(
   DTOClass: Class<DTO>,
-  references: ReferencesOpts<DTO>,
+  references: ReferencesOpts<DTO>
 ): Class<ServiceResolver<DTO, QS>> => ReferencesRelationMixin(DTOClass, references)(BaseServiceResolver);

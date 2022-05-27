@@ -5,7 +5,7 @@ import { AUTHORIZER_KEY, CUSTOM_AUTHORIZER_KEY } from './constants';
 const reflector = new ValueReflector(AUTHORIZER_KEY);
 const customAuthorizerReflector = new ValueReflector(CUSTOM_AUTHORIZER_KEY);
 export function Authorize<DTO>(
-  optsOrAuthorizerOrClass: Class<CustomAuthorizer<DTO>> | CustomAuthorizer<DTO> | AuthorizerOptions<DTO>,
+  optsOrAuthorizerOrClass: Class<CustomAuthorizer<DTO>> | CustomAuthorizer<DTO> | AuthorizerOptions<DTO>
 ) {
   return (DTOClass: Class<DTO>): void => {
     if (!('authorize' in optsOrAuthorizerOrClass)) {

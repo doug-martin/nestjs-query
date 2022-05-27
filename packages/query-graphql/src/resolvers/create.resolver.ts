@@ -16,7 +16,7 @@ import {
   CreateOneInputType,
   MutationArgsType,
   SubscriptionArgsType,
-  SubscriptionFilterInputType,
+  SubscriptionFilterInputType
 } from '../types';
 import { createSubscriptionFilter, getSubscriptionEventName } from './helpers';
 import { BaseServiceResolver, ResolverClass, ServiceResolver, SubscriptionResolverOpts } from './resolver.interface';
@@ -49,7 +49,7 @@ export interface CreateResolver<DTO, C, QS extends QueryService<DTO, C, unknown>
 
   createdSubscription(
     input?: SubscriptionArgsType<DTO>,
-    authorizeFilter?: Filter<DTO>,
+    authorizeFilter?: Filter<DTO>
   ): AsyncIterator<CreatedEvent<DTO>>;
 }
 
@@ -95,7 +95,7 @@ export const Creatable =
     const {
       CreateDTOClass = defaultCreateDTO(dtoNames, DTOClass),
       CreateOneInput = defaultCreateOneInput(dtoNames, CreateDTOClass),
-      CreateManyInput = defaultCreateManyInput(dtoNames, CreateDTOClass),
+      CreateManyInput = defaultCreateManyInput(dtoNames, CreateDTOClass)
     } = opts;
     const createOneMutationName = opts.one?.name ?? `createOne${baseName}`;
     const createManyMutationName = opts.many?.name ?? `createMany${pluralBaseName}`;
@@ -106,7 +106,7 @@ export const Creatable =
       'many',
       'CreateDTOClass',
       'CreateOneInput',
-      'CreateManyInput',
+      'CreateManyInput'
     );
 
     @ArgsType()
@@ -133,18 +133,18 @@ export const Creatable =
         {
           interceptors: [
             HookInterceptor(HookTypes.BEFORE_CREATE_ONE, CreateDTOClass, DTOClass),
-            AuthorizerInterceptor(DTOClass),
-          ],
+            AuthorizerInterceptor(DTOClass)
+          ]
         },
-        opts.one ?? {},
+        opts.one ?? {}
       )
       async createOne(
         @MutationHookArgs() input: CO,
         @AuthorizerFilter({
           operationGroup: OperationGroup.CREATE,
-          many: false,
+          many: false
         }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        authorizeFilter?: Filter<DTO>,
+        authorizeFilter?: Filter<DTO>
       ): Promise<DTO> {
         // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
         const created = await this.service.createOne(input.input.input);
@@ -161,19 +161,19 @@ export const Creatable =
         {
           interceptors: [
             HookInterceptor(HookTypes.BEFORE_CREATE_MANY, CreateDTOClass, DTOClass),
-            AuthorizerInterceptor(DTOClass),
-          ],
+            AuthorizerInterceptor(DTOClass)
+          ]
         },
-        opts.many ?? {},
+        opts.many ?? {}
       )
       async createMany(
         @MutationHookArgs() input: CM,
 
         @AuthorizerFilter({
           operationGroup: OperationGroup.CREATE,
-          many: true,
+          many: true
         }) // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        authorizeFilter?: Filter<DTO>,
+        authorizeFilter?: Filter<DTO>
       ): Promise<DTO[]> {
         // Ignore `authorizeFilter` for now but give users the ability to throw an UnauthorizedException
         const created = await this.service.createMany(input.input.input);
@@ -192,12 +192,12 @@ export const Creatable =
 
       @ResolverSubscription(() => DTOClass, { name: createdEvent, filter: subscriptionFilter }, commonResolverOpts, {
         enableSubscriptions: enableOneSubscriptions || enableManySubscriptions,
-        interceptors: [AuthorizerInterceptor(DTOClass)],
+        interceptors: [AuthorizerInterceptor(DTOClass)]
       })
       createdSubscription(
         @Args() input?: SA,
         @AuthorizerFilter({ operationGroup: OperationGroup.CREATE, many: false })
-        authorizeFilter?: Filter<DTO>,
+        authorizeFilter?: Filter<DTO>
       ): AsyncIterator<CreatedEvent<DTO>> {
         if (!this.pubSub || !(enableManySubscriptions || enableOneSubscriptions)) {
           throw new Error(`Unable to subscribe to ${createdEvent}`);
@@ -234,8 +234,8 @@ export const Creatable =
 export const CreateResolver = <
   DTO,
   C = DeepPartial<DTO>,
-  QS extends QueryService<DTO, C, unknown> = QueryService<DTO, C, unknown>,
+  QS extends QueryService<DTO, C, unknown> = QueryService<DTO, C, unknown>
 >(
   DTOClass: Class<DTO>,
-  opts: CreateResolverOpts<DTO, C> = {},
+  opts: CreateResolverOpts<DTO, C> = {}
 ): ResolverClass<DTO, QS, CreateResolver<DTO, C, QS>> => Creatable(DTOClass, opts)(BaseServiceResolver);

@@ -14,5 +14,5 @@ TestReferenceSchema.virtual('virtualTestEntity', {
   ref: 'TestEntity',
   localField: 'testEntity',
   foreignField: '_id',
-  justOne: true,
+  justOne: true
 });

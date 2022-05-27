@@ -23,10 +23,10 @@ const guards = [AuthGuard];
           UpdateDTOClass: TodoItemUpdateDTO,
           create: { guards },
           update: { guards },
-          delete: { guards },
-        },
-      ],
-    }),
-  ],
+          delete: { guards }
+        }
+      ]
+    })
+  ]
 })
 export class TodoItemModule {}

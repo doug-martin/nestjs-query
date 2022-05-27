@@ -8,7 +8,7 @@ enum AggregateFuncs {
   SUM = 'SUM',
   COUNT = 'COUNT',
   MAX = 'MAX',
-  MIN = 'MIN',
+  MIN = 'MIN'
 }
 
 const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN|GROUP_BY)_(.*)/;
@@ -20,7 +20,7 @@ const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN|GROUP_BY)_(.*)/;
 export class AggregateBuilder<Entity> {
   // eslint-disable-next-line @typescript-eslint/no-shadow
   static async asyncConvertToAggregateResponse<Entity>(
-    responsePromise: Promise<Record<string, unknown>[]>,
+    responsePromise: Promise<Record<string, unknown>[]>
   ): Promise<AggregateResponse<Entity>[]> {
     const aggResponse = await responsePromise;
     return this.convertToAggregateResponse(aggResponse);
@@ -43,7 +43,7 @@ export class AggregateBuilder<Entity> {
       [AggregateFuncs.SUM, query.sum],
       [AggregateFuncs.AVG, query.avg],
       [AggregateFuncs.MAX, query.max],
-      [AggregateFuncs.MIN, query.min],
+      [AggregateFuncs.MIN, query.min]
     ];
     return aggs.reduce((cols, [func, fields]) => {
       const aliases = (fields ?? []).map((f) => this.getAggregateAlias(func, f));
@@ -76,7 +76,7 @@ export class AggregateBuilder<Entity> {
         return {
           ...agg,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          [aggFunc]: { ...aggResult, [fieldName]: response[resultField] },
+          [aggFunc]: { ...aggResult, [fieldName]: response[resultField] }
         };
       }, {});
     });
@@ -95,7 +95,7 @@ export class AggregateBuilder<Entity> {
       ...this.createAggSelect(AggregateFuncs.SUM, aggregate.sum, alias),
       ...this.createAggSelect(AggregateFuncs.AVG, aggregate.avg, alias),
       ...this.createAggSelect(AggregateFuncs.MAX, aggregate.max, alias),
-      ...this.createAggSelect(AggregateFuncs.MIN, aggregate.min, alias),
+      ...this.createAggSelect(AggregateFuncs.MIN, aggregate.min, alias)
     ];
     if (!selects.length) {
       throw new BadRequestException('No aggregate fields found.');
@@ -103,7 +103,7 @@ export class AggregateBuilder<Entity> {
     const [head, ...tail] = selects;
     return tail.reduce(
       (acc: Qb, [select, selectAlias]) => acc.addSelect(select, selectAlias),
-      qb.select(head[0], head[1]),
+      qb.select(head[0], head[1])
     );
   }
 

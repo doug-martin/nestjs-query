@@ -20,21 +20,21 @@ import { TodoItemService } from './todo-item.service';
           DTOClass: TagDTO,
           EntityClass: TagEntity,
           CreateDTOClass: TagInputDTO,
-          UpdateDTOClass: TagInputDTO,
+          UpdateDTOClass: TagInputDTO
         },
         {
           DTOClass: TagTodoItemDTO,
           EntityClass: TagTodoItemEntity,
           CreateDTOClass: TagTodoItemInputDTO,
-          UpdateDTOClass: TagTodoItemInputDTO,
+          UpdateDTOClass: TagTodoItemInputDTO
         },
         {
           type: 'federated',
           DTOClass: TodoItemReferenceDTO,
-          Service: TodoItemService,
-        },
-      ],
-    }),
-  ],
+          Service: TodoItemService
+        }
+      ]
+    })
+  ]
 })
 export class TagModule {}

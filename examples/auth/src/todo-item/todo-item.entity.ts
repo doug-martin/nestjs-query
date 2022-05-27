@@ -7,7 +7,7 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
-  ManyToOne,
+  ManyToOne
 } from 'typeorm';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
 import { TagEntity } from '../tag/tag.entity';
@@ -32,7 +32,7 @@ export class TodoItemEntity {
 
   @ManyToOne(() => UserEntity, (u) => u.todoItems, {
     onDelete: 'CASCADE',
-    nullable: false,
+    nullable: false
   })
   owner!: UserEntity;
 

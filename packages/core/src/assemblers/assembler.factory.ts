@@ -8,7 +8,7 @@ import { DefaultAssembler } from './default.assembler';
 export class AssemblerFactory {
   static getAssembler<DTO, Entity, C = DeepPartial<DTO>, CE = DeepPartial<Entity>, U = C, UE = CE>(
     DTOClass: Class<DTO>,
-    EntityClass: Class<Entity>,
+    EntityClass: Class<Entity>
   ): Assembler<DTO, Entity, C, CE, U, UE> {
     const AssemblerClasses = getAssemblers(DTOClass);
     if (AssemblerClasses) {

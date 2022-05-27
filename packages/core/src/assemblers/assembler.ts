@@ -8,7 +8,7 @@ export interface Assembler<
   CreateDTO = DeepPartial<DTO>,
   CreateEntity = DeepPartial<Entity>,
   UpdateDTO = CreateDTO,
-  UpdateEntity = CreateEntity,
+  UpdateEntity = CreateEntity
 > {
   /**
    * Convert an entity to a DTO
@@ -113,7 +113,7 @@ export function Assembler<
   C = DeepPartial<DTO>,
   CE = DeepPartial<Entity>,
   U = DeepPartial<DTO>,
-  UE = DeepPartial<Entity>,
+  UE = DeepPartial<Entity>
 >(DTOClass: Class<DTO>, EntityClass: Class<Entity>) {
   return <Cls extends Class<Assembler<DTO, Entity, C, CE, U, UE>>>(cls: Cls): Cls | void => {
     if (reflector.has(DTOClass, EntityClass)) {
@@ -126,13 +126,13 @@ export function Assembler<
 }
 
 export function getAssemblers<DTO>(
-  DTOClass: Class<DTO>,
+  DTOClass: Class<DTO>
 ): MetaValue<Map<Class<unknown>, Class<Assembler<DTO, unknown, unknown, unknown, unknown, unknown>>>> {
   return reflector.get(DTOClass);
 }
 
 export function getAssemblerClasses<DTO, Entity, C, CE, U, UE>(
-  AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>,
+  AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>
 ): MetaValue<AssemblerClasses<DTO, Entity>> {
   return assemblerReflector.get(AssemblerClass);
 }

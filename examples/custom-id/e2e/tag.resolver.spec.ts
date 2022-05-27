@@ -14,7 +14,7 @@ describe('TagResolver (custom-id - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -24,8 +24,8 @@ describe('TagResolver (custom-id - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -39,7 +39,7 @@ describe('TagResolver (custom-id - e2e)', () => {
     { id: 'aWQ6Mg==', name: 'Home' },
     { id: 'aWQ6Mw==', name: 'Work' },
     { id: 'aWQ6NA==', name: 'Question' },
-    { id: 'aWQ6NQ==', name: 'Blocked' },
+    { id: 'aWQ6NQ==', name: 'Blocked' }
   ];
 
   describe('find one', () => {
@@ -53,7 +53,7 @@ describe('TagResolver (custom-id - e2e)', () => {
           tag(id: "aWQ6MQ==") {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200, { data: { tag: tags[0] } }));
 
@@ -67,9 +67,9 @@ describe('TagResolver (custom-id - e2e)', () => {
           tag(id: "aWQ6MTAw") {
             ${tagFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -88,7 +88,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               ${edgeNodes('id')}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -97,7 +97,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.id)).toEqual(['aWQ6MQ==', 'aWQ6Mg==']);
@@ -116,7 +116,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -125,7 +125,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags);
@@ -142,7 +142,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -151,7 +151,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
@@ -168,7 +168,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -177,7 +177,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
@@ -195,7 +195,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -204,7 +204,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
@@ -221,7 +221,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -230,7 +230,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
@@ -253,15 +253,15 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: 'aWQ6Ng==',
-              name: 'Test Tag',
-            },
-          },
+              name: 'Test Tag'
+            }
+          }
         }));
 
     it('should validate a tag', () =>
@@ -278,7 +278,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -305,15 +305,15 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: 'aWQ6Nw==', name: 'Create Many Tag - 1' },
-              { id: 'aWQ6OA==', name: 'Create Many Tag - 2' },
-            ],
-          },
+              { id: 'aWQ6OA==', name: 'Create Many Tag - 2' }
+            ]
+          }
         }));
 
     it('should validate a tag', () =>
@@ -330,7 +330,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -355,15 +355,15 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: 'aWQ6Ng==',
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -380,13 +380,13 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTagInput.id" of required type "CustomID!" was not provided.',
+            'Field "UpdateOneTagInput.id" of required type "CustomID!" was not provided.'
           );
         }));
 
@@ -405,7 +405,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -430,14 +430,14 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -454,13 +454,13 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
+            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
           );
         }));
 
@@ -479,7 +479,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -501,15 +501,15 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTag: {
               id: null,
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -524,13 +524,13 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteOneTagInput.id" of required type "CustomID!" was not provided.',
+            'Field "DeleteOneTagInput.id" of required type "CustomID!" was not provided.'
           );
         }));
   });
@@ -550,14 +550,14 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTags: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -572,13 +572,13 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
+            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
           );
         }));
 
@@ -596,7 +596,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -625,7 +625,7 @@ describe('TagResolver (custom-id - e2e)', () => {
                 ${edgeNodes(todoItemFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -636,14 +636,14 @@ describe('TagResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges.map((e) => e.node.title).sort()).toEqual([
             'Add Todo Item Resolver',
             'Create Entity',
             'Create Entity Service',
             'Create Nest App',
-            'How to create item With Sub Tasks',
+            'How to create item With Sub Tasks'
           ]);
         }));
   });
@@ -668,7 +668,7 @@ describe('TagResolver (custom-id - e2e)', () => {
                 ${edgeNodes(todoItemFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -679,7 +679,7 @@ describe('TagResolver (custom-id - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
         }));

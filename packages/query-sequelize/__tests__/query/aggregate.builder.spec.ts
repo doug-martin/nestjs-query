@@ -25,8 +25,8 @@ describe('AggregateBuilder', (): void => {
     moduleRef = await Test.createTestingModule({
       imports: [
         SequelizeModule.forRoot(CONNECTION_OPTIONS),
-        SequelizeModule.forFeature([TestEntity, TestRelation, TestEntityTestRelationEntity]),
-      ],
+        SequelizeModule.forFeature([TestEntity, TestRelation, TestEntityTestRelationEntity])
+      ]
     }).compile();
     await moduleRef.get(Sequelize).sync();
   });
@@ -42,7 +42,7 @@ describe('AggregateBuilder', (): void => {
         avg: ['numberType'],
         sum: ['numberType'],
         max: ['stringType', 'dateType', 'numberType'],
-        min: ['stringType', 'dateType', 'numberType'],
+        min: ['stringType', 'dateType', 'numberType']
       },
       {
         attributes: [
@@ -55,9 +55,9 @@ describe('AggregateBuilder', (): void => {
           [sequelize.fn('MAX', sequelize.col('number_type')), 'MAX_numberType'],
           [sequelize.fn('MIN', sequelize.col('string_type')), 'MIN_stringType'],
           [sequelize.fn('MIN', sequelize.col('date_type')), 'MIN_dateType'],
-          [sequelize.fn('MIN', sequelize.col('number_type')), 'MIN_numberType'],
-        ],
-      },
+          [sequelize.fn('MIN', sequelize.col('number_type')), 'MIN_numberType']
+        ]
+      }
     );
   });
 
@@ -65,15 +65,15 @@ describe('AggregateBuilder', (): void => {
     expectAggregateQuery(
       {
         groupBy: ['stringType', 'boolType'],
-        count: ['testEntityPk'],
+        count: ['testEntityPk']
       },
       {
         attributes: [
           [sequelize.col('string_type'), 'GROUP_BY_stringType'],
           [sequelize.col('bool_type'), 'GROUP_BY_boolType'],
-          [sequelize.fn('COUNT', sequelize.col('test_entity_pk')), 'COUNT_testEntityPk'],
-        ],
-      },
+          [sequelize.fn('COUNT', sequelize.col('test_entity_pk')), 'COUNT_testEntityPk']
+        ]
+      }
     );
   });
 
@@ -88,8 +88,8 @@ describe('AggregateBuilder', (): void => {
           MAX_stringType: 'z',
           MAX_numberType: 10,
           MIN_stringType: 'a',
-          MIN_numberType: 1,
-        },
+          MIN_numberType: 1
+        }
       ];
       expect(AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toEqual([
         {
@@ -98,19 +98,19 @@ describe('AggregateBuilder', (): void => {
           sum: { numberType: 55 },
           avg: { numberType: 5 },
           max: { stringType: 'z', numberType: 10 },
-          min: { stringType: 'a', numberType: 1 },
-        },
+          min: { stringType: 'a', numberType: 1 }
+        }
       ]);
     });
 
     it('should throw an error if a column is not expected', () => {
       const dbResult = [
         {
-          COUNTtestEntityPk: 10,
-        },
+          COUNTtestEntityPk: 10
+        }
       ];
       expect(() => AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toThrow(
-        'Unknown aggregate column encountered.',
+        'Unknown aggregate column encountered.'
       );
     });
   });

@@ -15,7 +15,7 @@ describe('Federated - TagResolver (e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -25,8 +25,8 @@ describe('Federated - TagResolver (e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -40,7 +40,7 @@ describe('Federated - TagResolver (e2e)', () => {
     { id: '2', name: 'Home' },
     { id: '3', name: 'Work' },
     { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
+    { id: '5', name: 'Blocked' }
   ];
 
   describe('find one', () => {
@@ -54,7 +54,7 @@ describe('Federated - TagResolver (e2e)', () => {
           tag(id: 1) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200, { data: { tag: tags[0] } }));
 
@@ -68,9 +68,9 @@ describe('Federated - TagResolver (e2e)', () => {
           tag(id: 100) {
             ${tagFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -89,7 +89,7 @@ describe('Federated - TagResolver (e2e)', () => {
               ${edgeNodes(`todoItem {${todoItemFields}}`)}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -99,7 +99,7 @@ describe('Federated - TagResolver (e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.todoItem.id)).toEqual(['1', '2']);
@@ -118,7 +118,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -127,7 +127,7 @@ describe('Federated - TagResolver (e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags);
@@ -144,7 +144,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -153,7 +153,7 @@ describe('Federated - TagResolver (e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
@@ -170,7 +170,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -179,7 +179,7 @@ describe('Federated - TagResolver (e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
@@ -197,7 +197,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -206,7 +206,7 @@ describe('Federated - TagResolver (e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
@@ -223,7 +223,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -232,7 +232,7 @@ describe('Federated - TagResolver (e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
@@ -255,15 +255,15 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: '6',
-              name: 'Test Tag',
-            },
-          },
+              name: 'Test Tag'
+            }
+          }
         }));
 
     it('should validate a tag', () =>
@@ -280,7 +280,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -307,15 +307,15 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: '7', name: 'Create Many Tag - 1' },
-              { id: '8', name: 'Create Many Tag - 2' },
-            ],
-          },
+              { id: '8', name: 'Create Many Tag - 2' }
+            ]
+          }
         }));
 
     it('should validate a tag', () =>
@@ -332,7 +332,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -357,15 +357,15 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: '6',
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -382,7 +382,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -405,7 +405,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -430,14 +430,14 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -454,13 +454,13 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
+            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
           );
         }));
 
@@ -479,7 +479,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -501,15 +501,15 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTag: {
               id: null,
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -524,7 +524,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -548,14 +548,14 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTags: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -570,13 +570,13 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
+            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
           );
         }));
 
@@ -594,7 +594,7 @@ describe('Federated - TagResolver (e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {

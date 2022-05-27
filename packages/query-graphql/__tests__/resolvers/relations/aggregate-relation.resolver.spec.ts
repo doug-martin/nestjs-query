@@ -8,7 +8,7 @@ import {
   createResolverFromNest,
   TestResolverDTO,
   TestService,
-  TestRelationDTO,
+  TestRelationDTO
 } from '../../__fixtures__';
 
 describe('AggregateRelationsResolver', () => {
@@ -42,7 +42,7 @@ describe('AggregateRelationsResolver', () => {
         class TestResolver extends AggregateRelationsResolver(TestResolverDTO, {
           enableAggregate: true,
           one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
-          many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
+          many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } }
         }) {
           constructor(service: TestService) {
             super(service);
@@ -52,18 +52,18 @@ describe('AggregateRelationsResolver', () => {
         const { resolver, mockService } = await createResolverFromNest(TestResolver);
         const dto: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const filter: Filter<TestRelationDTO> = { id: { eq: 'id-2' } };
         const aggregateQuery: AggregateQuery<TestRelationDTO> = {
           count: ['id'],
-          sum: ['testResolverId'],
+          sum: ['testResolverId']
         };
         const output: AggregateResponse<TestRelationDTO>[] = [
           {
             count: { id: 10 },
-            sum: { testResolverId: 100 },
-          },
+            sum: { testResolverId: 100 }
+          }
         ];
         when(
           mockService.aggregateRelations(
@@ -71,8 +71,8 @@ describe('AggregateRelationsResolver', () => {
             'relations',
             deepEqual([dto]),
             objectContaining(filter),
-            objectContaining(aggregateQuery),
-          ),
+            objectContaining(aggregateQuery)
+          )
         ).thenResolve(new Map([[dto, output]]));
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call

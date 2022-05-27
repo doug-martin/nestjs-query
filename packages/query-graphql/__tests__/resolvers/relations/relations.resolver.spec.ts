@@ -1,6 +1,13 @@
 // eslint-disable-next-line max-classes-per-file
 import { Field, ObjectType } from '@nestjs/graphql';
-import { PagingStrategies, Relatable, FilterableField, CursorConnection, Reference, Relation } from '@ptc-org/nestjs-query-graphql';
+import {
+  PagingStrategies,
+  Relatable,
+  FilterableField,
+  CursorConnection,
+  Reference,
+  Relation
+} from '@ptc-org/nestjs-query-graphql';
 import * as readRelations from '../../../src/resolvers/relations/read-relations.resolver';
 import * as referenceRelation from '../../../src/resolvers/relations/references-relation.resolver';
 import * as removeRelations from '../../../src/resolvers/relations/remove-relations.resolver';
@@ -31,7 +38,7 @@ describe('Relatable', () => {
 
     const relations = {
       one: { testRelation: { DTO: TestRelation, allowFiltering: false } },
-      many: { testConnection: { DTO: TestRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR } },
+      many: { testConnection: { DTO: TestRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR } }
     };
     expect(readMixinSpy).toHaveBeenCalledWith(Test, relations);
     expect(updateMixinSpy).toHaveBeenCalledWith(Test, relations);
@@ -53,7 +60,7 @@ describe('Relatable', () => {
     expect(updateMixinSpy).toHaveBeenCalledWith(Test, {});
     expect(removeMixinSpy).toHaveBeenCalledWith(Test, {});
     expect(referenceMixinSpy).toHaveBeenCalledWith(Test, {
-      testReference: { DTO: TestRelation, keys: { id: 'relationId' } },
+      testReference: { DTO: TestRelation, keys: { id: 'relationId' } }
     });
   });
 });

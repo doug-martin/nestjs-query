@@ -6,7 +6,7 @@ import {
   CreateManyInputType,
   CreateOneInputType,
   UpdateManyInputType,
-  UpdateOneInputType,
+  UpdateOneInputType
 } from '@ptc-org/nestjs-query-graphql';
 import { Injectable } from '@nestjs/common';
 import { GqlContext } from './auth/auth.guard';
@@ -31,7 +31,7 @@ export class CreatedByHook<T extends CreatedBy>
   run(instance: CreateOneInputType<T>, context: GqlContext): Promise<CreateOneInputType<T>>;
   async run(
     instance: CreateOneInputType<T> | CreateManyInputType<T>,
-    context: GqlContext,
+    context: GqlContext
   ): Promise<CreateOneInputType<T> | CreateManyInputType<T>> {
     const createdBy = await this.authService.getUserEmail(getUserName(context));
     if (Array.isArray(instance.input)) {
@@ -55,7 +55,7 @@ export class UpdatedByHook<T extends UpdatedBy>
   run(instance: UpdateManyInputType<T, T>, context: GqlContext): Promise<UpdateManyInputType<T, T>>;
   async run(
     instance: UpdateOneInputType<T> | UpdateManyInputType<T, T>,
-    context: GqlContext,
+    context: GqlContext
   ): Promise<UpdateOneInputType<T> | UpdateManyInputType<T, T>> {
     // eslint-disable-next-line no-param-reassign
     instance.update.updatedBy = await this.authService.getUserEmail(getUserName(context));

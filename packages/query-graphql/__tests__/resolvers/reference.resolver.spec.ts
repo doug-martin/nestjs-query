@@ -37,7 +37,7 @@ describe('ReferenceResolver', () => {
       const id = 'id-1';
       const output: TestResolverDTO = {
         id,
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.getById(id)).thenResolve(output);
       // @ts-ignore
@@ -51,13 +51,13 @@ describe('ReferenceResolver', () => {
       const id = 'id-1';
       const output: TestResolverDTO = {
         id,
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.getById(id)).thenResolve(output);
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/naming-convention
       return expect(resolver.resolveReference({ __type: 'TestReference' })).rejects.toThrow(
-        'Unable to resolve reference, missing required key id for TestResolverDTO',
+        'Unable to resolve reference, missing required key id for TestResolverDTO'
       );
     });
   });

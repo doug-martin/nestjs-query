@@ -17,7 +17,7 @@ export interface UpdateManyInputType<DTO, U> {
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function UpdateManyInputType<DTO, U>(
   DTOClass: Class<DTO>,
-  UpdateType: Class<U>,
+  UpdateType: Class<U>
 ): Class<UpdateManyInputType<DTO, U>> {
   const F = UpdateFilterType(DTOClass);
 

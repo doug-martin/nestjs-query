@@ -10,7 +10,7 @@ import {
   FindByIdOptions,
   GetByIdOptions,
   UpdateOneOptions,
-  DeleteOneOptions,
+  DeleteOneOptions
 } from '@ptc-org/nestjs-query-core';
 import lodashPick from 'lodash.pick';
 import { Model, ModelCtor } from 'sequelize-typescript';
@@ -60,10 +60,12 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param query - The Query used to filter, page, and sort rows.
    */
   async query(query: Query<Entity>): Promise<Entity[]> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.model.findAll<Entity>(this.filterQueryBuilder.findOptions(query));
   }
 
   async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>[]> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const result = await this.model.findAll(this.filterQueryBuilder.aggregateOptions({ filter }, aggregate));
     if (!result) {
       return [{}];
@@ -72,6 +74,7 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
   }
 
   async count(filter: Filter<Entity>): Promise<number> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.model.count(this.filterQueryBuilder.countOptions({ filter }));
   }
 
@@ -86,6 +89,7 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param opts - Additional options
    */
   async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const model = await this.model.findOne<Entity>(this.filterQueryBuilder.findByIdOptions(id, opts ?? {}));
     if (!model) {
       return undefined;
@@ -180,7 +184,7 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
     this.ensureIdIsNotPresent(update);
     const [count] = await this.model.update(
       this.getChangedValues(update),
-      this.filterQueryBuilder.updateOptions({ filter }),
+      this.filterQueryBuilder.updateOptions({ filter })
     );
     return { updatedCount: count };
   }
@@ -217,6 +221,7 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param filter - A `Filter` to find records to delete.
    */
   async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const deletedCount = await this.model.destroy(this.filterQueryBuilder.destroyOptions({ filter }));
     return { deletedCount: deletedCount || 0 };
   }

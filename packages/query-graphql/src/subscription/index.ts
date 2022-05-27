@@ -10,7 +10,7 @@ export enum EventType {
   UPDATED_ONE = 'updatedOne',
   UPDATED_MANY = 'updatedMany',
   DELETED_ONE = 'deletedOne',
-  DELETED_MANY = 'deletedMany',
+  DELETED_MANY = 'deletedMany'
 }
 export const getDTOEventName = <DTO>(type: EventType, DTOClass: Class<DTO>, opts?: DTONamesOpts): string => {
   const { baseName, pluralBaseName } = getDTONames(DTOClass, opts);

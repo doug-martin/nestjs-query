@@ -11,7 +11,7 @@ export {
   OffsetConnectionType,
   OffsetConnectionOptions,
   StaticConnectionType,
-  InferConnectionTypeFromStrategy,
+  InferConnectionTypeFromStrategy
 } from './connection';
 export { MutationArgsType } from './mutation-args.type';
 export {
@@ -27,7 +27,7 @@ export {
   NonePagingQueryArgsType,
   CursorPagingType,
   OffsetPagingType,
-  PagingStrategies,
+  PagingStrategies
 } from './query';
 export { CreateManyInputType } from './create-many-input.type';
 export { CreateOneInputType } from './create-one-input.type';

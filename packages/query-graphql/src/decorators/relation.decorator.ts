@@ -7,7 +7,7 @@ import { mergeBaseResolverOpts } from '../common';
 
 export const reflector = new ArrayReflector(RELATION_KEY);
 
-export type RelationDecoratorOpts<Relation> = Omit<ResolverRelation<Relation>, 'DTO'>;
+export type RelationDecoratorOpts<Relation> = Omit<ResolverRelation<Relation>, 'DTO' | 'allowFiltering'>;
 export type RelationTypeFunc<Relation> = () => Class<Relation>;
 export type RelationClassDecorator<DTO> = <Cls extends Class<DTO>>(DTOClass: Cls) => Cls | void;
 
@@ -38,7 +38,6 @@ function convertRelationsToOpts(
 
     if (relation.isMany) {
       relationOpts.many = { ...relationOpts.many, [relation.name]: opts };
-
     } else {
       relationOpts.one = { ...relationOpts.one, [relation.name]: opts };
     }
@@ -53,20 +52,20 @@ export function getRelations<DTO>(DTOClass: Class<DTO>, opts?: BaseResolverOptio
 
 const relationDecorator =
   (isMany: boolean, allowFiltering: boolean, pagingStrategy?: PagingStrategies) =>
-    <DTO, Relation>(
-      name: string,
-      relationTypeFunc: RelationTypeFunc<Relation>,
-      options?: RelationDecoratorOpts<Relation>
-    ): RelationClassDecorator<DTO> =>
-      <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
-        reflector.append(DTOClass, {
-          name,
-          isMany,
-          relationOpts: { pagingStrategy, allowFiltering, ...options },
-          relationTypeFunc
-        });
-        return DTOClass;
-      };
+  <DTO, Relation>(
+    name: string,
+    relationTypeFunc: RelationTypeFunc<Relation>,
+    options?: RelationDecoratorOpts<Relation>
+  ): RelationClassDecorator<DTO> =>
+  <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
+    reflector.append(DTOClass, {
+      name,
+      isMany,
+      relationOpts: { pagingStrategy, allowFiltering, ...options },
+      relationTypeFunc
+    });
+    return DTOClass;
+  };
 
 export const Relation = relationDecorator(false, false);
 export const FilterableRelation = relationDecorator(false, true);

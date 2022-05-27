@@ -59,11 +59,11 @@ describe('FindOneArgsType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmpty: 'id should not be empty',
+            isNotEmpty: 'id should not be empty'
           },
           property: 'id',
-          target: input,
-        },
+          target: input
+        }
       ]);
     });
 
@@ -75,12 +75,12 @@ describe('FindOneArgsType', (): void => {
         {
           children: [],
           constraints: {
-            isNotEmpty: 'id should not be empty',
+            isNotEmpty: 'id should not be empty'
           },
           property: 'id',
           target: input,
-          value: '',
-        },
+          value: ''
+        }
       ]);
     });
   });

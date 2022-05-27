@@ -39,21 +39,21 @@ describe('@Reference decorator', () => {
   describe('getReferences', () => {
     it('should return references for a type', () => {
       expect(getReferences(BaseType)).toEqual({
-        testReference: { DTO: SomeReference, keys: { id: 'referenceId' } },
+        testReference: { DTO: SomeReference, keys: { id: 'referenceId' } }
       });
     });
 
     it('should return inherited references fields for a type', () => {
       expect(getReferences(ImplementingClass)).toEqual({
         testReference: { DTO: SomeReference, keys: { id: 'referenceId' } },
-        implementedReference: { DTO: SomeReference, keys: { id: 'referenceId' } },
+        implementedReference: { DTO: SomeReference, keys: { id: 'referenceId' } }
       });
     });
 
     it('should exclude duplicate inherited references fields for a type', () => {
       expect(getReferences(DuplicateImplementor)).toEqual({
         testReference: { DTO: SomeReference, keys: { id: 'referenceId' } },
-        implementedReference: { DTO: SomeReference, keys: { id: 'someReferenceId' } },
+        implementedReference: { DTO: SomeReference, keys: { id: 'someReferenceId' } }
       });
     });
   });

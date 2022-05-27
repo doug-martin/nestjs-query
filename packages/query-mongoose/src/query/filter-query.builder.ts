@@ -6,7 +6,7 @@ import { WhereBuilder } from './where.builder';
 
 const MONGOOSE_SORT_DIRECTION: Record<SortDirection, 1 | -1> = {
   [SortDirection.ASC]: 1,
-  [SortDirection.DESC]: -1,
+  [SortDirection.DESC]: -1
 };
 
 type MongooseSort = Record<string, 1 | -1>;
@@ -27,13 +27,13 @@ export class FilterQueryBuilder<Entity extends Document> {
   constructor(
     readonly Model: MongooseModel<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(Model),
-    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(),
+    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>()
   ) {}
 
   buildQuery({ filter, paging, sorting }: Query<Entity>): MongooseQuery<Entity> {
     return {
       filterQuery: this.buildFilterQuery(filter),
-      options: { limit: paging?.limit, skip: paging?.offset, sort: this.buildSorting(sorting) },
+      options: { limit: paging?.limit, skip: paging?.offset, sort: this.buildSorting(sorting) }
     };
   }
 
@@ -41,26 +41,26 @@ export class FilterQueryBuilder<Entity extends Document> {
     return {
       filterQuery: this.buildFilterQuery(filter),
       aggregate: this.aggregateBuilder.build(aggregate),
-      options: { sort: this.buildAggregateSorting(aggregate) },
+      options: { sort: this.buildAggregateSorting(aggregate) }
     };
   }
 
   buildIdAggregateQuery(
     id: unknown | unknown[],
     filter: Filter<Entity>,
-    aggregate: AggregateQuery<Entity>,
+    aggregate: AggregateQuery<Entity>
   ): MongooseAggregateQuery<Entity> {
     return {
       filterQuery: this.buildIdFilterQuery(id, filter),
       aggregate: this.aggregateBuilder.build(aggregate),
-      options: { sort: this.buildAggregateSorting(aggregate) },
+      options: { sort: this.buildAggregateSorting(aggregate) }
     };
   }
 
   buildIdFilterQuery(id: unknown | unknown[], filter?: Filter<Entity>): FilterQuery<Entity> {
     return {
       ...this.buildFilterQuery(filter),
-      _id: Array.isArray(id) ? { $in: id } : id,
+      _id: Array.isArray(id) ? { $in: id } : id
     };
   }
 

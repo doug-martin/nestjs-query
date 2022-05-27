@@ -7,12 +7,12 @@ import { getGraphqlObjectName } from '../../common';
 
 registerEnumType(SortDirection, {
   name: 'SortDirection', // this one is mandatory
-  description: 'Sort Directions', // this one is optional
+  description: 'Sort Directions' // this one is optional
 });
 
 registerEnumType(SortNulls, {
   name: 'SortNulls', // this one is mandatory
-  description: 'Sort Nulls Options', // this one is optional
+  description: 'Sort Nulls Options' // this one is optional
 });
 
 const reflector = new ValueReflector('nestjs-query:sort-type');
@@ -23,7 +23,7 @@ export function getOrCreateSortType<T>(TClass: Class<T>): Class<SortField<T>> {
     const fields = getFilterableFields(TClass);
     if (!fields.length) {
       throw new Error(
-        `No fields found to create SortType for ${TClass.name}. Ensure fields are annotated with @FilterableField`,
+        `No fields found to create SortType for ${TClass.name}. Ensure fields are annotated with @FilterableField`
       );
     }
     const fieldNames = fields.map((f) => f.propertyName);

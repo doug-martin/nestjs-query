@@ -8,6 +8,7 @@ import { createFilterComparisonType } from './field-comparison';
 import { getDTONames, getGraphqlObjectName } from '../../common';
 import { getFilterableFields, getQueryOptions, getRelations, SkipIf } from '../../decorators';
 import { isInAllowedList } from './helpers';
+import { HasRequiredFilter } from '../../decorators/has-required.filter';
 
 const reflector = new MapReflector('nestjs-query:filter-type');
 
@@ -20,7 +21,7 @@ export type FilterableRelations = Record<string, Class<unknown>>;
 export interface FilterConstructor<T> {
   hasRequiredFilters: boolean;
 
-  new(): Filter<T>;
+  new (): Filter<T>;
 }
 
 function getObjectTypeName<DTO>(DTOClass: Class<DTO>): string {
@@ -47,8 +48,6 @@ function getOrCreateFilterType<T>(
     class GraphQLFilter {
       static hasRequiredFilters: boolean = hasRequiredFilters;
 
-      // TODO:: Add the required fields also in here and validate they are set!
-
       @ValidateNested()
       @SkipIf(() => isNotAllowedComparison('and'), Field(() => [GraphQLFilter], { nullable: true }))
       @Type(() => GraphQLFilter)
@@ -70,6 +69,9 @@ function getOrCreateFilterType<T>(
       });
       const nullable = advancedOptions?.filterRequired !== true;
       ValidateNested()(GraphQLFilter.prototype, propertyName);
+      if (advancedOptions?.filterRequired) {
+        HasRequiredFilter()(GraphQLFilter.prototype, propertyName);
+      }
       Field(() => FC, { nullable })(GraphQLFilter.prototype, propertyName);
       Type(() => FC)(GraphQLFilter.prototype, propertyName);
     });

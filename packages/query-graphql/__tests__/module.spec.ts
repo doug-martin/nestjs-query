@@ -15,9 +15,9 @@ describe('NestjsQueryGraphQLModule', () => {
       resolvers: [
         {
           DTOClass: TestDTO,
-          EntityClass: TestDTO,
-        },
-      ],
+          EntityClass: TestDTO
+        }
+      ]
     });
     expect(graphqlModule.imports).toHaveLength(1);
     expect(graphqlModule.module).toBe(NestjsQueryGraphQLModule);
@@ -32,9 +32,9 @@ describe('NestjsQueryGraphQLModule', () => {
         {
           DTOClass: TestDTO,
           EntityClass: TestDTO,
-          read: { defaultFilter: { name: { eq: 'foo' } } },
-        },
-      ],
+          read: { defaultFilter: { name: { eq: 'foo' } } }
+        }
+      ]
     });
     expect(graphqlModule.imports).toHaveLength(1);
     expect(graphqlModule.module).toBe(NestjsQueryGraphQLModule);

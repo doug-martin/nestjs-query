@@ -31,7 +31,7 @@ export class SQLComparisonBuilder<Entity> {
     ilike: Op.iLike,
     notilike: Op.notILike,
     is: Op.is,
-    isnot: Op.not,
+    isnot: Op.not
   };
 
   constructor(readonly comparisonMap: Record<string, symbol> = SQLComparisonBuilder.DEFAULT_COMPARISON_MAP) {}
@@ -47,7 +47,7 @@ export class SQLComparisonBuilder<Entity> {
     field: F,
     cmp: FilterComparisonOperators<Entity[F]>,
     val: EntityComparisonField<Entity, F>,
-    alias?: string,
+    alias?: string
   ): WhereOptions {
     const col = alias ? `$${alias}.${field as string}$` : `${field as string}`;
     const normalizedCmp = (cmp as string).toLowerCase();
@@ -68,11 +68,11 @@ export class SQLComparisonBuilder<Entity> {
 
   private betweenComparisonSQL<F extends keyof Entity>(
     col: string,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): WhereOptions {
     if (this.isBetweenVal(val)) {
       return {
-        [col]: { [Op.between]: [val.lower, val.upper] as unknown as Rangable },
+        [col]: { [Op.between]: [val.lower, val.upper] as unknown as Rangable }
       };
     }
     throw new Error(`Invalid value for between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
@@ -80,18 +80,18 @@ export class SQLComparisonBuilder<Entity> {
 
   private notBetweenComparisonSQL<F extends keyof Entity>(
     col: string,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): WhereOptions {
     if (this.isBetweenVal(val)) {
       return {
-        [col]: { [Op.notBetween]: [val.lower, val.upper] as unknown as Rangable },
+        [col]: { [Op.notBetween]: [val.lower, val.upper] as unknown as Rangable }
       };
     }
     throw new Error(`Invalid value for not between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
   }
 
   private isBetweenVal<F extends keyof Entity>(
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): val is CommonFieldComparisonBetweenType<Entity[F]> {
     return val !== null && typeof val === 'object' && 'lower' in val && 'upper' in val;
   }

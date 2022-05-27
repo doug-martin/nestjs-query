@@ -20,7 +20,7 @@ export const transformAndValidate = async <T>(TClass: Class<T>, partial: T): Pro
 export const createSubscriptionFilter =
   <DTO, Input extends SubscriptionFilterInputType<DTO>>(
     InputClass: Class<Input>,
-    payloadKey: string,
+    payloadKey: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): ((payload: any, variables: SubscriptionArgsType<Input>, context: any) => boolean | Promise<boolean>) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

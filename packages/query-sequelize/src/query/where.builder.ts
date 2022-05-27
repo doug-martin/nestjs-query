@@ -45,7 +45,7 @@ export class WhereBuilder<Entity> {
   private filterFields(
     filter: Filter<Entity>,
     associations: Map<string, Association>,
-    alias?: string,
+    alias?: string
   ): WhereOptions | undefined {
     const ands = Object.keys(filter)
       .filter((f) => f !== 'and' && f !== 'or')
@@ -54,8 +54,8 @@ export class WhereBuilder<Entity> {
           field as keyof Entity,
           this.getField(filter, field as keyof Entity),
           associations,
-          alias,
-        ),
+          alias
+        )
       );
     if (ands.length === 1) {
       return ands[0];
@@ -68,7 +68,7 @@ export class WhereBuilder<Entity> {
 
   private getField<K extends keyof FilterComparisons<Entity>>(
     obj: FilterComparisons<Entity>,
-    field: K,
+    field: K
   ): FilterFieldComparison<Entity[K]> {
     return obj[field] as FilterFieldComparison<Entity[K]>;
   }
@@ -77,7 +77,7 @@ export class WhereBuilder<Entity> {
     field: T,
     cmp: FilterFieldComparison<Entity[T]>,
     associations: Map<string, Association>,
-    alias?: string,
+    alias?: string
   ): WhereOptions {
     if (associations.has(field as string)) {
       const wb = new WhereBuilder<Entity[T]>();
@@ -94,8 +94,8 @@ export class WhereBuilder<Entity> {
     }
     return {
       [Op.or]: opts.map((cmpType) =>
-        this.sqlComparisonBuilder.build(colName, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias),
-      ),
+        this.sqlComparisonBuilder.build(colName, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias)
+      )
     };
   }
 }

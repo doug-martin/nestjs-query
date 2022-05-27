@@ -9,7 +9,7 @@ import sequelize, {
   CountOptions,
   Association,
   Projectable,
-  GroupOption,
+  GroupOption
 } from 'sequelize';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { AggregateBuilder } from './aggregate.builder';
@@ -46,7 +46,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
   constructor(
     readonly model: ModelCtor<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
-    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(model),
+    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(model)
   ) {}
 
   /**
@@ -72,7 +72,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     let opts: FindOptions = this.applyAssociationIncludes({ subQuery: false }, query.filter);
     opts = this.applyFilter(opts, {
       ...(query.filter ?? ({} as Filter<Entity>)),
-      [this.model.primaryKeyAttribute]: { [Array.isArray(pk) ? 'in' : 'eq']: pk },
+      [this.model.primaryKeyAttribute]: { [Array.isArray(pk) ? 'in' : 'eq']: pk }
     });
     opts = this.applySorting(opts, query.sorting);
     opts = this.applyPaging(opts, query.paging);
@@ -224,7 +224,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
 
   private applyAssociationIncludes<Opts extends FindOptions | CountOptions>(
     findOpts: Opts,
-    filter?: Filter<Entity>,
+    filter?: Filter<Entity>
   ): Opts {
     if (!filter) {
       return findOpts;
@@ -244,7 +244,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     const referencedRelations = referencedFields.filter((f) => relationNames.includes(f));
     return referencedRelations.reduce(
       (map, r) => map.set(r, this.model.associations[r]),
-      new Map<string, Association>(),
+      new Map<string, Association>()
     );
   }
 

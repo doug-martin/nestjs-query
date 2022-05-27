@@ -36,20 +36,24 @@ const ReadOneRelationMixin =
         () => relationDTO,
         { nullable: relation.nullable, complexity: relation.complexity, description: relation?.description },
         commonResolverOpts,
-        { interceptors: [AuthorizerInterceptor(DTOClass)] },
+        { interceptors: [AuthorizerInterceptor(DTOClass)] }
       )
       async [`find${baseName}`](
         @Parent() dto: DTO,
         @Context() context: ExecutionContext,
         @RelationAuthorizerFilter(baseNameLower, {
           operationGroup: OperationGroup.READ,
-          many: false,
+          many: false
         })
-        authFilter?: Filter<Relation>,
+        authFilter?: Filter<Relation>
       ): Promise<Relation | undefined> {
-        return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load({
+        return DataLoaderFactory.getOrCreateLoader(
+          context,
+          loaderName,
+          findLoader.createLoader(this.service, { withDeleted: relation.withDeleted })
+        ).load({
           dto,
-          filter: authFilter,
+          filter: authFilter
         });
       }
     }
@@ -76,7 +80,7 @@ const ReadManyRelationMixin =
     class RelationQA extends QueryArgsType(relationDTO, {
       ...relation,
       connectionName,
-      disableKeySetPagination: true,
+      disableKeySetPagination: true
     }) {}
 
     // disable keyset pagination for relations otherwise recursive paging will not work
@@ -88,7 +92,7 @@ const ReadManyRelationMixin =
         () => CT.resolveType,
         { nullable: relation.nullable, complexity: relation.complexity, description: relation?.description },
         commonResolverOpts,
-        { interceptors: [AuthorizerInterceptor(DTOClass)] },
+        { interceptors: [AuthorizerInterceptor(DTOClass)] }
       )
       async [`query${pluralBaseName}`](
         @Parent() dto: DTO,
@@ -96,25 +100,25 @@ const ReadManyRelationMixin =
         @Context() context: ExecutionContext,
         @RelationAuthorizerFilter(pluralBaseNameLower, {
           operationGroup: OperationGroup.READ,
-          many: true,
+          many: true
         })
-        relationFilter?: Filter<Relation>,
+        relationFilter?: Filter<Relation>
       ): Promise<InstanceType<typeof CT>> {
-        const qa = await transformAndValidate(RelationQA, q);
+        const relationQuery = await transformAndValidate(RelationQA, q);
         const relationLoader = DataLoaderFactory.getOrCreateLoader(
           context,
           relationLoaderName,
-          queryLoader.createLoader(this.service),
+          queryLoader.createLoader(this.service)
         );
         const relationCountLoader = DataLoaderFactory.getOrCreateLoader(
           context,
           countRelationLoaderName,
-          countLoader.createLoader(this.service),
+          countLoader.createLoader(this.service)
         );
         return CT.createFromPromise(
           (query) => relationLoader.load({ dto, query }),
-          mergeQuery(qa, { filter: relationFilter }),
-          (filter) => relationCountLoader.load({ dto, filter }),
+          mergeQuery(relationQuery, { filter: relationFilter }),
+          (filter) => relationCountLoader.load({ dto, filter })
         );
       }
     }
@@ -129,15 +133,15 @@ export const ReadRelationsMixin =
     const oneRelations = flattenRelations(one ?? {});
     const WithMany = manyRelations.reduce(
       (RB, a) => ReadManyRelationMixin(DTOClass, { enableTotalCount, ...a })(RB),
-      Base,
+      Base
     );
     return oneRelations.reduce((RB, a) => ReadOneRelationMixin(DTOClass, a)(RB), WithMany);
   };
 
 export const ReadRelationsResolver = <
   DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>,
+  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
 >(
   DTOClass: Class<DTO>,
-  relations: ReadRelationsResolverOpts,
+  relations: ReadRelationsResolverOpts
 ): Class<ServiceResolver<DTO, QS>> => ReadRelationsMixin(DTOClass, relations)(BaseServiceResolver);

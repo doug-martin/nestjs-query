@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToMany,
-  JoinTable,
+  JoinTable
 } from 'typeorm';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
 import { TagEntity } from '../tag/tag.entity';

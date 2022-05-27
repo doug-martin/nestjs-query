@@ -17,7 +17,7 @@ describe('TagResolver (hooks - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -27,8 +27,8 @@ describe('TagResolver (hooks - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -42,7 +42,7 @@ describe('TagResolver (hooks - e2e)', () => {
     { id: '2', name: 'Home' },
     { id: '3', name: 'Work' },
     { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
+    { id: '5', name: 'Blocked' }
   ];
 
   describe('find one', () => {
@@ -56,7 +56,7 @@ describe('TagResolver (hooks - e2e)', () => {
           tag(id: 1) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200, { data: { tag: tags[0] } }));
 
@@ -70,7 +70,7 @@ describe('TagResolver (hooks - e2e)', () => {
           tag(id: 100) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -91,7 +91,7 @@ describe('TagResolver (hooks - e2e)', () => {
               ${edgeNodes('id')}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -100,7 +100,7 @@ describe('TagResolver (hooks - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
@@ -119,7 +119,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -128,7 +128,7 @@ describe('TagResolver (hooks - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags);
@@ -145,7 +145,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -154,7 +154,7 @@ describe('TagResolver (hooks - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
@@ -171,7 +171,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -180,7 +180,7 @@ describe('TagResolver (hooks - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual([tags[0], tags[2], tags[4]]);
@@ -197,7 +197,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -206,7 +206,7 @@ describe('TagResolver (hooks - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
@@ -224,7 +224,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -233,7 +233,7 @@ describe('TagResolver (hooks - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
@@ -250,7 +250,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -259,7 +259,7 @@ describe('TagResolver (hooks - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
@@ -282,15 +282,15 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: '6',
-              name: 'Test Tag',
-            },
-          },
+              name: 'Test Tag'
+            }
+          }
         }));
 
     it('should call beforeCreateOne hook when creating a tag', () =>
@@ -309,16 +309,16 @@ describe('TagResolver (hooks - e2e)', () => {
               ${tagFields}
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: '7',
               name: 'Before Create One Tag',
-              createdBy: 'e2e@nestjs-query.com',
-            },
-          },
+              createdBy: 'e2e@nestjs-query.com'
+            }
+          }
         }));
 
     it('should validate a tag', () =>
@@ -335,7 +335,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -362,15 +362,15 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: '8', name: 'Create Many Tag - 1' },
-              { id: '9', name: 'Create Many Tag - 2' },
-            ],
-          },
+              { id: '9', name: 'Create Many Tag - 2' }
+            ]
+          }
         }));
 
     it('should call beforeCreateMany hook when creating multiple tags', () =>
@@ -392,15 +392,15 @@ describe('TagResolver (hooks - e2e)', () => {
               ${tagFields}
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: '10', name: 'Before Create Many Tag - 1', createdBy: 'e2e@nestjs-query.com' },
-              { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'e2e@nestjs-query.com' },
-            ],
-          },
+              { id: '11', name: 'Before Create Many Tag - 2', createdBy: 'e2e@nestjs-query.com' }
+            ]
+          }
         }));
 
     it('should validate a tag', () =>
@@ -417,7 +417,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -442,15 +442,15 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: '6',
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should call beforeUpdateOne hook when updating a tag', () =>
@@ -470,16 +470,16 @@ describe('TagResolver (hooks - e2e)', () => {
               ${tagFields}
               updatedBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: '7',
               name: 'Before Update One Test Tag',
-              updatedBy: 'e2e@nestjs-query.com',
-            },
-          },
+              updatedBy: 'e2e@nestjs-query.com'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -496,7 +496,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -519,7 +519,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -544,14 +544,14 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should call beforeUpdateMany hook when updating multiple tags', () =>
@@ -570,14 +570,14 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         })
         .then(async () => {
           const queryService = app.get<QueryService<TagEntity>>(getQueryServiceToken(TagEntity));
@@ -586,11 +586,11 @@ describe('TagResolver (hooks - e2e)', () => {
             todoItems.map((ti) => ({
               id: ti.id,
               name: ti.name,
-              updatedBy: ti.updatedBy,
-            })),
+              updatedBy: ti.updatedBy
+            }))
           ).toEqual([
             { id: 10, name: 'Before Update Many Tag', updatedBy: 'e2e@nestjs-query.com' },
-            { id: 11, name: 'Before Update Many Tag', updatedBy: 'e2e@nestjs-query.com' },
+            { id: 11, name: 'Before Update Many Tag', updatedBy: 'e2e@nestjs-query.com' }
           ]);
         }));
 
@@ -608,13 +608,13 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
+            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
           );
         }));
 
@@ -633,7 +633,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -655,15 +655,15 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTag: {
               id: null,
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -678,7 +678,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -702,14 +702,14 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTags: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -724,13 +724,13 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
+            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
           );
         }));
 
@@ -748,7 +748,7 @@ describe('TagResolver (hooks - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -777,7 +777,7 @@ describe('TagResolver (hooks - e2e)', () => {
                 ${edgeNodes(todoItemFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -787,7 +787,7 @@ describe('TagResolver (hooks - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node.title).sort()).toEqual([
@@ -795,7 +795,7 @@ describe('TagResolver (hooks - e2e)', () => {
             'Create Entity',
             'Create Entity Service',
             'Create Nest App',
-            'How to create item With Sub Tasks',
+            'How to create item With Sub Tasks'
           ]);
         }));
   });
@@ -820,7 +820,7 @@ describe('TagResolver (hooks - e2e)', () => {
                 ${edgeNodes(todoItemFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -830,7 +830,7 @@ describe('TagResolver (hooks - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);

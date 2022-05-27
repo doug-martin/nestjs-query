@@ -10,7 +10,7 @@ import {
   RangeComparisonOperators,
   LikeComparisonOperators,
   InComparisonOperators,
-  BetweenComparisonOperators,
+  BetweenComparisonOperators
 } from './filter.helpers';
 
 const compare =
@@ -22,7 +22,7 @@ export class ComparisonBuilder {
   static build<DTO, F extends keyof DTO>(
     field: F,
     cmp: FilterComparisonOperators<DTO[F]>,
-    val: ComparisonField<DTO, F>,
+    val: ComparisonField<DTO, F>
   ): FilterFn<DTO> {
     if (isBooleanComparisonOperators(cmp)) {
       return this.booleanComparison(cmp, field, val as DTO[F]);
@@ -46,7 +46,7 @@ export class ComparisonBuilder {
   private static booleanComparison<DTO, F extends keyof DTO>(
     cmp: BooleanComparisonOperators,
     field: F,
-    val: DTO[F],
+    val: DTO[F]
   ): FilterFn<DTO> {
     if (cmp === 'neq') {
       return (dto?: DTO): boolean => (dto ? dto[field] : null) !== val;
@@ -65,7 +65,7 @@ export class ComparisonBuilder {
   private static rangeComparison<DTO, F extends keyof DTO>(
     cmp: RangeComparisonOperators,
     field: F,
-    val: DTO[F],
+    val: DTO[F]
   ): FilterFn<DTO> {
     if (cmp === 'gt') {
       return compare((dto) => dto[field] > val, false);
@@ -82,7 +82,7 @@ export class ComparisonBuilder {
   private static likeComparison<DTO, F extends keyof DTO>(
     cmp: LikeComparisonOperators,
     field: F,
-    val: string,
+    val: string
   ): FilterFn<DTO> {
     if (cmp === 'like') {
       const likeRegexp = this.likeSearchToRegexp(val);
@@ -103,7 +103,7 @@ export class ComparisonBuilder {
   private static inComparison<DTO, F extends keyof DTO>(
     cmp: InComparisonOperators,
     field: F,
-    val: DTO[F][],
+    val: DTO[F][]
   ): FilterFn<DTO> {
     if (cmp === 'notIn') {
       return compare((dto) => !val.includes(dto[field]), true);
@@ -114,7 +114,7 @@ export class ComparisonBuilder {
   private static betweenComparison<DTO, F extends keyof DTO>(
     cmp: BetweenComparisonOperators,
     field: F,
-    val: CommonFieldComparisonBetweenType<DTO[F]>,
+    val: CommonFieldComparisonBetweenType<DTO[F]>
   ): FilterFn<DTO> {
     const { lower, upper } = val;
     if (cmp === 'notBetween') {

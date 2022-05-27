@@ -21,7 +21,6 @@ describe('AggregateResolver', () => {
 
   it('should create a AggregateResolver for the DTO', () => expectResolverSDL({ enabled: true }));
 
-
   describe('#aggregate', () => {
     const createResolver = () => {
       @Resolver(() => TestResolverDTO)
@@ -31,21 +30,21 @@ describe('AggregateResolver', () => {
         }
       }
       return TestResolver;
-    }
+    };
     it('should call the service query with the provided input', async () => {
       const { resolver, mockService } = await createResolverFromNest(createResolver());
       const input: AggregateArgsType<TestResolverDTO> = {
         filter: {
-          stringField: { eq: 'foo' },
-        },
+          stringField: { eq: 'foo' }
+        }
       };
       const aggregateQuery: AggregateQuery<TestResolverDTO> = { count: ['id'] };
       const output: AggregateResponse<TestResolverDTO>[] = [
         {
-          count: { id: 10 },
-        },
+          count: { id: 10 }
+        }
       ];
-      when(mockService.aggregate(objectContaining(input.filter!), deepEqual(aggregateQuery))).thenResolve(output);
+      when(mockService.aggregate(objectContaining(input.filter), deepEqual(aggregateQuery))).thenResolve(output);
       const result = await resolver.aggregate(input, aggregateQuery);
       return expect(result).toEqual(output);
     });

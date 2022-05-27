@@ -14,7 +14,7 @@ import {
   tagFields,
   todoItemFields,
   tagAggregateFields,
-  todoItemAggregateFields,
+  todoItemAggregateFields
 } from './graphql-fragments';
 
 describe('TagResolver (sequelize - e2e)', () => {
@@ -22,7 +22,7 @@ describe('TagResolver (sequelize - e2e)', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = module.createNestApplication();
@@ -32,8 +32,8 @@ describe('TagResolver (sequelize - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -47,7 +47,7 @@ describe('TagResolver (sequelize - e2e)', () => {
     { id: '2', name: 'Home' },
     { id: '3', name: 'Work' },
     { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
+    { id: '5', name: 'Blocked' }
   ];
 
   describe('find one', () => {
@@ -61,7 +61,7 @@ describe('TagResolver (sequelize - e2e)', () => {
           tag(id: 1) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200, { data: { tag: tags[0] } }));
 
@@ -75,9 +75,9 @@ describe('TagResolver (sequelize - e2e)', () => {
           tag(id: 100) {
             ${tagFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -97,7 +97,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               totalCount
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -106,7 +106,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);
@@ -125,7 +125,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               ${todoItemAggregateFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -136,8 +136,8 @@ describe('TagResolver (sequelize - e2e)', () => {
               count: { completed: 2, created: 2, description: 0, id: 2, title: 2, updated: 2 },
               max: { description: null, id: '2', title: 'Create Nest App' },
               min: { description: null, id: '1', title: 'Create Entity' },
-              sum: { id: 3 },
-            },
+              sum: { id: 3 }
+            }
           ]);
         }));
   });
@@ -155,7 +155,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -164,7 +164,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -183,7 +183,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -192,7 +192,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -211,7 +211,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -220,7 +220,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -239,7 +239,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -248,7 +248,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
+            startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -268,7 +268,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -277,7 +277,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
@@ -296,7 +296,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ${edgeNodes(tagFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -305,7 +305,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
+              startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0='
             });
             expect(totalCount).toBe(5);
             expect(edges).toHaveLength(2);
@@ -325,7 +325,7 @@ describe('TagResolver (sequelize - e2e)', () => {
           tagAggregate {
               ${tagAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -336,8 +336,8 @@ describe('TagResolver (sequelize - e2e)', () => {
               sum: { id: 15 },
               avg: { id: 3 },
               min: { id: '1', name: 'Blocked' },
-              max: { id: '5', name: 'Work' },
-            },
+              max: { id: '5', name: 'Work' }
+            }
           ]);
         }));
 
@@ -351,7 +351,7 @@ describe('TagResolver (sequelize - e2e)', () => {
           tagAggregate(filter: { name: { in: ["Urgent", "Blocked", "Work"] } }) {
               ${tagAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -362,8 +362,8 @@ describe('TagResolver (sequelize - e2e)', () => {
               sum: { id: 9 },
               avg: { id: 3 },
               min: { id: '1', name: 'Blocked' },
-              max: { id: '5', name: 'Work' },
-            },
+              max: { id: '5', name: 'Work' }
+            }
           ]);
         }));
   });
@@ -383,15 +383,15 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: '6',
-              name: 'Test Tag',
-            },
-          },
+              name: 'Test Tag'
+            }
+          }
         }));
 
     it('should validate a tag', () =>
@@ -408,7 +408,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -435,15 +435,15 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: '7', name: 'Create Many Tag - 1' },
-              { id: '8', name: 'Create Many Tag - 2' },
-            ],
-          },
+              { id: '8', name: 'Create Many Tag - 2' }
+            ]
+          }
         }));
 
     it('should validate a tag', () =>
@@ -460,7 +460,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -485,15 +485,15 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: '6',
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -510,7 +510,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -533,7 +533,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -558,14 +558,14 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -582,13 +582,13 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
+            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
           );
         }));
 
@@ -607,7 +607,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -629,15 +629,15 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTag: {
               id: '6',
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -652,7 +652,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -676,14 +676,14 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTags: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -698,13 +698,13 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
+            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
           );
         }));
 
@@ -722,7 +722,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -752,7 +752,7 @@ describe('TagResolver (sequelize - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -763,7 +763,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(5);
           expect(edges).toHaveLength(5);
@@ -772,7 +772,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             'Create Entity',
             'Create Entity Service',
             'Create Nest App',
-            'How to create item With Sub Tasks',
+            'How to create item With Sub Tasks'
           ]);
         }));
   });
@@ -798,7 +798,7 @@ describe('TagResolver (sequelize - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -809,7 +809,7 @@ describe('TagResolver (sequelize - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(2);
           expect(edges).toHaveLength(2);

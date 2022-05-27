@@ -30,14 +30,14 @@ describe('AggregateBuilder', (): void => {
       avg: ['numberType'],
       sum: ['numberType'],
       max: ['stringType', 'dateType', 'numberType'],
-      min: ['stringType', 'dateType', 'numberType'],
+      min: ['stringType', 'dateType', 'numberType']
     });
   });
 
   it('should create selects for all aggregate functions and group bys', (): void => {
     expectSQLSnapshot({
       groupBy: ['stringType', 'boolType'],
-      count: ['testEntityPk'],
+      count: ['testEntityPk']
     });
   });
 
@@ -52,8 +52,8 @@ describe('AggregateBuilder', (): void => {
           MAX_stringType: 'z',
           MAX_numberType: 10,
           MIN_stringType: 'a',
-          MIN_numberType: 1,
-        },
+          MIN_numberType: 1
+        }
       ];
       expect(AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toEqual([
         {
@@ -62,19 +62,19 @@ describe('AggregateBuilder', (): void => {
           sum: { numberType: 55 },
           avg: { numberType: 5 },
           max: { stringType: 'z', numberType: 10 },
-          min: { stringType: 'a', numberType: 1 },
-        },
+          min: { stringType: 'a', numberType: 1 }
+        }
       ]);
     });
 
     it('should throw an error if a column is not expected', () => {
       const dbResult = [
         {
-          COUNTtestEntityPk: 10,
-        },
+          COUNTtestEntityPk: 10
+        }
       ];
       expect(() => AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toThrow(
-        'Unknown aggregate column encountered.',
+        'Unknown aggregate column encountered.'
       );
     });
   });

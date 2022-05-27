@@ -13,7 +13,7 @@ export const refresh = async (connection: Connection): Promise<void> => {
     { id: 2, title: 'Create Entity' },
     { id: 3, title: 'Create Entity Service' },
     { id: 4, title: 'Add Todo Item Resolver' },
-    { id: 5, title: 'How to create item With Sub Tasks' },
+    { id: 5, title: 'How to create item With Sub Tasks' }
   ];
   const subTaskRepo = connection.getRepository(SubTaskEntity);
 
@@ -23,10 +23,10 @@ export const refresh = async (connection: Connection): Promise<void> => {
         ...subTasks,
         { completed: true, title: `${todo.title} - Sub Task 1`, todoItemId: todo.id },
         { completed: false, title: `${todo.title} - Sub Task 2`, todoItemId: todo.id },
-        { completed: false, title: `${todo.title} - Sub Task 3`, todoItemId: todo.id },
+        { completed: false, title: `${todo.title} - Sub Task 3`, todoItemId: todo.id }
       ],
-      [] as Partial<SubTaskEntity>[],
-    ),
+      [] as Partial<SubTaskEntity>[]
+    )
   );
 };
 

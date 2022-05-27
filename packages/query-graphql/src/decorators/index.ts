@@ -2,7 +2,7 @@ export {
   FilterableField,
   FilterableFieldOptions,
   FilterableFieldDescriptor,
-  getFilterableFields,
+  getFilterableFields
 } from './filterable-field.decorator';
 export { ResolverMethodOpts } from './resolver-method.decorator';
 export {
@@ -16,7 +16,7 @@ export {
   FilterableRelation,
   RelationDecoratorOpts,
   RelationTypeFunc,
-  getRelations,
+  getRelations
 } from './relation.decorator';
 export * from './resolver-mutation.decorator';
 export * from './resolver-query.decorator';

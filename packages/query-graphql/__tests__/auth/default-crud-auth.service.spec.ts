@@ -8,7 +8,7 @@ import {
   OperationGroup,
   getAuthorizerToken,
   getCustomAuthorizerToken,
-  CustomAuthorizer,
+  CustomAuthorizer
 } from '../../src/auth';
 import { createAuthorizerProviders } from '../../src/providers';
 
@@ -38,8 +38,8 @@ describe('createDefaultAuthorizer', () => {
 
   @Authorize({
     authorize: (ctx: UserContext) => ({
-      decoratorOwnerId: { eq: ctx.user.id },
-    }),
+      decoratorOwnerId: { eq: ctx.user.id }
+    })
   })
   class TestDecoratorRelation {
     decoratorOwnerId!: number;
@@ -49,15 +49,15 @@ describe('createDefaultAuthorizer', () => {
     authorize: (ctx: UserContext, authorizationContext?: AuthorizationContext) =>
       authorizationContext?.operationName === 'other'
         ? { ownerId: { neq: ctx.user.id } }
-        : { ownerId: { eq: ctx.user.id } },
+        : { ownerId: { eq: ctx.user.id } }
   })
   @Relation('relations', () => TestRelation, {
     auth: {
       authorize: (ctx: UserContext, authorizationContext?: AuthorizationContext) =>
         authorizationContext?.operationName === 'other'
           ? { relationOwnerId: { neq: ctx.user.id } }
-          : { relationOwnerId: { eq: ctx.user.id } },
-    },
+          : { relationOwnerId: { eq: ctx.user.id } }
+    }
   })
   @UnPagedRelation('unPagedDecoratorRelations', () => TestDecoratorRelation)
   @Relation('authorizerRelation', () => RelationWithAuthorizer)
@@ -76,7 +76,7 @@ describe('createDefaultAuthorizer', () => {
     }
 
     authorizeRelation(): Promise<Filter<unknown> | undefined> {
-      return Promise.resolve(undefined);
+      return Promise.resolve<undefined>(undefined);
     }
   }
 
@@ -86,8 +86,8 @@ describe('createDefaultAuthorizer', () => {
       authorize: (ctx: UserContext, authorizationContext?: AuthorizationContext) =>
         authorizationContext?.operationName === 'other'
           ? { relationOwnerId: { neq: ctx.user.id } }
-          : { relationOwnerId: { eq: ctx.user.id } },
-    },
+          : { relationOwnerId: { eq: ctx.user.id } }
+    }
   })
   @UnPagedRelation('unPagedDecoratorRelations', () => TestDecoratorRelation)
   @Relation('authorizerRelation', () => RelationWithAuthorizer)
@@ -104,9 +104,9 @@ describe('createDefaultAuthorizer', () => {
           RelationWithAuthorizer,
           TestDTO,
           TestNoAuthDTO,
-          TestWithAuthorizerDTO,
-        ]),
-      ],
+          TestWithAuthorizerDTO
+        ])
+      ]
     }).compile();
   });
 
@@ -120,8 +120,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryMany',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({ ownerId: { eq: 2 } });
   });
@@ -134,8 +134,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'other',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({ ownerId: { neq: 2 } });
   });
@@ -148,8 +148,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryMany',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({});
   });
@@ -163,8 +163,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({ decoratorOwnerId: { eq: 2 } });
   });
@@ -178,8 +178,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({ relationOwnerId: { eq: 2 } });
   });
@@ -193,8 +193,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'other',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({ relationOwnerId: { neq: 2 } });
   });
@@ -208,8 +208,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({ authorizerOwnerId: { eq: 2 } });
   });
@@ -223,8 +223,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({});
   });
@@ -233,7 +233,7 @@ describe('createDefaultAuthorizer', () => {
     const authorizer = testingModule.get<Authorizer<TestWithAuthorizerDTO>>(getAuthorizerToken(TestWithAuthorizerDTO));
     jest.spyOn(authorizer, 'authorizeRelation');
     const customAuthorizer = testingModule.get<CustomAuthorizer<TestWithAuthorizerDTO>>(
-      getCustomAuthorizerToken(TestWithAuthorizerDTO),
+      getCustomAuthorizerToken(TestWithAuthorizerDTO)
     );
     jest.spyOn(customAuthorizer, 'authorizeRelation');
     expect(customAuthorizer).toBeDefined();
@@ -244,11 +244,11 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryMany',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({
-      decoratorOwnerId: { eq: 2 },
+      decoratorOwnerId: { eq: 2 }
     });
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(customAuthorizer.authorizeRelation).toHaveBeenCalledWith(
@@ -258,8 +258,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryMany',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(authorizer.authorizeRelation).toHaveBeenCalledWith(
@@ -269,8 +269,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryMany',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
   });
 
@@ -278,16 +278,16 @@ describe('createDefaultAuthorizer', () => {
     const authorizer = testingModule.get<Authorizer<TestWithAuthorizerDTO>>(getAuthorizerToken(TestWithAuthorizerDTO));
     jest.spyOn(authorizer, 'authorizeRelation');
     const customAuthorizer = testingModule.get<CustomAuthorizer<TestWithAuthorizerDTO>>(
-      getCustomAuthorizerToken(TestWithAuthorizerDTO),
+      getCustomAuthorizerToken(TestWithAuthorizerDTO)
     );
     jest.spyOn(customAuthorizer, 'authorizeRelation');
     expect(customAuthorizer).toBeDefined();
     const relationAuthorizer = testingModule.get<Authorizer<RelationWithAuthorizer>>(
-      getAuthorizerToken(RelationWithAuthorizer),
+      getAuthorizerToken(RelationWithAuthorizer)
     );
     jest.spyOn(relationAuthorizer, 'authorize');
     const customRelationAuthorizer = testingModule.get<CustomAuthorizer<RelationWithAuthorizer>>(
-      getCustomAuthorizerToken(RelationWithAuthorizer),
+      getCustomAuthorizerToken(RelationWithAuthorizer)
     );
     jest.spyOn(customRelationAuthorizer, 'authorize');
     const filter = await authorizer.authorizeRelation(
@@ -297,11 +297,11 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     expect(filter).toEqual({
-      authorizerOwnerId: { eq: 2 },
+      authorizerOwnerId: { eq: 2 }
     });
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(customAuthorizer.authorizeRelation).toHaveBeenCalledWith(
@@ -311,8 +311,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(authorizer.authorizeRelation).toHaveBeenCalledWith(
@@ -322,8 +322,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(relationAuthorizer.authorize).toHaveBeenCalledWith(
@@ -332,8 +332,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(customRelationAuthorizer.authorize).toHaveBeenCalledWith(
@@ -342,8 +342,8 @@ describe('createDefaultAuthorizer', () => {
         operationName: 'queryRelation',
         operationGroup: OperationGroup.READ,
         readonly: true,
-        many: true,
-      },
+        many: true
+      }
     );
   });
 });

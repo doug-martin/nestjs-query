@@ -9,14 +9,14 @@ import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
 import { refresh } from './fixtures';
 import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
 
-jest.setTimeout(20000)
+jest.setTimeout(20000);
 
 describe('TagResolver (complexity - e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -26,8 +26,8 @@ describe('TagResolver (complexity - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -41,7 +41,7 @@ describe('TagResolver (complexity - e2e)', () => {
     { id: '2', name: 'Home' },
     { id: '3', name: 'Work' },
     { id: '4', name: 'Question' },
-    { id: '5', name: 'Blocked' },
+    { id: '5', name: 'Blocked' }
   ];
 
   describe('find one', () => {
@@ -55,7 +55,7 @@ describe('TagResolver (complexity - e2e)', () => {
           tag(id: 1) {
             ${tagFields}
           }
-        }`,
+        }`
         })
         .expect(200, { data: { tag: tags[0] } }));
 
@@ -69,9 +69,9 @@ describe('TagResolver (complexity - e2e)', () => {
           tag(id: 100) {
             ${tagFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toContain('Unable to find');
@@ -90,7 +90,7 @@ describe('TagResolver (complexity - e2e)', () => {
               ${edgeNodes('id')}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -99,7 +99,7 @@ describe('TagResolver (complexity - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(2);
           expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
@@ -118,7 +118,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -127,7 +127,7 @@ describe('TagResolver (complexity - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags);
@@ -144,7 +144,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -153,7 +153,7 @@ describe('TagResolver (complexity - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(3);
           expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
@@ -176,7 +176,7 @@ describe('TagResolver (complexity - e2e)', () => {
             }
             `)}
           }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -184,9 +184,9 @@ describe('TagResolver (complexity - e2e)', () => {
             errors: [
               {
                 extensions: { code: 'INTERNAL_SERVER_ERROR' },
-                message: 'Query is too complex: 33. Maximum allowed complexity: 30',
-              },
-            ],
+                message: 'Query is too complex: 33. Maximum allowed complexity: 30'
+              }
+            ]
           });
         }));
 
@@ -201,7 +201,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -210,7 +210,7 @@ describe('TagResolver (complexity - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges).toHaveLength(5);
           expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
@@ -228,7 +228,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -237,7 +237,7 @@ describe('TagResolver (complexity - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
@@ -254,7 +254,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ${pageInfoField}
             ${edgeNodes(tagFields)}
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -263,7 +263,7 @@ describe('TagResolver (complexity - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
             });
             expect(edges).toHaveLength(2);
             expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
@@ -286,15 +286,15 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createOneTag: {
               id: '6',
-              name: 'Test Tag',
-            },
-          },
+              name: 'Test Tag'
+            }
+          }
         }));
 
     it('should validate a tag', () =>
@@ -311,7 +311,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -338,15 +338,15 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             createManyTags: [
               { id: '7', name: 'Create Many Tag - 1' },
-              { id: '8', name: 'Create Many Tag - 2' },
-            ],
-          },
+              { id: '8', name: 'Create Many Tag - 2' }
+            ]
+          }
         }));
 
     it('should validate a tag', () =>
@@ -363,7 +363,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -388,15 +388,15 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTag: {
               id: '6',
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -413,7 +413,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -436,7 +436,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -461,14 +461,14 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTags: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -485,13 +485,13 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.',
+            'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
           );
         }));
 
@@ -510,7 +510,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -532,15 +532,15 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTag: {
               id: null,
-              name: 'Update Test Tag',
-            },
-          },
+              name: 'Update Test Tag'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -555,7 +555,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               ${tagFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
@@ -579,14 +579,14 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTags: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -601,13 +601,13 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.',
+            'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
           );
         }));
 
@@ -625,7 +625,7 @@ describe('TagResolver (complexity - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -654,7 +654,7 @@ describe('TagResolver (complexity - e2e)', () => {
                 ${edgeNodes(todoItemFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -665,14 +665,14 @@ describe('TagResolver (complexity - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges.map((e) => e.node.title).sort()).toEqual([
             'Add Todo Item Resolver',
             'Create Entity',
             'Create Entity Service',
             'Create Nest App',
-            'How to create item With Sub Tasks',
+            'How to create item With Sub Tasks'
           ]);
         }));
   });
@@ -697,7 +697,7 @@ describe('TagResolver (complexity - e2e)', () => {
                 ${edgeNodes(todoItemFields)}
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -708,7 +708,7 @@ describe('TagResolver (complexity - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
         }));

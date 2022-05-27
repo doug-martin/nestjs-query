@@ -11,14 +11,14 @@ import { formatGraphqlError, typeormOrmConfig } from '../../helpers';
     TypeOrmModule.forRoot(typeormOrmConfig('subscription')),
     GraphQLModule.forRoot({
       subscriptions: {
-        'graphql-ws': true,
+        'graphql-ws': true
       },
       autoSchemaFile: 'schema.gql',
       formatError: formatGraphqlError
     }),
     SubTaskModule,
     TodoItemModule,
-    TagModule,
-  ],
+    TagModule
+  ]
 })
 export class AppModule {}

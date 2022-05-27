@@ -20,6 +20,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 import { MethodNotAllowedException, NotFoundException } from '@nestjs/common';
 import { FilterQueryBuilder, AggregateBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
+import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
 
 export interface TypeOrmQueryServiceOpts<Entity> {
   useSoftDelete?: boolean;
@@ -42,7 +43,10 @@ export interface TypeOrmQueryServiceOpts<Entity> {
  * }
  * ```
  */
-export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>> {
+export class TypeOrmQueryService<Entity>
+  extends RelationQueryService<Entity>
+  implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
+{
   readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   readonly useSoftDelete: boolean;
@@ -94,6 +98,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * const todoItem = await this.service.findById(1);
    * ```
    * @param id - The id of the record to find.
+   * @param opts
    */
   async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
     const qb = this.filterQueryBuilder.selectById(id, opts ?? {});
@@ -115,6 +120,7 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    * }
    * ```
    * @param id - The id of the record to find.
+   * @param opts
    */
   async getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity> {
     const entity = await this.findById(id, opts);
@@ -194,25 +200,21 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
    */
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
-    let updateResult;
+    let updateResult: UpdateResult;
 
     // If the update has relations then fetch all the id's and then do an update on the ids returned
     if (this.filterQueryBuilder.filterHasRelations(filter)) {
-      const builder = this.filterQueryBuilder.select({ filter })
-        .distinct(true);
+      const builder = this.filterQueryBuilder.select({ filter }).distinct(true);
 
-      const distinctRecords = await builder
-        .addSelect(`${builder.alias}.id`)
-        .getRawMany();
+      const distinctRecords = await builder.addSelect(`${builder.alias}.id`).getRawMany();
 
-      const ids = distinctRecords.map(({ id }) => id);
+      const ids: unknown[] = distinctRecords.map(({ id }) => id as unknown);
       const idsFilter = { id: { in: ids } } as Filter<Entity>;
 
       updateResult = await this.filterQueryBuilder
         .update({ filter: idsFilter })
         .set({ ...(update as QueryDeepPartialEntity<Entity>) })
         .execute();
-
     } else {
       updateResult = await this.filterQueryBuilder
         .update({ filter })
@@ -265,20 +267,16 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
     let deleteResult = {} as DeleteResult;
 
     if (this.filterQueryBuilder.filterHasRelations(filter)) {
-      const builder = this.filterQueryBuilder.select({ filter })
-        .distinct(true);
+      const builder = this.filterQueryBuilder.select({ filter }).distinct(true);
 
-      const distinctRecords = await builder
-        .addSelect(`${builder.alias}.id`)
-        .getRawMany();
+      const distinctRecords = await builder.addSelect(`${builder.alias}.id`).getRawMany();
 
-      const ids = distinctRecords.map(({ id }) => id);
+      const ids: unknown[] = distinctRecords.map(({ id }) => id as unknown);
       const idsFilter = { id: { in: ids } } as Filter<Entity>;
 
       if (ids.length > 0) {
         if (this.useSoftDelete || opts?.useSoftDelete) {
           deleteResult = await this.filterQueryBuilder.softDelete({ filter: idsFilter }).execute();
-
         } else {
           deleteResult = await this.filterQueryBuilder.delete({ filter: idsFilter }).execute();
         }
@@ -286,7 +284,6 @@ export class TypeOrmQueryService<Entity> extends RelationQueryService<Entity> im
     } else {
       if (this.useSoftDelete || opts?.useSoftDelete) {
         deleteResult = await this.filterQueryBuilder.softDelete({ filter }).execute();
-
       } else {
         deleteResult = await this.filterQueryBuilder.delete({ filter }).execute();
       }

@@ -10,7 +10,7 @@ import { UserDTO } from '../user/user.dto';
 export class AuthService {
   constructor(
     @InjectQueryService(UserEntity) private usersService: QueryService<UserEntity>,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   async validateUser(username: string, pass: string): Promise<AuthenticatedUser | null> {
@@ -36,7 +36,7 @@ export class AuthService {
     const payload: JwtPayload = { username: user.username, sub: user.id };
     return Promise.resolve({
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      accessToken: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload)
     });
   }
 }

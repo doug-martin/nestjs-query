@@ -34,21 +34,21 @@ describe('FilterableField decorator', (): void => {
         propertyName: 'stringOptionalField',
         target: String,
         advancedOptions: { nullable: true },
-        returnTypeFunc: undefined,
+        returnTypeFunc: undefined
       },
       {
         propertyName: 'floatField',
         target: Number,
         advancedOptions: { nullable: true },
-        returnTypeFunc: floatReturnFunc,
+        returnTypeFunc: floatReturnFunc
       },
       { propertyName: 'numberField', target: Number, advancedOptions: { nullable: true }, returnTypeFunc: undefined },
       {
         propertyName: 'filterOnlyField',
         target: String,
         advancedOptions: { filterOnly: true },
-        returnTypeFunc: undefined,
-      },
+        returnTypeFunc: undefined
+      }
     ]);
     expect(fieldSpy).toHaveBeenCalledTimes(4);
     expect(fieldSpy).toHaveBeenNthCalledWith(1);
@@ -84,21 +84,21 @@ describe('FilterableField decorator', (): void => {
 
     it('should return filterable fields for a type', () => {
       expect(getFilterableFields(BaseType)).toEqual([
-        { propertyName: 'id', target: Number, returnTypeFunc: expect.any(Function) },
+        { propertyName: 'id', target: Number, returnTypeFunc: expect.any(Function) }
       ]);
     });
 
     it('should return inherited filterable fields for a type', () => {
       expect(getFilterableFields(ImplementingClass)).toEqual([
         { propertyName: 'id', target: Number, returnTypeFunc: expect.any(Function) },
-        { propertyName: 'implemented', target: Boolean },
+        { propertyName: 'implemented', target: Boolean }
       ]);
     });
 
     it('should exclude duplicate fields inherited filterable fields for a type', () => {
       expect(getFilterableFields(DuplicateImplementor)).toEqual([
         { propertyName: 'implemented', target: Boolean },
-        { propertyName: 'id', target: Number, advancedOptions: { name: 'test' } },
+        { propertyName: 'id', target: Number, advancedOptions: { name: 'test' } }
       ]);
     });
   });

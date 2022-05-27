@@ -15,7 +15,7 @@ export class TodoItemResolver {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = {
       ...query.filter,
-      ...{ completed: { is: true } },
+      ...{ completed: { is: true } }
     };
 
     return TodoItemConnection.createFromPromise((q) => this.service.query(q), { ...query, ...{ filter } });
@@ -27,7 +27,7 @@ export class TodoItemResolver {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = {
       ...query.filter,
-      ...{ completed: { is: false } },
+      ...{ completed: { is: false } }
     };
 
     return TodoItemConnection.createFromPromise((q) => this.service.query(q), { ...query, ...{ filter } });

@@ -19,10 +19,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
           UpdateDTOClass: SubTaskUpdateDTO,
           enableAggregate: true,
           enableSubscriptions: true,
-          guards: [JwtAuthGuard],
-        },
-      ],
-    }),
-  ],
+          guards: [JwtAuthGuard]
+        }
+      ]
+    })
+  ]
 })
 export class SubTaskModule {}

@@ -7,7 +7,7 @@ import {
   AggregateResponse,
   transformAggregateQuery,
   transformAggregateResponse,
-  DeepPartial,
+  DeepPartial
 } from '@ptc-org/nestjs-query-core';
 
 describe('ClassTransformerAssembler', () => {
@@ -28,49 +28,49 @@ describe('ClassTransformerAssembler', () => {
     convertToCreateEntity(create: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
       return {
         first: create.firstName,
-        last: create.lastName,
+        last: create.lastName
       };
     }
 
     convertToUpdateEntity(update: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
       return {
         first: update.firstName,
-        last: update.lastName,
+        last: update.lastName
       };
     }
 
     convertToDTO(entity: TestEntity): TestDTO {
       return {
         firstName: entity.first,
-        lastName: entity.last,
+        lastName: entity.last
       };
     }
 
     convertToEntity(dto: TestDTO): TestEntity {
       return {
         first: dto.firstName,
-        last: dto.lastName,
+        last: dto.lastName
       };
     }
 
     convertQuery(query: Query<TestDTO>): Query<TestEntity> {
       return transformQuery(query, {
         firstName: 'first',
-        lastName: 'last',
+        lastName: 'last'
       });
     }
 
     convertAggregateQuery(aggregate: AggregateQuery<TestDTO>): AggregateQuery<TestEntity> {
       return transformAggregateQuery(aggregate, {
         firstName: 'first',
-        lastName: 'last',
+        lastName: 'last'
       });
     }
 
     convertAggregateResponse(aggregate: AggregateResponse<TestEntity>): AggregateResponse<TestDTO> {
       return transformAggregateResponse(aggregate, {
         first: 'firstName',
-        last: 'lastName',
+        last: 'lastName'
       });
     }
   }
@@ -81,13 +81,13 @@ describe('ClassTransformerAssembler', () => {
   it('should throw an error if DTOClass or EntityClass cannot be determined', () => {
     class TestBadAssembler extends TestAssembler {}
     expect(() => new TestBadAssembler()).toThrow(
-      'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler',
+      'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler'
     );
     expect(() => new TestBadAssembler(TestDTO)).toThrow(
-      'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler',
+      'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler'
     );
     expect(() => new TestBadAssembler(undefined, TestEntity)).toThrow(
-      'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler',
+      'Unable to determine DTO or Entity types for TestBadAssembler. Did you annotate your assembler with @Assembler'
     );
   });
 

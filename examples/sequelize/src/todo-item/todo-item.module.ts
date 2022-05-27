@@ -28,10 +28,10 @@ const guards = [AuthGuard];
           create: { guards },
           update: { guards },
           delete: { guards },
-          aggregate: { guards },
-        },
-      ],
-    }),
-  ],
+          aggregate: { guards }
+        }
+      ]
+    })
+  ]
 })
 export class TodoItemModule {}

@@ -6,7 +6,7 @@ import {
   CreatedAt,
   Model,
   PrimaryKey,
-  AutoIncrement,
+  AutoIncrement
 } from 'sequelize-typescript';
 import { TodoItemEntityTags } from '../todo-item/entity/todo-item-tag.entity';
 import { TodoItemEntity } from '../todo-item/entity/todo-item.entity';

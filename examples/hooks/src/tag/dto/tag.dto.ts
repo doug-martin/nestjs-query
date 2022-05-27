@@ -6,7 +6,7 @@ import {
   BeforeCreateMany,
   BeforeUpdateOne,
   BeforeUpdateMany,
-  KeySet,
+  KeySet
 } from '@ptc-org/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { CreatedByHook, UpdatedByHook } from '../../hooks';

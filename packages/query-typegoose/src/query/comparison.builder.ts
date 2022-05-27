@@ -30,12 +30,12 @@ export class ComparisonBuilder<Entity> {
     in: '$in',
     notin: '$nin',
     is: '$eq',
-    isnot: '$ne',
+    isnot: '$ne'
   };
 
   constructor(
     readonly Model: ReturnModelType<new () => Entity>,
-    readonly comparisonMap: Record<string, string> = ComparisonBuilder.DEFAULT_COMPARISON_MAP,
+    readonly comparisonMap: Record<string, string> = ComparisonBuilder.DEFAULT_COMPARISON_MAP
   ) {}
 
   /**
@@ -48,7 +48,7 @@ export class ComparisonBuilder<Entity> {
   build<F extends keyof Entity>(
     field: F,
     cmp: FilterComparisonOperators<Entity[F]>,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): mongoose.FilterQuery<Entity> {
     const schemaKey = getSchemaKey(`${String(field)}`);
     const normalizedCmp = (cmp as string).toLowerCase();
@@ -56,26 +56,28 @@ export class ComparisonBuilder<Entity> {
     if (this.comparisonMap[normalizedCmp]) {
       // comparison operator (e.b. =, !=, >, <)
       querySelector = {
-        [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F]),
+        [this.comparisonMap[normalizedCmp]]: this.convertQueryValue(field, val as Entity[F])
       } as mongoose.FilterQuery<Entity[F]>;
     }
     if (normalizedCmp.includes('like')) {
-      // @ts-ignore
       querySelector = this.likeComparison(normalizedCmp, val);
     }
+
     if (normalizedCmp.includes('between')) {
       querySelector = this.betweenComparison(normalizedCmp, field, val);
     }
+
     if (!querySelector) {
       throw new BadRequestException(`unknown operator ${JSON.stringify(cmp)}`);
     }
+
     return { [schemaKey]: querySelector } as mongoose.FilterQuery<Entity>;
   }
 
   private betweenComparison<F extends keyof Entity>(
     cmp: string,
     field: F,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): mongoose.FilterQuery<Entity[F]> {
     if (!this.isBetweenVal(val)) {
       throw new Error(`Invalid value for ${cmp} expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
@@ -87,14 +89,14 @@ export class ComparisonBuilder<Entity> {
   }
 
   private isBetweenVal<F extends keyof Entity>(
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): val is CommonFieldComparisonBetweenType<Entity[F]> {
     return val !== null && typeof val === 'object' && 'lower' in val && 'upper' in val;
   }
 
   private likeComparison<F extends keyof Entity>(
     cmp: string,
-    val: EntityComparisonField<Entity, F>,
+    val: EntityComparisonField<Entity, F>
   ): mongoose.FilterQuery<RegExp> {
     const regExpStr = escapeRegExp(`${String(val)}`).replace(/%/g, '.*');
     const regExp = new RegExp(regExpStr, cmp.includes('ilike') ? 'i' : undefined);

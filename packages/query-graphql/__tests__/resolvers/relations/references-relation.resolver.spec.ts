@@ -5,12 +5,12 @@ import {
   createResolverFromNest,
   TestResolverDTO,
   TestService,
-  TestRelationDTO,
+  TestRelationDTO
 } from '../../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends ReferencesRelationsResolver(TestResolverDTO, {
-  reference: { DTO: TestRelationDTO, keys: { id: 'stringField' } },
+  reference: { DTO: TestRelationDTO, keys: { id: 'stringField' } }
 }) {
   constructor(service: TestService) {
     super(service);
@@ -42,7 +42,7 @@ describe('ReferencesRelationMixin', () => {
     const { resolver } = await createResolverFromNest(TestResolver);
     const dto: TestResolverDTO = {
       id: 'id-1',
-      stringField: 'reference-id-1',
+      stringField: 'reference-id-1'
     };
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call

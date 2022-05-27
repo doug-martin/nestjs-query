@@ -38,5 +38,4 @@ interface ContextArgs {
     TagModule
   ]
 })
-export class AppModule {
-}
+export class AppModule {}

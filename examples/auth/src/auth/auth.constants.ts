@@ -1,3 +1,3 @@
 export const jwtConstants = {
-  secret: 'nestjs-query-secret!!!',
+  secret: 'nestjs-query-secret!!!'
 };

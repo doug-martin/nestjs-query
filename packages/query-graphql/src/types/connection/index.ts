@@ -11,7 +11,7 @@ export {
   CursorConnectionOptions,
   OffsetConnectionOptions,
   ArrayConnectionOptions,
-  InferConnectionTypeFromStrategy,
+  InferConnectionTypeFromStrategy
 } from './interfaces';
 export { getOrCreateCursorConnectionType } from './cursor';
 export { getOrCreateOffsetConnectionType } from './offset';

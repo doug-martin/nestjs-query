@@ -8,6 +8,6 @@ labels: 'documentation, needs triage'
 
 (A clear and concise description of what the issue is.)
 
-### Have you read the [Contributing Guidelines on issues](https://github.com/doug-martin/nestjs-query/blob/master/CONTRIBUTING.md)?
+### Have you read the [Contributing Guidelines on issues](https://github.com/tripss/nestjs-query/blob/master/CONTRIBUTING.md)?
 
 (Write your answer here.)

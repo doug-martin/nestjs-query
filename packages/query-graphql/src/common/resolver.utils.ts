@@ -9,7 +9,7 @@ const mergeArrays = <T>(arr1?: T[], arr2?: T[]): T[] | undefined => {
 
 export const mergeBaseResolverOpts = <Into extends BaseResolverOptions>(
   into: Into,
-  from: BaseResolverOptions,
+  from: BaseResolverOptions
 ): Into => {
   const guards = mergeArrays(from.guards, into.guards);
   const interceptors = mergeArrays(from.interceptors, into.interceptors);

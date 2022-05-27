@@ -55,7 +55,7 @@ describe('@SkipIf decorator', () => {
       expect(dec).toHaveBeenCalledWith(
         TestSkipDecorator.prototype,
         'prop',
-        Object.getOwnPropertyDescriptor(TestSkipDecorator.prototype, 'prop'),
+        Object.getOwnPropertyDescriptor(TestSkipDecorator.prototype, 'prop')
       );
     });
 

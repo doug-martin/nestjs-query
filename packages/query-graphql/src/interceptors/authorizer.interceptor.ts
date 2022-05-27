@@ -21,7 +21,7 @@ export function AuthorizerInterceptor<DTO>(DTOClass: Class<DTO>): Class<NestInte
   Object.defineProperty(Interceptor, 'name', {
     writable: false,
     // set a unique name otherwise DI does not inject a unique one for each request
-    value: `${DTOClass.name}AuthorizerInterceptor`,
+    value: `${DTOClass.name}AuthorizerInterceptor`
   });
 
   return Interceptor;

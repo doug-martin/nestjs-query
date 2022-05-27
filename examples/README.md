@@ -39,7 +39,7 @@ For example to run the `basic` example
 npm run start -- basic
 ```
 
-To read more about `nestjs-query` checkout the [docs](https://doug-martin.github.io/nestjs-query/docs/introduction/getting-started)
+To read more about `nestjs-query` checkout the [docs](https://tripss.github.io/nestjs-query/docs/introduction/getting-started)
 
 
 

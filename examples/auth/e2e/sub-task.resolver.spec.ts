@@ -17,7 +17,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule]
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -27,8 +27,8 @@ describe('SubTaskResolver (auth - e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
+        forbidUnknownValues: true
+      })
     );
 
     await app.init();
@@ -54,64 +54,64 @@ describe('SubTaskResolver (auth - e2e)', () => {
       title: 'Create Entity Service - Sub Task 1',
       completed: true,
       description: null,
-      todoItemId: '3',
+      todoItemId: '3'
     },
     {
       id: '8',
       title: 'Create Entity Service - Sub Task 2',
       completed: false,
       description: null,
-      todoItemId: '3',
+      todoItemId: '3'
     },
     {
       id: '9',
       title: 'Create Entity Service - Sub Task 3',
       completed: false,
       description: null,
-      todoItemId: '3',
+      todoItemId: '3'
     },
     {
       id: '10',
       title: 'Add Todo Item Resolver - Sub Task 1',
       completed: true,
       description: null,
-      todoItemId: '4',
+      todoItemId: '4'
     },
     {
       completed: false,
       description: null,
       id: '11',
       title: 'Add Todo Item Resolver - Sub Task 2',
-      todoItemId: '4',
+      todoItemId: '4'
     },
     {
       completed: false,
       description: null,
       id: '12',
       title: 'Add Todo Item Resolver - Sub Task 3',
-      todoItemId: '4',
+      todoItemId: '4'
     },
     {
       completed: true,
       description: null,
       id: '13',
       title: 'How to create item With Sub Tasks - Sub Task 1',
-      todoItemId: '5',
+      todoItemId: '5'
     },
     {
       completed: false,
       description: null,
       id: '14',
       title: 'How to create item With Sub Tasks - Sub Task 2',
-      todoItemId: '5',
+      todoItemId: '5'
     },
     {
       completed: false,
       description: null,
       id: '15',
       title: 'How to create item With Sub Tasks - Sub Task 3',
-      todoItemId: '5',
-    },
+      todoItemId: '5'
+    }
   ];
 
   describe('find one', () => {
@@ -125,7 +125,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
           subTask(id: 1) {
             ${subTaskFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -140,7 +140,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
           subTask(id: 1) {
             ${subTaskFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -151,9 +151,9 @@ describe('SubTaskResolver (auth - e2e)', () => {
                 title: 'Create Nest App - Sub Task 1',
                 completed: true,
                 description: null,
-                todoItemId: '1',
-              },
-            },
+                todoItemId: '1'
+              }
+            }
           });
         }));
 
@@ -168,7 +168,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
           subTask(id: 100) {
             ${subTaskFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -189,7 +189,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -201,10 +201,10 @@ describe('SubTaskResolver (auth - e2e)', () => {
                   title: 'Create Nest App',
                   completed: true,
                   description: null,
-                  age: expect.any(Number),
-                },
-              },
-            },
+                  age: expect.any(Number)
+                }
+              }
+            }
           });
         }));
   });
@@ -222,7 +222,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -239,7 +239,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -248,7 +248,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(15);
           expect(edges).toHaveLength(10);
@@ -268,7 +268,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -277,7 +277,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(3);
           expect(edges).toHaveLength(3);
@@ -297,7 +297,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -306,7 +306,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(6);
           expect(edges).toHaveLength(6);
@@ -326,7 +326,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -335,7 +335,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
           });
           expect(totalCount).toBe(15);
           expect(edges).toHaveLength(10);
@@ -356,7 +356,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -365,7 +365,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
             });
             expect(totalCount).toBe(15);
             expect(edges).toHaveLength(2);
@@ -385,7 +385,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ${edgeNodes(subTaskFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
@@ -394,7 +394,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
-              startCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
+              startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
             });
             expect(totalCount).toBe(15);
             expect(edges).toHaveLength(2);
@@ -414,7 +414,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
           subTaskAggregate {
               ${subTaskAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -430,7 +430,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
           subTaskAggregate {
               ${subTaskAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -445,9 +445,9 @@ describe('SubTaskResolver (auth - e2e)', () => {
                 id: '15',
                 title: 'How to create item With Sub Tasks - Sub Task 3',
                 description: null,
-                todoItemId: '5',
-              },
-            },
+                todoItemId: '5'
+              }
+            }
           ]);
         }));
 
@@ -462,7 +462,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
           subTaskAggregate(filter: {completed: {is: true}}) {
               ${subTaskAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -477,9 +477,9 @@ describe('SubTaskResolver (auth - e2e)', () => {
                 id: '13',
                 title: 'How to create item With Sub Tasks - Sub Task 1',
                 description: null,
-                todoItemId: '5',
-              },
-            },
+                todoItemId: '5'
+              }
+            }
           ]);
         }));
   });
@@ -499,7 +499,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -519,7 +519,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               ${subTaskFields}
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -529,9 +529,9 @@ describe('SubTaskResolver (auth - e2e)', () => {
               description: null,
               completed: false,
               todoItemId: '1',
-              createdBy: 'nestjs-query',
-            },
-          },
+              createdBy: 'nestjs-query'
+            }
+          }
         }));
 
     it('should validate a subTask', () =>
@@ -549,7 +549,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -576,7 +576,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -599,7 +599,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               ${subTaskFields}
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -610,7 +610,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
                 description: null,
                 completed: false,
                 todoItemId: '2',
-                createdBy: 'nestjs-query',
+                createdBy: 'nestjs-query'
               },
               {
                 id: '48',
@@ -618,10 +618,10 @@ describe('SubTaskResolver (auth - e2e)', () => {
                 description: null,
                 completed: true,
                 todoItemId: '2',
-                createdBy: 'nestjs-query',
-              },
-            ],
-          },
+                createdBy: 'nestjs-query'
+              }
+            ]
+          }
         }));
 
     it('should validate a subTask', () =>
@@ -639,7 +639,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -664,7 +664,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -685,7 +685,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               ${subTaskFields}
               updatedBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -695,9 +695,9 @@ describe('SubTaskResolver (auth - e2e)', () => {
               description: null,
               completed: true,
               todoItemId: '1',
-              updatedBy: 'nestjs-query',
-            },
-          },
+              updatedBy: 'nestjs-query'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -717,13 +717,13 @@ describe('SubTaskResolver (auth - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateOneSubTaskInput.id" of required type "ID!" was not provided.',
+            'Field "UpdateOneSubTaskInput.id" of required type "ID!" was not provided.'
           );
         }));
 
@@ -745,7 +745,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -770,7 +770,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -790,14 +790,14 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManySubTasks: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -815,13 +815,13 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.',
+            'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.'
           );
         }));
 
@@ -841,7 +841,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -863,7 +863,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -881,7 +881,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -890,9 +890,9 @@ describe('SubTaskResolver (auth - e2e)', () => {
               title: 'Update Test Sub Task',
               completed: true,
               description: null,
-              todoItemId: '1',
-            },
-          },
+              todoItemId: '1'
+            }
+          }
         }));
 
     it('should require an id', () =>
@@ -908,13 +908,13 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               ${subTaskFields}
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteOneSubTaskInput.id" of required type "ID!" was not provided.',
+            'Field "DeleteOneSubTaskInput.id" of required type "ID!" was not provided.'
           );
         }));
   });
@@ -934,7 +934,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -953,14 +953,14 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManySubTasks: {
-              deletedCount: 2,
-            },
-          },
+              deletedCount: 2
+            }
+          }
         }));
 
     it('should require a filter', () =>
@@ -976,13 +976,13 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.',
+            'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.'
           );
         }));
 
@@ -1001,7 +1001,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1025,7 +1025,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
@@ -1044,7 +1044,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1058,10 +1058,10 @@ describe('SubTaskResolver (auth - e2e)', () => {
                   title: 'Create Entity',
                   completed: false,
                   description: null,
-                  age: expect.any(Number),
-                },
-              },
-            },
+                  age: expect.any(Number)
+                }
+              }
+            }
           });
         }));
     it('should not allow setting a the todoItem that does not belong to the user on a subTask', () =>
@@ -1079,7 +1079,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -1101,7 +1101,7 @@ describe('SubTaskResolver (auth - e2e)', () => {
               ${todoItemFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {

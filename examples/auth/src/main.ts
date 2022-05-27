@@ -7,8 +7,8 @@ async function bootstrap(): Promise<void> {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
-    }),
+      transform: true
+    })
   );
 
   await app.listen(3000);

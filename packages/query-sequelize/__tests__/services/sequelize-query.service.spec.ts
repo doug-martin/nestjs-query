@@ -31,9 +31,9 @@ describe('SequelizeQueryService', (): void => {
     moduleRef = await Test.createTestingModule({
       imports: [
         SequelizeModule.forRoot(CONNECTION_OPTIONS),
-        SequelizeModule.forFeature([TestEntity, TestRelation, TestEntityTestRelationEntity]),
+        SequelizeModule.forFeature([TestEntity, TestRelation, TestEntityTestRelationEntity])
       ],
-      providers: [TestEntityService, TestRelationService],
+      providers: [TestEntityService, TestRelationService]
     }).compile();
     const sequelize = moduleRef.get(Sequelize);
     await sequelize.sync();
@@ -60,10 +60,10 @@ describe('SequelizeQueryService', (): void => {
             filter: {
               oneTestRelation: {
                 testRelationPk: {
-                  in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
-                },
-              },
-            },
+                  in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`]
+                }
+              }
+            }
           });
           expect(queryResult.map((e) => e.get({ plain: true }))).toEqual([entity]);
         });
@@ -76,10 +76,10 @@ describe('SequelizeQueryService', (): void => {
             filter: {
               testEntity: {
                 testEntityPk: {
-                  in: [PLAIN_TEST_ENTITIES[0].testEntityPk, PLAIN_TEST_ENTITIES[1].testEntityPk],
-                },
-              },
-            },
+                  in: [PLAIN_TEST_ENTITIES[0].testEntityPk, PLAIN_TEST_ENTITIES[1].testEntityPk]
+                }
+              }
+            }
           });
           expect(queryResults.map((e) => e.get({ plain: true }))).toEqual(PLAIN_TEST_RELATIONS.slice(0, 6));
         });
@@ -93,10 +93,10 @@ describe('SequelizeQueryService', (): void => {
             filter: {
               testRelations: {
                 relationName: {
-                  in: [PLAIN_TEST_RELATIONS[0].relationName, PLAIN_TEST_RELATIONS[1].relationName],
-                },
-              },
-            },
+                  in: [PLAIN_TEST_RELATIONS[0].relationName, PLAIN_TEST_RELATIONS[1].relationName]
+                }
+              }
+            }
           });
           expect(queryResult.map((e) => e.get({ plain: true }))).toEqual([entity]);
         });
@@ -114,33 +114,33 @@ describe('SequelizeQueryService', (): void => {
           avg: ['numberType'],
           sum: ['numberType'],
           max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-        },
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType']
+        }
       );
       return expect(queryResult).toEqual([
         {
           avg: {
-            numberType: 5.5,
+            numberType: 5.5
           },
           count: {
-            testEntityPk: 10,
+            testEntityPk: 10
           },
           max: {
             dateType: expect.stringMatching('2020-02-10'),
             numberType: 10,
             stringType: 'foo9',
-            testEntityPk: 'test-entity-9',
+            testEntityPk: 'test-entity-9'
           },
           min: {
             dateType: expect.stringMatching('2020-02-01'),
             numberType: 1,
             stringType: 'foo1',
-            testEntityPk: 'test-entity-1',
+            testEntityPk: 'test-entity-1'
           },
           sum: {
-            numberType: 55,
-          },
-        },
+            numberType: 55
+          }
+        }
       ]);
     });
 
@@ -154,62 +154,62 @@ describe('SequelizeQueryService', (): void => {
           avg: ['numberType'],
           sum: ['numberType'],
           max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-        },
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType']
+        }
       );
       return expect(queryResult).toEqual([
         {
           groupBy: {
-            boolType: 0,
+            boolType: 0
           },
           avg: {
-            numberType: 5,
+            numberType: 5
           },
           count: {
-            testEntityPk: 5,
+            testEntityPk: 5
           },
           max: {
             dateType: expect.stringMatching('2020-02-09'),
             numberType: 9,
             stringType: 'foo9',
-            testEntityPk: 'test-entity-9',
+            testEntityPk: 'test-entity-9'
           },
           min: {
             dateType: expect.stringMatching('2020-02-01'),
             numberType: 1,
             stringType: 'foo1',
-            testEntityPk: 'test-entity-1',
+            testEntityPk: 'test-entity-1'
           },
           sum: {
-            numberType: 25,
-          },
+            numberType: 25
+          }
         },
         {
           groupBy: {
-            boolType: 1,
+            boolType: 1
           },
           avg: {
-            numberType: 6,
+            numberType: 6
           },
           count: {
-            testEntityPk: 5,
+            testEntityPk: 5
           },
           max: {
             dateType: expect.stringMatching('2020-02-10'),
             numberType: 10,
             stringType: 'foo8',
-            testEntityPk: 'test-entity-8',
+            testEntityPk: 'test-entity-8'
           },
           min: {
             dateType: expect.stringMatching('2020-02-02'),
             numberType: 2,
             stringType: 'foo10',
-            testEntityPk: 'test-entity-10',
+            testEntityPk: 'test-entity-10'
           },
           sum: {
-            numberType: 30,
-          },
-        },
+            numberType: 30
+          }
+        }
       ]);
     });
 
@@ -222,33 +222,33 @@ describe('SequelizeQueryService', (): void => {
           avg: ['numberType'],
           sum: ['numberType'],
           max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-        },
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType']
+        }
       );
       return expect(queryResult).toEqual([
         {
           avg: {
-            numberType: 2,
+            numberType: 2
           },
           count: {
-            testEntityPk: 3,
+            testEntityPk: 3
           },
           max: {
             dateType: expect.stringMatching('2020-02-03'),
             numberType: 3,
             stringType: 'foo3',
-            testEntityPk: 'test-entity-3',
+            testEntityPk: 'test-entity-3'
           },
           min: {
             dateType: expect.stringMatching('2020-02-01'),
             numberType: 1,
             stringType: 'foo1',
-            testEntityPk: 'test-entity-1',
+            testEntityPk: 'test-entity-1'
           },
           sum: {
-            numberType: 6,
-          },
-        },
+            numberType: 6
+          }
+        }
       ]);
     });
 
@@ -262,62 +262,62 @@ describe('SequelizeQueryService', (): void => {
           avg: ['numberType'],
           sum: ['numberType'],
           max: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-          min: ['testEntityPk', 'dateType', 'numberType', 'stringType'],
-        },
+          min: ['testEntityPk', 'dateType', 'numberType', 'stringType']
+        }
       );
       return expect(queryResult).toEqual([
         {
           groupBy: {
-            boolType: 0,
+            boolType: 0
           },
           avg: {
-            numberType: 2,
+            numberType: 2
           },
           count: {
-            testEntityPk: 2,
+            testEntityPk: 2
           },
           max: {
             dateType: expect.stringMatching('2020-02-03'),
             numberType: 3,
             stringType: 'foo3',
-            testEntityPk: 'test-entity-3',
+            testEntityPk: 'test-entity-3'
           },
           min: {
             dateType: expect.stringMatching('2020-02-01'),
             numberType: 1,
             stringType: 'foo1',
-            testEntityPk: 'test-entity-1',
+            testEntityPk: 'test-entity-1'
           },
           sum: {
-            numberType: 4,
-          },
+            numberType: 4
+          }
         },
         {
           groupBy: {
-            boolType: 1,
+            boolType: 1
           },
           avg: {
-            numberType: 2,
+            numberType: 2
           },
           count: {
-            testEntityPk: 1,
+            testEntityPk: 1
           },
           max: {
             dateType: expect.stringMatching('2020-02-02'),
             numberType: 2,
             stringType: 'foo2',
-            testEntityPk: 'test-entity-2',
+            testEntityPk: 'test-entity-2'
           },
           min: {
             dateType: expect.stringMatching('2020-02-02'),
             numberType: 2,
             stringType: 'foo2',
-            testEntityPk: 'test-entity-2',
+            testEntityPk: 'test-entity-2'
           },
           sum: {
-            numberType: 2,
-          },
-        },
+            numberType: 2
+          }
+        }
       ]);
     });
   });
@@ -337,9 +337,9 @@ describe('SequelizeQueryService', (): void => {
           const count = await queryService.count({
             oneTestRelation: {
               testRelationPk: {
-                in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`],
-              },
-            },
+                in: [`test-relations-${entity.testEntityPk}-1`, `test-relations-${entity.testEntityPk}-3`]
+              }
+            }
           });
           expect(count).toBe(1);
         });
@@ -351,9 +351,9 @@ describe('SequelizeQueryService', (): void => {
           const count = await queryService.count({
             testEntity: {
               testEntityPk: {
-                in: [PLAIN_TEST_ENTITIES[0].testEntityPk, PLAIN_TEST_ENTITIES[2].testEntityPk],
-              },
-            },
+                in: [PLAIN_TEST_ENTITIES[0].testEntityPk, PLAIN_TEST_ENTITIES[2].testEntityPk]
+              }
+            }
           });
           expect(count).toBe(6);
         });
@@ -366,9 +366,9 @@ describe('SequelizeQueryService', (): void => {
           const count = await queryService.count({
             testRelations: {
               testEntityId: {
-                in: [relation.testEntityId as string],
-              },
-            },
+                in: [relation.testEntityId]
+              }
+            }
           });
           expect(count).toBe(1);
         });
@@ -385,13 +385,13 @@ describe('SequelizeQueryService', (): void => {
           'testRelations',
           TestEntity.build(PLAIN_TEST_ENTITIES[0]),
           {
-            filter: { relationName: { isNot: null } },
-          },
+            filter: { relationName: { isNot: null } }
+          }
         );
         return expect(queryResult.map((r) => r.testEntityId)).toEqual([
           PLAIN_TEST_ENTITIES[0].testEntityPk,
           PLAIN_TEST_ENTITIES[0].testEntityPk,
-          PLAIN_TEST_ENTITIES[0].testEntityPk,
+          PLAIN_TEST_ENTITIES[0].testEntityPk
         ]);
       });
     });
@@ -401,7 +401,7 @@ describe('SequelizeQueryService', (): void => {
         const entities = PLAIN_TEST_ENTITIES.slice(0, 3).map((pe) => TestEntity.build(pe));
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', entities, {
-          filter: { relationName: { isNot: null } },
+          filter: { relationName: { isNot: null } }
         });
 
         expect(queryResult.size).toBe(3);
@@ -411,11 +411,11 @@ describe('SequelizeQueryService', (): void => {
       it('should return an empty array if no results are found.', async () => {
         const entities: TestEntity[] = [
           PLAIN_TEST_ENTITIES[0] as TestEntity,
-          { testEntityPk: 'does-not-exist' } as TestEntity,
+          { testEntityPk: 'does-not-exist' } as TestEntity
         ];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.queryRelations(TestRelation, 'testRelations', entities, {
-          filter: { relationName: { isNot: null } },
+          filter: { relationName: { isNot: null } }
         });
 
         expect(queryResult.size).toBe(2);
@@ -434,14 +434,14 @@ describe('SequelizeQueryService', (): void => {
           'testRelations',
           TestEntity.build(PLAIN_TEST_ENTITIES[0]),
           { relationName: { isNot: null } },
-          { count: ['testRelationPk'] },
+          { count: ['testRelationPk'] }
         );
         return expect(aggResult).toEqual([
           {
             count: {
-              testRelationPk: 3,
-            },
-          },
+              testRelationPk: 3
+            }
+          }
         ]);
       });
     });
@@ -458,8 +458,8 @@ describe('SequelizeQueryService', (): void => {
           {
             count: ['testRelationPk', 'relationName', 'testEntityId'],
             min: ['testRelationPk', 'relationName', 'testEntityId'],
-            max: ['testRelationPk', 'relationName', 'testEntityId'],
-          },
+            max: ['testRelationPk', 'relationName', 'testEntityId']
+          }
         );
 
         expect(queryResult.size).toBe(3);
@@ -472,20 +472,20 @@ describe('SequelizeQueryService', (): void => {
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo1-test-relation-two',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-3',
+                    testRelationPk: 'test-relations-test-entity-1-3'
                   },
                   min: {
                     relationName: 'foo1-test-relation-one',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-1-1'
+                  }
+                }
+              ]
             ],
             [
               entities[1],
@@ -494,20 +494,20 @@ describe('SequelizeQueryService', (): void => {
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo2-test-relation-two',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-3',
+                    testRelationPk: 'test-relations-test-entity-2-3'
                   },
                   min: {
                     relationName: 'foo2-test-relation-one',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-2-1'
+                  }
+                }
+              ]
             ],
             [
               entities[2],
@@ -516,22 +516,22 @@ describe('SequelizeQueryService', (): void => {
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo3-test-relation-two',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-3',
+                    testRelationPk: 'test-relations-test-entity-3-3'
                   },
                   min: {
                     relationName: 'foo3-test-relation-one',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-1',
-                  },
-                },
-              ],
-            ],
-          ]),
+                    testRelationPk: 'test-relations-test-entity-3-1'
+                  }
+                }
+              ]
+            ]
+          ])
         );
       });
 
@@ -547,8 +547,8 @@ describe('SequelizeQueryService', (): void => {
             groupBy: ['testEntityId'],
             count: ['testRelationPk', 'relationName', 'testEntityId'],
             min: ['testRelationPk', 'relationName', 'testEntityId'],
-            max: ['testRelationPk', 'relationName', 'testEntityId'],
-          },
+            max: ['testRelationPk', 'relationName', 'testEntityId']
+          }
         );
 
         expect(queryResult.size).toBe(3);
@@ -559,84 +559,84 @@ describe('SequelizeQueryService', (): void => {
               [
                 {
                   groupBy: {
-                    testEntityId: 'test-entity-1',
+                    testEntityId: 'test-entity-1'
                   },
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo1-test-relation-two',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-3',
+                    testRelationPk: 'test-relations-test-entity-1-3'
                   },
                   min: {
                     relationName: 'foo1-test-relation-one',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-1-1'
+                  }
+                }
+              ]
             ],
             [
               entities[1],
               [
                 {
                   groupBy: {
-                    testEntityId: 'test-entity-2',
+                    testEntityId: 'test-entity-2'
                   },
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo2-test-relation-two',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-3',
+                    testRelationPk: 'test-relations-test-entity-2-3'
                   },
                   min: {
                     relationName: 'foo2-test-relation-one',
                     testEntityId: 'test-entity-2',
-                    testRelationPk: 'test-relations-test-entity-2-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-2-1'
+                  }
+                }
+              ]
             ],
             [
               entities[2],
               [
                 {
                   groupBy: {
-                    testEntityId: 'test-entity-3',
+                    testEntityId: 'test-entity-3'
                   },
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo3-test-relation-two',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-3',
+                    testRelationPk: 'test-relations-test-entity-3-3'
                   },
                   min: {
                     relationName: 'foo3-test-relation-one',
                     testEntityId: 'test-entity-3',
-                    testRelationPk: 'test-relations-test-entity-3-1',
-                  },
-                },
-              ],
-            ],
-          ]),
+                    testRelationPk: 'test-relations-test-entity-3-1'
+                  }
+                }
+              ]
+            ]
+          ])
         );
       });
 
       it('should return an empty array if no results are found.', async () => {
         const entities: TestEntity[] = [
           PLAIN_TEST_ENTITIES[0] as TestEntity,
-          { testEntityPk: 'does-not-exist' } as TestEntity,
+          { testEntityPk: 'does-not-exist' } as TestEntity
         ];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.aggregateRelations(
@@ -647,8 +647,8 @@ describe('SequelizeQueryService', (): void => {
           {
             count: ['testRelationPk', 'relationName', 'testEntityId'],
             min: ['testRelationPk', 'relationName', 'testEntityId'],
-            max: ['testRelationPk', 'relationName', 'testEntityId'],
-          },
+            max: ['testRelationPk', 'relationName', 'testEntityId']
+          }
         );
 
         expect(queryResult).toEqual(
@@ -660,20 +660,20 @@ describe('SequelizeQueryService', (): void => {
                   count: {
                     relationName: 3,
                     testEntityId: 3,
-                    testRelationPk: 3,
+                    testRelationPk: 3
                   },
                   max: {
                     relationName: 'foo1-test-relation-two',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-3',
+                    testRelationPk: 'test-relations-test-entity-1-3'
                   },
                   min: {
                     relationName: 'foo1-test-relation-one',
                     testEntityId: 'test-entity-1',
-                    testRelationPk: 'test-relations-test-entity-1-1',
-                  },
-                },
-              ],
+                    testRelationPk: 'test-relations-test-entity-1-1'
+                  }
+                }
+              ]
             ],
             [
               { testEntityPk: 'does-not-exist' } as TestEntity,
@@ -682,22 +682,22 @@ describe('SequelizeQueryService', (): void => {
                   count: {
                     relationName: 0,
                     testEntityId: 0,
-                    testRelationPk: 0,
+                    testRelationPk: 0
                   },
                   max: {
                     relationName: null,
                     testEntityId: null,
-                    testRelationPk: null,
+                    testRelationPk: null
                   },
                   min: {
                     relationName: null,
                     testEntityId: null,
-                    testRelationPk: null,
-                  },
-                },
-              ],
-            ],
-          ]),
+                    testRelationPk: null
+                  }
+                }
+              ]
+            ]
+          ])
         );
       });
     });
@@ -709,7 +709,7 @@ describe('SequelizeQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         const entity = TestEntity.build(PLAIN_TEST_ENTITIES[0]);
         const countResult = await queryService.countRelations(TestRelation, 'testRelations', entity, {
-          relationName: { isNot: null },
+          relationName: { isNot: null }
         });
         return expect(countResult).toBe(3);
       });
@@ -720,15 +720,15 @@ describe('SequelizeQueryService', (): void => {
         const entities = PLAIN_TEST_ENTITIES.slice(0, 3).map((pe) => TestEntity.build(pe));
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.countRelations(TestRelation, 'testRelations', entities, {
-          relationName: { isNot: null },
+          relationName: { isNot: null }
         });
 
         expect(queryResult).toEqual(
           new Map([
             [entities[0], 3],
             [entities[1], 3],
-            [entities[2], 3],
-          ]),
+            [entities[2], 3]
+          ])
         );
       });
     });
@@ -741,19 +741,19 @@ describe('SequelizeQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
 
-        expect(queryResult!.get({ plain: true })).toEqual(PLAIN_TEST_RELATIONS[0]);
+        expect(queryResult.get({ plain: true })).toEqual(PLAIN_TEST_RELATIONS[0]);
       });
 
       it('apply the filter option', async () => {
         const entity = TestEntity.build(PLAIN_TEST_ENTITIES[0]);
         const queryService = moduleRef.get(TestEntityService);
         const queryResult1 = await queryService.findRelation(TestRelation, 'oneTestRelation', entity, {
-          filter: { relationName: { eq: PLAIN_TEST_RELATIONS[0].relationName } },
+          filter: { relationName: { eq: PLAIN_TEST_RELATIONS[0].relationName } }
         });
-        expect(queryResult1!.get({ plain: true })).toEqual(PLAIN_TEST_RELATIONS[0]);
+        expect(queryResult1.get({ plain: true })).toEqual(PLAIN_TEST_RELATIONS[0]);
 
         const queryResult2 = await queryService.findRelation(TestRelation, 'oneTestRelation', entity, {
-          filter: { relationName: { eq: PLAIN_TEST_RELATIONS[1].relationName } },
+          filter: { relationName: { eq: PLAIN_TEST_RELATIONS[1].relationName } }
         });
         expect(queryResult2).toBeUndefined();
       });
@@ -770,7 +770,7 @@ describe('SequelizeQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         const entity = TestEntity.build(PLAIN_TEST_ENTITIES[0]);
         return expect(queryService.findRelation(TestRelation, 'badRelation', entity)).rejects.toThrow(
-          'Unable to find relation badRelation on TestEntity',
+          'Unable to find relation badRelation on TestEntity'
         );
       });
     });
@@ -785,8 +785,8 @@ describe('SequelizeQueryService', (): void => {
           new Map([
             [entities[0], expect.objectContaining(PLAIN_TEST_RELATIONS[0])],
             [entities[1], expect.objectContaining(PLAIN_TEST_RELATIONS[3])],
-            [entities[2], expect.objectContaining(PLAIN_TEST_RELATIONS[6])],
-          ]),
+            [entities[2], expect.objectContaining(PLAIN_TEST_RELATIONS[6])]
+          ])
         );
       });
 
@@ -795,21 +795,21 @@ describe('SequelizeQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities, {
           filter: {
-            testRelationPk: { in: [PLAIN_TEST_RELATIONS[0].testRelationPk, PLAIN_TEST_RELATIONS[6].testRelationPk] },
-          },
+            testRelationPk: { in: [PLAIN_TEST_RELATIONS[0].testRelationPk, PLAIN_TEST_RELATIONS[6].testRelationPk] }
+          }
         });
         expect(queryResult).toEqual(
           new Map([
             [entities[0], expect.objectContaining(PLAIN_TEST_RELATIONS[0])],
-            [entities[2], expect.objectContaining(PLAIN_TEST_RELATIONS[6])],
-          ]),
+            [entities[2], expect.objectContaining(PLAIN_TEST_RELATIONS[6])]
+          ])
         );
       });
 
       it('should return undefined select if no results are found.', async () => {
         const entities: TestEntity[] = [
           PLAIN_TEST_ENTITIES[0] as TestEntity,
-          { testEntityPk: 'does-not-exist' } as TestEntity,
+          { testEntityPk: 'does-not-exist' } as TestEntity
         ];
         const queryService = moduleRef.get(TestEntityService);
         const queryResult = await queryService.findRelation(TestRelation, 'oneTestRelation', entities);
@@ -826,7 +826,7 @@ describe('SequelizeQueryService', (): void => {
       const queryResult = await queryService.addRelations(
         'testRelations',
         entity.testEntityPk,
-        PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => (r as TestRelation).testRelationPk),
+        PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => (r as TestRelation).testRelationPk)
       );
       expect(queryResult).toEqual(expect.objectContaining(entity));
 
@@ -854,9 +854,9 @@ describe('SequelizeQueryService', (): void => {
             entity.testEntityPk,
             PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-            },
-          ),
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+            }
+          )
         ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
       });
 
@@ -869,9 +869,9 @@ describe('SequelizeQueryService', (): void => {
             entity.testEntityPk,
             PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              relationFilter: { relationName: { like: '%-one' } },
-            },
-          ),
+              relationFilter: { relationName: { like: '%-one' } }
+            }
+          )
         ).rejects.toThrow('Unable to find all testRelations to add to TestEntity');
       });
     });
@@ -909,9 +909,9 @@ describe('SequelizeQueryService', (): void => {
             entity.testEntityPk,
             PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-            },
-          ),
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+            }
+          )
         ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
       });
 
@@ -924,9 +924,9 @@ describe('SequelizeQueryService', (): void => {
             entity.testEntityPk,
             PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              relationFilter: { relationName: { like: '%-one' } },
-            },
-          ),
+              relationFilter: { relationName: { like: '%-one' } }
+            }
+          )
         ).rejects.toThrow('Unable to find all testRelations to set on TestEntity');
       });
     });
@@ -939,12 +939,12 @@ describe('SequelizeQueryService', (): void => {
       const queryResult = await queryService.setRelation(
         'oneTestRelation',
         entity.testEntityPk,
-        PLAIN_TEST_RELATIONS[1].testRelationPk,
+        PLAIN_TEST_RELATIONS[1].testRelationPk
       );
       expect(queryResult).toEqual(expect.objectContaining(entity));
 
       const relation = await queryService.findRelation(TestRelation, 'oneTestRelation', entity);
-      expect(relation!.testRelationPk).toBe(PLAIN_TEST_RELATIONS[1].testRelationPk);
+      expect(relation.testRelationPk).toBe(PLAIN_TEST_RELATIONS[1].testRelationPk);
     });
 
     describe('with modify options', () => {
@@ -953,8 +953,8 @@ describe('SequelizeQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(
           queryService.setRelation('oneTestRelation', entity.testEntityPk, PLAIN_TEST_RELATIONS[1].testRelationPk, {
-            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-          }),
+            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+          })
         ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
       });
 
@@ -967,9 +967,9 @@ describe('SequelizeQueryService', (): void => {
             entity.testEntityPk,
             PLAIN_TEST_RELATIONS[1].testRelationPk,
             {
-              relationFilter: { relationName: { like: '%-one' } },
-            },
-          ),
+              relationFilter: { relationName: { like: '%-one' } }
+            }
+          )
         ).rejects.toThrow('Unable to find oneTestRelation to set on TestEntity');
       });
     });
@@ -982,7 +982,7 @@ describe('SequelizeQueryService', (): void => {
       const queryResult = await queryService.removeRelations(
         'testRelations',
         entity.testEntityPk,
-        PLAIN_TEST_RELATIONS.slice(0, 3).map((r) => r.testRelationPk),
+        PLAIN_TEST_RELATIONS.slice(0, 3).map((r) => r.testRelationPk)
       );
       expect(queryResult).toEqual(expect.objectContaining(entity));
 
@@ -1010,9 +1010,9 @@ describe('SequelizeQueryService', (): void => {
             entity.testEntityPk,
             PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-            },
-          ),
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+            }
+          )
         ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
       });
 
@@ -1025,9 +1025,9 @@ describe('SequelizeQueryService', (): void => {
             entity.testEntityPk,
             PLAIN_TEST_RELATIONS.slice(3, 6).map((r) => r.testRelationPk),
             {
-              relationFilter: { relationName: { like: '%-one' } },
-            },
-          ),
+              relationFilter: { relationName: { like: '%-one' } }
+            }
+          )
         ).rejects.toThrow('Unable to find all testRelations to remove from TestEntity');
       });
     });
@@ -1041,7 +1041,7 @@ describe('SequelizeQueryService', (): void => {
         const queryResult = await queryService.removeRelation(
           'oneTestRelation',
           entity.testEntityPk,
-          PLAIN_TEST_RELATIONS[0].testRelationPk,
+          PLAIN_TEST_RELATIONS[0].testRelationPk
         );
         expect(queryResult).toEqual(expect.objectContaining(entity));
 
@@ -1059,9 +1059,9 @@ describe('SequelizeQueryService', (): void => {
               entity.testEntityPk,
               PLAIN_TEST_RELATIONS[1].testRelationPk,
               {
-                filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-              },
-            ),
+                filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+              }
+            )
           ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
         });
 
@@ -1074,9 +1074,9 @@ describe('SequelizeQueryService', (): void => {
               entity.testEntityPk,
               PLAIN_TEST_RELATIONS[1].testRelationPk,
               {
-                relationFilter: { relationName: { like: '%-one' } },
-              },
-            ),
+                relationFilter: { relationName: { like: '%-one' } }
+              }
+            )
           ).rejects.toThrow('Unable to find oneTestRelation to remove from TestEntity');
         });
       });
@@ -1089,7 +1089,7 @@ describe('SequelizeQueryService', (): void => {
         const queryResult = await queryService.removeRelation(
           'testEntity',
           relation.testRelationPk,
-          PLAIN_TEST_ENTITIES[0].testEntityPk,
+          PLAIN_TEST_ENTITIES[0].testEntityPk
         );
         expect(queryResult).toEqual(expect.objectContaining({ ...relation, testEntityId: null }));
 
@@ -1103,8 +1103,8 @@ describe('SequelizeQueryService', (): void => {
           const queryService = moduleRef.get(TestRelationService);
           return expect(
             queryService.removeRelation('testEntity', relation.testRelationPk, PLAIN_TEST_ENTITIES[1].testEntityPk, {
-              filter: { relationName: { eq: PLAIN_TEST_RELATIONS[1].relationName } },
-            }),
+              filter: { relationName: { eq: PLAIN_TEST_RELATIONS[1].relationName } }
+            })
           ).rejects.toThrow('Unable to find TestRelation with id: test-relations-test-entity-1-1');
         });
 
@@ -1113,8 +1113,8 @@ describe('SequelizeQueryService', (): void => {
           const queryService = moduleRef.get(TestRelationService);
           return expect(
             queryService.removeRelation('testEntity', relation.testRelationPk, PLAIN_TEST_ENTITIES[0].testEntityPk, {
-              relationFilter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-            }),
+              relationFilter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+            })
           ).rejects.toThrow('Unable to find testEntity to remove from TestRelation');
         });
       });
@@ -1127,7 +1127,7 @@ describe('SequelizeQueryService', (): void => {
         const queryResult = await queryService.removeRelation(
           'testRelations',
           entity.testEntityPk,
-          PLAIN_TEST_RELATIONS[0].testRelationPk,
+          PLAIN_TEST_RELATIONS[0].testRelationPk
         );
         expect(queryResult).toEqual(expect.objectContaining(entity));
 
@@ -1141,8 +1141,8 @@ describe('SequelizeQueryService', (): void => {
           const queryService = moduleRef.get(TestEntityService);
           return expect(
             queryService.removeRelation('testRelations', entity.testEntityPk, PLAIN_TEST_RELATIONS[4].testRelationPk, {
-              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-            }),
+              filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+            })
           ).rejects.toThrow('Unable to find TestEntity with id: test-entity-1');
         });
 
@@ -1155,9 +1155,9 @@ describe('SequelizeQueryService', (): void => {
               entity.testEntityPk,
               PLAIN_TEST_RELATIONS[4].testRelationPk,
               {
-                relationFilter: { relationName: { like: '%-one' } },
-              },
-            ),
+                relationFilter: { relationName: { like: '%-one' } }
+              }
+            )
           ).rejects.toThrow('Unable to find testRelations to remove from TestEntity');
         });
       });
@@ -1183,7 +1183,7 @@ describe('SequelizeQueryService', (): void => {
         const entity = PLAIN_TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const found = await queryService.findById(entity.testEntityPk, {
-          filter: { stringType: { eq: entity.stringType } },
+          filter: { stringType: { eq: entity.stringType } }
         });
         expect(found).toEqual(expect.objectContaining(entity));
       });
@@ -1192,7 +1192,7 @@ describe('SequelizeQueryService', (): void => {
         const entity = PLAIN_TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const found = await queryService.findById(entity.testEntityPk, {
-          filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
+          filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
         });
         expect(found).toBeUndefined();
       });
@@ -1217,7 +1217,7 @@ describe('SequelizeQueryService', (): void => {
         const entity = PLAIN_TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const found = await queryService.getById(entity.testEntityPk, {
-          filter: { stringType: { eq: entity.stringType } },
+          filter: { stringType: { eq: entity.stringType } }
         });
         expect(found).toEqual(expect.objectContaining(entity));
       });
@@ -1227,8 +1227,8 @@ describe('SequelizeQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(
           queryService.getById(entity.testEntityPk, {
-            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-          }),
+            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+          })
         ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
       });
     });
@@ -1284,7 +1284,7 @@ describe('SequelizeQueryService', (): void => {
     it('delete all records that match the query', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const { deletedCount } = await queryService.deleteMany({
-        testEntityPk: { in: PLAIN_TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) },
+        testEntityPk: { in: PLAIN_TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) }
       });
       expect(deletedCount).toBe(5);
       const allCount = await queryService.count({});
@@ -1309,7 +1309,7 @@ describe('SequelizeQueryService', (): void => {
         const entity = PLAIN_TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         const deleted = await queryService.deleteOne(entity.testEntityPk, {
-          filter: { stringType: { eq: entity.stringType } },
+          filter: { stringType: { eq: entity.stringType } }
         });
         expect(deleted).toEqual(expect.objectContaining(PLAIN_TEST_ENTITIES[0]));
       });
@@ -1319,8 +1319,8 @@ describe('SequelizeQueryService', (): void => {
         const queryService = moduleRef.get(TestEntityService);
         return expect(
           queryService.deleteOne(entity.testEntityPk, {
-            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } },
-          }),
+            filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } }
+          })
         ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
       });
     });
@@ -1330,7 +1330,7 @@ describe('SequelizeQueryService', (): void => {
     it('update all entities in the filter', async () => {
       const queryService = moduleRef.get(TestEntityService);
       const filter = {
-        testEntityPk: { in: PLAIN_TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) },
+        testEntityPk: { in: PLAIN_TEST_ENTITIES.slice(0, 5).map((e) => e.testEntityPk) }
       };
       await queryService.updateMany({ stringType: 'updated' }, filter);
       const entities = await queryService.query({ filter });
@@ -1341,7 +1341,7 @@ describe('SequelizeQueryService', (): void => {
     it('should reject if the update contains a primary key', () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.updateMany({ testEntityPk: 'updated' }, {})).rejects.toThrow(
-        'Id cannot be specified when updating',
+        'Id cannot be specified when updating'
       );
     });
   });
@@ -1356,14 +1356,14 @@ describe('SequelizeQueryService', (): void => {
     it('should reject if the update contains a primary key', async () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(
-        queryService.updateOne(PLAIN_TEST_ENTITIES[0].testEntityPk, { testEntityPk: 'bad-id' }),
+        queryService.updateOne(PLAIN_TEST_ENTITIES[0].testEntityPk, { testEntityPk: 'bad-id' })
       ).rejects.toThrow('Id cannot be specified when updating');
     });
 
     it('call fail if the entity is not found', async () => {
       const queryService = moduleRef.get(TestEntityService);
       return expect(queryService.updateOne('bad-id', { stringType: 'updated' })).rejects.toThrow(
-        'Unable to find TestEntity with id: bad-id',
+        'Unable to find TestEntity with id: bad-id'
       );
     });
 
@@ -1374,7 +1374,7 @@ describe('SequelizeQueryService', (): void => {
         const updated = await queryService.updateOne(
           entity.testEntityPk,
           { stringType: 'updated' },
-          { filter: { stringType: { eq: entity.stringType } } },
+          { filter: { stringType: { eq: entity.stringType } } }
         );
         expect(updated).toEqual(expect.objectContaining({ ...PLAIN_TEST_ENTITIES[0], stringType: 'updated' }));
       });
@@ -1386,8 +1386,8 @@ describe('SequelizeQueryService', (): void => {
           queryService.updateOne(
             entity.testEntityPk,
             { stringType: 'updated' },
-            { filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } } },
-          ),
+            { filter: { stringType: { eq: PLAIN_TEST_ENTITIES[1].stringType } } }
+          )
         ).rejects.toThrow(`Unable to find TestEntity with id: ${entity.testEntityPk}`);
       });
     });

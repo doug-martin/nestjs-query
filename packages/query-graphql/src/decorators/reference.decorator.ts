@@ -27,12 +27,12 @@ function getReferenceDescriptors<DTO>(DTOClass: Class<DTO>): ReferenceDescriptor
 
 function convertReferencesToOpts<DTO>(
   references: ReferenceDescriptor<DTO, unknown>[],
-  baseOpts?: BaseResolverOptions,
+  baseOpts?: BaseResolverOptions
 ): ReferencesOpts<DTO> {
   return references.reduce((referenceOpts, r) => {
     const opts = mergeBaseResolverOpts<ResolverRelationReference<DTO, unknown>>(
       { ...r.relationOpts, DTO: r.relationTypeFunc(), keys: r.keys },
-      baseOpts ?? {},
+      baseOpts ?? {}
     );
     return { ...referenceOpts, [r.name]: opts };
   }, {} as ReferencesOpts<DTO>);
@@ -48,7 +48,7 @@ export function Reference<DTO, Reference>(
   relationTypeFunc: ReferenceTypeFunc<Reference>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   keys: ReferencesKeys<any, Reference>,
-  relationOpts?: ReferenceDecoratorOpts<DTO, Reference>,
+  relationOpts?: ReferenceDecoratorOpts<DTO, Reference>
 ) {
   return <Cls extends Class<DTO>>(DTOClass: Cls): Cls | void => {
     reflector.append(DTOClass, { name, keys, relationOpts, relationTypeFunc });

@@ -49,6 +49,7 @@ SELECT
   "manyTestEntities"."number_type" AS "manyTestEntities_number_type",
   "manyTestEntities"."date_type" AS "manyTestEntities_date_type",
   "manyTestEntities"."many_to_one_relation_id" AS "manyTestEntities_many_to_one_relation_id",
+  "manyTestEntities"."many_to_one_soft_delete_relation_id" AS "manyTestEntities_many_to_one_soft_delete_relation_id",
   "manyTestEntities"."oneTestRelationTestRelationPk" AS "manyTestEntities_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "manyTestEntities"
@@ -99,6 +100,7 @@ SELECT
   "testEntityUniDirectional"."number_type" AS "testEntityUniDirectional_number_type",
   "testEntityUniDirectional"."date_type" AS "testEntityUniDirectional_date_type",
   "testEntityUniDirectional"."many_to_one_relation_id" AS "testEntityUniDirectional_many_to_one_relation_id",
+  "testEntityUniDirectional"."many_to_one_soft_delete_relation_id" AS "testEntityUniDirectional_many_to_one_soft_delete_relation_id",
   "testEntityUniDirectional"."oneTestRelationTestRelationPk" AS "testEntityUniDirectional_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "testEntityUniDirectional"
@@ -115,6 +117,7 @@ SELECT
   "testEntity"."number_type" AS "testEntity_number_type",
   "testEntity"."date_type" AS "testEntity_date_type",
   "testEntity"."many_to_one_relation_id" AS "testEntity_many_to_one_relation_id",
+  "testEntity"."many_to_one_soft_delete_relation_id" AS "testEntity_many_to_one_soft_delete_relation_id",
   "testEntity"."oneTestRelationTestRelationPk" AS "testEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "testEntity"
@@ -144,6 +147,7 @@ SELECT
   "oneTestEntity"."number_type" AS "oneTestEntity_number_type",
   "oneTestEntity"."date_type" AS "oneTestEntity_date_type",
   "oneTestEntity"."many_to_one_relation_id" AS "oneTestEntity_many_to_one_relation_id",
+  "oneTestEntity"."many_to_one_soft_delete_relation_id" AS "oneTestEntity_many_to_one_soft_delete_relation_id",
   "oneTestEntity"."oneTestRelationTestRelationPk" AS "oneTestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "oneTestEntity"

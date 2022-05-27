@@ -6,13 +6,13 @@ import {
   UnPagedRelation,
   FilterableUnPagedRelation,
   OffsetConnection,
-  FilterableRelation,
+  FilterableRelation
 } from '@ptc-org/nestjs-query-graphql';
 import {
   CursorConnection,
   FilterableCursorConnection,
   FilterableOffsetConnection,
-  getRelations,
+  getRelations
 } from '../../src/decorators';
 
 @ObjectType()
@@ -55,8 +55,8 @@ describe('@UnPagedRelation', () => {
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({
       many: {
-        tests: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
-      },
+        tests: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.NONE }
+      }
     });
   });
 });
@@ -72,8 +72,8 @@ describe('@FilterableUnPagedRelation', () => {
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({
       many: {
-        test: { DTO: TestRelation, pagingStrategy: PagingStrategies.NONE, ...relationOpts, allowFiltering: true },
-      },
+        test: { DTO: TestRelation, pagingStrategy: PagingStrategies.NONE, ...relationOpts, allowFiltering: true }
+      }
     });
   });
 });
@@ -89,8 +89,8 @@ describe('@OffsetConnection', () => {
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({
       many: {
-        test: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
-      },
+        test: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET }
+      }
     });
   });
 });
@@ -106,8 +106,8 @@ describe('@FilterableOffsetConnection', () => {
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({
       many: {
-        test: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.OFFSET, allowFiltering: true },
-      },
+        test: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.OFFSET, allowFiltering: true }
+      }
     });
   });
 });
@@ -123,8 +123,8 @@ describe('@CursorConnection', () => {
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({
       many: {
-        test: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
-      },
+        test: { DTO: TestRelation, ...relationOpts, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR }
+      }
     });
   });
 });
@@ -140,8 +140,8 @@ describe('@FilterableCursorConnection', () => {
     const relations = getRelations(TestDTO);
     expect(relations).toEqual({
       many: {
-        test: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.CURSOR, allowFiltering: true },
-      },
+        test: { DTO: TestRelation, ...relationOpts, pagingStrategy: PagingStrategies.CURSOR, allowFiltering: true }
+      }
     });
   });
 });
@@ -174,13 +174,13 @@ describe('getRelations', () => {
   it('should return relations for a type', () => {
     expect(getRelations(BaseType)).toEqual({
       one: {
-        test: { DTO: SomeRelation, allowFiltering: false },
+        test: { DTO: SomeRelation, allowFiltering: false }
       },
       many: {
         allTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
         offsetTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.OFFSET },
-        cursorTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR },
-      },
+        cursorTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.CURSOR }
+      }
     });
   });
 
@@ -188,7 +188,7 @@ describe('getRelations', () => {
     expect(getRelations(ImplementingClass)).toEqual({
       one: {
         test: { DTO: SomeRelation, allowFiltering: false },
-        implementedRelation: { DTO: SomeRelation, allowFiltering: false },
+        implementedRelation: { DTO: SomeRelation, allowFiltering: false }
       },
       many: {
         allTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
@@ -197,19 +197,19 @@ describe('getRelations', () => {
         implementedAllRelations: {
           DTO: SomeRelation,
           allowFiltering: false,
-          pagingStrategy: PagingStrategies.NONE,
+          pagingStrategy: PagingStrategies.NONE
         },
         implementedOffsetConnection: {
           DTO: SomeRelation,
           allowFiltering: false,
-          pagingStrategy: PagingStrategies.OFFSET,
+          pagingStrategy: PagingStrategies.OFFSET
         },
         implementedCursorConnection: {
           DTO: SomeRelation,
           allowFiltering: false,
-          pagingStrategy: PagingStrategies.CURSOR,
-        },
-      },
+          pagingStrategy: PagingStrategies.CURSOR
+        }
+      }
     });
   });
 
@@ -217,7 +217,7 @@ describe('getRelations', () => {
     expect(getRelations(DuplicateImplementor)).toEqual({
       one: {
         test: { DTO: SomeRelation, allowFiltering: false },
-        implementedRelation: { DTO: SomeRelation, allowFiltering: false, relationName: 'test' },
+        implementedRelation: { DTO: SomeRelation, allowFiltering: false, relationName: 'test' }
       },
       many: {
         allTests: { DTO: SomeRelation, allowFiltering: false, pagingStrategy: PagingStrategies.NONE },
@@ -227,21 +227,21 @@ describe('getRelations', () => {
           DTO: SomeRelation,
           allowFiltering: false,
           pagingStrategy: PagingStrategies.NONE,
-          relationName: 'tests',
+          relationName: 'tests'
         },
         implementedOffsetConnection: {
           DTO: SomeRelation,
           allowFiltering: false,
           pagingStrategy: PagingStrategies.OFFSET,
-          relationName: 'tests',
+          relationName: 'tests'
         },
         implementedCursorConnection: {
           DTO: SomeRelation,
           allowFiltering: false,
           pagingStrategy: PagingStrategies.CURSOR,
-          relationName: 'testConnection',
-        },
-      },
+          relationName: 'testConnection'
+        }
+      }
     });
   });
 });

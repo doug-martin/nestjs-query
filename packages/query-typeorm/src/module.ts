@@ -12,7 +12,7 @@ export class NestjsQueryTypeOrmModule {
       imports: [typeOrmModule],
       module: NestjsQueryTypeOrmModule,
       providers: [...queryServiceProviders],
-      exports: [...queryServiceProviders, typeOrmModule],
+      exports: [...queryServiceProviders, typeOrmModule]
     };
   }
 }

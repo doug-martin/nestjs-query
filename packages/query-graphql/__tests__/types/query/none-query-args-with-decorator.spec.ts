@@ -10,7 +10,7 @@ import {
   Int,
   ObjectType,
   Query,
-  Resolver,
+  Resolver
 } from '@nestjs/graphql';
 import { FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '@ptc-org/nestjs-query-graphql';
 import { generateSchema } from '../../__fixtures__';
@@ -24,7 +24,7 @@ describe('QueryArgsType with decorator options', (): void => {
     defaultResultSize: 2,
     maxResultsSize: 5,
     defaultFilter: { booleanField: { is: true } },
-    defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }],
+    defaultSort: [{ field: 'booleanField', direction: SortDirection.DESC }]
   })
   class TestDto {
     @FilterableField(() => ID)

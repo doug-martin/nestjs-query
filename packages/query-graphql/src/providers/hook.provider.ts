@@ -33,8 +33,8 @@ function getHookProviders(opts: HookProviderOptions<unknown, unknown, unknown>):
     createHookProvider(HookTypes.BEFORE_DELETE_ONE, DTOClass),
     createHookProvider(HookTypes.BEFORE_DELETE_MANY, DTOClass),
     createHookProvider(HookTypes.BEFORE_QUERY_MANY, DTOClass),
-    createHookProvider(HookTypes.BEFORE_FIND_ONE, DTOClass),
-  ].filter((p) => !!p) as Provider[];
+    createHookProvider(HookTypes.BEFORE_FIND_ONE, DTOClass)
+  ].filter((p) => !!p);
 }
 
 export const createHookProviders = (opts: HookProviderOptions<unknown, unknown, unknown>[]): Provider[] =>

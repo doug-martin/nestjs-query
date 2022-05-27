@@ -11,7 +11,7 @@ import { formatGraphqlError, typeormOrmConfig } from '../../helpers';
       autoSchemaFile: 'schema.gql',
       formatError: formatGraphqlError
     }),
-    TodoItemModule,
-  ],
+    TodoItemModule
+  ]
 })
 export class AppModule {}

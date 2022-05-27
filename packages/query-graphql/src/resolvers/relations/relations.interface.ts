@@ -60,7 +60,10 @@ export type ResolverRelation<Relation> = {
    * Enable aggregation queries.
    */
   enableAggregate?: boolean;
-
+  /**
+   * Indicates if soft-deleted rows should be included in relation result.
+   */
+  withDeleted?: boolean;
   /**
    * Set to true if you should be able to filter on this relation.
    *

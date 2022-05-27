@@ -65,7 +65,7 @@ describe('AggregateResponseType', (): void => {
       id!: number;
     }
     expect(() => AggregateResponseType(BadType)).toThrow(
-      'Unable to make AggregationResponseType. Ensure BadType is annotated with @nestjs/graphql @ObjectType',
+      'Unable to make AggregationResponseType. Ensure BadType is annotated with @nestjs/graphql @ObjectType'
     );
   });
   it('throw an error if fields are not found', () => {
@@ -74,7 +74,7 @@ describe('AggregateResponseType', (): void => {
       id!: number;
     }
     expect(() => AggregateResponseType(BadType)).toThrow(
-      'No fields found to create AggregationResponseType for BadType. Ensure fields are annotated with @FilterableField',
+      'No fields found to create AggregationResponseType for BadType. Ensure fields are annotated with @FilterableField'
     );
   });
 });

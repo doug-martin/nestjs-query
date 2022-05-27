@@ -11,8 +11,8 @@ async function bootstrap(): Promise<void> {
       whitelist: true,
       forbidNonWhitelisted: true,
       skipMissingProperties: false,
-      forbidUnknownValues: true,
-    }),
+      forbidUnknownValues: true
+    })
   );
 
   await app.listen(3003);

@@ -32,7 +32,7 @@ export function HookInterceptor(type: HookTypes, ...DTOClasses: Class<unknown>[]
   Object.defineProperty(Interceptor, 'name', {
     writable: false,
     // set a unique name otherwise DI does not inject a unique one for each request
-    value: `${DTOClasses[0].name}${type}HookInterceptor`,
+    value: `${DTOClasses[0].name}${type}HookInterceptor`
   });
 
   return Interceptor;

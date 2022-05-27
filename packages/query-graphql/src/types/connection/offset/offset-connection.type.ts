@@ -10,7 +10,7 @@ import {
   OffsetConnectionType,
   OffsetPageInfoType,
   QueryMany,
-  StaticConnectionType,
+  StaticConnectionType
 } from '../interfaces';
 import { getGraphqlObjectName } from '../../../common';
 import { createPager } from './pager';
@@ -31,7 +31,7 @@ function getOrCreateConnectionName<DTO>(DTOClass: Class<DTO>, opts: OffsetConnec
 
 export function getOrCreateOffsetConnectionType<DTO>(
   TItemClass: Class<DTO>,
-  opts: OffsetConnectionOptions,
+  opts: OffsetConnectionOptions
 ): StaticConnectionType<DTO, PagingStrategies.OFFSET> {
   const connectionName = getOrCreateConnectionName(TItemClass, opts);
   return reflector.memoize(TItemClass, connectionName, () => {
@@ -46,14 +46,14 @@ export function getOrCreateOffsetConnectionType<DTO>(
       static async createFromPromise<Q extends Query<DTO>>(
         queryMany: QueryMany<DTO, Q>,
         query: Q,
-        count?: Count<DTO>,
+        count?: Count<DTO>
       ): Promise<AbstractConnection> {
         const { pageInfo, nodes, totalCount } = await pager.page(queryMany, query, count ?? DEFAULT_COUNT);
         return new AbstractConnection(
           // create the appropriate graphql instance
           new PIT(pageInfo.hasNextPage, pageInfo.hasPreviousPage),
           nodes,
-          totalCount,
+          totalCount
         );
       }
 

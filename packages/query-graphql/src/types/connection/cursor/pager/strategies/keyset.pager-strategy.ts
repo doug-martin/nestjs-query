@@ -13,7 +13,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
     const isForward = isForwardPaging(cursor);
     const isBackward = isBackwardPaging(cursor);
     const hasBefore = hasBeforeCursor(cursor);
-    let payload;
+    let payload: KeySetCursorPayload<DTO>;
     let limit = 0;
     if (isForwardPaging(cursor)) {
       payload = cursor.after ? this.decodeCursor(cursor.after) : undefined;
@@ -29,7 +29,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
   toCursor(dto: DTO, index: number, opts: KeySetPagingOpts<DTO>, query: Query<DTO>): string {
     const cursorFields: (keyof DTO)[] = [
       ...(query.sorting ?? []).map((f: SortField<DTO>) => f.field),
-      ...this.pageFields,
+      ...this.pageFields
     ];
     return this.encodeCursor(this.createKeySetPayload(dto, cursorFields));
   }
@@ -79,7 +79,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
       }
       const partial: Partial<DTO> = payload.fields.reduce(
         (dtoPartial: Partial<DTO>, { field, value }) => ({ ...dtoPartial, [field]: value }),
-        {},
+        {}
       );
       const transformed = plainToClass(this.DTOClass, partial);
       const typesafeFields = payload.fields.map(({ field }) => ({ field, value: transformed[field] }));
@@ -101,12 +101,12 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
         throw new Error(
           `Cursor Payload does not match query sort expected ${keySetField.field as string} found ${
             sortField.field as string
-          }`,
+          }`
         );
       }
       const isAsc = sortField.direction === SortDirection.ASC;
       const subFilter = {
-        and: [...equalities, { [keySetField.field]: { [isAsc ? 'gt' : 'lt']: keySetField.value } }],
+        and: [...equalities, { [keySetField.field]: { [isAsc ? 'gt' : 'lt']: keySetField.value } }]
       } as Filter<DTO>;
       equalities.push({ [keySetField.field]: { eq: keySetField.value } } as Filter<DTO>);
       return [...dtoFilters, subFilter];
@@ -132,7 +132,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
         payload.fields.push({ field, value: dto[field] });
         return payload;
       },
-      { type: 'keyset', fields: [] },
+      { type: 'keyset', fields: [] }
     );
   }
 }

@@ -27,7 +27,7 @@ export class TestEntity {
   @prop({
     ref: 'TestReference',
     localField: '_id',
-    foreignField: 'testEntity',
+    foreignField: 'testEntity'
   })
   virtualTestReferences?: Ref<TestReference>[];
 }

@@ -6,7 +6,7 @@ import {
   SelectQueryBuilder,
   UpdateQueryBuilder,
   WhereExpression,
-  EntityMetadata,
+  EntityMetadata
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 import { AggregateBuilder } from './aggregate.builder';
@@ -56,7 +56,7 @@ export class FilterQueryBuilder<Entity> {
   constructor(
     readonly repo: Repository<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
-    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(),
+    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>()
   ) {}
 
   /**
@@ -115,7 +115,7 @@ export class FilterQueryBuilder<Entity> {
   softDelete(query: Query<Entity>): SoftDeleteQueryBuilder<Entity> {
     return this.applyFilter(
       this.repo.createQueryBuilder().softDelete() as SoftDeleteQueryBuilder<Entity>,
-      query.filter,
+      query.filter
     );
   }
 
@@ -226,7 +226,7 @@ export class FilterQueryBuilder<Entity> {
   applyRelationJoinsRecursive(
     qb: SelectQueryBuilder<Entity>,
     relationsMap?: NestedRecord,
-    alias?: string,
+    alias?: string
   ): SelectQueryBuilder<Entity> {
     if (!relationsMap) {
       return qb;
@@ -236,7 +236,7 @@ export class FilterQueryBuilder<Entity> {
       return this.applyRelationJoinsRecursive(
         rqb.leftJoin(`${alias ?? rqb.alias}.${relation}`, relation),
         relationsMap[relation],
-        relation,
+        relation
       );
     }, qb);
   }
@@ -276,8 +276,8 @@ export class FilterQueryBuilder<Entity> {
         ...prev,
         [curr]: merge(
           (prev as NestedRecord)[curr],
-          this.getReferencedRelationsRecursive(referencedRelation.inverseEntityMetadata, currFilterValue),
-        ),
+          this.getReferencedRelationsRecursive(referencedRelation.inverseEntityMetadata, currFilterValue)
+        )
       };
     }, {});
   }

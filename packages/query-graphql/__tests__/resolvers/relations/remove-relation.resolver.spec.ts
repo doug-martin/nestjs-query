@@ -7,13 +7,13 @@ import {
   createResolverFromNest,
   TestResolverDTO,
   TestService,
-  TestRelationDTO,
+  TestRelationDTO
 } from '../../__fixtures__';
 
 @Resolver(() => TestResolverDTO)
 class TestResolver extends RemoveRelationsResolver(TestResolverDTO, {
   one: { relation: { DTO: TestRelationDTO }, custom: { DTO: TestRelationDTO, relationName: 'other' } },
-  many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } },
+  many: { relations: { DTO: TestRelationDTO }, customs: { DTO: TestRelationDTO, relationName: 'others' } }
 }) {
   constructor(service: TestService) {
     super(service);
@@ -48,11 +48,11 @@ describe('RemoveRelationsResolver', () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationInputType = {
         id: 'record-id',
-        relationId: 'relation-id',
+        relationId: 'relation-id'
       };
       const output: TestResolverDTO = {
         id: 'record-id',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.removeRelation('relation', input.id, input.relationId, undefined)).thenResolve(output);
       // @ts-ignore
@@ -65,11 +65,11 @@ describe('RemoveRelationsResolver', () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationInputType = {
         id: 'record-id',
-        relationId: 'relation-id',
+        relationId: 'relation-id'
       };
       const output: TestResolverDTO = {
         id: 'record-id',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.removeRelation('other', input.id, input.relationId, undefined)).thenResolve(output);
       // @ts-ignore
@@ -92,14 +92,14 @@ describe('RemoveRelationsResolver', () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationsInputType = {
         id: 'id-1',
-        relationIds: ['relation-id-1', 'relation-id-2'],
+        relationIds: ['relation-id-1', 'relation-id-2']
       };
       const output: TestResolverDTO = {
         id: 'record-id',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.removeRelations('relations', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-        output,
+        output
       );
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -111,14 +111,14 @@ describe('RemoveRelationsResolver', () => {
       const { resolver, mockService } = await createResolverFromNest(TestResolver);
       const input: RelationsInputType = {
         id: 'id-1',
-        relationIds: ['relation-id-1', 'relation-id-2'],
+        relationIds: ['relation-id-1', 'relation-id-2']
       };
       const output: TestResolverDTO = {
         id: 'record-id',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.removeRelations('others', input.id, deepEqual(input.relationIds), undefined)).thenResolve(
-        output,
+        output
       );
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call

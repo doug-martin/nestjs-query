@@ -4,8 +4,7 @@ import { closeTestConnection, createTestConnection, getTestConnection } from '..
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { RelationQueryBuilder } from '../../src/query';
-import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
-import { TEST_ENTITIES, TEST_RELATIONS } from '../__fixtures__/seeds';
+import { TEST_ENTITIES } from '../__fixtures__/seeds';
 
 describe('RelationQueryBuilder', (): void => {
   beforeEach(createTestConnection);
@@ -35,7 +34,10 @@ describe('RelationQueryBuilder', (): void => {
     relation: string,
     query: Query<Relation>
   ): void => {
-    const selectQueryBuilder = getRelationQueryBuilder<Entity, Relation>(EntityClass, relation).batchSelect(entities, query);
+    const selectQueryBuilder = getRelationQueryBuilder<Entity, Relation>(EntityClass, relation).batchSelect(
+      entities,
+      query
+    );
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
 
     expect(formatSql(sql, { params })).toMatchSnapshot();
@@ -58,7 +60,7 @@ describe('RelationQueryBuilder', (): void => {
     it('should throw an error if there is no relation with that name', () => {
       expect(() => {
         expectSQLSnapshot(TestEntity, testEntity, 'badRelations', {});
-      }).toThrow('Unable to find entity for relation \'badRelations\'');
+      }).toThrow("Unable to find entity for relation 'badRelations'");
     });
 
     describe('one to many', () => {
@@ -211,5 +213,4 @@ describe('RelationQueryBuilder', (): void => {
       });
     });
   });
-
 });

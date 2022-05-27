@@ -12,7 +12,7 @@ import {
   EdgeType,
   PageInfoType,
   QueryMany,
-  StaticConnectionType,
+  StaticConnectionType
 } from '../interfaces';
 import { getOrCreateEdgeType } from './edge.type';
 import { getOrCreatePageInfoType } from './page-info.type';
@@ -33,7 +33,7 @@ function getOrCreateConnectionName<DTO>(DTOClass: Class<DTO>, opts: CursorConnec
 
 export function getOrCreateCursorConnectionType<DTO>(
   TItemClass: Class<DTO>,
-  maybeOpts?: CursorConnectionOptions,
+  maybeOpts?: CursorConnectionOptions
 ): StaticConnectionType<DTO, PagingStrategies.CURSOR> {
   const opts = maybeOpts ?? { pagingStrategy: PagingStrategies.CURSOR };
   const connectionName = getOrCreateConnectionName(TItemClass, opts);
@@ -50,14 +50,14 @@ export function getOrCreateCursorConnectionType<DTO>(
       static async createFromPromise<Q extends Query<DTO>>(
         queryMany: QueryMany<DTO, Q>,
         query: Q,
-        count?: Count<DTO>,
+        count?: Count<DTO>
       ): Promise<AbstractConnection> {
         const { pageInfo, edges, totalCount } = await pager.page(queryMany, query, count ?? DEFAULT_COUNT);
         return new AbstractConnection(
           // create the appropriate graphql instance
           new PIT(pageInfo.hasNextPage, pageInfo.hasPreviousPage, pageInfo.startCursor, pageInfo.endCursor),
           edges.map(({ node, cursor }) => new E(node, cursor)),
-          totalCount,
+          totalCount
         );
       }
 

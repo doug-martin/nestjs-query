@@ -16,5 +16,5 @@ export const ConnectionCursorScalar = new GraphQLScalarType({
       return ast.value;
     }
     return null;
-  },
+  }
 });

@@ -19,7 +19,7 @@ export class QueryRelationsLoader<DTO, Relation>
 
   private async loadResults(
     service: QueryService<DTO, unknown, unknown>,
-    queryRelationsMap: QueryRelationsMap<DTO, Relation>,
+    queryRelationsMap: QueryRelationsMap<DTO, Relation>
   ): Promise<Relation[][]> {
     const results: Relation[][] = [];
     await Promise.all(
@@ -31,7 +31,7 @@ export class QueryRelationsLoader<DTO, Relation>
         dtoRelations.forEach((relations, index) => {
           results[args[index].index] = relations;
         });
-      }),
+      })
     );
     return results;
   }

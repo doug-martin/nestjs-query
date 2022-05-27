@@ -16,10 +16,10 @@ import { AuthModule } from '../auth/auth.module';
           DTOClass: SubTaskDTO,
           EntityClass: SubTaskEntity,
           CreateDTOClass: CreateSubTaskDTO,
-          UpdateDTOClass: SubTaskUpdateDTO,
-        },
-      ],
-    }),
-  ],
+          UpdateDTOClass: SubTaskUpdateDTO
+        }
+      ]
+    })
+  ]
 })
 export class SubTaskModule {}

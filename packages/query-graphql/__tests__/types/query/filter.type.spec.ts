@@ -36,14 +36,14 @@ describe('filter types', (): void => {
     ONE,
     TWO,
     THREE,
-    FOUR,
+    FOUR
   }
 
   enum StringEnum {
     ONE_STR = 'one',
     TWO_STR = 'two',
     THREE_STR = 'three',
-    FOUR_STR = 'four',
+    FOUR_STR = 'four'
   }
 
   registerEnumType(StringEnum, {
@@ -114,12 +114,10 @@ describe('filter types', (): void => {
     const TestGraphQLFilter: Class<Filter<TestDto>> = FilterType(TestDto);
 
     @InputType()
-    class TestDtoFilter extends TestGraphQLFilter {
-    }
+    class TestDtoFilter extends TestGraphQLFilter {}
 
     it('should throw an error if the class is not annotated with @ObjectType', () => {
-      class TestInvalidFilter {
-      }
+      class TestInvalidFilter {}
 
       expect(() => FilterType(TestInvalidFilter)).toThrow(
         'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType'
@@ -142,8 +140,7 @@ describe('filter types', (): void => {
 
     it('should throw an error if no fields are found', () => {
       @ObjectType('TestNoFields')
-      class TestInvalidFilter {
-      }
+      class TestInvalidFilter {}
 
       expect(() => FilterType(TestInvalidFilter)).toThrow(
         'No fields found to create GraphQLFilter for TestInvalidFilter'
@@ -152,7 +149,7 @@ describe('filter types', (): void => {
 
     it('should throw an error when the field type is unknown', () => {
       enum EnumField {
-        ONE = 'one',
+        ONE = 'one'
       }
 
       @ObjectType('TestBadField')
@@ -169,7 +166,7 @@ describe('filter types', (): void => {
         and: [{ stringField: { eq: 'foo' } }]
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
-      expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
+      expect(filterInstance.and[0]).toBeInstanceOf(TestGraphQLFilter);
     });
 
     it('should convert or filters to filter class', () => {
@@ -177,7 +174,7 @@ describe('filter types', (): void => {
         or: [{ stringField: { eq: 'foo' } }]
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
-      expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+      expect(filterInstance.or[0]).toBeInstanceOf(TestGraphQLFilter);
     });
 
     describe('allowedComparisons option', () => {
@@ -205,8 +202,7 @@ describe('filter types', (): void => {
       const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestAllowedComparisonsDto);
 
       @InputType()
-      class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {
-      }
+      class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
       it('should only expose allowed comparisons', async () => {
         @Resolver()
@@ -247,8 +243,7 @@ describe('filter types', (): void => {
         const TestGraphQLBetweenComparisonFilter: Class<Filter<TestDto>> = FilterType(TestBetweenComparisonsDto);
 
         @InputType()
-        class TestBetweenComparisonDtoFilter extends TestGraphQLBetweenComparisonFilter {
-        }
+        class TestBetweenComparisonDtoFilter extends TestGraphQLBetweenComparisonFilter {}
 
         @Resolver()
         class FilterBetweenTypeSpec {
@@ -276,8 +271,7 @@ describe('filter types', (): void => {
         const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestOnlyAndBooleanExpressionsDto);
 
         @InputType()
-        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {
-        }
+        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
         it('should only expose allowed comparisons', async () => {
           @Resolver()
@@ -305,8 +299,7 @@ describe('filter types', (): void => {
         const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestOnlyOrBooleanExpressionsDto);
 
         @InputType()
-        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {
-        }
+        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
         it('should only expose allowed comparisons', async () => {
           @Resolver()
@@ -334,8 +327,7 @@ describe('filter types', (): void => {
         const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestNoBooleanExpressionsDto);
 
         @InputType()
-        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {
-        }
+        class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
         it('should only expose allowed comparisons', async () => {
           @Resolver()
@@ -369,8 +361,7 @@ describe('filter types', (): void => {
       const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestFilterRequiredDto);
 
       @InputType()
-      class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {
-      }
+      class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
       it('should only expose allowed comparisons', async () => {
         @Resolver()
@@ -392,12 +383,10 @@ describe('filter types', (): void => {
     const TestGraphQLFilter: Class<Filter<TestDto>> = UpdateFilterType(TestDto);
 
     @InputType()
-    class TestDtoFilter extends TestGraphQLFilter {
-    }
+    class TestDtoFilter extends TestGraphQLFilter {}
 
     it('should throw an error if the class is not annotated with @ObjectType', () => {
-      class TestInvalidFilter {
-      }
+      class TestInvalidFilter {}
 
       expect(() => UpdateFilterType(TestInvalidFilter)).toThrow(
         'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType'
@@ -420,8 +409,7 @@ describe('filter types', (): void => {
 
     it('should throw an error if no fields are found', () => {
       @ObjectType('TestNoFields')
-      class TestInvalidFilter {
-      }
+      class TestInvalidFilter {}
 
       expect(() => UpdateFilterType(TestInvalidFilter)).toThrow(
         'No fields found to create GraphQLFilter for TestInvalidFilter'
@@ -430,7 +418,7 @@ describe('filter types', (): void => {
 
     it('should throw an error when the field type is unknown', () => {
       enum EnumField {
-        ONE = 'one',
+        ONE = 'one'
       }
 
       @ObjectType('TestBadField')
@@ -449,7 +437,7 @@ describe('filter types', (): void => {
         and: [{ stringField: { eq: 'foo' } }]
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
-      expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
+      expect(filterInstance.and[0]).toBeInstanceOf(TestGraphQLFilter);
     });
 
     it('should convert or filters to filter class', () => {
@@ -457,7 +445,7 @@ describe('filter types', (): void => {
         or: [{ stringField: { eq: 'foo' } }]
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
-      expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+      expect(filterInstance.or[0]).toBeInstanceOf(TestGraphQLFilter);
     });
   });
 
@@ -465,12 +453,10 @@ describe('filter types', (): void => {
     const TestGraphQLFilter: Class<Filter<TestDto>> = DeleteFilterType(TestDto);
 
     @InputType()
-    class TestDtoFilter extends TestGraphQLFilter {
-    }
+    class TestDtoFilter extends TestGraphQLFilter {}
 
     it('should throw an error if the class is not annotated with @ObjectType', () => {
-      class TestInvalidFilter {
-      }
+      class TestInvalidFilter {}
 
       expect(() => DeleteFilterType(TestInvalidFilter)).toThrow(
         'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType'
@@ -493,8 +479,7 @@ describe('filter types', (): void => {
 
     it('should throw an error if no fields are found', () => {
       @ObjectType('TestNoFields')
-      class TestInvalidFilter {
-      }
+      class TestInvalidFilter {}
 
       expect(() => DeleteFilterType(TestInvalidFilter)).toThrow(
         'No fields found to create GraphQLFilter for TestInvalidFilter'
@@ -503,7 +488,7 @@ describe('filter types', (): void => {
 
     it('should throw an error when the field type is unknown', () => {
       enum EnumField {
-        ONE = 'one',
+        ONE = 'one'
       }
 
       @ObjectType('TestBadField')
@@ -522,7 +507,7 @@ describe('filter types', (): void => {
         and: [{ stringField: { eq: 'foo' } }]
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
-      expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
+      expect(filterInstance.and[0]).toBeInstanceOf(TestGraphQLFilter);
     });
 
     it('should convert or filters to filter class', () => {
@@ -530,7 +515,7 @@ describe('filter types', (): void => {
         or: [{ stringField: { eq: 'foo' } }]
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
-      expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+      expect(filterInstance.or[0]).toBeInstanceOf(TestGraphQLFilter);
     });
   });
 
@@ -538,12 +523,10 @@ describe('filter types', (): void => {
     const TestGraphQLFilter: Class<Filter<TestDto>> = SubscriptionFilterType(TestDto);
 
     @InputType()
-    class TestDtoFilter extends TestGraphQLFilter {
-    }
+    class TestDtoFilter extends TestGraphQLFilter {}
 
     it('should throw an error if the class is not annotated with @ObjectType', () => {
-      class TestInvalidFilter {
-      }
+      class TestInvalidFilter {}
 
       expect(() => SubscriptionFilterType(TestInvalidFilter)).toThrow(
         'No fields found to create FilterType. Ensure TestInvalidFilter is annotated with @nestjs/graphql @ObjectType'
@@ -566,8 +549,7 @@ describe('filter types', (): void => {
 
     it('should throw an error if no fields are found', () => {
       @ObjectType('TestNoFields')
-      class TestInvalidFilter {
-      }
+      class TestInvalidFilter {}
 
       expect(() => SubscriptionFilterType(TestInvalidFilter)).toThrow(
         'No fields found to create GraphQLFilter for TestInvalidFilter'
@@ -576,7 +558,7 @@ describe('filter types', (): void => {
 
     it('should throw an error when the field type is unknown', () => {
       enum EnumField {
-        ONE = 'one',
+        ONE = 'one'
       }
 
       @ObjectType('TestBadField')
@@ -595,7 +577,7 @@ describe('filter types', (): void => {
         and: [{ stringField: { eq: 'foo' } }]
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
-      expect(filterInstance.and![0]).toBeInstanceOf(TestGraphQLFilter);
+      expect(filterInstance.and[0]).toBeInstanceOf(TestGraphQLFilter);
     });
 
     it('should convert or filters to filter class', () => {
@@ -603,7 +585,7 @@ describe('filter types', (): void => {
         or: [{ stringField: { eq: 'foo' } }]
       };
       const filterInstance = plainToClass(TestDtoFilter, filterObject);
-      expect(filterInstance.or![0]).toBeInstanceOf(TestGraphQLFilter);
+      expect(filterInstance.or[0]).toBeInstanceOf(TestGraphQLFilter);
     });
   });
 });

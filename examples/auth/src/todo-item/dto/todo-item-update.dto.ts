@@ -4,7 +4,7 @@ import {
   BeforeUpdateMany,
   BeforeUpdateOne,
   UpdateManyInputType,
-  UpdateOneInputType,
+  UpdateOneInputType
 } from '@ptc-org/nestjs-query-graphql';
 import { TodoItemDTO } from './todo-item.dto';
 import { UserContext } from '../../auth/auth.interfaces';

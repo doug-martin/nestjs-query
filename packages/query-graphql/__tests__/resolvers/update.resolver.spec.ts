@@ -8,7 +8,7 @@ import {
   UpdateOneInputType,
   UpdateResolver,
   UpdateResolverOpts,
-  InjectPubSub,
+  InjectPubSub
 } from '@ptc-org/nestjs-query-graphql';
 import { UpdatedEvent } from '../../src/resolvers/update.resolver';
 import { EventType, getDTOEventName } from '../../src/subscription';
@@ -17,7 +17,7 @@ import {
   createResolverFromNest,
   TestResolverDTO,
   TestResolverInputDTO,
-  TestService,
+  TestService
 } from '../__fixtures__';
 
 describe('UpdateResolver', () => {
@@ -76,15 +76,15 @@ describe('UpdateResolver', () => {
       const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
         id: 'id-1',
         update: {
-          stringField: 'foo',
-        },
+          stringField: 'foo'
+        }
       };
       const output: TestResolverDTO = {
         id: 'id-1',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
-        output,
+        output
       );
       const result = await resolver.updateOne({ input });
       return expect(result).toEqual(output);
@@ -95,16 +95,16 @@ describe('UpdateResolver', () => {
       const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
         id: 'id-1',
         update: {
-          stringField: 'foo',
-        },
+          stringField: 'foo'
+        }
       };
       const output: TestResolverDTO = {
         id: 'id-1',
-        stringField: 'foo',
+        stringField: 'foo'
       };
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
       when(
-        mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: authorizeFilter })),
+        mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: authorizeFilter }))
       ).thenResolve(output);
       const result = await resolver.updateOne({ input }, authorizeFilter);
       return expect(result).toEqual(output);
@@ -129,13 +129,13 @@ describe('UpdateResolver', () => {
         input: {
           filter: { id: { eq: 'id-1' } },
           update: {
-            stringField: 'foo',
-          },
-        },
+            stringField: 'foo'
+          }
+        }
       };
       const output: UpdateManyResponse = { updatedCount: 1 };
       when(
-        mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter)),
+        mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter))
       ).thenResolve(output);
       const result = await resolver.updateMany(input);
       return expect(result).toEqual(output);
@@ -147,17 +147,17 @@ describe('UpdateResolver', () => {
         input: {
           filter: { id: { eq: 'id-1' } },
           update: {
-            stringField: 'foo',
-          },
-        },
+            stringField: 'foo'
+          }
+        }
       };
       const output: UpdateManyResponse = { updatedCount: 1 };
       const authorizeFilter: Filter<TestResolverDTO> = { stringField: { eq: 'foo' } };
       when(
         mockService.updateMany(
           objectContaining(input.input.update),
-          objectContaining({ and: [authorizeFilter, input.input.filter] }),
-        ),
+          objectContaining({ and: [authorizeFilter, input.input.filter] })
+        )
       ).thenResolve(output);
       const result = await resolver.updateMany(input, authorizeFilter);
       return expect(result).toEqual(output);
@@ -180,22 +180,22 @@ describe('UpdateResolver', () => {
     describe('update one events', () => {
       it('should publish events for create one when enableSubscriptions is set to true for all', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
-          enableSubscriptions: true,
+          enableSubscriptions: true
         });
         const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
           id: 'id-1',
           update: {
-            stringField: 'foo',
-          },
+            stringField: 'foo'
+          }
         };
         const output: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const eventName = getDTOEventName(EventType.UPDATED_ONE, TestResolverDTO);
         const event = { [eventName]: output };
         when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
-          output,
+          output
         );
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.updateOne({ input });
@@ -205,22 +205,22 @@ describe('UpdateResolver', () => {
 
       it('should publish events for create one when enableSubscriptions is set to true for createOne', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
-          one: { enableSubscriptions: true },
+          one: { enableSubscriptions: true }
         });
         const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
           id: 'id-1',
           update: {
-            stringField: 'foo',
-          },
+            stringField: 'foo'
+          }
         };
         const output: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const eventName = getDTOEventName(EventType.UPDATED_ONE, TestResolverDTO);
         const event = { [eventName]: output };
         when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
-          output,
+          output
         );
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.updateOne({ input });
@@ -230,21 +230,21 @@ describe('UpdateResolver', () => {
 
       it('should not publish an event if enableSubscriptions is false', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
-          enableSubscriptions: false,
+          enableSubscriptions: false
         });
         const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
           id: 'id-1',
           update: {
-            stringField: 'foo',
-          },
+            stringField: 'foo'
+          }
         };
         const output: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         const context = {};
         when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
-          output,
+          output
         );
         const result = await resolver.updateOne({ input }, context);
         verify(mockPubSub.publish(anything(), anything())).never();
@@ -254,20 +254,20 @@ describe('UpdateResolver', () => {
       it('should not publish an event if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
           enableSubscriptions: true,
-          one: { enableSubscriptions: false },
+          one: { enableSubscriptions: false }
         });
         const input: UpdateOneInputType<Partial<TestResolverDTO>> = {
           id: 'id-1',
           update: {
-            stringField: 'foo',
-          },
+            stringField: 'foo'
+          }
         };
         const output: TestResolverDTO = {
           id: 'id-1',
-          stringField: 'foo',
+          stringField: 'foo'
         };
         when(mockService.updateOne(input.id, objectContaining(input.update), deepEqual({ filter: {} }))).thenResolve(
-          output,
+          output
         );
         const result = await resolver.updateOne({ input });
         verify(mockPubSub.publish(anything(), anything())).never();
@@ -282,15 +282,15 @@ describe('UpdateResolver', () => {
           input: {
             filter: { id: { eq: 'id-1' } },
             update: {
-              stringField: 'foo',
-            },
-          },
+              stringField: 'foo'
+            }
+          }
         };
         const output: UpdateManyResponse = { updatedCount: 1 };
         const eventName = getDTOEventName(EventType.UPDATED_MANY, TestResolverDTO);
         const event = { [eventName]: output };
         when(
-          mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter)),
+          mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter))
         ).thenResolve(output);
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.updateMany(input);
@@ -304,15 +304,15 @@ describe('UpdateResolver', () => {
           input: {
             filter: { id: { eq: 'id-1' } },
             update: {
-              stringField: 'foo',
-            },
-          },
+              stringField: 'foo'
+            }
+          }
         };
         const output: UpdateManyResponse = { updatedCount: 1 };
         const eventName = getDTOEventName(EventType.UPDATED_MANY, TestResolverDTO);
         const event = { [eventName]: output };
         when(
-          mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter)),
+          mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter))
         ).thenResolve(output);
         when(mockPubSub.publish(eventName, deepEqual(event))).thenResolve();
         const result = await resolver.updateMany(input);
@@ -326,13 +326,13 @@ describe('UpdateResolver', () => {
           input: {
             filter: { id: { eq: 'id-1' } },
             update: {
-              stringField: 'foo',
-            },
-          },
+              stringField: 'foo'
+            }
+          }
         };
         const output: UpdateManyResponse = { updatedCount: 1 };
         when(
-          mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter)),
+          mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter))
         ).thenResolve(output);
         const result = await resolver.updateMany(input);
         verify(mockPubSub.publish(anything(), anything())).never();
@@ -342,19 +342,19 @@ describe('UpdateResolver', () => {
       it('should not publish an event if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
         const { resolver, mockService, mockPubSub } = await createTestResolver({
           enableSubscriptions: true,
-          many: { enableSubscriptions: false },
+          many: { enableSubscriptions: false }
         });
         const input: MutationArgsType<UpdateManyInputType<TestResolverDTO, Partial<TestResolverDTO>>> = {
           input: {
             filter: { id: { eq: 'id-1' } },
             update: {
-              stringField: 'foo',
-            },
-          },
+              stringField: 'foo'
+            }
+          }
         };
         const output: UpdateManyResponse = { updatedCount: 1 };
         when(
-          mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter)),
+          mockService.updateMany(objectContaining(input.input.update), objectContaining(input.input.filter))
         ).thenResolve(output);
         const result = await resolver.updateMany(input);
         verify(mockPubSub.publish(anything(), anything())).never();
@@ -365,15 +365,15 @@ describe('UpdateResolver', () => {
     describe('updatedOneSubscription', () => {
       it('should propagate events if enableSubscriptions is true', async () => {
         const { resolver, mockPubSub } = await createTestResolver({
-          enableSubscriptions: true,
+          enableSubscriptions: true
         });
         const eventName = getDTOEventName(EventType.UPDATED_ONE, TestResolverDTO);
 
         const event: UpdatedEvent<TestResolverDTO> = {
           [eventName]: {
             id: 'id-1',
-            stringField: 'foo',
-          },
+            stringField: 'foo'
+          }
         };
         const mockIterator = mock<AsyncIterator<UpdatedEvent<TestResolverDTO>>>();
         when(mockPubSub.asyncIterator(eventName)).thenReturn(instance(mockIterator));
@@ -382,13 +382,13 @@ describe('UpdateResolver', () => {
         verify(mockPubSub.asyncIterator(eventName)).once();
         return expect(result).toEqual({
           done: false,
-          value: event,
+          value: event
         });
       });
 
       it('should not propagate events if enableSubscriptions is false', async () => {
         const { resolver } = await createTestResolver({
-          enableSubscriptions: false,
+          enableSubscriptions: false
         });
         const eventName = getDTOEventName(EventType.UPDATED_ONE, TestResolverDTO);
         return expect(() => resolver.updatedOneSubscription()).toThrow(`Unable to subscribe to ${eventName}`);
@@ -397,7 +397,7 @@ describe('UpdateResolver', () => {
       it('should not propagate events if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
         const { resolver } = await createTestResolver({
           enableSubscriptions: true,
-          one: { enableSubscriptions: false },
+          one: { enableSubscriptions: false }
         });
         const eventName = getDTOEventName(EventType.UPDATED_ONE, TestResolverDTO);
         return expect(() => resolver.updatedOneSubscription()).toThrow(`Unable to subscribe to ${eventName}`);
@@ -416,13 +416,13 @@ describe('UpdateResolver', () => {
         verify(mockPubSub.asyncIterator(eventName)).once();
         return expect(result).toEqual({
           done: false,
-          value: event,
+          value: event
         });
       });
 
       it('should not propagate events if enableSubscriptions is false', async () => {
         const { resolver } = await createTestResolver({
-          enableSubscriptions: false,
+          enableSubscriptions: false
         });
         const eventName = getDTOEventName(EventType.UPDATED_MANY, TestResolverDTO);
         return expect(() => resolver.updatedManySubscription()).toThrow(`Unable to subscribe to ${eventName}`);
@@ -431,7 +431,7 @@ describe('UpdateResolver', () => {
       it('should not propagate events if enableSubscriptions is true and one.enableSubscriptions is false', async () => {
         const { resolver } = await createTestResolver({
           enableSubscriptions: true,
-          many: { enableSubscriptions: false },
+          many: { enableSubscriptions: false }
         });
         const eventName = getDTOEventName(EventType.UPDATED_MANY, TestResolverDTO);
         return expect(() => resolver.updatedManySubscription()).toThrow(`Unable to subscribe to ${eventName}`);

@@ -18,5 +18,4 @@ import { typeormOrmConfig, formatGraphqlError } from '../../helpers';
     TagModule
   ]
 })
-export class AppModule {
-}
+export class AppModule {}

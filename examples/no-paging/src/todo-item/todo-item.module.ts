@@ -15,10 +15,10 @@ import { TodoItemEntity } from './todo-item.entity';
           DTOClass: TodoItemDTO,
           EntityClass: TodoItemEntity,
           CreateDTOClass: TodoItemInputDTO,
-          UpdateDTOClass: TodoItemUpdateDTO,
-        },
-      ],
-    }),
-  ],
+          UpdateDTOClass: TodoItemUpdateDTO
+        }
+      ]
+    })
+  ]
 })
 export class TodoItemModule {}

@@ -18,10 +18,10 @@ import { TodoItemService } from './todo-item.service';
           EntityClass: TodoItemEntity,
           ServiceClass: TodoItemService,
           CreateDTOClass: TodoItemInputDTO,
-          UpdateDTOClass: TodoItemUpdateDTO,
-        },
-      ],
-    }),
-  ],
+          UpdateDTOClass: TodoItemUpdateDTO
+        }
+      ]
+    })
+  ]
 })
 export class TodoItemModule {}

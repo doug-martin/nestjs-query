@@ -15,7 +15,7 @@ export class AggregateRelationsLoader<DTO, Relation>
 
   createLoader(service: QueryService<DTO, unknown, unknown>) {
     return async (
-      queryArgs: ReadonlyArray<AggregateRelationsArgs<DTO, Relation>>,
+      queryArgs: ReadonlyArray<AggregateRelationsArgs<DTO, Relation>>
     ): Promise<(AggregateResponse<Relation> | Error)[]> => {
       // group
       const queryMap = this.groupQueries(queryArgs);
@@ -25,7 +25,7 @@ export class AggregateRelationsLoader<DTO, Relation>
 
   private async loadResults(
     service: QueryService<DTO, unknown, unknown>,
-    queryRelationsMap: AggregateRelationsMap<DTO, Relation>,
+    queryRelationsMap: AggregateRelationsMap<DTO, Relation>
   ): Promise<AggregateResponse<Relation>[]> {
     const results: AggregateResponse<Relation>[] = [];
     await Promise.all(
@@ -37,19 +37,19 @@ export class AggregateRelationsLoader<DTO, Relation>
           this.relationName,
           dtos,
           filter,
-          aggregate,
+          aggregate
         );
         const dtoRelationAggregates = dtos.map((dto) => aggregationResults.get(dto) ?? {});
         dtoRelationAggregates.forEach((relationAggregate, index) => {
           results[args[index].index] = relationAggregate;
         });
-      }),
+      })
     );
     return results;
   }
 
   private groupQueries(
-    queryArgs: ReadonlyArray<AggregateRelationsArgs<DTO, Relation>>,
+    queryArgs: ReadonlyArray<AggregateRelationsArgs<DTO, Relation>>
   ): AggregateRelationsMap<DTO, Relation> {
     // group
     return queryArgs.reduce((map, args, index) => {

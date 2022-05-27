@@ -12,11 +12,17 @@ import {
   refresh,
   truncate
 } from '../__fixtures__/connection.fixture';
-import { TEST_ENTITIES, TEST_RELATIONS, TEST_SOFT_DELETE_ENTITIES } from '../__fixtures__/seeds';
+import {
+  TEST_ENTITIES,
+  TEST_RELATIONS,
+  TEST_SOFT_DELETE_ENTITIES,
+  TEST_SOFT_DELETE_RELATION_ENTITIES
+} from '../__fixtures__/seeds';
 import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
+import { TestSoftDeleteRelation } from '../__fixtures__/test-soft-delete.relation';
 
 describe('TypeOrmQueryService', (): void => {
   let moduleRef: TestingModule;
@@ -157,7 +163,7 @@ describe('TypeOrmQueryService', (): void => {
               }
             }
           });
-          expect(queryResults.length).toEqual(6);
+          expect(queryResults).toHaveLength(6);
           queryResults.map((e, idx) => {
             expect(e).toMatchObject(TEST_RELATIONS[idx]);
           });
@@ -174,7 +180,7 @@ describe('TypeOrmQueryService', (): void => {
               }
             }
           });
-          expect(queryResults.length).toEqual(6);
+          expect(queryResults).toHaveLength(6);
           queryResults.map((e, idx) => {
             expect(e).toMatchObject(TEST_RELATIONS[idx]);
           });
@@ -198,7 +204,7 @@ describe('TypeOrmQueryService', (): void => {
             sorting: [{ field: 'testRelationPk', direction: SortDirection.ASC }],
             paging: { limit: 3 }
           });
-          expect(queryResults.length).toEqual(3);
+          expect(queryResults).toHaveLength(3);
           queryResults.map((e, idx) => {
             expect(e).toMatchObject(TEST_RELATIONS[idx]);
           });
@@ -571,7 +577,7 @@ describe('TypeOrmQueryService', (): void => {
           const count = await queryService.count({
             testRelations: {
               testEntityId: {
-                in: [relation.testEntityId as string]
+                in: [relation.testEntityId]
               }
             }
           });
@@ -694,19 +700,27 @@ describe('TypeOrmQueryService', (): void => {
       describe('manyToMany', () => {
         it('call select and return the with owning side of the relations', async () => {
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = await queryService.queryRelations(TestEntity, 'manyTestRelations', [TEST_ENTITIES[1]], {});
+          const queryResult = await queryService.queryRelations(
+            TestEntity,
+            'manyTestRelations',
+            [TEST_ENTITIES[1]],
+            {}
+          );
 
           const adaptedQueryResult = new Map();
           queryResult.forEach((relations, key) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            adaptedQueryResult.set(key, relations.map(({ relationOfTestRelationId, ...relation }) => ({
-              ...relation
-            })));
+            adaptedQueryResult.set(
+              key,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              relations.map(({ relationOfTestRelationId, ...relation }) => ({
+                ...relation
+              }))
+            );
           });
 
           const expectRelations = TEST_RELATIONS.filter((tr) => tr.relationName.endsWith('two'));
-          expect(adaptedQueryResult.get(TEST_ENTITIES[1]).length).toEqual(expectRelations.length);
+          expect(adaptedQueryResult.get(TEST_ENTITIES[1])).toHaveLength(expectRelations.length);
           expect(adaptedQueryResult.get(TEST_ENTITIES[1])).toEqual(expect.arrayContaining(expectRelations));
         });
 
@@ -718,9 +732,9 @@ describe('TypeOrmQueryService', (): void => {
 
           const expectRelations = TEST_ENTITIES.filter((te) => te.numberType % 2 === 0);
 
-          expect(queryResult.get(entities[0]).length).toEqual(0);
+          expect(queryResult.get(entities[0])).toHaveLength(0);
           expect(queryResult.get(entities[0])).toEqual([]);
-          expect(queryResult.get(entities[1]).length).toEqual(expectRelations.length);
+          expect(queryResult.get(entities[1])).toHaveLength(expectRelations.length);
           expect(queryResult.get(entities[1])).toEqual(expect.arrayContaining(expectRelations));
         });
       });
@@ -1186,6 +1200,37 @@ describe('TypeOrmQueryService', (): void => {
           expect(queryResult).toEqual(TEST_ENTITIES[0]);
         });
       });
+
+      describe('soft deleted relation', () => {
+        it('call select and return undefined', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.findRelation(
+            TestSoftDeleteRelation,
+            'oneSoftDeleteTestRelation',
+            entity,
+            { withDeleted: false }
+          );
+
+          expect(queryResult).toBeUndefined();
+        });
+
+        it('call select and return the deleted relation', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.findRelation(
+            TestSoftDeleteRelation,
+            'oneSoftDeleteTestRelation',
+            entity,
+            { withDeleted: true }
+          );
+
+          expect(queryResult).toEqual({
+            ...TEST_SOFT_DELETE_RELATION_ENTITIES[0],
+            deletedAt: expect.any(Date)
+          });
+        });
+      });
     });
 
     describe('with multiple entities', () => {
@@ -1240,10 +1285,50 @@ describe('TypeOrmQueryService', (): void => {
           adaptedQueryResult.set(key, entry);
         });
 
-        expect(adaptedQueryResult).toEqual(new Map([
-          [entities[0], TEST_RELATIONS[0]],
-          [entities[1], undefined]
-        ]));
+        expect(adaptedQueryResult).toEqual(
+          new Map([
+            [entities[0], TEST_RELATIONS[0]],
+            [entities[1], undefined]
+          ])
+        );
+      });
+
+      describe('soft deleted relation', () => {
+        it('call select and return undefined', async () => {
+          const entities = [TEST_ENTITIES[0]];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.findRelation(
+            TestSoftDeleteRelation,
+            'oneSoftDeleteTestRelation',
+            entities,
+            { withDeleted: false }
+          );
+
+          expect(queryResult).toEqual(new Map([[entities[0], undefined]]));
+        });
+
+        it('call select and return the deleted relation', async () => {
+          const entities = [TEST_ENTITIES[0]];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.findRelation(
+            TestSoftDeleteRelation,
+            'oneSoftDeleteTestRelation',
+            entities,
+            { withDeleted: true }
+          );
+
+          expect(queryResult).toEqual(
+            new Map([
+              [
+                entities[0],
+                {
+                  ...TEST_SOFT_DELETE_RELATION_ENTITIES[0],
+                  deletedAt: expect.any(Date)
+                }
+              ]
+            ])
+          );
+        });
       });
     });
   });

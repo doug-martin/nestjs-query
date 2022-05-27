@@ -14,7 +14,7 @@ export const asyncLoop = async <T>(items: T[], fn: (t: T) => Promise<unknown>): 
   for (const item of items) {
     await fn(item);
   }
-}
+};
 
 export const executeTruncate = (exec: QueryExecutor, table: string | string[]): Promise<void> => {
   if (Array.isArray(table)) {

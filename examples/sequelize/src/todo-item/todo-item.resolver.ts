@@ -15,7 +15,7 @@ export class TodoItemResolver {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = {
       ...query.filter,
-      ...{ completed: { is: true } },
+      ...{ completed: { is: true } }
     };
 
     // call the original queryMany method with the new query
@@ -28,7 +28,7 @@ export class TodoItemResolver {
     // add the completed filter the user provided filter
     const filter: Filter<TodoItemDTO> = {
       ...query.filter,
-      ...{ completed: { is: false } },
+      ...{ completed: { is: false } }
     };
 
     // call the original queryMany method with the new query

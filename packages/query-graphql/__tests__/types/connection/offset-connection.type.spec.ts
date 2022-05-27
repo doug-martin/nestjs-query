@@ -31,7 +31,7 @@ describe('OffsetConnectionType', (): void => {
   const createTestDTO = (index: number): TestDto => ({
     stringField: `foo${index}`,
     numberField: index,
-    boolField: index % 2 === 0,
+    boolField: index % 2 === 0
   });
 
   it('should create the connection SDL', async () => {
@@ -50,7 +50,7 @@ describe('OffsetConnectionType', (): void => {
   it('should create the connection SDL with totalCount if enabled', async () => {
     const TestConnectionWithTotalCount = getOrCreateOffsetConnectionType(TestTotalCountDto, {
       pagingStrategy: PagingStrategies.OFFSET,
-      enableTotalCount: true,
+      enableTotalCount: true
     });
     @Resolver()
     class TestOffsetConnectionTypeResolver {
@@ -71,7 +71,7 @@ describe('OffsetConnectionType', (): void => {
     }
 
     expect(() => getOrCreateOffsetConnectionType(TestBadDto, { pagingStrategy: PagingStrategies.OFFSET })).toThrow(
-      'Unable to make OffsetConnectionType. Ensure TestBadDto is annotated with @nestjs/graphql @ObjectType',
+      'Unable to make OffsetConnectionType. Ensure TestBadDto is annotated with @nestjs/graphql @ObjectType'
     );
   });
 
@@ -82,7 +82,7 @@ describe('OffsetConnectionType', (): void => {
       expect(new TestConnection()).toEqual({
         pageInfo: { hasNextPage: false, hasPreviousPage: false },
         nodes: [],
-        totalCountFn: expect.any(Function),
+        totalCountFn: expect.any(Function)
       });
     });
 
@@ -95,9 +95,9 @@ describe('OffsetConnectionType', (): void => {
           nodes: [],
           pageInfo: {
             hasNextPage: false,
-            hasPreviousPage: false,
+            hasPreviousPage: false
           },
-          totalCountFn: expect.any(Function),
+          totalCountFn: expect.any(Function)
         });
       });
 
@@ -107,7 +107,7 @@ describe('OffsetConnectionType', (): void => {
         queryMany.mockResolvedValueOnce([...dtos]);
         await TestConnection.createFromPromise(queryMany, {
           search: 'searchString',
-          paging: createPage({ limit: 2 }),
+          paging: createPage({ limit: 2 })
         });
         expect(queryMany).toHaveBeenCalledTimes(1);
         expect(queryMany).toHaveBeenCalledWith({ search: 'searchString', paging: { limit: 3, offset: 0 } });
@@ -121,9 +121,9 @@ describe('OffsetConnectionType', (): void => {
           nodes: [],
           pageInfo: {
             hasNextPage: false,
-            hasPreviousPage: false,
+            hasPreviousPage: false
           },
-          totalCountFn: expect.any(Function),
+          totalCountFn: expect.any(Function)
         });
       });
 
@@ -139,9 +139,9 @@ describe('OffsetConnectionType', (): void => {
             nodes: dtos,
             pageInfo: {
               hasNextPage: false,
-              hasPreviousPage: false,
+              hasPreviousPage: false
             },
-            totalCountFn: expect.any(Function),
+            totalCountFn: expect.any(Function)
           });
         });
 
@@ -156,9 +156,9 @@ describe('OffsetConnectionType', (): void => {
             nodes: [dtos[0], dtos[1]],
             pageInfo: {
               hasNextPage: true,
-              hasPreviousPage: false,
+              hasPreviousPage: false
             },
-            totalCountFn: expect.any(Function),
+            totalCountFn: expect.any(Function)
           });
         });
       });
@@ -169,7 +169,7 @@ describe('OffsetConnectionType', (): void => {
           const dtos = [createTestDTO(1)];
           queryMany.mockResolvedValueOnce([...dtos]);
           const response = await TestConnection.createFromPromise(queryMany, {
-            paging: createPage({ limit: 1, offset: 0 }),
+            paging: createPage({ limit: 1, offset: 0 })
           });
           expect(queryMany).toHaveBeenCalledTimes(1);
           expect(queryMany).toHaveBeenCalledWith({ paging: { limit: 2, offset: 0 } });
@@ -177,9 +177,9 @@ describe('OffsetConnectionType', (): void => {
             nodes: dtos,
             pageInfo: {
               hasNextPage: false,
-              hasPreviousPage: false,
+              hasPreviousPage: false
             },
-            totalCountFn: expect.any(Function),
+            totalCountFn: expect.any(Function)
           });
         });
 
@@ -188,7 +188,7 @@ describe('OffsetConnectionType', (): void => {
           const dtos = [createTestDTO(1), createTestDTO(2), createTestDTO(3)];
           queryMany.mockResolvedValueOnce([...dtos]);
           const response = await TestConnection.createFromPromise(queryMany, {
-            paging: createPage({ limit: 2, offset: 1 }),
+            paging: createPage({ limit: 2, offset: 1 })
           });
           expect(queryMany).toHaveBeenCalledTimes(1);
           expect(queryMany).toHaveBeenCalledWith({ paging: { limit: 3, offset: 1 } });
@@ -196,9 +196,9 @@ describe('OffsetConnectionType', (): void => {
             nodes: [dtos[0], dtos[1]],
             pageInfo: {
               hasNextPage: true,
-              hasPreviousPage: true,
+              hasPreviousPage: true
             },
-            totalCountFn: expect.any(Function),
+            totalCountFn: expect.any(Function)
           });
         });
       });
@@ -207,7 +207,7 @@ describe('OffsetConnectionType', (): void => {
         const queryMany = jest.fn();
         queryMany.mockResolvedValueOnce([]);
         const response = await TestConnection.createFromPromise(queryMany, {
-          paging: createPage({ limit: 2 }),
+          paging: createPage({ limit: 2 })
         });
         expect(queryMany).toHaveBeenCalledTimes(1);
         expect(queryMany).toHaveBeenCalledWith({ paging: { limit: 3, offset: 0 } });
@@ -215,9 +215,9 @@ describe('OffsetConnectionType', (): void => {
           nodes: [],
           pageInfo: {
             hasNextPage: false,
-            hasPreviousPage: false,
+            hasPreviousPage: false
           },
-          totalCountFn: expect.any(Function),
+          totalCountFn: expect.any(Function)
         });
       });
     });

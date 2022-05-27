@@ -19,7 +19,7 @@ export class CountRelationsLoader<DTO, Relation>
 
   private async loadResults(
     service: QueryService<DTO, unknown, unknown>,
-    countRelationsMap: CountRelationsMap<DTO, Relation>,
+    countRelationsMap: CountRelationsMap<DTO, Relation>
   ): Promise<number[]> {
     const results: number[] = [];
     await Promise.all(
@@ -31,7 +31,7 @@ export class CountRelationsLoader<DTO, Relation>
         dtoRelations.forEach((relationCount, index) => {
           results[args[index].index] = relationCount;
         });
-      }),
+      })
     );
     return results;
   }

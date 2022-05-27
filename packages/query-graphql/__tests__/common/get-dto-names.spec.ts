@@ -18,7 +18,7 @@ describe('getDTONames', () => {
 
   it('should use the dtoName if specified', () => {
     const { baseName, baseNameLower, pluralBaseNameLower, pluralBaseName } = getDTONames(DTO, {
-      dtoName: 'NamedObj',
+      dtoName: 'NamedObj'
     });
     expect(baseName).toBe('NamedObj');
     expect(baseNameLower).toBe('namedObj');
