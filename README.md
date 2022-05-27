@@ -38,10 +38,26 @@ Nestjs-query is composed of multiple packages
 * [`@nestjs-query/query-sequelize`](https://github.com/tripss/nestjs-query/tree/master/packages/query-sequelize) - Package that implements a Sequelize service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
 * [`@nestjs-query/query-typegoose`](https://github.com/tripss/nestjs-query/tree/master/packages/query-typegoose) - Package that implements a Typegoos service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
 * [`@nestjs-query/query-typeorm`](https://github.com/tripss/nestjs-query/tree/master/packages/query-typeorm) - Package that implements a Typeorm service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
-* [`@nestjs-query/query-sequelize`](https://github.com/tripss/nestjs-query/tree/master/packages/query-sequelize) - Package that implements a Sequelize service that can be used by itself or with the graphql resolver provided by `@nestjs-query/query-graphql`.
 
 
+## Development
+If you'd like to contribute to this project, all you need to do is clone this project and run:
 
+```bash
+$ yarn
+
+# To build all packages
+$ yarn nx run-many --target=build --all
+
+# To run all tests
+$ yarn nx run-many --target=test --all
+
+# To run the E2E tests
+$ yarn nx e2e examples
+
+# To build one package
+$ yarn nx build query-graphql
+```
 
 ## Collaboration
 
