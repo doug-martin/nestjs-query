@@ -2,7 +2,7 @@
   <a href="https://tripss.github.io/nestjs-query" target="blank"><img src="https://tripss.github.io/nestjs-query/img/logo.svg" width="120" alt="Nestjs-query Logo" /></a>
 </p>
 
-[![Test](https://github.com/tripss/nestjs-query/workflows/test/badge.svg?branch=master)](https://github.com/tripss/nestjs-query/actions?query=workflow%3ATest+and+branch%3Amaster+)
+[![Test](https://github.com/TriPSs/nestjs-query/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/TriPSs/nestjs-query/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/TriPSs/nestjs-query/branch/master/graph/badge.svg?token=29EX71ID2P)](https://codecov.io/gh/TriPSs/nestjs-query)
 [![Known Vulnerabilities](https://snyk.io/test/github/tripss/nestjs-query/badge.svg?targetFile=package.json)](https://snyk.io/test/github/tripss/nestjs-query?targetFile=package.json)
 
