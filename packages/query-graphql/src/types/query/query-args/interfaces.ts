@@ -20,7 +20,7 @@ export type BaseQueryArgsTypeOpts<DTO> = {
    */
   defaultSort?: SortField<DTO>[];
   /**
-   * Disable the sorting of this relation.
+   * Disable the sorting
    */
   disableSort?: boolean;
   /**
@@ -29,7 +29,7 @@ export type BaseQueryArgsTypeOpts<DTO> = {
    */
   defaultFilter?: Filter<DTO>;
   /**
-   * Disable the filtering of this relation.
+   * Disable the filtering
    */
   disableFilter?: boolean;
 } & FilterTypeOptions;
