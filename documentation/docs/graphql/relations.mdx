@@ -1127,6 +1127,51 @@ To disable the `read` `queries` you can set the `disableRead` option to `true`.
 </TabItem>
 </Tabs>
 
+#### Disable `filter` or `sorting` in relations
+
+To disable the `filter` or `sorting` of relations you can set the `disableFilter` or/and `disableSort` option to `true`.
+
+<Tabs
+  defaultValue="relation"
+  groupId="relation-type"
+  values={[
+    { label: 'Relation', value: 'relation', },
+    { label: 'CursorConnection', value: 'cursor-connection', },
+    { label: 'OffsetConnection', value: 'offset-connection', },
+    { label: 'UnPagedRelation', value: 'unpaged-relation', },
+  ]
+  }>
+  <TabItem value="relation">
+
+    This is not available in `relation` as it will only fetch one record.
+
+  </TabItem>
+  <TabItem value="cursor-connection">
+
+    ```ts
+    // disable reading the connection
+    @CursorConnection('subTasks', () => SubTaskDTO, { disableFilter: true, disableSort: true })
+    ```
+
+  </TabItem>
+  <TabItem value="offset-connection">
+
+    ```ts
+    // disable reading the relation
+    @OffsetConnection('subTaskConnection', () => SubTaskDTO, { disableFilter: true, disableSort: true })
+    ```
+
+  </TabItem>
+  <TabItem value="unpaged-relation">
+
+    ```ts
+    // disable reading the relation
+    @UnPagedRelation('subTaskConnection', () => SubTaskDTO, { disableFilter: true, disableSort: true })
+    ```
+
+  </TabItem>
+</Tabs>
+
 ### Disable Updates
 
 To disable the `update` `mutations` you can set the `disableUpdate` option to `true`.
