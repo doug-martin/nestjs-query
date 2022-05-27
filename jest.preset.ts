@@ -8,6 +8,7 @@ module.exports = {
   collectCoverageFrom: [
     'packages/**/*.ts',
     '!**/__tests__/**',
+    '!*.spec.ts',
     '!**/dist/**',
     '!**/node_modules/**',
     '!**/jest.config.ts',

@@ -5,34 +5,36 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+
 env:
   NX_BRANCH: ${{ github.event.number }}
   NX_RUN_GROUP: ${{ github.run_id }}
 
 jobs:
 
-  prepare-env:
+  setup:
+    uses: ./.github/workflows/shared.setup-env.yml
+
+  docs:
+    concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
-    outputs:
-      GITHUB_HEAD_REF: ${{ steps.script.outputs.headRef }}
-      GITHUB_BASE_REF: ${{ steps.script.outputs.tagHash }}
+    needs: setup
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup-step
         with:
-          fetch-depth: 0
+          set_shas: false
 
-      - name: Cache node modules
-        id: cache
-        uses: actions/cache@v2
+      - name: Build docs
+        run: npx nx build documentation
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
-          path: |
-            **/node_modules
-          key: ${{ env.DEPENDENCIES_CACHE }}-${{ hashFiles('yarn.lock') }}
-
-      - name: yarn install
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install --pure-lockfile --prefer-offline
-
-      - name: Set correct env vars
-        id: script
-        uses: ./tools/actions/set-master-vars
+          branch: gh-pages # The branch the action should deploy to.
+          folder: ./dist/documentation # The folder the action should deploy.

@@ -20,6 +20,7 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [ 14.x ]
         target: [ 'build', 'test', 'lint' ]
@@ -62,6 +63,7 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [ 14.x ]
         db-type: ['postgres', 'mysql']
