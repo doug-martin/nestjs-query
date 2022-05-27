@@ -10,6 +10,7 @@ export function getOrCreateBooleanFieldComparison(): Class<FilterFieldComparison
   if (booleanFieldComparison) {
     return booleanFieldComparison;
   }
+
   @InputType()
   class BooleanFieldComparison implements FilterFieldComparison<boolean> {
     @Field(() => Boolean, { nullable: true })
@@ -22,6 +23,8 @@ export function getOrCreateBooleanFieldComparison(): Class<FilterFieldComparison
     @IsOptional()
     isNot?: boolean | null;
   }
+
   booleanFieldComparison = BooleanFieldComparison;
+
   return BooleanFieldComparison;
 }

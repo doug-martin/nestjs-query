@@ -86,6 +86,8 @@ export function getOrCreateDateFieldComparison(): Class<FilterFieldComparison<Da
     @Type(() => DateFieldComparisonBetween)
     notBetween?: DateFieldComparisonBetween;
   }
+
   dateFieldComparison = DateFieldComparison;
+
   return dateFieldComparison;
 }
