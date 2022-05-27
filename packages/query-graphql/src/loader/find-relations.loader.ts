@@ -1,7 +1,8 @@
-import { Class, Filter, QueryService } from '@ptc-org/nestjs-query-core';
+import { Class, FindRelationOptions, QueryService } from '@ptc-org/nestjs-query-core';
 import { NestjsQueryDataloader } from './relations.loader';
 
-export type FindRelationsArgs<DTO, Relation> = { dto: DTO; filter?: Filter<Relation> };
+export type FindRelationsArgs<DTO, Relation> = { dto: DTO } & FindRelationOptions<Relation>;
+type FindRelationsOpts<Relation> = Omit<FindRelationOptions<Relation>, 'filter'>;
 type FindRelationsMap<DTO, Relation> = Map<string, (FindRelationsArgs<DTO, Relation> & { index: number })[]>;
 
 export class FindRelationsLoader<DTO, Relation>
@@ -9,9 +10,9 @@ export class FindRelationsLoader<DTO, Relation>
 {
   constructor(readonly RelationDTO: Class<Relation>, readonly relationName: string) {}
 
-  createLoader(service: QueryService<DTO, unknown, unknown>) {
+  createLoader(service: QueryService<DTO, unknown, unknown>, opts?: FindRelationsOpts<Relation>) {
     return async (args: ReadonlyArray<FindRelationsArgs<DTO, Relation>>): Promise<(Relation | undefined | Error)[]> => {
-      const grouped = this.groupFinds(args);
+      const grouped = this.groupFinds(args, opts);
       return this.loadResults(service, grouped);
     };
   }
@@ -23,9 +24,10 @@ export class FindRelationsLoader<DTO, Relation>
     const results: (Relation | undefined)[] = [];
     await Promise.all(
       [...findRelationsMap.values()].map(async (args) => {
-        const { filter } = args[0];
+        const { filter, withDeleted } = args[0];
         const dtos = args.map((a) => a.dto);
-        const relationResults = await service.findRelation(this.RelationDTO, this.relationName, dtos, { filter });
+        const opts = { filter, withDeleted };
+        const relationResults = await service.findRelation(this.RelationDTO, this.relationName, dtos, opts);
         const dtoRelations: (Relation | undefined)[] = dtos.map((dto) => relationResults.get(dto));
         dtoRelations.forEach((relation, index) => {
           results[args[index].index] = relation;
@@ -35,7 +37,10 @@ export class FindRelationsLoader<DTO, Relation>
     return results;
   }
 
-  private groupFinds(queryArgs: ReadonlyArray<FindRelationsArgs<DTO, Relation>>): FindRelationsMap<DTO, Relation> {
+  private groupFinds(
+    queryArgs: ReadonlyArray<FindRelationsArgs<DTO, Relation>>,
+    opts?: FindRelationsOpts<Relation>
+  ): FindRelationsMap<DTO, Relation> {
     // group
     return queryArgs.reduce((map, args, index) => {
       const filterJson = JSON.stringify(args.filter);
@@ -43,7 +48,7 @@ export class FindRelationsLoader<DTO, Relation>
         map.set(filterJson, []);
       }
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      map.get(filterJson)!.push({ ...args, index });
+      map.get(filterJson)!.push({ ...args, ...opts, index });
       return map;
     }, new Map<string, (FindRelationsArgs<DTO, Relation> & { index: number })[]>());
   }

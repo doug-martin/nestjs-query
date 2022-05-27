@@ -104,9 +104,14 @@ export class RelationQueryBuilder<Entity, Relation> {
     return this.filterQueryBuilder.applySorting(relationBuilder, query.sorting, relationBuilder.alias);
   }
 
-  public batchSelect(entities: Entity[], query: Query<Relation>): SelectQueryBuilder<Relation> {
+  public batchSelect(entities: Entity[], query: Query<Relation>, withDeleted?: boolean): SelectQueryBuilder<Relation> {
     const hasRelations = this.filterQueryBuilder.filterHasRelations(query.filter);
     let qb = this.relationRepo.createQueryBuilder(this.relationMeta.fromAlias);
+
+    if (withDeleted) {
+      qb.withDeleted();
+    }
+
     qb = hasRelations
       ? this.filterQueryBuilder.applyRelationJoinsRecursive(
           qb,

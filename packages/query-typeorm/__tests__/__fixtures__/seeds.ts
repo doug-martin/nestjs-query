@@ -1,8 +1,9 @@
-import { Connection, getConnection } from 'typeorm';
+import { Connection, getConnection, In } from 'typeorm';
 import { TestRelation } from './test-relation.entity';
 import { TestSoftDeleteEntity } from './test-soft-delete.entity';
 import { TestEntity } from './test.entity';
 import { RelationOfTestRelationEntity } from './relation-of-test-relation.entity';
+import { TestSoftDeleteRelation } from './test-soft-delete.relation';
 
 export const TEST_ENTITIES: TestEntity[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
   const testEntityPk = `test-entity-${i}`;
@@ -18,6 +19,14 @@ export const TEST_ENTITIES: TestEntity[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((
 
 export const TEST_SOFT_DELETE_ENTITIES: TestSoftDeleteEntity[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
   const testEntityPk = `test-entity-${i}`;
+  return {
+    testEntityPk,
+    stringType: `foo${i}`
+  };
+});
+
+export const TEST_SOFT_DELETE_RELATION_ENTITIES: TestSoftDeleteRelation[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
+  const testEntityPk = `test-deleted-entity-${i}`;
   return {
     testEntityPk,
     stringType: `foo${i}`
@@ -60,10 +69,14 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
   const testRelationRepo = connection.getRepository(TestRelation);
   const relationOfTestRelationRepo = connection.getRepository(RelationOfTestRelationEntity);
   const testSoftDeleteRepo = connection.getRepository(TestSoftDeleteEntity);
+  const testSoftDeleteRelationRepo = connection.getRepository(TestSoftDeleteRelation);
 
   const testEntities = await testEntityRepo.save(TEST_ENTITIES.map((e: TestEntity) => ({ ...e })));
 
   const testRelations = await testRelationRepo.save(TEST_RELATIONS.map((r: TestRelation) => ({ ...r })));
+  const testSoftDeleteRelations = await testSoftDeleteRelationRepo.save(
+    TEST_SOFT_DELETE_RELATION_ENTITIES.map((r: TestSoftDeleteRelation) => ({ ...r }))
+  );
 
   await relationOfTestRelationRepo.save(
     TEST_RELATIONS_OF_RELATION.map((r: RelationOfTestRelationEntity) => ({ ...r }))
@@ -73,6 +86,7 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
     testEntities.map((te) => {
       // eslint-disable-next-line no-param-reassign
       te.oneTestRelation = testRelations.find((tr) => tr.testRelationPk === `test-relations-${te.testEntityPk}-1`);
+      te.oneSoftDeleteTestRelation = testSoftDeleteRelations[0];
       if (te.numberType % 2 === 0) {
         // eslint-disable-next-line no-param-reassign
         te.manyTestRelations = testRelations.filter((tr) => tr.relationName.endsWith('two'));
@@ -97,4 +111,8 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
   );
 
   await testSoftDeleteRepo.save(TEST_SOFT_DELETE_ENTITIES.map((e: TestSoftDeleteEntity) => ({ ...e })));
+
+  await testSoftDeleteRelationRepo.softDelete({
+    testEntityPk: In(TEST_SOFT_DELETE_RELATION_ENTITIES.map(({ testEntityPk }) => testEntityPk))
+  });
 };

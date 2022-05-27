@@ -98,6 +98,7 @@ export class TypeOrmQueryService<Entity>
    * const todoItem = await this.service.findById(1);
    * ```
    * @param id - The id of the record to find.
+   * @param opts
    */
   async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
     const qb = this.filterQueryBuilder.selectById(id, opts ?? {});
@@ -119,6 +120,7 @@ export class TypeOrmQueryService<Entity>
    * }
    * ```
    * @param id - The id of the record to find.
+   * @param opts
    */
   async getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity> {
     const entity = await this.findById(id, opts);

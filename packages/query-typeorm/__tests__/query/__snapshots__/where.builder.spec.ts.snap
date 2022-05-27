@@ -8,6 +8,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -28,6 +29,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -52,6 +54,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -69,6 +72,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -88,6 +92,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -116,6 +121,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -140,6 +146,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -160,6 +167,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -180,6 +188,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -199,6 +208,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"
@@ -227,6 +237,7 @@ SELECT
   "TestEntity"."number_type" AS "TestEntity_number_type",
   "TestEntity"."date_type" AS "TestEntity_date_type",
   "TestEntity"."many_to_one_relation_id" AS "TestEntity_many_to_one_relation_id",
+  "TestEntity"."many_to_one_soft_delete_relation_id" AS "TestEntity_many_to_one_soft_delete_relation_id",
   "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk"
 FROM
   "test_entity" "TestEntity"

@@ -47,7 +47,11 @@ const ReadOneRelationMixin =
         })
         authFilter?: Filter<Relation>
       ): Promise<Relation | undefined> {
-        return DataLoaderFactory.getOrCreateLoader(context, loaderName, findLoader.createLoader(this.service)).load({
+        return DataLoaderFactory.getOrCreateLoader(
+          context,
+          loaderName,
+          findLoader.createLoader(this.service, { withDeleted: relation.withDeleted })
+        ).load({
           dto,
           filter: authFilter
         });
@@ -100,7 +104,7 @@ const ReadManyRelationMixin =
         })
         relationFilter?: Filter<Relation>
       ): Promise<InstanceType<typeof CT>> {
-        const qa = await transformAndValidate(RelationQA, q);
+        const relationQuery = await transformAndValidate(RelationQA, q);
         const relationLoader = DataLoaderFactory.getOrCreateLoader(
           context,
           relationLoaderName,
@@ -113,7 +117,7 @@ const ReadManyRelationMixin =
         );
         return CT.createFromPromise(
           (query) => relationLoader.load({ dto, query }),
-          mergeQuery(qa, { filter: relationFilter }),
+          mergeQuery(relationQuery, { filter: relationFilter }),
           (filter) => relationCountLoader.load({ dto, filter })
         );
       }

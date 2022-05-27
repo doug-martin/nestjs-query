@@ -9,8 +9,7 @@ import {
   FindRelationOptions,
   GetByIdOptions
 } from '@ptc-org/nestjs-query-core';
-import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder, ObjectLiteral } from 'typeorm';
-import lodashFilter from 'lodash.filter';
+import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder } from 'typeorm';
 import lodashOmit from 'lodash.omit';
 import { AggregateBuilder, EntityIndexRelation, FilterQueryBuilder, RelationQueryBuilder } from '../query';
 
@@ -183,9 +182,16 @@ export abstract class RelationQueryService<Entity> {
     }
 
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
-    const relationEntity = await this.getRelationQueryBuilder(relationName)
-      .select(dto, { filter: opts?.filter, paging: { limit: 1 } })
-      .getOne();
+    const relationQueryBuilder = this.getRelationQueryBuilder(relationName).select(dto, {
+      filter: opts?.filter,
+      paging: { limit: 1 }
+    });
+
+    if (opts?.withDeleted) {
+      relationQueryBuilder.withDeleted();
+    }
+
+    const relationEntity = await relationQueryBuilder.getOne();
 
     return relationEntity ? assembler.convertToDTO(relationEntity) : undefined;
   }
@@ -328,13 +334,16 @@ export abstract class RelationQueryService<Entity> {
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
-    query: Query<Relation>
+    query: Query<Relation>,
+    withDeleted?: boolean
   ): Promise<Map<Entity, Relation[]>> {
     const assembler = AssemblerFactory.getAssembler(RelationClass, this.getRelationEntity(relationName));
     const convertedQuery = assembler.convertQuery(query);
 
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
-    const entityRelations = await relationQueryBuilder.batchSelect(entities, convertedQuery).getRawAndEntities();
+    const entityRelations = await relationQueryBuilder
+      .batchSelect(entities, convertedQuery, withDeleted)
+      .getRawAndEntities();
 
     return entities.reduce((results, entity) => {
       const relations = relationQueryBuilder.relationMeta.mapRelations(
@@ -426,10 +435,16 @@ export abstract class RelationQueryService<Entity> {
     dtos: Entity[],
     opts?: FindRelationOptions<Relation>
   ): Promise<Map<Entity, Relation | undefined>> {
-    const batchResults = await this.batchQueryRelations(RelationClass, relationName, dtos, {
-      paging: { limit: dtos.length },
-      filter: opts?.filter
-    });
+    const batchResults = await this.batchQueryRelations(
+      RelationClass,
+      relationName,
+      dtos,
+      {
+        paging: { limit: dtos.length },
+        filter: opts?.filter
+      },
+      opts?.withDeleted
+    );
 
     const results = new Map<Entity, Relation>();
     batchResults.forEach((relation, dto) => {

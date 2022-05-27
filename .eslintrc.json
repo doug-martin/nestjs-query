@@ -66,6 +66,7 @@
       "files": ["*.spec.ts", "*/__fixtures__/*.ts"],
       "extends": ["plugin:@nrwl/nx/typescript"],
       "rules": {
+        "max-classes-per-file": ["off"],
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",

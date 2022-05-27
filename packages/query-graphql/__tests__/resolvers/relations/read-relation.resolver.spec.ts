@@ -39,6 +39,7 @@ describe('ReadRelationsResolver', () => {
         super(service);
       }
     }
+
     it('should use the object type name', () => expectResolverSDL({ one: { relation: { DTO: TestRelationDTO } } }));
 
     it('should use the dtoName if provided', () =>
@@ -61,7 +62,15 @@ describe('ReadRelationsResolver', () => {
         testResolverId: dto.id
       };
       when(
-        mockService.findRelation(TestRelationDTO, 'relation', deepEqual([dto]), deepEqual({ filter: undefined }))
+        mockService.findRelation(
+          TestRelationDTO,
+          'relation',
+          deepEqual([dto]),
+          deepEqual({
+            filter: undefined,
+            withDeleted: undefined
+          })
+        )
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -80,11 +89,57 @@ describe('ReadRelationsResolver', () => {
         testResolverId: dto.id
       };
       when(
-        mockService.findRelation(TestRelationDTO, 'other', deepEqual([dto]), deepEqual({ filter: undefined }))
+        mockService.findRelation(
+          TestRelationDTO,
+          'other',
+          deepEqual([dto]),
+          deepEqual({
+            filter: undefined,
+            withDeleted: undefined
+          })
+        )
       ).thenResolve(new Map([[dto, output]]));
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const result = await resolver.findCustom(dto, {});
+      return expect(result).toEqual(output);
+    });
+  });
+
+  describe('one (withDeleted)', () => {
+    @Resolver(() => TestResolverDTO)
+    class TestDeletedResolver extends ReadRelationsResolver(TestResolverDTO, {
+      one: { relation: { DTO: TestRelationDTO, withDeleted: true } }
+    }) {
+      constructor(service: TestService) {
+        super(service);
+      }
+    }
+
+    it('should call the service findRelation with the provided dto', async () => {
+      const { resolver, mockService } = await createResolverFromNest(TestDeletedResolver);
+      const dto: TestResolverDTO = {
+        id: 'id-1',
+        stringField: 'foo'
+      };
+      const output: TestRelationDTO = {
+        id: 'id-2',
+        testResolverId: dto.id
+      };
+      when(
+        mockService.findRelation(
+          TestRelationDTO,
+          'relation',
+          deepEqual([dto]),
+          deepEqual({
+            filter: undefined,
+            withDeleted: true
+          })
+        )
+      ).thenResolve(new Map([[dto, output]]));
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      const result = await resolver.findRelation(dto, {});
       return expect(result).toEqual(output);
     });
   });

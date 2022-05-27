@@ -1,3 +1,8 @@
 import { Filterable } from './filterable.interface';
 
-export type FindRelationOptions<Relation> = Filterable<Relation>;
+export interface FindRelationOptions<Relation> extends Filterable<Relation> {
+  /**
+   * Allow also deleted records to be retrieved
+   */
+  withDeleted?: boolean;
+}

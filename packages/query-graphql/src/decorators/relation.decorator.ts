@@ -7,7 +7,7 @@ import { mergeBaseResolverOpts } from '../common';
 
 export const reflector = new ArrayReflector(RELATION_KEY);
 
-export type RelationDecoratorOpts<Relation> = Omit<ResolverRelation<Relation>, 'DTO'>;
+export type RelationDecoratorOpts<Relation> = Omit<ResolverRelation<Relation>, 'DTO' | 'allowFiltering'>;
 export type RelationTypeFunc<Relation> = () => Class<Relation>;
 export type RelationClassDecorator<DTO> = <Cls extends Class<DTO>>(DTOClass: Cls) => Cls | void;
 

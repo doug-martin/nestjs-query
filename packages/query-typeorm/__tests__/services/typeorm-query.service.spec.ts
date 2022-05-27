@@ -12,11 +12,17 @@ import {
   refresh,
   truncate
 } from '../__fixtures__/connection.fixture';
-import { TEST_ENTITIES, TEST_RELATIONS, TEST_SOFT_DELETE_ENTITIES } from '../__fixtures__/seeds';
+import {
+  TEST_ENTITIES,
+  TEST_RELATIONS,
+  TEST_SOFT_DELETE_ENTITIES,
+  TEST_SOFT_DELETE_RELATION_ENTITIES
+} from '../__fixtures__/seeds';
 import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
+import { TestSoftDeleteRelation } from '../__fixtures__/test-soft-delete.relation';
 
 describe('TypeOrmQueryService', (): void => {
   let moduleRef: TestingModule;
@@ -1194,6 +1200,37 @@ describe('TypeOrmQueryService', (): void => {
           expect(queryResult).toEqual(TEST_ENTITIES[0]);
         });
       });
+
+      describe('soft deleted relation', () => {
+        it('call select and return undefined', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.findRelation(
+            TestSoftDeleteRelation,
+            'oneSoftDeleteTestRelation',
+            entity,
+            { withDeleted: false }
+          );
+
+          expect(queryResult).toBeUndefined();
+        });
+
+        it('call select and return the deleted relation', async () => {
+          const entity = TEST_ENTITIES[0];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.findRelation(
+            TestSoftDeleteRelation,
+            'oneSoftDeleteTestRelation',
+            entity,
+            { withDeleted: true }
+          );
+
+          expect(queryResult).toEqual({
+            ...TEST_SOFT_DELETE_RELATION_ENTITIES[0],
+            deletedAt: expect.any(Date)
+          });
+        });
+      });
     });
 
     describe('with multiple entities', () => {
@@ -1254,6 +1291,44 @@ describe('TypeOrmQueryService', (): void => {
             [entities[1], undefined]
           ])
         );
+      });
+
+      describe('soft deleted relation', () => {
+        it('call select and return undefined', async () => {
+          const entities = [TEST_ENTITIES[0]];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.findRelation(
+            TestSoftDeleteRelation,
+            'oneSoftDeleteTestRelation',
+            entities,
+            { withDeleted: false }
+          );
+
+          expect(queryResult).toEqual(new Map([[entities[0], undefined]]));
+        });
+
+        it('call select and return the deleted relation', async () => {
+          const entities = [TEST_ENTITIES[0]];
+          const queryService = moduleRef.get(TestEntityService);
+          const queryResult = await queryService.findRelation(
+            TestSoftDeleteRelation,
+            'oneSoftDeleteTestRelation',
+            entities,
+            { withDeleted: true }
+          );
+
+          expect(queryResult).toEqual(
+            new Map([
+              [
+                entities[0],
+                {
+                  ...TEST_SOFT_DELETE_RELATION_ENTITIES[0],
+                  deletedAt: expect.any(Date)
+                }
+              ]
+            ])
+          );
+        });
       });
     });
   });

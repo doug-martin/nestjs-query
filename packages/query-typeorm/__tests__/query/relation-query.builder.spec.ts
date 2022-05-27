@@ -4,8 +4,7 @@ import { closeTestConnection, createTestConnection, getTestConnection } from '..
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
 import { RelationQueryBuilder } from '../../src/query';
-import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
-import { TEST_ENTITIES, TEST_RELATIONS } from '../__fixtures__/seeds';
+import { TEST_ENTITIES } from '../__fixtures__/seeds';
 
 describe('RelationQueryBuilder', (): void => {
   beforeEach(createTestConnection);

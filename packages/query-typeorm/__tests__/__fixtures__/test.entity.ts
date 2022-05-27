@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestRelation } from './test-relation.entity';
+import { TestSoftDeleteRelation } from './test-soft-delete.relation';
 
 @Entity()
 export class TestEntity {
@@ -37,6 +38,12 @@ export class TestEntity {
   })
   @JoinColumn({ name: 'many_to_one_relation_id' })
   manyToOneRelation?: TestRelation;
+
+  @ManyToOne(() => TestSoftDeleteRelation, {
+    nullable: true
+  })
+  @JoinColumn({ name: 'many_to_one_soft_delete_relation_id' })
+  oneSoftDeleteTestRelation?: TestSoftDeleteRelation;
 
   @ManyToMany(() => TestRelation, (tr) => tr.manyTestEntities, { onDelete: 'CASCADE', nullable: false })
   @JoinTable()
