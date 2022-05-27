@@ -10,11 +10,5 @@ export {
   StaticQueryType,
   QueryType
 } from './query-args';
-export {
-  FilterType,
-  DeleteFilterType,
-  UpdateFilterType,
-  SubscriptionFilterType,
-  AggregateFilterType
-} from './filter.type';
+export { FilterType, DeleteFilterType, UpdateFilterType, SubscriptionFilterType, AggregateFilterType } from './filter.type';
 export { CursorPagingType, OffsetPagingType, NonePagingType, PagingTypes, PagingStrategies } from './paging';

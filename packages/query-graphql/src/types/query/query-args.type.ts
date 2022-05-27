@@ -41,21 +41,17 @@ export function QueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: CursorQueryArgsTypeOpts<DTO>
 ): StaticQueryType<DTO, PagingStrategies.CURSOR>;
-export function QueryArgsType<DTO>(
-  DTOClass: Class<DTO>,
-  opts?: QueryArgsTypeOpts<DTO>
-): StaticQueryType<DTO, PagingStrategies>;
-export function QueryArgsType<DTO>(
-  DTOClass: Class<DTO>,
-  opts?: QueryArgsTypeOpts<DTO>
-): StaticQueryType<DTO, PagingStrategies> {
+export function QueryArgsType<DTO>(DTOClass: Class<DTO>, opts?: QueryArgsTypeOpts<DTO>): StaticQueryType<DTO, PagingStrategies>;
+export function QueryArgsType<DTO>(DTOClass: Class<DTO>, opts?: QueryArgsTypeOpts<DTO>): StaticQueryType<DTO, PagingStrategies> {
   // override any options from the DTO with the options passed in
   const mergedOpts = getMergedQueryOpts(DTOClass, opts);
   if (mergedOpts.pagingStrategy === PagingStrategies.OFFSET) {
     return createOffsetQueryArgs(DTOClass, mergedOpts);
   }
+
   if (mergedOpts.pagingStrategy === PagingStrategies.NONE) {
     return createNonePagingQueryArgsType(DTOClass, mergedOpts);
   }
+
   return createCursorQueryArgsType(DTOClass, mergedOpts);
 }

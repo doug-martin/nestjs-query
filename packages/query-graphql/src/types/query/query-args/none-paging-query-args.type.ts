@@ -8,8 +8,10 @@ import { DEFAULT_QUERY_OPTS } from './constants';
 import { NonePagingQueryArgsTypeOpts, QueryType, StaticQueryType } from './interfaces';
 import { FilterType } from '../filter.type';
 import { getOrCreateSortType } from '../sorting.type';
+import { SkipIf } from '../../../decorators';
 
 export type NonePagingQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.NONE>;
+
 export function createNonePagingQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: NonePagingQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.NONE }
@@ -29,24 +31,31 @@ export function createNonePagingQueryArgsType<DTO>(
 
     static ConnectionType = C;
 
-    @Field(() => F, {
-      defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
-      description: 'Specify to filter the records returned.',
-      nullable: false
-    })
+    @SkipIf(
+      () => opts.disableFilter,
+      Field(() => F, {
+        defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
+        description: 'Specify to filter the records returned.',
+        nullable: false
+      })
+    )
     @ValidateNested()
     @Type(() => F)
     filter?: Filter<DTO>;
 
-    @Field(() => [S], {
-      defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
-      description: 'Specify to sort results.'
-    })
+    @SkipIf(
+      () => opts.disableSort,
+      Field(() => [S], {
+        defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
+        description: 'Specify to sort results.'
+      })
+    )
     @ValidateNested()
     @Type(() => S)
     sorting?: SortField<DTO>[];
 
     paging?: NonePagingType;
   }
+
   return QueryArgs;
 }

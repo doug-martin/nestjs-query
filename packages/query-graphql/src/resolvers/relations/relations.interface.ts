@@ -86,15 +86,18 @@ export type ResolverRelation<Relation> = {
 
 export type RelationTypeMap<RT> = Record<string, RT>;
 
-export type RelationsOpts = {
+export type ResolverOneRelation<Relation> = Omit<ResolverRelation<Relation>, 'disableFilter' | 'disableSorting'>;
+export type ResolverManyRelation<Relation> = ResolverRelation<Relation>;
+
+export type RelationsOpts<Relation = unknown> = {
   /**
    * All relations that are a single record
    */
-  one?: RelationTypeMap<ResolverRelation<unknown>>;
+  one?: RelationTypeMap<ResolverOneRelation<Relation>>;
   /**
    * All relations that have multiple records
    */
-  many?: RelationTypeMap<ResolverRelation<unknown>>;
+  many?: RelationTypeMap<ResolverManyRelation<Relation>>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

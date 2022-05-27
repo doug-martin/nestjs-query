@@ -14,7 +14,7 @@ export {
   FilterableUnPagedRelation,
   Relation,
   FilterableRelation,
-  RelationDecoratorOpts,
+  RelationOneDecoratorOpts,
   RelationTypeFunc,
   getRelations
 } from './relation.decorator';

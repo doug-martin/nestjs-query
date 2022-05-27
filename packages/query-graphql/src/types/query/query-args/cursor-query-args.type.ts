@@ -9,8 +9,10 @@ import { PagingStrategies, getOrCreateCursorPagingType, CursorPagingType } from 
 import { FilterType } from '../filter.type';
 import { getOrCreateSortType } from '../sorting.type';
 import { getOrCreateCursorConnectionType } from '../../connection';
+import { SkipIf } from '../../../decorators';
 
 export type CursorQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.CURSOR>;
+
 export function createCursorQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: CursorQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR }
@@ -40,22 +42,29 @@ export function createCursorQueryArgsType<DTO>(
     @Type(() => P)
     paging?: CursorPagingType;
 
-    @Field(() => F, {
-      defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
-      description: 'Specify to filter the records returned.',
-      nullable: false
-    })
+    @SkipIf(
+      () => opts.disableFilter,
+      Field(() => F, {
+        defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
+        description: 'Specify to filter the records returned.',
+        nullable: false
+      })
+    )
     @ValidateNested()
     @Type(() => F)
     filter?: Filter<DTO>;
 
-    @Field(() => [S], {
-      defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
-      description: 'Specify to sort results.'
-    })
+    @SkipIf(
+      () => opts.disableSort,
+      Field(() => [S], {
+        defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
+        description: 'Specify to sort results.'
+      })
+    )
     @ValidateNested()
     @Type(() => S)
     sorting?: SortField<DTO>[];
   }
+
   return QueryArgs;
 }

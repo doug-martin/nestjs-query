@@ -25,10 +25,18 @@ export type BaseQueryArgsTypeOpts<DTO> = {
    */
   defaultSort?: SortField<DTO>[];
   /**
+   * Disable the sorting of this relation.
+   */
+  disableSort?: boolean;
+  /**
    * Default filter.
    * [Default=\{\}]
    */
   defaultFilter?: Filter<DTO>;
+  /**
+   * Disable the filtering of this relation.
+   */
+  disableFilter?: boolean;
 } & FilterTypeOptions;
 
 export interface CursorQueryArgsTypeOpts<DTO> extends BaseQueryArgsTypeOpts<DTO>, CursorConnectionOptions {
