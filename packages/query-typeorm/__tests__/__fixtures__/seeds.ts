@@ -78,9 +78,7 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
     TEST_SOFT_DELETE_RELATION_ENTITIES.map((r: TestSoftDeleteRelation) => ({ ...r }))
   );
 
-  await relationOfTestRelationRepo.save(
-    TEST_RELATIONS_OF_RELATION.map((r: RelationOfTestRelationEntity) => ({ ...r }))
-  );
+  await relationOfTestRelationRepo.save(TEST_RELATIONS_OF_RELATION.map((r: RelationOfTestRelationEntity) => ({ ...r })));
 
   await Promise.all(
     testEntities.map((te) => {
@@ -102,9 +100,7 @@ export const seed = async (connection: Connection = getConnection()): Promise<vo
 
   await Promise.all(
     testRelations.map(async (te) => {
-      const relationOfTestRelationEntity = TEST_RELATIONS_OF_RELATION.find(
-        (r) => r.testRelationId === te.testRelationPk
-      );
+      const relationOfTestRelationEntity = TEST_RELATIONS_OF_RELATION.find((r) => r.testRelationId === te.testRelationPk);
       te.relationOfTestRelationId = relationOfTestRelationEntity?.id;
       return testRelationRepo.save(te);
     })

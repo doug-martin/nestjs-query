@@ -1,12 +1,7 @@
 import { Class, Filter, Query, SortField } from '@ptc-org/nestjs-query-core';
 import { PagingStrategies, InferPagingTypeFromStrategy } from '../paging';
 import { FilterTypeOptions } from '../filter.type';
-import {
-  ArrayConnectionOptions,
-  CursorConnectionOptions,
-  OffsetConnectionOptions,
-  StaticConnectionType
-} from '../../connection';
+import { ArrayConnectionOptions, CursorConnectionOptions, OffsetConnectionOptions, StaticConnectionType } from '../../connection';
 
 export type BaseQueryArgsTypeOpts<DTO> = {
   /**
@@ -25,10 +20,18 @@ export type BaseQueryArgsTypeOpts<DTO> = {
    */
   defaultSort?: SortField<DTO>[];
   /**
+   * Disable the sorting
+   */
+  disableSort?: boolean;
+  /**
    * Default filter.
    * [Default=\{\}]
    */
   defaultFilter?: Filter<DTO>;
+  /**
+   * Disable the filtering
+   */
+  disableFilter?: boolean;
 } & FilterTypeOptions;
 
 export interface CursorQueryArgsTypeOpts<DTO> extends BaseQueryArgsTypeOpts<DTO>, CursorConnectionOptions {

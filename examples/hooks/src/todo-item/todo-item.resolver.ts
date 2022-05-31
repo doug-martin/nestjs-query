@@ -17,9 +17,6 @@ export class TodoItemResolver {
   @UseGuards(AuthGuard)
   @UseInterceptors(HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, TodoItemUpdateDTO))
   markTodoItemsAsCompleted(@MutationHookArgs() { input }: MarkTodoItemsAsCompletedArgs): Promise<UpdateManyResponse> {
-    return this.service.updateMany(
-      { ...input.update, completed: true },
-      mergeFilter(input.filter, { completed: { is: false } })
-    );
+    return this.service.updateMany({ ...input.update, completed: true }, mergeFilter(input.filter, { completed: { is: false } }));
   }
 }

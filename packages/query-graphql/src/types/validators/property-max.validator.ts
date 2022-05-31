@@ -19,8 +19,6 @@ export class PropertyMax implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments): string {
-    return `Field ${args.property}.${args.constraints[0] as number} max allowed value is \`${
-      args.constraints[1] as number
-    }\`.`;
+    return `Field ${args.property}.${args.constraints[0] as number} max allowed value is \`${args.constraints[1] as number}\`.`;
   }
 }

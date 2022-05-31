@@ -34,11 +34,7 @@ export interface ServiceResolver<DTO, QS extends QueryService<DTO, unknown, unkn
 }
 
 /** @internal */
-export interface ResolverClass<
-  DTO,
-  QS extends QueryService<DTO, unknown, unknown>,
-  Resolver extends ServiceResolver<DTO, QS>
-> {
+export interface ResolverClass<DTO, QS extends QueryService<DTO, unknown, unknown>, Resolver extends ServiceResolver<DTO, QS>> {
   new (service: QS): Resolver;
 }
 
@@ -50,10 +46,9 @@ export class BaseServiceResolver<DTO, QS extends QueryService<DTO, unknown, unkn
   constructor(readonly service: QS) {}
 }
 
-export type ExtractPagingStrategy<
-  DTO,
-  Opts extends QueryArgsTypeOpts<DTO>
-> = Opts['pagingStrategy'] extends PagingStrategies ? Opts['pagingStrategy'] : PagingStrategies.CURSOR;
+export type ExtractPagingStrategy<DTO, Opts extends QueryArgsTypeOpts<DTO>> = Opts['pagingStrategy'] extends PagingStrategies
+  ? Opts['pagingStrategy']
+  : PagingStrategies.CURSOR;
 
 export type MergePagingStrategyOpts<
   DTO,

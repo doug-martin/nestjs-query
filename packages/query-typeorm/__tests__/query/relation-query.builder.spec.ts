@@ -34,10 +34,7 @@ describe('RelationQueryBuilder', (): void => {
     relation: string,
     query: Query<Relation>
   ): void => {
-    const selectQueryBuilder = getRelationQueryBuilder<Entity, Relation>(EntityClass, relation).batchSelect(
-      entities,
-      query
-    );
+    const selectQueryBuilder = getRelationQueryBuilder<Entity, Relation>(EntityClass, relation).batchSelect(entities, query);
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
 
     expect(formatSql(sql, { params })).toMatchSnapshot();

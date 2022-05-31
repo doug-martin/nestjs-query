@@ -239,9 +239,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
       throw new Error(`Unable to find all ${relationName} to set on ${this.Model.modelName}`);
     }
 
-    return this.findAndUpdate(id, opts?.filter, { [relationName]: relationIds } as mongoose.UpdateQuery<
-      DocumentType<Entity>
-    >);
+    return this.findAndUpdate(id, opts?.filter, { [relationName]: relationIds } as mongoose.UpdateQuery<DocumentType<Entity>>);
   }
 
   public async setRelation<Relation>(
@@ -256,9 +254,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
       throw new Error(`Unable to find ${relationName} to set on ${this.Model.modelName}`);
     }
 
-    return this.findAndUpdate(id, opts?.filter, { [relationName]: relationId } as mongoose.UpdateQuery<
-      DocumentType<Entity>
-    >);
+    return this.findAndUpdate(id, opts?.filter, { [relationName]: relationId } as mongoose.UpdateQuery<DocumentType<Entity>>);
   }
 
   public async removeRelation<Relation>(
@@ -316,11 +312,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     return !!this.Model.schema.virtualpath(refName);
   }
 
-  private getReferenceFilter<Relation>(
-    refName: string,
-    entity: Entity,
-    filter?: Filter<Relation>
-  ): Filter<Relation> | undefined {
+  private getReferenceFilter<Relation>(refName: string, entity: Entity, filter?: Filter<Relation>): Filter<Relation> | undefined {
     if (this.isReferencePath(refName)) {
       return this.getObjectIdReferenceFilter(refName, entity, filter);
     }
@@ -342,11 +334,7 @@ export abstract class ReferenceQueryService<Entity extends Base> {
     return mergeFilter(filter ?? ({} as Filter<Ref>), refFilter);
   }
 
-  private getVirtualReferenceFilter<Ref>(
-    virtualType: VirtualTypeWithOptions,
-    entity: Entity,
-    filter?: Filter<Ref>
-  ): Filter<Ref> {
+  private getVirtualReferenceFilter<Ref>(virtualType: VirtualTypeWithOptions, entity: Entity, filter?: Filter<Ref>): Filter<Ref> {
     const { foreignField, localField } = virtualType.options;
     const refVal = entity[localField as keyof Entity];
     const isArray = Array.isArray(refVal);

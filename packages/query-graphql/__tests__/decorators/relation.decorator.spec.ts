@@ -8,12 +8,7 @@ import {
   OffsetConnection,
   FilterableRelation
 } from '@ptc-org/nestjs-query-graphql';
-import {
-  CursorConnection,
-  FilterableCursorConnection,
-  FilterableOffsetConnection,
-  getRelations
-} from '../../src/decorators';
+import { CursorConnection, FilterableCursorConnection, FilterableOffsetConnection, getRelations } from '../../src/decorators';
 
 @ObjectType()
 class TestRelation {}

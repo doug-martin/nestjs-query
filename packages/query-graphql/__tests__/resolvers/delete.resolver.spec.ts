@@ -140,9 +140,9 @@ describe('DeleteResolver', () => {
         filter: { id: { eq: 'id-1' } }
       };
       const output: DeleteManyResponse = { deletedCount: 1 };
-      when(
-        mockService.deleteMany(objectContaining(input.filter), objectContaining({ useSoftDelete: false }))
-      ).thenResolve(output);
+      when(mockService.deleteMany(objectContaining(input.filter), objectContaining({ useSoftDelete: false }))).thenResolve(
+        output
+      );
       const result = await resolver.deleteMany({ input });
       return expect(result).toEqual(output);
     });
@@ -177,8 +177,7 @@ describe('DeleteResolver', () => {
   });
 
   describe('deleted subscription', () => {
-    it('should add subscription types if enableSubscriptions is true', () =>
-      expectResolverSDL({ enableSubscriptions: true }));
+    it('should add subscription types if enableSubscriptions is true', () => expectResolverSDL({ enableSubscriptions: true }));
 
     it('should add subscription types if one.enableSubscriptions is true', () =>
       expectResolverSDL({ one: { enableSubscriptions: true } }));

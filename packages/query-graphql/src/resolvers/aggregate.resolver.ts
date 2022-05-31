@@ -1,11 +1,4 @@
-import {
-  AggregateQuery,
-  AggregateResponse,
-  Class,
-  Filter,
-  mergeFilter,
-  QueryService
-} from '@ptc-org/nestjs-query-core';
+import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@ptc-org/nestjs-query-core';
 import { Args, ArgsType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { AuthorizerInterceptor } from '../interceptors';
@@ -20,8 +13,7 @@ export type AggregateResolverOpts = {
   enabled?: boolean;
 } & ResolverMethodOpts;
 
-export interface AggregateResolver<DTO, QS extends QueryService<DTO, unknown, unknown>>
-  extends ServiceResolver<DTO, QS> {
+export interface AggregateResolver<DTO, QS extends QueryService<DTO, unknown, unknown>> extends ServiceResolver<DTO, QS> {
   aggregate(
     filter: AggregateArgsType<DTO>,
     aggregateQuery: AggregateQuery<DTO>,
@@ -72,10 +64,7 @@ export const Aggregateable =
     return AggregateResolverBase;
   };
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export const AggregateResolver = <
-  DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
->(
+export const AggregateResolver = <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
   DTOClass: Class<DTO>,
   opts?: AggregateResolverOpts
 ): ResolverClass<DTO, QS, AggregateResolver<DTO, QS>> => Aggregateable(DTOClass, opts)(BaseServiceResolver);

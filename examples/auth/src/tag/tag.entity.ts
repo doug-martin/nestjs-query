@@ -1,12 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ObjectType,
-  ManyToMany
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ObjectType, ManyToMany } from 'typeorm';
 import { TodoItemEntity } from '../todo-item/todo-item.entity';
 
 @Entity({ name: 'tag' })

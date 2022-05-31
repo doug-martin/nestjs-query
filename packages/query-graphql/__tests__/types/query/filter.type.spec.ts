@@ -142,9 +142,7 @@ describe('filter types', (): void => {
       @ObjectType('TestNoFields')
       class TestInvalidFilter {}
 
-      expect(() => FilterType(TestInvalidFilter)).toThrow(
-        'No fields found to create GraphQLFilter for TestInvalidFilter'
-      );
+      expect(() => FilterType(TestInvalidFilter)).toThrow('No fields found to create GraphQLFilter for TestInvalidFilter');
     });
 
     it('should throw an error when the field type is unknown', () => {
@@ -411,9 +409,7 @@ describe('filter types', (): void => {
       @ObjectType('TestNoFields')
       class TestInvalidFilter {}
 
-      expect(() => UpdateFilterType(TestInvalidFilter)).toThrow(
-        'No fields found to create GraphQLFilter for TestInvalidFilter'
-      );
+      expect(() => UpdateFilterType(TestInvalidFilter)).toThrow('No fields found to create GraphQLFilter for TestInvalidFilter');
     });
 
     it('should throw an error when the field type is unknown', () => {
@@ -427,9 +423,7 @@ describe('filter types', (): void => {
         fakeType!: EnumField;
       }
 
-      expect(() => UpdateFilterType(TestInvalidFilter)).toThrow(
-        'Unable to create filter comparison for {"ONE":"one"}.'
-      );
+      expect(() => UpdateFilterType(TestInvalidFilter)).toThrow('Unable to create filter comparison for {"ONE":"one"}.');
     });
 
     it('should convert and filters to filter class', () => {
@@ -481,9 +475,7 @@ describe('filter types', (): void => {
       @ObjectType('TestNoFields')
       class TestInvalidFilter {}
 
-      expect(() => DeleteFilterType(TestInvalidFilter)).toThrow(
-        'No fields found to create GraphQLFilter for TestInvalidFilter'
-      );
+      expect(() => DeleteFilterType(TestInvalidFilter)).toThrow('No fields found to create GraphQLFilter for TestInvalidFilter');
     });
 
     it('should throw an error when the field type is unknown', () => {
@@ -497,9 +489,7 @@ describe('filter types', (): void => {
         fakeType!: EnumField;
       }
 
-      expect(() => DeleteFilterType(TestInvalidFilter)).toThrow(
-        'Unable to create filter comparison for {"ONE":"one"}.'
-      );
+      expect(() => DeleteFilterType(TestInvalidFilter)).toThrow('Unable to create filter comparison for {"ONE":"one"}.');
     });
 
     it('should convert and filters to filter class', () => {
@@ -567,9 +557,7 @@ describe('filter types', (): void => {
         fakeType!: EnumField;
       }
 
-      expect(() => SubscriptionFilterType(TestInvalidFilter)).toThrow(
-        'Unable to create filter comparison for {"ONE":"one"}.'
-      );
+      expect(() => SubscriptionFilterType(TestInvalidFilter)).toThrow('Unable to create filter comparison for {"ONE":"one"}.');
     });
 
     it('should convert and filters to filter class', () => {

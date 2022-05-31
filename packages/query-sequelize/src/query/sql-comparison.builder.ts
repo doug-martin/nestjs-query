@@ -66,10 +66,7 @@ export class SQLComparisonBuilder<Entity> {
     throw new Error(`unknown operator ${JSON.stringify(cmp)}`);
   }
 
-  private betweenComparisonSQL<F extends keyof Entity>(
-    col: string,
-    val: EntityComparisonField<Entity, F>
-  ): WhereOptions {
+  private betweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): WhereOptions {
     if (this.isBetweenVal(val)) {
       return {
         [col]: { [Op.between]: [val.lower, val.upper] as unknown as Rangable }
@@ -78,10 +75,7 @@ export class SQLComparisonBuilder<Entity> {
     throw new Error(`Invalid value for between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
   }
 
-  private notBetweenComparisonSQL<F extends keyof Entity>(
-    col: string,
-    val: EntityComparisonField<Entity, F>
-  ): WhereOptions {
+  private notBetweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): WhereOptions {
     if (this.isBetweenVal(val)) {
       return {
         [col]: { [Op.notBetween]: [val.lower, val.upper] as unknown as Rangable }

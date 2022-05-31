@@ -19,6 +19,7 @@ interface SequelizeAssociation {
   isMultiAssociation: boolean;
   isSingleAssociation: boolean;
 }
+
 /**
  * Base class to house relations loading.
  * @internal
@@ -31,7 +32,8 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
   abstract getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity>;
 
   /**
-   * Query for relations for an array of Entities. This method will return a map with the Entity as the key and the relations as the value.
+   * Query for relations for an array of Entities. This method will return a map
+   * with the Entity as the key and the relations as the value.
    * @param RelationClass - The class of the relation.
    * @param relationName - The name of the relation to load.
    * @param entities - the dtos to find relations for.
@@ -150,10 +152,7 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
     const relationEntity = this.getRelationEntity(relationName);
     const assembler = AssemblerFactory.getAssembler(RelationClass, relationEntity);
     const relationQueryBuilder = this.getRelationQueryBuilder<Model>(relationEntity);
-    return this.ensureIsEntity(dto).$count(
-      relationName,
-      relationQueryBuilder.countOptions(assembler.convertQuery({ filter }))
-    );
+    return this.ensureIsEntity(dto).$count(relationName, relationQueryBuilder.countOptions(assembler.convertQuery({ filter })));
   }
 
   /**
@@ -321,7 +320,8 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
       throw new Error(`Unable to find ${relationName} to remove from ${this.model.name}`);
     }
     if (association.isSingleAssociation) {
-      // todo update that this line to remove the casting once https://github.com/RobinBuschmann/sequelize-typescript/issues/803 is addressed.
+      // TODO:: update that this line to remove the casting once
+      //  https://github.com/RobinBuschmann/sequelize-typescript/issues/803 is addressed.
       await entity.$set(relationName as keyof Entity, null as unknown as string);
     } else {
       await entity.$remove(relationName, relationId);
@@ -374,10 +374,7 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
     );
     return entities.reduce(async (mapPromise, e) => {
       const map = await mapPromise;
-      const results = (await this.ensureIsEntity(e).$get(relationName as keyof Entity, findOptions)) as Record<
-        string,
-        unknown
-      >[];
+      const results = (await this.ensureIsEntity(e).$get(relationName as keyof Entity, findOptions)) as Record<string, unknown>[];
       const aggResponse = AggregateBuilder.convertToAggregateResponse(results).map((agg) =>
         assembler.convertAggregateResponse(agg)
       );
@@ -445,11 +442,7 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
     return this.getAssociation(relationName).target as ModelCtor;
   }
 
-  private getRelations<Relation>(
-    relationName: string,
-    ids: (string | number)[],
-    filter?: Filter<Relation>
-  ): Promise<Model[]> {
+  private getRelations<Relation>(relationName: string, ids: (string | number)[], filter?: Filter<Relation>): Promise<Model[]> {
     const relationEntity = this.getRelationEntity(relationName);
     const relationQueryBuilder = this.getRelationQueryBuilder(relationEntity);
     const findOptions = relationQueryBuilder.findByIdOptions(ids, { filter });

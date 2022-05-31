@@ -261,13 +261,7 @@ describe('TypeOrmQueryService', (): void => {
               }
             }
           });
-          expect(queryResult).toEqual([
-            TEST_ENTITIES[1],
-            TEST_ENTITIES[3],
-            TEST_ENTITIES[5],
-            TEST_ENTITIES[7],
-            TEST_ENTITIES[9]
-          ]);
+          expect(queryResult).toEqual([TEST_ENTITIES[1], TEST_ENTITIES[3], TEST_ENTITIES[5], TEST_ENTITIES[7], TEST_ENTITIES[9]]);
         });
 
         it('should allow filtering on a many to many uni-directional relation', async () => {
@@ -638,12 +632,12 @@ describe('TypeOrmQueryService', (): void => {
         it('call select and return the with a uni-directional relation', async () => {
           const entity = TEST_ENTITIES[2];
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = (
-            await queryService.queryRelations(TestRelation, 'manyToManyUniDirectional', entity, {})
-          ).map((r) => {
-            delete r.relationOfTestRelationId;
-            return r;
-          });
+          const queryResult = (await queryService.queryRelations(TestRelation, 'manyToManyUniDirectional', entity, {})).map(
+            (r) => {
+              delete r.relationOfTestRelationId;
+              return r;
+            }
+          );
 
           TEST_RELATIONS.filter((tr) => tr.relationName.endsWith('three')).forEach((tr) => {
             expect(queryResult).toContainEqual(tr);
@@ -700,12 +694,7 @@ describe('TypeOrmQueryService', (): void => {
       describe('manyToMany', () => {
         it('call select and return the with owning side of the relations', async () => {
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = await queryService.queryRelations(
-            TestEntity,
-            'manyTestRelations',
-            [TEST_ENTITIES[1]],
-            {}
-          );
+          const queryResult = await queryService.queryRelations(TestEntity, 'manyTestRelations', [TEST_ENTITIES[1]], {});
 
           const adaptedQueryResult = new Map();
           queryResult.forEach((relations, key) => {
@@ -1205,12 +1194,9 @@ describe('TypeOrmQueryService', (): void => {
         it('call select and return undefined', async () => {
           const entity = TEST_ENTITIES[0];
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = await queryService.findRelation(
-            TestSoftDeleteRelation,
-            'oneSoftDeleteTestRelation',
-            entity,
-            { withDeleted: false }
-          );
+          const queryResult = await queryService.findRelation(TestSoftDeleteRelation, 'oneSoftDeleteTestRelation', entity, {
+            withDeleted: false
+          });
 
           expect(queryResult).toBeUndefined();
         });
@@ -1218,12 +1204,9 @@ describe('TypeOrmQueryService', (): void => {
         it('call select and return the deleted relation', async () => {
           const entity = TEST_ENTITIES[0];
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = await queryService.findRelation(
-            TestSoftDeleteRelation,
-            'oneSoftDeleteTestRelation',
-            entity,
-            { withDeleted: true }
-          );
+          const queryResult = await queryService.findRelation(TestSoftDeleteRelation, 'oneSoftDeleteTestRelation', entity, {
+            withDeleted: true
+          });
 
           expect(queryResult).toEqual({
             ...TEST_SOFT_DELETE_RELATION_ENTITIES[0],
@@ -1297,12 +1280,9 @@ describe('TypeOrmQueryService', (): void => {
         it('call select and return undefined', async () => {
           const entities = [TEST_ENTITIES[0]];
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = await queryService.findRelation(
-            TestSoftDeleteRelation,
-            'oneSoftDeleteTestRelation',
-            entities,
-            { withDeleted: false }
-          );
+          const queryResult = await queryService.findRelation(TestSoftDeleteRelation, 'oneSoftDeleteTestRelation', entities, {
+            withDeleted: false
+          });
 
           expect(queryResult).toEqual(new Map([[entities[0], undefined]]));
         });
@@ -1310,12 +1290,9 @@ describe('TypeOrmQueryService', (): void => {
         it('call select and return the deleted relation', async () => {
           const entities = [TEST_ENTITIES[0]];
           const queryService = moduleRef.get(TestEntityService);
-          const queryResult = await queryService.findRelation(
-            TestSoftDeleteRelation,
-            'oneSoftDeleteTestRelation',
-            entities,
-            { withDeleted: true }
-          );
+          const queryResult = await queryService.findRelation(TestSoftDeleteRelation, 'oneSoftDeleteTestRelation', entities, {
+            withDeleted: true
+          });
 
           expect(queryResult).toEqual(
             new Map([
@@ -1476,14 +1453,9 @@ describe('TypeOrmQueryService', (): void => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         return expect(
-          queryService.setRelation<TestRelation>(
-            'oneTestRelation',
-            entity.testEntityPk,
-            TEST_RELATIONS[1].testRelationPk,
-            {
-              relationFilter: { relationName: { like: '%-one' } }
-            }
-          )
+          queryService.setRelation<TestRelation>('oneTestRelation', entity.testEntityPk, TEST_RELATIONS[1].testRelationPk, {
+            relationFilter: { relationName: { like: '%-one' } }
+          })
         ).rejects.toThrow('Unable to find oneTestRelation to set on TestEntity');
       });
     });
@@ -1578,14 +1550,9 @@ describe('TypeOrmQueryService', (): void => {
           const entity = TEST_ENTITIES[0];
           const queryService = moduleRef.get(TestEntityService);
           return expect(
-            queryService.removeRelation<TestRelation>(
-              'oneTestRelation',
-              entity.testEntityPk,
-              TEST_RELATIONS[1].testRelationPk,
-              {
-                relationFilter: { relationName: { like: '%-one' } }
-              }
-            )
+            queryService.removeRelation<TestRelation>('oneTestRelation', entity.testEntityPk, TEST_RELATIONS[1].testRelationPk, {
+              relationFilter: { relationName: { like: '%-one' } }
+            })
           ).rejects.toThrow('Unable to find oneTestRelation to remove from TestEntity');
         });
       });
@@ -1659,14 +1626,9 @@ describe('TypeOrmQueryService', (): void => {
           const entity = TEST_ENTITIES[0];
           const queryService = moduleRef.get(TestEntityService);
           return expect(
-            queryService.removeRelation<TestRelation>(
-              'testRelations',
-              entity.testEntityPk,
-              TEST_RELATIONS[4].testRelationPk,
-              {
-                relationFilter: { relationName: { like: '%-one' } }
-              }
-            )
+            queryService.removeRelation<TestRelation>('testRelations', entity.testEntityPk, TEST_RELATIONS[4].testRelationPk, {
+              relationFilter: { relationName: { like: '%-one' } }
+            })
           ).rejects.toThrow('Unable to find testRelations to remove from TestEntity');
         });
       });
@@ -1953,9 +1915,7 @@ describe('TypeOrmQueryService', (): void => {
 
       it('should fail if the entity is not found', async () => {
         const queryService = moduleRef.get(TestSoftDeleteEntityService);
-        return expect(queryService.deleteOne('bad-id')).rejects.toThrow(
-          'Unable to find TestSoftDeleteEntity with id: bad-id'
-        );
+        return expect(queryService.deleteOne('bad-id')).rejects.toThrow('Unable to find TestSoftDeleteEntity with id: bad-id');
       });
     });
 
@@ -1972,9 +1932,7 @@ describe('TypeOrmQueryService', (): void => {
 
       it('should fail if the entity is not found', async () => {
         const queryService = moduleRef.get(TestSoftDeleteEntityService);
-        return expect(queryService.restoreOne('bad-id')).rejects.toThrow(
-          'Unable to find TestSoftDeleteEntity with id: bad-id'
-        );
+        return expect(queryService.restoreOne('bad-id')).rejects.toThrow('Unable to find TestSoftDeleteEntity with id: bad-id');
       });
 
       it('should fail if the useSoftDelete is not enabled', async () => {

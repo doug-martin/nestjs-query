@@ -34,7 +34,8 @@ export abstract class RelationQueryService<Entity> {
   abstract getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity>;
 
   /**
-   * Query for relations for an array of Entities. This method will return a map with the Entity as the key and the relations as the value.
+   * Query for relations for an array of Entities. This method will return a map with
+   * the Entity as the key and the relations as the value.
    * @param RelationClass - The class of the relation.
    * @param relationName - The name of the relation to load.
    * @param entities - the dtos to find relations for.
@@ -341,16 +342,10 @@ export abstract class RelationQueryService<Entity> {
     const convertedQuery = assembler.convertQuery(query);
 
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
-    const entityRelations = await relationQueryBuilder
-      .batchSelect(entities, convertedQuery, withDeleted)
-      .getRawAndEntities();
+    const entityRelations = await relationQueryBuilder.batchSelect(entities, convertedQuery, withDeleted).getRawAndEntities();
 
     return entities.reduce((results, entity) => {
-      const relations = relationQueryBuilder.relationMeta.mapRelations(
-        entity,
-        entityRelations.entities,
-        entityRelations.raw
-      );
+      const relations = relationQueryBuilder.relationMeta.mapRelations(entity, entityRelations.entities, entityRelations.raw);
 
       return results.set(entity, assembler.convertToDTOs(relations));
     }, new Map<Entity, Relation[]>());
@@ -386,9 +381,7 @@ export abstract class RelationQueryService<Entity> {
       const resultingAgg = results.get(e) ?? [];
       results.set(e, [
         ...resultingAgg,
-        ...AggregateBuilder.convertToAggregateResponse([
-          lodashOmit(relationAgg, relationQueryBuilder.entityIndexColName)
-        ])
+        ...AggregateBuilder.convertToAggregateResponse([lodashOmit(relationAgg, relationQueryBuilder.entityIndexColName)])
       ]);
       return results;
     }, new Map<Entity, AggregateResponse<Relation>[]>());
@@ -411,9 +404,7 @@ export abstract class RelationQueryService<Entity> {
     const relationQueryBuilder = this.getRelationQueryBuilder(relationName);
     const convertedQuery = assembler.convertQuery({ filter });
 
-    const entityRelations = await Promise.all(
-      entities.map((e) => relationQueryBuilder.select(e, convertedQuery).getCount())
-    );
+    const entityRelations = await Promise.all(entities.map((e) => relationQueryBuilder.select(e, convertedQuery).getCount()));
 
     return entityRelations.reduce((results, relationCount, index) => {
       const e = entities[index];
@@ -477,11 +468,7 @@ export abstract class RelationQueryService<Entity> {
     return relationMeta.type as Class<unknown>;
   }
 
-  private getRelations<Relation>(
-    relationName: string,
-    ids: (string | number)[],
-    filter?: Filter<Relation>
-  ): Promise<Relation[]> {
+  private getRelations<Relation>(relationName: string, ids: (string | number)[], filter?: Filter<Relation>): Promise<Relation[]> {
     const relationQueryBuilder = this.getRelationQueryBuilder<Relation>(relationName).filterQueryBuilder;
     return relationQueryBuilder.selectById(ids, { filter }).getMany();
   }

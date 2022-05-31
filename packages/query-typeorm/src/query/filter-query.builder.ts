@@ -113,10 +113,7 @@ export class FilterQueryBuilder<Entity> {
    * @param query - the query to apply.
    */
   softDelete(query: Query<Entity>): SoftDeleteQueryBuilder<Entity> {
-    return this.applyFilter(
-      this.repo.createQueryBuilder().softDelete() as SoftDeleteQueryBuilder<Entity>,
-      query.filter
-    );
+    return this.applyFilter(this.repo.createQueryBuilder().softDelete() as SoftDeleteQueryBuilder<Entity>, query.filter);
   }
 
   /**

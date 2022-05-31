@@ -7,13 +7,7 @@ import {
   PagingStrategies
 } from '@ptc-org/nestjs-query-graphql';
 import { ReadRelationsResolver, RelationsOpts } from '../../../src/resolvers/relations';
-import {
-  generateSchema,
-  createResolverFromNest,
-  TestResolverDTO,
-  TestService,
-  TestRelationDTO
-} from '../../__fixtures__';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestService, TestRelationDTO } from '../../__fixtures__';
 
 describe('ReadRelationsResolver', () => {
   const expectResolverSDL = async (opts?: RelationsOpts) => {
@@ -30,6 +24,7 @@ describe('ReadRelationsResolver', () => {
   };
 
   it('should not add read methods if one and many are empty', () => expectResolverSDL());
+
   describe('one', () => {
     @Resolver(() => TestResolverDTO)
     class TestResolver extends ReadRelationsResolver(TestResolverDTO, {
@@ -160,6 +155,12 @@ describe('ReadRelationsResolver', () => {
 
     it('should not add read methods if disableRead is true', () =>
       expectResolverSDL({ many: { relations: { DTO: TestRelationDTO, disableRead: true } } }));
+
+    it('should not add filter argument if disableFilter is true', () =>
+      expectResolverSDL({ many: { relation: { DTO: TestRelationDTO, disableFilter: true } } }));
+
+    it('should not add sorting argument if disableSorting is true', () =>
+      expectResolverSDL({ many: { relation: { DTO: TestRelationDTO, disableSort: true } } }));
 
     describe('many connection query', () => {
       @Resolver(() => TestResolverDTO)
@@ -442,9 +443,9 @@ describe('ReadRelationsResolver', () => {
             testResolverId: dto.id
           }
         ];
-        when(
-          mockService.queryRelations(TestRelationDTO, 'others', deepEqual([dto]), objectContaining(query))
-        ).thenResolve(new Map([[dto, output]]));
+        when(mockService.queryRelations(TestRelationDTO, 'others', deepEqual([dto]), objectContaining(query))).thenResolve(
+          new Map([[dto, output]])
+        );
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const result = await resolver.queryCustoms(dto, query, {});

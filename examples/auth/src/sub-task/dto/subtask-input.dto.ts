@@ -1,11 +1,6 @@
 import { Field, InputType, ID } from '@nestjs/graphql';
 import { IsOptional, IsString, IsBoolean, IsNotEmpty } from 'class-validator';
-import {
-  BeforeCreateMany,
-  BeforeCreateOne,
-  CreateManyInputType,
-  CreateOneInputType
-} from '@ptc-org/nestjs-query-graphql';
+import { BeforeCreateMany, BeforeCreateOne, CreateManyInputType, CreateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { UserContext } from '../../auth/auth.interfaces';
 
 @InputType('SubTaskInput')

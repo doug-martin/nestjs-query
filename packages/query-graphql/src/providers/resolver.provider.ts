@@ -66,8 +66,7 @@ export const isFederatedResolverOpts = <DTO, MaybeService, C, U, R, PS extends P
 
 export const isAssemblerCRUDAutoResolverOpts = <DTO, MaybeAssembler, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS>
-): opts is AssemblerCRUDAutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS> =>
-  'DTOClass' in opts && 'AssemblerClass' in opts;
+): opts is AssemblerCRUDAutoResolverOpts<DTO, MaybeAssembler, C, U, R, PS> => 'DTOClass' in opts && 'AssemblerClass' in opts;
 
 export const isServiceCRUDAutoResolverOpts = <DTO, MaybeService, C, U, R, PS extends PagingStrategies>(
   opts: AutoResolverOpts<DTO, MaybeService, C, U, R, PS>
@@ -106,10 +105,7 @@ function createEntityAutoResolver<DTO, Entity, C, U, R, PS extends PagingStrateg
   }
   @Resolver(() => DTOClass)
   class AutoResolver extends CRUDResolver(DTOClass, resolverOpts) {
-    constructor(
-      @InjectQueryService(EntityClass) service: QueryService<Entity, C, U>,
-      @InjectPubSub() readonly pubSub: PubSub
-    ) {
+    constructor(@InjectQueryService(EntityClass) service: QueryService<Entity, C, U>, @InjectPubSub() readonly pubSub: PubSub) {
       super(new Service(service));
     }
   }

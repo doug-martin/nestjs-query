@@ -64,19 +64,14 @@ export class WhereBuilder<Entity extends Document> {
     return obj[field] as FilterFieldComparison<Entity[K]>;
   }
 
-  private withFilterComparison<T extends keyof Entity>(
-    field: T,
-    cmp: FilterFieldComparison<Entity[T]>
-  ): FilterQuery<Entity> {
+  private withFilterComparison<T extends keyof Entity>(field: T, cmp: FilterFieldComparison<Entity[T]>): FilterQuery<Entity> {
     const opts = Object.keys(cmp) as (keyof FilterFieldComparison<Entity[T]>)[];
     if (opts.length === 1) {
       const cmpType = opts[0];
       return this.comparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>);
     }
     return {
-      $or: opts.map((cmpType) =>
-        this.comparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>)
-      )
+      $or: opts.map((cmpType) => this.comparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>))
     } as FilterQuery<Entity>;
   }
 }

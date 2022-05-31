@@ -31,8 +31,7 @@ describe('ReadResolver', () => {
 
   it('should use the dtoName if provided', () => expectResolverSDL({ dtoName: 'Test' }));
 
-  it('should use the one.name option for the findById if provided', () =>
-    expectResolverSDL({ one: { name: 'read_one_test' } }));
+  it('should use the one.name option for the findById if provided', () => expectResolverSDL({ one: { name: 'read_one_test' } }));
 
   it('should use the many.name option for the queryMany if provided', () =>
     expectResolverSDL({ many: { name: 'read_many_test' } }));

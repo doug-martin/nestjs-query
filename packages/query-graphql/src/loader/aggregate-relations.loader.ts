@@ -32,13 +32,7 @@ export class AggregateRelationsLoader<DTO, Relation>
       [...queryRelationsMap.values()].map(async (args) => {
         const { filter, aggregate } = args[0];
         const dtos = args.map((a) => a.dto);
-        const aggregationResults = await service.aggregateRelations(
-          this.RelationDTO,
-          this.relationName,
-          dtos,
-          filter,
-          aggregate
-        );
+        const aggregationResults = await service.aggregateRelations(this.RelationDTO, this.relationName, dtos, filter, aggregate);
         const dtoRelationAggregates = dtos.map((dto) => aggregationResults.get(dto) ?? {});
         dtoRelationAggregates.forEach((relationAggregate, index) => {
           results[args[index].index] = relationAggregate;
@@ -48,9 +42,7 @@ export class AggregateRelationsLoader<DTO, Relation>
     return results;
   }
 
-  private groupQueries(
-    queryArgs: ReadonlyArray<AggregateRelationsArgs<DTO, Relation>>
-  ): AggregateRelationsMap<DTO, Relation> {
+  private groupQueries(queryArgs: ReadonlyArray<AggregateRelationsArgs<DTO, Relation>>): AggregateRelationsMap<DTO, Relation> {
     // group
     return queryArgs.reduce((map, args, index) => {
       const queryJson = JSON.stringify({ filter: args.filter, aggregate: args.aggregate });

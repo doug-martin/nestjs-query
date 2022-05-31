@@ -27,10 +27,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
   }
 
   toCursor(dto: DTO, index: number, opts: KeySetPagingOpts<DTO>, query: Query<DTO>): string {
-    const cursorFields: (keyof DTO)[] = [
-      ...(query.sorting ?? []).map((f: SortField<DTO>) => f.field),
-      ...this.pageFields
-    ];
+    const cursorFields: (keyof DTO)[] = [...(query.sorting ?? []).map((f: SortField<DTO>) => f.field), ...this.pageFields];
     return this.encodeCursor(this.createKeySetPayload(dto, cursorFields));
   }
 
@@ -99,9 +96,7 @@ export class KeysetPagerStrategy<DTO> implements PagerStrategy<DTO> {
       const keySetField = fields[index];
       if (keySetField.field !== sortField.field) {
         throw new Error(
-          `Cursor Payload does not match query sort expected ${keySetField.field as string} found ${
-            sortField.field as string
-          }`
+          `Cursor Payload does not match query sort expected ${keySetField.field as string} found ${sortField.field as string}`
         );
       }
       const isAsc = sortField.direction === SortDirection.ASC;

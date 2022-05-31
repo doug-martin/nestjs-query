@@ -5,9 +5,7 @@ import { getQueryServiceToken } from './decorators';
 import { getAssemblerQueryServiceToken } from './decorators/helpers';
 import { AssemblerQueryService, QueryService } from './services';
 
-function createServiceProvider<DTO, Entity, C, CE, U, UE>(
-  AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>
-): Provider {
+function createServiceProvider<DTO, Entity, C, CE, U, UE>(AssemblerClass: Class<Assembler<DTO, Entity, C, CE, U, UE>>): Provider {
   const classes = getAssemblerClasses(AssemblerClass);
   if (!classes) {
     throw new Error(
@@ -24,6 +22,5 @@ function createServiceProvider<DTO, Entity, C, CE, U, UE>(
   };
 }
 
-export const createServices = (
-  opts: Class<Assembler<unknown, unknown, unknown, unknown, unknown, unknown>>[]
-): Provider[] => opts.map((opt) => createServiceProvider(opt));
+export const createServices = (opts: Class<Assembler<unknown, unknown, unknown, unknown, unknown, unknown>>[]): Provider[] =>
+  opts.map((opt) => createServiceProvider(opt));

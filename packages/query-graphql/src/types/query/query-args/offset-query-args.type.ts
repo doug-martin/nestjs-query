@@ -9,6 +9,7 @@ import { getOrCreateOffsetPagingType, OffsetPagingType, PagingStrategies } from 
 import { FilterType } from '../filter.type';
 import { getOrCreateSortType } from '../sorting.type';
 import { getOrCreateOffsetConnectionType } from '../../connection';
+import { SkipIf } from '../../../decorators';
 
 export type OffsetQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.OFFSET>;
 export function createOffsetQueryArgs<DTO>(
@@ -39,6 +40,7 @@ export function createOffsetQueryArgs<DTO>(
     @Type(() => P)
     paging?: OffsetPagingType;
 
+    @SkipIf(() => opts.disableFilter)
     @Field(() => F, {
       defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
       description: 'Specify to filter the records returned.',
@@ -48,6 +50,7 @@ export function createOffsetQueryArgs<DTO>(
     @Type(() => F)
     filter?: Filter<DTO>;
 
+    @SkipIf(() => opts.disableSort)
     @Field(() => [S], {
       defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
       description: 'Specify to sort results.'

@@ -37,10 +37,7 @@ export interface UpdateResolverOpts<DTO, U = DeepPartial<DTO>> extends Subscript
 export interface UpdateResolver<DTO, U, QS extends QueryService<DTO, unknown, U>> extends ServiceResolver<DTO, QS> {
   updateOne(input: MutationArgsType<UpdateOneInputType<U>>, authFilter?: Filter<DTO>): Promise<DTO>;
 
-  updateMany(
-    input: MutationArgsType<UpdateManyInputType<DTO, U>>,
-    authFilter?: Filter<DTO>
-  ): Promise<UpdateManyResponse>;
+  updateMany(input: MutationArgsType<UpdateManyInputType<DTO, U>>, authFilter?: Filter<DTO>): Promise<UpdateManyResponse>;
 
   updatedOneSubscription(input?: SubscriptionArgsType<DTO>, authFilter?: Filter<DTO>): AsyncIterator<UpdatedEvent<DTO>>;
 
@@ -108,15 +105,7 @@ export const Updateable =
     const updateOneMutationName = opts.one?.name ?? `updateOne${baseName}`;
     const updateManyMutationName = opts.many?.name ?? `updateMany${pluralBaseName}`;
 
-    const commonResolverOpts = omit(
-      opts,
-      'dtoName',
-      'one',
-      'many',
-      'UpdateDTOClass',
-      'UpdateOneInput',
-      'UpdateManyInput'
-    );
+    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'UpdateDTOClass', 'UpdateOneInput', 'UpdateManyInput');
 
     @ArgsType()
     class UO extends MutationArgsType(UpdateOneInput) {}
@@ -138,10 +127,7 @@ export const Updateable =
         () => DTOClass,
         { name: updateOneMutationName, description: opts?.one?.description },
         {
-          interceptors: [
-            HookInterceptor(HookTypes.BEFORE_UPDATE_ONE, UpdateDTOClass, DTOClass),
-            AuthorizerInterceptor(DTOClass)
-          ]
+          interceptors: [HookInterceptor(HookTypes.BEFORE_UPDATE_ONE, UpdateDTOClass, DTOClass), AuthorizerInterceptor(DTOClass)]
         },
         commonResolverOpts,
         opts.one ?? {}
@@ -166,10 +152,7 @@ export const Updateable =
         () => UMR,
         { name: updateManyMutationName, description: opts?.many?.description },
         {
-          interceptors: [
-            HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, UpdateDTOClass, DTOClass),
-            AuthorizerInterceptor(DTOClass)
-          ]
+          interceptors: [HookInterceptor(HookTypes.BEFORE_UPDATE_MANY, UpdateDTOClass, DTOClass), AuthorizerInterceptor(DTOClass)]
         },
         commonResolverOpts,
         opts.many ?? {}
@@ -204,15 +187,10 @@ export const Updateable =
         }
       }
 
-      @ResolverSubscription(
-        () => DTOClass,
-        { name: updateOneEvent, filter: updateOneSubscriptionFilter },
-        commonResolverOpts,
-        {
-          enableSubscriptions: enableOneSubscriptions,
-          interceptors: [AuthorizerInterceptor(DTOClass)]
-        }
-      )
+      @ResolverSubscription(() => DTOClass, { name: updateOneEvent, filter: updateOneSubscriptionFilter }, commonResolverOpts, {
+        enableSubscriptions: enableOneSubscriptions,
+        interceptors: [AuthorizerInterceptor(DTOClass)]
+      })
       // input required so graphql subscription filtering will work.
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       updatedOneSubscription(

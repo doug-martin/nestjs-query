@@ -15,10 +15,7 @@ export interface UpdateManyInputType<DTO, U> {
  * @param UpdateType - The InputType to use for the update field.
  */
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export function UpdateManyInputType<DTO, U>(
-  DTOClass: Class<DTO>,
-  UpdateType: Class<U>
-): Class<UpdateManyInputType<DTO, U>> {
+export function UpdateManyInputType<DTO, U>(DTOClass: Class<DTO>, UpdateType: Class<U>): Class<UpdateManyInputType<DTO, U>> {
   const F = UpdateFilterType(DTOClass);
 
   @InputType({ isAbstract: true })

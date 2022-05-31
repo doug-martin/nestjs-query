@@ -76,8 +76,7 @@ export interface Pager<DTO, R extends PagerResult> {
   page<Q extends Query<DTO>>(queryMany: QueryMany<DTO, Q>, query: Q, count: Count<DTO>): Promise<R>;
 }
 
-export interface StaticConnectionType<DTO, S extends PagingStrategies>
-  extends Class<InferConnectionTypeFromStrategy<DTO, S>> {
+export interface StaticConnectionType<DTO, S extends PagingStrategies> extends Class<InferConnectionTypeFromStrategy<DTO, S>> {
   resolveType: ReturnTypeFuncValue;
   createFromPromise<Q extends Query<DTO>>(
     queryMany: QueryMany<DTO, Q>,

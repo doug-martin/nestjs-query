@@ -134,9 +134,9 @@ describe('RelationQueryService', () => {
       const relationAggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
       testRelationFn.mockReturnValue({ filter: relationFilter });
       when(mockRelationService.aggregate(deepEqual(relationFilter), relationAggregateQuery)).thenResolve(result);
-      await expect(
-        queryService.aggregateRelations(TestType, relationName, dto, filter, relationAggregateQuery)
-      ).resolves.toBe(result);
+      await expect(queryService.aggregateRelations(TestType, relationName, dto, filter, relationAggregateQuery)).resolves.toBe(
+        result
+      );
       return expect(testRelationFn).toHaveBeenCalledWith(dto);
     });
 
@@ -149,9 +149,7 @@ describe('RelationQueryService', () => {
       const relationFilter = {};
       const relationAggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
       testRelationFn.mockReturnValue({ filter: relationFilter });
-      when(mockRelationService.aggregate(deepEqual(relationFilter), relationAggregateQuery)).thenResolve(
-        relationResults
-      );
+      when(mockRelationService.aggregate(deepEqual(relationFilter), relationAggregateQuery)).thenResolve(relationResults);
       return expect(
         queryService.aggregateRelations(TestType, relationName, dtos, filter, relationAggregateQuery)
       ).resolves.toEqual(result);
@@ -163,12 +161,8 @@ describe('RelationQueryService', () => {
       const filter = {};
       const aggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
       const result = [{ count: { foo: 1 } }];
-      when(mockQueryService.aggregateRelations(TestType, relationName, dto, filter, aggregateQuery)).thenResolve(
-        result
-      );
-      return expect(queryService.aggregateRelations(TestType, relationName, dto, filter, aggregateQuery)).resolves.toBe(
-        result
-      );
+      when(mockQueryService.aggregateRelations(TestType, relationName, dto, filter, aggregateQuery)).thenResolve(result);
+      return expect(queryService.aggregateRelations(TestType, relationName, dto, filter, aggregateQuery)).resolves.toBe(result);
     });
 
     it('should proxy to the underlying service when calling queryRelations with many dtos and a unknown relation', () => {
@@ -177,12 +171,8 @@ describe('RelationQueryService', () => {
       const filter = {};
       const aggregateQuery: AggregateQuery<TestType> = { count: ['foo'] };
       const result = new Map([[dtos[0], [{ count: { foo: 1 } }]]]);
-      when(mockQueryService.aggregateRelations(TestType, relationName, dtos, filter, aggregateQuery)).thenResolve(
-        result
-      );
-      return expect(
-        queryService.aggregateRelations(TestType, relationName, dtos, filter, aggregateQuery)
-      ).resolves.toBe(result);
+      when(mockQueryService.aggregateRelations(TestType, relationName, dtos, filter, aggregateQuery)).thenResolve(result);
+      return expect(queryService.aggregateRelations(TestType, relationName, dtos, filter, aggregateQuery)).resolves.toBe(result);
     });
   });
 

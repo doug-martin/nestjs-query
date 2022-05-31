@@ -47,9 +47,7 @@ describe('createDefaultAuthorizer', () => {
 
   @Authorize({
     authorize: (ctx: UserContext, authorizationContext?: AuthorizationContext) =>
-      authorizationContext?.operationName === 'other'
-        ? { ownerId: { neq: ctx.user.id } }
-        : { ownerId: { eq: ctx.user.id } }
+      authorizationContext?.operationName === 'other' ? { ownerId: { neq: ctx.user.id } } : { ownerId: { eq: ctx.user.id } }
   })
   @Relation('relations', () => TestRelation, {
     auth: {
@@ -282,9 +280,7 @@ describe('createDefaultAuthorizer', () => {
     );
     jest.spyOn(customAuthorizer, 'authorizeRelation');
     expect(customAuthorizer).toBeDefined();
-    const relationAuthorizer = testingModule.get<Authorizer<RelationWithAuthorizer>>(
-      getAuthorizerToken(RelationWithAuthorizer)
-    );
+    const relationAuthorizer = testingModule.get<Authorizer<RelationWithAuthorizer>>(getAuthorizerToken(RelationWithAuthorizer));
     jest.spyOn(relationAuthorizer, 'authorize');
     const customRelationAuthorizer = testingModule.get<CustomAuthorizer<RelationWithAuthorizer>>(
       getCustomAuthorizerToken(RelationWithAuthorizer)

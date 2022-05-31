@@ -42,20 +42,11 @@ export class WhereBuilder<Entity> {
    * Creates field comparisons from a filter. This method will ignore and/or properties.
    * @param filter - the filter with fields to create comparisons for.
    */
-  private filterFields(
-    filter: Filter<Entity>,
-    associations: Map<string, Association>,
-    alias?: string
-  ): WhereOptions | undefined {
+  private filterFields(filter: Filter<Entity>, associations: Map<string, Association>, alias?: string): WhereOptions | undefined {
     const ands = Object.keys(filter)
       .filter((f) => f !== 'and' && f !== 'or')
       .map((field) =>
-        this.withFilterComparison(
-          field as keyof Entity,
-          this.getField(filter, field as keyof Entity),
-          associations,
-          alias
-        )
+        this.withFilterComparison(field as keyof Entity, this.getField(filter, field as keyof Entity), associations, alias)
       );
     if (ands.length === 1) {
       return ands[0];

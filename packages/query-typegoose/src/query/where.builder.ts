@@ -82,9 +82,7 @@ export class WhereBuilder<Entity> {
       return this.comparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>);
     }
     return {
-      $or: opts.map((cmpType) =>
-        this.comparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>)
-      )
+      $or: opts.map((cmpType) => this.comparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>))
     } as mongoose.FilterQuery<Entity>;
   }
 }

@@ -1,12 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToMany,
-  JoinTable
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany, JoinTable } from 'typeorm';
 import { TodoItemEntity } from '../todo-item/todo-item.entity';
 
 @Entity({ name: 'user' })

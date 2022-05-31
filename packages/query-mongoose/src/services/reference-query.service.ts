@@ -356,11 +356,7 @@ export abstract class ReferenceQueryService<Entity extends Document> {
     return undefined;
   }
 
-  private getObjectIdReferenceFilter<Ref extends Document>(
-    refName: string,
-    entity: Entity,
-    filter?: Filter<Ref>
-  ): Filter<Ref> {
+  private getObjectIdReferenceFilter<Ref extends Document>(refName: string, entity: Entity, filter?: Filter<Ref>): Filter<Ref> {
     const referenceIds = entity[refName as keyof Entity];
     const refFilter = {
       _id: { [Array.isArray(referenceIds) ? 'in' : 'eq']: referenceIds }

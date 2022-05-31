@@ -407,9 +407,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.'
-          );
+          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.');
         }));
 
     it('should validate an update', () =>
@@ -558,9 +556,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.'
-          );
+          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.');
         }));
   });
 
@@ -658,8 +654,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { id, subTasks }: { id: string; subTasks: OffsetConnectionType<SubTaskDTO> } =
-            body.data.addSubTasksToTodoItem;
+          const { id, subTasks }: { id: string; subTasks: OffsetConnectionType<SubTaskDTO> } = body.data.addSubTasksToTodoItem;
           expect(id).toBe('1');
           expect(subTasks.nodes).toHaveLength(6);
           subTasks.nodes.forEach((e) => expect(e.todoItemId).toBe('1'));

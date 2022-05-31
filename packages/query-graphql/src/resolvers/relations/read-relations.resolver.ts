@@ -131,17 +131,11 @@ export const ReadRelationsMixin =
     const { many, one, enableTotalCount } = relations;
     const manyRelations = flattenRelations(many ?? {});
     const oneRelations = flattenRelations(one ?? {});
-    const WithMany = manyRelations.reduce(
-      (RB, a) => ReadManyRelationMixin(DTOClass, { enableTotalCount, ...a })(RB),
-      Base
-    );
+    const WithMany = manyRelations.reduce((RB, a) => ReadManyRelationMixin(DTOClass, { enableTotalCount, ...a })(RB), Base);
     return oneRelations.reduce((RB, a) => ReadOneRelationMixin(DTOClass, a)(RB), WithMany);
   };
 
-export const ReadRelationsResolver = <
-  DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
->(
+export const ReadRelationsResolver = <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
   DTOClass: Class<DTO>,
   relations: ReadRelationsResolverOpts
 ): Class<ServiceResolver<DTO, QS>> => ReadRelationsMixin(DTOClass, relations)(BaseServiceResolver);

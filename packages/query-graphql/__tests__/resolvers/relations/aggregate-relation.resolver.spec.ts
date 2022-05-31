@@ -3,13 +3,7 @@ import { deepEqual, objectContaining, when } from 'ts-mockito';
 import { AggregateQuery, AggregateResponse, Filter } from '@ptc-org/nestjs-query-core';
 import { AggregateRelationsResolver } from '../../../src/resolvers/relations';
 import { AggregateRelationsResolverOpts } from '../../../src/resolvers/relations/aggregate-relations.resolver';
-import {
-  generateSchema,
-  createResolverFromNest,
-  TestResolverDTO,
-  TestService,
-  TestRelationDTO
-} from '../../__fixtures__';
+import { generateSchema, createResolverFromNest, TestResolverDTO, TestService, TestRelationDTO } from '../../__fixtures__';
 
 describe('AggregateRelationsResolver', () => {
   const expectResolverSDL = async (opts?: AggregateRelationsResolverOpts) => {

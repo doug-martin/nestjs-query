@@ -101,10 +101,7 @@ export class AggregateBuilder<Entity> {
       throw new BadRequestException('No aggregate fields found.');
     }
     const [head, ...tail] = selects;
-    return tail.reduce(
-      (acc: Qb, [select, selectAlias]) => acc.addSelect(select, selectAlias),
-      qb.select(head[0], head[1])
-    );
+    return tail.reduce((acc: Qb, [select, selectAlias]) => acc.addSelect(select, selectAlias), qb.select(head[0], head[1]));
   }
 
   private createAggSelect(func: AggregateFuncs, fields?: (keyof Entity)[], alias?: string): [string, string][] {

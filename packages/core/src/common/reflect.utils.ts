@@ -13,11 +13,7 @@ export const classMetadataDecorator =
     Reflect.defineMetadata(key, data, target);
   };
 
-export function getClassMetadata<DTO, Data>(
-  DTOClass: Class<DTO>,
-  key: string,
-  includeParents: boolean
-): MetaValue<Data> {
+export function getClassMetadata<DTO, Data>(DTOClass: Class<DTO>, key: string, includeParents: boolean): MetaValue<Data> {
   if (includeParents) {
     return Reflect.getMetadata(key, DTOClass) as MetaValue<Data>;
   }
@@ -86,11 +82,7 @@ export class MapReflector<K = string> extends Reflector {
 
   get<DTO, Data>(DTOClass: Class<DTO>, includeParents?: boolean): MetaValue<Map<K, Data>>;
   get<DTO, Data>(DTOClass: Class<DTO>, key: K, includeParents?: boolean): MetaValue<Data>;
-  get<DTO, Data>(
-    DTOClass: Class<DTO>,
-    key: K | boolean | undefined,
-    includeParents?: boolean
-  ): MetaValue<Data | Map<K, Data>> {
+  get<DTO, Data>(DTOClass: Class<DTO>, key: K | boolean | undefined, includeParents?: boolean): MetaValue<Data | Map<K, Data>> {
     if (typeof key === 'boolean' || typeof key === 'undefined') {
       return this.getMetadata<Map<K, Data>>(DTOClass, includeParents ?? false);
     }

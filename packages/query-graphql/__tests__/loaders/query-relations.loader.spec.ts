@@ -63,12 +63,7 @@ describe('QueryRelationsLoader', () => {
       const dto3Relations = [{ id: 'relation-5' }, { id: 'relation-6' }];
       const dto4Relations = [{ id: 'relation-7' }, { id: 'relation-8' }];
       when(
-        service.queryRelations(
-          RelationDTO,
-          'relation',
-          deepEqual([dtos[0], dtos[2]]),
-          deepEqual({ paging: { limit: 10 } })
-        )
+        service.queryRelations(RelationDTO, 'relation', deepEqual([dtos[0], dtos[2]]), deepEqual({ paging: { limit: 10 } }))
       ).thenResolve(
         new Map([
           [dtos[0], dto1Relations],

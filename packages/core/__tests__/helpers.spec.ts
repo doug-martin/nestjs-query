@@ -556,18 +556,14 @@ describe('applyFilter', () => {
     });
 
     it('should handle between comparisons', () => {
-      expect(applyFilter(singleNestedNull(), { child: { first: { between: { lower: 'foo', upper: 'bar' } } } })).toBe(
+      expect(applyFilter(singleNestedNull(), { child: { first: { between: { lower: 'foo', upper: 'bar' } } } })).toBe(false);
+      expect(applyFilter(doubleNestedNull(), { child: { child: { first: { between: { lower: 'foo', upper: 'bar' } } } } })).toBe(
         false
       );
-      expect(
-        applyFilter(doubleNestedNull(), { child: { child: { first: { between: { lower: 'foo', upper: 'bar' } } } } })
-      ).toBe(false);
     });
 
     it('should handle notBetween comparisons', () => {
-      expect(
-        applyFilter(singleNestedNull(), { child: { first: { notBetween: { lower: 'foo', upper: 'bar' } } } })
-      ).toBe(true);
+      expect(applyFilter(singleNestedNull(), { child: { first: { notBetween: { lower: 'foo', upper: 'bar' } } } })).toBe(true);
       expect(
         applyFilter(doubleNestedNull(), {
           child: { child: { first: { notBetween: { lower: 'foo', upper: 'bar' } } } }
@@ -917,62 +913,20 @@ describe('applySort', () => {
       {
         description: 'sort dates with nulls asc',
         sortFields: [{ field: 'created', direction: SortDirection.ASC }],
-        input: [
-          { created: date(4) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(1) },
-          { created: null },
-          {}
-        ],
-        expected: [
-          { created: date(1) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(4) },
-          { created: null },
-          {}
-        ]
+        input: [{ created: date(4) }, { created: date(2) }, { created: date(3) }, { created: date(1) }, { created: null }, {}],
+        expected: [{ created: date(1) }, { created: date(2) }, { created: date(3) }, { created: date(4) }, { created: null }, {}]
       },
       {
         description: 'sort dates with nulls first asc',
         sortFields: [{ field: 'created', direction: SortDirection.ASC, nulls: SortNulls.NULLS_FIRST }],
-        input: [
-          { created: date(4) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(1) },
-          { created: null },
-          {}
-        ],
-        expected: [
-          {},
-          { created: null },
-          { created: date(1) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(4) }
-        ]
+        input: [{ created: date(4) }, { created: date(2) }, { created: date(3) }, { created: date(1) }, { created: null }, {}],
+        expected: [{}, { created: null }, { created: date(1) }, { created: date(2) }, { created: date(3) }, { created: date(4) }]
       },
       {
         description: 'sort dates with nulls last asc',
         sortFields: [{ field: 'created', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }],
-        input: [
-          { created: date(4) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(1) },
-          { created: null },
-          {}
-        ],
-        expected: [
-          { created: date(1) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(4) },
-          { created: null },
-          {}
-        ]
+        input: [{ created: date(4) }, { created: date(2) }, { created: date(3) }, { created: date(1) }, { created: null }, {}],
+        expected: [{ created: date(1) }, { created: date(2) }, { created: date(3) }, { created: date(4) }, { created: null }, {}]
       }
     ];
     testCases.forEach(({ description, input, expected, sortFields }) => {
@@ -1107,62 +1061,20 @@ describe('applySort', () => {
       {
         description: 'sort dates with nulls desc',
         sortFields: [{ field: 'created', direction: SortDirection.DESC }],
-        input: [
-          { created: date(4) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(1) },
-          { created: null },
-          {}
-        ],
-        expected: [
-          {},
-          { created: null },
-          { created: date(4) },
-          { created: date(3) },
-          { created: date(2) },
-          { created: date(1) }
-        ]
+        input: [{ created: date(4) }, { created: date(2) }, { created: date(3) }, { created: date(1) }, { created: null }, {}],
+        expected: [{}, { created: null }, { created: date(4) }, { created: date(3) }, { created: date(2) }, { created: date(1) }]
       },
       {
         description: 'sort dates with nulls first desc',
         sortFields: [{ field: 'created', direction: SortDirection.DESC, nulls: SortNulls.NULLS_FIRST }],
-        input: [
-          { created: date(4) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(1) },
-          { created: null },
-          {}
-        ],
-        expected: [
-          {},
-          { created: null },
-          { created: date(4) },
-          { created: date(3) },
-          { created: date(2) },
-          { created: date(1) }
-        ]
+        input: [{ created: date(4) }, { created: date(2) }, { created: date(3) }, { created: date(1) }, { created: null }, {}],
+        expected: [{}, { created: null }, { created: date(4) }, { created: date(3) }, { created: date(2) }, { created: date(1) }]
       },
       {
         description: 'sort dates with nulls last desc',
         sortFields: [{ field: 'created', direction: SortDirection.DESC, nulls: SortNulls.NULLS_LAST }],
-        input: [
-          { created: date(4) },
-          { created: date(2) },
-          { created: date(3) },
-          { created: date(1) },
-          { created: null },
-          {}
-        ],
-        expected: [
-          { created: date(4) },
-          { created: date(3) },
-          { created: date(2) },
-          { created: date(1) },
-          { created: null },
-          {}
-        ]
+        input: [{ created: date(4) }, { created: date(2) }, { created: date(3) }, { created: date(1) }, { created: null }, {}],
+        expected: [{ created: date(4) }, { created: date(3) }, { created: date(2) }, { created: date(1) }, { created: null }, {}]
       }
     ];
     testCases.forEach(({ description, input, expected, sortFields }) => {

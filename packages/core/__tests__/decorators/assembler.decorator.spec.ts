@@ -30,8 +30,6 @@ describe('@Assembler', () => {
         return dtoOrEntity;
       }
     }
-    expect(() => Assembler(TestFrom, TestTo)(TestAssembler)).toThrow(
-      'Assembler already registered for TestFrom TestTo'
-    );
+    expect(() => Assembler(TestFrom, TestTo)(TestAssembler)).toThrow('Assembler already registered for TestFrom TestTo');
   });
 });

@@ -25,8 +25,7 @@ describe('OffsetConnectionType', (): void => {
     stringField!: string;
   }
 
-  const createPage = (paging: OffsetPagingType): OffsetPagingType =>
-    plainToClass(getOrCreateOffsetPagingType(), paging);
+  const createPage = (paging: OffsetPagingType): OffsetPagingType => plainToClass(getOrCreateOffsetPagingType(), paging);
 
   const createTestDTO = (index: number): TestDto => ({
     stringField: `foo${index}`,

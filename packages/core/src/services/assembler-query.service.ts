@@ -20,10 +20,7 @@ import { QueryService } from './query.service';
 export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepPartial<Entity>, U = C, UE = CE>
   implements QueryService<DTO, C, U>
 {
-  constructor(
-    readonly assembler: Assembler<DTO, Entity, C, CE, U, UE>,
-    readonly queryService: QueryService<Entity, CE, UE>
-  ) {}
+  constructor(readonly assembler: Assembler<DTO, Entity, C, CE, U, UE>, readonly queryService: QueryService<Entity, CE, UE>) {}
 
   addRelations<Relation>(
     relationName: string,
@@ -292,13 +289,7 @@ export class AssemblerQueryService<DTO, Entity, C = DeepPartial<DTO>, CE = DeepP
   ): Promise<AggregateResponse<Relation>[] | Map<DTO, AggregateResponse<Relation>[]>> {
     if (Array.isArray(dto)) {
       const entities = this.assembler.convertToEntities(dto);
-      const relationMap = await this.queryService.aggregateRelations(
-        RelationClass,
-        relationName,
-        entities,
-        filter,
-        aggregate
-      );
+      const relationMap = await this.queryService.aggregateRelations(RelationClass, relationName, entities, filter, aggregate);
       return entities.reduce((map, e, index) => {
         const entry = relationMap.get(e) ?? [];
         map.set(dto[index], entry);

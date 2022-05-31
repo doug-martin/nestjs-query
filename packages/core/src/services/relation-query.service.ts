@@ -10,11 +10,7 @@ export type QueryServiceRelation<DTO, Relation> = {
   query: (dto: DTO) => Query<Relation>;
 };
 
-export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> extends ProxyQueryService<
-  DTO,
-  C,
-  U
-> {
+export class RelationQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> extends ProxyQueryService<DTO, C, U> {
   readonly relations: Record<string, QueryServiceRelation<DTO, unknown>>;
 
   constructor(queryService: QueryService<DTO, C, U>, relations: Record<string, QueryServiceRelation<DTO, unknown>>);

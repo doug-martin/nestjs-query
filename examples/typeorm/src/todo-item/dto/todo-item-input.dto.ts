@@ -1,11 +1,6 @@
 import { IsString, MaxLength, IsBoolean } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  BeforeCreateMany,
-  BeforeCreateOne,
-  CreateManyInputType,
-  CreateOneInputType
-} from '@ptc-org/nestjs-query-graphql';
+import { BeforeCreateMany, BeforeCreateOne, CreateManyInputType, CreateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { GqlContext } from '../../auth.guard';
 import { getUserName } from '../../helpers';
 import { TodoItemDTO } from './todo-item.dto';

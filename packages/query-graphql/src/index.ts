@@ -12,7 +12,7 @@ export {
   UnPagedRelation,
   FilterableUnPagedRelation,
   RelationTypeFunc,
-  RelationDecoratorOpts,
+  RelationOneDecoratorOpts,
   Reference,
   ReferenceTypeFunc,
   ReferenceDecoratorOpts,

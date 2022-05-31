@@ -39,10 +39,7 @@ export interface DeleteResolverOpts<DTO> extends SubscriptionResolverOpts {
 export interface DeleteResolver<DTO, QS extends QueryService<DTO, unknown, unknown>> extends ServiceResolver<DTO, QS> {
   deleteOne(input: MutationArgsType<DeleteOneInputType>, authorizeFilter?: Filter<DTO>): Promise<Partial<DTO>>;
 
-  deleteMany(
-    input: MutationArgsType<DeleteManyInputType<DTO>>,
-    authorizeFilter?: Filter<DTO>
-  ): Promise<DeleteManyResponse>;
+  deleteMany(input: MutationArgsType<DeleteManyInputType<DTO>>, authorizeFilter?: Filter<DTO>): Promise<DeleteManyResponse>;
 
   deletedOneSubscription(
     input?: SubscriptionArgsType<DTO>,
@@ -94,15 +91,7 @@ export const Deletable =
     const deleteManyMutationName = opts.many?.name ?? `deleteMany${pluralBaseName}`;
     const DMR = DeleteManyResponseType();
 
-    const commonResolverOpts = omit(
-      opts,
-      'dtoName',
-      'one',
-      'many',
-      'DeleteOneInput',
-      'DeleteManyInput',
-      'useSoftDelete'
-    );
+    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput', 'useSoftDelete');
 
     @ObjectType(`${baseName}DeleteResponse`)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -166,12 +155,9 @@ export const Deletable =
         })
         authorizeFilter?: Filter<DTO>
       ): Promise<DeleteManyResponse> {
-        const deleteManyResponse = await this.service.deleteMany(
-          mergeFilter(input.input.filter, authorizeFilter ?? {}),
-          {
-            useSoftDelete: opts?.useSoftDelete ?? false
-          }
-        );
+        const deleteManyResponse = await this.service.deleteMany(mergeFilter(input.input.filter, authorizeFilter ?? {}), {
+          useSoftDelete: opts?.useSoftDelete ?? false
+        });
         if (enableManySubscriptions) {
           await this.publishDeletedManyEvent(deleteManyResponse, authorizeFilter);
         }
@@ -232,10 +218,7 @@ export const Deletable =
     return DeleteResolverBase;
   };
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
-export const DeleteResolver = <
-  DTO,
-  QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>
->(
+export const DeleteResolver = <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
   DTOClass: Class<DTO>,
   opts: DeleteResolverOpts<DTO> = {}
 ): ResolverClass<DTO, QS, DeleteResolver<DTO, QS>> => Deletable<DTO, QS>(DTOClass, opts)(BaseServiceResolver);
