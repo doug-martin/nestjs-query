@@ -22,7 +22,7 @@
     "is-class": "0.0.9",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.merge": "^4.6.2",
-    "tslib": "^2.1.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.0.4",

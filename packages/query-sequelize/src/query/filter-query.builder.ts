@@ -104,7 +104,7 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     return opts;
   }
 
-  countOptions(query: Query<Entity>): CountOptions {
+  countOptions(query: Query<Entity>): CountOptions<Entity> {
     let opts: CountOptions = this.applyAssociationIncludes({}, query.filter);
     opts.distinct = true;
     opts = this.applyFilter(opts, query.filter);

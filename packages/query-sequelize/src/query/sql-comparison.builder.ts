@@ -69,7 +69,7 @@ export class SQLComparisonBuilder<Entity> {
   private betweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): WhereOptions {
     if (this.isBetweenVal(val)) {
       return {
-        [col]: { [Op.between]: [val.lower, val.upper] as unknown as Rangable }
+        [col]: { [Op.between]: [val.lower, val.upper] as unknown as Rangable<Entity> }
       };
     }
     throw new Error(`Invalid value for between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
@@ -78,7 +78,7 @@ export class SQLComparisonBuilder<Entity> {
   private notBetweenComparisonSQL<F extends keyof Entity>(col: string, val: EntityComparisonField<Entity, F>): WhereOptions {
     if (this.isBetweenVal(val)) {
       return {
-        [col]: { [Op.notBetween]: [val.lower, val.upper] as unknown as Rangable }
+        [col]: { [Op.notBetween]: [val.lower, val.upper] as unknown as Rangable<Entity> }
       };
     }
     throw new Error(`Invalid value for not between expected {lower: val, upper: val} got ${JSON.stringify(val)}`);
