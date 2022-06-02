@@ -16,7 +16,6 @@
     "@apollo/federation": "0.33.0",
     "@docusaurus/core": "2.0.0-beta.21",
     "@docusaurus/preset-classic": "2.0.0-beta.21",
-    "@mdx-js/react": "^2.1.1",
     "@nestjs/common": "8.4.6",
     "@nestjs/core": "8.4.6",
     "@nestjs/graphql": "9.1.2",
