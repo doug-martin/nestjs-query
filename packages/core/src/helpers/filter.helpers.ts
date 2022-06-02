@@ -28,6 +28,7 @@ export const isComparison = <DTO, K extends keyof DTO>(
   if (!maybeComparison) {
     return false;
   }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return Object.keys(maybeComparison as Record<string, unknown>).every(
     (op) =>
@@ -100,38 +101,56 @@ export const getFilterComparisons = <DTO, K extends keyof FilterComparisons<DTO>
   filter: Filter<DTO>,
   key: K
 ): FilterFieldComparison<DTO[K]>[] => {
-  const results: FilterFieldComparison<DTO[K]>[] = [];
-
-  if (filter.and || filter.or) {
-    const filters = [...(filter.and ?? []), ...(filter.or ?? [])];
-    filters.forEach((f) => getFilterComparisons(f, key).forEach((comparison) => results.push(comparison)));
-  }
+  let results: FilterFieldComparison<DTO[K]>[] = [];
 
   const comparison = getFilterFieldComparison(filter as FilterComparisons<DTO>, key);
   if (isComparison(comparison)) {
     results.push(comparison);
+
+  } else if (Array.isArray(filter)) {
+    filter.forEach((f: Filter<DTO>) => {
+      results = results.concat(getFilterComparisons(f, key));
+    });
+  }
+
+  if (typeof filter === 'object') {
+    Object.keys(filter).forEach((subFilterKey) => {
+      const subFilter = filter[subFilterKey] as FilterFieldComparison<DTO[K]>;
+
+      if (subFilterKey === key) {
+        results.push(subFilter);
+      } else {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        results = results.concat(getFilterComparisons(subFilter, key));
+      }
+    });
   }
 
   return [...results];
 };
 
-export const getFilterOmitting = <DTO>(filter: Filter<DTO>, key: keyof DTO): Filter<DTO> =>
+export const getFilterOmitting = <DTO>(filter: Filter<DTO>, ...keys: (keyof Filter<DTO>)[]): Filter<DTO> =>
   Object.keys(filter).reduce<Filter<DTO>>((f, next) => {
     const omitted = { ...f };
     const k = next as keyof Filter<DTO>;
+
     if (k === 'and' && filter.and) {
-      omitted.and = filter.and.map((part) => getFilterOmitting(part, key));
+      omitted.and = filter.and.map((part) => getFilterOmitting(part, ...keys));
+
       if (omitted.and.every((part) => Object.keys(part).length === 0)) {
         delete omitted.and;
       }
     } else if (k === 'or' && filter.or) {
-      omitted.or = filter.or.map((part) => getFilterOmitting(part, key));
+      omitted.or = filter.or.map((part) => getFilterOmitting(part, ...keys));
+
       if (omitted.or.every((part) => Object.keys(part).length === 0)) {
         delete omitted.or;
       }
-    } else if (k !== key) {
+    } else if (!keys.includes(k)) {
       omitted[k] = filter[k];
     }
+
     return omitted;
   }, {} as Filter<DTO>);
 
