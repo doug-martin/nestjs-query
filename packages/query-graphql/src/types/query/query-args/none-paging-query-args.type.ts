@@ -41,7 +41,7 @@ export function createNonePagingQueryArgsType<DTO>(
     )
     @ValidateNested()
     @Type(() => F)
-    filter?: Filter<DTO>;
+    filter?: Filter<DTO> = opts.disableFilter ? opts.defaultFilter : undefined;
 
     @SkipIf(
       () => opts.disableSort,
@@ -52,7 +52,7 @@ export function createNonePagingQueryArgsType<DTO>(
     )
     @ValidateNested()
     @Type(() => S)
-    sorting?: SortField<DTO>[];
+    sorting?: SortField<DTO>[] = opts.disableSort ? opts.defaultSort : undefined;
 
     paging?: NonePagingType;
   }
