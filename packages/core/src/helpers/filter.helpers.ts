@@ -101,34 +101,57 @@ export const getFilterComparisons = <DTO, K extends keyof FilterComparisons<DTO>
   filter: Filter<DTO>,
   key: K
 ): FilterFieldComparison<DTO[K]>[] => {
-  let results: FilterFieldComparison<DTO[K]>[] = [];
+  const results: FilterFieldComparison<DTO[K]>[] = [];
+
+  if (filter.and || filter.or) {
+    const filters = [...(filter.and ?? []), ...(filter.or ?? [])];
+    filters.forEach((f) => getFilterComparisons(f, key).forEach((comparison) => results.push(comparison)));
+  }
 
   const comparison = getFilterFieldComparison(filter as FilterComparisons<DTO>, key);
   if (isComparison(comparison)) {
     results.push(comparison);
-
-  } else if (Array.isArray(filter)) {
-    filter.forEach((f: Filter<DTO>) => {
-      results = results.concat(getFilterComparisons(f, key));
-    });
-  }
-
-  if (typeof filter === 'object') {
-    Object.keys(filter).forEach((subFilterKey) => {
-      const subFilter = filter[subFilterKey] as FilterFieldComparison<DTO[K]>;
-
-      if (subFilterKey === key) {
-        results.push(subFilter);
-      } else {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        results = results.concat(getFilterComparisons(subFilter, key));
-      }
-    });
   }
 
   return [...results];
 };
+
+/*
+getFilterComparisons only returns the first layer, this one will return everything, it only returns the same
+item multiple times, that needs to be fixed first
+ */
+// export const getDeepFilterComparisons = <DTO, K extends keyof FilterComparisons<DTO>>(
+//   filter: Filter<DTO>,
+//   key: K
+// ): FilterFieldComparison<DTO[K]>[] => {
+//   let results: FilterFieldComparison<DTO[K]>[] = [];
+//
+//   const comparison = getFilterFieldComparison(filter as FilterComparisons<DTO>, key);
+//   if (isComparison(comparison)) {
+//     results.push(comparison);
+//
+//   } else if (Array.isArray(filter)) {
+//     filter.forEach((f: Filter<DTO>) => {
+//       results = results.concat(getFilterComparisons(f, key));
+//     });
+//   }
+//
+//   if (typeof filter === 'object') {
+//     Object.keys(filter).forEach((subFilterKey) => {
+//       const subFilter = filter[subFilterKey] as FilterFieldComparison<DTO[K]>;
+//
+//       if (subFilterKey === key) {
+//         results.push(subFilter);
+//       } else {
+//         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//         // @ts-ignore
+//         results = results.concat(getFilterComparisons(subFilter, key));
+//       }
+//     });
+//   }
+//
+//   return [...results];
+// };
 
 export const getFilterOmitting = <DTO>(filter: Filter<DTO>, ...keys: (keyof Filter<DTO>)[]): Filter<DTO> =>
   Object.keys(filter).reduce<Filter<DTO>>((f, next) => {
