@@ -67,6 +67,8 @@ TodoItemEntitySchema.virtual('subTasks', {
   localField: '_id',
   foreignField: 'todoItem',
 });
+TodoItemEntitySchema.set('toObject', { virtuals: true });
+TodoItemEntitySchema.set('toJSON', { virtuals: true });
 ```
 
 </TabItem>
