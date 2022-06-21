@@ -9,7 +9,6 @@ module.exports = {
   organizationName: 'tripss', // Usually your GitHub org/user name.
   projectName: 'nestjs-query', // Usually your repo name.
   themeConfig: {
-    hideableSidebar: true,
     navbar: {
       title: 'Nestjs-query',
       logo: {
@@ -29,11 +28,13 @@ module.exports = {
         },
       ],
     },
-    algolia: {
-      apiKey: '2bec315c442a99da17e68f485900e339',
-      indexName: 'nestjs-query',
-      algoliaOptions: {}, // Optional, if provided by Algolia
-    },
+    // Disable until we have keys
+    // algolia: {
+
+    //   apiKey: '2bec315c442a99da17e68f485900e339',
+    //   indexName: 'nestjs-query',
+    //   algoliaOptions: {}, // Optional, if provided by Algolia
+    // },
     footer: {
       links: [
         {

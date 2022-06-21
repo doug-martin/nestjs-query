@@ -104,11 +104,11 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     return opts;
   }
 
-  countOptions(query: Query<Entity>): CountOptions {
+  countOptions(query: Query<Entity>): CountOptions<Entity> {
     let opts: CountOptions = this.applyAssociationIncludes({}, query.filter);
     opts.distinct = true;
     opts = this.applyFilter(opts, query.filter);
-    return opts;
+    return opts as CountOptions<Entity>;
   }
 
   /**
@@ -222,7 +222,10 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     return qb;
   }
 
-  private applyAssociationIncludes<Opts extends FindOptions | CountOptions>(findOpts: Opts, filter?: Filter<Entity>): Opts {
+  private applyAssociationIncludes<Opts extends FindOptions<Entity> | CountOptions<Entity>>(
+    findOpts: Opts,
+    filter?: Filter<Entity>
+  ): Opts {
     if (!filter) {
       return findOpts;
     }

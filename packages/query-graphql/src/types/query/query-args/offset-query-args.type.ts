@@ -12,6 +12,7 @@ import { getOrCreateOffsetConnectionType } from '../../connection';
 import { SkipIf } from '../../../decorators';
 
 export type OffsetQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.OFFSET>;
+
 export function createOffsetQueryArgs<DTO>(
   DTOClass: Class<DTO>,
   opts: OffsetQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.OFFSET }
@@ -48,7 +49,7 @@ export function createOffsetQueryArgs<DTO>(
     })
     @ValidateNested()
     @Type(() => F)
-    filter?: Filter<DTO>;
+    filter?: Filter<DTO> = opts.disableFilter ? opts.defaultFilter : undefined;
 
     @SkipIf(() => opts.disableSort)
     @Field(() => [S], {
@@ -57,7 +58,8 @@ export function createOffsetQueryArgs<DTO>(
     })
     @ValidateNested()
     @Type(() => S)
-    sorting?: SortField<DTO>[];
+    sorting?: SortField<DTO>[] = opts.disableSort ? opts.defaultSort : undefined;
   }
+
   return QueryArgs;
 }

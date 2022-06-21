@@ -1,6 +1,6 @@
 {
   "name": "@ptc-org/nestjs-query-graphql",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Nestjs graphql query adapter",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/tripss/nestjs-query#readme",
@@ -34,10 +34,10 @@
   "dependencies": {
     "graphql-fields": "^2.0.3",
     "lodash.omit": "^4.5.0",
-    "lower-case-first": "^2.0.1",
+    "lower-case-first": "^2.0.2",
     "pluralize": "^8.0.0",
-    "tslib": "^2.1.0",
-    "upper-case-first": "^2.0.1"
+    "tslib": "^2.4.0",
+    "upper-case-first": "^2.0.2"
   },
   "peerDependencies": {
     "@apollo/gateway": "^0.41.0 || ^0.42.0",

@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14.x ]
+        node-version: [ 16.x ]
         target: [ 'build', 'test', 'lint' ]
     steps:
       - name: Use Node.js ${{ matrix.node-version }}
@@ -65,7 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14.x ]
+        node-version: [ 16.x ]
         db-type: ['postgres', 'mysql']
     steps:
       - name: Use Node.js ${{ matrix.node-version }}

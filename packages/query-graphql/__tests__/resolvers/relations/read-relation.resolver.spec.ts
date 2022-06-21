@@ -6,6 +6,7 @@ import {
   OffsetQueryArgsType,
   PagingStrategies
 } from '@ptc-org/nestjs-query-graphql';
+import { SortDirection } from '@ptc-org/nestjs-query-core';
 import { ReadRelationsResolver, RelationsOpts } from '../../../src/resolvers/relations';
 import { generateSchema, createResolverFromNest, TestResolverDTO, TestService, TestRelationDTO } from '../../__fixtures__';
 
@@ -161,6 +162,84 @@ describe('ReadRelationsResolver', () => {
 
     it('should not add sorting argument if disableSorting is true', () =>
       expectResolverSDL({ many: { relation: { DTO: TestRelationDTO, disableSort: true } } }));
+
+    describe('disabled sorting/filtering', () => {
+      @Resolver(() => TestResolverDTO)
+      class TestDisabledResolver extends ReadRelationsResolver(TestResolverDTO, {
+        many: {
+          relations: {
+            DTO: TestRelationDTO,
+            disableFilter: true,
+            disableSort: true,
+            // @ts-ignore
+            defaultSort: [{ field: 'id', direction: SortDirection.ASC }],
+            defaultFilter: {
+              // @ts-ignore
+              id: { eq: 'id-2' }
+            }
+          }
+        }
+      }) {
+        constructor(service: TestService) {
+          super(service);
+        }
+      }
+
+      it('should still use the provided default filter', async () => {
+        const { resolver, mockService } = await createResolverFromNest(TestDisabledResolver);
+        const dto: TestResolverDTO = {
+          id: 'id-1',
+          stringField: 'foo'
+        };
+        const query: CursorQueryArgsType<TestRelationDTO> = {
+          paging: { first: 1 }
+        };
+        const output: TestRelationDTO[] = [
+          {
+            id: 'id-2',
+            testResolverId: dto.id
+          }
+        ];
+        when(
+          mockService.queryRelations(
+            TestRelationDTO,
+            'relations',
+            deepEqual([dto]),
+            deepEqual({
+              filter: { id: { eq: 'id-2' } },
+              paging: { limit: 2, offset: 0 },
+              sorting: [
+                {
+                  field: 'id',
+                  direction: SortDirection.ASC
+                }
+              ]
+            })
+          )
+        ).thenResolve(new Map([[dto, output]]));
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const result = await resolver.queryRelations(dto, query, {});
+        return expect(result).toEqual({
+          edges: [
+            {
+              cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              node: {
+                id: output[0].id,
+                testResolverId: dto.id
+              }
+            }
+          ],
+          pageInfo: {
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
+          },
+          totalCountFn: expect.any(Function)
+        });
+      });
+    });
 
     describe('many connection query', () => {
       @Resolver(() => TestResolverDTO)

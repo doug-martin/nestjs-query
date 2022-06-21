@@ -12,6 +12,7 @@ import {
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { ModelCtor as SequelizeModelCtor } from 'sequelize';
 import { AggregateBuilder, FilterQueryBuilder } from '../query';
+import { MakeNullishOptional } from 'sequelize/types/utils';
 
 interface SequelizeAssociation {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -423,11 +424,11 @@ export abstract class RelationQueryService<Entity extends Model<Entity, Partial<
     }, Promise.resolve(new Map<Entity, Relation | undefined>()));
   }
 
-  private ensureIsEntity(e: Entity): Entity {
-    if (!(e instanceof this.model)) {
-      return this.model.build(e);
+  private ensureIsEntity(entity: Entity): Entity {
+    if (!(entity instanceof this.model)) {
+      return this.model.build(entity as never);
     }
-    return e;
+    return entity;
   }
 
   private getAssociation(relationName: string): SequelizeAssociation {

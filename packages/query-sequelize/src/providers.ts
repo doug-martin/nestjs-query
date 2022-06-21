@@ -3,6 +3,7 @@ import { FactoryProvider } from '@nestjs/common';
 import { ModelCtor, Model, SequelizeOptions } from 'sequelize-typescript';
 import { getModelToken } from '@nestjs/sequelize';
 import { SequelizeQueryService } from './services';
+import { MakeNullishOptional } from 'sequelize/types/utils';
 
 function createSequelizeQueryServiceProvider<Entity extends Model>(
   EntityClass: ModelCtor<Entity>,
@@ -13,7 +14,7 @@ function createSequelizeQueryServiceProvider<Entity extends Model>(
     useFactory(entity: ModelCtor<Entity>) {
       AssemblerSerializer<Entity>((instance) => instance.get({ plain: true }) as Entity)(entity);
       // eslint-disable-next-line @typescript-eslint/ban-types
-      AssemblerDeserializer<Entity>((obj: object) => entity.build(obj))(entity);
+      AssemblerDeserializer<Entity>((obj: MakeNullishOptional<Entity>) => entity.build(obj))(entity);
       return new SequelizeQueryService(entity);
     },
     inject: [getModelToken(EntityClass, connection)]

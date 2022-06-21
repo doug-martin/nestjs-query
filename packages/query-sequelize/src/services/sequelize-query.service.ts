@@ -18,6 +18,7 @@ import { WhereOptions } from 'sequelize';
 import { NotFoundException } from '@nestjs/common';
 import { FilterQueryBuilder, AggregateBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
+import { MakeNullishOptional } from 'sequelize/types/utils';
 
 /**
  * Base class for all query services that use a `sequelize` Model.
@@ -130,7 +131,8 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    */
   async createOne(record: DeepPartial<Entity>): Promise<Entity> {
     await this.ensureEntityDoesNotExist(record);
-    return this.model.create<Entity>(this.getChangedValues(record));
+    const changedValues = this.getChangedValues(record);
+    return this.model.create<Entity>(changedValues as MakeNullishOptional<Entity>);
   }
 
   /**
@@ -147,7 +149,8 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    */
   async createMany(records: DeepPartial<Entity>[]): Promise<Entity[]> {
     await Promise.all(records.map((r) => this.ensureEntityDoesNotExist(r)));
-    return this.model.bulkCreate<Entity>(records.map((r) => this.getChangedValues(r)));
+
+    return this.model.bulkCreate<Entity>(records.map((r) => this.getChangedValues(r) as MakeNullishOptional<Entity>));
   }
 
   /**
@@ -164,7 +167,10 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
   async updateOne(id: number | string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
     const entity = await this.getById(id, opts);
-    return entity.update(this.getChangedValues(update));
+
+    const changedValues = this.getChangedValues(update);
+
+    return entity.update(changedValues);
   }
 
   /**
@@ -182,7 +188,10 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    */
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
     this.ensureIdIsNotPresent(update);
-    const [count] = await this.model.update(this.getChangedValues(update), this.filterQueryBuilder.updateOptions({ filter }));
+
+    const changedValues = this.getChangedValues(update);
+
+    const [count] = await this.model.update(changedValues, this.filterQueryBuilder.updateOptions({ filter }));
     return { updatedCount: count };
   }
 
@@ -224,43 +233,51 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  private getChangedValues(record: object): object {
+  private getChangedValues(record: DeepPartial<Entity>): Partial<Entity> {
     if (record instanceof this.model) {
-      const recordEntity = record as unknown as Entity;
+      const recordEntity = record as Entity;
+
       const raw = recordEntity.get({ plain: true });
       const changed = recordEntity.changed();
       if (changed === false) {
         return {};
       }
+
       return lodashPick(raw, changed);
     }
-    return record;
+
+    return record as Partial<Entity>;
   }
 
-  private async ensureEntityDoesNotExist(e: DeepPartial<Entity>): Promise<void> {
-    const pks = this.primaryKeyValues(e);
+  private async ensureEntityDoesNotExist(entity: DeepPartial<Entity>): Promise<void> {
+    const pks = this.primaryKeyValues(entity);
+
     if (Object.keys(pks).length) {
       const found = await this.model.findOne({ where: pks });
+
       if (found) {
         throw new Error('Entity already exists');
       }
     }
   }
 
-  private ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
-    if (Object.keys(this.primaryKeyValues(e)).length) {
+  private ensureIdIsNotPresent(entity: DeepPartial<Entity>): void {
+    if (Object.keys(this.primaryKeyValues(entity)).length) {
       throw new Error('Id cannot be specified when updating');
     }
   }
 
-  private primaryKeyValues(e: DeepPartial<Entity>): WhereOptions {
-    const changed = this.getChangedValues(e) as Partial<Entity>;
+  private primaryKeyValues(entity: DeepPartial<Entity>): WhereOptions<Entity> {
+    const changed = this.getChangedValues(entity);
+
     return this.model.primaryKeyAttributes.reduce((pks, pk) => {
       const key = pk as keyof Entity;
+
       if (key in changed && changed[key] !== undefined) {
-        return { ...pks, [pk]: changed[key] } as WhereOptions;
+        return { ...pks, [pk]: changed[key] } as WhereOptions<Entity>;
       }
+
       return pks;
-    }, {} as WhereOptions);
+    }, {} as WhereOptions<Entity>);
   }
 }
