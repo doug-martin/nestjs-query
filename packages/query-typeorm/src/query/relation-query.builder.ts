@@ -156,7 +156,11 @@ export class RelationQueryBuilder<Entity, Relation> {
       aggregateQuery.groupBy,
       relationBuilder.alias
     );
-    relationBuilder = this.filterQueryBuilder.applyGroupBy(relationBuilder, aggregateQuery.groupBy, relationBuilder.alias);
+    relationBuilder = this.filterQueryBuilder.applyAggregateGroupBy(
+      relationBuilder,
+      aggregateQuery.groupBy,
+      relationBuilder.alias
+    );
     return relationBuilder;
   }
 
