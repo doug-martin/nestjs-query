@@ -12,7 +12,7 @@
     "test": "__tests__"
   },
   "files": [
-    "dist/src/**"
+    "src/**"
   ],
   "publishConfig": {
     "access": "public"
