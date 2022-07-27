@@ -30,7 +30,7 @@
     "@nestjs/common": "^8.0.4",
     "@nestjs/typeorm": "^8.0.0",
     "class-transformer": "^0.2.3 || 0.3.1 || 0.4",
-    "typeorm": "^0.2.25"
+    "typeorm": "^0.2.25 || 0.3.7"
   },
   "devDependencies": {
     "@nestjs/common": "8.4.0",
@@ -42,7 +42,7 @@
     "class-transformer": "0.4.0",
     "sqlite3": "5.0.2",
     "ts-mockito": "2.6.1",
-    "typeorm": "0.2.40",
+    "typeorm": "0.3.7",
     "typescript": "4.4.4"
   },
   "repository": {

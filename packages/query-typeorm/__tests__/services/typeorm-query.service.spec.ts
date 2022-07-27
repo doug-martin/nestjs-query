@@ -334,7 +334,7 @@ describe('TypeOrmQueryService', (): void => {
             testEntityPk: 'test-entity-9',
           },
           min: {
-            dateType: expect.stringMatching('2020-02-01'),
+            dateType: expect.stringMatching('2020-01-31'),
             numberType: 1,
             stringType: 'foo1',
             testEntityPk: 'test-entity-1',
@@ -371,13 +371,13 @@ describe('TypeOrmQueryService', (): void => {
             testEntityPk: 5,
           },
           max: {
-            dateType: expect.stringMatching('2020-02-09'),
+            dateType: expect.stringMatching('2020-02-08'),
             numberType: 9,
             stringType: 'foo9',
             testEntityPk: 'test-entity-9',
           },
           min: {
-            dateType: expect.stringMatching('2020-02-01'),
+            dateType: expect.stringMatching('2020-01-31'),
             numberType: 1,
             stringType: 'foo1',
             testEntityPk: 'test-entity-1',
@@ -403,7 +403,7 @@ describe('TypeOrmQueryService', (): void => {
             testEntityPk: 'test-entity-8',
           },
           min: {
-            dateType: expect.stringMatching('2020-02-02'),
+            dateType: expect.stringMatching('2020-02-01'),
             numberType: 2,
             stringType: 'foo10',
             testEntityPk: 'test-entity-10',
@@ -436,13 +436,13 @@ describe('TypeOrmQueryService', (): void => {
             testEntityPk: 3,
           },
           max: {
-            dateType: expect.stringMatching('2020-02-03'),
+            dateType: expect.stringMatching('2020-02-02'),
             numberType: 3,
             stringType: 'foo3',
             testEntityPk: 'test-entity-3',
           },
           min: {
-            dateType: expect.stringMatching('2020-02-01'),
+            dateType: expect.stringMatching('2020-01-31'),
             numberType: 1,
             stringType: 'foo1',
             testEntityPk: 'test-entity-1',
@@ -479,13 +479,13 @@ describe('TypeOrmQueryService', (): void => {
             testEntityPk: 2,
           },
           max: {
-            dateType: expect.stringMatching('2020-02-03'),
+            dateType: expect.stringMatching('2020-02-02'),
             numberType: 3,
             stringType: 'foo3',
             testEntityPk: 'test-entity-3',
           },
           min: {
-            dateType: expect.stringMatching('2020-02-01'),
+            dateType: expect.stringMatching('2020-01-31'),
             numberType: 1,
             stringType: 'foo1',
             testEntityPk: 'test-entity-1',
@@ -505,13 +505,13 @@ describe('TypeOrmQueryService', (): void => {
             testEntityPk: 1,
           },
           max: {
-            dateType: expect.stringMatching('2020-02-02'),
+            dateType: expect.stringMatching('2020-02-01'),
             numberType: 2,
             stringType: 'foo2',
             testEntityPk: 'test-entity-2',
           },
           min: {
-            dateType: expect.stringMatching('2020-02-02'),
+            dateType: expect.stringMatching('2020-02-01'),
             numberType: 2,
             stringType: 'foo2',
             testEntityPk: 'test-entity-2',
@@ -1769,7 +1769,10 @@ describe('TypeOrmQueryService', (): void => {
         await queryService.deleteMany(deleteMany);
         const foundEntity = await queryService.findById(entity.testEntityPk);
         expect(foundEntity).toBeUndefined();
-        const deletedEntity = await queryService.repo.findOne(entity.testEntityPk, { withDeleted: true });
+        const deletedEntity = await queryService.repo.findOne({
+          where: { testEntityPk: entity.testEntityPk },
+          withDeleted: true,
+        });
         expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) });
       });
     });
@@ -1779,10 +1782,13 @@ describe('TypeOrmQueryService', (): void => {
         const queryService = moduleRef.get(TestSoftDeleteEntityService);
         const entity = TEST_SOFT_DELETE_ENTITIES[0];
         const deleted = await queryService.deleteOne(entity.testEntityPk);
-        expect(deleted).toEqual({ ...entity, deletedAt: null });
+        expect(deleted).toEqual({ ...entity, deletedAt: expect.any(Date) });
         const foundEntity = await queryService.findById(entity.testEntityPk);
         expect(foundEntity).toBeUndefined();
-        const deletedEntity = await queryService.repo.findOne(entity.testEntityPk, { withDeleted: true });
+        const deletedEntity = await queryService.repo.findOne({
+          where: { testEntityPk: entity.testEntityPk },
+          withDeleted: true,
+        });
         expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) });
       });
 

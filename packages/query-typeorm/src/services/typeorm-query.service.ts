@@ -16,6 +16,7 @@ import {
 } from '@nestjs-query/core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { DeepPartial as TypeOrmDeepPartial } from 'typeorm/common/DeepPartial';
 import { MethodNotAllowedException, NotFoundException } from '@nestjs/common';
 import { FilterQueryBuilder, AggregateBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
@@ -97,7 +98,7 @@ export class TypeOrmQueryService<Entity>
    * @param id - The id of the record to find.
    */
   async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
-    return this.filterQueryBuilder.selectById(id, opts ?? {}).getOne();
+    return (await this.filterQueryBuilder.selectById(id, opts ?? {}).getOne()) ?? undefined;
   }
 
   /**
@@ -166,7 +167,7 @@ export class TypeOrmQueryService<Entity>
   async updateOne(id: number | string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
     this.ensureIdIsNotPresent(update);
     const entity = await this.getById(id, opts);
-    return this.repo.save(this.repo.merge(entity, update));
+    return this.repo.save(this.repo.merge(entity, update as TypeOrmDeepPartial<Entity>));
   }
 
   /**
@@ -273,14 +274,15 @@ export class TypeOrmQueryService<Entity>
 
   private async ensureIsEntityAndDoesNotExist(e: DeepPartial<Entity>): Promise<Entity> {
     if (!(e instanceof this.EntityClass)) {
-      return this.ensureEntityDoesNotExist(this.repo.create(e));
+      return this.ensureEntityDoesNotExist(this.repo.create(e as TypeOrmDeepPartial<Entity>));
     }
     return this.ensureEntityDoesNotExist(e);
   }
 
   private async ensureEntityDoesNotExist(e: Entity): Promise<Entity> {
     if (this.repo.hasId(e)) {
-      const found = await this.repo.findOne(this.repo.getId(e) as string | number);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const found = await this.repo.findOneById(this.repo.getId(e) as string | number);
       if (found) {
         throw new Error('Entity already exists');
       }

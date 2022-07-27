@@ -1,4 +1,4 @@
-import { Brackets, WhereExpression } from 'typeorm';
+import { Brackets, WhereExpressionBuilder } from 'typeorm';
 import { Filter, FilterComparisons, FilterFieldComparison } from '@nestjs-query/core';
 import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
 import { NestedRecord } from './filter-query.builder';
@@ -12,12 +12,12 @@ export class WhereBuilder<Entity> {
 
   /**
    * Builds a WHERE clause from a Filter.
-   * @param where - the `typeorm` WhereExpression
+   * @param where - the `typeorm` WhereExpressionBuilder
    * @param filter - the filter to build the WHERE clause from.
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  build<Where extends WhereExpression>(
+  build<Where extends WhereExpressionBuilder>(
     where: Where,
     filter: Filter<Entity>,
     relationNames: NestedRecord,
@@ -36,12 +36,12 @@ export class WhereBuilder<Entity> {
   /**
    * ANDs multiple filters together. This will properly group every clause to ensure proper precedence.
    *
-   * @param where - the `typeorm` WhereExpression
+   * @param where - the `typeorm` WhereExpressionBuilder
    * @param filters - the array of filters to AND together
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterAnd<Where extends WhereExpression>(
+  private filterAnd<Where extends WhereExpressionBuilder>(
     where: Where,
     filters: Filter<Entity>[],
     relationNames: NestedRecord,
@@ -55,12 +55,12 @@ export class WhereBuilder<Entity> {
   /**
    * ORs multiple filters together. This will properly group every clause to ensure proper precedence.
    *
-   * @param where - the `typeorm` WhereExpression
+   * @param where - the `typeorm` WhereExpressionBuilder
    * @param filter - the array of filters to OR together
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterOr<Where extends WhereExpression>(
+  private filterOr<Where extends WhereExpressionBuilder>(
     where: Where,
     filter: Filter<Entity>[],
     relationNames: NestedRecord,
@@ -87,12 +87,12 @@ export class WhereBuilder<Entity> {
 
   /**
    * Creates field comparisons from a filter. This method will ignore and/or properties.
-   * @param where - the `typeorm` WhereExpression
+   * @param where - the `typeorm` WhereExpressionBuilder
    * @param filter - the filter with fields to create comparisons for.
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterFields<Where extends WhereExpression>(
+  private filterFields<Where extends WhereExpressionBuilder>(
     where: Where,
     filter: Filter<Entity>,
     relationNames: NestedRecord,
@@ -119,7 +119,7 @@ export class WhereBuilder<Entity> {
     return obj[field] as FilterFieldComparison<Entity[K]>;
   }
 
-  private withFilterComparison<T extends keyof Entity, Where extends WhereExpression>(
+  private withFilterComparison<T extends keyof Entity, Where extends WhereExpressionBuilder>(
     where: Where,
     field: T,
     cmp: FilterFieldComparison<Entity[T]>,
@@ -140,7 +140,7 @@ export class WhereBuilder<Entity> {
     );
   }
 
-  private withRelationFilter<T extends keyof Entity, Where extends WhereExpression>(
+  private withRelationFilter<T extends keyof Entity, Where extends WhereExpressionBuilder>(
     where: Where,
     field: T,
     cmp: Filter<Entity[T]>,

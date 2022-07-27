@@ -19,7 +19,7 @@ export class TestEntity {
   @Column({ name: 'date_type' })
   dateType!: Date;
 
-  @OneToMany('TestRelation', 'testEntity')
+  @OneToMany(() => TestRelation, (tr) => tr.testEntity)
   testRelations?: TestRelation[];
 
   @ManyToMany(() => TestRelation, (tr) => tr.manyTestEntities, { onDelete: 'CASCADE', nullable: false })
