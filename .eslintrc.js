@@ -8,9 +8,8 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
-    project:  ['./packages/*/tsconfig.json', './examples/tsconfig.json'],
+    project: ['./packages/*/tsconfig.json', './examples/tsconfig.json'],
     tsconfigRootDir: __dirname,
-
   },
   plugins: ['@typescript-eslint', 'prettier', 'import', 'jest', 'eslint-plugin-tsdoc'],
   extends: [
@@ -23,7 +22,7 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
-    "plugin:prettier/recommended"
+    'plugin:prettier/recommended',
   ],
   rules: {
     // airbnb default is 1
@@ -40,10 +39,9 @@ module.exports = {
     '@typescript-eslint/no-useless-constructor': 'off',
 
     // override airbnb to allow class interface merging
-    "@typescript-eslint/no-redeclare": ["error", {ignoreDeclarationMerge: true}]
-
+    '@typescript-eslint/no-redeclare': ['error', { ignoreDeclarationMerge: true }],
   },
-  ignorePatterns: ['**/dist', '**/node_modules'],
+  ignorePatterns: ['**/dist', '**/node_modules', '**/examples'],
   overrides: [
     {
       files: ['*.spec.ts'],
