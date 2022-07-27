@@ -4,11 +4,11 @@
     "baseUrl": ".",
     "paths": {
       "@codeshine/nestjs-query-core": ["packages/core/src"],
-      "@codeshine/nestjs-query-query-graphql": ["packages/query-graphql/src"],
-      "@codeshine/nestjs-query-query-typeorm": ["packages/query-typeorm/src"],
-      "@codeshine/nestjs-query-query-sequelize": ["packages/query-sequelize/src"],
-      "@codeshine/nestjs-query-query-mongoose": ["packages/query-mongoose/src"],
-      "@codeshine/nestjs-query-query-typegoose": ["packages/query-typegoose/src"]
+      "@codeshine/nestjs-query-graphql": ["packages/query-graphql/src"],
+      "@codeshine/nestjs-query-typeorm": ["packages/query-typeorm/src"],
+      "@codeshine/nestjs-query-sequelize": ["packages/query-sequelize/src"],
+      "@codeshine/nestjs-query-mongoose": ["packages/query-mongoose/src"],
+      "@codeshine/nestjs-query-typegoose": ["packages/query-typegoose/src"]
     }
   },
   "references": [

@@ -9,7 +9,7 @@
 
 # `@codeshine/nestjs-query-core`
 
-Core package that contains interfaces for types used by [`@codeshine/nestjs-query-query-graphql`](../query-graphql) and [`@codeshine/nestjs-query-query-typeorm`](../query-typeorm)
+Core package that contains interfaces for types used by [`@codeshine/nestjs-query-graphql`](../query-graphql) and [`@codeshine/nestjs-query-typeorm`](../query-typeorm)
 
 ## Installation
 

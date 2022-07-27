@@ -2,7 +2,7 @@
 title: Getting Started
 ---
 
-The `@codeshine/nestjs-query-query-graphql` package provided base `Resolvers` and graphql type classes to make creating code-first graphql CRUD applications easy.
+The `@codeshine/nestjs-query-graphql` package provided base `Resolvers` and graphql type classes to make creating code-first graphql CRUD applications easy.
 
 ## Installation
 

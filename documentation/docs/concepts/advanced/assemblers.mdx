@@ -86,7 +86,7 @@ To create your own `Assembler` extend the `AbstractAssembler`.
 Lets assume we have the following `UserDTO`.
 
 ```ts title="user.dto.ts"
-import { FilterableField } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField } from '@codeshine/nestjs-query-graphql';
 import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType('User')
@@ -388,7 +388,7 @@ Before using the decorator you need to register your Assembler with `nestjs-quer
 ### Module
 
 ```ts title="user.module.ts" {10}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
 import { UserDTO } from './user.dto';
 
@@ -412,7 +412,7 @@ export class UserModule {}
 If you want your assembler to be used by the auto-generated resolver you can specify the `AssemblerClass` option.
 
 ```ts title="user.module.ts" {10,14}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
 import { UserDTO } from './user.dto';
 
@@ -441,7 +441,7 @@ export class UserModule {}
 If you are manually defining you resolver or want to use the `AssemblerQueryService` in another service use the `@InjectAssemblerQueryService` decorator.
 
 ```ts title="user.resolver.ts" {8}
-import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver } from '@codeshine/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { UserDTO } from './user.dto';
 import { UserAssembler } from './user.assembler';

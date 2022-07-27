@@ -1,5 +1,5 @@
 import { ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
-import { FilterableField } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField } from '@codeshine/nestjs-query-graphql';
 
 @ObjectType('User')
 export class UserDTO {

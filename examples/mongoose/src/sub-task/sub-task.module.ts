@@ -1,6 +1,6 @@
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
-import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-query-mongoose';
+import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-mongoose';
 import { SubTaskDTO } from './dto/sub-task.dto';
 import { CreateSubTaskDTO } from './dto/subtask-input.dto';
 import { SubTaskUpdateDTO } from './dto/subtask-update.dto';

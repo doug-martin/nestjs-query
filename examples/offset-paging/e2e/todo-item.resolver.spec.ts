@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import { OffsetConnectionType } from '@codeshine/nestjs-query-query-graphql';
+import { OffsetConnectionType } from '@codeshine/nestjs-query-graphql';
 import { AppModule } from '../src/app.module';
 import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
 import { TagDTO } from '../src/tag/dto/tag.dto';

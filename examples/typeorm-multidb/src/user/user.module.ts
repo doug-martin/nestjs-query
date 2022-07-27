@@ -1,5 +1,5 @@
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { USER_CONNECTION } from '../constants';
 import { UserInputDTO } from './dto/user-input.dto';

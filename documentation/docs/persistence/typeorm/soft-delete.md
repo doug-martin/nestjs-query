@@ -50,7 +50,7 @@ Once you have added the column to your entity you need to declare your service s
 
 ```ts title="todo-item.service.ts"
 import { QueryService } from '@codeshine/nestjs-query-core';
-import { TypeOrmQueryService } from '@codeshine/nestjs-query-query-typeorm';
+import { TypeOrmQueryService } from '@codeshine/nestjs-query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoItemEntity } from './todo-item.entity';
@@ -72,7 +72,7 @@ Notice that when calling `super` the `useSoftDelete` option is set to `true`. Th
 
 ```ts title="todo-item.resolver.ts"
 import { UpdateManyResponse, Filter } from '@codeshine/nestjs-query-core';
-import { CRUDResolver, FilterType, UpdateManyResponseType } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver, FilterType, UpdateManyResponseType } from '@codeshine/nestjs-query-graphql';
 import { Resolver, Args, Mutation, ID } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';

@@ -1,5 +1,5 @@
 {
-  "name": "@codeshine/nestjs-query-query-typeorm",
+  "name": "@codeshine/nestjs-query-typeorm",
   "version": "0.30.4",
   "description": "Typeorm adapter for @codeshine/nestjs-query-core",
   "author": "doug-martin <doug@dougamartin.com>",

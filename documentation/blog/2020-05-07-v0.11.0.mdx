@@ -25,7 +25,7 @@ You still need to import the `NestjsQueryTypeOrmModule` or `NestjsQuerySequelize
 
 ```ts
 import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
-import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver } from '@codeshine/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -40,7 +40,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 
 ## Relation Decorators
 
-In `v0.11.x` two new decorators were introduced from the `@codeshine/nestjs-query-query-graphql` package. The `@Relation` and `@Connection` allow specifying relations on the DTO rather than passing them in as options to the `CRUDResolver`.
+In `v0.11.x` two new decorators were introduced from the `@codeshine/nestjs-query-graphql` package. The `@Relation` and `@Connection` allow specifying relations on the DTO rather than passing them in as options to the `CRUDResolver`.
 
 ### @Relation
 
@@ -49,7 +49,7 @@ The `@Relation` decorator allow specifying a single relation (e.g. one-to-one, m
 In this example we add a relation for a `todoItem`.
 
 ```ts {6}
-import { FilterableField, Relation } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, Relation } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../todo-item/todo-item.dto.ts';
 
@@ -83,7 +83,7 @@ The `@Connection` decorator allow specifying a connection relation (e.g. many-to
 In this example we add a connection for `subTasks`.
 
 ```ts {6}
-import { FilterableField, Connection } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, Connection } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../sub-task/sub-task.dto';
 
@@ -109,7 +109,7 @@ export class TodoItemDTO {
 
 ## Auto Generated Resolvers
 
-In `v0.11.x` the `@codeshine/nestjs-query-query-graph` package is now able to automatically create your resolvers.
+In `v0.11.x` the `@codeshine/nestjs-query-graph` package is now able to automatically create your resolvers.
 
 To start using this feature update your module to import the `NestjsQueryGraphQLModule`
 
@@ -128,8 +128,8 @@ When used with the new relation decorators, you can remove a lot of boiler plate
 <TabItem value="typeorm">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -149,8 +149,8 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -183,7 +183,7 @@ To read more about the auto-generated resolvers check out the [resolvers docs](/
 
 ```ts title="todo-item.resolver.ts"
 import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
-import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver } from '@codeshine/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemInputDTO } from './todo-item.input';
 import { TodoItemDTO } from './todo-item.dto';
@@ -208,7 +208,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 <TabItem value="typeorm">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
@@ -224,7 +224,7 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
@@ -252,8 +252,8 @@ export class TodoItemModule {}
 <TabItem value="typeorm">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -273,8 +273,8 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

@@ -6,7 +6,7 @@ title: Multiple Databases
 
 Further, the official `@nestjs/typeorm` package also provides functionality to support multiple databases within the application. For details, consider the [official documentation](https://docs.nestjs.com/techniques/database#multiple-databases).
 
-Therefore, `@codeshine/nestjs-query-query-typeorm` also offers this functionality. This section will walk you through a short example indicating how to connect your application to multiple databases. Further, this will assume, that you **already have a working application with a configured database**. Please note that only key aspects are shown here:
+Therefore, `@codeshine/nestjs-query-typeorm` also offers this functionality. This section will walk you through a short example indicating how to connect your application to multiple databases. Further, this will assume, that you **already have a working application with a configured database**. Please note that only key aspects are shown here:
 
 ## Defining multiple connections
 
@@ -105,8 +105,8 @@ The only difference is you need to pass the name of the `Connection` when import
 
 ```ts title="secret/secret.module.ts"
 import { Module } from '@nestjs/common';
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { SECRET_DB_CONNECTION } from '../constants';
 import { SecretEntity } from './secret.entity';
 import { SecretDTO } from './secret.dto';
@@ -138,7 +138,7 @@ If you want to create a custom `SecretService` responsible for the database acce
 
 ```ts title="secret/secret.service.ts"
 import { QueryService } from '@codeshine/nestjs-query-core';
-import { TypeOrmQueryService } from '@codeshine/nestjs-query-query-typeorm';
+import { TypeOrmQueryService } from '@codeshine/nestjs-query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SECRET_DB_CONNECTION } from '../constants';

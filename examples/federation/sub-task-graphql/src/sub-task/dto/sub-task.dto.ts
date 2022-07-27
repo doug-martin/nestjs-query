@@ -1,4 +1,4 @@
-import { FilterableField, Reference } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, Reference } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemReferenceDTO } from './todo-item-reference.dto';
 

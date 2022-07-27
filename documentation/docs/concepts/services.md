@@ -325,9 +325,9 @@ You can create your own service to use with the `CRUDResolver` as long as it imp
 
 There are a number of persistence `QueryServices` that are provided out of the box.
 
-- [@codeshine/nestjs-query-query-typeorm](../persistence/typeorm/getting-started.md)
-- [@codeshine/nestjs-query-query-sequelize](../persistence/sequelize/getting-started.md)
-- [@codeshine/nestjs-query-query-mongoose](../persistence/mongoose/getting-started.md)
+- [@codeshine/nestjs-query-typeorm](../persistence/typeorm/getting-started.md)
+- [@codeshine/nestjs-query-sequelize](../persistence/sequelize/getting-started.md)
+- [@codeshine/nestjs-query-mongoose](../persistence/mongoose/getting-started.md)
 
 In addition to the persistence `QueryServices` `@codeshine/nestjs-query-core` provides a few helper services that can be used for more complex use cases.
 
@@ -384,7 +384,7 @@ export class TodoItemService extends RelationQueryService<TodoItemEntity> {
 Once the `relation` is defined in the query service we can add it to our `DTO` to expose it in our schema.
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, IDField, FilterableConnection, KeySet } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, IDField, FilterableConnection, KeySet } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 
@@ -421,8 +421,8 @@ Next we need to export the `SubTask` query service from the `SubTaskModule` so w
 `TodoItemService`.
 
 ```ts title='sub-task/sub-task.module.ts'
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { SubTaskDTO } from './dto/sub-task.dto';
 import { SubTaskEntity } from './sub-task.entity';
@@ -455,8 +455,8 @@ Now we can import the `SubTaskModule` into the `TodoItemModule` so the `SubTask`
 the `TodoItemService`.
 
 ```ts title="todo-item/todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemAssembler } from './todo-item.assembler';
@@ -574,8 +574,8 @@ export class TodoItemService extends MutationLoggerQueryService<TodoItemEntity> 
 Don't forget to use your custom query service in your module
 
 ```ts title="todo-item/todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

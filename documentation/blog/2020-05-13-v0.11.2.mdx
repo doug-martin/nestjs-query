@@ -37,7 +37,7 @@ Now, instead of defining an `AssemblerQueryService` you can use the decorator.
 
 ```ts title="todo-item.resolver.ts" {8}
 import { QueryService, InjectAssemblerQueryService } from '@codeshine/nestjs-query-core';
-import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver } from '@codeshine/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -58,8 +58,8 @@ When using the AssemblerClass option you don't need to specify the entity.
 :::
 
 ```ts title="todo-item.module.ts" {12-13,17-18}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -93,8 +93,8 @@ When using the ServiceClass option you don't need to specify the entity.
 :::
 
 ```ts title="todo-item.module.ts" {12-13,17-18}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

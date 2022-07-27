@@ -199,7 +199,7 @@ npx nest g cl todo-item.dto todo-item
 Now lets fill out the DTO. Add the following to `src/todo-item/todo-item.dto.ts`.
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, IDField } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, IDField } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, GraphQLISODateTime, Field, ID } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -221,7 +221,7 @@ export class TodoItemDTO {
 }
 ```
 
-Notice the use of `@FilterableField` this will let `@codeshine/nestjs-query-query-graphql` know to allow filtering on the
+Notice the use of `@FilterableField` this will let `@codeshine/nestjs-query-graphql` know to allow filtering on the
 corresponding field. If you just use `@Field` then you will not be able to filter on the corresponding field.
 
 ## Wire everything up.
@@ -257,8 +257,8 @@ The `NestjsQueryGraphQLModule` will automatically create a Resolver that will ex
 <TabItem value="typeorm">
 
 ```ts {9-15}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -281,8 +281,8 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts {9-15}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -305,8 +305,8 @@ export class TodoItemModule {}
 <TabItem value="mongoose">
 
 ```ts {9-19}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-query-mongoose';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-mongoose';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity, TodoItemEntitySchema } from './todo-item.entity';
@@ -333,9 +333,9 @@ export class TodoItemModule {}
 <TabItem value="typegoose">
 
 ```ts {9-19}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
 import { Module } from '@nestjs/common';
-import { NestjsQueryTypegooseModule } from '@codeshine/nestjs-query-query-typegoose';
+import { NestjsQueryTypegooseModule } from '@codeshine/nestjs-query-typegoose';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 

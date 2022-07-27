@@ -8,7 +8,7 @@ To create a custom query service to add your own methods to you can extend the `
 import { Model } from 'mongoose';
 import { QueryService } from '@codeshine/nestjs-query-core';
 import { InjectModel } from '@nestjs/mongoose';
-import { MongooseQueryService } from '@codeshine/nestjs-query-query-mongoose';
+import { MongooseQueryService } from '@codeshine/nestjs-query-mongoose';
 import { TodoItemEntity } from './entity/todo-item.entity';
 
 @QueryService(TodoItemEntity)
@@ -33,8 +33,8 @@ export class TodoItemService extends MongooseQueryService<TodoItemEntity> {
 To use the custom service in the auto-generated resolver you can specify the `ServiceClass` option.
 
 ```ts title="todo-item.module.ts" {12,16}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-query-mongoose';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-mongoose';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

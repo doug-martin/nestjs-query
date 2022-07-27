@@ -10,7 +10,7 @@ import {
   AuthorizerFilter,
   ConnectionType,
   OperationGroup,
-} from '@codeshine/nestjs-query-query-graphql';
+} from '@codeshine/nestjs-query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';

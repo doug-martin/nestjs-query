@@ -8,7 +8,7 @@ Let's assume we have the following `TodoItem` service. For the sake of completen
 
 ```ts title="todo-item.service.ts"
 import { InjectQueryService, QueryService } from '@codeshine/nestjs-query-core';
-import { TypeOrmQueryService } from '@codeshine/nestjs-query-query-typeorm';
+import { TypeOrmQueryService } from '@codeshine/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';

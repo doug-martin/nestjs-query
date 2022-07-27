@@ -27,11 +27,11 @@ Check out the [installation docs](./install.md)
 Nestjs-query is composed of multiple packages
 
 - [`@codeshine/nestjs-query-core`](https://github.com/doug-martin/nestjs-query/tree/master/packages/core) - Defines all interfaces and utility types implemented by the other packages.
-- [`@codeshine/nestjs-query-query-graphql`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-graphql) - Package that provides the graphql resolver and decorators for crud endpoints.
-- [`@codeshine/nestjs-query-query-typeorm`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-typeorm) - Package that implements a Typeorm service that can be used by itself or with the graphql resolver provided by `@codeshine/nestjs-query-query-graphql`.
-- [`@codeshine/nestjs-query-query-sequelize`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-sequelize) - Package that implements a Sequelize service that can be used by itself or with the graphql resolver provided by `@codeshine/nestjs-query-query-graphql`.
-- [`@codeshine/nestjs-query-query-mongoose`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-mongoose) - Package that implements a Mongoose service that can be used by itself or with the graphql resolver provided by `@codeshine/nestjs-query-query-graphql`.
-- [`@codeshine/nestjs-query-query-typegoose`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-typegoose) - Package that implements a Typegoose service that can be used by itself or with the graphql resolver provided by `@codeshine/nestjs-query-query-graphql`.
+- [`@codeshine/nestjs-query-graphql`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-graphql) - Package that provides the graphql resolver and decorators for crud endpoints.
+- [`@codeshine/nestjs-query-typeorm`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-typeorm) - Package that implements a Typeorm service that can be used by itself or with the graphql resolver provided by `@codeshine/nestjs-query-graphql`.
+- [`@codeshine/nestjs-query-sequelize`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-sequelize) - Package that implements a Sequelize service that can be used by itself or with the graphql resolver provided by `@codeshine/nestjs-query-graphql`.
+- [`@codeshine/nestjs-query-mongoose`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-mongoose) - Package that implements a Mongoose service that can be used by itself or with the graphql resolver provided by `@codeshine/nestjs-query-graphql`.
+- [`@codeshine/nestjs-query-typegoose`](https://github.com/doug-martin/nestjs-query/tree/master/packages/query-typegoose) - Package that implements a Typegoose service that can be used by itself or with the graphql resolver provided by `@codeshine/nestjs-query-graphql`.
 
 ## Migration Guides
 

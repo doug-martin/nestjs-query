@@ -1,4 +1,4 @@
-import { CursorConnectionType } from '@codeshine/nestjs-query-query-graphql';
+import { CursorConnectionType } from '@codeshine/nestjs-query-graphql';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication, ValidationPipe } from '@nestjs/common';

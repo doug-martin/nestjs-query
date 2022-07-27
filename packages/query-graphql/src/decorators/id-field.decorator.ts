@@ -22,7 +22,7 @@ export interface IDFieldDescriptor {
  * In the following DTO `id`, `title` and `completed` are filterable.
  *
  * ```ts
- * import { IDField } from '@codeshine/nestjs-query-query-graphql';
+ * import { IDField } from '@codeshine/nestjs-query-graphql';
  * import { ObjectType, ID } from '@nestjs/graphql';
  *
  * @ObjectType('TodoItem')

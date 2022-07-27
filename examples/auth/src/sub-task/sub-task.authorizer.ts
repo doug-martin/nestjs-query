@@ -1,4 +1,4 @@
-import { Authorizer, AuthorizationContext } from '@codeshine/nestjs-query-query-graphql';
+import { Authorizer, AuthorizationContext } from '@codeshine/nestjs-query-graphql';
 import { Filter } from '@codeshine/nestjs-query-core';
 import { UserContext } from '../auth/auth.interfaces';
 import { SubTaskDTO } from './dto/sub-task.dto';

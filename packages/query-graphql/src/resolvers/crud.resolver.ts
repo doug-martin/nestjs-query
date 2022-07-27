@@ -101,7 +101,7 @@ function extractDeleteResolverOpts<DTO>(
  * [[UpdateResolver]], and [[DeleteResolver]].
  *
  * ```ts
- * import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
+ * import { CRUDResolver } from '@codeshine/nestjs-query-graphql';
  * import { Resolver } from '@nestjs/graphql';
  * import { TodoItemDTO } from './dto/todo-item.dto';
  * import { TodoItemService } from './todo-item.service';

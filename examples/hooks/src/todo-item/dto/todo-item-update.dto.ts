@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsBoolean, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
-import { BeforeUpdateMany, BeforeUpdateOne } from '@codeshine/nestjs-query-query-graphql';
+import { BeforeUpdateMany, BeforeUpdateOne } from '@codeshine/nestjs-query-graphql';
 import { UpdatedByHook } from '../../hooks';
 
 @InputType('TodoItemUpdate')

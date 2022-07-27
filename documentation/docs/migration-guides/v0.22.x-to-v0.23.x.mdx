@@ -152,7 +152,7 @@ Old way
 
 ```ts
 import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
-import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver } from '@codeshine/nestjs-query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -186,7 +186,7 @@ New
 
 ```ts
 import { Filter, InjectQueryService, mergeFilter, mergeQuery, QueryService } from '@codeshine/nestjs-query-core';
-import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@codeshine/nestjs-query-query-graphql';
+import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@codeshine/nestjs-query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -229,12 +229,7 @@ would not have been possible previously)
 
 ```ts {14-15}
 import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@codeshine/nestjs-query-core';
-import {
-  HookTypes,
-  HookInterceptor,
-  MutationHookArgs,
-  UpdateManyResponseType,
-} from '@codeshine/nestjs-query-query-graphql';
+import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@codeshine/nestjs-query-graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -326,14 +321,14 @@ export class TodoItemInputDTO {
 In previous versions of `nestjs-query` you could extend `CRUDResolver` but there was not a way to set up the
 appropriate providers for many of the newer features (hooks, authorizers etc.).
 
-In the latest version you now have the option to register your DTOs with `@codeshine/nestjs-query-query-graphql` without it
+In the latest version you now have the option to register your DTOs with `@codeshine/nestjs-query-graphql` without it
 generating a resolver automatically.
 
 In this example we create a custom resolver that extends `CRUDResolver`.
 
 ```ts title="todo-item.resolver.ts"
 import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
-import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver } from '@codeshine/nestjs-query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -351,8 +346,8 @@ instead you can specify the `dtos` option which just takes in `DTOClass`, `Creat
 set up all of additional providers to hooks, authorizers and other features.
 
 ```ts title="todo-item.module.ts" {9,13}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

@@ -51,8 +51,8 @@ The `guards` option will ensure that all queries and mutations will have the `gu
 the request.
 
 ```ts title="todo-item/todo-item.module.ts" {19}
-import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';
 import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
@@ -80,7 +80,7 @@ export class TodoItemModule {}
 
 ## @Authorize Decorator
 
-The `@codeshine/nestjs-query-query-graphql` package includes an `@Authorize` decorator that allows you to add additional filter
+The `@codeshine/nestjs-query-graphql` package includes an `@Authorize` decorator that allows you to add additional filter
 criteria to authorize an incoming request.
 
 The `@Authorize` decorator accepts the following types.
@@ -116,7 +116,7 @@ import {
   FilterableConnection,
   FilterableRelation,
   Authorize,
-} from '@codeshine/nestjs-query-query-graphql';
+} from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 import { TagDTO } from '../../tag/dto/tag.dto';
@@ -186,7 +186,7 @@ For example given the following `SubTaskDTO` definition whenever the `subTasks` 
 `todoItem`, only `subTasks` that belong to the user will be returned.
 
 ```ts title="sub-task/dto/sub-task.dto.ts"
-import { FilterableField, IDField, FilterableRelation, Authorize } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, IDField, FilterableRelation, Authorize } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 import { UserContext } from '../../auth/auth.interfaces';
@@ -261,7 +261,7 @@ authorizers that depends on other services.
 
 ```ts title='sub-task/sub-task.authorizer.ts'
 import { Injectable } from '@nestjs/common';
-import { Authorizer } from '@codeshine/nestjs-query-query-graphql';
+import { Authorizer } from '@codeshine/nestjs-query-graphql';
 import { Filter } from '@codeshine/nestjs-query-core';
 import { UserContext } from '../auth/auth.interfaces';
 import { SubTaskDTO } from './dto/sub-task.dto';
@@ -284,7 +284,7 @@ export class SubTaskAuthorizer implements CustomAuthorizer<SubTaskDTO> {
 To use the `SubTaskAuthorizer` you only need to provide it as an argument to the `@Authorize` decorator
 
 ```ts title='sub-task/sub-task.dto.ts' {8}
-import { Authorize, FilterableField, IDField, FilterableRelation } from '@codeshine/nestjs-query-query-graphql';
+import { Authorize, FilterableField, IDField, FilterableRelation } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 import { UserDTO } from '../../user/user.dto';
@@ -339,7 +339,7 @@ In this example there are two important additions:
 
 ```ts title="todo-item/todo-item.resolver.ts" {9,17}
 import { Filter, InjectQueryService, mergeFilter, mergeQuery, QueryService } from '@codeshine/nestjs-query-core';
-import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@codeshine/nestjs-query-query-graphql';
+import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@codeshine/nestjs-query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -379,7 +379,7 @@ In this example the `Authorizer` is injected as a `readonly` property you can th
 
 ```ts title="todo-item/todo-item.resolver.ts"
 import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
-import { CRUDResolver, InjectAuthorizer } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver, InjectAuthorizer } from '@codeshine/nestjs-query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -413,7 +413,7 @@ In this case we can make use of the second parameter of the `authorize` function
 
 ```ts title='sub-task/sub-task.authorizer.ts'
 import { Injectable } from '@nestjs/common';
-import { CustomAuthorizer } from '@codeshine/nestjs-query-query-graphql';
+import { CustomAuthorizer } from '@codeshine/nestjs-query-graphql';
 import { Filter } from '@codeshine/nestjs-query-core';
 import { UserContext } from '../auth/auth.interfaces';
 import { SubTaskDTO } from './dto/sub-task.dto';

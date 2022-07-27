@@ -172,7 +172,7 @@ In order to use the decorator you will need to use the module that comes with th
 <TabItem value="typeorm">
 
 ```ts title="todo-item.module.ts" {8}
-import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
@@ -188,7 +188,7 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts title="todo-item.module.ts" {8}
-import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
@@ -204,7 +204,7 @@ export class TodoItemModule {}
 <TabItem value="mongoose">
 
 ```ts title="todo-item.module.ts" {9-11}
-import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-query-mongoose';
+import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-mongoose';
 import { Module } from '@nestjs/common';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
@@ -224,7 +224,7 @@ export class TodoItemModule {}
 <TabItem value="typegoose">
 
 ```ts title="todo-item.module.ts" {8}
-import { NestjsQueryTypegooseModule } from '@codeshine/nestjs-query-query-typegoose';
+import { NestjsQueryTypegooseModule } from '@codeshine/nestjs-query-typegoose';
 import { Module } from '@nestjs/common';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
@@ -245,7 +245,7 @@ Once you have imported the correct module, use `@InjectQueryService` decorator t
 
 ```ts title="todo-item.resolver.ts" {10}
 import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
-import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
+import { CRUDResolver } from '@codeshine/nestjs-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -621,7 +621,7 @@ export class SubTaskEntity extends Model<SubTaskEntity, Partial<SubTaskEntity>> 
 Then we could add the `todoItemId` to the SubTaskDTO.
 
 ```ts title="sub-task.dto.ts" {24-26}
-import { FilterableField, IDField } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, IDField } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('SubTask')
@@ -685,7 +685,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { ObjectType, ID } from '@nestjs/graphql';
-import { FilterableField, IDField, Relation } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, IDField, Relation } from '@codeshine/nestjs-query-graphql';
 import { TodoItem } from '../todo-item/todo-item';
 
 @ObjectType()
@@ -746,7 +746,7 @@ import {
   AutoIncrement,
   PrimaryKey,
 } from 'sequelize-typescript';
-import { FilterableField, IDField } from '@codeshine/nestjs-query-query-graphql';
+import { FilterableField, IDField } from '@codeshine/nestjs-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItem } from '../todo-item/entity/todo-item';
 

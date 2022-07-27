@@ -9,42 +9,42 @@ sidebar_label: Install
 npm i @codeshine/nestjs-query-core @nestjs/common class-transformer
 ```
 
-## @codeshine/nestjs-query-query-graphql
+## @codeshine/nestjs-query-graphql
 
 ```sh
-npm i @codeshine/nestjs-query-query-graphql @nestjs/common @nestjs/graphql graphql graphql-subscriptions class-transformer class-validator dataloader
+npm i @codeshine/nestjs-query-graphql @nestjs/common @nestjs/graphql graphql graphql-subscriptions class-transformer class-validator dataloader
 ```
 
-**NOTE** `@codeshine/nestjs-query-query-graphql` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
+**NOTE** `@codeshine/nestjs-query-graphql` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
 
-## @codeshine/nestjs-query-query-typeorm
+## @codeshine/nestjs-query-typeorm
 
 ```sh
-npm i @codeshine/nestjs-query-query-typeorm @nestjs/common @nestjs/typeorm class-transformer typeorm
+npm i @codeshine/nestjs-query-typeorm @nestjs/common @nestjs/typeorm class-transformer typeorm
 ```
 
-**NOTE** `@codeshine/nestjs-query-query-typeorm` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
+**NOTE** `@codeshine/nestjs-query-typeorm` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
 
-## @codeshine/nestjs-query-query-sequelize
+## @codeshine/nestjs-query-sequelize
 
 ```sh
-npm i @codeshine/nestjs-query-query-sequelize @nestjs/common @nestjs/sequelize sequelize sequelize-typescript
+npm i @codeshine/nestjs-query-sequelize @nestjs/common @nestjs/sequelize sequelize sequelize-typescript
 ```
 
-**NOTE** `@codeshine/nestjs-query-query-sequelize` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
+**NOTE** `@codeshine/nestjs-query-sequelize` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
 
-## @codeshine/nestjs-query-query-mongoose
+## @codeshine/nestjs-query-mongoose
 
 ```sh
-npm i @codeshine/nestjs-query-query-mongoose @nestjs/common @nestjs/mongoose mongoose mongodb
+npm i @codeshine/nestjs-query-mongoose @nestjs/common @nestjs/mongoose mongoose mongodb
 ```
 
-**NOTE** `@codeshine/nestjs-query-query-mongoose` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
+**NOTE** `@codeshine/nestjs-query-mongoose` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
 
-## @codeshine/nestjs-query-query-typegoose
+## @codeshine/nestjs-query-typegoose
 
 ```sh
-npm i @codeshine/nestjs-query-query-typegoose @nestjs/common @typegoose/typegoose nestjs-typegoose mongoose mongodb
+npm i @codeshine/nestjs-query-typegoose @nestjs/common @typegoose/typegoose nestjs-typegoose mongoose mongodb
 ```
 
-**NOTE** `@codeshine/nestjs-query-query-typegoose` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
+**NOTE** `@codeshine/nestjs-query-typegoose` has opted for peer dependencies to follow nest conventions and to prevent duplicate installations of packages.
