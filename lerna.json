@@ -2,6 +2,7 @@
   "tagVersionPrefix": "v",
   "packages": [
     "packages/core",
+    "packages/query-graphql",
     "packages/query-typeorm"
   ],
   "command": {
