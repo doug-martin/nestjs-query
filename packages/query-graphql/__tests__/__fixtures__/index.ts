@@ -1,7 +1,7 @@
 import { printSchema } from 'graphql';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchemaBuilderModule, GraphQLSchemaFactory } from '@nestjs/graphql';
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { instance, mock } from 'ts-mockito';
 import { PubSub } from 'graphql-subscriptions';
 import { Authorizer, pubSubToken } from '../../src';

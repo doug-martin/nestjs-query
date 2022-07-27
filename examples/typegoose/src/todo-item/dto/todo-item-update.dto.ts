@@ -5,7 +5,7 @@ import {
   BeforeUpdateOne,
   UpdateManyInputType,
   UpdateOneInputType,
-} from '@nestjs-query/query-graphql';
+} from '@codeshine/nestjs-query-query-graphql';
 import { GqlContext } from '../../auth.guard';
 import { getUserName } from '../../helpers';
 import { TodoItemDTO } from './todo-item.dto';

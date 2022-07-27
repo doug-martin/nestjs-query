@@ -1,4 +1,4 @@
-import { Class, QueryService } from '@nestjs-query/core';
+import { Class, QueryService } from '@codeshine/nestjs-query-core';
 import { ServiceResolver } from '../resolver.interface';
 import { AggregateRelationsMixin } from './aggregate-relations.resolver';
 import { ReadRelationsMixin } from './read-relations.resolver';

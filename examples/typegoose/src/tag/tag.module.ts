@@ -1,6 +1,6 @@
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
 import { Module } from '@nestjs/common';
-import { NestjsQueryTypegooseModule } from '@nestjs-query/query-typegoose';
+import { NestjsQueryTypegooseModule } from '@codeshine/nestjs-query-query-typegoose';
 import { TagInputDTO } from './dto/tag-input.dto';
 import { TagDTO } from './dto/tag.dto';
 import { TagEntity } from './tag.entity';

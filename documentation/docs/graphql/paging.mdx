@@ -11,7 +11,7 @@ cover the different paging strategies and their applicable use cases.
 The following examples are based on the following `TodoItemDTO`
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -31,7 +31,6 @@ export class TodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-
 ```
 
 ## Cursor Based Paging
@@ -80,28 +79,28 @@ type TodoItem {
 
 By default all cursors will use a form of offset based paging to back cursors.
 
-|Pros|Cons|
-|----|----|
-|Allow for recursive relation paging|Pages and nodes may change between queries|
-|Straight forward to implement|Inconsistent Sorting - natural sorting is used by default|
-||Queries grow more inefficient as you go through more pages|
+| Pros                                | Cons                                                       |
+| ----------------------------------- | ---------------------------------------------------------- |
+| Allow for recursive relation paging | Pages and nodes may change between queries                 |
+| Straight forward to implement       | Inconsistent Sorting - natural sorting is used by default  |
+|                                     | Queries grow more inefficient as you go through more pages |
 
 ### Key Set Based Cursor
 
 You have the option to specify a key set on your DTO which will replace the `offset` with a `where` clause. A keyset
 is a set of fields that uniquely identify a record (e.g. `id`).
 
-|Pros|Cons|
-|----|----|
-|Consistent Results - All cursors uniquely identify a record allowing for deterministic before/after pages|Unable to do recursive paging for relations|
-|Stable Sorting - All results will be deterministically sorted|A unique key set must be specified|
-|Consistent performance with correct indexes in place|Unable to jump to arbitrary page|
-|Suitable for datasets of any size||
+| Pros                                                                                                      | Cons                                        |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Consistent Results - All cursors uniquely identify a record allowing for deterministic before/after pages | Unable to do recursive paging for relations |
+| Stable Sorting - All results will be deterministically sorted                                             | A unique key set must be specified          |
+| Consistent performance with correct indexes in place                                                      | Unable to jump to arbitrary page            |
+| Suitable for datasets of any size                                                                         |                                             |
 
 To enable key set based paging all you need to do is decorate your `DTO` with the `@KeySet` decorator.
 
 ```ts
-import { FilterableField, IDField, KeySet } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -125,7 +124,6 @@ export class TodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-
 ```
 
 #### Sorting and Key set cursors
@@ -155,20 +153,20 @@ If we only compared on the keyset `[id]` our pages would no longer be sorted pro
 `completed` you would not be able to page.
 
 We solve this problem by encoding information about the each field in the sort as well as the key set fields into the
- cursor so we can page properly.
+cursor so we can page properly.
 
- In the above example the filter from the cursor (when paging forward) would be something like
+In the above example the filter from the cursor (when paging forward) would be something like
 
- ```
- WHERE (completed > ? OR (completed = ? AND id > ?))
- ```
+```
+WHERE (completed > ? OR (completed = ? AND id > ?))
+```
 
 ### Relation Connections
 
 Key set paging will not apply to relations because they are recursive by nature.
 
 For example if you query for multiple `TodoItems` and their `subTasks` if key set paging was used for the `subTasks`
-connection  the cursor from one `todoItems` `subTasks` may not be applicable to all `todoItems`
+connection the cursor from one `todoItems` `subTasks` may not be applicable to all `todoItems`
 
 For example, assume you have the following todo items and subTasks
 
@@ -201,14 +199,13 @@ If you ran the following graphql query
     edges {
       node {
         title
-        subTasks(paging: {first: 2, after: "ghi"}){
+        subTasks(paging: { first: 2, after: "ghi" }) {
           title
         }
       }
     }
   }
 }
-
 ```
 
 The resulting query would look for all subTasks with an id > 3 breaking paging for `Todo 1`, for this reason the
@@ -219,6 +216,7 @@ The resulting query would look for all subTasks with an id > 3 breaking paging f
 To page with cursors it works the same way for all strategies.
 
 In this example we'll fetch the first 2 records.
+
 <Tabs
   defaultValue="graphql"
   values={[
@@ -230,15 +228,15 @@ In this example we'll fetch the first 2 records.
 
 ```graphql
 {
-  todoItems(paging: {first: 2}) {
-    pageInfo{
+  todoItems(paging: { first: 2 }) {
+    pageInfo {
       hasNextPage
       hasPreviousPage
       startCursor
       endCursor
     }
-    edges{
-      node{
+    edges {
+      node {
         id
         title
         completed
@@ -303,7 +301,7 @@ Lets take a look the `pageInfo` from the previous example
     "hasPreviousPage": false,
     "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
     "endCursor": "YXJyYXljb25uZWN0aW9uOjE="
-  },
+  }
 }
 ```
 
@@ -380,6 +378,7 @@ Notice how `hasNextPage` is `true` and there is an `endCursor` that can be used 
   }
 }
 ```
+
 </TabItem>
 </Tabs>
 
@@ -457,6 +456,7 @@ previous example and set `last` to 2.
   }
 }
 ```
+
 </TabItem>
 </Tabs>
 
@@ -488,17 +488,17 @@ type TodoItem {
 }
 ```
 
-|Pros|Cons|
-|----|----|
-|Easy to understand|unstable - pages and nodes may change between queries|
-|Able to jump to arbitrary pages|Inconsistent Sorting - natural sorting is used in the strategy|
-||Queries grow more inefficient as you go through more pages|
-||State must be maintained in the client to know last limit and offset in order to page|
+| Pros                            | Cons                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| Easy to understand              | unstable - pages and nodes may change between queries                                 |
+| Able to jump to arbitrary pages | Inconsistent Sorting - natural sorting is used in the strategy                        |
+|                                 | Queries grow more inefficient as you go through more pages                            |
+|                                 | State must be maintained in the client to know last limit and offset in order to page |
 
 To enable OFFSET based paging all you need to do is set the `pagingStrategy` option using the `@QueryOptions` decorator.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -522,10 +522,10 @@ export class TodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-
 ```
 
 In this example we'll fetch the first 2 records.
+
 <Tabs
   defaultValue="graphql"
   values={[
@@ -615,8 +615,6 @@ In this example we'll also pass in an offset to fetch the next 2 records.
     }
   }
 }
-
-
 ```
 
 </TabItem>
@@ -664,15 +662,15 @@ This strategy is only recommended if you are sure your dataset is small.
 
 When using the `NONE` paging strategy the `paging` argument is removed and all methods will return an `ArrayConnection`.
 
-|Pros|Cons|
-|----|----|
-|All data is returned at once|Not suitable for large datasets|
+| Pros                         | Cons                            |
+| ---------------------------- | ------------------------------- |
+| All data is returned at once | Not suitable for large datasets |
 
 To disable paging all you can set the `pagingStrategy` option using the `@QueryOptions` decorator to
 `PagingStrategies.NONE`.
 
 ```ts title="todo-item.dto.ts" {5}
-import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, QueryOptions, PagingStrategies } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -696,7 +694,6 @@ export class TodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-
 ```
 
 When using the strategy queries that return multiple records will return an array instead of a connection.
@@ -722,10 +719,8 @@ When using the strategy queries that return multiple records will return an arra
 }
 ```
 
-
 </TabItem>
 <TabItem value="response">
-
 
 ```json
 {
@@ -775,4 +770,3 @@ When using the strategy queries that return multiple records will return an arra
 </Tabs>
 
 ---
-

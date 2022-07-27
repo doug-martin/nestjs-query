@@ -1,4 +1,4 @@
-import { Class, QueryService } from '@nestjs-query/core';
+import { Class, QueryService } from '@codeshine/nestjs-query-core';
 import { Parent, Resolver } from '@nestjs/graphql';
 import { getDTONames } from '../../common';
 import { ResolverField } from '../../decorators';

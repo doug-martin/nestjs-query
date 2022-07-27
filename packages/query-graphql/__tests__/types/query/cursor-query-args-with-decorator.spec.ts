@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { SortDirection } from '@nestjs-query/core';
+import { SortDirection } from '@codeshine/nestjs-query-core';
 import {
   Args,
   ArgsType,

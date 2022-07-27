@@ -1,4 +1,4 @@
-import { Filter, Paging, Query, SortField, getFilterFields, AggregateQuery } from '@nestjs-query/core';
+import { Filter, Paging, Query, SortField, getFilterFields, AggregateQuery } from '@codeshine/nestjs-query-core';
 import {
   DeleteQueryBuilder,
   QueryBuilder,

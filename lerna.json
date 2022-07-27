@@ -1,7 +1,6 @@
 {
   "tagVersionPrefix": "v",
   "packages": [
-    "examples",
     "packages/*"
   ],
   "command": {

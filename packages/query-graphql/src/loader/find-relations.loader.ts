@@ -1,4 +1,4 @@
-import { Class, Filter, QueryService } from '@nestjs-query/core';
+import { Class, Filter, QueryService } from '@codeshine/nestjs-query-core';
 import { NestjsQueryDataloader } from './relations.loader';
 
 export type FindRelationsArgs<DTO, Relation> = { dto: DTO; filter?: Filter<Relation> };

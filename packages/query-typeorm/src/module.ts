@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DynamicModule } from '@nestjs/common';
 import { Connection, ConnectionOptions } from 'typeorm';

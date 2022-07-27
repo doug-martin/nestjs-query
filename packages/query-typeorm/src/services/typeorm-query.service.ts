@@ -13,7 +13,7 @@ import {
   UpdateOneOptions,
   DeleteOneOptions,
   Filterable,
-} from '@nestjs-query/core';
+} from '@codeshine/nestjs-query-core';
 import { Repository, DeleteResult } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DeepPartial as TypeOrmDeepPartial } from 'typeorm/common/DeepPartial';
@@ -62,7 +62,7 @@ export class TypeOrmQueryService<Entity>
   }
 
   /**
-   * Query for multiple entities, using a Query from `@nestjs-query/core`.
+   * Query for multiple entities, using a Query from `@codeshine/nestjs-query-core`.
    *
    * @example
    * ```ts
@@ -171,7 +171,7 @@ export class TypeOrmQueryService<Entity>
   }
 
   /**
-   * Update multiple entities with a `@nestjs-query/core` Filter.
+   * Update multiple entities with a `@codeshine/nestjs-query-core` Filter.
    *
    * @example
    * ```ts
@@ -213,7 +213,7 @@ export class TypeOrmQueryService<Entity>
   }
 
   /**
-   * Delete multiple records with a `@nestjs-query/core` `Filter`.
+   * Delete multiple records with a `@codeshine/nestjs-query-core` `Filter`.
    *
    * @example
    *
@@ -254,7 +254,7 @@ export class TypeOrmQueryService<Entity>
   }
 
   /**
-   * Restores multiple records with a `@nestjs-query/core` `Filter`.
+   * Restores multiple records with a `@codeshine/nestjs-query-core` `Filter`.
    *
    * @example
    *

@@ -1,5 +1,5 @@
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { AuthGuard } from '../auth/auth.guard';

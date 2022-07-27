@@ -1,4 +1,9 @@
-import { FilterableField, PagingStrategies, QueryOptions, UnPagedRelation } from '@nestjs-query/query-graphql';
+import {
+  FilterableField,
+  PagingStrategies,
+  QueryOptions,
+  UnPagedRelation,
+} from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 

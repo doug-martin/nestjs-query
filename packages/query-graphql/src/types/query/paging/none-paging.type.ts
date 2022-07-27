@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { PagingStrategies } from './constants';
 import { NonePagingType } from './interfaces';
 

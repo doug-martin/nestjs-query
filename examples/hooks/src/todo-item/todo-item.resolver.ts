@@ -1,5 +1,10 @@
-import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@nestjs-query/core';
-import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@nestjs-query/query-graphql';
+import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@codeshine/nestjs-query-core';
+import {
+  HookTypes,
+  HookInterceptor,
+  MutationHookArgs,
+  UpdateManyResponseType,
+} from '@codeshine/nestjs-query-query-graphql';
 import { UseInterceptors, UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';

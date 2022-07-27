@@ -1,5 +1,5 @@
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
 import { Module } from '@nestjs/common';
 import { AuthGuard } from '../auth.guard';
 import { TodoItemInputDTO } from './dto/todo-item-input.dto';

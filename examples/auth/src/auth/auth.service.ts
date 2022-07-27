@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectQueryService, QueryService } from '@nestjs-query/core';
+import { InjectQueryService, QueryService } from '@codeshine/nestjs-query-core';
 import { UserEntity } from '../user/user.entity';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { AuthenticatedUser, JwtPayload } from './auth.interfaces';

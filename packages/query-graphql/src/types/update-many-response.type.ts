@@ -1,4 +1,4 @@
-import { Class, UpdateManyResponse } from '@nestjs-query/core';
+import { Class, UpdateManyResponse } from '@codeshine/nestjs-query-core';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 /** @internal */

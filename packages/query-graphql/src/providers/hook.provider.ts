@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common';
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { CRUDAutoResolverOpts } from './resolver.provider';
 import { getHookForType } from '../decorators';
 import { getHookToken, HookTypes } from '../hooks';

@@ -1,5 +1,5 @@
 import { SelectQueryBuilder } from 'typeorm';
-import { AggregateQuery, AggregateResponse } from '@nestjs-query/core';
+import { AggregateQuery, AggregateResponse } from '@codeshine/nestjs-query-core';
 import { BadRequestException } from '@nestjs/common';
 import { camelCase } from 'camel-case';
 

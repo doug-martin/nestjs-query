@@ -1,4 +1,4 @@
-import { AggregateQuery, Class, QueryService, Filter, AggregateResponse } from '@nestjs-query/core';
+import { AggregateQuery, Class, QueryService, Filter, AggregateResponse } from '@codeshine/nestjs-query-core';
 import { NestjsQueryDataloader } from './relations.loader';
 
 type AggregateRelationsArgs<DTO, Relation> = {

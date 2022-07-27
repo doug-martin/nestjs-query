@@ -1,4 +1,4 @@
-import { Class, NoOpQueryService, QueryService } from '@nestjs-query/core';
+import { Class, NoOpQueryService, QueryService } from '@codeshine/nestjs-query-core';
 import { ObjectType } from '@nestjs/graphql';
 import { FilterableField } from '../src/decorators';
 import { createResolvers } from '../src/providers';

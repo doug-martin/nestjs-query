@@ -13,8 +13,9 @@ import TabItem from '@theme/TabItem';
 ### `@InjectQueryService`
 
 In `v0.11.x` an new decorator was added `@InjectQueryService`, this decorator replaces the ORM specific decorators:
-* `@InjectTypeOrmQueryService`
-* `@InjectSequelizeQueryService`
+
+- `@InjectTypeOrmQueryService`
+- `@InjectSequelizeQueryService`
 
 To migrate replace all `@InjectTypeOrmQueryService` and `@InjectSequelizeQueryService` with `@InjectQueryService`.
 
@@ -23,8 +24,8 @@ You still need to import the `NestjsQueryTypeOrmModule` or `NestjsQuerySequelize
 :::
 
 ```ts
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
+import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -39,7 +40,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 
 ## Relation Decorators
 
-In `v0.11.x` two new decorators were introduced from the `@nestjs-query/query-graphql` package. The `@Relation` and `@Connection` allow specifying relations on the DTO rather than passing them in as options to the `CRUDResolver`.
+In `v0.11.x` two new decorators were introduced from the `@codeshine/nestjs-query-query-graphql` package. The `@Relation` and `@Connection` allow specifying relations on the DTO rather than passing them in as options to the `CRUDResolver`.
 
 ### @Relation
 
@@ -48,7 +49,7 @@ The `@Relation` decorator allow specifying a single relation (e.g. one-to-one, m
 In this example we add a relation for a `todoItem`.
 
 ```ts {6}
-import { FilterableField, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, Relation } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../todo-item/todo-item.dto.ts';
 
@@ -82,9 +83,9 @@ The `@Connection` decorator allow specifying a connection relation (e.g. many-to
 In this example we add a connection for `subTasks`.
 
 ```ts {6}
-import { FilterableField, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, Connection } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
-import { SubTaskDTO } from '../sub-task/sub-task.dto'
+import { SubTaskDTO } from '../sub-task/sub-task.dto';
 
 @ObjectType('TodoItem')
 @Connection('subTasks', () => SubTaskDTO, { disableRemove: true })
@@ -108,7 +109,7 @@ export class TodoItemDTO {
 
 ## Auto Generated Resolvers
 
-In `v0.11.x` the `@nestjs-query/query-graph` package is now able to automatically create your resolvers.
+In `v0.11.x` the `@codeshine/nestjs-query-query-graph` package is now able to automatically create your resolvers.
 
 To start using this feature update your module to import the `NestjsQueryGraphQLModule`
 
@@ -127,8 +128,8 @@ When used with the new relation decorators, you can remove a lot of boiler plate
 <TabItem value="typeorm">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -148,8 +149,8 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -176,14 +177,13 @@ Be sure to add the `NestjsQueryTypeOrmModule` or `NestjsQuerySequelizeModule` to
 
 To read more about the auto-generated resolvers check out the [resolvers docs](/docs/graphql/resolvers)
 
-
 ### Example
 
 #### Previously
 
 ```ts title="todo-item.resolver.ts"
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
+import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemInputDTO } from './todo-item.input';
 import { TodoItemDTO } from './todo-item.dto';
@@ -191,9 +191,7 @@ import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver()
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
-  constructor(
-      @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
-  ) {
+  constructor(@InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>) {
     super(service);
   }
 }
@@ -210,7 +208,7 @@ export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
 <TabItem value="typeorm">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
@@ -220,14 +218,13 @@ import { TodoItemResolver } from './todo-item.resolver';
   imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
 })
 export class TodoItemModule {}
-
 ```
 
 </TabItem>
 <TabItem value="sequelize">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemEntity } from './todo-item.entity';
 import { TodoItemResolver } from './todo-item.resolver';
@@ -237,12 +234,10 @@ import { TodoItemResolver } from './todo-item.resolver';
   imports: [NestjsQuerySequelizeModule.forFeature([TodoItemEntity])],
 })
 export class TodoItemModule {}
-
 ```
 
 </TabItem>
 </Tabs>
-
 
 #### New
 
@@ -257,8 +252,8 @@ export class TodoItemModule {}
 <TabItem value="typeorm">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -278,8 +273,8 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -297,5 +292,3 @@ export class TodoItemModule {}
 
 </TabItem>
 </Tabs>
-
-

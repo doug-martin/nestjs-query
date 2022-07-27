@@ -6,8 +6,8 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.spec.ts'],
   testEnvironment: 'node',
   moduleNameMapper: {
-    '^@nestjs-query/(.*)$': '<rootDir>/packages/$1/src',
+    '^@codeshine/nestjs-query-(.*)$': '<rootDir>/packages/$1/src',
   },
-  "setupFilesAfterEnv": ["jest-extended"],
-  snapshotSerializers: ['jest-snapshot-serializer-raw/always']
+  setupFilesAfterEnv: ['jest-extended'],
+  snapshotSerializers: ['jest-snapshot-serializer-raw/always'],
 };

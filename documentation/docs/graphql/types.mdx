@@ -5,13 +5,13 @@ title: Types
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-`@nestjs-query/query-graphql` provides a number of types. Most will be automatically generated for you when you create a
- resolver. However, you can use many of the types in your own code for custom endpoints.
+`@codeshine/nestjs-query-query-graphql` provides a number of types. Most will be automatically generated for you when you create a
+resolver. However, you can use many of the types in your own code for custom endpoints.
 
 The following examples are based on the following `TodoItemDTO`
 
 ```ts
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -31,7 +31,6 @@ export class TodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-
 ```
 
 ## ArgsTypes
@@ -41,20 +40,22 @@ export class TodoItemDTO {
 Args type used in `read` endpoints to allow `filtering`, `paging`, and `sorting`.
 
 The `QueryArgsType` will generate an `ArgsType` that will require the user to provide three arguments.
-* `filter?` - A filter that should be used to find records to update. See [FilterType](#filtertype)
-* `paging?` - Options to page of result.
-* `sorting?` - Optional array to allow sorting of results. See [SortType](#sorttype).
+
+- `filter?` - A filter that should be used to find records to update. See [FilterType](#filtertype)
+- `paging?` - Options to page of result.
+- `sorting?` - Optional array to allow sorting of results. See [SortType](#sorttype).
 
 #### Usage
 
 ```ts
-import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@codeshine/nestjs-query-query-graphql';
 import { ArgsType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @ArgsType()
 export class TodoItemQuery extends QueryArgsType(TodoItemDTO) {}
 ```
+
 ---
 
 ## ObjectTypes
@@ -76,17 +77,15 @@ where the end user should be able to page through the results.
 <TabItem value="code">
 
 ```ts
-import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@codeshine/nestjs-query-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
-export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
+export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO);
 export const TodoItemConnection = TodoItemQueryArgs.ConnectionType;
 ```
 
-
 </TabItem>
 <TabItem value="schema">
-
 
 ```graphql
 scalar ConnectionCursor
@@ -130,15 +129,13 @@ Response from `updateMany` mutations.
 <TabItem value="code">
 
 ```ts
-import { UpdateManyResponseType } from '@nestjs-query/query-graphql';
+import { UpdateManyResponseType } from '@codeshine/nestjs-query-query-graphql';
 
-export const UpdateManyResponse = UpdateManyResponseType()
+export const UpdateManyResponse = UpdateManyResponseType();
 ```
-
 
 </TabItem>
 <TabItem value="schema">
-
 
 ```graphql
 type UpdateManyResponse {
@@ -167,15 +164,13 @@ Response from `deleteMany` mutations.
 <TabItem value="code">
 
 ```ts
-import { DeleteManyResponseType } from '@nestjs-query/query-graphql';
+import { DeleteManyResponseType } from '@codeshine/nestjs-query-query-graphql';
 
-export const UpdateManyResponse = DeleteManyResponseType()
+export const UpdateManyResponse = DeleteManyResponseType();
 ```
-
 
 </TabItem>
 <TabItem value="schema">
-
 
 ```graphql
 type DeleteManyResponse {
@@ -192,13 +187,13 @@ type DeleteManyResponse {
 
 ### FilterType
 
-GraphQL implementation of the `@nestjs-query/core` `Filter` type.
+GraphQL implementation of the `@codeshine/nestjs-query-core` `Filter` type.
 
 The `FilterType` is dynamically created based on the fields in the `DTO` annotated with [@FilterableField](./dtos.mdx#filterablefield).
 
 Along with the dynamically create fields filter also has the following static fields:
 
-* `and` - Allows for joining multiple `Filters` with using an `AND` condition.
+- `and` - Allows for joining multiple `Filters` with using an `AND` condition.
 
   For example, find all todo items that `start with 'Foo' AND end in 'Bar'`.
 
@@ -213,9 +208,9 @@ Along with the dynamically create fields filter also has the following static fi
   }
   ```
 
-* `or` - Allows for joining multiple `Filters` using an `OR` condition.
+- `or` - Allows for joining multiple `Filters` using an `OR` condition.
 
-    For example, find all todo items that ``(are completed AND start with 'Foo') OR (are not completed and end in 'Bar')``.
+  For example, find all todo items that `(are completed AND start with 'Foo') OR (are not completed and end in 'Bar')`.
 
   ```graphql
   todoItems(filter: {
@@ -238,15 +233,14 @@ Along with the dynamically create fields filter also has the following static fi
 <TabItem value="code">
 
 ```ts
-import { FilterType } from '@nestjs-query/query-graphql';
+import { FilterType } from '@codeshine/nestjs-query-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
-export const TodoItemFilter = FilterType(TodoItemDTO)
+export const TodoItemFilter = FilterType(TodoItemDTO);
 ```
 
 </TabItem>
 <TabItem value="schema">
-
 
 ```graphql
 input TodoItemFilter {
@@ -327,9 +321,9 @@ For more comprehensive examples take a look at the [Sorting Docs](./queries.mdx#
 
 #### Fields
 
-* `field` - The field to sort on. The is an ENUM of [@FilterableFields](./dtos.mdx#filterablefield) defined in the DTO.
-* `direction` - The direction to sort the field `ASC` or `DESC`.
-* `nulls?` - On supported storage engines you can specify the null sort order `NULLS_FIRST`, `NULLS_LAST`
+- `field` - The field to sort on. The is an ENUM of [@FilterableFields](./dtos.mdx#filterablefield) defined in the DTO.
+- `direction` - The direction to sort the field `ASC` or `DESC`.
+- `nulls?` - On supported storage engines you can specify the null sort order `NULLS_FIRST`, `NULLS_LAST`
 
 <Tabs
   defaultValue="code"
@@ -341,16 +335,15 @@ For more comprehensive examples take a look at the [Sorting Docs](./queries.mdx#
 <TabItem value="code">
 
 ```ts
-import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@codeshine/nestjs-query-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
-export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
+export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO);
 export const TodoItemSort = TodoItemQueryArgs.SortType;
 ```
 
 </TabItem>
 <TabItem value="schema">
-
 
 ```graphql
 input TodoItemSort {
@@ -376,7 +369,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 ```
 
 </TabItem>
@@ -396,24 +388,25 @@ specify the `created` or `updated` fields so you would create a new DTO just for
 #### Usage
 
 ```ts
-import { CreateOneInputType } from '@nestjs-query/query-graphql';
+import { CreateOneInputType } from '@codeshine/nestjs-query-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType('TodoItemInput')
 export class TodoItemInputDTO {
   @IsString()
-  @Field({nullable: true})
+  @Field({ nullable: true })
   title?: string;
 
   @IsBoolean()
-  @Field({nullable: true})
+  @Field({ nullable: true })
   completed?: string;
 }
 
 @InputType()
 export class CreateOneTodoItemInput extends CreateOneInputType('todoItem', TodoItemInputDTO) {}
 ```
+
 ---
 
 ### CreateManyInputType
@@ -428,18 +421,18 @@ specify the `created` or `updated` fields so you would create a new DTO just for
 #### Usage
 
 ```ts
-import { CreateManyInputType } from '@nestjs-query/query-graphql';
+import { CreateManyInputType } from '@codeshine/nestjs-query-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType('TodoItemInput')
 export class TodoItemInputDTO {
   @IsString()
-  @Field({nullable: true})
+  @Field({ nullable: true })
   title?: string;
 
   @IsBoolean()
-  @Field({nullable: true})
+  @Field({ nullable: true })
   completed?: string;
 }
 
@@ -452,8 +445,9 @@ export class CreateManyTodoItemsInput extends CreateManyInputType('todoItems', T
 InputType type for `updateOne` mutations.
 
 The `UpdateOneInputType` will generate an `InputType` that will require the user to provide two fields.
-* `id` - The id of the record to update
-* `update` - A record with fields to update.
+
+- `id` - The id of the record to update
+- `update` - A record with fields to update.
 
 :::note
 Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
@@ -467,7 +461,7 @@ update the `created` or `updated` fields so you would create a new DTO just for 
 #### Usage
 
 ```ts
-import { UpdateOneInputType } from '@nestjs-query/query-graphql';
+import { UpdateOneInputType } from '@codeshine/nestjs-query-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -487,6 +481,7 @@ export class TodoItemUpdateDTO {
 @InputType()
 export class UpdateOneTodoItemInput extends UpdateOneInputType(TodoItemDTO, TodoItemUpdateDTO) {}
 ```
+
 ---
 
 ### UpdateManyInputType
@@ -494,8 +489,9 @@ export class UpdateOneTodoItemInput extends UpdateOneInputType(TodoItemDTO, Todo
 Input type for `updateMany` mutations.
 
 The `UpdateOneInputType` will generate an `InputType` that will require the user to provide two arguments.
-* `filter` - The filter that should be used to find records to update. See [FilterType](#filtertype)
-* `update` - The update to apply to each record found.
+
+- `filter` - The filter that should be used to find records to update. See [FilterType](#filtertype)
+- `update` - The update to apply to each record found.
 
 **NOTE** Dont forget to annotate your DTO with `@InputType()` from `@nestjs/graphql`.
 
@@ -507,7 +503,7 @@ specify the `created` or `updated` fields so you would create a new DTO just for
 In this example we use the read DTO for the FilterType, and a different update DTO.
 
 ```ts
-import { CreateOneInputType, FilterType } from '@nestjs-query/query-graphql';
+import { CreateOneInputType, FilterType } from '@codeshine/nestjs-query-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
@@ -527,9 +523,10 @@ export class TodoItemUpdateDTO {
 @InputType()
 export class UpdateManyTodoItemsInput extends UpdateManyInputType(
   TodoItemDTO, // filter
-  TodoItemUpdateDTO // update DTO
+  TodoItemUpdateDTO, // update DTO
 ) {}
 ```
+
 ---
 
 ### DeleteOneInputType
@@ -541,13 +538,14 @@ The `DeleteOneInputType` will generate an `InputType` that will require the user
 #### Usage
 
 ```ts
-import { DeleteOneInputType } from '@nestjs-query/query-graphql';
+import { DeleteOneInputType } from '@codeshine/nestjs-query-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType()
 export class DeleteOneTodoItemInput extends DeleteOneInputType(TodoItemDTO) {}
 ```
+
 ---
 
 ### DeleteManyInputType
@@ -555,16 +553,16 @@ export class DeleteOneTodoItemInput extends DeleteOneInputType(TodoItemDTO) {}
 Input type type for `deleteMany` mutations.
 
 The `DeleteManyInputType` will generate an `InputType` that will require the user to provide:
-* `filter` - A filter used to find records to delete. See [FilterType](#filtertype)
+
+- `filter` - A filter used to find records to delete. See [FilterType](#filtertype)
 
 #### Usage
 
 ```ts
-import { CreateOneInputType, FilterType } from '@nestjs-query/query-graphql';
+import { CreateOneInputType, FilterType } from '@codeshine/nestjs-query-query-graphql';
 import { InputType } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 @InputType()
 export class DeleteManyTodoItemsInput extends DeleteManyInputType(TodoItemDTO) {}
 ```
-

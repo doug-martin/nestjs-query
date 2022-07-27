@@ -1,4 +1,11 @@
-import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@nestjs-query/core';
+import {
+  AggregateQuery,
+  AggregateResponse,
+  Class,
+  Filter,
+  mergeFilter,
+  QueryService,
+} from '@codeshine/nestjs-query-core';
 import { Args, ArgsType, Resolver } from '@nestjs/graphql';
 import omit from 'lodash.omit';
 import { AuthorizerInterceptor } from '../interceptors';

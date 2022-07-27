@@ -11,7 +11,7 @@ from name provided to `@ObjectType` or the class name.
 The following examples are based on the following `TodoItemDTO`
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -31,19 +31,18 @@ export class TodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-
 ```
 
 In the following examples you will see the following endpoints referenced
 
-* `createOneTodoItem` - graphql endpoint to create a single record.
-* `createManyTodoItems` - graphql endpoint to create multiple records,
+- `createOneTodoItem` - graphql endpoint to create a single record.
+- `createManyTodoItems` - graphql endpoint to create multiple records,
 
-* `updateOneTodoItem` - graphql endpoint to update a single record by id.
-* `updateManyTodoItems` - graphql endpoint update multiple records with a filter,
+- `updateOneTodoItem` - graphql endpoint to update a single record by id.
+- `updateManyTodoItems` - graphql endpoint update multiple records with a filter,
 
-* `deleteOneTodoItem` - graphql endpoint to delete one record by id.
-* `deleteManyTodoItems` - graphql endpoint to delete multiple records with a filter.
+- `deleteOneTodoItem` - graphql endpoint to delete one record by id.
+- `deleteManyTodoItems` - graphql endpoint to delete multiple records with a filter.
 
 ### Create One
 
@@ -62,9 +61,7 @@ In this example we create a single `TodoItem`, the input by default will be a `P
 
 ```graphql
 mutation {
-  createOneTodoItem(
-    input: { todoItem: { title: "Create One Todo Item", completed: false } }
-  ) {
+  createOneTodoItem(input: { todoItem: { title: "Create One Todo Item", completed: false } }) {
     id
     title
     completed
@@ -169,9 +166,9 @@ mutation {
 
 The `CRUDResolver` will by default expose an `updateOne` mutation that takes two fields:
 
-* `id`: The id of the record to update.
-* `update`: The values to update on the record. This is a partial so you only have to pass in the values you want to
-change.
+- `id`: The id of the record to update.
+- `update`: The values to update on the record. This is a partial so you only have to pass in the values you want to
+  change.
 
 #### Examples
 
@@ -224,10 +221,10 @@ mutation {
 
 The `CRUDResolver` will by default expose an `updateMany` mutation that takes two fields:
 
-* `filter`: The filter to use to find the records to update.
-    * **NOTE** The filter **CANNOT** be an empty object. This prevents accidental updating of all records.
-* `update`: The values to update on the record. This is a partial so you only have to pass in the values you want to
-change.
+- `filter`: The filter to use to find the records to update.
+  - **NOTE** The filter **CANNOT** be an empty object. This prevents accidental updating of all records.
+- `update`: The values to update on the record. This is a partial so you only have to pass in the values you want to
+  change.
 
 The response contains the number of records updated.
 
@@ -246,9 +243,7 @@ The following example updates records with an `id` equal to 1 or 2 to `completed
 
 ```graphql
 mutation {
-  updateManyTodoItems(
-    input: { filter: { id: { in: [1, 2] } }, update: { completed: true } }
-  ) {
+  updateManyTodoItems(input: { filter: { id: { in: [1, 2] } }, update: { completed: true } }) {
     updatedCount
   }
 }
@@ -343,9 +338,7 @@ The following example deletes all records that start with `Create Many Todo Item
 
 ```graphql
 mutation {
-  deleteManyTodoItems(
-    input: { filter: { title: { like: "Create Many Todo Items%" } } }
-  ) {
+  deleteManyTodoItems(input: { filter: { title: { like: "Create Many Todo Items%" } } }) {
     deletedCount
   }
 }

@@ -1,6 +1,7 @@
 ---
 title: Assemblers
 ---
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -12,15 +13,16 @@ In most cases an Assembler will not be required because your Entity and DTO will
 
 The only time you need to define an assembler is when the DTO and Entity are different. The most common scenarios are
 
-* Additional computed fields and you do not want to include the business logic in your DTO definition.
-* Different field names because of poorly named columns in the database or to make a DB change passive to the end user.
-* You need to transform the create or update DTO before being passed to your persistence QueryService
+- Additional computed fields and you do not want to include the business logic in your DTO definition.
+- Different field names because of poorly named columns in the database or to make a DB change passive to the end user.
+- You need to transform the create or update DTO before being passed to your persistence QueryService
 
 ## Why?
 
 Separation of concerns.
 
 ### Resolvers
+
 Your resolvers only concern is dealing with graphql and translating the request (a DTO) into something the service cares about.
 
 The resolver should not care about how it is persisted. The underlying Entity **could** have additional fields that you do not want to expose in your API, or it may be persisted into multiple stores.
@@ -31,9 +33,9 @@ By separating the resolver from the persistence layer you can evolve your API se
 
 The services concern are operating on a DTO, preventing the leaking of persistence details to the API.
 
- In `nestjs-query` services can be composed. In the case of assemblers information is translated using the assembler and delegated to an underlying service.
+In `nestjs-query` services can be composed. In the case of assemblers information is translated using the assembler and delegated to an underlying service.
 
- This alleviates any awkwardness around passing in a DTO and receiving a different object type back. Instead, your service can use an assembler to alleviate these concerns.
+This alleviates any awkwardness around passing in a DTO and receiving a different object type back. Instead, your service can use an assembler to alleviate these concerns.
 
 ### Assemblers
 
@@ -58,7 +60,7 @@ If you find yourself in a scenario where you need to compute values and you dont
 Lets take a simple example, where we have `TodoItemDTO` and we want to compute the `age`.
 
 ```ts title="todo-item.assembler.ts"
-import { Assembler, ClassTransformerAssembler } from '@nestjs-query/core';
+import { Assembler, ClassTransformerAssembler } from '@codeshine/nestjs-query-core';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
@@ -84,7 +86,7 @@ To create your own `Assembler` extend the `AbstractAssembler`.
 Lets assume we have the following `UserDTO`.
 
 ```ts title="user.dto.ts"
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType('User')
@@ -98,7 +100,6 @@ class UserDTO {
   @FilterableField()
   emailAddress!: string;
 }
-
 ```
 
 But you inherited a DB schema that has names that are not as user friendly.
@@ -115,7 +116,7 @@ But you inherited a DB schema that has names that are not as user friendly.
 <TabItem value="typeorm">
 
 ```ts title="user.entity.ts"
-import {Entity, Column} from 'typeorm'
+import { Entity, Column } from 'typeorm';
 
 @Entity()
 class UserEntity {
@@ -138,16 +139,15 @@ import { Table, Column, Model } from 'sequelize-typescript';
 
 @Table
 export class UserEntity extends Model<UserEntity, Partial<UserEntity>> {
-   @Column
-   first!: string;
+  @Column
+  first!: string;
 
-   @Column
-   last!: string;
+  @Column
+  last!: string;
 
-   @Column
-   email!: string;
+  @Column
+  email!: string;
 }
-
 ```
 
 </TabItem>
@@ -170,7 +170,6 @@ export class UserEntity extends Document {
 }
 
 export const UserEntityEntitySchema = SchemaFactory.createForClass(UserEntity);
-
 ```
 
 </TabItem>
@@ -185,8 +184,8 @@ import {
   Query,
   transformQuery,
   transformAggregateQuery,
-  transformAggregateResponse
-} from '@nestjs-query/core';
+  transformAggregateResponse,
+} from '@codeshine/nestjs-query-core';
 import { UserDTO } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 
@@ -217,10 +216,10 @@ export class UserAssembler extends AbstractAssembler<UserDTO, UserEntity> {
   }
 
   convertAggregateQuery(aggregate: AggregateQuery<TestDTO>): AggregateQuery<TestEntity> {
-     return transformAggregateQuery(aggregate, {
-       firstName: 'first',
-       lastName: 'last',
-       emailAddress: 'email',
+    return transformAggregateQuery(aggregate, {
+      firstName: 'first',
+      lastName: 'last',
+      emailAddress: 'email',
     });
   }
 
@@ -228,25 +227,24 @@ export class UserAssembler extends AbstractAssembler<UserDTO, UserEntity> {
     return transformAggregateResponse(aggregate, {
       first: 'firstName',
       last: 'lastName',
-      email: 'emailAddress'
+      email: 'emailAddress',
     });
   }
 
-  convertToCreateEntity({firstName, lastName}: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+  convertToCreateEntity({ firstName, lastName }: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
     return {
       first: firstName,
       last: lastName,
     };
   }
 
-  convertToUpdateEntity({firstName, lastName}: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
+  convertToUpdateEntity({ firstName, lastName }: DeepPartial<TestDTO>): DeepPartial<TestEntity> {
     return {
       first: firstName,
       last: lastName,
     };
   }
 }
-
 ```
 
 The first thing to look at is the `@Assembler` decorator. It will register the assembler with `nestjs-query` so `QueryServices` can look it up later.
@@ -269,7 +267,7 @@ convertQuery(query: Query<UserDTO>): Query<UserEntity> {
 }
 ```
 
-This method leverages the `transformQuery` function from `@nestjs-query/core`. This method will remap all fields specified in the field map to correct field name.
+This method leverages the `transformQuery` function from `@codeshine/nestjs-query-core`. This method will remap all fields specified in the field map to correct field name.
 
 In this example
 
@@ -390,7 +388,7 @@ Before using the decorator you need to register your Assembler with `nestjs-quer
 ### Module
 
 ```ts title="user.module.ts" {10}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
 import { Module } from '@nestjs/common';
 import { UserDTO } from './user.dto';
 
@@ -398,14 +396,15 @@ import { UserDTO } from './user.dto';
   providers: [TodoItemResolver],
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [ /* set up your entity with a nestjs-query persitence package */],
+      imports: [
+        /* set up your entity with a nestjs-query persitence package */
+      ],
       assemblers: [UserAssembler],
-      resolvers: [ ],
+      resolvers: [],
     }),
   ],
 })
 export class UserModule {}
-
 ```
 
 ### Auto Generated Resolver
@@ -413,7 +412,7 @@ export class UserModule {}
 If you want your assembler to be used by the auto-generated resolver you can specify the `AssemblerClass` option.
 
 ```ts title="user.module.ts" {10,14}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
 import { Module } from '@nestjs/common';
 import { UserDTO } from './user.dto';
 
@@ -421,31 +420,31 @@ import { UserDTO } from './user.dto';
   providers: [TodoItemResolver],
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [ /* set up your entity with a nestjs-query persitence package */],
+      imports: [
+        /* set up your entity with a nestjs-query persitence package */
+      ],
       assemblers: [UserAssembler],
       resolvers: [
         {
           DTOClass: UserDTO,
-          AssemblerClass: UserAssembler
-        }
+          AssemblerClass: UserAssembler,
+        },
       ],
     }),
   ],
 })
 export class UserModule {}
-
 ```
-
 
 ### Manual Resolver
 
 If you are manually defining you resolver or want to use the `AssemblerQueryService` in another service use the `@InjectAssemblerQueryService` decorator.
 
 ```ts title="user.resolver.ts" {8}
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { UserDTO } from './user.dto';
-import { UserAssembler } from './user.assembler'
+import { UserAssembler } from './user.assembler';
 
 @Resolver(() => UserDTO)
 export class UserResolver extends CRUDResolver(UserDTO) {

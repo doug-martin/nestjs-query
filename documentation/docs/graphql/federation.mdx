@@ -6,12 +6,14 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 `nestjs-query` provides **basic** federation support, with the intention of helping to
- * Plug into existing federated graphs, through references.
- * Create a federated relations/connections on types defined in other services.
+
+- Plug into existing federated graphs, through references.
+- Create a federated relations/connections on types defined in other services.
 
 These docs assume you have read
-* https://docs.nestjs.com/graphql/federation
-* https://www.apollographql.com/docs/apollo-server/federation/introduction/
+
+- https://docs.nestjs.com/graphql/federation
+- https://www.apollographql.com/docs/apollo-server/federation/introduction/
 
 ## Base Type
 
@@ -32,10 +34,11 @@ Both of the examples below add a `resolveReference` function see https://www.apo
 To reference a type in `nestjs-query` you must first create DTO that defines the base type.
 
 ### Base Type
+
 The base type in its own service must be decorated with federated directives specifying its key.
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Directive } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -48,10 +51,11 @@ export class TodoItemDTO {
 ```
 
 ### Auto Generated Resolver
+
 When using the `NestjsQueryGraphQLModule` module add the `referenceBy` option that `nestjs-query` will use to automatically expose add a `@ResolveReference` decorator and method that the gateway can use.
 
 ```ts title="todo-item/todo-item.module.ts" {14-15}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -59,7 +63,9 @@ import { TodoItemEntity } from './todo-item.entity';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [ /* import the nestjs-query persistence module*/],
+      imports: [
+        /* import the nestjs-query persistence module*/
+      ],
       resolvers: [
         {
           DTOClass: TodoItemDTO,
@@ -72,7 +78,6 @@ import { TodoItemEntity } from './todo-item.entity';
   ],
 })
 export class TodoItemModule {}
-
 ```
 
 :::note
@@ -82,7 +87,6 @@ The `referenceBy.key` should be the field you want to look up the DTO by.
 ### Manual Resolver
 
 If you want to manually define your resolver pass in the `referenceBy` option to the `CRUDResolver`.
-
 
 ```ts title="todo-item.resolver.ts" {3-4}
 @Resolver(() => TodoItemDTO)
@@ -120,6 +124,7 @@ export class AppModule {}
 ```
 
 ## Reference Base Type
+
 In a separate service from the one defining the base type above, we can use Apollo Federation to extend that base type.
 
 To do this with `nestjs-query` you must create a type that extends the base type contained in some other graphql service.
@@ -127,7 +132,6 @@ To do this with `nestjs-query` you must create a type that extends the base type
 :::warning
 The type name must be the same name as the type it extends in the graph.
 :::
-
 
 For example
 
@@ -142,8 +146,8 @@ export class TodoItemReferenceDTO {
   @Directive('@external')
   id!: number;
 }
-
 ```
+
 :::note
 Notice how the `@Directive` decorator is used to add the `@extends` annotation along with the `@keys`.
 
@@ -157,7 +161,7 @@ To reference a type defined in another service you can use the `@Reference` deco
 When using the `@Reference` decorator `nestjs-query` will **NOT** look up the relation through the `QueryService`, instead return a reference type like the one described above.
 
 ```ts title="sub-task/sub-task.dto.ts" {5-6}
-import { FilterableField, Reference } from '@nestjs-query/query-graphql';
+import { FilterableField, Reference } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('SubTask')
@@ -190,7 +194,9 @@ export class SubTaskDTO {
 In the above example we provided the keys which look like the following
 
 ```ts
-{ id: 'todoItemId' }
+{
+  id: 'todoItemId';
+}
 ```
 
 Which will map the `SubTask.todoItemId` to the `id` field in the reference type.
@@ -202,6 +208,7 @@ Assuming you have the following `SubTask`
 ```
 
 The reference type would be
+
 ```ts
 { __typename: 'TodoItem', id: 2 }
 ```
@@ -220,7 +227,7 @@ Now that we have added the decorator the `nestjs-query` resolver will automatica
 <TabItem value="module">
 
 ```ts title="sub-task/sub-task.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
 import { Module } from '@nestjs/common';
 import { SubTaskDTO } from './dto/sub-task.dto';
 import { SubTaskEntity } from './sub-task.entity';
@@ -228,7 +235,9 @@ import { SubTaskEntity } from './sub-task.entity';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [ /* import the nestjs-query persistence module*/],
+      imports: [
+        /* import the nestjs-query persistence module*/
+      ],
       resolvers: [{ DTOClass: SubTaskDTO, EntityClass: SubTaskEntity }],
     }),
   ],
@@ -236,14 +245,12 @@ import { SubTaskEntity } from './sub-task.entity';
 export class SubTaskModule {}
 ```
 
-
 </TabItem>
 <TabItem value="resolver">
 
-
 ```ts title="sub-task/sub-task.resolver.ts"
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
+import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { SubTaskDTO } from './sub-task.dto';
 import { TodoItemReferenceDTO } from './dto/todo-item-reference.dto';
@@ -271,7 +278,7 @@ Lets continue with the `SubTask` example used above. We have add a `todoItem` re
 The first step is to create a `RelationQueryService`. The `RelationQueryService` is a special type of `QueryService` that allows looking up relations without defining them in your entity.
 
 ```ts title="todo-item.service.ts"
-import { InjectQueryService, QueryService, RelationQueryService } from '@nestjs-query/core';
+import { InjectQueryService, QueryService, RelationQueryService } from '@codeshine/nestjs-query-core';
 import { TodoItemReferenceDTO } from './todo-item-reference.dto';
 import { SubTaskEntity } from './sub-task.entity';
 
@@ -288,7 +295,6 @@ export class TodoItemService extends RelationQueryService<TodoItemReferenceDTO> 
     });
   }
 }
-
 ```
 
 In this example we inject a `SubTask` service that will be used to look up `subTask` relations. The `query` method is used to filter relations when `findRelation` or `queryRelations` is called.
@@ -318,7 +324,7 @@ The same pattern applies when you have a single relation and use the `@Relation`
 :::
 
 ```ts title='sub-task/todo-item-reference.dto.ts'
-import { Connection } from '@nestjs-query/query-graphql';
+import { Connection } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, Directive, Field, ID } from '@nestjs/graphql';
 import { SubTaskDTO } from './sub-task.dto';
 
@@ -331,7 +337,6 @@ export class TodoItemReferenceDTO {
   @Directive('@external')
   id!: number;
 }
-
 ```
 
 ### Federation Resolver
@@ -352,7 +357,7 @@ When using the `NestjsQueryGraphQLModule` set the `type` of the resolver to `fed
 Also, add the `TodoItemService` to the `services` option to make it available for nest to inject the service into the auto-generated resolver.
 
 ```ts title="sub-task/sub-task.module.ts" {12,18-22}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
 import { Module } from '@nestjs/common';
 import { SubTaskDTO } from './dto/sub-task.dto';
 import { SubTaskEntity } from './sub-task.entity';
@@ -362,7 +367,9 @@ import { TodoItemService } from './todo-item.service';
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [/* import the nestjs-query persistence module*/],
+      imports: [
+        /* import the nestjs-query persistence module*/
+      ],
       services: [TodoItemService],
       resolvers: [
         {
@@ -379,7 +386,6 @@ import { TodoItemService } from './todo-item.service';
   ],
 })
 export class SubTaskModule {}
-
 ```
 
 </TabItem>
@@ -389,9 +395,8 @@ When manually defining the resolver extend the `FederationResolver`.
 
 The `FederationResolver` this will not set up any queries or mutations in the graph. Instead, it is used set up the reading of relations for a type that originates from another service.
 
-
 ```ts title="sub-task/todo-item.resolver.ts"
-import { FederationResolver } from '@nestjs-query/query-graphql';
+import { FederationResolver } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemReferenceDTO } from './todo-item-reference.dto';
 import { TodoItemService } from './todo-item.service';
@@ -410,6 +415,3 @@ export class TodoItemResolver extends FederationResolver(TodoItemReferenceDTO) {
 ## Complete Example
 
 To see a complete example checkout https://github.com/doug-martin/nestjs-query/tree/master/examples/federation
-
-
-

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Class, Query } from '@nestjs-query/core';
+import { Class, Query } from '@codeshine/nestjs-query-core';
 import {
   CreateManyInputType,
   CreateOneInputType,

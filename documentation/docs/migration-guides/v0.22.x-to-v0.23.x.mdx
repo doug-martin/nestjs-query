@@ -37,10 +37,9 @@ type TodoItem {
 ## Total Count with OFFSET Strategy
 
 In previous versions of the nestjs-query the `enableTotalCount` option only worked with the `CURSOR` paging strategy.
- In `v0.23.0` the `enableTotalCount` option now also works with the `OFFSET` paging strategy.
+In `v0.23.0` the `enableTotalCount` option now also works with the `OFFSET` paging strategy.
 
- When `enableTotalCount` is set to true the following graphql schema will be generated
-
+When `enableTotalCount` is set to true the following graphql schema will be generated
 
 ```graphql
 type OffsetPageInfo {
@@ -68,23 +67,23 @@ type TodoItem {
 
 In previous versions of `nestjs-query` there were four relation decorators `@Relation`, `@FilterableRelation`,
 `@Connection`, and `@FilterableConnection` all four of the decorators have been changed to be more explicit in naming
- to be clear in what they are doing.
+to be clear in what they are doing.
 
 In `v0.23.0` the decorators have been renamed to be more explicit.
 
-* `@Relation` - A relation that is a single value (one-to-one, many-to-one)
-* `@FilterableRelation` - A `@Relation` that enables filtering the parent by fields of the relation `DTO`.
-* `@UnPagedRelation` - An array of relations (e.g, many-to-many, one-to-many) that returns all the related records.
-* `@FilterableUnPagedRelation` - An `@UnPagedRelation` that enables filtering the parent by fields of the relation
-`DTO`.
-* `@OffsetConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `offset`
- based pagination.
-* `@FilterableOffsetConnection` - An `@OffsetConnection` that enables filtering the parent by fields of the connection
- `DTO`.
-* `@CursorConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `cursor`
- based pagination.
-* `@FilterableCursorConnection` - A `@CursorConnection` that enables filtering the parent by fields of the
- connection `DTO`.
+- `@Relation` - A relation that is a single value (one-to-one, many-to-one)
+- `@FilterableRelation` - A `@Relation` that enables filtering the parent by fields of the relation `DTO`.
+- `@UnPagedRelation` - An array of relations (e.g, many-to-many, one-to-many) that returns all the related records.
+- `@FilterableUnPagedRelation` - An `@UnPagedRelation` that enables filtering the parent by fields of the relation
+  `DTO`.
+- `@OffsetConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `offset`
+  based pagination.
+- `@FilterableOffsetConnection` - An `@OffsetConnection` that enables filtering the parent by fields of the connection
+  `DTO`.
+- `@CursorConnection` - A connection that represents a collection (e.g, many-to-many, one-to-many) that uses `cursor`
+  based pagination.
+- `@FilterableCursorConnection` - A `@CursorConnection` that enables filtering the parent by fields of the
+  connection `DTO`.
 
 Below is a mapping of the old definition to the new one
 
@@ -141,18 +140,19 @@ In previous versions of `nestjs-query` the resolvers relied on an AuthorizerServ
 were created manually within the resolver.
 
 In the latest version, we have transitioned to a interceptor/param decorator pattern. This provides:
- * Better separation of concerns, auth filters are now just params passed to the resolver method.
- * More flexibility when extending the resolvers to reuse the same logic that the auto-generated resolvers use
- without having to worry about internal implementation details.
- * Easier extension of the `CRUDResolver` by not having to worry about injecting the authorizerService, it will
- automatically add the interceptor and param decorators to auto generated methods, you just need to decorate your DTO.
- * Familiar patterns that are laid out in the core nestjs documentation.
+
+- Better separation of concerns, auth filters are now just params passed to the resolver method.
+- More flexibility when extending the resolvers to reuse the same logic that the auto-generated resolvers use
+  without having to worry about internal implementation details.
+- Easier extension of the `CRUDResolver` by not having to worry about injecting the authorizerService, it will
+  automatically add the interceptor and param decorators to auto generated methods, you just need to decorate your DTO.
+- Familiar patterns that are laid out in the core nestjs documentation.
 
 Old way
 
 ```ts
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
+import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -161,29 +161,32 @@ import { TodoItemEntity } from './todo-item.entity';
 export class TodoItemResolver {
   constructor(
     @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>,
-    @InjectAuthorizer(TodoItemDTO) readonly authorizer: Authorizer<TodoItemDTO>
+    @InjectAuthorizer(TodoItemDTO) readonly authorizer: Authorizer<TodoItemDTO>,
   ) {}
 
   @Query(() => TodoItemConnection)
-   async uncompletedTodoItems(@Args() query: TodoItemQuery, @Context() context: unknown): Promise<ConnectionType<TodoItemDTO>> {
-     // add the completed filter the user provided filter
-     const authFilter = this.authorizer.authorize(context);
-     const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: false } });
-     const uncompletedQuery = mergeQuery(query, { filter: mergeFilter(filter, authFilter) });
-     return TodoItemConnection.createFromPromise(
-       (q) => this.service.query(q),
-       uncompletedQuery,
-       (q) => this.service.count(q),
-     );
-   }
+  async uncompletedTodoItems(
+    @Args() query: TodoItemQuery,
+    @Context() context: unknown,
+  ): Promise<ConnectionType<TodoItemDTO>> {
+    // add the completed filter the user provided filter
+    const authFilter = this.authorizer.authorize(context);
+    const filter: Filter<TodoItemDTO> = mergeFilter(query.filter ?? {}, { completed: { is: false } });
+    const uncompletedQuery = mergeQuery(query, { filter: mergeFilter(filter, authFilter) });
+    return TodoItemConnection.createFromPromise(
+      (q) => this.service.query(q),
+      uncompletedQuery,
+      (q) => this.service.count(q),
+    );
+  }
 }
 ```
 
 New
 
 ```ts
-import { Filter, InjectQueryService, mergeFilter, mergeQuery, QueryService } from '@nestjs-query/core';
-import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@nestjs-query/query-graphql';
+import { Filter, InjectQueryService, mergeFilter, mergeQuery, QueryService } from '@codeshine/nestjs-query-core';
+import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType } from '@codeshine/nestjs-query-query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -217,15 +220,21 @@ export class TodoItemResolver {
 In previous versions of nestjs-query hooks were not very flexible, and could not be used by custom resolver endpoints.
 
 In the latest version the hooks pipeline has been re-worked to enable the following:
-* Hook decorators now accept either a hook funciton OR a custom hook class that can use dependency injection.
-* Reusing hooks in custom endpoints.
+
+- Hook decorators now accept either a hook funciton OR a custom hook class that can use dependency injection.
+- Reusing hooks in custom endpoints.
 
 As a demonstration of the flexibility of the new hooks implementation, lets use a hook in a custom endpoint (this
 would not have been possible previously)
 
 ```ts {14-15}
-import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@nestjs-query/core';
-import { HookTypes, HookInterceptor, MutationHookArgs, UpdateManyResponseType } from '@nestjs-query/query-graphql';
+import { InjectQueryService, mergeFilter, QueryService, UpdateManyResponse } from '@codeshine/nestjs-query-core';
+import {
+  HookTypes,
+  HookInterceptor,
+  MutationHookArgs,
+  UpdateManyResponseType,
+} from '@codeshine/nestjs-query-query-graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
@@ -248,9 +257,10 @@ export class TodoItemResolver {
 ```
 
 The two important things are:
-* The `HookInterceptor` in this example we reuse the `BEFORE_UPDATE_MANY` hook on the `TodoItemDTO`, the interceptor
-adds a DI hook instance to the context that can be used downstream by any guards or param decorators.
-* `@MutationHookArgs` will apply the correct hook to the args and provide it to the resolver endpoint.
+
+- The `HookInterceptor` in this example we reuse the `BEFORE_UPDATE_MANY` hook on the `TodoItemDTO`, the interceptor
+  adds a DI hook instance to the context that can be used downstream by any guards or param decorators.
+- `@MutationHookArgs` will apply the correct hook to the args and provide it to the resolver endpoint.
 
 In this next example we can demonstrate the DI capability, we'll keep the example simple, but with `nestjs`'s DI
 functionality you can inject other services to look up information and transform the incoming request as much as you
@@ -259,6 +269,7 @@ need.
 In this example we create a simple hook that will work for both `createOne` and `createMany` endpoints to set the
 `createdBy` attribute. In this example we look up the userEmail from the `userService` and set `createdBy` attribute
 on the input.
+
 ```ts
 interface CreatedBy {
   createdBy: string;
@@ -266,7 +277,8 @@ interface CreatedBy {
 
 @Injectable()
 export class CreatedByHook<T extends CreatedBy>
-  implements BeforeCreateOneHook<T, GqlContext>, BeforeCreateManyHook<T, GqlContext> {
+  implements BeforeCreateOneHook<T, GqlContext>, BeforeCreateManyHook<T, GqlContext>
+{
   constructor(readonly userService: UserService) {}
 
   run(instance: CreateManyInputType<T>, context: GqlContext): Promise<CreateManyInputType<T>>;
@@ -314,40 +326,37 @@ export class TodoItemInputDTO {
 In previous versions of `nestjs-query` you could extend `CRUDResolver` but there was not a way to set up the
 appropriate providers for many of the newer features (hooks, authorizers etc.).
 
-In the latest version you now have the option to register your DTOs with `@nestjs-query/query-graphql` without it
+In the latest version you now have the option to register your DTOs with `@codeshine/nestjs-query-query-graphql` without it
 generating a resolver automatically.
 
 In this example we create a custom resolver that extends `CRUDResolver`.
 
 ```ts title="todo-item.resolver.ts"
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
+import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
 @Resolver(() => TodoItemDTO)
 export class TodoItemResolver extends CRUDResolver(TodoItemDTO) {
-  constructor(
-    @InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>
-  ) {
+  constructor(@InjectQueryService(TodoItemEntity) readonly service: QueryService<TodoItemEntity>) {
     super(service);
   }
 }
-
 ```
 
 Because the `TodoItemResolver` extends `CRUDResolver` there is no need to have `nestjs-query` also create a resolver,
- instead you can specify the `dtos` option which just takes in `DTOClass`, `CreateDTOClass`, and `UpdateDTOClass` to
- set up all of additional providers to hooks, authorizers and other features.
+instead you can specify the `dtos` option which just takes in `DTOClass`, `CreateDTOClass`, and `UpdateDTOClass` to
+set up all of additional providers to hooks, authorizers and other features.
 
 ```ts title="todo-item.module.ts" {9,13}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
-import { TodoItemResolver } from './todo-item.resolver'
+import { TodoItemResolver } from './todo-item.resolver';
 
 @Module({
   providers: [TodoItemResolver],
@@ -360,4 +369,3 @@ import { TodoItemResolver } from './todo-item.resolver'
 })
 export class TodoItemModule {}
 ```
-

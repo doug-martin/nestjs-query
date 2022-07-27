@@ -1,5 +1,5 @@
 {
-  "name": "@nestjs-query/query-graphql",
+  "name": "@codeshine/nestjs-query-query-graphql",
   "version": "0.30.0",
   "description": "Nestjs graphql query adapter",
   "author": "doug-martin <doug@dougamartin.com>",
@@ -38,7 +38,7 @@
     "url": "https://github.com/doug-martin/nestjs-query/issues"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.30.0",
+    "@codeshine/nestjs-query-core": "0.30.0",
     "graphql-fields": "^2.0.3",
     "lodash.omit": "^4.5.0",
     "lower-case-first": "^2.0.1",

@@ -5,7 +5,7 @@ import {
   BeforeCreateOne,
   CreateManyInputType,
   CreateOneInputType,
-} from '@nestjs-query/query-graphql';
+} from '@codeshine/nestjs-query-query-graphql';
 import { UserContext } from '../../auth/auth.interfaces';
 
 @InputType('SubTaskInput')

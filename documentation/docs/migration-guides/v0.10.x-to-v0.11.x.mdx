@@ -8,8 +8,9 @@ import TabItem from '@theme/TabItem';
 ### `@InjectQueryService`
 
 In `v0.11.x` an new decorator was added `@InjectQueryService`, this decorator replaces the ORM specific decorators:
-* `@InjectTypeOrmQueryService`
-* `@InjectSequelizeQueryService`
+
+- `@InjectTypeOrmQueryService`
+- `@InjectSequelizeQueryService`
 
 To migrate replace all `@InjectTypeOrmQueryService` and `@InjectSequelizeQueryService` with `@InjectQueryService`.
 
@@ -18,8 +19,8 @@ You still need to import the `NestjsQueryTypeOrmModule` or `NestjsQuerySequelize
 :::
 
 ```ts
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { QueryService, InjectQueryService } from '@codeshine/nestjs-query-core';
+import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';

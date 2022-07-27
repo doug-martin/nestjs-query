@@ -1,5 +1,5 @@
-import { QueryService } from '@nestjs-query/core';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { QueryService } from '@codeshine/nestjs-query-core';
+import { TypeOrmQueryService } from '@codeshine/nestjs-query-query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoItemEntity } from './todo-item.entity';

@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { DeepPartial } from '@nestjs-query/core';
+import { DeepPartial } from '@codeshine/nestjs-query-core';
 import { Resolver, Query, InputType } from '@nestjs/graphql';
 import { when, objectContaining, verify, deepEqual, anything, mock, instance } from 'ts-mockito';
 import { PubSub } from 'graphql-subscriptions';

@@ -17,7 +17,7 @@ QueryArgsType.
 ### Old
 
 ```ts
-import { ConnectionType, SortType } from '@nestjs-query/query-graphql';
+import { ConnectionType, SortType } from '@codeshine/nestjs-query-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
 export const TodoItemConnection = ConnectionType(TodoItemDTO);
@@ -27,10 +27,10 @@ export const TodoItemSort = SortType(TodoItemDTO);
 ### New
 
 ```ts
-import { QueryArgsType } from '@nestjs-query/query-graphql';
+import { QueryArgsType } from '@codeshine/nestjs-query-query-graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 
-export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO)
+export const TodoItemQueryArgs = QueryArgsType(TodoItemDTO);
 export const TodoItemConnection = TodoItemQueryArgs.ConnectionType;
 export const TodoItemSort = TodoItemQueryArgs.SortType;
 ```
@@ -38,16 +38,17 @@ export const TodoItemSort = TodoItemQueryArgs.SortType;
 ## `@QueryOptions` Decorator
 
 In previous versions you had to specify options for querying and connections in your resolver. In `v0.24.0` a new
-`@QueryOptions` decorator was  introduced to allow specifying all query related options along side the DTO, instead of splitting the configuration between the resolver and `DTO`.  The new `@QueryOptions` provides a few benefits.
-* Better re-use across types by avoiding passing configuration options all the way through the code to each piece that may need them.
-* Decoupling query options from the resolver. This puts us in a better position to decouple the DTO definition from the transport layer (e.g. graphql)
-* Keeps DTO configuration options closer to the source.
+`@QueryOptions` decorator was introduced to allow specifying all query related options along side the DTO, instead of splitting the configuration between the resolver and `DTO`. The new `@QueryOptions` provides a few benefits.
+
+- Better re-use across types by avoiding passing configuration options all the way through the code to each piece that may need them.
+- Decoupling query options from the resolver. This puts us in a better position to decouple the DTO definition from the transport layer (e.g. graphql)
+- Keeps DTO configuration options closer to the source.
 
 ### Old
 
 ```ts title="todo-item.module.ts"
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -56,25 +57,28 @@ import { TodoItemEntity } from './todo-item.entity';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [NestjsQueryTypeOrmModule.forFeature([TodoItemEntity])],
-      resolvers: [{
-        DTOClass: TodoItemDTO,
-        EntityClass: TodoItemEntity,
-        pagingStrategy: PagingStrategies.OFFSET,
-        enableTotalCount: true,
-        defaultResultSize: 5,
-        maxResultSize: 100,
-        defaultFilter: { completed: { is: true } },
-        defaultSort: [{ field: 'title', direction: SortDirection.ASC }],
-      }],
+      resolvers: [
+        {
+          DTOClass: TodoItemDTO,
+          EntityClass: TodoItemEntity,
+          pagingStrategy: PagingStrategies.OFFSET,
+          enableTotalCount: true,
+          defaultResultSize: 5,
+          maxResultSize: 100,
+          defaultFilter: { completed: { is: true } },
+          defaultSort: [{ field: 'title', direction: SortDirection.ASC }],
+        },
+      ],
     }),
   ],
 })
 export class TodoItemModule {}
 ```
+
 ### New
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField, QueryOptions, PagingStrategies } from '@nestjs-query/query-graphql';
+import { FilterableField, QueryOptions, PagingStrategies } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')

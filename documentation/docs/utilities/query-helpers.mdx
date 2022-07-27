@@ -2,7 +2,7 @@
 title: Query Helpers
 ---
 
-The `@nestjs-query/core` package provides a number of helper functions to transform or apply queries to a list of items.
+The `@codeshine/nestjs-query-core` package provides a number of helper functions to transform or apply queries to a list of items.
 
 An example use case for these helpers would be to write a `QueryService` that wraps a store that does not support the
 query options natively (e.g. An in memory collection of objects such as a static array of objects).
@@ -39,7 +39,7 @@ The `applyFilter` helper applies a `Filter` to a single object or an array of ob
 ### Example
 
 ```ts
-import { applyFilter } from `@nestjs-query/core`;
+import { applyFilter } from `@codeshine/nestjs-query-core`;
 
 const dtos: TestDTO[] = [
   {first: 'Bob', last: 'Yukon'}
@@ -78,7 +78,7 @@ represented as strings the applySort method may not work as expected.
 ### Example
 
 ```ts
-import { applySort, SortDirection, SortNulls } from `@nestjs-query/core`;
+import { applySort, SortDirection, SortNulls } from `@codeshine/nestjs-query-core`;
 
 const dtos: TestDTO[] = [
   {first: 'Bob', last: 'Yukon'}
@@ -118,7 +118,7 @@ The `applyPaging` method will apply a `limit` and/or `offset` to an array of dto
 ### Example
 
 ```ts
-import { applyPaging } from `@nestjs-query/core`;
+import { applyPaging } from `@codeshine/nestjs-query-core`;
 const dtos: TestDTO[] = [
   {first: 'Bob', last: 'Yukon'}
   {first: 'Alice', last: 'Yukon'}
@@ -150,7 +150,7 @@ DTOs.
 ### Example
 
 ```ts
-import { applyQuery, SortDirection } from `@nestjs-query/core`;
+import { applyQuery, SortDirection } from `@codeshine/nestjs-query-core`;
 
 const dtos: TestDTO[] = [
   {first: 'Bob', last: 'Yukon', isVerified: true}
@@ -188,7 +188,7 @@ The transformFilter is used to remap fields in a `Filter`. This method is common
 ### Example
 
 ```ts
-import { transformFilter, QueryFieldMap, Filter } from `@nestjs-query/core`;
+import { transformFilter, QueryFieldMap, Filter } from `@codeshine/nestjs-query-core`;
 
 class TestEntity {
   firstName!: string;
@@ -231,7 +231,7 @@ defining a custom [Assembler](../concepts/advanced/assemblers.mdx).
 ### Example
 
 ```ts
-import { transformSort, QueryFieldMap, SortField, SortDirection } from `@nestjs-query/core`;
+import { transformSort, QueryFieldMap, SortField, SortDirection } from `@codeshine/nestjs-query-core`;
 
 class TestEntity {
   firstName!: string;
@@ -271,7 +271,7 @@ commonly used when defining a custom [Assembler](../concepts/advanced/assemblers
 ### Example
 
 ```ts
-import { transformQuery, QueryFieldMap, Query, SortDirection } from `@nestjs-query/core`;
+import { transformQuery, QueryFieldMap, Query, SortDirection } from `@codeshine/nestjs-query-core`;
 
 class TestEntity {
   firstName!: string;
@@ -318,7 +318,7 @@ Used to search a filter get a list of comparison objects for a given key.
 ### Example
 
 ```ts
-import { Filter, getFilterComparisons } from `@nestjs-query/core`;
+import { Filter, getFilterComparisons } from `@codeshine/nestjs-query-core`;
 
 class TestDTO {
   age!: number;
@@ -352,7 +352,7 @@ Used to get a filter with a given key removed.
 ### Example
 
 ```ts
-import { Filter, getFilterOmitting } from `@nestjs-query/core`;
+import { Filter, getFilterOmitting } from `@codeshine/nestjs-query-core`;
 
 class TestDTO {
   age!: number;

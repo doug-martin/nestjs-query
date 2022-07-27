@@ -11,7 +11,7 @@ name provided to `@ObjectType` or the class name.
 The following examples are based on the following `TodoItemDTO`
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField } from '@nestjs-query/query-graphql';
+import { FilterableField } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -31,13 +31,12 @@ export class TodoItemDTO {
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }
-
 ```
 
 In the following examples you will see two endpoints referenced
 
-* `todoItem` - graphql endpoint to find a record by id.
-* `todoItems` - graphql endpoint to filter, page, and sort records,
+- `todoItem` - graphql endpoint to find a record by id.
+- `todoItems` - graphql endpoint to filter, page, and sort records,
 
 ## Find By Id
 
@@ -62,13 +61,10 @@ The following example finds a `TodoItem` by id.
     updated
   }
 }
-
 ```
-
 
 </TabItem>
 <TabItem value="response">
-
 
 ```json
 {
@@ -112,15 +108,15 @@ By default if you do not provided an arguments you can query for all records.
 
 ```graphql
 {
-  todoItems{
-    pageInfo{
+  todoItems {
+    pageInfo {
       hasNextPage
       hasPreviousPage
       startCursor
       endCursor
     }
-    edges{
-      node{
+    edges {
+      node {
         id
         title
         completed
@@ -133,10 +129,8 @@ By default if you do not provided an arguments you can query for all records.
 }
 ```
 
-
 </TabItem>
 <TabItem value="response">
-
 
 ```json
 {
@@ -209,15 +203,15 @@ The following example filters for all todoItems that are marked completed.
 
 ```graphql
 {
-  todoItems(filter: {completed: {is: true}}){
-    pageInfo{
+  todoItems(filter: { completed: { is: true } }) {
+    pageInfo {
       hasNextPage
       hasPreviousPage
       startCursor
       endCursor
     }
-    edges{
-      node{
+    edges {
+      node {
         id
         title
         completed
@@ -279,9 +273,9 @@ You can sort by one or more fields by using the `sorting` parameter.
 
 The `sorting` parameter is an array where each item has the following options.
 
-* `field!` - The name of the field to sort by.
-* `direction!` - The direction to sort either `ASC` or `DESC`.
-* `nulls?` - Optional field to set nulls sort order `NULLS_FIRST` or `NULLS_last`
+- `field!` - The name of the field to sort by.
+- `direction!` - The direction to sort either `ASC` or `DESC`.
+- `nulls?` - Optional field to set nulls sort order `NULLS_FIRST` or `NULLS_last`
 
 In this example we sort by title descending.
 
@@ -315,7 +309,6 @@ In this example we sort by title descending.
     }
   }
 }
-
 ```
 
 </TabItem>
@@ -387,6 +380,7 @@ In this example we sort by title descending.
   }
 }
 ```
+
 </TabItem>
 </Tabs>
 
@@ -403,12 +397,7 @@ In this example we sort by completed and title.
 
 ```graphql
 {
-  todoItems(
-    sorting: [
-      { field: completed, direction: ASC }
-      { field: title, direction: DESC }
-    ]
-  ) {
+  todoItems(sorting: [{ field: completed, direction: ASC }, { field: title, direction: DESC }]) {
     pageInfo {
       hasNextPage
       hasPreviousPage
@@ -498,5 +487,6 @@ In this example we sort by completed and title.
   }
 }
 ```
+
 </TabItem>
 </Tabs>

@@ -1,5 +1,5 @@
 import { when, objectContaining, anything, verify, deepEqual, mock, instance } from 'ts-mockito';
-import { Filter, UpdateManyResponse } from '@nestjs-query/core';
+import { Filter, UpdateManyResponse } from '@codeshine/nestjs-query-core';
 import { Resolver, Query, Field, InputType } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import {

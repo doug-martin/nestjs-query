@@ -1,4 +1,4 @@
-import { Class, DeepPartial, QueryService } from '@nestjs-query/core';
+import { Class, DeepPartial, QueryService } from '@codeshine/nestjs-query-core';
 import { ConnectionOptions, PagingStrategies } from '../types';
 import { Aggregateable, AggregateResolverOpts, AggregateResolver } from './aggregate.resolver';
 import { Relatable } from './relations';
@@ -101,7 +101,7 @@ function extractDeleteResolverOpts<DTO>(
  * [[UpdateResolver]], and [[DeleteResolver]].
  *
  * ```ts
- * import { CRUDResolver } from '@nestjs-query/query-graphql';
+ * import { CRUDResolver } from '@codeshine/nestjs-query-query-graphql';
  * import { Resolver } from '@nestjs/graphql';
  * import { TodoItemDTO } from './dto/todo-item.dto';
  * import { TodoItemService } from './todo-item.service';

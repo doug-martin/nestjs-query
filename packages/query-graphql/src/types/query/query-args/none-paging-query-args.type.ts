@@ -1,4 +1,4 @@
-import { Class, Filter, Query, SortField } from '@nestjs-query/core';
+import { Class, Filter, Query, SortField } from '@codeshine/nestjs-query-core';
 import { ArgsType, Field } from '@nestjs/graphql';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';

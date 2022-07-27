@@ -1,5 +1,5 @@
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TagInputDTO } from './dto/tag-input.dto';
 import { TagDTO } from './dto/tag.dto';

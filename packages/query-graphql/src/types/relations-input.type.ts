@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, ArrayUnique } from 'class-validator';
 import { getDTOIdTypeOrDefault } from '../common';

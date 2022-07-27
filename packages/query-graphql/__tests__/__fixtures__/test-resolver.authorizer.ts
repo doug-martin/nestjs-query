@@ -1,4 +1,4 @@
-import { Filter } from '@nestjs-query/core';
+import { Filter } from '@codeshine/nestjs-query-core';
 import { Injectable } from '@nestjs/common';
 import { Authorizer } from '../../src';
 import { TestResolverDTO } from './test-resolver.dto';

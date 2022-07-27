@@ -2,7 +2,7 @@
 title: Getting Started
 ---
 
-The `@nestjs-query/query-typegoose` package provides an implementation of `@nestjs-query/core` [QueryService](../../concepts/services.md).
+The `@codeshine/nestjs-query-query-typegoose` package provides an implementation of `@codeshine/nestjs-query-core` [QueryService](../../concepts/services.md).
 
 This package is built using [typegoose](https://typegoose.github.io/typegoose/) and [nestjs-typegoose](https://github.com/kpfromer/nestjs-typegoose#readme). If you are unfamiliar with them I suggest you read their documentation first.
 

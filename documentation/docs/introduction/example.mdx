@@ -2,6 +2,7 @@
 title: Example
 sidebar_label: Example
 ---
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import useBaseUrl from '@docusaurus/useBaseUrl';
@@ -24,6 +25,7 @@ Be sure to install the correct ORM package!
 :::
 
 Install extra dependencies for the example.
+
 ```sh
 npm i pg apollo-server-express
 ```
@@ -61,13 +63,7 @@ Add the following to `src/todo-item/todo-item.entity.ts`.
 <TabItem value="typeorm">
 
 ```ts title="todo-item/todo-item.entity.ts"
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class TodoItemEntity {
@@ -92,15 +88,7 @@ export class TodoItemEntity {
 <TabItem value="sequelize">
 
 ```ts title="todo-item/todo-item.entity.ts"
-import {
-  Table,
-  Column,
-  Model,
-  CreatedAt,
-  UpdatedAt,
-  PrimaryKey,
-  AutoIncrement,
-} from 'sequelize-typescript';
+import { Table, Column, Model, CreatedAt, UpdatedAt, PrimaryKey, AutoIncrement } from 'sequelize-typescript';
 
 @Table
 export class TodoItemEntity extends Model<TodoItemEntity, Partial<TodoItemEntity>> {
@@ -121,7 +109,6 @@ export class TodoItemEntity extends Model<TodoItemEntity, Partial<TodoItemEntity
   @UpdatedAt
   updated!: Date;
 }
-
 ```
 
 </TabItem>
@@ -150,7 +137,6 @@ export class TodoItemEntity extends Document {
 }
 
 export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity);
-
 ```
 
 </TabItem>
@@ -197,14 +183,15 @@ The DTO (Data Transfer Object) is used by the resolver to represent incoming req
 
 The DTO is where you can:
 
-* Define fields that should be rendered by graphql.
-* Define fields that should be filterable using the `@FilterableField` decorator.
-* Define validation that will be used by mutations.
+- Define fields that should be rendered by graphql.
+- Define fields that should be filterable using the `@FilterableField` decorator.
+- Define validation that will be used by mutations.
 
 In this example the DTO and entity are two different classes to clearly demonstrate what is required for `graphql` vs
 the persistence layer. However, you can combine the two into a single class.
 
 From the root of your project run:
+
 ```sh
 npx nest g cl todo-item.dto todo-item
 ```
@@ -212,7 +199,7 @@ npx nest g cl todo-item.dto todo-item
 Now lets fill out the DTO. Add the following to `src/todo-item/todo-item.dto.ts`.
 
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, IDField } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, GraphQLISODateTime, Field, ID } from '@nestjs/graphql';
 
 @ObjectType('TodoItem')
@@ -232,11 +219,9 @@ export class TodoItemDTO {
   @Field(() => GraphQLISODateTime)
   updated!: Date;
 }
-
-
 ```
 
-Notice the use of `@FilterableField` this will let `@nestjs-query/query-graphql` know to allow filtering on the
+Notice the use of `@FilterableField` this will let `@codeshine/nestjs-query-query-graphql` know to allow filtering on the
 corresponding field. If you just use `@Field` then you will not be able to filter on the corresponding field.
 
 ## Wire everything up.
@@ -247,17 +232,17 @@ The `NestjsQueryGraphQLModule` will automatically create a Resolver that will ex
 
 **Queries**
 
-* `todoItems` - find multiple `TodoItem`s.
-* `todoItem` - find one `TodoItem`.
+- `todoItems` - find multiple `TodoItem`s.
+- `todoItem` - find one `TodoItem`.
 
 **Mutations**
 
-* `createManyTodoItems` - create multiple `TodoItem`s.
-* `createOneTodoItems` - create one `TodoItem`.
-* `updateManyTodoItems` - update multiple `TodoItems`.
-* `updateOneTodoItems` - update one `TodoItem`.
-* `deleteManyTodoItems` - delete multiple `TodoItems`s.
-* `deleteOneTodoItems` - delete one `TodoItem`.
+- `createManyTodoItems` - create multiple `TodoItem`s.
+- `createOneTodoItems` - create one `TodoItem`.
+- `updateManyTodoItems` - update multiple `TodoItems`.
+- `updateOneTodoItems` - update one `TodoItem`.
+- `deleteManyTodoItems` - delete multiple `TodoItems`s.
+- `deleteOneTodoItems` - delete one `TodoItem`.
 
 <Tabs
   defaultValue="typeorm"
@@ -272,8 +257,8 @@ The `NestjsQueryGraphQLModule` will automatically create a Resolver that will ex
 <TabItem value="typeorm">
 
 ```ts {9-15}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -296,8 +281,8 @@ export class TodoItemModule {}
 <TabItem value="sequelize">
 
 ```ts {9-15}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQuerySequelizeModule } from '@nestjs-query/query-sequelize';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQuerySequelizeModule } from '@codeshine/nestjs-query-query-sequelize';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
@@ -320,8 +305,8 @@ export class TodoItemModule {}
 <TabItem value="mongoose">
 
 ```ts {9-19}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryMongooseModule } from '@nestjs-query/query-mongoose';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryMongooseModule } from '@codeshine/nestjs-query-query-mongoose';
 import { Module } from '@nestjs/common';
 import { TodoItemDTO } from './todo-item.dto';
 import { TodoItemEntity, TodoItemEntitySchema } from './todo-item.entity';
@@ -348,9 +333,9 @@ export class TodoItemModule {}
 <TabItem value="typegoose">
 
 ```ts {9-19}
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
 import { Module } from '@nestjs/common';
-import { NestjsQueryTypegooseModule } from '@nestjs-query/query-typegoose';
+import { NestjsQueryTypegooseModule } from '@codeshine/nestjs-query-query-typegoose';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './todo-item.entity';
 
@@ -371,7 +356,6 @@ export class TodoItemModule {}
 </Tabs>
 
 Next update `app.module` to set up your db connection and the `graphql` nest modules.
-
 
 <Tabs
   defaultValue="typeorm"
@@ -446,8 +430,6 @@ import { TodoItemModule } from './todo-item/todo-item.module';
   providers: [AppService],
 })
 export class AppModule {}
-
-
 ```
 
 </TabItem>
@@ -474,8 +456,6 @@ import { TodoItemModule } from './todo-item/todo-item.module';
   providers: [AppService],
 })
 export class AppModule {}
-
-
 ```
 
 </TabItem>
@@ -498,9 +478,8 @@ import { TodoItemModule } from './todo-item/todo-item.module';
   ],
 })
 export class AppModule {}
-
-
 ```
+
 **NOTE** For the sake of brevity, the `options` object in the Mongoose and Typegoose examples aren't defined. If you'd like to see full examples of all of the persistence services, please refer to the `./examples` directory in the [source code](https://github.com/doug-martin/nestjs-query/tree/master/examples).
 
 </TabItem>
@@ -539,6 +518,7 @@ services:
 ## Running the Example
 
 Start the backing services
+
 ```sh
 docker-compose up -d
 ```
@@ -568,9 +548,7 @@ Visit http://localhost:3000/graphql where you should see the playground
 
 ```graphql
 mutation {
-  createOneTodoItem(
-    input: { todoItem: { title: "Create One Todo Item", completed: false } }
-  ) {
+  createOneTodoItem(input: { todoItem: { title: "Create One Todo Item", completed: false } }) {
     id
     title
     completed
@@ -695,10 +673,8 @@ mutation {
 }
 ```
 
-
 </TabItem>
 <TabItem value="response">
-
 
 ```json
 {
@@ -845,7 +821,6 @@ mutation {
 </TabItem>
 <TabItem value="response">
 
-
 ```json
 {
   "data": {
@@ -863,10 +838,10 @@ mutation {
 </TabItem>
 </Tabs>
 
-
 ### Update a TodoItem
 
 Lets update the completed `TodoItem` we created earlier to not be completed.
+
 <Tabs
   defaultValue="graphql"
   values={[
@@ -911,6 +886,7 @@ mutation {
 ### Update Multiple TodoItems
 
 Lets update the completed `TodoItem` we created earlier to not be completed.
+
 <Tabs
   defaultValue="graphql"
   values={[
@@ -922,13 +898,10 @@ Lets update the completed `TodoItem` we created earlier to not be completed.
 
 ```graphql
 mutation {
-  updateManyTodoItems(
-    input: { filter: { id: { in: [1, 2] } }, update: { completed: true } }
-  ) {
+  updateManyTodoItems(input: { filter: { id: { in: [1, 2] } }, update: { completed: true } }) {
     updatedCount
   }
 }
-
 ```
 
 </TabItem>
@@ -949,10 +922,10 @@ mutation {
 
 You can check this by running the completed query from above.
 
-
 ### Delete One TodoItem
 
 Lets update delete the first `TodoItem`.
+
 <Tabs
   defaultValue="graphql"
   values={[
@@ -1009,9 +982,7 @@ Lets update delete the create many todo items `TodoItem` using a filter.
 
 ```graphql
 mutation {
-  deleteManyTodoItems(
-    input: { filter: { title: { like: "Create Many Todo Items%" } } }
-  ) {
+  deleteManyTodoItems(input: { filter: { title: { like: "Create Many Todo Items%" } } }) {
     deletedCount
   }
 }
@@ -1032,4 +1003,3 @@ mutation {
 
 </TabItem>
 </Tabs>
-

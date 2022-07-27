@@ -1,4 +1,9 @@
-import { FilterableField, FilterableCursorConnection, KeySet, QueryOptions } from '@nestjs-query/query-graphql';
+import {
+  FilterableField,
+  FilterableCursorConnection,
+  KeySet,
+  QueryOptions,
+} from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { AuthGuard } from '../../auth.guard';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';

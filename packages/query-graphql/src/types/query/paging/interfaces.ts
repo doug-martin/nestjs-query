@@ -1,4 +1,4 @@
-import { Paging } from '@nestjs-query/core';
+import { Paging } from '@codeshine/nestjs-query-core';
 import { PagingStrategies } from './constants';
 import { ConnectionCursorType } from '../../cursor.scalar';
 

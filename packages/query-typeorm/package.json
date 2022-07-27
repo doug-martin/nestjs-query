@@ -1,7 +1,7 @@
 {
-  "name": "@nestjs-query/query-typeorm",
+  "name": "@codeshine/nestjs-query-query-typeorm",
   "version": "0.30.0",
-  "description": "Typeorm adapter for @nestjs-query/core",
+  "description": "Typeorm adapter for @codeshine/nestjs-query-core",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/doug-martin/nestjs-query#readme",
   "license": "MIT",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs-query/core": "0.30.0",
+    "@codeshine/nestjs-query-core": "0.30.0",
     "camel-case": "^4.1.2",
     "lodash.filter": "^4.6.0",
     "lodash.merge": "^4.6.2",

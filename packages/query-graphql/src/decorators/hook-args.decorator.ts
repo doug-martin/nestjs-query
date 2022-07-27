@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Args, GqlExecutionContext } from '@nestjs/graphql';
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { plainToClass } from 'class-transformer';
 import { MutationArgsType } from '../types';
 import { composeDecorators } from './decorator.utils';

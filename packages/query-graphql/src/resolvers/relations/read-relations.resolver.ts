@@ -1,4 +1,4 @@
-import { Class, Filter, mergeQuery, QueryService } from '@nestjs-query/core';
+import { Class, Filter, mergeQuery, QueryService } from '@codeshine/nestjs-query-core';
 import { ExecutionContext } from '@nestjs/common';
 import { Args, ArgsType, Context, Parent, Resolver } from '@nestjs/graphql';
 import { OperationGroup } from '../../auth';

@@ -1,4 +1,4 @@
-import { Query } from '@nestjs-query/core';
+import { Query } from '@codeshine/nestjs-query-core';
 import { CursorPagingOpts, OffsetPagingOpts, PagerStrategy } from './strategies';
 import { Count, EdgeType, Pager, QueryMany } from '../../interfaces';
 import { CursorQueryArgsType } from '../../../query';

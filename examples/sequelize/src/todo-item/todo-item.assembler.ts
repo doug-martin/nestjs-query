@@ -1,4 +1,4 @@
-import { Assembler, ClassTransformerAssembler } from '@nestjs-query/core';
+import { Assembler, ClassTransformerAssembler } from '@codeshine/nestjs-query-core';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemEntity } from './entity/todo-item.entity';
 

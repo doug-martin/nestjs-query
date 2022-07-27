@@ -1,5 +1,5 @@
-import { UpdateManyResponse, Filter } from '@nestjs-query/core';
-import { FilterType, UpdateManyResponseType } from '@nestjs-query/query-graphql';
+import { UpdateManyResponse, Filter } from '@codeshine/nestjs-query-core';
+import { FilterType, UpdateManyResponseType } from '@codeshine/nestjs-query-query-graphql';
 import { Resolver, Args, Mutation, ID } from '@nestjs/graphql';
 import { TodoItemDTO } from './dto/todo-item.dto';
 import { TodoItemService } from './todo-item.service';

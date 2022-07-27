@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { Hook } from './hooks';
 
 export const createDefaultHook = <T>(func: Hook<T>['run']): Class<Hook<T>> => {

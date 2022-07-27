@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Test, TestingModule } from '@nestjs/testing';
-import { Filter } from '@nestjs-query/core';
+import { Filter } from '@codeshine/nestjs-query-core';
 import { Injectable } from '@nestjs/common';
 import { Authorizer, Relation, Authorize, UnPagedRelation } from '../../src';
 import {

@@ -1,4 +1,4 @@
-import { getQueryServiceToken } from '@nestjs-query/core';
+import { getQueryServiceToken } from '@codeshine/nestjs-query-core';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { mock, instance } from 'ts-mockito';

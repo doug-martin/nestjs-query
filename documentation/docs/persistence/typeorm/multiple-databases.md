@@ -6,7 +6,7 @@ title: Multiple Databases
 
 Further, the official `@nestjs/typeorm` package also provides functionality to support multiple databases within the application. For details, consider the [official documentation](https://docs.nestjs.com/techniques/database#multiple-databases).
 
-Therefore, `@nestjs-query/query-typeorm` also offers this functionality. This section will walk you through a short example indicating how to connect your application to multiple databases. Further, this will assume, that you **already have a working application with a configured database**. Please note that only key aspects are shown here:
+Therefore, `@codeshine/nestjs-query-query-typeorm` also offers this functionality. This section will walk you through a short example indicating how to connect your application to multiple databases. Further, this will assume, that you **already have a working application with a configured database**. Please note that only key aspects are shown here:
 
 ## Defining multiple connections
 
@@ -37,8 +37,8 @@ const secretEntities = [SecretEntity];
     ConfigModule.forRoot(environment),
     TypeOrmModule.forRoot({
       // name: MUSIC_DB_CONNECTION, // if you leave this out, this will be the "default" connection!
-      type: "postgres",
-      host: "localhost",
+      type: 'postgres',
+      host: 'localhost',
       port: 5436,
       username: 'user',
       password: 'password',
@@ -49,7 +49,7 @@ const secretEntities = [SecretEntity];
     }),
     // this also works with the ASYNC configuration!
     TypeOrmModule.forRootAsync({
-      name: SECRET_DB_CONNECTION,   // you need to set the name here!
+      name: SECRET_DB_CONNECTION, // you need to set the name here!
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
@@ -99,17 +99,17 @@ export class SecretDTO {
 }
 ```
 
-Now lets register the `SecretEntity` with `NestjsQueryTypeOrmModule`. 
+Now lets register the `SecretEntity` with `NestjsQueryTypeOrmModule`.
 
 The only difference is you need to pass the name of the `Connection` when importing respective `TypeOrmModule`.
 
 ```ts title="secret/secret.module.ts"
 import { Module } from '@nestjs/common';
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
-import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm'; 
+import { NestjsQueryGraphQLModule } from '@codeshine/nestjs-query-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@codeshine/nestjs-query-query-typeorm';
 import { SECRET_DB_CONNECTION } from '../constants';
 import { SecretEntity } from './secret.entity';
-import { SecretDTO } from './secret.dto'
+import { SecretDTO } from './secret.dto';
 
 @Module({
   imports: [
@@ -118,15 +118,14 @@ import { SecretDTO } from './secret.dto'
       // and provide a QueryService
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [SecretEntity], 
+          [SecretEntity],
           SECRET_DB_CONNECTION, // specify the connection name
-        )
+        ),
       ],
       // describe the resolvers you want to expose
       resolvers: [{ DTOClass: SecretDTO, EntityClass: SecretEntity }],
     }),
-    
-  ],  
+  ],
 })
 export class SecretModule {}
 ```
@@ -138,8 +137,8 @@ Now the `NestjsQueryGraphQLModule` will create a `Resolver` for the `SecretDTO` 
 If you want to create a custom `SecretService` responsible for the database access, a custom [QueryService](../services.mdx), you need to pass an additional argument to the `@InjectRepository()` decorator that indicates the `Connection` you are using. This string has to match the `name` property in the `TypeOrmModule` options!
 
 ```ts title="secret/secret.service.ts"
-import { QueryService } from '@nestjs-query/core';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { QueryService } from '@codeshine/nestjs-query-core';
+import { TypeOrmQueryService } from '@codeshine/nestjs-query-query-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SECRET_DB_CONNECTION } from '../constants';
@@ -147,9 +146,7 @@ import { SecretEntity } from './secret.entity';
 
 @QueryService(SecretEntity)
 export class SecretService extends TypeOrmQueryService<SecretEntity> {
-  constructor(
-    @InjectRepository(SecretEntity, SECRET_DB_CONNECTION) repository: Repository<SecretEntity>,
-  ) {
+  constructor(@InjectRepository(SecretEntity, SECRET_DB_CONNECTION) repository: Repository<SecretEntity>) {
     super(repository);
   }
 }

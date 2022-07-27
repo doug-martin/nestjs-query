@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { Class, Filter } from '@nestjs-query/core';
+import { Class, Filter } from '@codeshine/nestjs-query-core';
 import { plainToClass } from 'class-transformer';
 import {
   ObjectType,

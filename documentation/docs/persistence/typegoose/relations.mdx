@@ -32,7 +32,6 @@ For example, lets add sub tasks to our todo items by storing a `todoItem` ref on
 }>
 <TabItem value="todoitem">
 
-
 ```ts title="todo-item/todo-item.entity.ts" {24-25}
 import { Prop, modelOptions } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
@@ -71,7 +70,6 @@ export class TodoItemEntity extends Base {
 </TabItem>
 <TabItem value="subtask">
 
-
 ```ts title="sub-task/sub-task.entity.ts" {15-16}
 import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
@@ -107,7 +105,6 @@ export class SubTaskEntity extends Base {
 </TabItem>
 </Tabs>
 
-
 Now that we have the relationships defined, we can add the `@Relation` and `@Connection` to our DTOs
 
 <Tabs
@@ -119,9 +116,8 @@ Now that we have the relationships defined, we can add the `@Relation` and `@Con
 }>
 <TabItem value="todoitem">
 
-
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, IDField, KeySet, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Connection } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 
@@ -165,9 +161,8 @@ export class TodoItemDTO {
 </TabItem>
 <TabItem value="subtask">
 
-
 ```ts title="sub-task/sub-task.dto.ts"
-import { FilterableField, IDField, KeySet, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Relation } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
@@ -205,7 +200,6 @@ export class SubTaskDTO {
 </TabItem>
 </Tabs>
 
-
 ## Many To Many Example
 
 In this example, we'll add `tags` to `todoItems` by storing an array of `tag` references on the `todoItems`.
@@ -218,7 +212,6 @@ In this example, we'll add `tags` to `todoItems` by storing an array of `tag` re
   ]
 }>
 <TabItem value="todoitem">
-
 
 ```ts title="todo-item/todo-item.entity.ts" {21-23}
 import { Prop, modelOption, Ref } from '@typegoose/typegoose';
@@ -258,12 +251,10 @@ export class TodoItemEntity extends Base {
     return this._id.toHexString();
   }
 }
-
 ```
 
 </TabItem>
 <TabItem value="tag">
-
 
 ```ts title="tag/tag.entity.ts" {33-38}
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
@@ -310,7 +301,6 @@ export class TagEntity implements Base {
 </TabItem>
 </Tabs>
 
-
 Now that we have the relationship defined, we can add the `@Connection` to our DTOS
 
 <Tabs
@@ -322,9 +312,8 @@ Now that we have the relationship defined, we can add the `@Connection` to our D
 }>
 <TabItem value="todoitem">
 
-
 ```ts title="todo-item/todo-item.dto.ts"
-import { FilterableField, IDField, KeySet, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Connection } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { TagDTO } from '../../tag/dto/tag.dto';
 
@@ -367,9 +356,8 @@ export class TodoItemDTO {
 </TabItem>
 <TabItem value="tag">
 
-
 ```ts title="tag/tag.dto.ts"
-import { FilterableField, IDField, KeySet, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, IDField, KeySet, Connection } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
@@ -400,4 +388,3 @@ export class TagDTO {
 
 </TabItem>
 </Tabs>
-

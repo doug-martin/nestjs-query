@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';

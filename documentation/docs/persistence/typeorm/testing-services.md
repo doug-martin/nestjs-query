@@ -7,8 +7,8 @@ It is possible to test services that use `TypeOrmQueryService`. The process is s
 Let's assume we have the following `TodoItem` service. For the sake of completeness, let's also add a dependency on another service (let's pretend that the todos have subTasks; we are not using relationships here):
 
 ```ts title="todo-item.service.ts"
-import { InjectQueryService, QueryService } from '@nestjs-query/core';
-import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
+import { InjectQueryService, QueryService } from '@codeshine/nestjs-query-core';
+import { TypeOrmQueryService } from '@codeshine/nestjs-query-query-typeorm';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubTaskEntity } from '../sub-task/sub-task.entity';
@@ -29,14 +29,13 @@ export class TodoItemService extends TypeOrmQueryService<TodoItemEntity> {
     return { todoItem, subTasks };
   }
 }
-
 ```
 
-Now lets write some tests! 
+Now lets write some tests!
 
 ```ts title="todo-item.service.spec.ts"
 import { Test, TestingModule } from '@nestjs/testing';
-import { getQueryServiceToken } from '@nestjs-query/core';
+import { getQueryServiceToken } from '@codeshine/nestjs-query-core';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
@@ -51,13 +50,13 @@ const oneTodo: TodoItemEntity = plainToClass(TodoItemEntity, { id: 1, title: 'A 
 describe('TodosItemService', () => {
   let service: TodoItemService; // Removed type, compared to the nestjs examples
 
-  // We mock the responses of the two services. 
+  // We mock the responses of the two services.
   // The mocks in this example are very simple, but they can be more complex, depending on the test cases.
 
   const mockedSubTaskService = {
     // mock the query method that is used by getWithSubTasks
     query: jest.fn((query) => Promise.resolve(subTasks)),
-  };  
+  };
   const mockedRepo = {
     // mock the repo `findOneOrFail`
     findOneOrFail: jest.fn((id) => Promise.resolve(oneTodo)),
@@ -73,7 +72,7 @@ describe('TodosItemService', () => {
           provide: getRepositoryToken(TodoItemEntity),
           useValue: mockedRepo,
         },
-        // Mock the SubTask QueryService using the `getQueryServiceToken` from @nestjs-query/core
+        // Mock the SubTask QueryService using the `getQueryServiceToken` from @codeshine/nestjs-query-core
         {
           provide: getQueryServiceToken(SubTaskEntity),
           useValue: mockedSubTaskService,
@@ -115,7 +114,6 @@ describe('TodosItemService', () => {
     });
   });
 });
-
 ```
 
 ## Mocking Inherited Methods
@@ -130,11 +128,11 @@ async getWithSubTasks(id: number): Promise<{ todoItem: TodoItemEntity; subTasks:
   const subTasks = await this.subTaskService.query({ filter: { todoItemId: { eq: id } } });
   return { todoItem, subTasks };
 }
-```              
+```
 
 To mock the `getById` method we can create a new `spy` with a mock implementation
 
-```ts 
+```ts
 const getByIdSpy = jest.spyOn(service, 'getById').mockImplementation(() => Promise.resolve(oneTodo));
 ```
 
@@ -186,7 +184,7 @@ describe('getWithSubTasks', () => {
     // Ensure that the getById spy is called one
     expect(getByIdSpy).toHaveBeenCalledTimes(1);
     expect(getByIdSpy).toHaveBeenCalledWith(oneTodo.id);
-    // Ensure that that the querySpy was not called  
+    // Ensure that that the querySpy was not called
     expect(querySpy).not.toHaveBeenCalled();
   });
 });

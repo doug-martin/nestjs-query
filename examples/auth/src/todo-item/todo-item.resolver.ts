@@ -1,5 +1,16 @@
-import { Filter, InjectAssemblerQueryService, mergeFilter, mergeQuery, QueryService } from '@nestjs-query/core';
-import { AuthorizerInterceptor, AuthorizerFilter, ConnectionType, OperationGroup } from '@nestjs-query/query-graphql';
+import {
+  Filter,
+  InjectAssemblerQueryService,
+  mergeFilter,
+  mergeQuery,
+  QueryService,
+} from '@codeshine/nestjs-query-core';
+import {
+  AuthorizerInterceptor,
+  AuthorizerFilter,
+  ConnectionType,
+  OperationGroup,
+} from '@codeshine/nestjs-query-query-graphql';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { TodoItemDTO } from './dto/todo-item.dto';

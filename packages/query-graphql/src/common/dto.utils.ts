@@ -1,4 +1,4 @@
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import { plural } from 'pluralize';
 import { upperCaseFirst } from 'upper-case-first';
 import { lowerCaseFirst } from 'lower-case-first';

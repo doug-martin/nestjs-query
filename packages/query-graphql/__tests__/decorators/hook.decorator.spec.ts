@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 // eslint-disable-next-line max-classes-per-file
-import { Class } from '@nestjs-query/core';
+import { Class } from '@codeshine/nestjs-query-core';
 import {
   BeforeCreateMany,
   BeforeCreateOne,

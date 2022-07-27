@@ -7,7 +7,7 @@ import {
   CreateOneInputType,
   UpdateManyInputType,
   UpdateOneInputType,
-} from '@nestjs-query/query-graphql';
+} from '@codeshine/nestjs-query-query-graphql';
 import { Injectable } from '@nestjs/common';
 import { GqlContext } from './auth/auth.guard';
 import { AuthService } from './auth/auth.service';

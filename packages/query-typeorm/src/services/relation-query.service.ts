@@ -8,7 +8,7 @@ import {
   ModifyRelationOptions,
   FindRelationOptions,
   GetByIdOptions,
-} from '@nestjs-query/core';
+} from '@codeshine/nestjs-query-core';
 import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder, ObjectLiteral } from 'typeorm';
 import lodashFilter from 'lodash.filter';
 import lodashOmit from 'lodash.omit';

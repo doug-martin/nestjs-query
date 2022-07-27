@@ -5,7 +5,7 @@ import {
   BeforeCreateOne,
   CreateManyInputType,
   CreateOneInputType,
-} from '@nestjs-query/query-graphql';
+} from '@codeshine/nestjs-query-query-graphql';
 import { GqlContext } from '../../auth.guard';
 import { getUserName } from '../../helpers';
 import { SubTaskDTO } from './sub-task.dto';

@@ -1,4 +1,4 @@
-import { Class, Filter, Query } from '@nestjs-query/core';
+import { Class, Filter, Query } from '@codeshine/nestjs-query-core';
 import { ReturnTypeFuncValue } from '@nestjs/graphql';
 import { ConnectionCursorType } from '../cursor.scalar';
 import { PagingStrategies } from '../query';

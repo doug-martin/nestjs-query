@@ -21,7 +21,7 @@ For example, suppose the following DTOS.
 <TabItem value="todoitem">
 
 ```ts title="todo-item.dto.ts"
-import { FilterableField, Connection } from '@nestjs-query/query-graphql';
+import { FilterableField, Connection } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
 
@@ -49,14 +49,13 @@ export class TodoItemDTO {
   @FilterableField()
   priority!: number;
 }
-
 ```
 
 </TabItem>
 <TabItem value="subtask">
 
 ```ts title="sub-task.dto.ts"
-import { FilterableField, Relation } from '@nestjs-query/query-graphql';
+import { FilterableField, Relation } from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
 import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
 
@@ -84,7 +83,6 @@ export class SubTaskDTO {
   @FilterableField()
   todoItemId!: string;
 }
-
 ```
 
 </TabItem>
@@ -144,10 +142,3 @@ type TodoItemSubTasksConnection {
   totalCount: Int!
 }
 ```
-
-
-
-
-
-
-

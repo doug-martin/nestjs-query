@@ -5,7 +5,7 @@ import {
   FilterableCursorConnection,
   QueryOptions,
   AuthorizationContext,
-} from '@nestjs-query/query-graphql';
+} from '@codeshine/nestjs-query-query-graphql';
 import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
 import { UnauthorizedException } from '@nestjs/common';
 import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
