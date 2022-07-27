@@ -55,8 +55,8 @@
     "class-validator": "^0.13.0",
     "dataloader": "^2.0.0",
     "graphql": "^15.0.0 || ^16.0.0",
-    "graphql-asubscriptions": "^1.1.0 || ^2.0.0",
-    "ts-morph": "^11.0.0 || ^12.0.0"
+    "graphql-subscriptions": "^1.1.0 || ^2.0.0",
+    "ts-morph": "^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0"
   },
   "devDependencies": {
     "@apollo/gateway": "0.42.0",
