@@ -11,7 +11,7 @@ describe('AggregateBuilder', (): void => {
 
   const getRepo = () => getTestConnection().getRepository(TestEntity);
   const getQueryBuilder = () => getRepo().createQueryBuilder();
-  const createAggregateBuilder = () => new AggregateBuilder<TestEntity>();
+  const createAggregateBuilder = () => new AggregateBuilder<TestEntity>(getRepo());
 
   const expectSQLSnapshot = (agg: AggregateQuery<TestEntity>): void => {
     const selectQueryBuilder = createAggregateBuilder().build(getQueryBuilder(), agg, 'TestEntity');

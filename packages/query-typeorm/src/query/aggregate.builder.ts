@@ -1,4 +1,4 @@
-import { SelectQueryBuilder } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { AggregateQuery, AggregateResponse } from '@ptc-org/nestjs-query-core';
 import { BadRequestException } from '@nestjs/common';
 import { camelCase } from 'camel-case';
@@ -18,8 +18,10 @@ const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN|GROUP_BY)_(.*)/;
  * Builds a WHERE clause from a Filter.
  */
 export class AggregateBuilder<Entity> {
+  constructor(readonly repo: Repository<Entity>) {}
+
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  static async asyncConvertToAggregateResponse<Entity>(
+  public static async asyncConvertToAggregateResponse<Entity>(
     responsePromise: Promise<Record<string, unknown>[]>
   ): Promise<AggregateResponse<Entity>[]> {
     const aggResponse = await responsePromise;
@@ -27,7 +29,7 @@ export class AggregateBuilder<Entity> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  static getAggregateSelects<Entity>(query: AggregateQuery<Entity>): string[] {
+  public static getAggregateSelects<Entity>(query: AggregateQuery<Entity>): string[] {
     return [...this.getAggregateGroupBySelects(query), ...this.getAggregateFuncSelects(query)];
   }
 
@@ -52,17 +54,17 @@ export class AggregateBuilder<Entity> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  static getAggregateAlias<Entity>(func: AggregateFuncs, field: keyof Entity): string {
+  public static getAggregateAlias<Entity>(func: AggregateFuncs, field: keyof Entity): string {
     return `${func}_${field as string}`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  static getGroupByAlias<Entity>(field: keyof Entity): string {
+  public static getGroupByAlias<Entity>(field: keyof Entity): string {
     return `GROUP_BY_${field as string}`;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  static convertToAggregateResponse<Entity>(rawAggregates: Record<string, unknown>[]): AggregateResponse<Entity>[] {
+  public static convertToAggregateResponse<Entity>(rawAggregates: Record<string, unknown>[]): AggregateResponse<Entity>[] {
     return rawAggregates.map((response) => {
       return Object.keys(response).reduce((agg: AggregateResponse<Entity>, resultField: string) => {
         const matchResult = AGG_REGEXP.exec(resultField);
@@ -83,12 +85,26 @@ export class AggregateBuilder<Entity> {
   }
 
   /**
+   * Returns the corrected fields for orderBy and groupBy
+   */
+  public getCorrectedField(alias: string, field: string) {
+    const col = alias ? `${alias}.${field}` : `${field}`;
+    const meta = this.repo.metadata.findColumnWithPropertyName(`${field}`);
+
+    if (meta && this.repo.manager.connection.driver.normalizeType(meta) === 'datetime') {
+      return `DATE(${col})`;
+    }
+
+    return col;
+  }
+
+  /**
    * Builds a aggregate SELECT clause from a aggregate.
    * @param qb - the `typeorm` SelectQueryBuilder
    * @param aggregate - the aggregates to select.
    * @param alias - optional alias to use to qualify an identifier
    */
-  build<Qb extends SelectQueryBuilder<Entity>>(qb: Qb, aggregate: AggregateQuery<Entity>, alias?: string): Qb {
+  public build<Qb extends SelectQueryBuilder<Entity>>(qb: Qb, aggregate: AggregateQuery<Entity>, alias?: string): Qb {
     const selects = [
       ...this.createGroupBySelect(aggregate.groupBy, alias),
       ...this.createAggSelect(AggregateFuncs.COUNT, aggregate.count, alias),
@@ -118,9 +134,17 @@ export class AggregateBuilder<Entity> {
     if (!fields) {
       return [];
     }
+
     return fields.map((field) => {
       const col = alias ? `${alias}.${field as string}` : (field as string);
-      return [`${col}`, AggregateBuilder.getGroupByAlias(field)];
+      const groupByAlias = AggregateBuilder.getGroupByAlias(field);
+
+      const meta = this.repo.metadata.findColumnWithPropertyName(`${field as string}`);
+      if (meta && this.repo.manager.connection.driver.normalizeType(meta) === 'datetime') {
+        return [`DATE(${col})`, groupByAlias];
+      }
+
+      return [`${col}`, groupByAlias];
     });
   }
 }

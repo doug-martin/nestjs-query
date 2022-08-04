@@ -33,8 +33,11 @@ interface Groupable<Entity> extends QueryBuilder<Entity> {
  */
 interface Pageable<Entity> extends QueryBuilder<Entity> {
   limit(limit?: number): this;
+
   offset(offset?: number): this;
+
   skip(skip?: number): this;
+
   take(take?: number): this;
 }
 
@@ -56,7 +59,7 @@ export class FilterQueryBuilder<Entity> {
   constructor(
     readonly repo: Repository<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),
-    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>()
+    readonly aggregateBuilder: AggregateBuilder<Entity> = new AggregateBuilder<Entity>(repo)
   ) {}
 
   /**
@@ -64,7 +67,7 @@ export class FilterQueryBuilder<Entity> {
    *
    * @param query - the query to apply.
    */
-  select(query: Query<Entity>): SelectQueryBuilder<Entity> {
+  public select(query: Query<Entity>): SelectQueryBuilder<Entity> {
     const hasRelations = this.filterHasRelations(query.filter);
     let qb = this.createQueryBuilder();
     qb = hasRelations
@@ -76,7 +79,7 @@ export class FilterQueryBuilder<Entity> {
     return qb;
   }
 
-  selectById(id: string | number | (string | number)[], query: Query<Entity>): SelectQueryBuilder<Entity> {
+  public selectById(id: string | number | (string | number)[], query: Query<Entity>): SelectQueryBuilder<Entity> {
     const hasRelations = this.filterHasRelations(query.filter);
     let qb = this.createQueryBuilder();
     qb = hasRelations
@@ -89,12 +92,16 @@ export class FilterQueryBuilder<Entity> {
     return qb;
   }
 
-  aggregate(query: Query<Entity>, aggregate: AggregateQuery<Entity>): SelectQueryBuilder<Entity> {
+  public aggregate(query: Query<Entity>, aggregate: AggregateQuery<Entity>): SelectQueryBuilder<Entity> {
+    const hasRelations = this.filterHasRelations(query.filter);
     let qb = this.createQueryBuilder();
+    qb = hasRelations
+      ? this.applyRelationJoinsRecursive(qb, this.getReferencedRelationsRecursive(this.repo.metadata, query.filter))
+      : qb;
     qb = this.applyAggregate(qb, aggregate, qb.alias);
     qb = this.applyFilter(qb, query.filter, qb.alias);
     qb = this.applyAggregateSorting(qb, aggregate.groupBy, qb.alias);
-    qb = this.applyGroupBy(qb, aggregate.groupBy, qb.alias);
+    qb = this.applyAggregateGroupBy(qb, aggregate.groupBy, qb.alias);
     return qb;
   }
 
@@ -103,7 +110,7 @@ export class FilterQueryBuilder<Entity> {
    *
    * @param query - the query to apply.
    */
-  delete(query: Query<Entity>): DeleteQueryBuilder<Entity> {
+  public delete(query: Query<Entity>): DeleteQueryBuilder<Entity> {
     return this.applyFilter(this.repo.createQueryBuilder().delete(), query.filter);
   }
 
@@ -112,7 +119,7 @@ export class FilterQueryBuilder<Entity> {
    *
    * @param query - the query to apply.
    */
-  softDelete(query: Query<Entity>): SoftDeleteQueryBuilder<Entity> {
+  public softDelete(query: Query<Entity>): SoftDeleteQueryBuilder<Entity> {
     return this.applyFilter(this.repo.createQueryBuilder().softDelete() as SoftDeleteQueryBuilder<Entity>, query.filter);
   }
 
@@ -121,7 +128,7 @@ export class FilterQueryBuilder<Entity> {
    *
    * @param query - the query to apply.
    */
-  update(query: Query<Entity>): UpdateQueryBuilder<Entity> {
+  public update(query: Query<Entity>): UpdateQueryBuilder<Entity> {
     const qb = this.applyFilter(this.repo.createQueryBuilder().update(), query.filter);
     return this.applySorting(qb, query.sorting);
   }
@@ -132,7 +139,7 @@ export class FilterQueryBuilder<Entity> {
    * @param paging - the Paging options.
    * @param useSkipTake - if skip/take should be used instead of limit/offset.
    */
-  applyPaging<P extends Pageable<Entity>>(qb: P, paging?: Paging, useSkipTake?: boolean): P {
+  public applyPaging<P extends Pageable<Entity>>(qb: P, paging?: Paging, useSkipTake?: boolean): P {
     if (!paging) {
       return qb;
     }
@@ -151,7 +158,7 @@ export class FilterQueryBuilder<Entity> {
    * @param aggregate - the aggregates to select.
    * @param alias - optional alias to use to qualify an identifier
    */
-  applyAggregate<Qb extends SelectQueryBuilder<Entity>>(qb: Qb, aggregate: AggregateQuery<Entity>, alias?: string): Qb {
+  public applyAggregate<Qb extends SelectQueryBuilder<Entity>>(qb: Qb, aggregate: AggregateQuery<Entity>, alias?: string): Qb {
     return this.aggregateBuilder.build(qb, aggregate, alias);
   }
 
@@ -162,7 +169,7 @@ export class FilterQueryBuilder<Entity> {
    * @param filter - the filter.
    * @param alias - optional alias to use to qualify an identifier
    */
-  applyFilter<Where extends WhereExpression>(qb: Where, filter?: Filter<Entity>, alias?: string): Where {
+  public applyFilter<Where extends WhereExpression>(qb: Where, filter?: Filter<Entity>, alias?: string): Where {
     if (!filter) {
       return qb;
     }
@@ -175,7 +182,7 @@ export class FilterQueryBuilder<Entity> {
    * @param sorts - an array of SortFields to create the ORDER BY clause.
    * @param alias - optional alias to use to qualify an identifier
    */
-  applySorting<T extends Sortable<Entity>>(qb: T, sorts?: SortField<Entity>[], alias?: string): T {
+  public applySorting<T extends Sortable<Entity>>(qb: T, sorts?: SortField<Entity>[], alias?: string): T {
     if (!sorts) {
       return qb;
     }
@@ -185,23 +192,21 @@ export class FilterQueryBuilder<Entity> {
     }, qb);
   }
 
-  applyGroupBy<T extends Groupable<Entity>>(qb: T, groupBy?: (keyof Entity)[], alias?: string): T {
-    if (!groupBy) {
-      return qb;
-    }
-    return groupBy.reduce((prevQb, group) => {
-      const col = alias ? `${alias}.${group as string}` : `${group as string}`;
-      return prevQb.addGroupBy(col);
-    }, qb);
-  }
-
-  applyAggregateSorting<T extends Sortable<Entity>>(qb: T, groupBy?: (keyof Entity)[], alias?: string): T {
+  public applyAggregateGroupBy<T extends Groupable<Entity>>(qb: T, groupBy?: (keyof Entity)[], alias?: string): T {
     if (!groupBy) {
       return qb;
     }
     return groupBy.reduce((prevQb, field) => {
-      const col = alias ? `${alias}.${field as string}` : `${field as string}`;
-      return prevQb.addOrderBy(col, 'ASC');
+      return prevQb.addGroupBy(this.aggregateBuilder.getCorrectedField(alias, field as string));
+    }, qb);
+  }
+
+  public applyAggregateSorting<T extends Sortable<Entity>>(qb: T, groupBy?: (keyof Entity)[], alias?: string): T {
+    if (!groupBy) {
+      return qb;
+    }
+    return groupBy.reduce((prevQb, field) => {
+      return prevQb.addOrderBy(this.aggregateBuilder.getCorrectedField(alias, field as string), 'ASC');
     }, qb);
   }
 
@@ -220,7 +225,7 @@ export class FilterQueryBuilder<Entity> {
    *
    * @returns the query builder for chaining
    */
-  applyRelationJoinsRecursive(
+  public applyRelationJoinsRecursive(
     qb: SelectQueryBuilder<Entity>,
     relationsMap?: NestedRecord,
     alias?: string
