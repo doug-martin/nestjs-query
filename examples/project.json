@@ -5,14 +5,20 @@
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["examples/**/*.ts"]
+        "lintFilePatterns": [
+          "examples/**/*.ts"
+        ]
       }
     },
     "e2e": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/examples"],
+      "outputs": [
+        "coverage/examples"
+      ],
       "options": {
         "jestConfig": "jest.e2e.ts",
         "runInBand": true

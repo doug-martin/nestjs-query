@@ -4,7 +4,7 @@ export const todoItemFields = `
     completed
     description
     age
-  `;
+  `
 
 export const subTaskFields = `
 id
@@ -12,12 +12,12 @@ title
 description
 completed
 todoItemId
-`;
+`
 
 export const tagFields = `
 id
 name
-`;
+`
 
 export const pageInfoField = `
 pageInfo{
@@ -26,7 +26,7 @@ pageInfo{
   startCursor
   endCursor
 }
-`;
+`
 
 export const edgeNodes = (fields: string): string => `
   edges {
@@ -35,7 +35,7 @@ export const edgeNodes = (fields: string): string => `
     }
     cursor
   }  
-  `;
+  `
 
 export const todoItemAggregateFields = `
 count {
@@ -62,7 +62,7 @@ max {
   title
   description
 }    
-`;
+`
 
 export const tagAggregateFields = `
 count {
@@ -85,7 +85,7 @@ max {
   id
   name
 }
-`;
+`
 
 export const subTaskAggregateFields = `
 count {
@@ -113,4 +113,4 @@ max {
   description    
   todoItemId
 }
-`;
+`

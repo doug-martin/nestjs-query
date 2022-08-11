@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-default-export
 export default {
   displayName: 'query-sequelize',
   preset: '../../jest.preset.js',

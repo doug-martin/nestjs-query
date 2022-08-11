@@ -1,2 +1,2 @@
-export { AggregateResponseType, AggregateResponseOpts } from './aggregate-response.type';
-export { AggregateArgsType } from './aggregate-args.type';
+export { AggregateArgsType } from './aggregate-args.type'
+export { AggregateResponseOpts, AggregateResponseType } from './aggregate-response.type'

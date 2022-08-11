@@ -1,14 +1,15 @@
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { Module } from '@nestjs/common';
-import { TagInputDTO } from './dto/tag-input.dto';
-import { TagTodoItemDTO } from './dto/tag-todo-item.dto';
-import { TagTodoItemInputDTO } from './dto/tag-todo-item.input';
-import { TagDTO } from './dto/tag.dto';
-import { TodoItemReferenceDTO } from './dto/todo-item-reference.dto';
-import { TagTodoItemEntity } from './tag-todo-item.entity';
-import { TagEntity } from './tag.entity';
-import { TodoItemService } from './todo-item.service';
+import { Module } from '@nestjs/common'
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql'
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm'
+
+import { TagDTO } from './dto/tag.dto'
+import { TagInputDTO } from './dto/tag-input.dto'
+import { TagTodoItemDTO } from './dto/tag-todo-item.dto'
+import { TagTodoItemInputDTO } from './dto/tag-todo-item.input'
+import { TodoItemReferenceDTO } from './dto/todo-item-reference.dto'
+import { TagEntity } from './tag.entity'
+import { TagTodoItemEntity } from './tag-todo-item.entity'
+import { TodoItemService } from './todo-item.service'
 
 @Module({
   imports: [

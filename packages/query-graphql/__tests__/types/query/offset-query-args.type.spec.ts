@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import {
   Args,
   ArgsType,
@@ -11,70 +10,72 @@ import {
   ObjectType,
   Query,
   Resolver
-} from '@nestjs/graphql';
-import { plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
-import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType } from '@ptc-org/nestjs-query-graphql';
-import { generateSchema } from '../../__fixtures__';
+} from '@nestjs/graphql'
+import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core'
+import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType } from '@ptc-org/nestjs-query-graphql'
+import { plainToClass } from 'class-transformer'
+import { validateSync } from 'class-validator'
+
+import { generateSchema } from '../../__fixtures__'
 
 describe('Offset paging strategy QueryArgsType with manual options', (): void => {
-  afterEach(() => jest.clearAllMocks());
+  afterEach(() => jest.clearAllMocks())
 
   @ObjectType('TestQuery')
   class TestDto {
     @FilterableField(() => ID)
-    idField!: number;
+    idField!: number
 
     @FilterableField(() => ID, { nullable: true })
-    idFieldOption?: number;
+    idFieldOption?: number
 
     @FilterableField()
-    stringField!: string;
+    stringField!: string
 
     @FilterableField({ nullable: true })
-    stringFieldOptional?: string;
+    stringFieldOptional?: string
 
     @FilterableField()
-    booleanField!: boolean;
+    booleanField!: boolean
 
     @FilterableField({ nullable: true })
-    booleanFieldOptional?: boolean;
+    booleanFieldOptional?: boolean
 
     @FilterableField()
-    numberField!: number;
+    numberField!: number
 
     @FilterableField({ nullable: true })
-    numberFieldOptional?: number;
+    numberFieldOptional?: number
 
     @FilterableField(() => Float)
-    floatField!: number;
+    floatField!: number
 
     @FilterableField(() => Float, { nullable: true })
-    floatFieldOptional?: number;
+    floatFieldOptional?: number
 
     @FilterableField(() => Int)
-    intField!: number;
+    intField!: number
 
     @FilterableField(() => Int, { nullable: true })
-    intFieldOptional?: number;
+    intFieldOptional?: number
 
     @FilterableField(() => GraphQLTimestamp)
-    timestampField!: Date;
+    timestampField!: Date
 
     @FilterableField(() => GraphQLTimestamp, { nullable: true })
-    timestampFieldOptional?: Date;
+    timestampFieldOptional?: Date
 
     @FilterableField(() => GraphQLISODateTime)
-    date!: Date;
+    date!: Date
 
     @FilterableField(() => GraphQLISODateTime, { nullable: true })
-    dateOptional?: Date;
+    dateOptional?: Date
   }
 
   @ObjectType()
   class TestFilterRequiredDto {
     @FilterableField({ filterRequired: true })
-    requiredFilterableField!: string;
+    requiredFilterableField!: string
   }
 
   @ArgsType()
@@ -86,12 +87,13 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
       @Query(() => String)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args() query: TestOffsetQuery): string {
-        return 'hello';
+        return 'hello'
       }
     }
-    const schema = await generateSchema([TestOffsetQueryArgsResolver]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([TestOffsetQueryArgsResolver])
+    expect(schema).toMatchSnapshot()
+  })
 
   it('should paging to the correct instance of paging', () => {
     const queryObj: TestOffsetQuery = {
@@ -99,31 +101,31 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
         limit: 10,
         offset: 2
       }
-    };
-    const queryInstance = plainToClass(TestOffsetQuery, queryObj);
-    expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.paging).toBeInstanceOf(TestOffsetQuery.PageType);
-  });
+    }
+    const queryInstance = plainToClass(TestOffsetQuery, queryObj)
+    expect(validateSync(queryInstance)).toEqual([])
+    expect(queryInstance.paging).toBeInstanceOf(TestOffsetQuery.PageType)
+  })
 
   it('should sorting to the correct instance of sorting', () => {
     const queryObj: TestOffsetQuery = {
       sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }]
-    };
-    const queryInstance = plainToClass(TestOffsetQuery, queryObj);
-    expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.sorting[0]).toBeInstanceOf(TestOffsetQuery.SortType);
-  });
+    }
+    const queryInstance = plainToClass(TestOffsetQuery, queryObj)
+    expect(validateSync(queryInstance)).toEqual([])
+    expect(queryInstance.sorting[0]).toBeInstanceOf(TestOffsetQuery.SortType)
+  })
 
   it('should make filter to the correct instance of sorting', () => {
     const queryObj: CursorQueryArgsType<TestDto> = {
       filter: {
         stringField: { eq: 'foo' }
       }
-    };
-    const queryInstance = plainToClass(TestOffsetQuery, queryObj);
-    expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.filter).toBeInstanceOf(TestOffsetQuery.FilterType);
-  });
+    }
+    const queryInstance = plainToClass(TestOffsetQuery, queryObj)
+    expect(validateSync(queryInstance)).toEqual([])
+    expect(queryInstance.filter).toBeInstanceOf(TestOffsetQuery.FilterType)
+  })
 
   it('should make the filter required if there is a filterRequired field', async () => {
     @ArgsType()
@@ -136,16 +138,18 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
       @Query(() => String)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args() query: TestFilterRequiredQuery): string {
-        return 'hello';
+        return 'hello'
       }
     }
-    const schema = await generateSchema([TestOffsetPagingFilterRequiredResolver]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([TestOffsetPagingFilterRequiredResolver])
+    expect(schema).toMatchSnapshot()
+  })
 
   describe('options', () => {
     @ObjectType()
     class OffsetQueryOptionsDTO extends TestDto {}
+
     @ArgsType()
     class OffsetQueryOptionsArgs extends QueryArgsType(OffsetQueryOptionsDTO, {
       pagingStrategy: PagingStrategies.OFFSET,
@@ -161,19 +165,20 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
         @Query(() => String)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         test(@Args() query: OffsetQueryOptionsArgs): string {
-          return 'hello';
+          return 'hello'
         }
       }
-      const schema = await generateSchema([TestOffsetQueryManualOptionsResolver]);
-      expect(schema).toMatchSnapshot();
-    });
+
+      const schema = await generateSchema([TestOffsetQueryManualOptionsResolver])
+      expect(schema).toMatchSnapshot()
+    })
 
     it('should validate a maxResultsSize for paging.limit', () => {
       const queryObj: CursorQueryArgsType<TestDto> = {
         paging: { limit: 10 }
-      };
-      const QT = QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET, maxResultsSize: 5 });
-      const queryInstance = plainToClass(QT, queryObj);
+      }
+      const QT = QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.OFFSET, maxResultsSize: 5 })
+      const queryInstance = plainToClass(QT, queryObj)
       expect(validateSync(queryInstance)).toEqual([
         {
           children: [],
@@ -184,18 +189,19 @@ describe('Offset paging strategy QueryArgsType with manual options', (): void =>
           target: queryObj,
           value: queryObj.paging
         }
-      ]);
-    });
+      ])
+    })
 
     it('should ignore a maxResultsSize for paging.limit if maxResultSize === -1', () => {
       class NoMaxQueryArgsTpe extends QueryArgsType(TestDto, {
         pagingStrategy: PagingStrategies.OFFSET,
         maxResultsSize: -1
       }) {}
+
       const queryObj: NoMaxQueryArgsTpe = {
         paging: { limit: 1000 }
-      };
-      expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObj))).toEqual([]);
-    });
-  });
-});
+      }
+      expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObj))).toEqual([])
+    })
+  })
+})

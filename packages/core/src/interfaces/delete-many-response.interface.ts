@@ -5,5 +5,5 @@ export interface DeleteManyResponse {
   /**
    * The number of records deleted.
    */
-  deletedCount: number;
+  deletedCount: number
 }

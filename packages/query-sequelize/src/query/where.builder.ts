@@ -1,6 +1,7 @@
-import { WhereOptions, Op, Association } from 'sequelize';
-import { Filter, FilterComparisons, FilterFieldComparison } from '@ptc-org/nestjs-query-core';
-import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
+import { Filter, FilterComparisons, FilterFieldComparison } from '@ptc-org/nestjs-query-core'
+import { Association, Op, WhereOptions } from 'sequelize'
+
+import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder'
 
 /**
  * @internal
@@ -15,27 +16,27 @@ export class WhereBuilder<Entity> {
    * @param associations - map of associations that are included in the query.
    */
   build(filter: Filter<Entity>, associations: Map<string, Association>, alias?: string): WhereOptions {
-    const { and, or } = filter;
-    let ands: WhereOptions[] = [];
-    let ors: WhereOptions[] = [];
-    let whereOpts: WhereOptions = {};
+    const { and, or } = filter
+    let ands: WhereOptions[] = []
+    let ors: WhereOptions[] = []
+    let whereOpts: WhereOptions = {}
     if (and && and.length) {
-      ands = and.map((f) => this.build(f, associations, alias));
+      ands = and.map((f) => this.build(f, associations, alias))
     }
     if (or && or.length) {
-      ors = or.map((f) => this.build(f, associations, alias));
+      ors = or.map((f) => this.build(f, associations, alias))
     }
-    const filterAnds = this.filterFields(filter, associations, alias);
+    const filterAnds = this.filterFields(filter, associations, alias)
     if (filterAnds) {
-      ands = [...ands, filterAnds];
+      ands = [...ands, filterAnds]
     }
     if (ands.length) {
-      whereOpts = { ...whereOpts, [Op.and]: ands };
+      whereOpts = { ...whereOpts, [Op.and]: ands }
     }
     if (ors.length) {
-      whereOpts = { ...whereOpts, [Op.or]: ors };
+      whereOpts = { ...whereOpts, [Op.or]: ors }
     }
-    return whereOpts;
+    return whereOpts
   }
 
   /**
@@ -47,21 +48,21 @@ export class WhereBuilder<Entity> {
       .filter((f) => f !== 'and' && f !== 'or')
       .map((field) =>
         this.withFilterComparison(field as keyof Entity, this.getField(filter, field as keyof Entity), associations, alias)
-      );
+      )
     if (ands.length === 1) {
-      return ands[0];
+      return ands[0]
     }
     if (ands.length) {
-      return { [Op.and]: ands };
+      return { [Op.and]: ands }
     }
-    return undefined;
+    return undefined
   }
 
   private getField<K extends keyof FilterComparisons<Entity>>(
     obj: FilterComparisons<Entity>,
     field: K
   ): FilterFieldComparison<Entity[K]> {
-    return obj[field] as FilterFieldComparison<Entity[K]>;
+    return obj[field] as FilterFieldComparison<Entity[K]>
   }
 
   private withFilterComparison<T extends keyof Entity>(
@@ -71,22 +72,22 @@ export class WhereBuilder<Entity> {
     alias?: string
   ): WhereOptions {
     if (associations.has(field as string)) {
-      const wb = new WhereBuilder<Entity[T]>();
-      return wb.build(cmp as unknown as Filter<Entity[T]>, associations, field as string);
+      const wb = new WhereBuilder<Entity[T]>()
+      return wb.build(cmp as unknown as Filter<Entity[T]>, associations, field as string)
     }
-    let colName = field;
+    let colName = field
     if (alias && associations.has(alias)) {
-      colName = (associations.get(alias)?.target.rawAttributes[colName as string]?.field ?? colName) as T;
+      colName = (associations.get(alias)?.target.rawAttributes[colName as string]?.field ?? colName) as T
     }
-    const opts = Object.keys(cmp) as (keyof FilterFieldComparison<Entity[T]>)[];
+    const opts = Object.keys(cmp) as (keyof FilterFieldComparison<Entity[T]>)[]
     if (opts.length === 1) {
-      const cmpType = opts[0];
-      return this.sqlComparisonBuilder.build(colName, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias);
+      const cmpType = opts[0]
+      return this.sqlComparisonBuilder.build(colName, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias)
     }
     return {
       [Op.or]: opts.map((cmpType) =>
         this.sqlComparisonBuilder.build(colName, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias)
       )
-    };
+    }
   }
 }

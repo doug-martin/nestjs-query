@@ -9,7 +9,8 @@
 
 # `@ptc-org/nestjs-query-core`
 
-Core package that contains interfaces for types used by [`@ptc-org/nestjs-query-graphql`](../query-graphql) and [`@ptc-org/nestjs-query-typeorm`](../query-typeorm)
+Core package that contains interfaces for types used by [`@ptc-org/nestjs-query-graphql`](../query-graphql)
+and [`@ptc-org/nestjs-query-typeorm`](../query-typeorm)
 
 ## Installation
 

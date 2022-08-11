@@ -1,41 +1,42 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
-import { getModelForClass, DocumentType, mongoose } from '@typegoose/typegoose';
-import { Test, TestingModule } from '@nestjs/testing';
-import { ReturnModelType } from '@typegoose/typegoose/lib/types';
-import { InjectModel, TypegooseModule } from 'nestjs-typegoose';
-import { FindRelationOptions, SortDirection } from '@ptc-org/nestjs-query-core';
+import { Test, TestingModule } from '@nestjs/testing'
+import { FindRelationOptions, SortDirection } from '@ptc-org/nestjs-query-core'
+import { DocumentType, getModelForClass, mongoose } from '@typegoose/typegoose'
+import { ReturnModelType } from '@typegoose/typegoose/lib/types'
+import { InjectModel, TypegooseModule } from 'nestjs-typegoose'
+
+import { NestjsQueryTypegooseModule } from '../../src'
+import { TypegooseQueryService } from '../../src/services'
 import {
-  TestReference,
-  TestEntity,
-  TEST_REFERENCES_FOR_DISCRIMINATES,
-  TEST_DISCRIMINATED_ENTITIES,
+  closeDbConnection,
+  dropDatabase,
   getConnectionUri,
   prepareDb,
-  closeDbConnection,
-  dropDatabase
-} from '../__fixtures__';
-import { NestjsQueryTypegooseModule } from '../../src';
-import { TypegooseQueryService } from '../../src/services';
-import { TestDiscriminatedEntity } from '../__fixtures__/test-discriminated.entity';
+  TEST_DISCRIMINATED_ENTITIES,
+  TEST_REFERENCES_FOR_DISCRIMINATES,
+  TestEntity,
+  TestReference
+} from '../__fixtures__'
+import { TestDiscriminatedEntity } from '../__fixtures__/test-discriminated.entity'
 
-const { Types } = mongoose;
+const { Types } = mongoose
 
 describe('TypegooseQueryService', () => {
-  let moduleRef: TestingModule;
-  let TestReferenceModel: ReturnModelType<typeof TestReference>;
-  let TestDiscriminatedEntityModel: ReturnModelType<typeof TestDiscriminatedEntity>;
+  let moduleRef: TestingModule
+  let TestReferenceModel: ReturnModelType<typeof TestReference>
+  let TestDiscriminatedEntityModel: ReturnModelType<typeof TestDiscriminatedEntity>
 
   class TestReferenceService extends TypegooseQueryService<TestReference> {
     constructor(@InjectModel(TestReference) readonly model: ReturnModelType<typeof TestReference>) {
-      super(model);
-      TestReferenceModel = model;
+      super(model)
+      TestReferenceModel = model
     }
   }
 
   class TestDiscriminatedEntityService extends TypegooseQueryService<TestDiscriminatedEntity> {
     constructor(@InjectModel(TestDiscriminatedEntity) readonly model: ReturnModelType<typeof TestDiscriminatedEntity>) {
-      super(model);
-      TestDiscriminatedEntityModel = model;
+      super(model)
+      TestDiscriminatedEntityModel = model
     }
   }
 
@@ -52,15 +53,15 @@ describe('TypegooseQueryService', () => {
         ])
       ],
       providers: [TestDiscriminatedEntityService, TestReferenceService]
-    }).compile();
-  });
+    }).compile()
+  })
 
   function convertDocument<Doc>(doc: DocumentType<Doc>): Doc {
-    return doc.toObject({ virtuals: true }) as Doc;
+    return doc.toObject({ virtuals: true }) as Doc
   }
 
   function convertDocuments<Doc>(docs: DocumentType<Doc>[]): Doc[] {
-    return docs.map((doc) => convertDocument(doc));
+    return docs.map((doc) => convertDocument(doc))
   }
 
   function testDiscriminatedEntityToObject(tde: TestDiscriminatedEntity): Partial<TestDiscriminatedEntity> {
@@ -71,127 +72,125 @@ describe('TypegooseQueryService', () => {
       numberType: tde.numberType,
       dateType: tde.dateType,
       stringType2: tde.stringType2
-    };
+    }
   }
 
   function testDiscriminatedEntityToCreate(tde: TestDiscriminatedEntity): Partial<TestDiscriminatedEntity> {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { _id, ...insert } = testDiscriminatedEntityToObject(tde);
-    return insert;
+    const { _id, ...insert } = testDiscriminatedEntityToObject(tde)
+    return insert
   }
 
   function expectEqualCreate(result: TestDiscriminatedEntity[], expected: TestDiscriminatedEntity[]) {
-    const cleansedResults = result.map(testDiscriminatedEntityToCreate);
-    const cleansedExpected = expected.map(testDiscriminatedEntityToCreate);
-    expect(cleansedResults).toEqual(cleansedExpected);
+    const cleansedResults = result.map(testDiscriminatedEntityToCreate)
+    const cleansedExpected = expected.map(testDiscriminatedEntityToCreate)
+    expect(cleansedResults).toEqual(cleansedExpected)
   }
 
-  afterAll(async () => closeDbConnection());
+  afterAll(async () => closeDbConnection())
 
-  beforeEach(async () => prepareDb());
+  beforeEach(async () => prepareDb())
 
-  afterEach(async () => dropDatabase());
+  afterEach(async () => dropDatabase())
 
   describe('#query with discriminated entity', () => {
     it('call find and return the result', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({});
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({})
 
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES));
-    });
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES))
+    })
 
     it('should support eq operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo11' } } });
-      expect(convertDocuments(queryResult)).toEqual([TEST_DISCRIMINATED_ENTITIES[0]]);
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo11' } } })
+      expect(convertDocuments(queryResult)).toEqual([TEST_DISCRIMINATED_ENTITIES[0]])
+    })
 
     it('should support neq operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { stringType: { neq: 'foo1' } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(1)));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { stringType: { neq: 'foo1' } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(1)))
+    })
 
     it('should support gt operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { numberType: { gt: 5 } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(5)));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { numberType: { gt: 5 } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(5)))
+    })
 
     it('should support gte operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { numberType: { gte: 5 } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(4)));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { numberType: { gte: 5 } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(4)))
+    })
 
     it('should support lt operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { numberType: { lt: 15 } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(0, 4)));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { numberType: { lt: 15 } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(0, 4)))
+    })
 
     it('should support lte operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { numberType: { lte: 15 } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(0, 5)));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { numberType: { lte: 15 } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(0, 5)))
+    })
 
     it('should support in operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { numberType: { in: [11, 12, 13] } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(0, 3)));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { numberType: { in: [11, 12, 13] } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(0, 3)))
+    })
 
     it('should support notIn operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { numberType: { notIn: [11, 12, 13] } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(4)));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { numberType: { notIn: [11, 12, 13] } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(4)))
+    })
 
     it('should support is operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { boolType: { is: true } } });
-      expect(convertDocuments(queryResult)).toEqual(
-        expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.filter((e) => e.boolType))
-      );
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { boolType: { is: true } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.filter((e) => e.boolType)))
+    })
 
     it('should support isNot operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { boolType: { isNot: true } } });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { boolType: { isNot: true } } })
       expect(convertDocuments(queryResult)).toEqual(
         expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.filter((e) => !e.boolType))
-      );
-    });
+      )
+    })
 
     it('should support like operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { stringType: { like: 'foo%' } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { stringType: { like: 'foo%' } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES))
+    })
 
     it('should support notLike operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { stringType: { notLike: 'foo%' } } });
-      expect(convertDocuments(queryResult)).toEqual([]);
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { stringType: { notLike: 'foo%' } } })
+      expect(convertDocuments(queryResult)).toEqual([])
+    })
 
     it('should support iLike operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { stringType: { iLike: 'FOO%' } } });
-      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES));
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { stringType: { iLike: 'FOO%' } } })
+      expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES))
+    })
 
     it('should support notILike operator', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const queryResult = await queryService.query({ filter: { stringType: { notILike: 'FOO%' } } });
-      expect(convertDocuments(queryResult)).toEqual([]);
-    });
-  });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.query({ filter: { stringType: { notILike: 'FOO%' } } })
+      expect(convertDocuments(queryResult)).toEqual([])
+    })
+  })
 
   describe('#aggregate with discriminated entity', () => {
     it('call select with the aggregate columns and return the result', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
       const queryResult = await queryService.aggregate(
         {},
         {
@@ -201,7 +200,7 @@ describe('TypegooseQueryService', () => {
           max: ['id', 'dateType', 'numberType', 'stringType'],
           min: ['id', 'dateType', 'numberType', 'stringType']
         }
-      );
+      )
       return expect(queryResult).toEqual([
         {
           avg: {
@@ -226,11 +225,11 @@ describe('TypegooseQueryService', () => {
             numberType: 155
           }
         }
-      ]);
-    });
+      ])
+    })
 
     it('allow aggregates with groupBy', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
       const queryResult = await queryService.aggregate(
         {},
         {
@@ -241,7 +240,7 @@ describe('TypegooseQueryService', () => {
           max: ['id', 'dateType', 'numberType', 'stringType'],
           min: ['id', 'dateType', 'numberType', 'stringType']
         }
-      );
+      )
       return expect(queryResult).toEqual([
         {
           groupBy: {
@@ -295,11 +294,11 @@ describe('TypegooseQueryService', () => {
             numberType: 80
           }
         }
-      ]);
-    });
+      ])
+    })
 
     it('call select with the aggregate columns and return the result with a filter', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
       const queryResult = await queryService.aggregate(
         { stringType: { in: ['foo11', 'foo12', 'foo13'] } },
         {
@@ -309,7 +308,7 @@ describe('TypegooseQueryService', () => {
           max: ['id', 'dateType', 'numberType', 'stringType'],
           min: ['id', 'dateType', 'numberType', 'stringType']
         }
-      );
+      )
       return expect(queryResult).toEqual([
         {
           avg: {
@@ -334,296 +333,296 @@ describe('TypegooseQueryService', () => {
             numberType: 36
           }
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
   describe('#count with discriminated entity', () => {
     it('should return number of elements matching a query', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const expectedEntities = TEST_DISCRIMINATED_ENTITIES.slice(0, 2);
-      const count = await queryService.count({ stringType: { in: expectedEntities.map((e) => e.stringType) } });
-      expect(count).toBe(2);
-    });
-  });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const expectedEntities = TEST_DISCRIMINATED_ENTITIES.slice(0, 2)
+      const count = await queryService.count({ stringType: { in: expectedEntities.map((e) => e.stringType) } })
+      expect(count).toBe(2)
+    })
+  })
 
   describe('#findById with discriminated entity', () => {
     it('return the entity if found', async () => {
-      const entity = TEST_DISCRIMINATED_ENTITIES[0];
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const found = await queryService.findById(entity._id.toString());
-      expect(convertDocument(found)).toEqual(entity);
-    });
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const found = await queryService.findById(entity._id.toString())
+      expect(convertDocument(found)).toEqual(entity)
+    })
 
     it('return undefined if not found', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const found = await queryService.findById(new Types.ObjectId().toString());
-      expect(found).toBeUndefined();
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const found = await queryService.findById(new Types.ObjectId().toString())
+      expect(found).toBeUndefined()
+    })
 
     describe('with filter on discriminated entity', () => {
       it('should return an entity if all filters match', async () => {
-        const entity = TEST_DISCRIMINATED_ENTITIES[0];
-        const queryService = moduleRef.get(TestDiscriminatedEntityService);
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
         const found = await queryService.findById(entity._id.toString(), {
           filter: { stringType: { eq: entity.stringType } }
-        });
-        expect(convertDocument(found)).toEqual(entity);
-      });
+        })
+        expect(convertDocument(found)).toEqual(entity)
+      })
 
       it('should return an undefined if an entity with the pk and filter is not found', async () => {
-        const entity = TEST_DISCRIMINATED_ENTITIES[0];
-        const queryService = moduleRef.get(TestDiscriminatedEntityService);
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
         const found = await queryService.findById(entity._id.toHexString(), {
           filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
-        });
-        expect(found).toBeUndefined();
-      });
-    });
-  });
+        })
+        expect(found).toBeUndefined()
+      })
+    })
+  })
 
   describe('#getById with discriminated entity', () => {
     it('return the entity if found', async () => {
-      const entity = TEST_DISCRIMINATED_ENTITIES[0];
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const found = await queryService.getById(entity._id.toHexString());
-      expect(convertDocument(found)).toEqual(entity);
-    });
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const found = await queryService.getById(entity._id.toHexString())
+      expect(convertDocument(found)).toEqual(entity)
+    })
 
     it('return undefined if not found', () => {
-      const badId = new Types.ObjectId().toHexString();
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      return expect(queryService.getById(badId)).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${badId}`);
-    });
+      const badId = new Types.ObjectId().toHexString()
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      return expect(queryService.getById(badId)).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${badId}`)
+    })
 
     describe('with filter on discriminated entity', () => {
       it('should return an entity if all filters match', async () => {
-        const entity = TEST_DISCRIMINATED_ENTITIES[0];
-        const queryService = moduleRef.get(TestDiscriminatedEntityService);
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
         const found = await queryService.getById(entity._id.toHexString(), {
           filter: { stringType: { eq: entity.stringType } }
-        });
-        expect(convertDocument(found)).toEqual(entity);
-      });
+        })
+        expect(convertDocument(found)).toEqual(entity)
+      })
 
       it('should return an undefined if an entity with the pk and filter is not found', async () => {
-        const entity = TEST_DISCRIMINATED_ENTITIES[0];
-        const queryService = moduleRef.get(TestDiscriminatedEntityService);
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
         return expect(
           queryService.getById(entity._id.toHexString(), {
             filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
           })
-        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`);
-      });
-    });
-  });
+        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`)
+      })
+    })
+  })
 
   describe('#createMany with discriminated entity', () => {
     it('call save on the repo with instances of entities when passed plain objects', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const created = await queryService.createMany(TEST_DISCRIMINATED_ENTITIES.map(testDiscriminatedEntityToCreate));
-      expectEqualCreate(created, TEST_DISCRIMINATED_ENTITIES);
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const created = await queryService.createMany(TEST_DISCRIMINATED_ENTITIES.map(testDiscriminatedEntityToCreate))
+      expectEqualCreate(created, TEST_DISCRIMINATED_ENTITIES)
+    })
 
     it('call save on the repo with instances of entities when passed instances', async () => {
-      const instances = TEST_DISCRIMINATED_ENTITIES.map((e) => testDiscriminatedEntityToCreate(e));
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const created = await queryService.createMany(instances);
-      expectEqualCreate(created, TEST_DISCRIMINATED_ENTITIES);
-    });
+      const instances = TEST_DISCRIMINATED_ENTITIES.map((e) => testDiscriminatedEntityToCreate(e))
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const created = await queryService.createMany(instances)
+      expectEqualCreate(created, TEST_DISCRIMINATED_ENTITIES)
+    })
 
     it('should reject if the entities already exist', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
       return expect(queryService.createMany(TEST_DISCRIMINATED_ENTITIES)).rejects.toThrow(
         'Id cannot be specified when updating or creating'
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe('#createOne with discriminated entity', () => {
     it('call save on the repo with an instance of the entity when passed a plain object', async () => {
-      const entity = testDiscriminatedEntityToCreate(TEST_DISCRIMINATED_ENTITIES[0]);
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const created = await queryService.createOne(entity);
-      expect(convertDocument(created)).toEqual(expect.objectContaining(entity));
-    });
+      const entity = testDiscriminatedEntityToCreate(TEST_DISCRIMINATED_ENTITIES[0])
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const created = await queryService.createOne(entity)
+      expect(convertDocument(created)).toEqual(expect.objectContaining(entity))
+    })
 
     it('call save on the repo with an instance of the entity when passed an instance', async () => {
-      const Model = getModelForClass(TestDiscriminatedEntity);
-      const entity = new Model(testDiscriminatedEntityToCreate(TEST_DISCRIMINATED_ENTITIES[0]));
-      const outcome = testDiscriminatedEntityToObject(entity);
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const created = await queryService.createOne(entity);
-      expect(convertDocument(created)).toEqual(expect.objectContaining(outcome));
-    });
+      const Model = getModelForClass(TestDiscriminatedEntity)
+      const entity = new Model(testDiscriminatedEntityToCreate(TEST_DISCRIMINATED_ENTITIES[0]))
+      const outcome = testDiscriminatedEntityToObject(entity)
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const created = await queryService.createOne(entity)
+      expect(convertDocument(created)).toEqual(expect.objectContaining(outcome))
+    })
 
     it('should reject if the entity contains an id', async () => {
-      const entity = TEST_DISCRIMINATED_ENTITIES[0];
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      return expect(queryService.createOne({ ...entity })).rejects.toThrow('Id cannot be specified when updating or creating');
-    });
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      return expect(queryService.createOne({ ...entity })).rejects.toThrow('Id cannot be specified when updating or creating')
+    })
 
     it('should not reject if the entity contains an undefined id', async () => {
-      const entity = testDiscriminatedEntityToCreate(TEST_DISCRIMINATED_ENTITIES[0]);
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const created = await queryService.createOne({ ...entity, id: undefined });
-      expect(convertDocument(created)).toEqual(expect.objectContaining(entity));
-    });
+      const entity = testDiscriminatedEntityToCreate(TEST_DISCRIMINATED_ENTITIES[0])
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const created = await queryService.createOne({ ...entity, id: undefined })
+      expect(convertDocument(created)).toEqual(expect.objectContaining(entity))
+    })
 
     it('should not reject if the entity contains an undefined _id', async () => {
-      const entity = testDiscriminatedEntityToCreate(TEST_DISCRIMINATED_ENTITIES[0]);
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const created = await queryService.createOne({ ...entity, _id: undefined });
-      expect(convertDocument(created)).toEqual(expect.objectContaining(entity));
-    });
-  });
+      const entity = testDiscriminatedEntityToCreate(TEST_DISCRIMINATED_ENTITIES[0])
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const created = await queryService.createOne({ ...entity, _id: undefined })
+      expect(convertDocument(created)).toEqual(expect.objectContaining(entity))
+    })
+  })
 
   describe('#deleteMany with discriminated entity', () => {
     it('delete all records that match the query', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 5);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 5)
       const { deletedCount } = await queryService.deleteMany({
         stringType: { in: entities.map((e) => e.stringType) }
-      });
-      expect(deletedCount).toBe(5);
-      const allCount = await queryService.count({});
-      expect(allCount).toBe(5);
-    });
-  });
+      })
+      expect(deletedCount).toBe(5)
+      const allCount = await queryService.count({})
+      expect(allCount).toBe(5)
+    })
+  })
 
   describe('#deleteOne with discriminated entity', () => {
     it('remove the entity', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const deleted = await queryService.deleteOne(TEST_DISCRIMINATED_ENTITIES[0]._id.toHexString());
-      expect(convertDocument(deleted)).toEqual(TEST_DISCRIMINATED_ENTITIES[0]);
-    });
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const deleted = await queryService.deleteOne(TEST_DISCRIMINATED_ENTITIES[0]._id.toHexString())
+      expect(convertDocument(deleted)).toEqual(TEST_DISCRIMINATED_ENTITIES[0])
+    })
 
     it('call fail if the entity is not found', async () => {
-      const badId = new Types.ObjectId().toHexString();
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      return expect(queryService.deleteOne(badId)).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${badId}`);
-    });
+      const badId = new Types.ObjectId().toHexString()
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      return expect(queryService.deleteOne(badId)).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${badId}`)
+    })
 
     describe('with filter on discriminated entity', () => {
       it('should delete the entity if all filters match', async () => {
-        const entity = TEST_DISCRIMINATED_ENTITIES[0];
-        const queryService = moduleRef.get(TestDiscriminatedEntityService);
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
         const deleted = await queryService.deleteOne(entity._id.toHexString(), {
           filter: { stringType: { eq: entity.stringType } }
-        });
-        expect(convertDocument(deleted)).toEqual(TEST_DISCRIMINATED_ENTITIES[0]);
-      });
+        })
+        expect(convertDocument(deleted)).toEqual(TEST_DISCRIMINATED_ENTITIES[0])
+      })
 
       it('should return throw an error if unable to find', async () => {
-        const entity = TEST_DISCRIMINATED_ENTITIES[0];
-        const queryService = moduleRef.get(TestDiscriminatedEntityService);
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
         return expect(
           queryService.deleteOne(entity._id.toHexString(), {
             filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
           })
-        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`);
-      });
-    });
-  });
+        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`)
+      })
+    })
+  })
 
   describe('#updateMany with discriminated entity', () => {
     it('update all entities in the filter', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
       const filter = {
         stringType: { in: TEST_DISCRIMINATED_ENTITIES.slice(0, 5).map((e) => e.stringType) }
-      };
-      await queryService.updateMany({ stringType: 'updated' }, filter);
-      const entities = await queryService.query({ filter: { stringType: { eq: 'updated' } } });
-      expect(entities).toHaveLength(5);
-    });
+      }
+      await queryService.updateMany({ stringType: 'updated' }, filter)
+      const entities = await queryService.query({ filter: { stringType: { eq: 'updated' } } })
+      expect(entities).toHaveLength(5)
+    })
 
     it('should reject if the update contains the ID', () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
       return expect(queryService.updateMany({ id: new Types.ObjectId().toHexString() }, {})).rejects.toThrow(
         'Id cannot be specified when updating'
-      );
-    });
+      )
+    })
 
     it('should not reject if the update contains an undefined id', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const entitiesToUpdate = TEST_DISCRIMINATED_ENTITIES.slice(0, 5);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const entitiesToUpdate = TEST_DISCRIMINATED_ENTITIES.slice(0, 5)
       const filter = {
         stringType: { in: entitiesToUpdate.map((e) => e.stringType) }
-      };
-      await queryService.updateMany({ stringType: 'updated', id: undefined }, filter);
-      const entities = await queryService.query({ filter: { stringType: { eq: 'updated' } } });
-      expect(entities).toHaveLength(entitiesToUpdate.length);
-      expect(new Set(entities.map((e) => e.id))).toEqual(new Set(entitiesToUpdate.map((e) => e.id)));
-    });
-  });
+      }
+      await queryService.updateMany({ stringType: 'updated', id: undefined }, filter)
+      const entities = await queryService.query({ filter: { stringType: { eq: 'updated' } } })
+      expect(entities).toHaveLength(entitiesToUpdate.length)
+      expect(new Set(entities.map((e) => e.id))).toEqual(new Set(entitiesToUpdate.map((e) => e.id)))
+    })
+  })
 
   describe('#updateOne with discriminated entity', () => {
     it('update the entity', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const entity = TEST_DISCRIMINATED_ENTITIES[0];
-      const update = { stringType: 'updated' };
-      const updated = await queryService.updateOne(entity._id.toHexString(), update);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const update = { stringType: 'updated' }
+      const updated = await queryService.updateOne(entity._id.toHexString(), update)
       expect(updated).toEqual(
         expect.objectContaining({
           _id: entity._id,
           ...update
         })
-      );
-    });
+      )
+    })
 
     it('update the entity with an instance of the entity', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
-      const entity = TEST_DISCRIMINATED_ENTITIES[0];
-      const Model = getModelForClass(TestDiscriminatedEntity);
-      const update = new Model({ stringType: 'updated' });
-      const updated = await queryService.updateOne(entity._id.toHexString(), update);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const Model = getModelForClass(TestDiscriminatedEntity)
+      const update = new Model({ stringType: 'updated' })
+      const updated = await queryService.updateOne(entity._id.toHexString(), update)
       expect(updated).toEqual(
         expect.objectContaining({
           _id: entity._id,
           stringType: 'updated'
         })
-      );
-    });
+      )
+    })
 
     it('should reject if the update contains the ID', async () => {
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
       return expect(
         queryService.updateOne(TEST_DISCRIMINATED_ENTITIES[0]._id.toHexString(), { _id: new Types.ObjectId() })
-      ).rejects.toThrow('Id cannot be specified when updating');
-    });
+      ).rejects.toThrow('Id cannot be specified when updating')
+    })
 
     it('call fail if the entity is not found', async () => {
-      const badId = new Types.ObjectId().toHexString();
-      const queryService = moduleRef.get(TestDiscriminatedEntityService);
+      const badId = new Types.ObjectId().toHexString()
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
       return expect(queryService.updateOne(badId, { stringType: 'updated' })).rejects.toThrow(
         `Unable to find TestDiscriminatedEntity with id: ${badId}`
-      );
-    });
+      )
+    })
 
     describe('with filter on discriminated entity', () => {
       it('should update the entity if all filters match', async () => {
-        const entity = TEST_DISCRIMINATED_ENTITIES[0];
-        const queryService = moduleRef.get(TestDiscriminatedEntityService);
-        const update = { stringType: 'updated' };
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const update = { stringType: 'updated' }
         const updated = await queryService.updateOne(entity._id.toHexString(), update, {
           filter: { stringType: { eq: entity.stringType } }
-        });
-        expect(updated).toEqual(expect.objectContaining({ _id: entity._id, ...update }));
-      });
+        })
+        expect(updated).toEqual(expect.objectContaining({ _id: entity._id, ...update }))
+      })
 
       it('should throw an error if unable to find the entity', async () => {
-        const entity = TEST_DISCRIMINATED_ENTITIES[0];
-        const queryService = moduleRef.get(TestDiscriminatedEntityService);
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
         return expect(
           queryService.updateOne(
             entity._id.toHexString(),
             { stringType: 'updated' },
             { filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } } }
           )
-        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`);
-      });
-    });
-  });
+        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`)
+      })
+    })
+  })
 
   // describe('#findRelation with discriminated entity', () => {
   //   describe('with one entity', () => {
@@ -1587,4 +1586,4 @@ describe('TypegooseQueryService', () => {
   //     });
   //   });
   // });
-});
+})

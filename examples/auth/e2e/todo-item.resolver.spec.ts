@@ -1,38 +1,39 @@
-import { AggregateResponse, getQueryServiceToken, QueryService } from '@ptc-org/nestjs-query-core';
-import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { AppModule } from '../src/app.module';
-import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
-import { TagDTO } from '../src/tag/dto/tag.dto';
-import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
-import { refresh } from './fixtures';
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import { AggregateResponse, getQueryServiceToken, QueryService } from '@ptc-org/nestjs-query-core'
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql'
+import request from 'supertest'
+import { Connection } from 'typeorm'
+
+import { AppModule } from '../src/app.module'
+import { AuthService } from '../src/auth/auth.service'
+import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto'
+import { TagDTO } from '../src/tag/dto/tag.dto'
+import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto'
+import { TodoItemEntity } from '../src/todo-item/todo-item.entity'
+import { refresh } from './fixtures'
 import {
   edgeNodes,
   pageInfoField,
+  subTaskAggregateFields,
   subTaskFields,
-  tagFields,
-  todoItemFields,
-  todoItemAggregateFields,
   tagAggregateFields,
-  subTaskAggregateFields
-} from './graphql-fragments';
-import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
-import { AuthService } from '../src/auth/auth.service';
+  tagFields,
+  todoItemAggregateFields,
+  todoItemFields
+} from './graphql-fragments'
 
 describe('TodoItemResolver (auth - e2e)', () => {
-  let app: INestApplication;
-  let jwtToken: string;
-  let user3JwtToken: string;
+  let app: INestApplication
+  let jwtToken: string
+  let user3JwtToken: string
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule]
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -41,19 +42,19 @@ describe('TodoItemResolver (auth - e2e)', () => {
         skipMissingProperties: false,
         forbidUnknownValues: true
       })
-    );
+    )
 
-    await app.init();
-    await refresh(app.get(Connection));
-  });
+    await app.init()
+    await refresh(app.get(Connection))
+  })
 
   beforeEach(async () => {
-    const authService = app.get(AuthService);
-    jwtToken = (await authService.login({ username: 'nestjs-query', id: 1 })).accessToken;
-    user3JwtToken = (await authService.login({ username: 'nestjs-query-3', id: 3 })).accessToken;
-  });
+    const authService = app.get(AuthService)
+    jwtToken = (await authService.login({ username: 'nestjs-query', id: 1 })).accessToken
+    user3JwtToken = (await authService.login({ username: 'nestjs-query-3', id: 3 })).accessToken
+  })
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Connection)))
 
   describe('find one', () => {
     it('should require authorization token', () =>
@@ -69,7 +70,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         }`
         })
         .expect(200)
-        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')))
 
     it(`should find a todo item by id`, () =>
       request(app.getHttpServer())
@@ -96,8 +97,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
                 age: expect.any(Number)
               }
             }
-          });
-        }));
+          })
+        }))
 
     it(`should find a users todo item by id`, () =>
       request(app.getHttpServer())
@@ -124,8 +125,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
                 age: expect.any(Number)
               }
             }
-          });
-        }));
+          })
+        }))
 
     it(`should throw item not found on non existing todo item`, () =>
       request(app.getHttpServer())
@@ -142,9 +143,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it(`should return subTasks as a connection`, () =>
       request(app.getHttpServer())
@@ -165,17 +166,17 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(3);
-          expect(edges).toHaveLength(3);
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
-        }));
+          })
+          expect(totalCount).toBe(3)
+          expect(edges).toHaveLength(3)
+          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'))
+        }))
 
     it(`should return subTasksAggregate`, () =>
       request(app.getHttpServer())
@@ -194,7 +195,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.subTasksAggregate;
+          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.subTasksAggregate
           expect(agg).toEqual([
             {
               avg: { id: 2 },
@@ -203,8 +204,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
               min: { description: null, id: '1', title: 'Create Nest App - Sub Task 1', todoItemId: '1' },
               sum: { id: 6 }
             }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should return tags as a connection`, () =>
       request(app.getHttpServer())
@@ -225,17 +226,17 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.todoItem.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.todoItem.tags
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        }));
+          })
+          expect(totalCount).toBe(2)
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home'])
+        }))
 
     it(`should return tagsAggregate`, () =>
       request(app.getHttpServer())
@@ -254,7 +255,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.tagsAggregate;
+          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.tagsAggregate
           expect(agg).toEqual([
             {
               avg: { id: 1.5 },
@@ -263,9 +264,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
               min: { id: '1', name: 'Home' },
               sum: { id: 3 }
             }
-          ]);
-        }));
-  });
+          ])
+        }))
+  })
 
   describe('query', () => {
     it(`should require authorization`, () =>
@@ -283,7 +284,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         }`
         })
         .expect(200)
-        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')));
+        .then(({ body }) => expect(body.errors[0].message).toBe('Unauthorized')))
 
     it(`should return a connection`, () =>
       request(app.getHttpServer())
@@ -302,15 +303,15 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
@@ -323,8 +324,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
               description: null,
               age: expect.any(Number)
             }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -343,21 +344,21 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(3);
-          expect(edges).toHaveLength(3);
+          })
+          expect(totalCount).toBe(3)
+          expect(edges).toHaveLength(3)
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
             { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying for all users`, () =>
       request(app.getHttpServer())
@@ -376,21 +377,21 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(3);
-          expect(edges).toHaveLength(3);
+          })
+          expect(totalCount).toBe(3)
+          expect(edges).toHaveLength(3)
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
             { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying on subTasks`, () =>
       request(app.getHttpServer())
@@ -409,21 +410,21 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, totalCount, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, totalCount, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
+          })
+          expect(totalCount).toBe(2)
+          expect(edges).toHaveLength(2)
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying on tags`, () =>
       request(app.getHttpServer())
@@ -442,21 +443,21 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, totalCount, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, totalCount, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
+          })
+          expect(totalCount).toBe(2)
+          expect(edges).toHaveLength(2)
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
             { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null, age: expect.any(Number) }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -475,15 +476,15 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
           expect(edges.map((e) => e.node)).toEqual([
             {
               id: '5',
@@ -496,8 +497,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
             { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
             { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) },
             { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should throw an error if AuthorizationContext was not setup`, () =>
       request(app.getHttpServer())
@@ -519,7 +520,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
           expect(body.errors[0].message).toBe(
             'No AuthorizationContext available for method failingTodoItems! Make sure that you provide an AuthorizationContext to your custom methods as argument of the @AuthorizerFilter decorator.'
           )
-        ));
+        ))
 
     describe('paging', () => {
       it(`should allow paging with the 'first' field`, () =>
@@ -539,20 +540,20 @@ describe('TodoItemResolver (auth - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-            });
-            expect(totalCount).toBe(5);
-            expect(edges).toHaveLength(2);
+            })
+            expect(totalCount).toBe(5)
+            expect(edges).toHaveLength(2)
             expect(edges.map((e) => e.node)).toEqual([
               { id: '1', title: 'Create Nest App', completed: true, description: null, age: expect.any(Number) },
               { id: '2', title: 'Create Entity', completed: false, description: null, age: expect.any(Number) }
-            ]);
-          }));
+            ])
+          }))
 
       it(`should allow paging with the 'first' field and 'after'`, () =>
         request(app.getHttpServer())
@@ -571,15 +572,15 @@ describe('TodoItemResolver (auth - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
-            });
-            expect(totalCount).toBe(5);
-            expect(edges).toHaveLength(2);
+            })
+            expect(totalCount).toBe(5)
+            expect(edges).toHaveLength(2)
             expect(edges.map((e) => e.node)).toEqual([
               { id: '3', title: 'Create Entity Service', completed: false, description: null, age: expect.any(Number) },
               {
@@ -589,10 +590,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
                 description: null,
                 age: expect.any(Number)
               }
-            ]);
-          }));
-    });
-  });
+            ])
+          }))
+    })
+  })
 
   describe('aggregate', () => {
     it('should require authorization', () =>
@@ -608,9 +609,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized')
+        }))
 
     it(`should return a aggregate response`, () =>
       request(app.getHttpServer())
@@ -627,7 +628,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate
           expect(res).toEqual([
             {
               avg: { id: 3 },
@@ -636,8 +637,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
               min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
               sum: { id: 15 }
             }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should return a aggregate response for all users`, () =>
       request(app.getHttpServer())
@@ -654,7 +655,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate
           expect(res).toEqual([
             {
               avg: { id: 8 },
@@ -663,8 +664,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
               min: { description: null, id: '1', title: 'Add Todo Item Resolver' },
               sum: { id: 120 }
             }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow filtering`, () =>
       request(app.getHttpServer())
@@ -681,7 +682,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate
           expect(res).toEqual([
             {
               count: { id: 4, title: 4, description: 0, completed: 4, created: 4, updated: 4 },
@@ -690,9 +691,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
               min: { id: '2', title: 'Add Todo Item Resolver', description: null },
               max: { id: '5', title: 'How to create item With Sub Tasks', description: null }
             }
-          ]);
-        }));
-  });
+          ])
+        }))
+  })
 
   describe('create one', () => {
     it('should require a header secret', () =>
@@ -714,9 +715,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized')
+        }))
     it('should allow creating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -744,7 +745,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               completed: false
             }
           }
-        }));
+        }))
 
     it('should forbid creating a todoItem for user 3', () =>
       request(app.getHttpServer())
@@ -767,9 +768,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized')
+        }))
 
     it('should call the beforeCreateOne hook', () =>
       request(app.getHttpServer())
@@ -800,7 +801,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               createdBy: 'nestjs-query'
             }
           }
-        }));
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -823,10 +824,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('create many', () => {
     it('should require auth token', () =>
@@ -849,9 +850,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized')
+        }))
 
     it('should allow creating multiple todoItems', () =>
       request(app.getHttpServer())
@@ -882,7 +883,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               { id: '19', title: 'Many Test Todo 2', completed: true }
             ]
           }
-        }));
+        }))
 
     it('should call the beforeCreateMany hook when creating multiple todoItems', () =>
       request(app.getHttpServer())
@@ -914,7 +915,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               { id: '21', title: 'Many Create Hook 2', completed: true, createdBy: 'nestjs-query' }
             ]
           }
-        }));
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -937,10 +938,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update one', () => {
     it('should require an auth token', () =>
@@ -963,9 +964,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized')
+        }))
     it('should allow updating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -994,7 +995,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               completed: true
             }
           }
-        }));
+        }))
 
     it('should not allow updating a todoItem that does not belong to the user', () =>
       request(app.getHttpServer())
@@ -1018,9 +1019,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it('should not allow updating a todoItem that does not belong to user 3', () =>
       request(app.getHttpServer())
@@ -1044,9 +1045,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it('should call the beforeUpdateOne hook', () =>
       request(app.getHttpServer())
@@ -1078,7 +1079,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               updatedBy: 'nestjs-query'
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -1101,9 +1102,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.')
+        }))
 
     it('should validate an update', () =>
       request(app.getHttpServer())
@@ -1127,10 +1128,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update many', () => {
     it('should require a header secret', () =>
@@ -1151,9 +1152,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized')
+        }))
     it('should allow updating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1178,7 +1179,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               updatedCount: 2
             }
           }
-        }));
+        }))
 
     it('should not allow update records that do not belong to the user', () =>
       request(app.getHttpServer())
@@ -1204,7 +1205,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               updatedCount: 0
             }
           }
-        }));
+        }))
 
     it('should not allow update records that do not belong to user 3', () =>
       request(app.getHttpServer())
@@ -1230,7 +1231,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               updatedCount: 0
             }
           }
-        }));
+        }))
 
     it('should call the beforeUpdateMany hook when updating todoItem', () =>
       request(app.getHttpServer())
@@ -1258,8 +1259,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
           }
         })
         .then(async () => {
-          const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
-          const todoItems = await queryService.query({ filter: { id: { in: [20, 21] } } });
+          const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity))
+          const todoItems = await queryService.query({ filter: { id: { in: [20, 21] } } })
           expect(
             todoItems.map((ti) => ({
               id: ti.id,
@@ -1270,8 +1271,8 @@ describe('TodoItemResolver (auth - e2e)', () => {
           ).toEqual([
             { id: 20, title: 'Update Many Hook', completed: true, updatedBy: 'nestjs-query' },
             { id: 21, title: 'Update Many Hook', completed: true, updatedBy: 'nestjs-query' }
-          ]);
-        }));
+          ])
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -1292,11 +1293,11 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -1318,10 +1319,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('delete one', () => {
     it('should require a header secret', () =>
@@ -1341,9 +1342,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized')
+        }))
     it('should allow deleting a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1369,7 +1370,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               completed: true
             }
           }
-        }));
+        }))
 
     it('should not allow deleting a todoItem that does not belong to the user', () =>
       request(app.getHttpServer())
@@ -1390,9 +1391,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it('should not allow deleting a todoItem that does not belong to user 3', () =>
       request(app.getHttpServer())
@@ -1413,9 +1414,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -1436,10 +1437,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.')
+        }))
+  })
 
   describe('delete many', () => {
     it('should require a header secret', () =>
@@ -1459,9 +1460,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Unauthorized')
+        }))
     it('should allow deleting multiple todoItems', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1485,7 +1486,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               deletedCount: 2
             }
           }
-        }));
+        }))
 
     it('should not allow deleting multiple todoItems that do not belong to the user', () =>
       request(app.getHttpServer())
@@ -1510,7 +1511,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               deletedCount: 0
             }
           }
-        }));
+        }))
 
     it('should not allow deleting multiple todoItems that do not belong to user 3', () =>
       request(app.getHttpServer())
@@ -1535,7 +1536,7 @@ describe('TodoItemResolver (auth - e2e)', () => {
               deletedCount: 0
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -1554,11 +1555,11 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -1579,10 +1580,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('addSubTasksToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -1611,18 +1612,18 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
-          expect(body.data.addSubTasksToTodoItem.id).toBe('1');
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks
+          expect(body.data.addSubTasksToTodoItem.id).toBe('1')
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(6);
-          expect(edges).toHaveLength(6);
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
-        }));
+          })
+          expect(totalCount).toBe(6)
+          expect(edges).toHaveLength(6)
+          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'))
+        }))
 
     it('should not allow adding subTasks to a todoItem that does not belong to the user', () =>
       request(app.getHttpServer())
@@ -1650,9 +1651,9 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it('should not allow adding subTasks that do not belong to a user to a todoItem', () =>
       request(app.getHttpServer())
@@ -1680,10 +1681,10 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
+  })
 
   describe('addTagsToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -1712,19 +1713,19 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
-          expect(body.data.addTagsToTodoItem.id).toBe('1');
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags
+          expect(body.data.addTagsToTodoItem.id).toBe('1')
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
-        }));
-  });
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked'])
+        }))
+  })
 
   describe('removeTagsFromTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -1753,21 +1754,21 @@ describe('TodoItemResolver (auth - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
-          expect(body.data.removeTagsFromTodoItem.id).toBe('1');
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags
+          expect(body.data.removeTagsFromTodoItem.id).toBe('1')
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        }));
-  });
+          })
+          expect(totalCount).toBe(2)
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home'])
+        }))
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

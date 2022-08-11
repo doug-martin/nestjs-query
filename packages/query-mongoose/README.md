@@ -9,7 +9,8 @@
 
 # `@nestjs-query/query-mongoose`
 
-The `query-mongoose` package that provides an implementation of `@ptc-org/nestjs-query-core` `QueryService`, built on top of of [nestjs](https://nestjs.com/) and [mongoose](https://mongoosejs.com/). 
+The `query-mongoose` package that provides an implementation of `@ptc-org/nestjs-query-core` `QueryService`, built on
+top of of [nestjs](https://nestjs.com/) and [mongoose](https://mongoosejs.com/).
 
 ## Installation
 
@@ -17,6 +18,7 @@ The `query-mongoose` package that provides an implementation of `@ptc-org/nestjs
 
 ## Getting Started
 
-The get started with the `@nestjs-query/query-mongoose` package checkout the [Getting Started](https://tripss.github.io/nestjs-query/docs/persistence/mongoose/getting-started) docs.
+The get started with the `@nestjs-query/query-mongoose` package checkout
+the [Getting Started](https://tripss.github.io/nestjs-query/docs/persistence/mongoose/getting-started) docs.
 
 

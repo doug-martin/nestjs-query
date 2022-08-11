@@ -1,4 +1,5 @@
-import { Inject } from '@nestjs/common';
-import { pubSubToken } from '../subscription';
+import { Inject } from '@nestjs/common'
 
-export const InjectPubSub = (): ParameterDecorator => Inject(pubSubToken());
+import { pubSubToken } from '../subscription'
+
+export const InjectPubSub = (): ParameterDecorator => Inject(pubSubToken())

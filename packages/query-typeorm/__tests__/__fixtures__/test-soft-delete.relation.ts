@@ -1,13 +1,13 @@
-import { Entity, DeleteDateColumn, PrimaryColumn, Column } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()
 export class TestSoftDeleteRelation {
   @PrimaryColumn({ name: 'test_entity_pk' })
-  testEntityPk!: string;
+  testEntityPk!: string
 
   @Column({ name: 'string_type' })
-  stringType!: string;
+  stringType!: string
 
   @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt?: Date;
+  deletedAt?: Date
 }

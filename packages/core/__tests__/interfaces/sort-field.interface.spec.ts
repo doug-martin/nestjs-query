@@ -1,10 +1,10 @@
-import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
+import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core'
 
 describe('SortField', () => {
   it('should define SortDirection', () => {
-    expect(SortDirection).toBeDefined();
-  });
+    expect(SortDirection).toBeDefined()
+  })
   it('should define SortNulls', () => {
-    expect(SortNulls).toBeDefined();
-  });
-});
+    expect(SortNulls).toBeDefined()
+  })
+})

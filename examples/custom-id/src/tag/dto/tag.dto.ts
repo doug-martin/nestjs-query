@@ -1,20 +1,21 @@
-import { FilterableField, CursorConnection, IDField } from '@ptc-org/nestjs-query-graphql';
-import { ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
-import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto';
-import { CustomIDScalar } from '../../common/custom-id.scalar';
+import { GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
+import { CursorConnection, FilterableField, IDField } from '@ptc-org/nestjs-query-graphql'
+
+import { CustomIDScalar } from '../../common/custom-id.scalar'
+import { TodoItemDTO } from '../../todo-item/dto/todo-item.dto'
 
 @ObjectType('Tag')
 @CursorConnection('todoItems', () => TodoItemDTO)
 export class TagDTO {
   @IDField(() => CustomIDScalar)
-  id!: number;
+  id!: number
 
   @FilterableField()
-  name!: string;
+  name!: string
 
   @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
+  created!: Date
 
   @FilterableField(() => GraphQLISODateTime)
-  updated!: Date;
+  updated!: Date
 }

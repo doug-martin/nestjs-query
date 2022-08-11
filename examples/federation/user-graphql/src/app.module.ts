@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
-import { GraphQLFederationModule } from '@nestjs/graphql';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeormOrmConfig } from '../../../helpers';
-import { UserModule } from './user/user.module';
+import { Module } from '@nestjs/common'
+import { GraphQLFederationModule } from '@nestjs/graphql'
+import { TypeOrmModule } from '@nestjs/typeorm'
+
+import { typeormOrmConfig } from '../../../helpers'
+import { UserModule } from './user/user.module'
 
 @Module({
   imports: [

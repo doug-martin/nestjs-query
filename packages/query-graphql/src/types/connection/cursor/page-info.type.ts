@@ -1,7 +1,8 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { Class } from '@ptc-org/nestjs-query-core';
-import { ConnectionCursorType, ConnectionCursorScalar } from '../../cursor.scalar';
-import { PageInfoType } from '../interfaces';
+import { Field, ObjectType } from '@nestjs/graphql'
+import { Class } from '@ptc-org/nestjs-query-core'
+
+import { ConnectionCursorScalar, ConnectionCursorType } from '../../cursor.scalar'
+import { PageInfoType } from '../interfaces'
 
 export interface PageInfoTypeConstructor {
   new (
@@ -9,15 +10,15 @@ export interface PageInfoTypeConstructor {
     hasPreviousPage: boolean,
     startCursor: ConnectionCursorType | undefined,
     endCursor: ConnectionCursorType | undefined
-  ): PageInfoType;
+  ): PageInfoType
 }
 
 /** @internal */
-let pageInfoType: Class<PageInfoType> | null = null;
+let pageInfoType: Class<PageInfoType> | null = null
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const getOrCreatePageInfoType = (): PageInfoTypeConstructor => {
   if (pageInfoType) {
-    return pageInfoType;
+    return pageInfoType
   }
 
   @ObjectType('PageInfo')
@@ -28,28 +29,28 @@ export const getOrCreatePageInfoType = (): PageInfoTypeConstructor => {
       startCursor: ConnectionCursorType | undefined,
       endCursor: ConnectionCursorType | undefined
     ) {
-      this.hasNextPage = hasNextPage;
-      this.hasPreviousPage = hasPreviousPage;
-      this.startCursor = startCursor;
-      this.endCursor = endCursor;
+      this.hasNextPage = hasNextPage
+      this.hasPreviousPage = hasPreviousPage
+      this.startCursor = startCursor
+      this.endCursor = endCursor
     }
 
     @Field(() => Boolean, { nullable: true, description: 'true if paging forward and there are more records.' })
-    hasNextPage: boolean;
+    hasNextPage: boolean
 
     @Field(() => Boolean, { nullable: true, description: 'true if paging backwards and there are more records.' })
-    hasPreviousPage: boolean;
+    hasPreviousPage: boolean
 
     @Field(() => ConnectionCursorScalar, { nullable: true, description: 'The cursor of the first returned record.' })
-    startCursor?: ConnectionCursorType | undefined;
+    startCursor?: ConnectionCursorType | undefined
 
     @Field(() => ConnectionCursorScalar, {
       nullable: true,
       description: 'The cursor of the last returned record.'
     })
-    endCursor?: ConnectionCursorType | undefined;
+    endCursor?: ConnectionCursorType | undefined
   }
 
-  pageInfoType = PageInfoTypeImpl;
-  return pageInfoType;
-};
+  pageInfoType = PageInfoTypeImpl
+  return pageInfoType
+}

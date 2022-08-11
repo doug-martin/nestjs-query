@@ -9,7 +9,8 @@
 
 # `@ptc-org/nestjs-query-graphql`
 
-This package provides a code first implementation of graphql CRUD endpoints. It is built on top of of [nestjs](https://nestjs.com/). 
+This package provides a code first implementation of graphql CRUD endpoints. It is built on top of
+of [nestjs](https://nestjs.com/).
 
 ## Installation
 
@@ -17,6 +18,7 @@ This package provides a code first implementation of graphql CRUD endpoints. It 
 
 ## Getting Started
 
-The get started with the `@ptc-org/nestjs-query-graphql` package checkout the [Getting Started](https://tripss.github.io/nestjs-query/docs/graphql/getting-started) docs.
+The get started with the `@ptc-org/nestjs-query-graphql` package checkout
+the [Getting Started](https://tripss.github.io/nestjs-query/docs/graphql/getting-started) docs.
 
 

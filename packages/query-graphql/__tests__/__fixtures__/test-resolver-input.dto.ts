@@ -1,10 +1,10 @@
-import { ID, InputType, Field } from '@nestjs/graphql';
+import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class TestResolverInputDTO {
   @Field(() => ID)
-  id!: string;
+  id!: string
 
   @Field()
-  stringField!: string;
+  stringField!: string
 }

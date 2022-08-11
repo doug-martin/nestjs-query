@@ -28,6 +28,12 @@
         "main": "packages/query-mongoose/src/index.ts",
         "assets": ["packages/query-mongoose/*.md"]
       }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular"
+      }
     }
   },
   "tags": [],

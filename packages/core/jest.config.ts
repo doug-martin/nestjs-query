@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-default-export
 export default {
   displayName: 'core',
   preset: '../../jest.preset.js',

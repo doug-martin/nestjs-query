@@ -5,5 +5,5 @@ export interface UpdateManyResponse {
   /**
    * The number of records deleted.
    */
-  updatedCount: number;
+  updatedCount: number
 }

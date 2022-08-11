@@ -1,17 +1,20 @@
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TagModule } from './tag/tag.module';
-import { TodoItemModule } from './todo-item/todo-item.module';
-import { SubTaskModule } from './sub-task/sub-task.module';
-import { formatGraphqlError, typeormOrmConfig } from '../../helpers';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { ApolloDriver } from '@nestjs/apollo'
+import { Module } from '@nestjs/common'
+import { GraphQLModule } from '@nestjs/graphql'
+import { TypeOrmModule } from '@nestjs/typeorm'
+
+import { formatGraphqlError, typeormOrmConfig } from '../../helpers'
+import { AuthModule } from './auth/auth.module'
+import { SubTaskModule } from './sub-task/sub-task.module'
+import { TagModule } from './tag/tag.module'
+import { TodoItemModule } from './todo-item/todo-item.module'
+import { UserModule } from './user/user.module'
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeormOrmConfig('auth')),
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
       installSubscriptionHandlers: true,
       subscriptions: {

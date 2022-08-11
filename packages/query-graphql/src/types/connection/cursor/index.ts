@@ -1,1 +1,1 @@
-export * from './cursor-connection.type';
+export * from './cursor-connection.type'

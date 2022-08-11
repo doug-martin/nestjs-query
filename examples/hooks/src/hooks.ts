@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import {
   BeforeCreateManyHook,
   BeforeCreateOneHook,
@@ -7,18 +8,18 @@ import {
   CreateOneInputType,
   UpdateManyInputType,
   UpdateOneInputType
-} from '@ptc-org/nestjs-query-graphql';
-import { Injectable } from '@nestjs/common';
-import { GqlContext } from './auth/auth.guard';
-import { AuthService } from './auth/auth.service';
-import { getUserName } from './auth/helpers';
+} from '@ptc-org/nestjs-query-graphql'
+
+import { GqlContext } from './auth/auth.guard'
+import { AuthService } from './auth/auth.service'
+import { getUserName } from './auth/helpers'
 
 interface CreatedBy {
-  createdBy: string;
+  createdBy: string
 }
 
 interface UpdatedBy {
-  updatedBy: string;
+  updatedBy: string
 }
 
 @Injectable()
@@ -27,21 +28,21 @@ export class CreatedByHook<T extends CreatedBy>
 {
   constructor(readonly authService: AuthService) {}
 
-  run(instance: CreateManyInputType<T>, context: GqlContext): Promise<CreateManyInputType<T>>;
-  run(instance: CreateOneInputType<T>, context: GqlContext): Promise<CreateOneInputType<T>>;
+  run(instance: CreateManyInputType<T>, context: GqlContext): Promise<CreateManyInputType<T>>
+  run(instance: CreateOneInputType<T>, context: GqlContext): Promise<CreateOneInputType<T>>
   async run(
     instance: CreateOneInputType<T> | CreateManyInputType<T>,
     context: GqlContext
   ): Promise<CreateOneInputType<T> | CreateManyInputType<T>> {
-    const createdBy = await this.authService.getUserEmail(getUserName(context));
+    const createdBy = await this.authService.getUserEmail(getUserName(context))
     if (Array.isArray(instance.input)) {
       // eslint-disable-next-line no-param-reassign
-      instance.input = instance.input.map((c) => ({ ...c, createdBy }));
-      return instance;
+      instance.input = instance.input.map((c) => ({ ...c, createdBy }))
+      return instance
     }
     // eslint-disable-next-line no-param-reassign
-    instance.input.createdBy = createdBy;
-    return instance;
+    instance.input.createdBy = createdBy
+    return instance
   }
 }
 
@@ -51,14 +52,14 @@ export class UpdatedByHook<T extends UpdatedBy>
 {
   constructor(readonly authService: AuthService) {}
 
-  run(instance: UpdateOneInputType<T>, context: GqlContext): Promise<UpdateOneInputType<T>>;
-  run(instance: UpdateManyInputType<T, T>, context: GqlContext): Promise<UpdateManyInputType<T, T>>;
+  run(instance: UpdateOneInputType<T>, context: GqlContext): Promise<UpdateOneInputType<T>>
+  run(instance: UpdateManyInputType<T, T>, context: GqlContext): Promise<UpdateManyInputType<T, T>>
   async run(
     instance: UpdateOneInputType<T> | UpdateManyInputType<T, T>,
     context: GqlContext
   ): Promise<UpdateOneInputType<T> | UpdateManyInputType<T, T>> {
     // eslint-disable-next-line no-param-reassign
-    instance.update.updatedBy = await this.authService.getUserEmail(getUserName(context));
-    return instance;
+    instance.update.updatedBy = await this.authService.getUserEmail(getUserName(context))
+    return instance
   }
 }

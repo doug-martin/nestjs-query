@@ -1,2 +1,2 @@
-export { MongooseQueryService } from './services';
-export { NestjsQueryMongooseModule } from './module';
+export { NestjsQueryMongooseModule } from './module'
+export { MongooseQueryService } from './services'

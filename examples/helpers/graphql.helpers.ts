@@ -1,5 +1,5 @@
-import { GraphQLError } from 'graphql';
+import { GraphQLError } from 'graphql'
 
 export const formatGraphqlError = (error: GraphQLError) => {
-  return error;
-};
+  return error
+}

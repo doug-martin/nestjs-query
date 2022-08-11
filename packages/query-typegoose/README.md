@@ -9,7 +9,8 @@
 
 # `@ptc-org/nestjs-query-typeorm`
 
-The `query-typegoose` package that provides an implementation of `@ptc-org/nestjs-query-core` `QueryService`, built on top of of [nestjs](https://nestjs.com/) and [typegoose](https://github.com/typegoose/typegoose).
+The `query-typegoose` package that provides an implementation of `@ptc-org/nestjs-query-core` `QueryService`, built on
+top of of [nestjs](https://nestjs.com/) and [typegoose](https://github.com/typegoose/typegoose).
 
 ## Installation
 
@@ -17,4 +18,5 @@ The `query-typegoose` package that provides an implementation of `@ptc-org/nestj
 
 ## Getting Started
 
-The get started with the `@nestjs-query/query-typegoose` package checkout the [Getting Started](https://tripss.github.io/nestjs-query/docs/persistence/typegoose/getting-started) docs.
+The get started with the `@nestjs-query/query-typegoose` package checkout
+the [Getting Started](https://tripss.github.io/nestjs-query/docs/persistence/typegoose/getting-started) docs.

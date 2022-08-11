@@ -1,22 +1,23 @@
-import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { AppModule } from '../src/app.module';
-import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
-import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, subTaskFields, todoItemFields } from './graphql-fragments';
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql'
+import request from 'supertest'
+import { Connection } from 'typeorm'
+
+import { AppModule } from '../src/app.module'
+import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto'
+import { refresh } from './fixtures'
+import { edgeNodes, pageInfoField, subTaskFields, todoItemFields } from './graphql-fragments'
 
 describe('SubTaskResolver (custom-id - e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule]
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -25,13 +26,13 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         skipMissingProperties: false,
         forbidUnknownValues: true
       })
-    );
+    )
 
-    await app.init();
-    await refresh(app.get(Connection));
-  });
+    await app.init()
+    await refresh(app.get(Connection))
+  })
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Connection)))
 
   const subTasks = [
     {
@@ -133,7 +134,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
       title: 'How to create item With Sub Tasks - Sub Task 3',
       todoItemId: 'aWQ6NQ=='
     }
-  ];
+  ]
 
   describe('find one', () => {
     it(`should a sub task by id`, () =>
@@ -160,8 +161,8 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
                 todoItemId: 'aWQ6MQ=='
               }
             }
-          });
-        }));
+          })
+        }))
 
     it(`should throw item not found on non existing sub task`, () =>
       request(app.getHttpServer())
@@ -177,9 +178,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it(`should return a todo item`, () =>
       request(app.getHttpServer())
@@ -203,9 +204,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
                 todoItem: { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null }
               }
             }
-          });
-        }));
-  });
+          })
+        }))
+  })
 
   describe('query', () => {
     it(`should return a connection`, () =>
@@ -223,16 +224,16 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(10);
-          expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 10));
-        }));
+          })
+          expect(edges).toHaveLength(10)
+          expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 10))
+        }))
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -249,16 +250,16 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(3);
-          expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 3));
-        }));
+          })
+          expect(edges).toHaveLength(3)
+          expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 3))
+        }))
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -275,16 +276,16 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
             hasNextPage: true,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(10);
-          expect(edges.map((e) => e.node)).toEqual(subTasks.slice().reverse().slice(0, 10));
-        }));
+          })
+          expect(edges).toHaveLength(10)
+          expect(edges.map((e) => e.node)).toEqual(subTasks.slice().reverse().slice(0, 10))
+        }))
 
     describe('paging', () => {
       it(`should allow paging with the 'first' field`, () =>
@@ -302,16 +303,16 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+            const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-            });
-            expect(edges).toHaveLength(2);
-            expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 2));
-          }));
+            })
+            expect(edges).toHaveLength(2)
+            expect(edges.map((e) => e.node)).toEqual(subTasks.slice(0, 2))
+          }))
 
       it(`should allow paging with the 'first' field and 'after'`, () =>
         request(app.getHttpServer())
@@ -328,18 +329,18 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks;
+            const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.subTasks
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
-            });
-            expect(edges).toHaveLength(2);
-            expect(edges.map((e) => e.node)).toEqual(subTasks.slice(2, 4));
-          }));
-    });
-  });
+            })
+            expect(edges).toHaveLength(2)
+            expect(edges.map((e) => e.node)).toEqual(subTasks.slice(2, 4))
+          }))
+    })
+  })
 
   describe('create one', () => {
     it('should allow creating a subTask', () =>
@@ -368,7 +369,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               todoItemId: 'aWQ6MQ=='
             }
           }
-        }));
+        }))
 
     it('should validate a subTask', () =>
       request(app.getHttpServer())
@@ -388,10 +389,10 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty')
+        }))
+  })
 
   describe('create many', () => {
     it('should allow creating a subTask', () =>
@@ -432,7 +433,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               }
             ]
           }
-        }));
+        }))
 
     it('should validate a subTask', () =>
       request(app.getHttpServer())
@@ -452,10 +453,10 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty')
+        }))
+  })
 
   describe('update one', () => {
     it('should allow updating a subTask', () =>
@@ -485,7 +486,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               todoItemId: 'aWQ6MQ=='
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -507,9 +508,9 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneSubTaskInput.id" of required type "CustomID!" was not provided.');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "UpdateOneSubTaskInput.id" of required type "CustomID!" was not provided.')
+        }))
 
     it('should validate an update', () =>
       request(app.getHttpServer())
@@ -532,10 +533,10 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title should not be empty')
+        }))
+  })
 
   describe('update many', () => {
     it('should allow updating a subTask', () =>
@@ -561,7 +562,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               updatedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -581,11 +582,11 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "UpdateManySubTasksInput.filter" of required type "SubTaskUpdateFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -606,10 +607,10 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('delete one', () => {
     it('should allow deleting a subTask', () =>
@@ -636,7 +637,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               todoItemId: 'aWQ6MQ=='
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -654,10 +655,10 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneSubTaskInput.id" of required type "CustomID!" was not provided.');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "DeleteOneSubTaskInput.id" of required type "CustomID!" was not provided.')
+        }))
+  })
 
   describe('delete many', () => {
     it('should allow updating a subTask', () =>
@@ -682,7 +683,7 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
               deletedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -700,11 +701,11 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "DeleteManySubTasksInput.filter" of required type "SubTaskDeleteFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -724,10 +725,10 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('setTodoItemOnSubTask', () => {
     it('should set a the todoItem on a subtask', () =>
@@ -756,11 +757,11 @@ describe('SubTaskResolver (custom-id - e2e)', () => {
                 todoItem: { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null }
               }
             }
-          });
-        }));
-  });
+          })
+        }))
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

@@ -1,20 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { TagTodoItemEntity } from './tag-todo-item.entity';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+
+import { TagTodoItemEntity } from './tag-todo-item.entity'
 
 @Entity({ name: 'tag' })
 export class TagEntity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: number
 
   @Column()
-  name!: string;
+  name!: string
 
   @CreateDateColumn()
-  created!: Date;
+  created!: Date
 
   @UpdateDateColumn()
-  updated!: Date;
+  updated!: Date
 
   @OneToMany(() => TagTodoItemEntity, (tagTodoItem) => tagTodoItem.tag)
-  tagTodoItems!: TagTodoItemEntity[];
+  tagTodoItems!: TagTodoItemEntity[]
 }

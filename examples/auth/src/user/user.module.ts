@@ -1,6 +1,7 @@
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { Module } from '@nestjs/common';
-import { UserEntity } from './user.entity';
+import { Module } from '@nestjs/common'
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm'
+
+import { UserEntity } from './user.entity'
 
 @Module({
   imports: [NestjsQueryTypeOrmModule.forFeature([UserEntity])],

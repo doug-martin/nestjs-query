@@ -1,7 +1,8 @@
-import { IsString, MaxLength, IsBoolean } from 'class-validator';
-import { Field, InputType } from '@nestjs/graphql';
-import { BeforeCreateMany, BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
-import { CreatedByHook } from '../../hooks';
+import { Field, InputType } from '@nestjs/graphql'
+import { BeforeCreateMany, BeforeCreateOne } from '@ptc-org/nestjs-query-graphql'
+import { IsBoolean, IsString, MaxLength } from 'class-validator'
+
+import { CreatedByHook } from '../../hooks'
 
 @InputType('TodoItemInput')
 @BeforeCreateOne(CreatedByHook)
@@ -10,9 +11,9 @@ export class TodoItemInputDTO {
   @IsString()
   @MaxLength(20)
   @Field()
-  title!: string;
+  title!: string
 
   @IsBoolean()
   @Field()
-  completed!: boolean;
+  completed!: boolean
 }

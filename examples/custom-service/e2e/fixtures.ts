@@ -1,14 +1,15 @@
-import { Connection } from 'typeorm';
-import { executeTruncate } from '../../helpers';
-import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
+import { Connection } from 'typeorm'
 
-const tables = ['todo_item'];
-export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables);
+import { executeTruncate } from '../../helpers'
+import { TodoItemEntity } from '../src/todo-item/todo-item.entity'
+
+const tables = ['todo_item']
+export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables)
 
 export const refresh = async (connection: Connection): Promise<void> => {
-  await truncate(connection);
+  await truncate(connection)
 
-  const todoRepo = connection.getRepository(TodoItemEntity);
+  const todoRepo = connection.getRepository(TodoItemEntity)
 
   await todoRepo.save([
     { title: 'Create Nest App', completed: true },
@@ -19,5 +20,5 @@ export const refresh = async (connection: Connection): Promise<void> => {
       title: 'How to create item With Sub Tasks',
       completed: false
     }
-  ]);
-};
+  ])
+}

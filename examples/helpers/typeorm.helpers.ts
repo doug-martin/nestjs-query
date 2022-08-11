@@ -1,5 +1,6 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { dbType } from './db-test.helpers';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm'
+
+import { dbType } from './db-test.helpers'
 
 export const typeormMysqlOptions = (
   username: string,
@@ -16,7 +17,7 @@ export const typeormMysqlOptions = (
     synchronize: true,
     dropSchema: true,
     ...overrides
-  } as TypeOrmModuleOptions);
+  } as TypeOrmModuleOptions)
 
 export const typeormPostgresOptions = (
   username: string,
@@ -33,7 +34,7 @@ export const typeormPostgresOptions = (
     synchronize: true,
     dropSchema: true,
     ...overrides
-  } as TypeOrmModuleOptions);
+  } as TypeOrmModuleOptions)
 
 export const typeormOrmConfig = (
   username: string,
@@ -41,8 +42,8 @@ export const typeormOrmConfig = (
   overrides?: Partial<TypeOrmModuleOptions>
 ): TypeOrmModuleOptions => {
   if (dbType === 'postgres') {
-    return typeormPostgresOptions(username, database, overrides);
+    return typeormPostgresOptions(username, database, overrides)
   }
 
-  return typeormMysqlOptions(username, database, overrides);
-};
+  return typeormMysqlOptions(username, database, overrides)
+}

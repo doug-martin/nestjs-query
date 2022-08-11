@@ -1,23 +1,24 @@
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { OffsetConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { AppModule } from '../src/app.module';
-import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
-import { TagDTO } from '../src/tag/dto/tag.dto';
-import { refresh } from './fixtures';
-import { offsetConnection, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import { OffsetConnectionType } from '@ptc-org/nestjs-query-graphql'
+import request from 'supertest'
+import { Connection } from 'typeorm'
+
+import { AppModule } from '../src/app.module'
+import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto'
+import { TagDTO } from '../src/tag/dto/tag.dto'
+import { refresh } from './fixtures'
+import { offsetConnection, subTaskFields, tagFields, todoItemFields } from './graphql-fragments'
 
 describe('TodoItemResolver (limitOffset - e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule]
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -26,11 +27,11 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         skipMissingProperties: false,
         forbidUnknownValues: true
       })
-    );
+    )
 
-    await app.init();
-    await refresh(app.get(Connection));
-  });
+    await app.init()
+    await refresh(app.get(Connection))
+  })
 
   const todoItems = [
     { id: '1', title: 'Create Nest App', completed: true, description: null },
@@ -38,9 +39,9 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
     { id: '3', title: 'Create Entity Service', completed: false, description: null },
     { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
     { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null }
-  ];
+  ]
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Connection)))
 
   describe('find one', () => {
     it(`should find a todo item by id`, () =>
@@ -55,7 +56,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           }
         }`
         })
-        .expect(200, { data: { todoItem: todoItems[0] } }));
+        .expect(200, { data: { todoItem: todoItems[0] } }))
 
     it(`should throw item not found on non existing todo item`, () =>
       request(app.getHttpServer())
@@ -71,9 +72,9 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it(`should return subTasks as a connection`, () =>
       request(app.getHttpServer())
@@ -123,7 +124,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               }
             }
           }
-        }));
+        }))
 
     it(`should return tags as a connection`, () =>
       request(app.getHttpServer())
@@ -151,8 +152,8 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               }
             }
           }
-        }));
-  });
+        }))
+  })
 
   describe('query', () => {
     it(`should return a connection`, () =>
@@ -169,7 +170,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200, {
           data: { todoItems: { nodes: todoItems, pageInfo: { hasNextPage: false, hasPreviousPage: false } } }
-        }));
+        }))
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -187,7 +188,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           data: {
             todoItems: { nodes: todoItems.slice(0, 3), pageInfo: { hasNextPage: false, hasPreviousPage: false } }
           }
-        }));
+        }))
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -205,7 +206,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
           data: {
             todoItems: { nodes: todoItems.slice().reverse(), pageInfo: { hasNextPage: false, hasPreviousPage: false } }
           }
-        }));
+        }))
 
     describe('paging', () => {
       it(`should allow paging with the 'limit' field`, () =>
@@ -224,7 +225,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             data: {
               todoItems: { nodes: todoItems.slice(0, 2), pageInfo: { hasNextPage: true, hasPreviousPage: false } }
             }
-          }));
+          }))
 
       it(`should allow paging with the 'limit' field and 'offset'`, () =>
         request(app.getHttpServer())
@@ -242,9 +243,9 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
             data: {
               todoItems: { nodes: todoItems.slice(2, 4), pageInfo: { hasNextPage: true, hasPreviousPage: true } }
             }
-          }));
-    });
-  });
+          }))
+    })
+  })
 
   describe('create one', () => {
     it('should allow creating a todoItem', () =>
@@ -273,7 +274,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               completed: false
             }
           }
-        }));
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -295,10 +296,10 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('create many', () => {
     it('should allow creating a todoItem', () =>
@@ -329,7 +330,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               { id: '8', title: 'Many Test Todo 2', completed: true }
             ]
           }
-        }));
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -351,10 +352,10 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update one', () => {
     it('should allow updating a todoItem', () =>
@@ -384,7 +385,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               completed: true
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -406,9 +407,9 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.')
+        }))
 
     it('should validate an update', () =>
       request(app.getHttpServer())
@@ -431,10 +432,10 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update many', () => {
     it('should allow updating a todoItem', () =>
@@ -460,7 +461,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               updatedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -480,11 +481,11 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -505,10 +506,10 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('delete one', () => {
     it('should allow deleting a todoItem', () =>
@@ -535,7 +536,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               completed: true
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -555,10 +556,10 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.')
+        }))
+  })
 
   describe('delete many', () => {
     it('should allow updating a todoItem', () =>
@@ -583,7 +584,7 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
               deletedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -601,11 +602,11 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -625,10 +626,10 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('addSubTasksToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -654,12 +655,12 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { id, subTasks }: { id: string; subTasks: OffsetConnectionType<SubTaskDTO> } = body.data.addSubTasksToTodoItem;
-          expect(id).toBe('1');
-          expect(subTasks.nodes).toHaveLength(6);
-          subTasks.nodes.forEach((e) => expect(e.todoItemId).toBe('1'));
-        }));
-  });
+          const { id, subTasks }: { id: string; subTasks: OffsetConnectionType<SubTaskDTO> } = body.data.addSubTasksToTodoItem
+          expect(id).toBe('1')
+          expect(subTasks.nodes).toHaveLength(6)
+          subTasks.nodes.forEach((e) => expect(e.todoItemId).toBe('1'))
+        }))
+  })
 
   describe('addTagsToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -685,12 +686,12 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { id, tags }: { id: string; tags: OffsetConnectionType<TagDTO> } = body.data.addTagsToTodoItem;
-          expect(id).toBe('1');
-          expect(tags.nodes).toHaveLength(5);
-          expect(tags.nodes.map((e) => e.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
-        }));
-  });
+          const { id, tags }: { id: string; tags: OffsetConnectionType<TagDTO> } = body.data.addTagsToTodoItem
+          expect(id).toBe('1')
+          expect(tags.nodes).toHaveLength(5)
+          expect(tags.nodes.map((e) => e.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked'])
+        }))
+  })
 
   describe('removeTagsFromTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -716,14 +717,14 @@ describe('TodoItemResolver (limitOffset - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { id, tags }: { id: string; tags: OffsetConnectionType<TagDTO> } = body.data.removeTagsFromTodoItem;
-          expect(id).toBe('1');
-          expect(tags.nodes).toHaveLength(2);
-          expect(tags.nodes.map((e) => e.name)).toEqual(['Urgent', 'Home']);
-        }));
-  });
+          const { id, tags }: { id: string; tags: OffsetConnectionType<TagDTO> } = body.data.removeTagsFromTodoItem
+          expect(id).toBe('1')
+          expect(tags.nodes).toHaveLength(2)
+          expect(tags.nodes.map((e) => e.name)).toEqual(['Urgent', 'Home'])
+        }))
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

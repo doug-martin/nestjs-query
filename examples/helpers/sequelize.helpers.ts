@@ -1,5 +1,6 @@
-import { SequelizeModuleOptions } from '@nestjs/sequelize';
-import { dbType } from './db-test.helpers';
+import { SequelizeModuleOptions } from '@nestjs/sequelize'
+
+import { dbType } from './db-test.helpers'
 
 export const sequelizeMysqlOptions = (
   username: string,
@@ -15,7 +16,7 @@ export const sequelizeMysqlOptions = (
   synchronize: true,
   logging: false,
   ...overrides
-});
+})
 
 export const sequelizePostgresOptions = (
   username: string,
@@ -31,7 +32,7 @@ export const sequelizePostgresOptions = (
   synchronize: true,
   logging: false,
   ...overrides
-});
+})
 
 export const sequelizeOrmConfig = (
   username: string,
@@ -39,7 +40,7 @@ export const sequelizeOrmConfig = (
   overrides?: Partial<SequelizeModuleOptions>
 ): SequelizeModuleOptions => {
   if (dbType === 'postgres') {
-    return sequelizePostgresOptions(username, database, overrides);
+    return sequelizePostgresOptions(username, database, overrides)
   }
-  return sequelizeMysqlOptions(username, database, overrides);
-};
+  return sequelizeMysqlOptions(username, database, overrides)
+}

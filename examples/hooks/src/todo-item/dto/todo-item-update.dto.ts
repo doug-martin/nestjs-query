@@ -1,7 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
-import { BeforeUpdateMany, BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql';
-import { UpdatedByHook } from '../../hooks';
+import { Field, InputType } from '@nestjs/graphql'
+import { BeforeUpdateMany, BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql'
+import { IsBoolean, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator'
+
+import { UpdatedByHook } from '../../hooks'
 
 @InputType('TodoItemUpdate')
 @BeforeUpdateOne(UpdatedByHook)
@@ -11,15 +12,15 @@ export class TodoItemUpdateDTO {
   @IsString()
   @MaxLength(20)
   @Field({ nullable: true })
-  title?: string;
+  title?: string
 
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true })
-  completed?: boolean;
+  completed?: boolean
 
   @IsOptional()
   @IsNumber()
   @Field({ nullable: true })
-  priority?: number;
+  priority?: number
 }

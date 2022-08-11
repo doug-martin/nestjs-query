@@ -1,11 +1,11 @@
-import { ObjectType, ID } from '@nestjs/graphql';
-import { FilterableField } from '@ptc-org/nestjs-query-graphql';
+import { ID, ObjectType } from '@nestjs/graphql'
+import { FilterableField } from '@ptc-org/nestjs-query-graphql'
 
 @ObjectType()
 export class TestRelationDTO {
   @FilterableField(() => ID)
-  id!: string;
+  id!: string
 
   @FilterableField()
-  testResolverId!: string;
+  testResolverId!: string
 }

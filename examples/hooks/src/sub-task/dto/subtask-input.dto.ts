@@ -1,7 +1,8 @@
-import { Field, InputType, ID } from '@nestjs/graphql';
-import { IsOptional, IsString, IsBoolean, IsNotEmpty } from 'class-validator';
-import { BeforeCreateMany, BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
-import { CreatedByHook } from '../../hooks';
+import { Field, ID, InputType } from '@nestjs/graphql'
+import { BeforeCreateMany, BeforeCreateOne } from '@ptc-org/nestjs-query-graphql'
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+
+import { CreatedByHook } from '../../hooks'
 
 @InputType('SubTaskInput')
 @BeforeCreateOne(CreatedByHook)
@@ -10,19 +11,19 @@ export class CreateSubTaskDTO {
   @Field()
   @IsString()
   @IsNotEmpty()
-  title!: string;
+  title!: string
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  description?: string;
+  description?: string
 
   @Field()
   @IsBoolean()
-  completed!: boolean;
+  completed!: boolean
 
   @Field(() => ID)
   @IsNotEmpty()
-  todoItemId!: string;
+  todoItemId!: string
 }

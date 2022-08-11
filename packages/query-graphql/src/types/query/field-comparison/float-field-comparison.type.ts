@@ -1,27 +1,28 @@
-import { Class, FilterFieldComparison } from '@ptc-org/nestjs-query-core';
-import { Field, Float, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsNumber, IsOptional, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { IsUndefined } from '../../validators';
+import { Field, Float, InputType } from '@nestjs/graphql'
+import { Class, FilterFieldComparison } from '@ptc-org/nestjs-query-core'
+import { Type } from 'class-transformer'
+import { IsBoolean, IsNumber, IsOptional, ValidateNested } from 'class-validator'
+
+import { IsUndefined } from '../../validators'
 
 /** @internal */
-let floatFieldComparison: Class<FilterFieldComparison<number>>;
+let floatFieldComparison: Class<FilterFieldComparison<number>>
 
 /** @internal */
 export function getOrCreateFloatFieldComparison(): Class<FilterFieldComparison<number>> {
   if (floatFieldComparison) {
-    return floatFieldComparison;
+    return floatFieldComparison
   }
 
   @InputType()
   class FloatFieldComparisonBetween {
     @Field(() => Float, { nullable: false })
     @IsNumber()
-    lower!: number;
+    lower!: number
 
     @Field(() => Float, { nullable: false })
     @IsNumber()
-    upper!: number;
+    upper!: number
   }
 
   @InputType()
@@ -29,37 +30,37 @@ export function getOrCreateFloatFieldComparison(): Class<FilterFieldComparison<n
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
     @IsOptional()
-    is?: boolean | null;
+    is?: boolean | null
 
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
     @IsOptional()
-    isNot?: boolean | null;
+    isNot?: boolean | null
 
     @Field(() => Float, { nullable: true })
     @IsNumber()
     @IsUndefined()
-    eq?: number;
+    eq?: number
 
     @Field(() => Float, { nullable: true })
     @IsNumber()
     @IsUndefined()
-    neq?: number;
+    neq?: number
 
     @Field(() => Float, { nullable: true })
     @IsNumber()
     @IsUndefined()
-    gt?: number;
+    gt?: number
 
     @Field(() => Float, { nullable: true })
     @IsNumber()
     @IsUndefined()
-    gte?: number;
+    gte?: number
 
     @Field(() => Float, { nullable: true })
     @IsNumber()
     @IsUndefined()
-    lt?: number;
+    lt?: number
 
     @Field(() => Float, { nullable: true })
     @IsNumber()
@@ -69,24 +70,24 @@ export function getOrCreateFloatFieldComparison(): Class<FilterFieldComparison<n
     @Field(() => [Float], { nullable: true })
     @IsNumber({}, { each: true })
     @IsUndefined()
-    in?: number[];
+    in?: number[]
 
     @Field(() => [Float], { nullable: true })
     @IsNumber({}, { each: true })
     @IsUndefined()
-    notIn?: number[];
+    notIn?: number[]
 
     @Field(() => FloatFieldComparisonBetween, { nullable: true })
     @ValidateNested()
     @Type(() => FloatFieldComparisonBetween)
-    between?: FloatFieldComparisonBetween;
+    between?: FloatFieldComparisonBetween
 
     @Field(() => FloatFieldComparisonBetween, { nullable: true })
     @ValidateNested()
     @Type(() => FloatFieldComparisonBetween)
-    notBetween?: FloatFieldComparisonBetween;
+    notBetween?: FloatFieldComparisonBetween
   }
 
-  floatFieldComparison = FloatFieldComparison;
-  return floatFieldComparison;
+  floatFieldComparison = FloatFieldComparison
+  return floatFieldComparison
 }
