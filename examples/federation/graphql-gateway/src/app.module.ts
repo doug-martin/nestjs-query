@@ -1,9 +1,12 @@
+import { ApolloFederationDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
-import { GraphQLGatewayModule } from '@nestjs/graphql'
+import { GraphQLModule } from '@nestjs/graphql'
 
 @Module({
   imports: [
-    GraphQLGatewayModule.forRoot({
+    GraphQLModule.forRoot({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: 'schema.gql',
       server: {
         // ... Apollo server options
         cors: true

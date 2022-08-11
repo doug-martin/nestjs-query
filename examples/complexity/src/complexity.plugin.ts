@@ -1,5 +1,6 @@
+import { Plugin } from '@nestjs/apollo'
 import { Logger, LoggerService } from '@nestjs/common'
-import { GraphQLSchemaHost, Plugin } from '@nestjs/graphql'
+import { GraphQLSchemaHost } from '@nestjs/graphql'
 import { ApolloServerPlugin, GraphQLRequestListener } from 'apollo-server-plugin-base'
 import { GraphQLError } from 'graphql'
 import { fieldExtensionsEstimator, getComplexity, simpleEstimator } from 'graphql-query-complexity'

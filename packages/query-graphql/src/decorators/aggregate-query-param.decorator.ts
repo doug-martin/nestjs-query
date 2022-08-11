@@ -8,6 +8,7 @@ const EXCLUDED_FIELDS = ['__typename']
 const QUERY_OPERATORS: (keyof AggregateQuery<unknown>)[] = ['groupBy', 'count', 'avg', 'sum', 'min', 'max']
 export const AggregateQueryParam = createParamDecorator(<DTO>(data: unknown, ctx: ExecutionContext) => {
   const info = GqlExecutionContext.create(ctx).getInfo<GraphQLResolveInfo>()
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const fields = graphqlFields(info, {}, { excludedFields: EXCLUDED_FIELDS }) as Record<
     keyof AggregateQuery<DTO>,
     Record<keyof DTO, unknown>

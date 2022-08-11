@@ -5,14 +5,20 @@
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["packages/query-mongoose/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/query-mongoose/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/query-mongoose"],
+      "outputs": [
+        "coverage/packages/query-mongoose"
+      ],
       "options": {
         "jestConfig": "packages/query-mongoose/jest.config.ts",
         "passWithNoTests": true
@@ -20,13 +26,17 @@
     },
     "build": {
       "executor": "@nrwl/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/packages/query-mongoose",
         "tsConfig": "packages/query-mongoose/tsconfig.lib.json",
         "packageJson": "packages/query-mongoose/package.json",
         "main": "packages/query-mongoose/src/index.ts",
-        "assets": ["packages/query-mongoose/*.md"]
+        "assets": [
+          "packages/query-mongoose/*.md"
+        ]
       }
     },
     "version": {
@@ -37,5 +47,7 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["core"]
+  "implicitDependencies": [
+    "core"
+  ]
 }
