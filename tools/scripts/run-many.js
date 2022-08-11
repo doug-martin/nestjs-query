@@ -50,6 +50,7 @@ if (affectedProjects.length > 0) {
     ]
 
     if (target === 'version') {
+      execCommand.push('--parallel=1')
       execCommand.push('--baseBranch="master"')
       execCommand.push('--changelogHeader=" "')
     }
