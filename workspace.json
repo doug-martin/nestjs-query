@@ -9,5 +9,6 @@
     "query-sequelize": "packages/query-sequelize",
     "query-typegoose": "packages/query-typegoose",
     "query-typeorm": "packages/query-typeorm"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

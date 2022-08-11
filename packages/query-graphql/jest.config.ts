@@ -1,6 +1,6 @@
-module.exports = {
+export default {
   displayName: 'query-graphql',
-  preset: '../../jest.preset.ts',
+  preset: '../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json'

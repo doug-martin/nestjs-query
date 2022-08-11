@@ -1,6 +1,6 @@
-module.exports = {
+export default {
   displayName: 'examples',
-  preset: './jest.preset.ts',
+  preset: './jest.preset.js',
   globals: {
     'ts-jest': {
       tsconfig: process.cwd() + '/examples/tsconfig.spec.json'
