@@ -2,7 +2,7 @@
 import { InjectModel, MongooseModule } from '@nestjs/mongoose'
 import { Test, TestingModule } from '@nestjs/testing'
 import { SortDirection } from '@ptc-org/nestjs-query-core'
-import { Document, LeanDocument, Model, Types } from 'mongoose'
+import { Document, Model, Types } from 'mongoose'
 
 import { NestjsQueryMongooseModule } from '../../src'
 import { MongooseQueryService } from '../../src/services'

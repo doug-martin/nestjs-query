@@ -83,5 +83,4 @@ input DateFieldComparisonBetween {
   lower: DateTime!
   upper: DateTime!
 }
-
 `;

@@ -9,5 +9,4 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;

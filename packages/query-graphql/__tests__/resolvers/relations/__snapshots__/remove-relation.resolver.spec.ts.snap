@@ -9,7 +9,6 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`RemoveRelationsResolver many should use the dtoName if provided 1`] = `
@@ -33,7 +32,6 @@ input RemoveTestsFromTestResolverDTOInput {
   """The ids of the relations."""
   relationIds: [ID!]!
 }
-
 `;
 
 exports[`RemoveRelationsResolver many should use the object type name 1`] = `
@@ -57,7 +55,6 @@ input RemoveRelationsFromTestResolverDTOInput {
   """The ids of the relations."""
   relationIds: [ID!]!
 }
-
 `;
 
 exports[`RemoveRelationsResolver one should not add remove methods if disableRemove is true 1`] = `
@@ -69,7 +66,6 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`RemoveRelationsResolver one should use the dtoName if provided 1`] = `
@@ -93,7 +89,6 @@ input RemoveTestFromTestResolverDTOInput {
   """The id of relation."""
   relationId: ID!
 }
-
 `;
 
 exports[`RemoveRelationsResolver one should use the object type name 1`] = `
@@ -117,7 +112,6 @@ input RemoveRelationFromTestResolverDTOInput {
   """The id of relation."""
   relationId: ID!
 }
-
 `;
 
 exports[`RemoveRelationsResolver should not add remove methods if one and many are empty 1`] = `
@@ -129,5 +123,4 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;

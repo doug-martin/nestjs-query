@@ -138,7 +138,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver #queryMany should not create a new type if the QueryArgs is supplied 1`] = `
@@ -285,7 +284,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver #queryMany should not expose query method if disabled 1`] = `
@@ -334,7 +332,6 @@ type Query {
   ): TestResolverDTO!
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadResolver #queryMany should not use a connection if pagingStrategy is OFFSET 1`] = `
@@ -473,7 +470,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver #queryMany should use a connection if custom QueryArgs is a cursor 1`] = `
@@ -618,7 +614,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver #queryMany should use an offset connection if custom QueryArgs is a limit offset 1`] = `
@@ -757,7 +752,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver should create a ReadResolver for the DTO 1`] = `
@@ -902,7 +896,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver should expose totalCount on cursor connections if enableTotalCount is true 1`] = `
@@ -1047,7 +1040,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver should expose totalCount on offset connections if enableTotalCount is true 1`] = `
@@ -1186,7 +1178,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver should not expose read methods if disabled 1`] = `
@@ -1231,7 +1222,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadResolver should use the dtoName if provided 1`] = `
@@ -1372,7 +1362,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver should use the many.name option for the queryMany if provided 1`] = `
@@ -1517,7 +1506,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`ReadResolver should use the one.name option for the findById if provided 1`] = `
@@ -1662,5 +1650,4 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;

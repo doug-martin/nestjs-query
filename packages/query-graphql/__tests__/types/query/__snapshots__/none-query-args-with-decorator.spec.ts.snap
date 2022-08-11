@@ -217,5 +217,4 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;

@@ -39,5 +39,4 @@ input StringFieldComparison {
 input FakeUpdateManyInput {
   name: String!
 }
-
 `;
