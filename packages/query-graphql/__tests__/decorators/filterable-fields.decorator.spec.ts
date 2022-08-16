@@ -5,7 +5,7 @@ import { getFilterableFields } from '../../src/decorators'
 
 const { Float, ObjectType, Field, Int } = nestjsGraphQL
 
-jest.mock('@nestjs/graphql', () => ({
+jest.mock('@nestjs/graphql', (): any => ({
   __esModule: true,
   ...jest.requireActual('@nestjs/graphql')
 }))

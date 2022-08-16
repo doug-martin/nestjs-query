@@ -6,7 +6,7 @@ import { Class } from '@ptc-org/nestjs-query-core'
 import { ResolverField } from '../../src/decorators'
 import * as resolverDecorator from '../../src/decorators/resolver-method.decorator'
 
-jest.mock('@nestjs/graphql', () => ({
+jest.mock('@nestjs/graphql', (): any => ({
   __esModule: true,
   ...jest.requireActual('@nestjs/graphql')
 }))
