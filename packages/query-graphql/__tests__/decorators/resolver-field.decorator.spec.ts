@@ -6,6 +6,11 @@ import { Class } from '@ptc-org/nestjs-query-core'
 import { ResolverField } from '../../src/decorators'
 import * as resolverDecorator from '../../src/decorators/resolver-method.decorator'
 
+jest.mock('@nestjs/graphql', () => ({
+  __esModule: true,
+  ...jest.requireActual('@nestjs/graphql')
+}))
+
 describe('ResolverField decorator', (): void => {
   const resolverMethodSpy = jest.spyOn(resolverDecorator, 'ResolverMethod')
   const propertySpy = jest.spyOn(nestGraphql, 'ResolveField')

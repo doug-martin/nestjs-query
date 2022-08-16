@@ -5,6 +5,11 @@ import { getFilterableFields } from '../../src/decorators'
 
 const { Float, ObjectType, Field, Int } = nestjsGraphQL
 
+jest.mock('@nestjs/graphql', () => ({
+  __esModule: true,
+  ...jest.requireActual('@nestjs/graphql')
+}))
+
 describe('FilterableField decorator', (): void => {
   const fieldSpy = jest.spyOn(nestjsGraphQL, 'Field')
   beforeAll(() => jest.clearAllMocks())
