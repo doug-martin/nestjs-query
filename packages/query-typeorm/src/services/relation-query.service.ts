@@ -1,24 +1,18 @@
 import {
-  Query,
-  Class,
-  AssemblerFactory,
-  Filter,
   AggregateQuery,
   AggregateResponse,
-  ModifyRelationOptions,
+  AssemblerFactory,
+  Class,
+  Filter,
   FindRelationOptions,
-  GetByIdOptions
+  GetByIdOptions,
+  ModifyRelationOptions,
+  Query
 } from '@ptc-org/nestjs-query-core';
-import { Repository, RelationQueryBuilder as TypeOrmRelationQueryBuilder } from 'typeorm';
 import lodashOmit from 'lodash.omit';
+import { RelationQueryBuilder as TypeOrmRelationQueryBuilder, Repository } from 'typeorm';
+import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 import { AggregateBuilder, EntityIndexRelation, FilterQueryBuilder, RelationQueryBuilder } from '../query';
-
-interface RelationMetadata {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  type: string | Function;
-  isOneToOne: boolean;
-  isManyToOne: boolean;
-}
 
 /**
  * Base class to house relations loading.
@@ -462,7 +456,7 @@ export abstract class RelationQueryService<Entity> {
     const relationMeta = this.getRelationMeta(relationName);
 
     if (typeof relationMeta.type === 'string') {
-      return this.repo.manager.getRepository(relationMeta.type).target as Class<unknown>;
+      return this.repo.manager.getRepository(relationMeta.type).metadata.target as Class<unknown>;
     }
 
     return relationMeta.type as Class<unknown>;

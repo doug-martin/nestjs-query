@@ -1,17 +1,17 @@
-import { Filter, Paging, Query, SortField, getFilterFields, AggregateQuery } from '@ptc-org/nestjs-query-core';
+import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@ptc-org/nestjs-query-core';
+import merge from 'lodash.merge';
 import {
   DeleteQueryBuilder,
+  EntityMetadata,
   QueryBuilder,
   Repository,
   SelectQueryBuilder,
   UpdateQueryBuilder,
-  WhereExpression,
-  EntityMetadata
+  WhereExpressionBuilder
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 import { AggregateBuilder } from './aggregate.builder';
 import { WhereBuilder } from './where.builder';
-import merge from 'lodash.merge';
 
 /**
  * @internal
@@ -169,7 +169,7 @@ export class FilterQueryBuilder<Entity> {
    * @param filter - the filter.
    * @param alias - optional alias to use to qualify an identifier
    */
-  public applyFilter<Where extends WhereExpression>(qb: Where, filter?: Filter<Entity>, alias?: string): Where {
+  public applyFilter<Where extends WhereExpressionBuilder>(qb: Where, filter?: Filter<Entity>, alias?: string): Where {
     if (!filter) {
       return qb;
     }

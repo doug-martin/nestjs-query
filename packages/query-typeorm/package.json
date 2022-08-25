@@ -26,10 +26,10 @@
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
-    "@nestjs/common": "^8.0.4",
-    "@nestjs/typeorm": "^8.0.0",
+    "@nestjs/common": "9.0.11",
+    "@nestjs/typeorm": "9.0.1",
     "class-transformer": "^0.2.3 || 0.3.1 || 0.4",
-    "typeorm": "0.2.45"
+    "typeorm": "0.3.7"
   },
   "repository": {
     "type": "git",

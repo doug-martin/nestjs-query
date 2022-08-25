@@ -1,8 +1,8 @@
-import { Filter, SortDirection } from '@ptc-org/nestjs-query-core';
 import { Test, TestingModule } from '@nestjs/testing';
+import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
+import { Filter, SortDirection } from '@ptc-org/nestjs-query-core';
 import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
-import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '../../src';
 import { FilterQueryBuilder } from '../../src/query';
 import {
@@ -21,8 +21,8 @@ import {
 import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
-import { TestEntity } from '../__fixtures__/test.entity';
 import { TestSoftDeleteRelation } from '../__fixtures__/test-soft-delete.relation';
+import { TestEntity } from '../__fixtures__/test.entity';
 
 describe('TypeOrmQueryService', (): void => {
   let moduleRef: TestingModule;
@@ -1894,7 +1894,10 @@ describe('TypeOrmQueryService', (): void => {
         await queryService.deleteMany(deleteMany);
         const foundEntity = await queryService.findById(entity.testEntityPk);
         expect(foundEntity).toBeUndefined();
-        const deletedEntity = await queryService.repo.findOne(entity.testEntityPk, { withDeleted: true });
+        const deletedEntity = await queryService.repo.findOne({
+          where: { testEntityPk: entity.testEntityPk },
+          withDeleted: true
+        });
         expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) });
       });
     });
@@ -1909,7 +1912,10 @@ describe('TypeOrmQueryService', (): void => {
         const foundEntity = await queryService.findById(entity.testEntityPk);
         expect(foundEntity).toBeUndefined();
 
-        const deletedEntity = await queryService.repo.findOne(entity.testEntityPk, { withDeleted: true });
+        const deletedEntity = await queryService.repo.findOne({
+          where: { testEntityPk: entity.testEntityPk },
+          withDeleted: true
+        });
         expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) });
       });
 
