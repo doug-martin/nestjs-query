@@ -67,7 +67,7 @@ export class WhereBuilder<Entity> {
   }
 
   /**
-   * Wraps a filter in brackes to ensure precedence.
+   * Wraps a filter in brackets to ensure precedence.
    * ```
    * {a: { eq: 1 } } // "(a = 1)"
    * {a: { eq: 1 }, b: { gt: 2 } } // "((a = 1) AND (b > 2))"

@@ -1712,7 +1712,7 @@ describe('TypeOrmQueryService', (): void => {
         expect(found).toEqual(entity);
       });
 
-      it('should return an undefined if an entitity with the pk and filter is not found', async () => {
+      it('should return an undefined if an entity with the pk and filter is not found', async () => {
         const entity = TEST_ENTITIES[0];
         const queryService = moduleRef.get(TestEntityService);
         return expect(
