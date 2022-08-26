@@ -20,3 +20,4 @@ of [nestjs](https://nestjs.com/).
 
 The get started with the `@ptc-org/nestjs-query-graphql` package checkout
 the [Getting Started](https://tripss.github.io/nestjs-query/docs/graphql/getting-started) docs.
+
