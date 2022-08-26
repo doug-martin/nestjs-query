@@ -53,6 +53,7 @@ $ yarn nx run-many --target=build --all
 $ yarn nx run-many --target=test --all
 
 # To run the E2E tests
+$ docker-compose -f examples/docker-compose.yml up -d
 $ yarn nx e2e examples
 
 # To build one package

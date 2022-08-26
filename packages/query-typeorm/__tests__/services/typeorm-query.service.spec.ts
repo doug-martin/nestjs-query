@@ -1,23 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm'
-import { Filter, SortDirection } from '@ptc-org/nestjs-query-core'
-import { plainToClass } from 'class-transformer'
-import { Repository } from 'typeorm'
+import { Test, TestingModule } from '@nestjs/testing';
+import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
+import { Filter, SortDirection } from '@ptc-org/nestjs-query-core';
+import { plainToClass } from 'class-transformer';
+import { Repository } from 'typeorm';
+import { TypeOrmQueryService } from '../../src';
+import { FilterQueryBuilder } from '../../src/query';
+import {
+  closeTestConnection,
+  CONNECTION_OPTIONS,
+  getTestConnection,
+  refresh,
+  truncate
+} from '../__fixtures__/connection.fixture';
 
-import { TypeOrmQueryService } from '../../src'
-import { FilterQueryBuilder } from '../../src/query'
-import { closeTestConnection, CONNECTION_OPTIONS, getTestConnection, refresh, truncate } from '../__fixtures__/connection.fixture'
 import {
   TEST_ENTITIES,
   TEST_RELATIONS,
   TEST_SOFT_DELETE_ENTITIES,
   TEST_SOFT_DELETE_RELATION_ENTITIES
-} from '../__fixtures__/seeds'
-import { TestEntity } from '../__fixtures__/test.entity'
-import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity'
-import { TestRelation } from '../__fixtures__/test-relation.entity'
-import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity'
-import { TestSoftDeleteRelation } from '../__fixtures__/test-soft-delete.relation'
+} from '../__fixtures__/seeds';
+import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
+import { TestRelation } from '../__fixtures__/test-relation.entity';
+import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
+import { TestSoftDeleteRelation } from '../__fixtures__/test-soft-delete.relation';
+import { TestEntity } from '../__fixtures__/test.entity';
 
 describe('TypeOrmQueryService', (): void => {
   let moduleRef: TestingModule
@@ -1703,9 +1709,10 @@ describe('TypeOrmQueryService', (): void => {
         expect(found).toEqual(entity)
       })
 
-      it('should return an undefined if an entitity with the pk and filter is not found', async () => {
-        const entity = TEST_ENTITIES[0]
-        const queryService = moduleRef.get(TestEntityService)
+      it('should return an undefined if an entity with the pk and filter is not found', async () => {
+        const entity = TEST_ENTITIES[0];
+        const queryService = moduleRef.get(TestEntityService);
+        
         return expect(
           queryService.getById(entity.testEntityPk, {
             filter: { stringType: { eq: TEST_ENTITIES[1].stringType } }
@@ -1879,16 +1886,20 @@ describe('TypeOrmQueryService', (): void => {
   describe('#isSoftDelete', () => {
     describe('#deleteMany', () => {
       it('should soft delete the entities matching the query', async () => {
-        const queryService = moduleRef.get(TestSoftDeleteEntityService)
-        const entity = TEST_SOFT_DELETE_ENTITIES[0]
-        const deleteMany: Filter<TestSoftDeleteEntity> = { testEntityPk: { eq: entity.testEntityPk } }
-        await queryService.deleteMany(deleteMany)
-        const foundEntity = await queryService.findById(entity.testEntityPk)
-        expect(foundEntity).toBeUndefined()
-        const deletedEntity = await queryService.repo.findOne(entity.testEntityPk, { withDeleted: true })
-        expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) })
-      })
-    })
+
+        const queryService = moduleRef.get(TestSoftDeleteEntityService);
+        const entity = TEST_SOFT_DELETE_ENTITIES[0];
+        const deleteMany: Filter<TestSoftDeleteEntity> = { testEntityPk: { eq: entity.testEntityPk } };
+        await queryService.deleteMany(deleteMany);
+        const foundEntity = await queryService.findById(entity.testEntityPk);
+        expect(foundEntity).toBeUndefined();
+        const deletedEntity = await queryService.repo.findOne({
+          where: { testEntityPk: entity.testEntityPk },
+          withDeleted: true
+        });
+        expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) });
+      });
+    });
 
     describe('#deleteOne', () => {
       it('should soft delete the entity', async () => {
@@ -1900,9 +1911,13 @@ describe('TypeOrmQueryService', (): void => {
         const foundEntity = await queryService.findById(entity.testEntityPk)
         expect(foundEntity).toBeUndefined()
 
-        const deletedEntity = await queryService.repo.findOne(entity.testEntityPk, { withDeleted: true })
-        expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) })
-      })
+
+        const deletedEntity = await queryService.repo.findOne({
+          where: { testEntityPk: entity.testEntityPk },
+          withDeleted: true
+        });
+        expect(deletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) });
+      });
 
       it('should fail if the entity is not found', async () => {
         const queryService = moduleRef.get(TestSoftDeleteEntityService)
