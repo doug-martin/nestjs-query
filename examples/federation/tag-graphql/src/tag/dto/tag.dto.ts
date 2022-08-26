@@ -1,19 +1,20 @@
-import { FilterableField, CursorConnection } from '@ptc-org/nestjs-query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
-import { TagTodoItemDTO } from './tag-todo-item.dto';
+import { GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { CursorConnection, FilterableField } from '@ptc-org/nestjs-query-graphql'
+
+import { TagTodoItemDTO } from './tag-todo-item.dto'
 
 @ObjectType('Tag')
 @CursorConnection('tagTodoItems', () => TagTodoItemDTO, { disableRemove: true, disableUpdate: true })
 export class TagDTO {
   @FilterableField(() => ID)
-  id!: number;
+  id!: number
 
   @FilterableField()
-  name!: string;
+  name!: string
 
   @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
+  created!: Date
 
   @FilterableField(() => GraphQLISODateTime)
-  updated!: Date;
+  updated!: Date
 }

@@ -8,5 +8,4 @@ type Query {
 input FakeType {
   foo: String!
 }
-
 `;

@@ -9,5 +9,4 @@ type UpdateManyResponse {
 type Query {
   updateTest: UpdateManyResponse!
 }
-
 `;

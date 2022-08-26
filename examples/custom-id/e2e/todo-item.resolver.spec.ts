@@ -1,24 +1,25 @@
-import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { AppModule } from '../src/app.module';
-import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
-import { TagDTO } from '../src/tag/dto/tag.dto';
-import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
-import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql'
+import request from 'supertest'
+import { Connection } from 'typeorm'
+
+import { AppModule } from '../src/app.module'
+import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto'
+import { TagDTO } from '../src/tag/dto/tag.dto'
+import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto'
+import { refresh } from './fixtures'
+import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments'
 
 describe('TodoItemResolver (custom-id - e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule]
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -27,13 +28,13 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         skipMissingProperties: false,
         forbidUnknownValues: true
       })
-    );
+    )
 
-    await app.init();
-    await refresh(app.get(Connection));
-  });
+    await app.init()
+    await refresh(app.get(Connection))
+  })
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Connection)))
 
   describe('find one', () => {
     it(`should find a todo item by id`, () =>
@@ -54,8 +55,8 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             data: {
               todoItem: { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null }
             }
-          });
-        }));
+          })
+        }))
 
     it(`should throw item not found on non existing todo item`, () =>
       request(app.getHttpServer())
@@ -71,9 +72,9 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it(`should not include filter-only fields`, () =>
       request(app.getHttpServer())
@@ -90,9 +91,9 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Cannot query field "created" on type "TodoItem".');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Cannot query field "created" on type "TodoItem".')
+        }))
 
     it(`should return subTasks as a connection`, () =>
       request(app.getHttpServer())
@@ -111,17 +112,17 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
-          expect(edges).toHaveLength(3);
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks
+          expect(edges).toHaveLength(3)
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
+          })
 
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('aWQ6MQ=='));
-        }));
+          edges.forEach((e) => expect(e.node.todoItemId).toBe('aWQ6MQ=='))
+        }))
 
     it(`should return tags as a connection`, () =>
       request(app.getHttpServer())
@@ -140,18 +141,18 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.todoItem.tags;
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.todoItem.tags
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(2);
+          })
+          expect(edges).toHaveLength(2)
 
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        }));
-  });
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home'])
+        }))
+  })
 
   describe('query', () => {
     it(`should return a connection`, () =>
@@ -169,14 +170,14 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(5);
+          })
+          expect(edges).toHaveLength(5)
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
@@ -184,8 +185,8 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
             { id: 'aWQ6NA==', title: 'Add Todo Item Resolver', completed: false, description: null },
             { id: 'aWQ6NQ==', title: 'How to create item With Sub Tasks', completed: false, description: null }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -202,21 +203,21 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(3);
+          })
+          expect(edges).toHaveLength(3)
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
             { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null },
             { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying by filter-only fields`, () =>
       request(app.getHttpServer())
@@ -235,14 +236,14 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(5);
+          })
+          expect(edges).toHaveLength(5)
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
@@ -250,8 +251,8 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
             { id: 'aWQ6NA==', title: 'Add Todo Item Resolver', completed: false, description: null },
             { id: 'aWQ6NQ==', title: 'How to create item With Sub Tasks', completed: false, description: null }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -268,14 +269,14 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(5);
+          })
+          expect(edges).toHaveLength(5)
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: 'aWQ6NQ==', title: 'How to create item With Sub Tasks', completed: false, description: null },
@@ -283,8 +284,8 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
             { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
             { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null },
             { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null }
-          ]);
-        }));
+          ])
+        }))
 
     describe('paging', () => {
       it(`should allow paging with the 'first' field`, () =>
@@ -302,20 +303,20 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-            });
-            expect(edges).toHaveLength(2);
+            })
+            expect(edges).toHaveLength(2)
 
             expect(edges.map((e) => e.node)).toEqual([
               { id: 'aWQ6MQ==', title: 'Create Nest App', completed: true, description: null },
               { id: 'aWQ6Mg==', title: 'Create Entity', completed: false, description: null }
-            ]);
-          }));
+            ])
+          }))
 
       it(`should allow paging with the 'first' field and 'after'`, () =>
         request(app.getHttpServer())
@@ -332,22 +333,22 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
-            });
-            expect(edges).toHaveLength(2);
+            })
+            expect(edges).toHaveLength(2)
 
             expect(edges.map((e) => e.node)).toEqual([
               { id: 'aWQ6Mw==', title: 'Create Entity Service', completed: false, description: null },
               { id: 'aWQ6NA==', title: 'Add Todo Item Resolver', completed: false, description: null }
-            ]);
-          }));
-    });
-  });
+            ])
+          }))
+    })
+  })
 
   describe('create one', () => {
     it('should allow creating a todoItem', () =>
@@ -376,7 +377,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               completed: false
             }
           }
-        }));
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -398,10 +399,10 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('create many', () => {
     it('should allow creating a todoItem', () =>
@@ -432,7 +433,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               { id: 'aWQ6OA==', title: 'Many Test Todo 2', completed: true }
             ]
           }
-        }));
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -454,10 +455,10 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update one', () => {
     it('should allow updating a todoItem', () =>
@@ -487,7 +488,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               completed: true
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -509,9 +510,9 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "CustomID!" was not provided.');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "CustomID!" was not provided.')
+        }))
 
     it('should validate an update', () =>
       request(app.getHttpServer())
@@ -534,10 +535,10 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update many', () => {
     it('should allow updating a todoItem', () =>
@@ -563,7 +564,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               updatedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -583,11 +584,11 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -608,10 +609,10 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('delete one', () => {
     it('should allow deleting a todoItem', () =>
@@ -638,7 +639,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               completed: true
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -658,10 +659,10 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "CustomID!" was not provided.');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "CustomID!" was not provided.')
+        }))
+  })
 
   describe('delete many', () => {
     it('should allow updating a todoItem', () =>
@@ -686,7 +687,7 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
               deletedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -704,11 +705,11 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -728,10 +729,10 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('addSubTasksToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -758,18 +759,18 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
-          expect(body.data.addSubTasksToTodoItem.id).toBe('aWQ6MQ==');
-          expect(edges).toHaveLength(6);
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks
+          expect(body.data.addSubTasksToTodoItem.id).toBe('aWQ6MQ==')
+          expect(edges).toHaveLength(6)
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('aWQ6MQ=='));
-        }));
-  });
+          })
+          edges.forEach((e) => expect(e.node.todoItemId).toBe('aWQ6MQ=='))
+        }))
+  })
 
   describe('addTagsToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -796,18 +797,18 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
-          expect(body.data.addTagsToTodoItem.id).toBe('aWQ6MQ==');
-          expect(edges).toHaveLength(5);
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags
+          expect(body.data.addTagsToTodoItem.id).toBe('aWQ6MQ==')
+          expect(edges).toHaveLength(5)
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
-        }));
-  });
+          })
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked'])
+        }))
+  })
 
   describe('removeTagsFromTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -834,20 +835,20 @@ describe('TodoItemResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
-          expect(body.data.removeTagsFromTodoItem.id).toBe('aWQ6MQ==');
-          expect(edges).toHaveLength(2);
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags
+          expect(body.data.removeTagsFromTodoItem.id).toBe('aWQ6MQ==')
+          expect(edges).toHaveLength(2)
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        }));
-  });
+          })
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home'])
+        }))
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

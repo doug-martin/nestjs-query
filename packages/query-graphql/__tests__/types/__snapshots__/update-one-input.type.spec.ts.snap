@@ -16,7 +16,6 @@ input UpdateOneCustomId {
 input FakeUpdateOneType {
   name: String!
 }
-
 `;
 
 exports[`UpdateOneInputType should create an input type with the id and update type as fields 1`] = `
@@ -35,5 +34,4 @@ input UpdateOne {
 input FakeUpdateOneType {
   name: String!
 }
-
 `;

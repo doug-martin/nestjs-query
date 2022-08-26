@@ -1,29 +1,32 @@
 // eslint-disable-next-line max-classes-per-file
-import { Class, ModifyRelationOptions, QueryService } from '@ptc-org/nestjs-query-core';
-import { Resolver, ArgsType, Args, InputType } from '@nestjs/graphql';
-import { AuthorizerInterceptor } from '../../interceptors';
-import { getDTONames } from '../../common';
-import { ModifyRelationAuthorizerFilter, ResolverMutation } from '../../decorators';
-import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types';
-import { transformAndValidate } from '../helpers';
-import { ServiceResolver, BaseServiceResolver } from '../resolver.interface';
-import { flattenRelations, removeRelationOpts } from './helpers';
-import { RelationsOpts, ResolverRelation } from './relations.interface';
-import { OperationGroup } from '../../auth';
+import { Args, ArgsType, InputType, Resolver } from '@nestjs/graphql'
+import { Class, ModifyRelationOptions, QueryService } from '@ptc-org/nestjs-query-core'
+
+import { OperationGroup } from '../../auth'
+import { getDTONames } from '../../common'
+import { ModifyRelationAuthorizerFilter, ResolverMutation } from '../../decorators'
+import { AuthorizerInterceptor } from '../../interceptors'
+import { MutationArgsType, RelationInputType, RelationsInputType } from '../../types'
+import { transformAndValidate } from '../helpers'
+import { BaseServiceResolver, ServiceResolver } from '../resolver.interface'
+import { flattenRelations, removeRelationOpts } from './helpers'
+import { RelationsOpts, ResolverRelation } from './relations.interface'
 
 const UpdateOneRelationMixin =
   <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) =>
   <B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>>(Base: B): B => {
     if (relation.disableUpdate) {
-      return Base;
+      return Base
     }
-    const commonResolverOpts = removeRelationOpts(relation);
-    const relationDTO = relation.DTO;
-    const dtoNames = getDTONames(DTOClass);
-    const { baseNameLower, baseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
-    const relationName = relation.relationName ?? baseNameLower;
+    const commonResolverOpts = removeRelationOpts(relation)
+    const relationDTO = relation.DTO
+    const dtoNames = getDTONames(DTOClass)
+    const { baseNameLower, baseName } = getDTONames(relationDTO, { dtoName: relation.dtoName })
+    const relationName = relation.relationName ?? baseNameLower
+
     @InputType(`Set${baseName}On${dtoNames.baseName}Input`)
     class RIT extends RelationInputType(DTOClass, relationDTO) {}
+
     @ArgsType()
     class SetArgs extends MutationArgsType(RIT) {}
 
@@ -40,31 +43,35 @@ const UpdateOneRelationMixin =
         })
         modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>
       ): Promise<DTO> {
-        const { input } = await transformAndValidate(SetArgs, setArgs);
-        return this.service.setRelation(relationName, input.id, input.relationId, modifyRelationsFilter);
+        const { input } = await transformAndValidate(SetArgs, setArgs)
+        return this.service.setRelation(relationName, input.id, input.relationId, modifyRelationsFilter)
       }
     }
-    return UpdateOneMixin;
-  };
+
+    return UpdateOneMixin
+  }
 
 const UpdateManyRelationMixin =
   <DTO, Relation>(DTOClass: Class<DTO>, relation: ResolverRelation<Relation>) =>
   <B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>>(Base: B): B => {
     if (relation.disableUpdate) {
-      return Base;
+      return Base
     }
-    const commonResolverOpts = removeRelationOpts(relation);
-    const relationDTO = relation.DTO;
-    const dtoNames = getDTONames(DTOClass);
-    const { pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, { dtoName: relation.dtoName });
-    const relationName = relation.relationName ?? pluralBaseNameLower;
+    const commonResolverOpts = removeRelationOpts(relation)
+    const relationDTO = relation.DTO
+    const dtoNames = getDTONames(DTOClass)
+    const { pluralBaseNameLower, pluralBaseName } = getDTONames(relationDTO, { dtoName: relation.dtoName })
+    const relationName = relation.relationName ?? pluralBaseNameLower
+
     @InputType(`Add${pluralBaseName}To${dtoNames.baseName}Input`)
     class AddRelationInput extends RelationsInputType(DTOClass, relationDTO) {}
+
     @ArgsType()
     class AddArgs extends MutationArgsType(AddRelationInput) {}
 
     @InputType(`Set${pluralBaseName}On${dtoNames.baseName}Input`)
     class SetRelationInput extends RelationsInputType(DTOClass, relationDTO) {}
+
     @ArgsType()
     class SetArgs extends MutationArgsType(SetRelationInput) {}
 
@@ -81,8 +88,8 @@ const UpdateManyRelationMixin =
         })
         modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>
       ): Promise<DTO> {
-        const { input } = await transformAndValidate(AddArgs, addArgs);
-        return this.service.addRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
+        const { input } = await transformAndValidate(AddArgs, addArgs)
+        return this.service.addRelations(relationName, input.id, input.relationIds, modifyRelationsFilter)
       }
 
       @ResolverMutation(() => DTOClass, {}, commonResolverOpts, {
@@ -96,22 +103,23 @@ const UpdateManyRelationMixin =
         })
         modifyRelationsFilter?: ModifyRelationOptions<DTO, Relation>
       ): Promise<DTO> {
-        const { input } = await transformAndValidate(AddArgs, addArgs);
-        return this.service.setRelations(relationName, input.id, input.relationIds, modifyRelationsFilter);
+        const { input } = await transformAndValidate(AddArgs, addArgs)
+        return this.service.setRelations(relationName, input.id, input.relationIds, modifyRelationsFilter)
       }
     }
-    return UpdateManyMixin;
-  };
+
+    return UpdateManyMixin
+  }
 
 export const UpdateRelationsMixin =
   <DTO>(DTOClass: Class<DTO>, relations: RelationsOpts) =>
   <B extends Class<ServiceResolver<DTO, QueryService<DTO, unknown, unknown>>>>(Base: B): B => {
-    const manyRelations = flattenRelations(relations.many ?? {});
-    const oneRelations = flattenRelations(relations.one ?? {});
+    const manyRelations = flattenRelations(relations.many ?? {})
+    const oneRelations = flattenRelations(relations.one ?? {})
 
-    const WithMany = manyRelations.reduce((RB, a) => UpdateManyRelationMixin(DTOClass, a)(RB), Base);
-    return oneRelations.reduce((RB, a) => UpdateOneRelationMixin(DTOClass, a)(RB), WithMany);
-  };
+    const WithMany = manyRelations.reduce((RB, a) => UpdateManyRelationMixin(DTOClass, a)(RB), Base)
+    return oneRelations.reduce((RB, a) => UpdateOneRelationMixin(DTOClass, a)(RB), WithMany)
+  }
 
 export const UpdateRelationsResolver = <
   DTO,
@@ -119,4 +127,4 @@ export const UpdateRelationsResolver = <
 >(
   DTOClass: Class<DTO>,
   relations: RelationsOpts
-): Class<ServiceResolver<DTO, QS>> => UpdateRelationsMixin(DTOClass, relations)(BaseServiceResolver);
+): Class<ServiceResolver<DTO, QS>> => UpdateRelationsMixin(DTOClass, relations)(BaseServiceResolver)

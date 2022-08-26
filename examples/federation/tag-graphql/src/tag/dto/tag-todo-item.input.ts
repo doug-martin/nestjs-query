@@ -1,15 +1,15 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql'
+import { IsInt, IsNotEmpty } from 'class-validator'
 
 @InputType('TagTodoItemInput')
 export class TagTodoItemInputDTO {
   @Field()
   @IsInt()
   @IsNotEmpty()
-  tagId!: number;
+  tagId!: number
 
   @Field()
   @IsInt()
   @IsNotEmpty()
-  todoItemId!: number;
+  todoItemId!: number
 }

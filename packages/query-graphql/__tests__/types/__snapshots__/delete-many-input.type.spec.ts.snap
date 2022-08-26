@@ -32,5 +32,4 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;

@@ -8,6 +8,38 @@
     "query-mongoose": "packages/query-mongoose",
     "query-sequelize": "packages/query-sequelize",
     "query-typegoose": "packages/query-typegoose",
-    "query-typeorm": "packages/query-typeorm"
-  }
+    "query-typeorm": "packages/query-typeorm",
+    "workspace": {
+      "root": ".",
+      "targets": {
+        "version": {
+          "executor": "@jscutlery/semver:version",
+          "options": {
+            "syncVersions": true,
+            "skipProjectChangelog": true,
+            "baseBranch": "master",
+            "changelogHeader": " ",
+            "preid": "alpha",
+            "releaseAs": "premajor",
+            "commitMessageFormat": "chore(release): v${version}"
+          },
+          "configurations": {
+            "production": {
+              "postTargets": [
+                "workspace:github"
+              ]
+            }
+          }
+        },
+        "github": {
+          "executor": "@jscutlery/semver:github",
+          "options": {
+            "tag": "${tag}",
+            "notes": "${notes}"
+          }
+        }
+      }
+    }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

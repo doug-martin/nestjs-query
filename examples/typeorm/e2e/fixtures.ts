@@ -1,24 +1,25 @@
-import { Connection } from 'typeorm';
-import { SubTaskEntity } from '../src/sub-task/sub-task.entity';
-import { TagEntity } from '../src/tag/tag.entity';
-import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
-import { executeTruncate } from '../../helpers';
+import { Connection } from 'typeorm'
 
-const tables = ['todo_item', 'sub_task', 'tag'];
-export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables);
+import { executeTruncate } from '../../helpers'
+import { SubTaskEntity } from '../src/sub-task/sub-task.entity'
+import { TagEntity } from '../src/tag/tag.entity'
+import { TodoItemEntity } from '../src/todo-item/todo-item.entity'
+
+const tables = ['todo_item', 'sub_task', 'tag']
+export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables)
 
 export const refresh = async (connection: Connection): Promise<void> => {
-  await truncate(connection);
+  await truncate(connection)
 
-  const todoRepo = connection.getRepository(TodoItemEntity);
-  const subTaskRepo = connection.getRepository(SubTaskEntity);
-  const tagsRepo = connection.getRepository(TagEntity);
+  const todoRepo = connection.getRepository(TodoItemEntity)
+  const subTaskRepo = connection.getRepository(SubTaskEntity)
+  const tagsRepo = connection.getRepository(TagEntity)
 
-  const urgentTag = await tagsRepo.save({ name: 'Urgent' });
-  const homeTag = await tagsRepo.save({ name: 'Home' });
-  const workTag = await tagsRepo.save({ name: 'Work' });
-  const questionTag = await tagsRepo.save({ name: 'Question' });
-  const blockedTag = await tagsRepo.save({ name: 'Blocked' });
+  const urgentTag = await tagsRepo.save({ name: 'Urgent' })
+  const homeTag = await tagsRepo.save({ name: 'Home' })
+  const workTag = await tagsRepo.save({ name: 'Work' })
+  const questionTag = await tagsRepo.save({ name: 'Question' })
+  const blockedTag = await tagsRepo.save({ name: 'Blocked' })
 
   const todoItems = await todoRepo.save([
     { title: 'Create Nest App', completed: true, priority: 0, tags: [urgentTag, homeTag] },
@@ -31,7 +32,7 @@ export const refresh = async (connection: Connection): Promise<void> => {
       priority: 4,
       tags: [questionTag, blockedTag]
     }
-  ]);
+  ])
 
   await subTaskRepo.save(
     todoItems.reduce(
@@ -43,5 +44,5 @@ export const refresh = async (connection: Connection): Promise<void> => {
       ],
       [] as Partial<SubTaskEntity>[]
     )
-  );
-};
+  )
+}

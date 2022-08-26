@@ -1,6 +1,6 @@
-import { Paging } from './paging.interface';
-import { SortField } from './sort-field.interface';
-import { Filterable } from './filterable.interface';
+import { Filterable } from './filterable.interface'
+import { Paging } from './paging.interface'
+import { SortField } from './sort-field.interface'
 
 /**
  * Interface for all queries to a collection of items.
@@ -30,9 +30,9 @@ export interface Query<T> extends Filterable<T> {
   /**
    * Option to page through the collection.
    */
-  paging?: Paging;
+  paging?: Paging
   /**
    * Option to sort the collection.
    */
-  sorting?: SortField<T>[];
+  sorting?: SortField<T>[]
 }

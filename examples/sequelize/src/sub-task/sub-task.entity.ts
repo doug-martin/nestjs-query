@@ -1,44 +1,45 @@
 import {
-  Table,
   AllowNull,
-  Column,
-  ForeignKey,
-  BelongsTo,
-  CreatedAt,
-  UpdatedAt,
-  Model,
   AutoIncrement,
-  PrimaryKey
-} from 'sequelize-typescript';
-import { TodoItemEntity } from '../todo-item/entity/todo-item.entity';
+  BelongsTo,
+  Column,
+  CreatedAt,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt
+} from 'sequelize-typescript'
+
+import { TodoItemEntity } from '../todo-item/entity/todo-item.entity'
 
 @Table({})
 export class SubTaskEntity extends Model<SubTaskEntity, Partial<SubTaskEntity>> {
   @PrimaryKey
   @AutoIncrement
   @Column
-  id!: number;
+  id!: number
 
   @Column
-  title!: string;
+  title!: string
 
   @AllowNull
   @Column
-  description?: string;
+  description?: string
 
   @Column
-  completed!: boolean;
+  completed!: boolean
 
   @Column
   @ForeignKey(() => TodoItemEntity)
-  todoItemId!: number;
+  todoItemId!: number
 
   @BelongsTo(() => TodoItemEntity)
-  todoItem!: TodoItemEntity;
+  todoItem!: TodoItemEntity
 
   @CreatedAt
-  created!: Date;
+  created!: Date
 
   @UpdatedAt
-  updated!: Date;
+  updated!: Date
 }

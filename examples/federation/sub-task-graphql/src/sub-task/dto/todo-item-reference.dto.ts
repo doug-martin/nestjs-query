@@ -1,6 +1,7 @@
-import { CursorConnection } from '@ptc-org/nestjs-query-graphql';
-import { ObjectType, Directive, Field, ID } from '@nestjs/graphql';
-import { SubTaskDTO } from './sub-task.dto';
+import { Directive, Field, ID, ObjectType } from '@nestjs/graphql'
+import { CursorConnection } from '@ptc-org/nestjs-query-graphql'
+
+import { SubTaskDTO } from './sub-task.dto'
 
 @ObjectType('TodoItem')
 @Directive('@extends')
@@ -9,5 +10,5 @@ import { SubTaskDTO } from './sub-task.dto';
 export class TodoItemReferenceDTO {
   @Field(() => ID)
   @Directive('@external')
-  id!: number;
+  id!: number
 }

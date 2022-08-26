@@ -1,11 +1,12 @@
-import { Filter, Class } from '@ptc-org/nestjs-query-core';
-import { Field, InputType } from '@nestjs/graphql';
-import { ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { SubscriptionFilterType } from './query';
+import { Field, InputType } from '@nestjs/graphql'
+import { Class, Filter } from '@ptc-org/nestjs-query-core'
+import { Type } from 'class-transformer'
+import { ValidateNested } from 'class-validator'
+
+import { SubscriptionFilterType } from './query'
 
 export interface SubscriptionFilterInputType<DTO> {
-  filter?: Filter<DTO>;
+  filter?: Filter<DTO>
 }
 
 /**
@@ -14,7 +15,7 @@ export interface SubscriptionFilterInputType<DTO> {
  */
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function SubscriptionFilterInputType<DTO>(DTOClass: Class<DTO>): Class<SubscriptionFilterInputType<DTO>> {
-  const F = SubscriptionFilterType(DTOClass);
+  const F = SubscriptionFilterType(DTOClass)
 
   @InputType({ isAbstract: true })
   class SubscriptionFilterInput implements SubscriptionFilterInputType<DTO> {
@@ -23,7 +24,8 @@ export function SubscriptionFilterInputType<DTO>(DTOClass: Class<DTO>): Class<Su
     })
     @ValidateNested()
     @Type(() => F)
-    filter?: Filter<DTO>;
+    filter?: Filter<DTO>
   }
-  return SubscriptionFilterInput;
+
+  return SubscriptionFilterInput
 }

@@ -1,21 +1,22 @@
-import { Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne } from 'typeorm';
-import { TagEntity } from './tag.entity';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm'
+
+import { TagEntity } from './tag.entity'
 
 @Entity({ name: 'tag_todo_item' })
 export class TagTodoItemEntity {
   @PrimaryColumn()
-  tagId!: number;
+  tagId!: number
 
   @PrimaryColumn()
-  todoItemId!: number;
+  todoItemId!: number
 
   @CreateDateColumn()
-  created!: Date;
+  created!: Date
 
   @UpdateDateColumn()
-  updated!: Date;
+  updated!: Date
 
   @ManyToOne(() => TagEntity, (tag) => tag.tagTodoItems)
   @JoinColumn({ name: 'tagId' })
-  tag!: TagEntity;
+  tag!: TagEntity
 }

@@ -1,72 +1,74 @@
-import { Class, FilterFieldComparison } from '@ptc-org/nestjs-query-core';
-import { Field, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsString, IsOptional } from 'class-validator';
-import { IsUndefined } from '../../validators';
+import { Field, InputType } from '@nestjs/graphql'
+import { Class, FilterFieldComparison } from '@ptc-org/nestjs-query-core'
+import { IsBoolean, IsOptional, IsString } from 'class-validator'
+
+import { IsUndefined } from '../../validators'
 
 /** @internal */
-let stringFieldComparison: Class<FilterFieldComparison<string>>;
+let stringFieldComparison: Class<FilterFieldComparison<string>>
 
 /** @internal */
 export function getOrCreateStringFieldComparison(): Class<FilterFieldComparison<string>> {
   if (stringFieldComparison) {
-    return stringFieldComparison;
+    return stringFieldComparison
   }
+
   @InputType()
   class StringFieldComparison implements FilterFieldComparison<string> {
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
     @IsOptional()
-    is?: boolean | null;
+    is?: boolean | null
 
     @Field(() => Boolean, { nullable: true })
     @IsBoolean()
     @IsOptional()
-    isNot?: boolean | null;
+    isNot?: boolean | null
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    eq?: string;
+    eq?: string
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    neq?: string;
+    neq?: string
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    gt?: string;
+    gt?: string
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    gte?: string;
+    gte?: string
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    lt?: string;
+    lt?: string
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    lte?: string;
+    lte?: string
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    like?: string;
+    like?: string
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    notLike?: string;
+    notLike?: string
 
     @Field({ nullable: true })
     @IsString()
     @IsUndefined()
-    iLike?: string;
+    iLike?: string
 
     @Field({ nullable: true })
     @IsString()
@@ -76,13 +78,14 @@ export function getOrCreateStringFieldComparison(): Class<FilterFieldComparison<
     @Field(() => [String], { nullable: true })
     @IsUndefined()
     @IsString({ each: true })
-    in?: string[];
+    in?: string[]
 
     @Field(() => [String], { nullable: true })
     @IsUndefined()
     @IsString({ each: true })
-    notIn?: string[];
+    notIn?: string[]
   }
-  stringFieldComparison = StringFieldComparison;
-  return stringFieldComparison;
+
+  stringFieldComparison = StringFieldComparison
+  return stringFieldComparison
 }

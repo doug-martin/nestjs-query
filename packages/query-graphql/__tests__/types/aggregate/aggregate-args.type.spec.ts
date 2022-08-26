@@ -1,22 +1,23 @@
 // eslint-disable-next-line max-classes-per-file
-import { Resolver, Query, ObjectType, GraphQLISODateTime, Args, Int, ArgsType } from '@nestjs/graphql';
-import { FilterableField, AggregateArgsType } from '@ptc-org/nestjs-query-graphql';
-import { generateSchema } from '../../__fixtures__';
+import { Args, ArgsType, GraphQLISODateTime, Int, ObjectType, Query, Resolver } from '@nestjs/graphql'
+import { AggregateArgsType, FilterableField } from '@ptc-org/nestjs-query-graphql'
+
+import { generateSchema } from '../../__fixtures__'
 
 describe('AggregateArgsType', (): void => {
   @ObjectType()
   class FakeType {
     @FilterableField()
-    stringField!: string;
+    stringField!: string
 
     @FilterableField()
-    numberField!: number;
+    numberField!: number
 
     @FilterableField()
-    boolField!: boolean;
+    boolField!: boolean
 
     @FilterableField(() => GraphQLISODateTime)
-    dateField!: Date;
+    dateField!: Date
   }
 
   @ArgsType()
@@ -28,10 +29,11 @@ describe('AggregateArgsType', (): void => {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       aggregate(@Args() args: AggArgs): number {
-        return 1;
+        return 1
       }
     }
-    const schema = await generateSchema([AggregateArgsTypeSpec]);
-    expect(schema).toMatchSnapshot();
-  });
-});
+
+    const schema = await generateSchema([AggregateArgsTypeSpec])
+    expect(schema).toMatchSnapshot()
+  })
+})

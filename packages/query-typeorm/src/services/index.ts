@@ -1,1 +1,1 @@
-export * from './typeorm-query.service';
+export * from './typeorm-query.service'

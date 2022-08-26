@@ -1,7 +1,8 @@
-import { FilterableField, OffsetConnection, PagingStrategies, QueryOptions } from '@ptc-org/nestjs-query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
-import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
-import { TagDTO } from '../../tag/dto/tag.dto';
+import { GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { FilterableField, OffsetConnection, PagingStrategies, QueryOptions } from '@ptc-org/nestjs-query-graphql'
+
+import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto'
+import { TagDTO } from '../../tag/dto/tag.dto'
 
 @ObjectType('TodoItem')
 @QueryOptions({ pagingStrategy: PagingStrategies.OFFSET, enableTotalCount: true })
@@ -9,20 +10,20 @@ import { TagDTO } from '../../tag/dto/tag.dto';
 @OffsetConnection('tags', () => TagDTO)
 export class TodoItemDTO {
   @FilterableField(() => ID)
-  id!: number;
+  id!: number
 
   @FilterableField()
-  title!: string;
+  title!: string
 
   @FilterableField({ nullable: true })
-  description?: string;
+  description?: string
 
   @FilterableField()
-  completed!: boolean;
+  completed!: boolean
 
   @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
+  created!: Date
 
   @FilterableField(() => GraphQLISODateTime)
-  updated!: Date;
+  updated!: Date
 }

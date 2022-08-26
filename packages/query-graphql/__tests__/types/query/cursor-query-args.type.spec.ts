@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import {
   Args,
   ArgsType,
@@ -11,71 +10,74 @@ import {
   ObjectType,
   Query,
   Resolver
-} from '@nestjs/graphql';
-import { plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
-import { FilterableField, PagingStrategies, QueryArgsType } from '@ptc-org/nestjs-query-graphql';
-import { generateSchema } from '../../__fixtures__';
+} from '@nestjs/graphql'
+import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core'
+import { FilterableField, PagingStrategies, QueryArgsType } from '@ptc-org/nestjs-query-graphql'
+import { plainToClass } from 'class-transformer'
+import { validateSync } from 'class-validator'
+
+import { generateSchema } from '../../__fixtures__'
 
 describe('Cursor paging strategy QueryArgsType with manual options', (): void => {
-  afterEach(() => jest.clearAllMocks());
+  afterEach(() => jest.clearAllMocks())
 
   @ObjectType('TestQuery')
   class TestDto {
     @FilterableField(() => ID)
-    idField!: number;
+    idField!: number
 
     @FilterableField(() => ID, { nullable: true })
-    idFieldOption?: number;
+    idFieldOption?: number
 
     @FilterableField()
-    stringField!: string;
+    stringField!: string
 
     @FilterableField({ nullable: true })
-    stringFieldOptional?: string;
+    stringFieldOptional?: string
 
     @FilterableField()
-    booleanField!: boolean;
+    booleanField!: boolean
 
     @FilterableField({ nullable: true })
-    booleanFieldOptional?: boolean;
+    booleanFieldOptional?: boolean
 
     @FilterableField()
-    numberField!: number;
+    numberField!: number
 
     @FilterableField({ nullable: true })
-    numberFieldOptional?: number;
+    numberFieldOptional?: number
 
     @FilterableField(() => Float)
-    floatField!: number;
+    floatField!: number
 
     @FilterableField(() => Float, { nullable: true })
-    floatFieldOptional?: number;
+    floatFieldOptional?: number
 
     @FilterableField(() => Int)
-    intField!: number;
+    intField!: number
 
     @FilterableField(() => Int, { nullable: true })
-    intFieldOptional?: number;
+    intFieldOptional?: number
 
     @FilterableField(() => GraphQLTimestamp)
-    timestampField!: Date;
+    timestampField!: Date
 
     @FilterableField(() => GraphQLTimestamp, { nullable: true })
-    timestampFieldOptional?: Date;
+    timestampFieldOptional?: Date
 
     @FilterableField(() => GraphQLISODateTime)
-    date!: Date;
+    date!: Date
 
     @FilterableField(() => GraphQLISODateTime, { nullable: true })
-    dateOptional?: Date;
+    dateOptional?: Date
   }
 
   @ObjectType()
   class TestFilterRequiredDto {
     @FilterableField({ filterRequired: true })
-    requiredFilterableField!: string;
+    requiredFilterableField!: string
   }
+
   @ArgsType()
   class TestCursorQuery extends QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.CURSOR }) {}
 
@@ -85,12 +87,13 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
       @Query(() => String)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args() query: TestCursorQuery): string {
-        return 'hello';
+        return 'hello'
       }
     }
-    const schema = await generateSchema([TestCursorQueryResolver]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([TestCursorQueryResolver])
+    expect(schema).toMatchSnapshot()
+  })
 
   it('should transform paging to the correct instance of paging', () => {
     const queryObj: TestCursorQuery = {
@@ -98,31 +101,31 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
         first: 10,
         after: 'YXJyYXljb25uZWN0aW9uOjEw'
       }
-    };
-    const queryInstance = plainToClass(TestCursorQuery, queryObj);
-    expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.paging).toBeInstanceOf(TestCursorQuery.PageType);
-  });
+    }
+    const queryInstance = plainToClass(TestCursorQuery, queryObj)
+    expect(validateSync(queryInstance)).toEqual([])
+    expect(queryInstance.paging).toBeInstanceOf(TestCursorQuery.PageType)
+  })
 
   it('should sorting to the correct instance of sorting', () => {
     const queryObj: TestCursorQuery = {
       sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }]
-    };
-    const queryInstance = plainToClass(TestCursorQuery, queryObj);
-    expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.sorting[0]).toBeInstanceOf(TestCursorQuery.SortType);
-  });
+    }
+    const queryInstance = plainToClass(TestCursorQuery, queryObj)
+    expect(validateSync(queryInstance)).toEqual([])
+    expect(queryInstance.sorting[0]).toBeInstanceOf(TestCursorQuery.SortType)
+  })
 
   it('should make filter to the correct instance of sorting', () => {
     const queryObj: TestCursorQuery = {
       filter: {
         stringField: { eq: 'foo' }
       }
-    };
-    const queryInstance = plainToClass(TestCursorQuery, queryObj);
-    expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.filter).toBeInstanceOf(TestCursorQuery.FilterType);
-  });
+    }
+    const queryInstance = plainToClass(TestCursorQuery, queryObj)
+    expect(validateSync(queryInstance)).toEqual([])
+    expect(queryInstance.filter).toBeInstanceOf(TestCursorQuery.FilterType)
+  })
 
   it('should make the filter required if there is a filterRequired field', async () => {
     @ArgsType()
@@ -133,12 +136,13 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
       @Query(() => String)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args() query: TestFilterRequiredQuery): string {
-        return 'hello';
+        return 'hello'
       }
     }
-    const schema = await generateSchema([TestFilterRequiredResolver]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([TestFilterRequiredResolver])
+    expect(schema).toMatchSnapshot()
+  })
 
   describe('options', () => {
     @ArgsType()
@@ -156,18 +160,19 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
         @Query(() => String)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         test(@Args() query: CursorQueryOptionsArgs): string {
-          return 'hello';
+          return 'hello'
         }
       }
-      const schema = await generateSchema([TestCursorQueryManualOptionsResolver]);
-      expect(schema).toMatchSnapshot();
-    });
+
+      const schema = await generateSchema([TestCursorQueryManualOptionsResolver])
+      expect(schema).toMatchSnapshot()
+    })
 
     it('should validate a maxResultsSize for paging.first', () => {
       const queryObj: TestCursorQuery = {
         paging: { first: 10 }
-      };
-      const queryInstance = plainToClass(CursorQueryOptionsArgs, queryObj);
+      }
+      const queryInstance = plainToClass(CursorQueryOptionsArgs, queryObj)
       expect(validateSync(queryInstance)).toEqual([
         {
           children: [],
@@ -178,14 +183,14 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
           target: queryObj,
           value: queryObj.paging
         }
-      ]);
-    });
+      ])
+    })
 
     it('should validate a maxResultsSize for paging.last', () => {
       const queryObj: TestCursorQuery = {
         paging: { last: 10, before: 'abc' }
-      };
-      const queryInstance = plainToClass(CursorQueryOptionsArgs, queryObj);
+      }
+      const queryInstance = plainToClass(CursorQueryOptionsArgs, queryObj)
       expect(validateSync(queryInstance)).toEqual([
         {
           children: [],
@@ -196,8 +201,8 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
           target: queryObj,
           value: queryObj.paging
         }
-      ]);
-    });
+      ])
+    })
 
     it('should ignore a maxResultsSize for paging.first and paging.last if maxResultSize === -1', () => {
       class NoMaxQueryArgsTpe extends QueryArgsType(TestDto, { maxResultsSize: -1 }) {}
@@ -206,16 +211,16 @@ describe('Cursor paging strategy QueryArgsType with manual options', (): void =>
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         paging: { first: 1000 }
-      };
-      expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObjFirst))).toEqual([]);
+      }
+      expect(validateSync(plainToClass(NoMaxQueryArgsTpe, queryObjFirst))).toEqual([])
 
       const queryObjLast: NoMaxQueryArgsTpe = {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         paging: { last: 1000, before: 'abc' }
-      };
-      const queryInstance = plainToClass(NoMaxQueryArgsTpe, queryObjLast);
-      expect(validateSync(queryInstance)).toEqual([]);
-    });
-  });
-});
+      }
+      const queryInstance = plainToClass(NoMaxQueryArgsTpe, queryObjLast)
+      expect(validateSync(queryInstance)).toEqual([])
+    })
+  })
+})

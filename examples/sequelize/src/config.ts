@@ -1,12 +1,13 @@
 export interface AuthConfig {
-  header: string;
+  header: string
 }
+
 export interface Config {
-  auth: AuthConfig;
+  auth: AuthConfig
 }
 
 export const config: Config = {
   auth: {
     header: 'super-secret'
   }
-};
+}

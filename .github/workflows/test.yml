@@ -43,9 +43,9 @@ jobs:
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-      - name: nx affected:version
+      - name: nx workspace:version
         if: matrix.target == 'build'
-        run: node ./tools/scripts/run-many.js version
+        run: yarn nx run workspace:version
 
       - name: nx affected:${{ matrix.target }}
         run: node ./tools/scripts/run-many.js ${{ matrix.target }}

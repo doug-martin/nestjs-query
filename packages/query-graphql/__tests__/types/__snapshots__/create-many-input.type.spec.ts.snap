@@ -13,5 +13,4 @@ input CreateMany {
 input FakeType {
   field: String!
 }
-
 `;

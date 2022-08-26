@@ -1,14 +1,15 @@
-import { Table, ForeignKey, Column, Model } from 'sequelize-typescript';
-import { TodoItemEntity } from './todo-item.entity';
-import { TagEntity } from '../../tag/tag.entity';
+import { Column, ForeignKey, Model, Table } from 'sequelize-typescript'
+
+import { TagEntity } from '../../tag/tag.entity'
+import { TodoItemEntity } from './todo-item.entity'
 
 @Table({})
 export class TodoItemEntityTags extends Model<TodoItemEntityTags> {
   @ForeignKey(() => TodoItemEntity)
   @Column
-  todoItemId!: number;
+  todoItemId!: number
 
   @ForeignKey(() => TagEntity)
   @Column
-  tagId!: number;
+  tagId!: number
 }

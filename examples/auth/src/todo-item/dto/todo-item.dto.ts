@@ -1,17 +1,18 @@
+import { UnauthorizedException } from '@nestjs/common'
+import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
 import {
-  FilterableField,
+  AuthorizationContext,
   Authorize,
-  Relation,
   FilterableCursorConnection,
+  FilterableField,
   QueryOptions,
-  AuthorizationContext
-} from '@ptc-org/nestjs-query-graphql';
-import { ObjectType, ID, GraphQLISODateTime, Field } from '@nestjs/graphql';
-import { UnauthorizedException } from '@nestjs/common';
-import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
-import { TagDTO } from '../../tag/dto/tag.dto';
-import { UserDTO } from '../../user/user.dto';
-import { UserContext } from '../../auth/auth.interfaces';
+  Relation
+} from '@ptc-org/nestjs-query-graphql'
+
+import { UserContext } from '../../auth/auth.interfaces'
+import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto'
+import { TagDTO } from '../../tag/dto/tag.dto'
+import { UserDTO } from '../../user/user.dto'
 
 @ObjectType('TodoItem')
 @QueryOptions({ enableTotalCount: true })
@@ -21,12 +22,12 @@ import { UserContext } from '../../auth/auth.interfaces';
       context.req.user.username === 'nestjs-query-3' &&
       (authorizationContext?.operationGroup === 'read' || authorizationContext?.operationGroup === 'aggregate')
     ) {
-      return {};
+      return {}
     }
     if (context.req.user.username === 'nestjs-query-3' && authorizationContext?.operationGroup === 'create') {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException()
     }
-    return { ownerId: { eq: context.req.user.id } };
+    return { ownerId: { eq: context.req.user.id } }
   }
 })
 @Relation('owner', () => UserDTO, { disableRemove: true, disableUpdate: true })
@@ -34,35 +35,35 @@ import { UserContext } from '../../auth/auth.interfaces';
 @FilterableCursorConnection('tags', () => TagDTO)
 export class TodoItemDTO {
   @FilterableField(() => ID)
-  id!: number;
+  id!: number
 
   @FilterableField()
-  title!: string;
+  title!: string
 
   @FilterableField({ nullable: true })
-  description?: string;
+  description?: string
 
   @FilterableField()
-  completed!: boolean;
+  completed!: boolean
 
   @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
+  created!: Date
 
   @FilterableField(() => GraphQLISODateTime)
-  updated!: Date;
+  updated!: Date
 
   @Field()
-  age!: number;
+  age!: number
 
   @FilterableField()
-  priority!: number;
+  priority!: number
 
   @FilterableField({ nullable: true })
-  createdBy?: string;
+  createdBy?: string
 
   @FilterableField({ nullable: true })
-  updatedBy?: string;
+  updatedBy?: string
 
   @FilterableField()
-  ownerId!: number;
+  ownerId!: number
 }

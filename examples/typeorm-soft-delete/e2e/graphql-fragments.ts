@@ -3,7 +3,7 @@ export const todoItemFields = `
     title
     completed
     description
-  `;
+  `
 
 export const pageInfoField = `
 pageInfo{
@@ -12,7 +12,7 @@ pageInfo{
   startCursor
   endCursor
 }
-`;
+`
 
 export const edgeNodes = (fields: string): string => `
   edges {
@@ -21,4 +21,4 @@ export const edgeNodes = (fields: string): string => `
     }
     cursor
   }  
-  `;
+  `

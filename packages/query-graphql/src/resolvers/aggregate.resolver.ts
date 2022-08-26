@@ -1,24 +1,25 @@
-import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@ptc-org/nestjs-query-core';
-import { Args, ArgsType, Resolver } from '@nestjs/graphql';
-import omit from 'lodash.omit';
-import { AuthorizerInterceptor } from '../interceptors';
-import { getDTONames } from '../common';
-import { AggregateQueryParam, AuthorizerFilter, ResolverMethodOpts, ResolverQuery, SkipIf } from '../decorators';
-import { AggregateArgsType, AggregateResponseType } from '../types';
-import { transformAndValidate } from './helpers';
-import { BaseServiceResolver, ResolverClass, ServiceResolver } from './resolver.interface';
-import { OperationGroup } from '../auth';
+import { Args, ArgsType, Resolver } from '@nestjs/graphql'
+import { AggregateQuery, AggregateResponse, Class, Filter, mergeFilter, QueryService } from '@ptc-org/nestjs-query-core'
+import omit from 'lodash.omit'
+
+import { OperationGroup } from '../auth'
+import { getDTONames } from '../common'
+import { AggregateQueryParam, AuthorizerFilter, ResolverMethodOpts, ResolverQuery, SkipIf } from '../decorators'
+import { AuthorizerInterceptor } from '../interceptors'
+import { AggregateArgsType, AggregateResponseType } from '../types'
+import { transformAndValidate } from './helpers'
+import { BaseServiceResolver, ResolverClass, ServiceResolver } from './resolver.interface'
 
 export type AggregateResolverOpts = {
-  enabled?: boolean;
-} & ResolverMethodOpts;
+  enabled?: boolean
+} & ResolverMethodOpts
 
 export interface AggregateResolver<DTO, QS extends QueryService<DTO, unknown, unknown>> extends ServiceResolver<DTO, QS> {
   aggregate(
     filter: AggregateArgsType<DTO>,
     aggregateQuery: AggregateQuery<DTO>,
     authFilter?: Filter<DTO>
-  ): Promise<AggregateResponse<DTO>[]>;
+  ): Promise<AggregateResponse<DTO>[]>
 }
 
 /**
@@ -28,11 +29,12 @@ export interface AggregateResolver<DTO, QS extends QueryService<DTO, unknown, un
 export const Aggregateable =
   <DTO, QS extends QueryService<DTO, unknown, unknown>>(DTOClass: Class<DTO>, opts?: AggregateResolverOpts) =>
   <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<AggregateResolver<DTO, QS>> & B => {
-    const { baseNameLower } = getDTONames(DTOClass);
-    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');
-    const queryName = `${baseNameLower}Aggregate`;
-    const disabled = !opts || !opts.enabled;
-    const AR = disabled ? DTOClass : AggregateResponseType(DTOClass);
+    const { baseNameLower } = getDTONames(DTOClass)
+    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection')
+    const queryName = `${baseNameLower}Aggregate`
+    const disabled = !opts || !opts.enabled
+    const AR = disabled ? DTOClass : AggregateResponseType(DTOClass)
+
     @ArgsType()
     class AA extends AggregateArgsType(DTOClass) {}
 
@@ -57,14 +59,15 @@ export const Aggregateable =
         })
         authFilter?: Filter<DTO>
       ): Promise<AggregateResponse<DTO>[]> {
-        const qa = await transformAndValidate(AA, args);
-        return this.service.aggregate(mergeFilter(qa.filter || {}, authFilter ?? {}), query);
+        const qa = await transformAndValidate(AA, args)
+        return this.service.aggregate(mergeFilter(qa.filter || {}, authFilter ?? {}), query)
       }
     }
-    return AggregateResolverBase;
-  };
+
+    return AggregateResolverBase
+  }
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const AggregateResolver = <DTO, QS extends QueryService<DTO, unknown, unknown> = QueryService<DTO, unknown, unknown>>(
   DTOClass: Class<DTO>,
   opts?: AggregateResolverOpts
-): ResolverClass<DTO, QS, AggregateResolver<DTO, QS>> => Aggregateable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, QS, AggregateResolver<DTO, QS>> => Aggregateable(DTOClass, opts)(BaseServiceResolver)

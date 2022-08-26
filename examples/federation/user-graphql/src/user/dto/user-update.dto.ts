@@ -1,5 +1,5 @@
-import { IsString, MaxLength, IsOptional, IsEmail } from 'class-validator';
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql'
+import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator'
 
 @InputType('UserUpdate')
 export class UserUpdateDTO {
@@ -7,10 +7,10 @@ export class UserUpdateDTO {
   @IsString()
   @MaxLength(50)
   @Field({ nullable: true })
-  name?: string;
+  name?: string
 
   @IsOptional()
   @IsEmail()
   @Field({ nullable: true })
-  email?: string;
+  email?: string
 }

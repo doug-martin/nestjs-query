@@ -49,11 +49,6 @@ if (affectedProjects.length > 0) {
       `--projects=${affectedProjects.join(',')}`,
     ]
 
-    if (target === 'version') {
-      execCommand.push('--baseBranch="master"')
-      execCommand.push('--changelogHeader=" "')
-    }
-
     const command = execCommand.join(' ')
 
     logger.info(`Running: ${command}`)

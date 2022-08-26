@@ -1,33 +1,34 @@
 // eslint-disable-next-line max-classes-per-file
-import { plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
-import { Args, Query, Resolver, Int, InputType, ObjectType } from '@nestjs/graphql';
-import { FilterableField, IDField, RelationsInputType } from '@ptc-org/nestjs-query-graphql';
-import { generateSchema } from '../__fixtures__';
+import { Args, InputType, Int, ObjectType, Query, Resolver } from '@nestjs/graphql'
+import { FilterableField, IDField, RelationsInputType } from '@ptc-org/nestjs-query-graphql'
+import { plainToClass } from 'class-transformer'
+import { validateSync } from 'class-validator'
+
+import { generateSchema } from '../__fixtures__'
 
 describe('RelationsInputType', (): void => {
   @ObjectType()
   class ParentDTO {
     @FilterableField()
-    field!: string;
+    field!: string
   }
 
   @ObjectType()
   class ParentCustomIDDTO {
     @IDField(() => String)
-    id!: string;
+    id!: string
   }
 
   @ObjectType()
   class RelationDTO {
     @FilterableField()
-    relationField!: string;
+    relationField!: string
   }
 
   @ObjectType()
   class RelationCustomIDDTO {
     @IDField(() => String)
-    relationId!: string;
+    relationId!: string
   }
 
   @InputType()
@@ -39,12 +40,13 @@ describe('RelationsInputType', (): void => {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args('input') input: RelationsInput): number {
-        return 1;
+        return 1
       }
     }
-    const schema = await generateSchema([RelationsInputTypeSpec]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([RelationsInputTypeSpec])
+    expect(schema).toMatchSnapshot()
+  })
 
   it('should create an input type with a custom parent id', async () => {
     @InputType()
@@ -55,12 +57,13 @@ describe('RelationsInputType', (): void => {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args('input') input: RelationsCustomParentIdInput): number {
-        return 1;
+        return 1
       }
     }
-    const schema = await generateSchema([RelationsCustomIdInputTypeSpec]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([RelationsCustomIdInputTypeSpec])
+    expect(schema).toMatchSnapshot()
+  })
 
   it('should create an input type with a custom relation id', async () => {
     @InputType()
@@ -71,12 +74,13 @@ describe('RelationsInputType', (): void => {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args('input') input: RelationsCustomRelationIdInput): number {
-        return 1;
+        return 1
       }
     }
-    const schema = await generateSchema([RelationsCustomIdInputTypeSpec]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([RelationsCustomIdInputTypeSpec])
+    expect(schema).toMatchSnapshot()
+  })
 
   it('should create an input type with a custom parent and relation id', async () => {
     @InputType()
@@ -87,25 +91,26 @@ describe('RelationsInputType', (): void => {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args('input') input: RelationsCustomParentRelationIdInput): number {
-        return 1;
+        return 1
       }
     }
-    const schema = await generateSchema([RelationsCustomIdInputTypeSpec]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([RelationsCustomIdInputTypeSpec])
+    expect(schema).toMatchSnapshot()
+  })
 
   it('should return the input when accessing the update field', () => {
-    const input: RelationsInputType = { id: 1, relationIds: [2, 3, 4] };
-    const it = plainToClass(RelationsInput, input);
-    expect(it.id).toEqual(input.id);
-    expect(it.relationIds).toEqual(input.relationIds);
-  });
+    const input: RelationsInputType = { id: 1, relationIds: [2, 3, 4] }
+    const it = plainToClass(RelationsInput, input)
+    expect(it.id).toEqual(input.id)
+    expect(it.relationIds).toEqual(input.relationIds)
+  })
 
   describe('validation', () => {
     it('should validate the id is defined', () => {
-      const input = { relationIds: [2, 3, 4] };
-      const it = plainToClass(RelationsInput, input);
-      const errors = validateSync(it);
+      const input = { relationIds: [2, 3, 4] }
+      const it = plainToClass(RelationsInput, input)
+      const errors = validateSync(it)
       expect(errors).toEqual([
         {
           children: [],
@@ -115,13 +120,13 @@ describe('RelationsInputType', (): void => {
           property: 'id',
           target: input
         }
-      ]);
-    });
+      ])
+    })
 
     it('should validate the id is not empty', () => {
-      const input = { id: '', relationIds: [2, 3, 4] };
-      const it = plainToClass(RelationsInput, input);
-      const errors = validateSync(it);
+      const input = { id: '', relationIds: [2, 3, 4] }
+      const it = plainToClass(RelationsInput, input)
+      const errors = validateSync(it)
       expect(errors).toEqual([
         {
           children: [],
@@ -132,20 +137,20 @@ describe('RelationsInputType', (): void => {
           target: input,
           value: ''
         }
-      ]);
-    });
+      ])
+    })
 
     it('should allow an empty relationIds array', () => {
-      const input: RelationsInputType = { id: 1, relationIds: [] };
-      const it = plainToClass(RelationsInput, input);
-      const errors = validateSync(it);
-      expect(errors).toEqual([]);
-    });
+      const input: RelationsInputType = { id: 1, relationIds: [] }
+      const it = plainToClass(RelationsInput, input)
+      const errors = validateSync(it)
+      expect(errors).toEqual([])
+    })
 
     it('should validate that relationsIds is unique', () => {
-      const input: RelationsInputType = { id: 1, relationIds: [1, 2, 1, 2] };
-      const it = plainToClass(RelationsInput, input);
-      const errors = validateSync(it);
+      const input: RelationsInputType = { id: 1, relationIds: [1, 2, 1, 2] }
+      const it = plainToClass(RelationsInput, input)
+      const errors = validateSync(it)
       expect(errors).toEqual([
         {
           children: [],
@@ -156,13 +161,13 @@ describe('RelationsInputType', (): void => {
           target: input,
           value: input.relationIds
         }
-      ]);
-    });
+      ])
+    })
 
     it('should validate that relationsIds does not contain an empty id', () => {
-      const input: RelationsInputType = { id: 1, relationIds: [''] };
-      const it = plainToClass(RelationsInput, input);
-      const errors = validateSync(it);
+      const input: RelationsInputType = { id: 1, relationIds: [''] }
+      const it = plainToClass(RelationsInput, input)
+      const errors = validateSync(it)
       expect(errors).toEqual([
         {
           children: [],
@@ -173,7 +178,7 @@ describe('RelationsInputType', (): void => {
           target: input,
           value: input.relationIds
         }
-      ]);
-    });
-  });
-});
+      ])
+    })
+  })
+})

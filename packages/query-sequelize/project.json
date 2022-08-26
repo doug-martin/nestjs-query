@@ -1,4 +1,5 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/query-sequelize/src",
   "projectType": "library",
   "targets": {
@@ -27,6 +28,10 @@
         "main": "packages/query-sequelize/src/index.ts",
         "assets": ["packages/query-sequelize/*.md"]
       }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {}
     }
   },
   "tags": [],

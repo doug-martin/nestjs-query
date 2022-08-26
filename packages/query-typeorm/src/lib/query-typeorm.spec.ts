@@ -1,7 +1,7 @@
-import { queryTypeorm } from './query-typeorm';
+import { queryTypeorm } from './query-typeorm'
 
 describe('queryTypeorm', () => {
   it('should work', () => {
-    expect(queryTypeorm()).toBe('query-typeorm');
-  });
-});
+    expect(queryTypeorm()).toBe('query-typeorm')
+  })
+})

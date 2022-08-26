@@ -1,6 +1,6 @@
-import { CommonFieldComparisonBetweenType } from '../interfaces';
+import { CommonFieldComparisonBetweenType } from '../interfaces'
 
-export type FilterFn<DTO> = (dto?: DTO) => boolean;
+export type FilterFn<DTO> = (dto?: DTO) => boolean
 
 export type ComparisonField<DTO, F extends keyof DTO> =
   | DTO[F]
@@ -8,4 +8,4 @@ export type ComparisonField<DTO, F extends keyof DTO> =
   | CommonFieldComparisonBetweenType<DTO[F]>
   | true
   | false
-  | null;
+  | null

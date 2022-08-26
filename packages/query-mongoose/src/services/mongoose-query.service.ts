@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+import { NotFoundException } from '@nestjs/common'
 import {
   AggregateQuery,
   AggregateResponse,
@@ -12,19 +13,19 @@ import {
   QueryService,
   UpdateManyResponse,
   UpdateOneOptions
-} from '@ptc-org/nestjs-query-core';
-import { NotFoundException } from '@nestjs/common';
-import { Document, Model as MongooseModel, PipelineStage, UpdateQuery } from 'mongoose';
-import { AggregateBuilder, FilterQueryBuilder } from '../query';
-import { ReferenceQueryService } from './reference-query.service';
+} from '@ptc-org/nestjs-query-core'
+import { Document, Model as MongooseModel, PipelineStage, UpdateQuery } from 'mongoose'
+
+import { AggregateBuilder, FilterQueryBuilder } from '../query'
+import { ReferenceQueryService } from './reference-query.service'
 
 type MongoDBUpdatedOutput = {
-  nModified: number;
-};
+  nModified: number
+}
 
 type MongoDBDeletedOutput = {
-  deletedCount: number;
-};
+  deletedCount: number
+}
 
 /**
  * Base class for all query services that use Typegoose.
@@ -50,7 +51,7 @@ export class MongooseQueryService<Entity extends Document>
     readonly Model: MongooseModel<Entity>,
     readonly filterQueryBuilder: FilterQueryBuilder<Entity> = new FilterQueryBuilder(Model)
   ) {
-    super();
+    super()
   }
 
   /**
@@ -67,23 +68,23 @@ export class MongooseQueryService<Entity extends Document>
    * @param query - The Query used to filter, page, and sort rows.
    */
   async query(query: Query<Entity>): Promise<Entity[]> {
-    const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query);
-    return this.Model.find(filterQuery, {}, options).exec();
+    const { filterQuery, options } = this.filterQueryBuilder.buildQuery(query)
+    return this.Model.find(filterQuery, {}, options).exec()
   }
 
   async aggregate(filter: Filter<Entity>, aggregateQuery: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>[]> {
-    const { aggregate, filterQuery, options } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter);
-    const aggPipeline: PipelineStage[] = [{ $match: filterQuery }, { $group: aggregate }];
+    const { aggregate, filterQuery, options } = this.filterQueryBuilder.buildAggregateQuery(aggregateQuery, filter)
+    const aggPipeline: PipelineStage[] = [{ $match: filterQuery }, { $group: aggregate }]
     if (options.sort) {
-      aggPipeline.push({ $sort: options.sort ?? {} });
+      aggPipeline.push({ $sort: options.sort ?? {} })
     }
-    const aggResult = await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec();
-    return AggregateBuilder.convertToAggregateResponse(aggResult);
+    const aggResult = await this.Model.aggregate<Record<string, unknown>>(aggPipeline).exec()
+    return AggregateBuilder.convertToAggregateResponse(aggResult)
   }
 
   count(filter: Filter<Entity>): Promise<number> {
-    const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    return this.Model.count(filterQuery).exec();
+    const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter)
+    return this.Model.count(filterQuery).exec()
   }
 
   /**
@@ -97,12 +98,12 @@ export class MongooseQueryService<Entity extends Document>
    * @param opts - Additional options
    */
   async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
-    const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
-    const doc = await this.Model.findOne(filterQuery);
+    const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter)
+    const doc = await this.Model.findOne(filterQuery)
     if (!doc) {
-      return undefined;
+      return undefined
     }
-    return doc;
+    return doc
   }
 
   /**
@@ -120,11 +121,11 @@ export class MongooseQueryService<Entity extends Document>
    * @param opts - Additional options
    */
   async getById(id: string, opts?: GetByIdOptions<Entity>): Promise<Entity> {
-    const doc = await this.findById(id, opts);
+    const doc = await this.findById(id, opts)
     if (!doc) {
-      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
+      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`)
     }
-    return doc;
+    return doc
   }
 
   /**
@@ -137,8 +138,8 @@ export class MongooseQueryService<Entity extends Document>
    * @param record - The entity to create.
    */
   async createOne(record: DeepPartial<Entity>): Promise<Entity> {
-    this.ensureIdIsNotPresent(record);
-    return this.Model.create(record);
+    this.ensureIdIsNotPresent(record)
+    return this.Model.create(record)
   }
 
   /**
@@ -154,8 +155,8 @@ export class MongooseQueryService<Entity extends Document>
    * @param records - The entities to create.
    */
   async createMany(records: DeepPartial<Entity>[]): Promise<Entity[]> {
-    records.forEach((r) => this.ensureIdIsNotPresent(r));
-    return this.Model.create(records);
+    records.forEach((r) => this.ensureIdIsNotPresent(r))
+    return this.Model.create(records)
   }
 
   /**
@@ -170,18 +171,18 @@ export class MongooseQueryService<Entity extends Document>
    * @param opts - Additional options
    */
   async updateOne(id: string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
-    this.ensureIdIsNotPresent(update);
-    const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
+    this.ensureIdIsNotPresent(update)
+    const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter)
 
     const doc = await this.Model.findOneAndUpdate(filterQuery, this.getUpdateQuery(update), {
       new: true
-    });
+    })
 
     if (!doc) {
-      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
+      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`)
     }
 
-    return doc;
+    return doc
   }
 
   /**
@@ -198,10 +199,10 @@ export class MongooseQueryService<Entity extends Document>
    * @param filter - A Filter used to find the records to update
    */
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
-    this.ensureIdIsNotPresent(update);
-    const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    const res = await this.Model.updateMany(filterQuery, this.getUpdateQuery(update)).exec();
-    return { updatedCount: res.modifiedCount || 0 };
+    this.ensureIdIsNotPresent(update)
+    const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter)
+    const res = await this.Model.updateMany(filterQuery, this.getUpdateQuery(update)).exec()
+    return { updatedCount: res.modifiedCount || 0 }
   }
 
   /**
@@ -217,12 +218,12 @@ export class MongooseQueryService<Entity extends Document>
    * @param opts - Additional filter to use when finding the entity to delete.
    */
   async deleteOne(id: string, opts?: DeleteOneOptions<Entity>): Promise<Entity> {
-    const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter);
-    const doc = await this.Model.findOneAndDelete(filterQuery);
+    const filterQuery = this.filterQueryBuilder.buildIdFilterQuery(id, opts?.filter)
+    const doc = await this.Model.findOneAndDelete(filterQuery)
     if (!doc) {
-      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`);
+      throw new NotFoundException(`Unable to find ${this.Model.modelName} with id: ${id}`)
     }
-    return doc;
+    return doc
   }
 
   /**
@@ -239,14 +240,14 @@ export class MongooseQueryService<Entity extends Document>
    * @param filter - A `Filter` to find records to delete.
    */
   async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
-    const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter);
-    const res = (await this.Model.deleteMany(filterQuery).exec()) as MongoDBDeletedOutput;
-    return { deletedCount: res.deletedCount || 0 };
+    const filterQuery = this.filterQueryBuilder.buildFilterQuery(filter)
+    const res = (await this.Model.deleteMany(filterQuery).exec()) as MongoDBDeletedOutput
+    return { deletedCount: res.deletedCount || 0 }
   }
 
   private ensureIdIsNotPresent(e: DeepPartial<Entity>): void {
     if (Object.keys(e).find((f) => f === 'id' || f === '_id')) {
-      throw new Error('Id cannot be specified when updating or creating');
+      throw new Error('Id cannot be specified when updating or creating')
     }
   }
 
@@ -257,8 +258,8 @@ export class MongooseQueryService<Entity extends Document>
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           ({ ...update, [k]: entity.get(k) }),
         {}
-      );
+      )
     }
-    return entity as UpdateQuery<Entity>;
+    return entity as UpdateQuery<Entity>
   }
 }

@@ -1,30 +1,30 @@
-import { Document, Types, SchemaTypes } from 'mongoose';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { Document, SchemaTypes, Types } from 'mongoose'
 
 @Schema()
 export class TestEntity extends Document {
   @Prop({ required: true })
-  stringType!: string;
+  stringType!: string
 
   @Prop({ required: true })
-  boolType!: boolean;
+  boolType!: boolean
 
   @Prop({ required: true })
-  numberType!: number;
+  numberType!: number
 
   @Prop({ required: true })
-  dateType!: Date;
+  dateType!: Date
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'TestReference' })
-  testReference?: Types.ObjectId | string;
+  testReference?: Types.ObjectId | string
 
   @Prop([{ type: SchemaTypes.ObjectId, ref: 'TestReference' }])
-  testReferences?: Types.ObjectId[];
+  testReferences?: Types.ObjectId[]
 }
 
-export const TestEntitySchema = SchemaFactory.createForClass(TestEntity);
+export const TestEntitySchema = SchemaFactory.createForClass(TestEntity)
 TestEntitySchema.virtual('virtualTestReferences', {
   ref: 'TestReference',
   localField: '_id',
   foreignField: 'testEntity'
-});
+})

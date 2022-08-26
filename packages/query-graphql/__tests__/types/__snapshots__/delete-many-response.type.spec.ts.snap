@@ -9,5 +9,4 @@ type DeleteManyResponse {
 type Query {
   deleteTest: DeleteManyResponse!
 }
-
 `;

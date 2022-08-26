@@ -1,41 +1,42 @@
-import { QueryService } from '@ptc-org/nestjs-query-core';
-import { DTONamesOpts } from '../common';
-import { QueryResolverMethodOpts, SubscriptionResolverMethodOpts } from '../decorators';
-import { GraphQLPubSub } from '../subscription';
-import { PagingStrategies, QueryArgsTypeOpts } from '../types';
+import { QueryService } from '@ptc-org/nestjs-query-core'
+
+import { DTONamesOpts } from '../common'
+import { QueryResolverMethodOpts, SubscriptionResolverMethodOpts } from '../decorators'
+import { GraphQLPubSub } from '../subscription'
+import { PagingStrategies, QueryArgsTypeOpts } from '../types'
 
 type NamedEndpoint = {
   /** Specify to override the name of the graphql query or mutation * */
-  name?: string;
+  name?: string
   /** Specify a description for the graphql query or mutation* */
-  description?: string;
-};
+  description?: string
+}
 
 export interface ResolverOpts extends QueryResolverMethodOpts, DTONamesOpts {
   /**
    * Options for single record graphql endpoints
    */
-  one?: QueryResolverMethodOpts & NamedEndpoint;
+  one?: QueryResolverMethodOpts & NamedEndpoint
   /**
    * Options for multiple record graphql endpoints
    */
-  many?: QueryResolverMethodOpts & NamedEndpoint;
+  many?: QueryResolverMethodOpts & NamedEndpoint
 }
 
 export interface SubscriptionResolverOpts extends SubscriptionResolverMethodOpts, DTONamesOpts {
-  one?: SubscriptionResolverMethodOpts & NamedEndpoint;
-  many?: SubscriptionResolverMethodOpts & NamedEndpoint;
+  one?: SubscriptionResolverMethodOpts & NamedEndpoint
+  many?: SubscriptionResolverMethodOpts & NamedEndpoint
 }
 
 /** @internal */
 export interface ServiceResolver<DTO, QS extends QueryService<DTO, unknown, unknown>> {
-  service: QS;
-  readonly pubSub?: GraphQLPubSub;
+  service: QS
+  readonly pubSub?: GraphQLPubSub
 }
 
 /** @internal */
 export interface ResolverClass<DTO, QS extends QueryService<DTO, unknown, unknown>, Resolver extends ServiceResolver<DTO, QS>> {
-  new (service: QS): Resolver;
+  new (service: QS): Resolver
 }
 
 /**
@@ -48,7 +49,7 @@ export class BaseServiceResolver<DTO, QS extends QueryService<DTO, unknown, unkn
 
 export type ExtractPagingStrategy<DTO, Opts extends QueryArgsTypeOpts<DTO>> = Opts['pagingStrategy'] extends PagingStrategies
   ? Opts['pagingStrategy']
-  : PagingStrategies.CURSOR;
+  : PagingStrategies.CURSOR
 
 export type MergePagingStrategyOpts<
   DTO,
@@ -58,4 +59,4 @@ export type MergePagingStrategyOpts<
   ? Opts
   : S extends PagingStrategies
   ? Omit<Opts, 'pagingStrategy'> & { pagingStrategy: S }
-  : Opts;
+  : Opts

@@ -1,16 +1,17 @@
-import { prop, Ref, mongoose } from '@typegoose/typegoose';
-import { TestEntity } from './test.entity';
+import { mongoose, prop, Ref } from '@typegoose/typegoose'
+
+import { TestEntity } from './test.entity'
 
 export class TestReference {
-  _id!: mongoose.Types.ObjectId;
+  _id!: mongoose.Types.ObjectId
 
-  id!: string;
+  id!: string
 
   @prop({ required: true })
-  referenceName!: string;
+  referenceName!: string
 
   @prop({ ref: () => TestEntity, required: false })
-  testEntity?: Ref<TestEntity>;
+  testEntity?: Ref<TestEntity>
 
   @prop({
     ref: 'TestEntity',
@@ -18,5 +19,5 @@ export class TestReference {
     foreignField: '_id',
     justOne: true
   })
-  virtualTestEntity?: Ref<TestEntity>;
+  virtualTestEntity?: Ref<TestEntity>
 }

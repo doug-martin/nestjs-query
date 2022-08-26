@@ -49,7 +49,6 @@ type TestResolverDTOTestsMaxAggregate {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`AggregateRelationsResolver aggregate should use the dtoName if provided 1`] = `
@@ -153,7 +152,6 @@ type TestResolverDTOTestsAggregateResponse {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`AggregateRelationsResolver aggregate should use the object type name 1`] = `
@@ -237,7 +235,6 @@ type TestResolverDTORelationsAggregateResponse {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`AggregateRelationsResolver should not add read methods if one and many are empty 1`] = `
@@ -249,5 +246,4 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;

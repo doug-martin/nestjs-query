@@ -1,4 +1,5 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/query-typeorm/src",
   "projectType": "library",
   "targets": {
@@ -27,6 +28,10 @@
         "jestConfig": "packages/query-typeorm/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {}
     }
   },
   "tags": [],

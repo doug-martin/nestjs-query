@@ -1,23 +1,24 @@
-import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { AppModule } from '../src/app.module';
-import { TagDTO } from '../src/tag/dto/tag.dto';
-import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
-import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments';
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql'
+import request from 'supertest'
+import { Connection } from 'typeorm'
+
+import { AppModule } from '../src/app.module'
+import { TagDTO } from '../src/tag/dto/tag.dto'
+import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto'
+import { refresh } from './fixtures'
+import { edgeNodes, pageInfoField, tagFields, todoItemFields } from './graphql-fragments'
 
 describe('TagResolver (custom-id - e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule]
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -26,13 +27,13 @@ describe('TagResolver (custom-id - e2e)', () => {
         skipMissingProperties: false,
         forbidUnknownValues: true
       })
-    );
+    )
 
-    await app.init();
-    await refresh(app.get(Connection));
-  });
+    await app.init()
+    await refresh(app.get(Connection))
+  })
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Connection)))
 
   const tags = [
     { id: 'aWQ6MQ==', name: 'Urgent' },
@@ -40,7 +41,7 @@ describe('TagResolver (custom-id - e2e)', () => {
     { id: 'aWQ6Mw==', name: 'Work' },
     { id: 'aWQ6NA==', name: 'Question' },
     { id: 'aWQ6NQ==', name: 'Blocked' }
-  ];
+  ]
 
   describe('find one', () => {
     it(`should find a tag by id`, () =>
@@ -55,7 +56,7 @@ describe('TagResolver (custom-id - e2e)', () => {
           }
         }`
         })
-        .expect(200, { data: { tag: tags[0] } }));
+        .expect(200, { data: { tag: tags[0] } }))
 
     it(`should throw item not found on non existing tag`, () =>
       request(app.getHttpServer())
@@ -71,9 +72,9 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it(`should return todoItems as a connection`, () =>
       request(app.getHttpServer())
@@ -92,17 +93,17 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.tag.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.tag.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.id)).toEqual(['aWQ6MQ==', 'aWQ6Mg==']);
-        }));
-  });
+          })
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.id)).toEqual(['aWQ6MQ==', 'aWQ6Mg=='])
+        }))
+  })
 
   describe('query', () => {
     it(`should return a connection`, () =>
@@ -120,16 +121,16 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node)).toEqual(tags);
-        }));
+          })
+          expect(edges).toHaveLength(5)
+          expect(edges.map((e) => e.node)).toEqual(tags)
+        }))
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -146,16 +147,16 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(3);
-          expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
-        }));
+          })
+          expect(edges).toHaveLength(3)
+          expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3))
+        }))
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -172,16 +173,16 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
-        }));
+          })
+          expect(edges).toHaveLength(5)
+          expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse())
+        }))
 
     describe('paging', () => {
       it(`should allow paging with the 'first' field`, () =>
@@ -199,16 +200,16 @@ describe('TagResolver (custom-id - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+            const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-            });
-            expect(edges).toHaveLength(2);
-            expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
-          }));
+            })
+            expect(edges).toHaveLength(2)
+            expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2))
+          }))
 
       it(`should allow paging with the 'first' field and 'after'`, () =>
         request(app.getHttpServer())
@@ -225,18 +226,18 @@ describe('TagResolver (custom-id - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags;
+            const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.tags
             expect(pageInfo).toEqual({
               endCursor: 'YXJyYXljb25uZWN0aW9uOjM=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'YXJyYXljb25uZWN0aW9uOjI='
-            });
-            expect(edges).toHaveLength(2);
-            expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
-          }));
-    });
-  });
+            })
+            expect(edges).toHaveLength(2)
+            expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4))
+          }))
+    })
+  })
 
   describe('create one', () => {
     it('should allow creating a tag', () =>
@@ -262,7 +263,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               name: 'Test Tag'
             }
           }
-        }));
+        }))
 
     it('should validate a tag', () =>
       request(app.getHttpServer())
@@ -282,10 +283,10 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty')
+        }))
+  })
 
   describe('create many', () => {
     it('should allow creating a tag', () =>
@@ -314,7 +315,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               { id: 'aWQ6OA==', name: 'Create Many Tag - 2' }
             ]
           }
-        }));
+        }))
 
     it('should validate a tag', () =>
       request(app.getHttpServer())
@@ -334,10 +335,10 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty')
+        }))
+  })
 
   describe('update one', () => {
     it('should allow updating a tag', () =>
@@ -364,7 +365,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               name: 'Update Test Tag'
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -384,9 +385,9 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "CustomID!" was not provided.');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "CustomID!" was not provided.')
+        }))
 
     it('should validate an update', () =>
       request(app.getHttpServer())
@@ -407,10 +408,10 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty')
+        }))
+  })
 
   describe('update many', () => {
     it('should allow updating a tag', () =>
@@ -436,7 +437,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               updatedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -456,11 +457,11 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -481,10 +482,10 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('delete one', () => {
     it('should allow deleting a tag', () =>
@@ -508,7 +509,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               name: 'Update Test Tag'
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -526,10 +527,10 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneTagInput.id" of required type "CustomID!" was not provided.');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "DeleteOneTagInput.id" of required type "CustomID!" was not provided.')
+        }))
+  })
 
   describe('delete many', () => {
     it('should allow updating a tag', () =>
@@ -554,7 +555,7 @@ describe('TagResolver (custom-id - e2e)', () => {
               deletedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -572,11 +573,11 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -596,10 +597,10 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('addTodoItemsToTag', () => {
     it('allow adding subTasks to a tag', () =>
@@ -625,24 +626,24 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems;
-          expect(body.data.addTodoItemsToTag.id).toBe('aWQ6MQ==');
-          expect(edges).toHaveLength(5);
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems
+          expect(body.data.addTodoItemsToTag.id).toBe('aWQ6MQ==')
+          expect(edges).toHaveLength(5)
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
+          })
           expect(edges.map((e) => e.node.title).sort()).toEqual([
             'Add Todo Item Resolver',
             'Create Entity',
             'Create Entity Service',
             'Create Nest App',
             'How to create item With Sub Tasks'
-          ]);
-        }));
-  });
+          ])
+        }))
+  })
 
   describe('removeTodoItemsFromTag', () => {
     it('allow removing todoItems from a tag', () =>
@@ -668,20 +669,20 @@ describe('TagResolver (custom-id - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems;
-          expect(body.data.removeTodoItemsFromTag.id).toBe('aWQ6MQ==');
-          expect(edges).toHaveLength(2);
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems
+          expect(body.data.removeTodoItemsFromTag.id).toBe('aWQ6MQ==')
+          expect(edges).toHaveLength(2)
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
-        }));
-  });
+          })
+          expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App'])
+        }))
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

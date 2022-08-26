@@ -1,8 +1,9 @@
-import { FilterableField, FilterableCursorConnection, KeySet } from '@ptc-org/nestjs-query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
-import { AuthGuard } from '../../auth/auth.guard';
-import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto';
-import { TagDTO } from '../../tag/dto/tag.dto';
+import { GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { FilterableCursorConnection, FilterableField, KeySet } from '@ptc-org/nestjs-query-graphql'
+
+import { AuthGuard } from '../../auth/auth.guard'
+import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto'
+import { TagDTO } from '../../tag/dto/tag.dto'
 
 @ObjectType('TodoItem')
 @KeySet(['id'])
@@ -10,29 +11,29 @@ import { TagDTO } from '../../tag/dto/tag.dto';
 @FilterableCursorConnection('tags', () => TagDTO, { guards: [AuthGuard] })
 export class TodoItemDTO {
   @FilterableField(() => ID)
-  id!: number;
+  id!: number
 
   @FilterableField()
-  title!: string;
+  title!: string
 
   @FilterableField({ nullable: true })
-  description?: string;
+  description?: string
 
   @FilterableField()
-  completed!: boolean;
+  completed!: boolean
 
   @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
+  created!: Date
 
   @FilterableField(() => GraphQLISODateTime)
-  updated!: Date;
+  updated!: Date
 
   @FilterableField()
-  priority!: number;
+  priority!: number
 
   @FilterableField({ nullable: true })
-  createdBy?: string;
+  createdBy?: string
 
   @FilterableField({ nullable: true })
-  updatedBy?: string;
+  updatedBy?: string
 }

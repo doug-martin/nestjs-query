@@ -1,2 +1,2 @@
-export { SequelizeQueryService } from './services';
-export { NestjsQuerySequelizeModule } from './module';
+export { NestjsQuerySequelizeModule } from './module'
+export { SequelizeQueryService } from './services'

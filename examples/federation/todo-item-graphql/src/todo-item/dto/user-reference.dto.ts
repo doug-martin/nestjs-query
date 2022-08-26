@@ -1,4 +1,4 @@
-import { ObjectType, Directive, Field, ID } from '@nestjs/graphql';
+import { Directive, Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('User')
 @Directive('@extends')
@@ -6,5 +6,5 @@ import { ObjectType, Directive, Field, ID } from '@nestjs/graphql';
 export class UserReferenceDTO {
   @Field(() => ID)
   @Directive('@external')
-  id!: number;
+  id!: number
 }

@@ -1,18 +1,18 @@
+export { getOrCreateArrayConnectionType } from './array-connection.type'
+export { getOrCreateCursorConnectionType } from './cursor'
 export {
-  StaticConnectionType,
-  OffsetPageInfoType,
-  OffsetConnectionType,
-  EdgeType,
-  PageInfoType,
-  CursorConnectionType,
-  ArrayConnectionType,
-  ConnectionType,
-  ConnectionOptions,
-  CursorConnectionOptions,
-  OffsetConnectionOptions,
   ArrayConnectionOptions,
-  InferConnectionTypeFromStrategy
-} from './interfaces';
-export { getOrCreateCursorConnectionType } from './cursor';
-export { getOrCreateOffsetConnectionType } from './offset';
-export { getOrCreateArrayConnectionType } from './array-connection.type';
+  ArrayConnectionType,
+  ConnectionOptions,
+  ConnectionType,
+  CursorConnectionOptions,
+  CursorConnectionType,
+  EdgeType,
+  InferConnectionTypeFromStrategy,
+  OffsetConnectionOptions,
+  OffsetConnectionType,
+  OffsetPageInfoType,
+  PageInfoType,
+  StaticConnectionType
+} from './interfaces'
+export { getOrCreateOffsetConnectionType } from './offset'

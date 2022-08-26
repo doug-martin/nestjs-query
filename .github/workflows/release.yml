@@ -5,36 +5,70 @@ on:
     branches:
       - master
 
-permissions:
-  contents: write
-
 env:
   NX_BRANCH: ${{ github.event.number }}
   NX_RUN_GROUP: ${{ github.run_id }}
 
 jobs:
 
-  setup:
-    uses: ./.github/workflows/shared.setup-env.yml
-
-  docs:
-    concurrency: ci-${{ github.ref }}
+  prepare-env:
     runs-on: ubuntu-latest
-    needs: setup
+    outputs:
+      GITHUB_HEAD_REF: ${{ steps.script.outputs.headRef }}
+      GITHUB_BASE_REF: ${{ steps.script.outputs.tagHash }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup
-        uses: ./.github/actions/setup-step
+      - uses: actions/checkout@v2
         with:
-          set_shas: false
+          fetch-depth: 0
 
-      - name: Build docs
-        run: npx nx build documentation
-
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v2
         with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: ./dist/documentation # The folder the action should deploy.
+          path: |
+            **/node_modules
+          key: ${{ env.DEPENDENCIES_CACHE }}-${{ hashFiles('yarn.lock') }}
+
+      - name: yarn install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Set correct env vars
+        id: script
+        uses: ./tools/actions/set-master-vars
+
+  release:
+    needs: [ prepare-env ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/node_modules
+          key: ${{ env.DEPENDENCIES_CACHE }}-${{ hashFiles('yarn.lock') }}
+
+      - name: GIT config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: nx workspace:version
+        run: yarn nx run workspace:version
+
+      - name: nx affected:build
+        run: node ./tools/scripts/run-many.js build origin/${{ needs.prepare-env.outputs.GITHUB_HEAD_REF }} ${{ needs.prepare-env.outputs.GITHUB_BASE_REF }}
+
+      - name: nx affected:publish
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          node ./tools/scripts/run-many.js publish origin/${{ needs.prepare-env.outputs.GITHUB_HEAD_REF }} ${{ needs.prepare-env.outputs.GITHUB_BASE_REF }}
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push GIT
+        run: git push --follow-tags origin ${{ needs.prepare-env.outputs.GITHUB_HEAD_REF }}

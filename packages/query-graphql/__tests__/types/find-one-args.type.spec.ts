@@ -1,15 +1,16 @@
 // eslint-disable-next-line max-classes-per-file
-import { plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
-import { Resolver, Query, Args, Int, ArgsType, ObjectType } from '@nestjs/graphql';
-import { FilterableField, FindOneArgsType, IDField } from '@ptc-org/nestjs-query-graphql';
-import { generateSchema } from '../__fixtures__';
+import { Args, ArgsType, Int, ObjectType, Query, Resolver } from '@nestjs/graphql'
+import { FilterableField, FindOneArgsType, IDField } from '@ptc-org/nestjs-query-graphql'
+import { plainToClass } from 'class-transformer'
+import { validateSync } from 'class-validator'
+
+import { generateSchema } from '../__fixtures__'
 
 describe('FindOneArgsType', (): void => {
   @ObjectType()
   class FindOneDTO {
     @FilterableField()
-    field!: string;
+    field!: string
   }
 
   @ArgsType()
@@ -21,18 +22,19 @@ describe('FindOneArgsType', (): void => {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args() input: FindOne): number {
-        return 1;
+        return 1
       }
     }
-    const schema = await generateSchema([FindOneArgsTypeSpec]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([FindOneArgsTypeSpec])
+    expect(schema).toMatchSnapshot()
+  })
 
   it('should create an args type with a custom ID type', async () => {
     @ObjectType()
     class FindOneCustomIDDTO {
       @IDField(() => String)
-      field!: string;
+      field!: string
     }
 
     @ArgsType()
@@ -43,18 +45,19 @@ describe('FindOneArgsType', (): void => {
       @Query(() => Int)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args() input: FindOneCustomId): number {
-        return 1;
+        return 1
       }
     }
-    const schema = await generateSchema([FindOneArgsTypeSpec]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([FindOneArgsTypeSpec])
+    expect(schema).toMatchSnapshot()
+  })
 
   describe('validation', () => {
     it('should validate the id is defined', () => {
-      const input = {};
-      const it = plainToClass(FindOne, input);
-      const errors = validateSync(it);
+      const input = {}
+      const it = plainToClass(FindOne, input)
+      const errors = validateSync(it)
       expect(errors).toEqual([
         {
           children: [],
@@ -64,13 +67,13 @@ describe('FindOneArgsType', (): void => {
           property: 'id',
           target: input
         }
-      ]);
-    });
+      ])
+    })
 
     it('should validate the id is not empty', () => {
-      const input = { id: '' };
-      const it = plainToClass(FindOne, input);
-      const errors = validateSync(it);
+      const input = { id: '' }
+      const it = plainToClass(FindOne, input)
+      const errors = validateSync(it)
       expect(errors).toEqual([
         {
           children: [],
@@ -81,7 +84,7 @@ describe('FindOneArgsType', (): void => {
           target: input,
           value: ''
         }
-      ]);
-    });
-  });
-});
+      ])
+    })
+  })
+})

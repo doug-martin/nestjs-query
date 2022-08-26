@@ -1,16 +1,17 @@
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
-import { NestjsQuerySequelizeModule } from '@ptc-org/nestjs-query-sequelize';
-import { Module } from '@nestjs/common';
-import { AuthGuard } from '../auth.guard';
-import { TodoItemInputDTO } from './dto/todo-item-input.dto';
-import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemEntityTags } from './entity/todo-item-tag.entity';
-import { TodoItemAssembler } from './todo-item.assembler';
-import { TodoItemEntity } from './entity/todo-item.entity';
-import { TodoItemResolver } from './todo-item.resolver';
+import { Module } from '@nestjs/common'
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql'
+import { NestjsQuerySequelizeModule } from '@ptc-org/nestjs-query-sequelize'
 
-const guards = [AuthGuard];
+import { AuthGuard } from '../auth.guard'
+import { TodoItemDTO } from './dto/todo-item.dto'
+import { TodoItemInputDTO } from './dto/todo-item-input.dto'
+import { TodoItemUpdateDTO } from './dto/todo-item-update.dto'
+import { TodoItemEntity } from './entity/todo-item.entity'
+import { TodoItemEntityTags } from './entity/todo-item-tag.entity'
+import { TodoItemAssembler } from './todo-item.assembler'
+import { TodoItemResolver } from './todo-item.resolver'
+
+const guards = [AuthGuard]
 
 @Module({
   providers: [TodoItemResolver],

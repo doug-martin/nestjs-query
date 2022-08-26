@@ -1,21 +1,21 @@
-import { FilterableField } from '@ptc-org/nestjs-query-graphql';
-import { ObjectType, ID, GraphQLISODateTime, Directive } from '@nestjs/graphql';
+import { Directive, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { FilterableField } from '@ptc-org/nestjs-query-graphql'
 
 @ObjectType('User')
 @Directive('@key(fields: "id")')
 export class UserDTO {
   @FilterableField(() => ID)
-  id!: number;
+  id!: number
 
   @FilterableField()
-  name!: string;
+  name!: string
 
   @FilterableField()
-  email!: string;
+  email!: string
 
   @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
+  created!: Date
 
   @FilterableField(() => GraphQLISODateTime)
-  updated!: Date;
+  updated!: Date
 }

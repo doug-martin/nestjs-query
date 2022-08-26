@@ -274,7 +274,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`Offset paging strategy QueryArgsType with manual options options allow apply the options to the generated SDL 1`] = `
@@ -555,7 +554,6 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;
 
 exports[`Offset paging strategy QueryArgsType with manual options should make the filter required if there is a filterRequired field 1`] = `
@@ -684,5 +682,4 @@ enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
 }
-
 `;

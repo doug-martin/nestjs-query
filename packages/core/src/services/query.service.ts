@@ -1,20 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { DeepPartial, Class } from '../common';
+import { Injectable } from '@nestjs/common'
+
+import { Class, DeepPartial } from '../common'
 import {
   AggregateQuery,
   AggregateResponse,
+  DeleteManyOptions,
   DeleteManyResponse,
+  DeleteOneOptions,
   Filter,
+  FindByIdOptions,
+  FindRelationOptions,
+  GetByIdOptions,
   ModifyRelationOptions,
   Query,
   UpdateManyResponse,
-  FindRelationOptions,
-  FindByIdOptions,
-  GetByIdOptions,
-  UpdateOneOptions,
-  DeleteOneOptions,
-  DeleteManyOptions
-} from '../interfaces';
+  UpdateOneOptions
+} from '../interfaces'
 
 /**
  * Base interface for all QueryServices.
@@ -27,21 +28,21 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    * @param query - the query used to filer, page or sort records.
    * @returns a promise with an array of records that match the query.
    */
-  query(query: Query<DTO>): Promise<DTO[]>;
+  query(query: Query<DTO>): Promise<DTO[]>
 
   /**
    * Perform an aggregate query
    * @param filter
    * @param aggregate
    */
-  aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>[]>;
+  aggregate(filter: Filter<DTO>, aggregate: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>[]>
 
   /**
    * Count the number of records that match the filter.
    * @param filter - the filter
    * @returns a promise with the total number of records.
    */
-  count(filter: Filter<DTO>): Promise<number>;
+  count(filter: Filter<DTO>): Promise<number>
 
   /**
    * Finds a record by `id`.
@@ -49,7 +50,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    * @param opts - Additional options to apply when finding by id.
    * @returns the found record or undefined.
    */
-  findById(id: string | number, opts?: FindByIdOptions<DTO>): Promise<DTO | undefined>;
+  findById(id: string | number, opts?: FindByIdOptions<DTO>): Promise<DTO | undefined>
 
   /**
    * Query for an array of relations.
@@ -63,14 +64,14 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     relationName: string,
     dto: DTO,
     query: Query<Relation>
-  ): Promise<Relation[]>;
+  ): Promise<Relation[]>
 
   queryRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
     query: Query<Relation>
-  ): Promise<Map<DTO, Relation[]>>;
+  ): Promise<Map<DTO, Relation[]>>
 
   /**
    * Aggregate relations for a DTO.
@@ -86,7 +87,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     dto: DTO,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>
-  ): Promise<AggregateResponse<Relation>[]>;
+  ): Promise<AggregateResponse<Relation>[]>
 
   aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -94,7 +95,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     dtos: DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>
-  ): Promise<Map<DTO, AggregateResponse<Relation>[]>>;
+  ): Promise<Map<DTO, AggregateResponse<Relation>[]>>
 
   /**
    * Count the number of relations
@@ -105,14 +106,14 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     relationName: string,
     dto: DTO,
     filter: Filter<Relation>
-  ): Promise<number>;
+  ): Promise<number>
 
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO[],
     filter: Filter<Relation>
-  ): Promise<Map<DTO, number>>;
+  ): Promise<Map<DTO, number>>
 
   /**
    * Finds a single relation.
@@ -126,7 +127,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     relationName: string,
     dto: DTO,
     opts?: FindRelationOptions<Relation>
-  ): Promise<Relation | undefined>;
+  ): Promise<Relation | undefined>
 
   /**
    * Finds a single relation for each DTO passed in.
@@ -141,7 +142,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     relationName: string,
     dtos: DTO[],
     opts?: FindRelationOptions<Relation>
-  ): Promise<Map<DTO, Relation | undefined>>;
+  ): Promise<Map<DTO, Relation | undefined>>
 
   /**
    * Adds multiple relations.
@@ -155,7 +156,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     id: string | number,
     relationIds: (string | number)[],
     opts?: ModifyRelationOptions<DTO, Relation>
-  ): Promise<DTO>;
+  ): Promise<DTO>
 
   /**
    * Set the relations on the dto.
@@ -171,7 +172,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     id: string | number,
     relationIds: (string | number)[],
     opts?: ModifyRelationOptions<DTO, Relation>
-  ): Promise<DTO>;
+  ): Promise<DTO>
 
   /**
    * Set the relation on the dto.
@@ -186,7 +187,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     id: string | number,
     relationId: string | number,
     opts?: ModifyRelationOptions<DTO, Relation>
-  ): Promise<DTO>;
+  ): Promise<DTO>
 
   /**
    * Removes multiple relations.
@@ -200,7 +201,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     id: string | number,
     relationIds: (string | number)[],
     opts?: ModifyRelationOptions<DTO, Relation>
-  ): Promise<DTO>;
+  ): Promise<DTO>
 
   /**
    * Remove the relation on the dto.
@@ -215,7 +216,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
     id: string | number,
     relationId: string | number,
     opts?: ModifyRelationOptions<DTO, Relation>
-  ): Promise<DTO>;
+  ): Promise<DTO>
 
   /**
    * Gets a record by `id`.
@@ -226,7 +227,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    * @param opts - Additional options to apply when getting by id.
    * @returns the found record or a rejected promise.
    */
-  getById(id: string | number, opts?: GetByIdOptions<DTO>): Promise<DTO>;
+  getById(id: string | number, opts?: GetByIdOptions<DTO>): Promise<DTO>
 
   /**
    * Create a single record.
@@ -234,7 +235,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    * @param item - the record to create.
    * @returns the created record.
    */
-  createOne(item: C): Promise<DTO>;
+  createOne(item: C): Promise<DTO>
 
   /**
    * Creates a multiple record.
@@ -242,7 +243,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    * @param items - the records to create.
    * @returns a created records.
    */
-  createMany(items: C[]): Promise<DTO[]>;
+  createMany(items: C[]): Promise<DTO[]>
 
   /**
    * Update one record.
@@ -251,21 +252,21 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    * @param opts - Additional opts to apply when updating one entity.
    * @returns the updated record.
    */
-  updateOne(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO>;
+  updateOne(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO>
 
   /**
    * Updates multiple records using a filter.
    * @param update - the update to apply.
    * @param filter - the filter used to specify records to update
    */
-  updateMany(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse>;
+  updateMany(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse>
 
   /**
    * Delete a single record by id.
    * @param id - the id of the record to delete.
    * @param opts - additional opts to apply when deleting by id.
    */
-  deleteOne(id: number | string, opts?: DeleteOneOptions<DTO>): Promise<DTO>;
+  deleteOne(id: number | string, opts?: DeleteOneOptions<DTO>): Promise<DTO>
 
   /**
    * Delete multiple records using a filter.
@@ -273,7 +274,7 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
    * @param filter - the filter to find records to delete.
    * @param opts - additional opts to apply when deleting by id.
    */
-  deleteMany(filter: Filter<DTO>, opts?: DeleteManyOptions<DTO>): Promise<DeleteManyResponse>;
+  deleteMany(filter: Filter<DTO>, opts?: DeleteManyOptions<DTO>): Promise<DeleteManyResponse>
 }
 
 /**
@@ -282,5 +283,5 @@ export interface QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> {
  */
 // eslint-disable-next-line @typescript-eslint/no-redeclare,@typescript-eslint/no-unused-vars -- intentional
 export function QueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>>(DTOClass: Class<DTO>) {
-  return <Cls extends Class<QueryService<DTO, C, U>>>(cls: Cls): Cls | void => Injectable()(cls);
+  return <Cls extends Class<QueryService<DTO, C, U>>>(cls: Cls): Cls | void => Injectable()(cls)
 }

@@ -1,1 +1,1 @@
-export * from './mongoose-query.service';
+export * from './mongoose-query.service'

@@ -1,10 +1,10 @@
-import { Class } from '@ptc-org/nestjs-query-core';
-import { Type } from 'class-transformer';
-import { ValidateNested, ArrayNotEmpty } from 'class-validator';
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql'
+import { Class } from '@ptc-org/nestjs-query-core'
+import { Type } from 'class-transformer'
+import { ArrayNotEmpty, ValidateNested } from 'class-validator'
 
 export interface CreateManyInputType<C> {
-  input: C[];
+  input: C[]
 }
 
 /**
@@ -20,16 +20,17 @@ export function CreateManyInputType<C>(fieldName: string, InputClass: Class<C>):
     @ArrayNotEmpty()
     @ValidateNested({ each: true })
     @Field(() => [InputClass], { description: 'Array of records to create', name: fieldName })
-    input!: C[];
+    input!: C[]
 
     @Type(() => InputClass)
     get [fieldName](): C[] {
-      return this.input;
+      return this.input
     }
 
     set [fieldName](input: C[]) {
-      this.input = input;
+      this.input = input
     }
   }
-  return CreateManyInput;
+
+  return CreateManyInput
 }

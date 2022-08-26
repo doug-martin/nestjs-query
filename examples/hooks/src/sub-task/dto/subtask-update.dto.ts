@@ -1,7 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsOptional, IsBoolean, IsString, IsNotEmpty } from 'class-validator';
-import { BeforeUpdateMany, BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql';
-import { UpdatedByHook } from '../../hooks';
+import { Field, InputType } from '@nestjs/graphql'
+import { BeforeUpdateMany, BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql'
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+
+import { UpdatedByHook } from '../../hooks'
 
 @InputType('SubTaskUpdate')
 @BeforeUpdateOne(UpdatedByHook)
@@ -11,21 +12,21 @@ export class SubTaskUpdateDTO {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  title?: string;
+  title?: string
 
   @Field({ nullable: true })
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  description?: string;
+  description?: string
 
   @Field({ nullable: true })
   @IsOptional()
   @IsBoolean()
-  completed?: boolean;
+  completed?: boolean
 
   @Field({ nullable: true })
   @IsOptional()
   @IsNotEmpty()
-  todoItemId?: string;
+  todoItemId?: string
 }

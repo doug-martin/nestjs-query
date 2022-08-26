@@ -1,16 +1,17 @@
-import { Class, DeepPartial, QueryService } from '@ptc-org/nestjs-query-core';
-import { ConnectionOptions, PagingStrategies } from '../types';
-import { Aggregateable, AggregateResolverOpts, AggregateResolver } from './aggregate.resolver';
-import { Relatable } from './relations';
-import { Readable, ReadResolverFromOpts, ReadResolverOpts } from './read.resolver';
-import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver';
-import { Referenceable, ReferenceResolverOpts } from './reference.resolver';
-import { MergePagingStrategyOpts, ResolverClass } from './resolver.interface';
-import { Updateable, UpdateResolver, UpdateResolverOpts } from './update.resolver';
-import { DeleteResolver, DeleteResolverOpts } from './delete.resolver';
-import { BaseResolverOptions } from '../decorators/resolver-method.decorator';
-import { mergeBaseResolverOpts } from '../common';
-import { RelatableOpts } from './relations/relations.resolver';
+import { Class, DeepPartial, QueryService } from '@ptc-org/nestjs-query-core'
+
+import { mergeBaseResolverOpts } from '../common'
+import { BaseResolverOptions } from '../decorators/resolver-method.decorator'
+import { ConnectionOptions, PagingStrategies } from '../types'
+import { Aggregateable, AggregateResolver, AggregateResolverOpts } from './aggregate.resolver'
+import { Creatable, CreateResolver, CreateResolverOpts } from './create.resolver'
+import { DeleteResolver, DeleteResolverOpts } from './delete.resolver'
+import { Readable, ReadResolverFromOpts, ReadResolverOpts } from './read.resolver'
+import { Referenceable, ReferenceResolverOpts } from './reference.resolver'
+import { Relatable } from './relations'
+import { RelatableOpts } from './relations/relations.resolver'
+import { MergePagingStrategyOpts, ResolverClass } from './resolver.interface'
+import { Updateable, UpdateResolver, UpdateResolverOpts } from './update.resolver'
 
 export interface CRUDResolverOpts<
   DTO,
@@ -23,20 +24,20 @@ export interface CRUDResolverOpts<
   /**
    * The DTO that should be used as input for create endpoints.
    */
-  CreateDTOClass?: Class<C>;
+  CreateDTOClass?: Class<C>
   /**
    * The DTO that should be used as input for update endpoints.
    */
-  UpdateDTOClass?: Class<U>;
-  enableSubscriptions?: boolean;
-  pagingStrategy?: PS;
-  enableAggregate?: boolean;
-  create?: CreateResolverOpts<DTO, C>;
-  read?: R;
-  update?: UpdateResolverOpts<DTO, U>;
-  delete?: DeleteResolverOpts<DTO>;
-  referenceBy?: ReferenceResolverOpts;
-  aggregate?: AggregateResolverOpts;
+  UpdateDTOClass?: Class<U>
+  enableSubscriptions?: boolean
+  pagingStrategy?: PS
+  enableAggregate?: boolean
+  create?: CreateResolverOpts<DTO, C>
+  read?: R
+  update?: UpdateResolverOpts<DTO, U>
+  delete?: DeleteResolverOpts<DTO>
+  referenceBy?: ReferenceResolverOpts
+  aggregate?: AggregateResolverOpts
 }
 
 export interface CRUDResolver<
@@ -54,43 +55,43 @@ export interface CRUDResolver<
 function extractRelatableOpts<DTO>(
   opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>
 ): RelatableOpts {
-  const { enableTotalCount, enableAggregate } = opts;
-  return mergeBaseResolverOpts<RelatableOpts>({ enableAggregate, enableTotalCount }, opts);
+  const { enableTotalCount, enableAggregate } = opts
+  return mergeBaseResolverOpts<RelatableOpts>({ enableAggregate, enableTotalCount }, opts)
 }
 
 function extractAggregateResolverOpts<DTO>(
   opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>
 ): AggregateResolverOpts {
-  const { enableAggregate, aggregate } = opts;
-  return mergeBaseResolverOpts<AggregateResolverOpts>({ enabled: enableAggregate, ...aggregate }, opts);
+  const { enableAggregate, aggregate } = opts
+  return mergeBaseResolverOpts<AggregateResolverOpts>({ enabled: enableAggregate, ...aggregate }, opts)
 }
 
 function extractCreateResolverOpts<DTO, C>(
   opts: CRUDResolverOpts<DTO, C, unknown, ReadResolverOpts<DTO>, PagingStrategies>
 ): CreateResolverOpts<DTO, C> {
-  const { CreateDTOClass, enableSubscriptions, create } = opts;
-  return mergeBaseResolverOpts<CreateResolverOpts<DTO, C>>({ CreateDTOClass, enableSubscriptions, ...create }, opts);
+  const { CreateDTOClass, enableSubscriptions, create } = opts
+  return mergeBaseResolverOpts<CreateResolverOpts<DTO, C>>({ CreateDTOClass, enableSubscriptions, ...create }, opts)
 }
 
 function extractReadResolverOpts<DTO, R extends ReadResolverOpts<DTO>, PS extends PagingStrategies>(
   opts: CRUDResolverOpts<DTO, unknown, unknown, R, PagingStrategies>
 ): MergePagingStrategyOpts<DTO, R, PS> {
-  const { enableTotalCount, pagingStrategy, read } = opts;
-  return mergeBaseResolverOpts({ enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<DTO, R, PS>, opts);
+  const { enableTotalCount, pagingStrategy, read } = opts
+  return mergeBaseResolverOpts({ enableTotalCount, pagingStrategy, ...read } as MergePagingStrategyOpts<DTO, R, PS>, opts)
 }
 
 function extractUpdateResolverOpts<DTO, U>(
   opts: CRUDResolverOpts<DTO, unknown, U, ReadResolverOpts<DTO>, PagingStrategies>
 ): UpdateResolverOpts<DTO, U> {
-  const { UpdateDTOClass, enableSubscriptions, update } = opts;
-  return mergeBaseResolverOpts<UpdateResolverOpts<DTO, U>>({ UpdateDTOClass, enableSubscriptions, ...update }, opts);
+  const { UpdateDTOClass, enableSubscriptions, update } = opts
+  return mergeBaseResolverOpts<UpdateResolverOpts<DTO, U>>({ UpdateDTOClass, enableSubscriptions, ...update }, opts)
 }
 
 function extractDeleteResolverOpts<DTO>(
   opts: CRUDResolverOpts<DTO, unknown, unknown, ReadResolverOpts<DTO>, PagingStrategies>
 ): DeleteResolverOpts<DTO> {
-  const { enableSubscriptions, delete: deleteArgs } = opts;
-  return mergeBaseResolverOpts<DeleteResolverOpts<DTO>>({ enableSubscriptions, ...deleteArgs }, opts);
+  const { enableSubscriptions, delete: deleteArgs } = opts
+  return mergeBaseResolverOpts<DeleteResolverOpts<DTO>>({ enableSubscriptions, ...deleteArgs }, opts)
 }
 
 /**
@@ -124,13 +125,13 @@ export const CRUDResolver = <
   DTOClass: Class<DTO>,
   opts: CRUDResolverOpts<DTO, C, U, R, PS> = {}
 ): ResolverClass<DTO, QueryService<DTO, C, U>, CRUDResolver<DTO, C, U, MergePagingStrategyOpts<DTO, R, PS>>> => {
-  const referencable = Referenceable(DTOClass, opts.referenceBy ?? {});
-  const relatable = Relatable(DTOClass, extractRelatableOpts(opts));
-  const aggregateable = Aggregateable(DTOClass, extractAggregateResolverOpts(opts));
-  const creatable = Creatable(DTOClass, extractCreateResolverOpts(opts));
-  const readable = Readable(DTOClass, extractReadResolverOpts(opts));
-  const updatable = Updateable(DTOClass, extractUpdateResolverOpts(opts));
-  const deleteResolver = DeleteResolver(DTOClass, extractDeleteResolverOpts(opts));
+  const referencable = Referenceable(DTOClass, opts.referenceBy ?? {})
+  const relatable = Relatable(DTOClass, extractRelatableOpts(opts))
+  const aggregateable = Aggregateable(DTOClass, extractAggregateResolverOpts(opts))
+  const creatable = Creatable(DTOClass, extractCreateResolverOpts(opts))
+  const readable = Readable(DTOClass, extractReadResolverOpts(opts))
+  const updatable = Updateable(DTOClass, extractUpdateResolverOpts(opts))
+  const deleteResolver = DeleteResolver(DTOClass, extractDeleteResolverOpts(opts))
 
-  return referencable(relatable(aggregateable(creatable(readable(updatable(deleteResolver))))));
-};
+  return referencable(relatable(aggregateable(creatable(readable(updatable(deleteResolver))))))
+}
