@@ -1,8 +1,8 @@
-import { Filter, FilterComparisons, FilterFieldComparison } from '@ptc-org/nestjs-query-core'
-import { Brackets, WhereExpression } from 'typeorm'
+import { Filter, FilterComparisons, FilterFieldComparison } from '@ptc-org/nestjs-query-core';
+import { Brackets, WhereExpression, WhereExpressionBuilder } from 'typeorm';
+import { NestedRecord } from './filter-query.builder';
+import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
 
-import { NestedRecord } from './filter-query.builder'
-import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder'
 
 /**
  * @internal
@@ -18,8 +18,14 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  build<Where extends WhereExpression>(where: Where, filter: Filter<Entity>, relationNames: NestedRecord, alias?: string): Where {
-    const { and, or } = filter
+
+  build<Where extends WhereExpressionBuilder>(
+    where: Where,
+    filter: Filter<Entity>,
+    relationNames: NestedRecord,
+    alias?: string
+  ): Where {
+    const { and, or } = filter;
     if (and && and.length) {
       this.filterAnd(where, and, relationNames, alias)
     }
@@ -56,7 +62,7 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterOr<Where extends WhereExpression>(
+  private filterOr<Where extends WhereExpressionBuilder>(
     where: Where,
     filter: Filter<Entity>[],
     relationNames: NestedRecord,
@@ -68,7 +74,7 @@ export class WhereBuilder<Entity> {
   }
 
   /**
-   * Wraps a filter in brackes to ensure precedence.
+   * Wraps a filter in brackets to ensure precedence.
    * ```
    * {a: { eq: 1 } } // "(a = 1)"
    * {a: { eq: 1 }, b: { gt: 2 } } // "((a = 1) AND (b > 2))"
