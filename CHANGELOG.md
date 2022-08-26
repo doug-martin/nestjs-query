@@ -1,4 +1,20 @@
  
+# [1.0.0](https://github.com/TriPSs/nestjs-query/compare/v1.0.0-alpha.0...v1.0.0) (2022-08-26)
+
+
+### Features
+
+* Bump all packages ([1d36ee0](https://github.com/TriPSs/nestjs-query/commit/1d36ee0401c7f2a82f2ea06092139526ea879f7c))
+* Updated some deps + cleanup incorrect changelogs ([f877a9c](https://github.com/TriPSs/nestjs-query/commit/f877a9c7e1c4f172ed9b94b33398da596e6222f7))
+
+
+### BREAKING CHANGES
+
+* We want the next major release
+* Nothing really but we want to be version 2
+
+
+
 # [1.0.0-alpha.0](https://github.com/TriPSs/nestjs-query/compare/v0.30.0...v1.0.0-alpha.0) (2022-08-26)
 
 
