@@ -20,7 +20,6 @@
             "baseBranch": "master",
             "changelogHeader": " ",
             "preid": "alpha",
-            "releaseAs": "premajor",
             "commitMessageFormat": "chore(release): v${version}"
           },
           "configurations": {
