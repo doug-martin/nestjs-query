@@ -1,7 +1,79 @@
-# Change Log
+ 
+# [1.0.0-alpha.0](https://github.com/TriPSs/nestjs-query/compare/v0.30.0...v1.0.0-alpha.0) (2022-08-26)
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+### Bug Fixes
+
+* **core:** fixed filters merged incorrectly causing unexpected behavior ([588dbe5](https://github.com/TriPSs/nestjs-query/commit/588dbe5ebb166db4c5a35fa8d36a3a0ceb3a0836))
+* **core:** Improved workings of `getFilterOmitting` ([28d7e6b](https://github.com/TriPSs/nestjs-query/commit/28d7e6b81f2a63a42331d0d4c5b8fb6ccd3a3d3c))
+* **core:** Improved workings of `getFilterOmitting` ([cb06762](https://github.com/TriPSs/nestjs-query/commit/cb067622ae7d754706f50df8c59ac2d711688e40))
+* **core:** Use correct return types for decorators ([d328d2b](https://github.com/TriPSs/nestjs-query/commit/d328d2beb8c0ebc3048631a97e5b2023b1891b25))
+* **deps:** update dependency apollo-server-plugin-base to v3.3.0 ([26cff92](https://github.com/TriPSs/nestjs-query/commit/26cff9256b85e8a83469744e1852dd9d5092aa23))
+* **deps:** update dependency apollo-server-plugin-base to v3.4.0 ([e3c95f2](https://github.com/TriPSs/nestjs-query/commit/e3c95f2e70382c863a6bdf7ab24a2cb1ab7266e5))
+* **deps:** update dependency apollo-server-types to v3.3.0 ([794c7d0](https://github.com/TriPSs/nestjs-query/commit/794c7d005bc4d696e34f538d202c497b3d1018ac))
+* **deps:** update dependency apollo-server-types to v3.4.0 ([a587a52](https://github.com/TriPSs/nestjs-query/commit/a587a52ff25412d1bae77dbc9a9b0ceca31070a9))
+* **deps:** update dependency graphql-query-complexity to v0.10.0 ([d88ce81](https://github.com/TriPSs/nestjs-query/commit/d88ce81bad0552f1b099c2c86ee9d080d3f1e270))
+* **deps:** update dependency graphql-query-complexity to v0.11.0 ([6ab330b](https://github.com/TriPSs/nestjs-query/commit/6ab330b69de031d8df472888f36754bd8db8b1e0))
+* **deps:** update dependency mysql2 to v2.3.1 ([b41d55e](https://github.com/TriPSs/nestjs-query/commit/b41d55efdba7dd902158846cce52a00c33450e13))
+* **deps:** update dependency mysql2 to v2.3.2 ([c67a172](https://github.com/TriPSs/nestjs-query/commit/c67a1728e2bd76b5e38bd5153735eab95525f543))
+* **deps:** update dependency mysql2 to v2.3.3 ([098f83a](https://github.com/TriPSs/nestjs-query/commit/098f83a1a8ac2d069039468e774242e3f25db7be))
+* **deps:** update dependency rxjs to v7.3.1 ([46e79d4](https://github.com/TriPSs/nestjs-query/commit/46e79d426bcfa85d6ba38080bc62944d7024937a))
+* **deps:** update dependency rxjs to v7.4.0 ([5ffd717](https://github.com/TriPSs/nestjs-query/commit/5ffd717698d2e74a1d2e8efe83610c6e4ea4ffef))
+* Fixed almost all tests ([f614f04](https://github.com/TriPSs/nestjs-query/commit/f614f04e4e75c87c3e72b1c30eb7899d3770a7c1))
+* Fixed package.json files ([97cbfd2](https://github.com/TriPSs/nestjs-query/commit/97cbfd26ba05afae345e4e21442744a872899b0b))
+* **mongoose,typegoose:** fix type errors from bad renovate bot merge ([46d9a6f](https://github.com/TriPSs/nestjs-query/commit/46d9a6f49c011c5bc40d00b92d2fa17059f2702c))
+* **query-graphql:** Do not generate aggregate types if disabled ([abd62a5](https://github.com/TriPSs/nestjs-query/commit/abd62a52a8c1f32814d4477a97c269eb1c078771))
+* **query-graphql:** Fixed `between` and `notBetween` types not generated ([be4bed6](https://github.com/TriPSs/nestjs-query/commit/be4bed6b60d9ac8fd2432b7f5e04ac1a2a596e29))
+* **query-graphql:** Fixed `ResolveOneRelation` interface ([e768900](https://github.com/TriPSs/nestjs-query/commit/e768900ae33949cb89c7ab4039b7cb008617a0e9))
+* **query-graphql:** Fixed default sorting/filtering for relations ([0877c23](https://github.com/TriPSs/nestjs-query/commit/0877c2374fe37725033ec14a7dc7b0a7d3f2e026))
+* **query-graphql:** Fixed empty object accepted by required filters ([f162cf3](https://github.com/TriPSs/nestjs-query/commit/f162cf3f6dde3dd6b6cb7846251a010c9c9cd9f7)), closes [doug-martin/nestjs-query#1504](https://github.com/doug-martin/nestjs-query/issues/1504)
+* **query-graphql:** Use `getById` instead of `findById` to correctly throw not found errors ([2b98581](https://github.com/TriPSs/nestjs-query/commit/2b9858164653dba552999ac1933ac256db09e4c8))
+* **query-typeorm:** Fixed `deleteMany` throwing error when called with filter that contained relations ([53c6c6b](https://github.com/TriPSs/nestjs-query/commit/53c6c6b9f0533f311d0de56d78a1a95a61713438))
+* **query-typeorm:** Fixed `deleteMany` throwing error when called with filter that contained relations ([6f8ac0b](https://github.com/TriPSs/nestjs-query/commit/6f8ac0b7960447e903c40635990addb66b46348c))
+* **query-typeorm:** Fixed `getManyToManyOwnerMeta` ([887df20](https://github.com/TriPSs/nestjs-query/commit/887df206eca99a80e5f8b37b5f00711d1ee3ecec))
+* **query-typeorm:** Fixed `updateMany` not supporting relations ([93ef5a9](https://github.com/TriPSs/nestjs-query/commit/93ef5a9002b1c2206a39770d6f8f59c5bfe26ecc))
+* **query-typeorm:** Fixed group by for aggregated date fields ([7ffeaf6](https://github.com/TriPSs/nestjs-query/commit/7ffeaf6b9e400eb027298a3870712eb7124c88bb))
+* **query-typeorm:** Use `qb` directly when adding additional fields ([5843ac4](https://github.com/TriPSs/nestjs-query/commit/5843ac4a7f0542efa9d33d1798e7ac3c2eaf16ca))
+* **sequelize:** fix bad renovate bot merge revert to sequelize@6.6.2 ([9225c6f](https://github.com/TriPSs/nestjs-query/commit/9225c6fca55d47715dc4debf01a03b884ae16cf0))
+
+
+### chore
+
+* Update third batch of deps + linting rules ([acaff0f](https://github.com/TriPSs/nestjs-query/commit/acaff0fd56918a26cc108d6d98ef71b275400da4))
+
+
+### Code Refactoring
+
+* Move project to NX ([c70a022](https://github.com/TriPSs/nestjs-query/commit/c70a022671b84025bb10ba3db0a3e5a11ddcccd7))
+
+
+### Features
+
+* Added support for `withDeleted` in `Relation` decorator ([923d972](https://github.com/TriPSs/nestjs-query/commit/923d972660d06cc76065d90b4a46f8775669ff0b))
+* allow for passing `useSoftDelete` in resolver opts ([4c59cd8](https://github.com/TriPSs/nestjs-query/commit/4c59cd82f87663a40634523101c7f511afe77e63))
+* **query-graphql:** Added `disableFilter` and `disableSort` ([80cc8e9](https://github.com/TriPSs/nestjs-query/commit/80cc8e988b73d057812cba901e909e1774eea77c))
+* **query-graphql:** allow descriptions to be defined ([568f228](https://github.com/TriPSs/nestjs-query/commit/568f2288efaefcbe0d3360284d626e6030165374))
+* **query-graphql:** allow descriptions to be defined in relations ([0fe9580](https://github.com/TriPSs/nestjs-query/commit/0fe9580bae5c292f2760e123e88f569e60253df4))
+
+
+### Performance Improvements
+
+* **query-typeorm:** Rewrote `batchQueryRelations` to use one query ([c7aa255](https://github.com/TriPSs/nestjs-query/commit/c7aa255e11e86bf13e87e7d3cd26ef34d556bb1a))
+* **query-typeorm:** Use existing join alias if there is one ([419d5b4](https://github.com/TriPSs/nestjs-query/commit/419d5b4f23efa111f698620e118b7168a1a594bd))
+
+
+### Reverts
+
+* Revert "chore(deps): update dependency @nestjs/mongoose to v9.0.1" ([9ea465e](https://github.com/TriPSs/nestjs-query/commit/9ea465e23a387b0b608cf07affe93e41af69e72d))
+* Revert "fix(query-typeorm): Fixed `deleteOne` returning entity without its id" ([205fdd0](https://github.com/TriPSs/nestjs-query/commit/205fdd01e0361ff3da2f1d63fb56ed4686a21427))
+
+
+### BREAKING CHANGES
+
+* Nothing special, just want the major version bump as we updated a lot of deps
+* Project is moved to NX, deps may still be incorrect
+
+
 
 # [0.30.0](https://github.com/tripss/nestjs-query/compare/v0.29.0...v0.30.0) (2021-09-30)
 
