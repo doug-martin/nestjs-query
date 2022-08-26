@@ -1,3 +1,4 @@
+/* eslint-disable */
 export default {
   displayName: 'examples',
   preset: './jest.preset.js',
@@ -15,4 +16,4 @@ export default {
   setupFilesAfterEnv: ['jest-extended'],
   snapshotSerializers: ['jest-snapshot-serializer-raw/always'],
   coverageDirectory: './coverage/examples'
-};
+}
