@@ -53,6 +53,7 @@ if (affectedProjects.length > 0) {
       execCommand.push('--parallel=1')
       execCommand.push('--baseBranch="master"')
       execCommand.push('--changelogHeader=" "')
+      execCommand.push('--releaseAs=premajor --preid=alpha')
     }
 
     const command = execCommand.join(' ')

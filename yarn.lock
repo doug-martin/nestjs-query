@@ -3270,19 +3270,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/config-angular-type-enum@npm:^17.0.0":
-  version: 17.0.0
-  resolution: "@commitlint/config-angular-type-enum@npm:17.0.0"
-  checksum: f5ef60302a3fb6fd181406d19f307c02e92df70cfc2ead33ec54def1b07298417d51a16b44513403bab7bfd68a08f3c5bf82064b3074e43b9c1b8b25f973a656
-  languageName: node
-  linkType: hard
-
-"@commitlint/config-angular@npm:17.0.3":
+"@commitlint/config-conventional@npm:^17.0.3":
   version: 17.0.3
-  resolution: "@commitlint/config-angular@npm:17.0.3"
+  resolution: "@commitlint/config-conventional@npm:17.0.3"
   dependencies:
-    "@commitlint/config-angular-type-enum": ^17.0.0
-  checksum: 3eeb7158c50721cb583ce2dfb78dc8c39103bd4bc60ec44a7f81efa8383ab7350ebeecaafe72d60ae94de6fe203919438f64e1032f2dfe645f28310785da8b50
+    conventional-changelog-conventionalcommits: ^5.0.0
+  checksum: 1cd30d827cf43bc7b08604398d4104bc031a69c8b45777886572aff12de25f40761dfbe5ffc6cd1f0d5b05de850e6d3e22dee6d799288e9cdd80bf575d036d46
   languageName: node
   linkType: hard
 
@@ -8956,6 +8949,17 @@ __metadata:
     lodash: ^4.17.15
     q: ^1.5.1
   checksum: 7b8e8a21ebb56f9aaa510e12917b7c609202072c3e71089e0a09630c37c2e8146cdb04364809839b0e3eb55f807fe84d03b2079500b37f6186d505848be5c562
+  languageName: node
+  linkType: hard
+
+"conventional-changelog-conventionalcommits@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "conventional-changelog-conventionalcommits@npm:5.0.0"
+  dependencies:
+    compare-func: ^2.0.0
+    lodash: ^4.17.15
+    q: ^1.5.1
+  checksum: b67d12e4e0fdde5baa32c3d77af472de38646a18657b26f5543eecce041a318103092fbfcef247e2319a16957c9ac78c6ea78acc11a5db6acf74be79a28c561f
   languageName: node
   linkType: hard
 
@@ -15425,7 +15429,7 @@ __metadata:
     "@apollo/federation": 0.36.2
     "@apollo/gateway": 2.0.5
     "@commitlint/cli": 17.0.3
-    "@commitlint/config-angular": 17.0.3
+    "@commitlint/config-conventional": ^17.0.3
     "@docusaurus/core": 2.0.1
     "@docusaurus/module-type-aliases": 2.0.1
     "@docusaurus/preset-classic": 2.0.1
