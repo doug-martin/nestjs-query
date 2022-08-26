@@ -1,6 +1,6 @@
 {
   "name": "@ptc-org/nestjs-query-core",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.0",
   "description": "Base query package",
   "author": "doug-martin <doug@dougamartin.com>",
   "homepage": "https://github.com/tripss/nestjs-query#readme",
