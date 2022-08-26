@@ -19,5 +19,3 @@ and [`@ptc-org/nestjs-query-typeorm`](../query-typeorm)
 ## Docs
 
 * [Nestjs-query Docs](https://tripss.github.io/nestjs-query/docs/introduction/getting-started)
-
-

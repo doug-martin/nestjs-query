@@ -57,8 +57,8 @@ jobs:
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-      - name: nx affected:version
-        run: node ./tools/scripts/run-many.js version origin/${{ needs.prepare-env.outputs.GITHUB_HEAD_REF }} ${{ needs.prepare-env.outputs.GITHUB_BASE_REF }}
+      - name: nx workspace:version
+        run: yarn nx run workspace:version
 
       - name: nx affected:build
         run: node ./tools/scripts/run-many.js build origin/${{ needs.prepare-env.outputs.GITHUB_HEAD_REF }} ${{ needs.prepare-env.outputs.GITHUB_BASE_REF }}

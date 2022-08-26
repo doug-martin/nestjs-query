@@ -9,3 +9,4 @@ Run `nx test query-typeorm` to execute the unit tests via [Jest](https://jestjs.
 ## Running lint
 
 Run `nx lint query-typeorm` to execute the lint via [ESLint](https://eslint.org/).
+

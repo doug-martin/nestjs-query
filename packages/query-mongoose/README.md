@@ -20,5 +20,3 @@ top of of [nestjs](https://nestjs.com/) and [mongoose](https://mongoosejs.com/).
 
 The get started with the `@nestjs-query/query-mongoose` package checkout
 the [Getting Started](https://tripss.github.io/nestjs-query/docs/persistence/mongoose/getting-started) docs.
-
-

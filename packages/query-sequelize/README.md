@@ -20,5 +20,3 @@ top of of [nestjs](https://nestjs.com/) and [sequelize](https://sequelize.org/).
 
 The get started with the `@ptc-org/nestjs-query-sequelize` package checkout
 the [Getting Started](https://tripss.github.io/nestjs-query/docs/sequelize/getting-started) docs.
-
-

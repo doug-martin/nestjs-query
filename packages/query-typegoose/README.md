@@ -20,3 +20,4 @@ top of of [nestjs](https://nestjs.com/) and [typegoose](https://github.com/typeg
 
 The get started with the `@nestjs-query/query-typegoose` package checkout
 the [Getting Started](https://tripss.github.io/nestjs-query/docs/persistence/typegoose/getting-started) docs.
+
