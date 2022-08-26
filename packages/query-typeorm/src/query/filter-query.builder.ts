@@ -1,6 +1,5 @@
-import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@ptc-org/nestjs-query-core';
-import merge from 'lodash.merge';
-
+import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@ptc-org/nestjs-query-core'
+import merge from 'lodash.merge'
 import {
   DeleteQueryBuilder,
   EntityMetadata,
@@ -8,12 +7,12 @@ import {
   Repository,
   SelectQueryBuilder,
   UpdateQueryBuilder,
-
   WhereExpressionBuilder
-} from 'typeorm';
-import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
-import { AggregateBuilder } from './aggregate.builder';
-import { WhereBuilder } from './where.builder';
+} from 'typeorm'
+import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder'
+
+import { AggregateBuilder } from './aggregate.builder'
+import { WhereBuilder } from './where.builder'
 
 /**
  * @internal

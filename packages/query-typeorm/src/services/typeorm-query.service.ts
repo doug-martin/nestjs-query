@@ -1,5 +1,4 @@
 import { MethodNotAllowedException, NotFoundException } from '@nestjs/common'
-import { MethodNotAllowedException, NotFoundException } from '@nestjs/common'
 import {
   AggregateQuery,
   AggregateResponse,
@@ -16,12 +15,13 @@ import {
   QueryService,
   UpdateManyResponse,
   UpdateOneOptions
-} from '@ptc-org/nestjs-query-core';
-import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
-import { AggregateBuilder, FilterQueryBuilder } from '../query';
-import { RelationQueryService } from './relation-query.service';
+} from '@ptc-org/nestjs-query-core'
+import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm'
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult'
+
+import { AggregateBuilder, FilterQueryBuilder } from '../query'
+import { RelationQueryService } from './relation-query.service'
 
 export interface TypeOrmQueryServiceOpts<Entity> {
   useSoftDelete?: boolean
@@ -106,8 +106,8 @@ export class TypeOrmQueryService<Entity>
     if (opts?.withDeleted) {
       qb.withDeleted()
     }
-    const result = await qb.getOne();
-    return result === null ? undefined : result;
+    const result = await qb.getOne()
+    return result === null ? undefined : result
   }
 
   /**
@@ -210,10 +210,8 @@ export class TypeOrmQueryService<Entity>
 
       const distinctRecords = await builder.addSelect(`${builder.alias}.id`).getRawMany()
 
-
-      // TODO:: @tripss check
-      const ids: unknown[] = distinctRecords.map(({ id }) => id as unknown);
-      const idsFilter = { id: { in: ids } } as unknown as Filter<Entity>;
+      const ids: unknown[] = distinctRecords.map(({ id }) => id as unknown)
+      const idsFilter = { id: { in: ids } } as Filter<Entity>
 
       updateResult = await this.filterQueryBuilder
         .update({ filter: idsFilter })
@@ -275,9 +273,8 @@ export class TypeOrmQueryService<Entity>
 
       const distinctRecords = await builder.addSelect(`${builder.alias}.id`).getRawMany()
 
-      // TODO @tripss check
-      const ids: unknown[] = distinctRecords.map(({ id }) => id as unknown);
-      const idsFilter = { id: { in: ids } } as unknown as Filter<Entity>;
+      const ids: unknown[] = distinctRecords.map(({ id }) => id as unknown)
+      const idsFilter = { id: { in: ids } } as Filter<Entity>
 
       if (ids.length > 0) {
         if (this.useSoftDelete || opts?.useSoftDelete) {
@@ -345,8 +342,8 @@ export class TypeOrmQueryService<Entity>
 
   private async ensureEntityDoesNotExist(e: Entity): Promise<Entity> {
     if (this.repo.hasId(e)) {
-      const where = this.repo.metadata.getEntityIdMap(e) as FindOptionsWhere<Entity>;
-      const found = await this.repo.findOne({ where });
+      const where = this.repo.metadata.getEntityIdMap(e) as FindOptionsWhere<Entity>
+      const found = await this.repo.findOne({ where })
 
       if (found) {
         throw new Error('Entity already exists')
