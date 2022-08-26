@@ -5,7 +5,7 @@ import { SubTaskEntity } from '../src/sub-task/sub-task.entity'
 import { TagEntity } from '../src/tag/tag.entity'
 import { TodoItemEntity } from '../src/todo-item/entity/todo-item.entity'
 
-const tables = ['TodoItemEntities', 'SubTaskEntities', 'TagEntities']
+const tables = ['SubTaskEntities', 'TodoItemEntities', 'TagEntities']
 export const truncate = async (sequelize: Sequelize): Promise<void> => executeTruncate(sequelize, tables)
 
 export const refresh = async (connection: Sequelize): Promise<void> => {

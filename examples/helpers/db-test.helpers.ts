@@ -2,11 +2,9 @@ export const dbType = process.env.NESTJS_QUERY_DB_TYPE ?? 'postgres'
 export const truncateSql = (table: string): string[] => {
   if (dbType === 'mysql') {
     return [
-      `SET foreign_key_checks = 0;`,
       `DELETE
-       FROM \`${table}\``,
-      `ALTER TABLE \`${table}\` AUTO_INCREMENT = 1`,
-      `SET foreign_key_checks = 1;`
+             FROM \`${table}\``,
+      `ALTER TABLE \`${table}\` AUTO_INCREMENT = 1`
     ]
   }
   return [`TRUNCATE "${table}" RESTART IDENTITY CASCADE`]
@@ -17,14 +15,14 @@ interface QueryExecutor {
 }
 
 export const asyncLoop = async <T>(items: T[], fn: (t: T) => Promise<unknown>): Promise<void> => {
-  try {
-    for (const item of items) {
+  for (const item of items) {
+    try {
       await fn(item)
-    }
-  } catch (err) {
-    console.error(err)
+    } catch (err) {
+      console.error(err)
 
-    throw err
+      throw err
+    }
   }
 }
 
