@@ -1,4 +1,13 @@
  
+# [2.0.0-alpha.1](https://github.com/TriPSs/nestjs-query/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (2022-08-28)
+
+
+### Features
+
+* **query-typeorm:** Updated Typeorm to `0.3.8` ([de00f77](https://github.com/TriPSs/nestjs-query/commit/de00f77965d605ce34e96378a89794347677656c))
+
+
+
 # [2.0.0-alpha.0](https://github.com/TriPSs/nestjs-query/compare/v1.0.0...v2.0.0-alpha.0) (2022-08-26)
 
 
