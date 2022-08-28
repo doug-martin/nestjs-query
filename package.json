@@ -2,7 +2,7 @@
   "name": "nestjs-query",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/**"
   ],
   "scripts": {
     "prepare": "husky install",
