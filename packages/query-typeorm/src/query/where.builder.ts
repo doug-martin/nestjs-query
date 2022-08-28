@@ -1,5 +1,7 @@
 import { Filter, FilterComparisons, FilterFieldComparison } from '@ptc-org/nestjs-query-core'
-import { Brackets, WhereExpression, WhereExpressionBuilder } from 'typeorm'
+import { Brackets } from 'typeorm'
+
+import type { WhereExpressionBuilder } from 'typeorm'
 
 import { NestedRecord } from './filter-query.builder'
 import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder'
@@ -19,7 +21,7 @@ export class WhereBuilder<Entity> {
    * @param alias - optional alias to use to qualify an identifier
    */
 
-  build<Where extends WhereExpressionBuilder>(
+  public build<Where extends WhereExpressionBuilder>(
     where: Where,
     filter: Filter<Entity>,
     relationNames: NestedRecord,
@@ -43,7 +45,7 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterAnd<Where extends WhereExpression>(
+  private filterAnd<Where extends WhereExpressionBuilder>(
     where: Where,
     filters: Filter<Entity>[],
     relationNames: NestedRecord,
@@ -94,7 +96,7 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterFields<Where extends WhereExpression>(
+  private filterFields<Where extends WhereExpressionBuilder>(
     where: Where,
     filter: Filter<Entity>,
     relationNames: NestedRecord,
@@ -121,7 +123,7 @@ export class WhereBuilder<Entity> {
     return obj[field] as FilterFieldComparison<Entity[K]>
   }
 
-  private withFilterComparison<T extends keyof Entity, Where extends WhereExpression>(
+  private withFilterComparison<T extends keyof Entity, Where extends WhereExpressionBuilder>(
     where: Where,
     field: T,
     cmp: FilterFieldComparison<Entity[T]>,
@@ -142,7 +144,7 @@ export class WhereBuilder<Entity> {
     )
   }
 
-  private withRelationFilter<T extends keyof Entity, Where extends WhereExpression>(
+  private withRelationFilter<T extends keyof Entity, Where extends WhereExpressionBuilder>(
     where: Where,
     field: T,
     cmp: Filter<Entity[T]>,
