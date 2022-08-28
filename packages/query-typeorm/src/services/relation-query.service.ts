@@ -457,7 +457,11 @@ export abstract class RelationQueryService<Entity> {
     const relationMeta = this.getRelationMeta(relationName)
 
     if (typeof relationMeta.type === 'string') {
-      return this.repo.manager.getRepository(relationMeta.type).metadata.target as Class<unknown>
+      const relationMetaData = this.repo.manager.connection.entityMetadatas.find((em) => em.targetName == relationMeta.type)
+
+      if (relationMetaData) {
+        return relationMetaData.target as Class<unknown>
+      }
     }
 
     return relationMeta.type as Class<unknown>
