@@ -11,7 +11,7 @@ export class FindRelationsLoader<DTO, Relation>
 {
   constructor(readonly RelationDTO: Class<Relation>, readonly relationName: string) {}
 
-  createLoader(service: QueryService<DTO, unknown, unknown>, opts?: FindRelationsOpts<Relation>) {
+  public createLoader(service: QueryService<DTO, unknown, unknown>, opts?: FindRelationsOpts<Relation>) {
     return async (args: ReadonlyArray<FindRelationsArgs<DTO, Relation>>): Promise<(Relation | undefined | Error)[]> => {
       const grouped = this.groupFinds(args, opts)
       return this.loadResults(service, grouped)

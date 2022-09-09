@@ -23,7 +23,7 @@
     "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^8.0.4",
+    "@nestjs/common": "^8.0.0 || ^9.0.0",
     "@nestjs/sequelize": "^8.0.0",
     "sequelize": "^6.5.0",
     "sequelize-typescript": "^1.1.0 || ^2.0.0"

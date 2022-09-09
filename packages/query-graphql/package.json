@@ -41,14 +41,14 @@
   },
   "peerDependencies": {
     "@apollo/gateway": "^0.41.0 || ^0.42.0",
-    "@nestjs/common": "^8.0.4",
-    "@nestjs/core": "^8.0.4",
+    "@nestjs/common": "^8.0.0 || ^9.0.0",
+    "@nestjs/core": "^8.0.0 || ^9.0.0",
     "@nestjs/graphql": "^9.0.0",
     "class-transformer": "^0.2.3 || 0.3.1 || 0.4",
     "class-validator": "^0.13.0",
     "dataloader": "^2.0.0",
-    "graphql": "^15.0.0",
-    "graphql-subscriptions": "^1.1.0",
+    "graphql": "^16.0.0",
+    "graphql-subscriptions": "^2.0.0",
     "ts-morph": "^11.0.0 || ^12.0.0"
   }
 }

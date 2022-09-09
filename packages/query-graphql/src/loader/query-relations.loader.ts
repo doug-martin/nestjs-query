@@ -10,7 +10,7 @@ export class QueryRelationsLoader<DTO, Relation>
 {
   constructor(readonly RelationDTO: Class<Relation>, readonly relationName: string) {}
 
-  createLoader(service: QueryService<DTO, unknown, unknown>) {
+  public createLoader(service: QueryService<DTO, unknown, unknown>) {
     return async (queryArgs: ReadonlyArray<QueryRelationsArgs<DTO, Relation>>): Promise<(Relation[] | Error)[]> => {
       // group
       const queryMap = this.groupQueries(queryArgs)

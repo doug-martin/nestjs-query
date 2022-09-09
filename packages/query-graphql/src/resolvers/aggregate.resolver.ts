@@ -4,7 +4,7 @@ import omit from 'lodash.omit'
 
 import { OperationGroup } from '../auth'
 import { getDTONames } from '../common'
-import { AggregateQueryParam, AuthorizerFilter, ResolverMethodOpts, ResolverQuery, SkipIf } from '../decorators'
+import { AggregateQueryParam, AuthorizerFilter, ResolverMethodOpts, ResolverQuery } from '../decorators'
 import { AuthorizerInterceptor } from '../interceptors'
 import { AggregateArgsType, AggregateResponseType } from '../types'
 import { transformAndValidate } from './helpers'
@@ -24,31 +24,31 @@ export interface AggregateResolver<DTO, QS extends QueryService<DTO, unknown, un
 
 /**
  * @internal
- * Mixin to add `read` graphql endpoints.
+ * Mixin to add `aggregate` graphql endpoints.
  */
 export const Aggregateable =
   <DTO, QS extends QueryService<DTO, unknown, unknown>>(DTOClass: Class<DTO>, opts?: AggregateResolverOpts) =>
   <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<AggregateResolver<DTO, QS>> & B => {
+    if (!opts || !opts.enabled) {
+      return BaseClass as never
+    }
+
     const { baseNameLower } = getDTONames(DTOClass)
     const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection')
     const queryName = `${baseNameLower}Aggregate`
-    const disabled = !opts || !opts.enabled
-    const AR = disabled ? DTOClass : AggregateResponseType(DTOClass)
+    const AR = AggregateResponseType(DTOClass)
 
     @ArgsType()
     class AA extends AggregateArgsType(DTOClass) {}
 
     @Resolver(() => AR, { isAbstract: true })
     class AggregateResolverBase extends BaseClass {
-      @SkipIf(
-        () => disabled,
-        ResolverQuery(
-          () => [AR],
-          { name: queryName },
-          commonResolverOpts,
-          { interceptors: [AuthorizerInterceptor(DTOClass)] },
-          opts ?? {}
-        )
+      @ResolverQuery(
+        () => [AR],
+        { name: queryName },
+        commonResolverOpts,
+        { interceptors: [AuthorizerInterceptor(DTOClass)] },
+        opts ?? {}
       )
       async aggregate(
         @Args() args: AA,
