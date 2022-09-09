@@ -28,7 +28,7 @@
   "peerDependencies": {
     "@nestjs/common": "9.0.11",
     "@nestjs/typeorm": "9.0.1",
-    "class-transformer": "^0.2.3 || 0.3.1 || 0.4",
+    "class-transformer": "^0.2.3 || 0.3.1 || ^0.5",
     "typeorm": "0.3.8"
   },
   "repository": {
