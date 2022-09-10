@@ -40,7 +40,7 @@
     "upper-case-first": "^2.0.2"
   },
   "peerDependencies": {
-    "@apollo/gateway": "^0.41.0 || ^0.42.0",
+    "@apollo/gateway": "^0.44.1 || ^0.46.0 || ^0.48.0 || ^0.49.0 || ^0.50.0 || ^2.0.0",
     "@nestjs/common": "^8.0.4",
     "@nestjs/core": "^8.0.4",
     "@nestjs/graphql": "^9.0.0",
