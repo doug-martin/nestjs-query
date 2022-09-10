@@ -9,7 +9,8 @@
 
 # `@ptc-org/nestjs-query-sequelize`
 
-The `query-sequelize` package that provides an implementation of `@ptc-org/nestjs-query-core` `QueryService`, built on top of of [nestjs](https://nestjs.com/) and [sequelize](https://sequelize.org/). 
+The `query-sequelize` package that provides an implementation of `@ptc-org/nestjs-query-core` `QueryService`, built on
+top of of [nestjs](https://nestjs.com/) and [sequelize](https://sequelize.org/).
 
 ## Installation
 
@@ -17,6 +18,6 @@ The `query-sequelize` package that provides an implementation of `@ptc-org/nestj
 
 ## Getting Started
 
-The get started with the `@ptc-org/nestjs-query-sequelize` package checkout the [Getting Started](https://tripss.github.io/nestjs-query/docs/sequelize/getting-started) docs.
-
+The get started with the `@ptc-org/nestjs-query-sequelize` package checkout
+the [Getting Started](https://tripss.github.io/nestjs-query/docs/sequelize/getting-started) docs.
 

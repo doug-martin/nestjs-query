@@ -1,6 +1,7 @@
-module.exports = {
+/* eslint-disable */
+export default {
   displayName: 'examples',
-  preset: './jest.preset.ts',
+  preset: './jest.preset.js',
   globals: {
     'ts-jest': {
       tsconfig: process.cwd() + '/examples/tsconfig.spec.json'
@@ -15,4 +16,4 @@ module.exports = {
   setupFilesAfterEnv: ['jest-extended'],
   snapshotSerializers: ['jest-snapshot-serializer-raw/always'],
   coverageDirectory: './coverage/examples'
-};
+}

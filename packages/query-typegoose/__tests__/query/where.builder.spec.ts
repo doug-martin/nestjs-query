@@ -1,19 +1,20 @@
-import { Filter } from '@ptc-org/nestjs-query-core';
-import { getModelForClass, mongoose } from '@typegoose/typegoose';
-import { TestEntity } from '../__fixtures__';
-import { WhereBuilder } from '../../src/query';
+import { Filter } from '@ptc-org/nestjs-query-core'
+import { getModelForClass, mongoose } from '@typegoose/typegoose'
+
+import { WhereBuilder } from '../../src/query'
+import { TestEntity } from '../__fixtures__'
 
 describe('WhereBuilder', (): void => {
-  const createWhereBuilder = () => new WhereBuilder<TestEntity>(getModelForClass(TestEntity));
+  const createWhereBuilder = () => new WhereBuilder<TestEntity>(getModelForClass(TestEntity))
 
   const expectFilterQuery = (filter: Filter<TestEntity>, expectedFilterQuery: mongoose.FilterQuery<TestEntity>): void => {
-    const actual = createWhereBuilder().build(filter);
-    expect(actual).toEqual(expectedFilterQuery);
-  };
+    const actual = createWhereBuilder().build(filter)
+    expect(actual).toEqual(expectedFilterQuery)
+  }
 
   it('should accept a empty filter', (): void => {
-    expectFilterQuery({}, {});
-  });
+    expectFilterQuery({}, {})
+  })
 
   it('or multiple operators for a single field together', (): void => {
     expectFilterQuery(
@@ -32,8 +33,8 @@ describe('WhereBuilder', (): void => {
           }
         ]
       }
-    );
-  });
+    )
+  })
 
   it('and multiple field comparisons together', (): void => {
     expectFilterQuery(
@@ -49,8 +50,8 @@ describe('WhereBuilder', (): void => {
           }
         ]
       }
-    );
-  });
+    )
+  })
 
   describe('and', (): void => {
     it('and multiple expressions together', (): void => {
@@ -66,8 +67,8 @@ describe('WhereBuilder', (): void => {
             { $and: [{ numberType: { $lte: 40 } }] }
           ]
         }
-      );
-    });
+      )
+    })
 
     it('and multiple filters together with multiple fields', (): void => {
       expectFilterQuery(
@@ -83,8 +84,8 @@ describe('WhereBuilder', (): void => {
             { $and: [{ $and: [{ numberType: { $lt: 20 } }, { stringType: { $regex: /.*bar/ } }] }] }
           ]
         }
-      );
-    });
+      )
+    })
 
     it('should support nested ors', (): void => {
       expectFilterQuery(
@@ -104,9 +105,9 @@ describe('WhereBuilder', (): void => {
             }
           ]
         }
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe('or', (): void => {
     it('or multiple expressions together', (): void => {
@@ -122,8 +123,8 @@ describe('WhereBuilder', (): void => {
             { $and: [{ numberType: { $lte: 40 } }] }
           ]
         }
-      );
-    });
+      )
+    })
 
     it('and multiple and filters together', (): void => {
       expectFilterQuery(
@@ -151,8 +152,8 @@ describe('WhereBuilder', (): void => {
             }
           ]
         }
-      );
-    });
+      )
+    })
 
     it('should support nested ands', (): void => {
       expectFilterQuery(
@@ -172,7 +173,7 @@ describe('WhereBuilder', (): void => {
             }
           ]
         }
-      );
-    });
-  });
-});
+      )
+    })
+  })
+})

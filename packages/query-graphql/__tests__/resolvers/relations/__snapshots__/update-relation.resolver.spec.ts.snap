@@ -9,7 +9,6 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`UpdateRelationsResolver many should use the dtoName if provided 1`] = `
@@ -42,7 +41,6 @@ input SetTestsOnTestResolverDTOInput {
   """The ids of the relations."""
   relationIds: [ID!]!
 }
-
 `;
 
 exports[`UpdateRelationsResolver many should use the object type name 1`] = `
@@ -75,7 +73,6 @@ input SetRelationsOnTestResolverDTOInput {
   """The ids of the relations."""
   relationIds: [ID!]!
 }
-
 `;
 
 exports[`UpdateRelationsResolver one should not add update one methods if disableRead is true 1`] = `
@@ -87,7 +84,6 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`UpdateRelationsResolver one should use the dtoName if provided 1`] = `
@@ -111,7 +107,6 @@ input SetTestOnTestResolverDTOInput {
   """The id of relation."""
   relationId: ID!
 }
-
 `;
 
 exports[`UpdateRelationsResolver one should use the object type name 1`] = `
@@ -135,7 +130,6 @@ input SetRelationOnTestResolverDTOInput {
   """The id of relation."""
   relationId: ID!
 }
-
 `;
 
 exports[`UpdateRelationsResolver should not add update methods if one and many are empty 1`] = `
@@ -147,5 +141,4 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;

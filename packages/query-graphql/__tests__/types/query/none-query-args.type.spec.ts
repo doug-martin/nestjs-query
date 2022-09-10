@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import {
   Args,
   ArgsType,
@@ -11,71 +10,74 @@ import {
   ObjectType,
   Query,
   Resolver
-} from '@nestjs/graphql';
-import { plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
-import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType } from '@ptc-org/nestjs-query-graphql';
-import { generateSchema } from '../../__fixtures__';
+} from '@nestjs/graphql'
+import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core'
+import { CursorQueryArgsType, FilterableField, PagingStrategies, QueryArgsType } from '@ptc-org/nestjs-query-graphql'
+import { plainToClass } from 'class-transformer'
+import { validateSync } from 'class-validator'
+
+import { generateSchema } from '../../__fixtures__'
 
 describe('None paging strategy QueryArgsType with manual options', (): void => {
-  afterEach(() => jest.clearAllMocks());
+  afterEach(() => jest.clearAllMocks())
 
   @ObjectType('TestQuery')
   class TestDto {
     @FilterableField(() => ID)
-    idField!: number;
+    idField!: number
 
     @FilterableField(() => ID, { nullable: true })
-    idFieldOption?: number;
+    idFieldOption?: number
 
     @FilterableField()
-    stringField!: string;
+    stringField!: string
 
     @FilterableField({ nullable: true })
-    stringFieldOptional?: string;
+    stringFieldOptional?: string
 
     @FilterableField()
-    booleanField!: boolean;
+    booleanField!: boolean
 
     @FilterableField({ nullable: true })
-    booleanFieldOptional?: boolean;
+    booleanFieldOptional?: boolean
 
     @FilterableField()
-    numberField!: number;
+    numberField!: number
 
     @FilterableField({ nullable: true })
-    numberFieldOptional?: number;
+    numberFieldOptional?: number
 
     @FilterableField(() => Float)
-    floatField!: number;
+    floatField!: number
 
     @FilterableField(() => Float, { nullable: true })
-    floatFieldOptional?: number;
+    floatFieldOptional?: number
 
     @FilterableField(() => Int)
-    intField!: number;
+    intField!: number
 
     @FilterableField(() => Int, { nullable: true })
-    intFieldOptional?: number;
+    intFieldOptional?: number
 
     @FilterableField(() => GraphQLTimestamp)
-    timestampField!: Date;
+    timestampField!: Date
 
     @FilterableField(() => GraphQLTimestamp, { nullable: true })
-    timestampFieldOptional?: Date;
+    timestampFieldOptional?: Date
 
     @FilterableField(() => GraphQLISODateTime)
-    date!: Date;
+    date!: Date
 
     @FilterableField(() => GraphQLISODateTime, { nullable: true })
-    dateOptional?: Date;
+    dateOptional?: Date
   }
 
   @ObjectType()
   class TestFilterRequiredDto {
     @FilterableField({ filterRequired: true })
-    requiredFilterableField!: string;
+    requiredFilterableField!: string
   }
+
   @ArgsType()
   class TestNoPagingQuery extends QueryArgsType(TestDto, { pagingStrategy: PagingStrategies.NONE }) {}
 
@@ -85,32 +87,33 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
       @Query(() => String)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args() query: TestNoPagingQuery): string {
-        return 'hello';
+        return 'hello'
       }
     }
-    const schema = await generateSchema([TestNonePagingStrategyResolver]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([TestNonePagingStrategyResolver])
+    expect(schema).toMatchSnapshot()
+  })
 
   it('should sorting to the correct instance of sorting', () => {
     const queryObj: TestNoPagingQuery = {
       sorting: [{ field: 'stringField', direction: SortDirection.ASC, nulls: SortNulls.NULLS_LAST }]
-    };
-    const queryInstance = plainToClass(TestNoPagingQuery, queryObj);
-    expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.sorting[0]).toBeInstanceOf(TestNoPagingQuery.SortType);
-  });
+    }
+    const queryInstance = plainToClass(TestNoPagingQuery, queryObj)
+    expect(validateSync(queryInstance)).toEqual([])
+    expect(queryInstance.sorting[0]).toBeInstanceOf(TestNoPagingQuery.SortType)
+  })
 
   it('should make filter to the correct instance of sorting', () => {
     const queryObj: CursorQueryArgsType<TestDto> = {
       filter: {
         stringField: { eq: 'foo' }
       }
-    };
-    const queryInstance = plainToClass(TestNoPagingQuery, queryObj);
-    expect(validateSync(queryInstance)).toEqual([]);
-    expect(queryInstance.filter).toBeInstanceOf(TestNoPagingQuery.FilterType);
-  });
+    }
+    const queryInstance = plainToClass(TestNoPagingQuery, queryObj)
+    expect(validateSync(queryInstance)).toEqual([])
+    expect(queryInstance.filter).toBeInstanceOf(TestNoPagingQuery.FilterType)
+  })
 
   it('should make the filter required if there is a filterRequired field', async () => {
     @ArgsType()
@@ -123,16 +126,18 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
       @Query(() => String)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       test(@Args() query: TestFilterRequiredQuery): string {
-        return 'hello';
+        return 'hello'
       }
     }
-    const schema = await generateSchema([TestNonePagingFilterRequiredResolver]);
-    expect(schema).toMatchSnapshot();
-  });
+
+    const schema = await generateSchema([TestNonePagingFilterRequiredResolver])
+    expect(schema).toMatchSnapshot()
+  })
 
   describe('options', () => {
     @ObjectType()
     class NoPagingQueryOptionsDTO extends TestDto {}
+
     @ArgsType()
     class NoPagingQueryOptionsArgs extends QueryArgsType(NoPagingQueryOptionsDTO, {
       pagingStrategy: PagingStrategies.NONE,
@@ -148,11 +153,12 @@ describe('None paging strategy QueryArgsType with manual options', (): void => {
         @Query(() => String)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         test(@Args() query: NoPagingQueryOptionsArgs): string {
-          return 'hello';
+          return 'hello'
         }
       }
-      const schema = await generateSchema([TestNoPagingQueryManualOptionsResolver]);
-      expect(schema).toMatchSnapshot();
-    });
-  });
-});
+
+      const schema = await generateSchema([TestNoPagingQueryManualOptionsResolver])
+      expect(schema).toMatchSnapshot()
+    })
+  })
+})

@@ -1,3 +1,3 @@
-import { FindByIdOptions } from './find-by-id-options.interface';
+import { FindByIdOptions } from './find-by-id-options.interface'
 
-export type GetByIdOptions<DTO> = FindByIdOptions<DTO>;
+export type GetByIdOptions<DTO> = FindByIdOptions<DTO>

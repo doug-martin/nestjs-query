@@ -1,12 +1,12 @@
-import { Assembler, AssemblerFactory, ClassTransformerAssembler, DefaultAssembler } from '@ptc-org/nestjs-query-core';
+import { Assembler, AssemblerFactory, ClassTransformerAssembler, DefaultAssembler } from '@ptc-org/nestjs-query-core'
 
 describe('AssemblerFactory', () => {
   class TestDTO {
-    foo!: string;
+    foo!: string
   }
 
   class TestEntity {
-    foo!: string;
+    foo!: string
   }
 
   @Assembler(TestDTO, TestEntity)
@@ -14,11 +14,11 @@ describe('AssemblerFactory', () => {
 
   describe('#getAssembler', () => {
     it('should return the correct assembler based on the classes', () => {
-      expect(AssemblerFactory.getAssembler(TestDTO, TestEntity)).toBeInstanceOf(TestAssembler);
-    });
+      expect(AssemblerFactory.getAssembler(TestDTO, TestEntity)).toBeInstanceOf(TestAssembler)
+    })
 
     it('should return a default assembler if an assembler for the classes is not found', () => {
-      expect(AssemblerFactory.getAssembler(TestDTO, TestDTO)).toBeInstanceOf(DefaultAssembler);
-    });
-  });
-});
+      expect(AssemblerFactory.getAssembler(TestDTO, TestDTO)).toBeInstanceOf(DefaultAssembler)
+    })
+  })
+})

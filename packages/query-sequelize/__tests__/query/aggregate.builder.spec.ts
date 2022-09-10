@@ -1,25 +1,26 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { AggregateQuery } from '@ptc-org/nestjs-query-core';
-import sequelize, { Projectable } from 'sequelize';
-import { Test, TestingModule } from '@nestjs/testing';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { Sequelize } from 'sequelize-typescript';
-import { CONNECTION_OPTIONS } from '../__fixtures__/sequelize.fixture';
-import { TestEntityTestRelationEntity } from '../__fixtures__/test-entity-test-relation.entity';
-import { TestRelation } from '../__fixtures__/test-relation.entity';
-import { TestEntity } from '../__fixtures__/test.entity';
-import { AggregateBuilder } from '../../src/query';
+import { SequelizeModule } from '@nestjs/sequelize'
+import { Test, TestingModule } from '@nestjs/testing'
+import { AggregateQuery } from '@ptc-org/nestjs-query-core'
+import sequelize, { Projectable } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
+
+import { AggregateBuilder } from '../../src/query'
+import { CONNECTION_OPTIONS } from '../__fixtures__/sequelize.fixture'
+import { TestEntity } from '../__fixtures__/test.entity'
+import { TestEntityTestRelationEntity } from '../__fixtures__/test-entity-test-relation.entity'
+import { TestRelation } from '../__fixtures__/test-relation.entity'
 
 describe('AggregateBuilder', (): void => {
-  let moduleRef: TestingModule;
-  const createAggregateBuilder = () => new AggregateBuilder<TestEntity>(TestEntity);
+  let moduleRef: TestingModule
+  const createAggregateBuilder = () => new AggregateBuilder<TestEntity>(TestEntity)
 
   const expectAggregateQuery = (agg: AggregateQuery<TestEntity>, expected: Projectable): void => {
-    const actual = createAggregateBuilder().build(agg);
-    expect(actual).toEqual(expected);
-  };
+    const actual = createAggregateBuilder().build(agg)
+    expect(actual).toEqual(expected)
+  }
 
-  afterEach(() => moduleRef.get(Sequelize).close());
+  afterEach(() => moduleRef.get(Sequelize).close())
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
@@ -27,13 +28,13 @@ describe('AggregateBuilder', (): void => {
         SequelizeModule.forRoot(CONNECTION_OPTIONS),
         SequelizeModule.forFeature([TestEntity, TestRelation, TestEntityTestRelationEntity])
       ]
-    }).compile();
-    await moduleRef.get(Sequelize).sync();
-  });
+    }).compile()
+    await moduleRef.get(Sequelize).sync()
+  })
 
   it('should throw an error if no selects are generated', (): void => {
-    expect(() => createAggregateBuilder().build({})).toThrow('No aggregate fields found.');
-  });
+    expect(() => createAggregateBuilder().build({})).toThrow('No aggregate fields found.')
+  })
 
   it('should create selects for all aggregate functions', (): void => {
     expectAggregateQuery(
@@ -58,8 +59,8 @@ describe('AggregateBuilder', (): void => {
           [sequelize.fn('MIN', sequelize.col('number_type')), 'MIN_numberType']
         ]
       }
-    );
-  });
+    )
+  })
 
   it('should create selects for all aggregate functions and group bys', (): void => {
     expectAggregateQuery(
@@ -74,8 +75,8 @@ describe('AggregateBuilder', (): void => {
           [sequelize.fn('COUNT', sequelize.col('test_entity_pk')), 'COUNT_testEntityPk']
         ]
       }
-    );
-  });
+    )
+  })
 
   describe('.convertToAggregateResponse', () => {
     it('should convert a flat response into an Aggregtate response', () => {
@@ -90,7 +91,7 @@ describe('AggregateBuilder', (): void => {
           MIN_stringType: 'a',
           MIN_numberType: 1
         }
-      ];
+      ]
       expect(AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toEqual([
         {
           groupBy: { stringType: 'z' },
@@ -100,18 +101,18 @@ describe('AggregateBuilder', (): void => {
           max: { stringType: 'z', numberType: 10 },
           min: { stringType: 'a', numberType: 1 }
         }
-      ]);
-    });
+      ])
+    })
 
     it('should throw an error if a column is not expected', () => {
       const dbResult = [
         {
           COUNTtestEntityPk: 10
         }
-      ];
+      ]
       expect(() => AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toThrow(
         'Unknown aggregate column encountered.'
-      );
-    });
-  });
-});
+      )
+    })
+  })
+})

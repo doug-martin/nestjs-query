@@ -1,5 +1,5 @@
-export type ComposableDecorator = MethodDecorator | PropertyDecorator | ClassDecorator | ParameterDecorator;
-export type ComposedDecorator = MethodDecorator & PropertyDecorator & ClassDecorator & ParameterDecorator;
+export type ComposableDecorator = MethodDecorator | PropertyDecorator | ClassDecorator | ParameterDecorator
+export type ComposedDecorator = MethodDecorator & PropertyDecorator & ClassDecorator & ParameterDecorator
 
 export function composeDecorators(...decorators: ComposableDecorator[]): ComposedDecorator {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -11,12 +11,12 @@ export function composeDecorators(...decorators: ComposableDecorator[]): Compose
   ) => {
     decorators.forEach((decorator) => {
       if (target instanceof Function && !descriptorOrIndex) {
-        return (decorator as ClassDecorator)(target);
+        return (decorator as ClassDecorator)(target)
       }
       if (typeof descriptorOrIndex === 'number') {
-        return (decorator as ParameterDecorator)(target, propertyKey, descriptorOrIndex);
+        return (decorator as ParameterDecorator)(target, propertyKey, descriptorOrIndex)
       }
-      return (decorator as MethodDecorator | PropertyDecorator)(target, propertyKey, descriptorOrIndex);
-    });
-  };
+      return (decorator as MethodDecorator | PropertyDecorator)(target, propertyKey, descriptorOrIndex)
+    })
+  }
 }

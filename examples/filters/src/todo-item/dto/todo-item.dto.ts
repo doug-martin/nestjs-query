@@ -1,25 +1,25 @@
-import { FilterableField } from '@ptc-org/nestjs-query-graphql';
-import { ObjectType, ID, GraphQLISODateTime } from '@nestjs/graphql';
+import { GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { FilterableField } from '@ptc-org/nestjs-query-graphql'
 
 @ObjectType('TodoItem')
 export class TodoItemDTO {
   @FilterableField(() => ID)
-  id!: number;
+  id!: number
 
   @FilterableField()
-  title!: string;
+  title!: string
 
   @FilterableField({ nullable: true })
-  description?: string;
+  description?: string
 
   @FilterableField({
     filterRequired: true
   })
-  completed!: boolean;
+  completed!: boolean
 
   @FilterableField(() => GraphQLISODateTime, { filterOnly: true })
-  created!: Date;
+  created!: Date
 
   @FilterableField(() => GraphQLISODateTime, { filterOnly: true })
-  updated!: Date;
+  updated!: Date
 }

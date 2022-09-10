@@ -1,2 +1,2 @@
-export { TypegooseQueryService, TypegooseQueryServiceOpts } from './services';
-export { NestjsQueryTypegooseModule } from './module';
+export { NestjsQueryTypegooseModule } from './module'
+export { TypegooseQueryService, TypegooseQueryServiceOpts } from './services'

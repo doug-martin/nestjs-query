@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { AggregateQuery } from '@ptc-org/nestjs-query-core';
-import { TestEntity } from '../__fixtures__';
-import { AggregateBuilder } from '../../src/query';
+import { AggregateQuery } from '@ptc-org/nestjs-query-core'
+
+import { AggregateBuilder } from '../../src/query'
+import { TestEntity } from '../__fixtures__'
 
 describe('AggregateBuilder', (): void => {
-  const createAggregateBuilder = () => new AggregateBuilder<TestEntity>();
+  const createAggregateBuilder = () => new AggregateBuilder<TestEntity>()
 
   it('should throw an error if no selects are generated', (): void => {
-    expect(() => createAggregateBuilder().build({})).toThrow('No aggregate fields found.');
-  });
+    expect(() => createAggregateBuilder().build({})).toThrow('No aggregate fields found.')
+  })
 
   it('should create an aggregate query', (): void => {
     const agg: AggregateQuery<TestEntity> = {
@@ -17,7 +18,7 @@ describe('AggregateBuilder', (): void => {
       sum: ['numberType'],
       max: ['stringType', 'dateType', 'numberType'],
       min: ['stringType', 'dateType', 'numberType']
-    };
+    }
     expect(createAggregateBuilder().build(agg)).toEqual({
       _id: null,
       avg_numberType: { $avg: '$numberType' },
@@ -32,8 +33,8 @@ describe('AggregateBuilder', (): void => {
       min_numberType: { $min: '$numberType' },
       min_stringType: { $min: '$stringType' },
       sum_numberType: { $sum: '$numberType' }
-    });
-  });
+    })
+  })
 
   describe('.convertToAggregateResponse', () => {
     it('should convert a flat response into an Aggregtate response', () => {
@@ -48,7 +49,7 @@ describe('AggregateBuilder', (): void => {
           min_stringType: 'a',
           min_numberType: 1
         }
-      ];
+      ]
       expect(AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toEqual([
         {
           groupBy: { stringType: 'z' },
@@ -58,18 +59,18 @@ describe('AggregateBuilder', (): void => {
           max: { stringType: 'z', numberType: 10 },
           min: { stringType: 'a', numberType: 1 }
         }
-      ]);
-    });
+      ])
+    })
 
     it('should throw an error if a column is not expected', () => {
       const dbResult = [
         {
           COUNTtestEntityPk: 10
         }
-      ];
+      ]
       expect(() => AggregateBuilder.convertToAggregateResponse<TestEntity>(dbResult)).toThrow(
         'Unknown aggregate column encountered.'
-      );
-    });
-  });
-});
+      )
+    })
+  })
+})

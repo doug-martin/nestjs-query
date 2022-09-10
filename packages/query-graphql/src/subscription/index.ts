@@ -1,9 +1,10 @@
-import { Class } from '@ptc-org/nestjs-query-core';
-import { PubSub } from 'graphql-subscriptions';
-import { DTONamesOpts, getDTONames } from '../common';
-import { GraphQLPubSub } from './pub-sub.interface';
+import { Class } from '@ptc-org/nestjs-query-core'
+import { PubSub } from 'graphql-subscriptions'
 
-export { GraphQLPubSub } from './pub-sub.interface';
+import { DTONamesOpts, getDTONames } from '../common'
+import { GraphQLPubSub } from './pub-sub.interface'
+
+export { GraphQLPubSub } from './pub-sub.interface'
 
 export enum EventType {
   CREATED = 'created',
@@ -12,20 +13,21 @@ export enum EventType {
   DELETED_ONE = 'deletedOne',
   DELETED_MANY = 'deletedMany'
 }
+
 export const getDTOEventName = <DTO>(type: EventType, DTOClass: Class<DTO>, opts?: DTONamesOpts): string => {
-  const { baseName, pluralBaseName } = getDTONames(DTOClass, opts);
+  const { baseName, pluralBaseName } = getDTONames(DTOClass, opts)
   if (type === EventType.DELETED_MANY || type === EventType.UPDATED_MANY) {
-    return `${type}${pluralBaseName}`;
+    return `${type}${pluralBaseName}`
   }
-  return `${type}${baseName}`;
-};
+  return `${type}${baseName}`
+}
 
-export const pubSubToken = (): string => 'pub_sub';
+export const pubSubToken = (): string => 'pub_sub'
 
-let pubSub: GraphQLPubSub;
+let pubSub: GraphQLPubSub
 export const defaultPubSub = (): GraphQLPubSub => {
   if (!pubSub) {
-    pubSub = new PubSub();
+    pubSub = new PubSub()
   }
-  return pubSub;
-};
+  return pubSub
+}

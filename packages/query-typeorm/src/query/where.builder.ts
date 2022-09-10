@@ -1,7 +1,10 @@
-import { Brackets, WhereExpression } from 'typeorm';
-import { Filter, FilterComparisons, FilterFieldComparison } from '@ptc-org/nestjs-query-core';
-import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder';
-import { NestedRecord } from './filter-query.builder';
+import { Filter, FilterComparisons, FilterFieldComparison } from '@ptc-org/nestjs-query-core'
+import { Brackets } from 'typeorm'
+
+import type { WhereExpressionBuilder } from 'typeorm'
+
+import { NestedRecord } from './filter-query.builder'
+import { EntityComparisonField, SQLComparisonBuilder } from './sql-comparison.builder'
 
 /**
  * @internal
@@ -17,15 +20,21 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  build<Where extends WhereExpression>(where: Where, filter: Filter<Entity>, relationNames: NestedRecord, alias?: string): Where {
-    const { and, or } = filter;
+
+  public build<Where extends WhereExpressionBuilder>(
+    where: Where,
+    filter: Filter<Entity>,
+    relationNames: NestedRecord,
+    alias?: string
+  ): Where {
+    const { and, or } = filter
     if (and && and.length) {
-      this.filterAnd(where, and, relationNames, alias);
+      this.filterAnd(where, and, relationNames, alias)
     }
     if (or && or.length) {
-      this.filterOr(where, or, relationNames, alias);
+      this.filterOr(where, or, relationNames, alias)
     }
-    return this.filterFields(where, filter, relationNames, alias);
+    return this.filterFields(where, filter, relationNames, alias)
   }
 
   /**
@@ -36,7 +45,7 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterAnd<Where extends WhereExpression>(
+  private filterAnd<Where extends WhereExpressionBuilder>(
     where: Where,
     filters: Filter<Entity>[],
     relationNames: NestedRecord,
@@ -44,7 +53,7 @@ export class WhereBuilder<Entity> {
   ): Where {
     return where.andWhere(
       new Brackets((qb) => filters.reduce((w, f) => qb.andWhere(this.createBrackets(f, relationNames, alias)), qb))
-    );
+    )
   }
 
   /**
@@ -55,7 +64,7 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterOr<Where extends WhereExpression>(
+  private filterOr<Where extends WhereExpressionBuilder>(
     where: Where,
     filter: Filter<Entity>[],
     relationNames: NestedRecord,
@@ -63,11 +72,11 @@ export class WhereBuilder<Entity> {
   ): Where {
     return where.andWhere(
       new Brackets((qb) => filter.reduce((w, f) => qb.orWhere(this.createBrackets(f, relationNames, alias)), qb))
-    );
+    )
   }
 
   /**
-   * Wraps a filter in brackes to ensure precedence.
+   * Wraps a filter in brackets to ensure precedence.
    * ```
    * {a: { eq: 1 } } // "(a = 1)"
    * {a: { eq: 1 }, b: { gt: 2 } } // "((a = 1) AND (b > 2))"
@@ -77,7 +86,7 @@ export class WhereBuilder<Entity> {
    * @param alias - optional alias to use to qualify an identifier
    */
   private createBrackets(filter: Filter<Entity>, relationNames: NestedRecord, alias?: string): Brackets {
-    return new Brackets((qb) => this.build(qb, filter, relationNames, alias));
+    return new Brackets((qb) => this.build(qb, filter, relationNames, alias))
   }
 
   /**
@@ -87,7 +96,7 @@ export class WhereBuilder<Entity> {
    * @param relationNames - the relations tree.
    * @param alias - optional alias to use to qualify an identifier
    */
-  private filterFields<Where extends WhereExpression>(
+  private filterFields<Where extends WhereExpressionBuilder>(
     where: Where,
     filter: Filter<Entity>,
     relationNames: NestedRecord,
@@ -101,20 +110,20 @@ export class WhereBuilder<Entity> {
           this.getField(filter, field as keyof Entity),
           relationNames,
           alias
-        );
+        )
       }
-      return w;
-    }, where);
+      return w
+    }, where)
   }
 
   private getField<K extends keyof FilterComparisons<Entity>>(
     obj: FilterComparisons<Entity>,
     field: K
   ): FilterFieldComparison<Entity[K]> {
-    return obj[field] as FilterFieldComparison<Entity[K]>;
+    return obj[field] as FilterFieldComparison<Entity[K]>
   }
 
-  private withFilterComparison<T extends keyof Entity, Where extends WhereExpression>(
+  private withFilterComparison<T extends keyof Entity, Where extends WhereExpressionBuilder>(
     where: Where,
     field: T,
     cmp: FilterFieldComparison<Entity[T]>,
@@ -122,20 +131,20 @@ export class WhereBuilder<Entity> {
     alias?: string
   ): Where {
     if (relationNames[field as string]) {
-      return this.withRelationFilter(where, field, cmp as Filter<Entity[T]>, relationNames[field as string]);
+      return this.withRelationFilter(where, field, cmp as Filter<Entity[T]>, relationNames[field as string])
     }
     return where.andWhere(
       new Brackets((qb) => {
-        const opts = Object.keys(cmp) as (keyof FilterFieldComparison<Entity[T]>)[];
+        const opts = Object.keys(cmp) as (keyof FilterFieldComparison<Entity[T]>)[]
         const sqlComparisons = opts.map((cmpType) =>
           this.sqlComparisonBuilder.build(field, cmpType, cmp[cmpType] as EntityComparisonField<Entity, T>, alias)
-        );
-        sqlComparisons.map(({ sql, params }) => qb.orWhere(sql, params));
+        )
+        sqlComparisons.map(({ sql, params }) => qb.orWhere(sql, params))
       })
-    );
+    )
   }
 
-  private withRelationFilter<T extends keyof Entity, Where extends WhereExpression>(
+  private withRelationFilter<T extends keyof Entity, Where extends WhereExpressionBuilder>(
     where: Where,
     field: T,
     cmp: Filter<Entity[T]>,
@@ -143,9 +152,9 @@ export class WhereBuilder<Entity> {
   ): Where {
     return where.andWhere(
       new Brackets((qb) => {
-        const relationWhere = new WhereBuilder<Entity[T]>();
-        return relationWhere.build(qb, cmp, relationNames, field as string);
+        const relationWhere = new WhereBuilder<Entity[T]>()
+        return relationWhere.build(qb, cmp, relationNames, field as string)
       })
-    );
+    )
   }
 }

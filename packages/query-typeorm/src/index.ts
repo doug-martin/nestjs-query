@@ -1,2 +1,2 @@
-export { TypeOrmQueryService, TypeOrmQueryServiceOpts } from './services';
-export { NestjsQueryTypeOrmModule } from './module';
+export { NestjsQueryTypeOrmModule } from './module'
+export { TypeOrmQueryService, TypeOrmQueryServiceOpts } from './services'

@@ -1,31 +1,32 @@
-import { AggregateResponse } from '@ptc-org/nestjs-query-core';
-import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { Test } from '@nestjs/testing';
-import { Sequelize } from 'sequelize-typescript';
-import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../src/app.module';
-import { TagDTO } from '../src/tag/dto/tag.dto';
-import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
-import { refresh } from './fixtures';
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import { AggregateResponse } from '@ptc-org/nestjs-query-core'
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql'
+import { Sequelize } from 'sequelize-typescript'
+import request from 'supertest'
+
+import { AppModule } from '../src/app.module'
+import { TagDTO } from '../src/tag/dto/tag.dto'
+import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto'
+import { refresh } from './fixtures'
 import {
   edgeNodes,
   pageInfoField,
-  tagFields,
-  todoItemFields,
   tagAggregateFields,
-  todoItemAggregateFields
-} from './graphql-fragments';
+  tagFields,
+  todoItemAggregateFields,
+  todoItemFields
+} from './graphql-fragments'
 
 describe('TagResolver (sequelize - e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule]
-    }).compile();
+    }).compile()
 
-    app = module.createNestApplication();
+    app = module.createNestApplication()
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -34,13 +35,13 @@ describe('TagResolver (sequelize - e2e)', () => {
         skipMissingProperties: false,
         forbidUnknownValues: true
       })
-    );
+    )
 
-    await app.init();
-    await refresh(app.get(Sequelize));
-  });
+    await app.init()
+    await refresh(app.get(Sequelize))
+  })
 
-  afterAll(() => refresh(app.get(Sequelize)));
+  afterAll(() => refresh(app.get(Sequelize)))
 
   const tags = [
     { id: '1', name: 'Urgent' },
@@ -48,7 +49,7 @@ describe('TagResolver (sequelize - e2e)', () => {
     { id: '3', name: 'Work' },
     { id: '4', name: 'Question' },
     { id: '5', name: 'Blocked' }
-  ];
+  ]
 
   describe('find one', () => {
     it(`should find a tag by id`, () =>
@@ -63,7 +64,7 @@ describe('TagResolver (sequelize - e2e)', () => {
           }
         }`
         })
-        .expect(200, { data: { tag: tags[0] } }));
+        .expect(200, { data: { tag: tags[0] } }))
 
     it(`should throw item not found on non existing tag`, () =>
       request(app.getHttpServer())
@@ -79,9 +80,9 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it(`should return todoItems as a connection`, () =>
       request(app.getHttpServer())
@@ -101,17 +102,17 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.tag.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.tag.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.id)).toEqual(['1', '2']);
-        }));
+          })
+          expect(totalCount).toBe(2)
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.id)).toEqual(['1', '2'])
+        }))
 
     it(`should return todoItems aggregate`, () =>
       request(app.getHttpServer())
@@ -129,7 +130,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TodoItemDTO>[] = body.data.tag.todoItemsAggregate;
+          const agg: AggregateResponse<TodoItemDTO>[] = body.data.tag.todoItemsAggregate
           expect(agg).toEqual([
             {
               avg: { id: 1.5 },
@@ -138,9 +139,9 @@ describe('TagResolver (sequelize - e2e)', () => {
               min: { description: null, id: '1', title: 'Create Entity' },
               sum: { id: 3 }
             }
-          ]);
-        }));
-  });
+          ])
+        }))
+  })
 
   describe('query', () => {
     it(`should return a connection`, () =>
@@ -159,17 +160,17 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node)).toEqual(tags);
-        }));
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
+          expect(edges.map((e) => e.node)).toEqual(tags)
+        }))
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -187,17 +188,17 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-          });
-          expect(totalCount).toBe(3);
-          expect(edges).toHaveLength(3);
-          expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3));
-        }));
+          })
+          expect(totalCount).toBe(3)
+          expect(edges).toHaveLength(3)
+          expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 3))
+        }))
 
     it(`should allow querying on todoItems`, () =>
       request(app.getHttpServer())
@@ -215,17 +216,17 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-          });
-          expect(totalCount).toBe(3);
-          expect(edges).toHaveLength(3);
-          expect(edges.map((e) => e.node)).toEqual([tags[0], tags[2], tags[4]]);
-        }));
+          })
+          expect(totalCount).toBe(3)
+          expect(edges).toHaveLength(3)
+          expect(edges.map((e) => e.node)).toEqual([tags[0], tags[2], tags[4]])
+        }))
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -243,17 +244,17 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0='
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse());
-        }));
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
+          expect(edges.map((e) => e.node)).toEqual(tags.slice().reverse())
+        }))
 
     describe('paging', () => {
       it(`should allow paging with the 'first' field`, () =>
@@ -272,17 +273,17 @@ describe('TagResolver (sequelize - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags
             expect(pageInfo).toEqual({
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-            });
-            expect(totalCount).toBe(5);
-            expect(edges).toHaveLength(2);
-            expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2));
-          }));
+            })
+            expect(totalCount).toBe(5)
+            expect(edges).toHaveLength(2)
+            expect(edges.map((e) => e.node)).toEqual(tags.slice(0, 2))
+          }))
 
       it(`should allow paging with the 'first' field and 'after'`, () =>
         request(app.getHttpServer())
@@ -300,19 +301,19 @@ describe('TagResolver (sequelize - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.tags
             expect(pageInfo).toEqual({
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0='
-            });
-            expect(totalCount).toBe(5);
-            expect(edges).toHaveLength(2);
-            expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4));
-          }));
-    });
-  });
+            })
+            expect(totalCount).toBe(5)
+            expect(edges).toHaveLength(2)
+            expect(edges.map((e) => e.node)).toEqual(tags.slice(2, 4))
+          }))
+    })
+  })
 
   describe('aggregate', () => {
     it(`should return a aggregate response`, () =>
@@ -329,7 +330,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO>[] = body.data.tagAggregate;
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.tagAggregate
           expect(res).toEqual([
             {
               count: { id: 5, name: 5, created: 5, updated: 5 },
@@ -338,8 +339,8 @@ describe('TagResolver (sequelize - e2e)', () => {
               min: { id: '1', name: 'Blocked' },
               max: { id: '5', name: 'Work' }
             }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow filtering`, () =>
       request(app.getHttpServer())
@@ -355,7 +356,7 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO>[] = body.data.tagAggregate;
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.tagAggregate
           expect(res).toEqual([
             {
               count: { id: 3, name: 3, created: 3, updated: 3 },
@@ -364,9 +365,9 @@ describe('TagResolver (sequelize - e2e)', () => {
               min: { id: '1', name: 'Blocked' },
               max: { id: '5', name: 'Work' }
             }
-          ]);
-        }));
-  });
+          ])
+        }))
+  })
 
   describe('create one', () => {
     it('should allow creating a tag', () =>
@@ -392,7 +393,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               name: 'Test Tag'
             }
           }
-        }));
+        }))
 
     it('should validate a tag', () =>
       request(app.getHttpServer())
@@ -412,10 +413,10 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty')
+        }))
+  })
 
   describe('create many', () => {
     it('should allow creating a tag', () =>
@@ -444,7 +445,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               { id: '8', name: 'Create Many Tag - 2' }
             ]
           }
-        }));
+        }))
 
     it('should validate a tag', () =>
       request(app.getHttpServer())
@@ -464,10 +465,10 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty')
+        }))
+  })
 
   describe('update one', () => {
     it('should allow updating a tag', () =>
@@ -494,7 +495,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               name: 'Update Test Tag'
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -514,9 +515,9 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "ID!" was not provided.');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "UpdateOneTagInput.id" of required type "ID!" was not provided.')
+        }))
 
     it('should validate an update', () =>
       request(app.getHttpServer())
@@ -537,10 +538,10 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('name should not be empty')
+        }))
+  })
 
   describe('update many', () => {
     it('should allow updating a tag', () =>
@@ -566,7 +567,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               updatedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -586,11 +587,11 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTagsInput.filter" of required type "TagUpdateFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -611,10 +612,10 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('delete one', () => {
     it('should allow deleting a tag', () =>
@@ -638,7 +639,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               name: 'Update Test Tag'
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -656,10 +657,10 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneTagInput.id" of required type "ID!" was not provided.');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "DeleteOneTagInput.id" of required type "ID!" was not provided.')
+        }))
+  })
 
   describe('delete many', () => {
     it('should allow updating a tag', () =>
@@ -684,7 +685,7 @@ describe('TagResolver (sequelize - e2e)', () => {
               deletedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -702,11 +703,11 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTagsInput.filter" of required type "TagDeleteFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -726,10 +727,10 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('addTodoItemsToTag', () => {
     it('allow adding subTasks to a tag', () =>
@@ -756,25 +757,25 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems;
-          expect(body.data.addTodoItemsToTag.id).toBe('1');
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.addTodoItemsToTag.todoItems
+          expect(body.data.addTodoItemsToTag.id).toBe('1')
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
           expect(edges.map((e) => e.node.title).sort()).toEqual([
             'Add Todo Item Resolver',
             'Create Entity',
             'Create Entity Service',
             'Create Nest App',
             'How to create item With Sub Tasks'
-          ]);
-        }));
-  });
+          ])
+        }))
+  })
 
   describe('removeTodoItemsFromTag', () => {
     it('allow removing todoItems from a tag', () =>
@@ -801,21 +802,21 @@ describe('TagResolver (sequelize - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems;
-          expect(body.data.removeTodoItemsFromTag.id).toBe('1');
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.removeTodoItemsFromTag.todoItems
+          expect(body.data.removeTodoItemsFromTag.id).toBe('1')
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App']);
-        }));
-  });
+          })
+          expect(totalCount).toBe(2)
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.title).sort()).toEqual(['Create Entity', 'Create Nest App'])
+        }))
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

@@ -43,7 +43,6 @@ type TestConnection {
 type Query {
   test: TestConnection!
 }
-
 `;
 
 exports[`CursorConnectionType should create the connection SDL with totalCount if enabled 1`] = `
@@ -104,5 +103,4 @@ type TestTotalCountConnection {
 type Query {
   test: TestTotalCountConnection!
 }
-
 `;

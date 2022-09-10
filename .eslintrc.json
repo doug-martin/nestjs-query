@@ -1,7 +1,12 @@
 {
   "root": true,
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx"],
+  "ignorePatterns": [
+    "**/*"
+  ],
+  "plugins": [
+    "@nrwl/nx",
+    "simple-import-sort"
+  ],
   "extends": [
     "airbnb-typescript/base",
     "eslint:recommended",
@@ -19,7 +24,12 @@
   },
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": [
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx"
+      ],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
@@ -29,19 +39,33 @@
             "depConstraints": [
               {
                 "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "onlyDependOnLibsWithTags": [
+                  "*"
+                ]
               }
             ]
           }
+        ],
+        "semi": [
+          "warn",
+          "never"
         ]
       }
     },
     {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "extends": [
+        "plugin:@nrwl/nx/typescript"
+      ],
       "rules": {
         // airbnb default is 1
-        "max-classes-per-file": ["error", 5],
+        "max-classes-per-file": [
+          "error",
+          5
+        ],
         // never allow default export
         "import/prefer-default-export": "off",
         // never allow default export
@@ -53,20 +77,64 @@
         // airbnb default this doesn't work when using parameter decorators.
         "@typescript-eslint/no-useless-constructor": "off",
         // override airbnb to allow class interface merging
-        "@typescript-eslint/no-redeclare": ["error", {"ignoreDeclarationMerge": true}],
-        "@typescript-eslint/no-unsafe-assignment": "off"
+        "@typescript-eslint/no-redeclare": [
+          "error",
+          {
+            "ignoreDeclarationMerge": true
+          }
+        ],
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "simple-import-sort/imports": [
+          "warn",
+          {
+            "groups": [
+              // Packages. `react` related packages come first.
+              [
+                "^react",
+                "^@?\\w"
+              ],
+              // "type" imports.
+              [
+                "^.*\\u0000$"
+              ],
+              // Absolute imports and other imports such as Vue-style `@/foo`.
+              // Anything not matched in another group.
+              [
+                "^"
+              ],
+              // Relative imports.
+              // Anything that starts with a dot.
+              [
+                "^\\."
+              ]
+            ]
+          }
+        ],
+        "simple-import-sort/exports": "warn"
       }
     },
     {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
+      "extends": [
+        "plugin:@nrwl/nx/javascript"
+      ],
       "rules": {}
     },
     {
-      "files": ["*.spec.ts", "*/__fixtures__/*.ts"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "files": [
+        "*.spec.ts",
+        "*/__fixtures__/*.ts"
+      ],
+      "extends": [
+        "plugin:@nrwl/nx/typescript"
+      ],
       "rules": {
-        "max-classes-per-file": ["off"],
+        "max-classes-per-file": [
+          "off"
+        ],
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",

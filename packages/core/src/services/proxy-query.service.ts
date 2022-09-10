@@ -1,4 +1,4 @@
-import { Class, DeepPartial } from '../common';
+import { Class, DeepPartial } from '../common'
 import {
   AggregateQuery,
   AggregateResponse,
@@ -12,8 +12,8 @@ import {
   Query,
   UpdateManyResponse,
   UpdateOneOptions
-} from '../interfaces';
-import { QueryService } from './query.service';
+} from '../interfaces'
+import { QueryService } from './query.service'
 
 export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> implements QueryService<DTO, C, U> {
   constructor(readonly proxied: QueryService<DTO, C, U>) {}
@@ -24,7 +24,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationIds: (string | number)[],
     opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
-    return this.proxied.addRelations(relationName, id, relationIds, opts);
+    return this.proxied.addRelations(relationName, id, relationIds, opts)
   }
 
   removeRelation<Relation>(
@@ -33,7 +33,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationId: string | number,
     opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
-    return this.proxied.removeRelation(relationName, id, relationId, opts);
+    return this.proxied.removeRelation(relationName, id, relationId, opts)
   }
 
   removeRelations<Relation>(
@@ -42,7 +42,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationIds: (string | number)[],
     opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
-    return this.proxied.removeRelations(relationName, id, relationIds, opts);
+    return this.proxied.removeRelations(relationName, id, relationIds, opts)
   }
 
   setRelations<Relation>(
@@ -51,7 +51,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationIds: (string | number)[],
     opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
-    return this.proxied.setRelations(relationName, id, relationIds, opts);
+    return this.proxied.setRelations(relationName, id, relationIds, opts)
   }
 
   setRelation<Relation>(
@@ -60,7 +60,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationId: string | number,
     opts?: ModifyRelationOptions<DTO, Relation>
   ): Promise<DTO> {
-    return this.proxied.setRelation(relationName, id, relationId, opts);
+    return this.proxied.setRelation(relationName, id, relationId, opts)
   }
 
   /**
@@ -75,7 +75,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationName: string,
     dtos: DTO[],
     query: Query<Relation>
-  ): Promise<Map<DTO, Relation[]>>;
+  ): Promise<Map<DTO, Relation[]>>
 
   /**
    * Query for an array of relations.
@@ -89,7 +89,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationName: string,
     dto: DTO,
     query: Query<Relation>
-  ): Promise<Relation[]>;
+  ): Promise<Relation[]>
 
   async queryRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -98,9 +98,9 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     query: Query<Relation>
   ): Promise<Relation[] | Map<DTO, Relation[]>> {
     if (Array.isArray(dto)) {
-      return this.proxied.queryRelations(RelationClass, relationName, dto, query);
+      return this.proxied.queryRelations(RelationClass, relationName, dto, query)
     }
-    return this.proxied.queryRelations(RelationClass, relationName, dto, query);
+    return this.proxied.queryRelations(RelationClass, relationName, dto, query)
   }
 
   countRelations<Relation>(
@@ -108,14 +108,14 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationName: string,
     dtos: DTO[],
     filter: Filter<Relation>
-  ): Promise<Map<DTO, number>>;
+  ): Promise<Map<DTO, number>>
 
   countRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: DTO,
     filter: Filter<Relation>
-  ): Promise<number>;
+  ): Promise<number>
 
   async countRelations<Relation>(
     RelationClass: Class<Relation>,
@@ -124,9 +124,9 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     filter: Filter<Relation>
   ): Promise<number | Map<DTO, number>> {
     if (Array.isArray(dto)) {
-      return this.proxied.countRelations(RelationClass, relationName, dto, filter);
+      return this.proxied.countRelations(RelationClass, relationName, dto, filter)
     }
-    return this.proxied.countRelations(RelationClass, relationName, dto, filter);
+    return this.proxied.countRelations(RelationClass, relationName, dto, filter)
   }
 
   /**
@@ -141,7 +141,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationName: string,
     dtos: DTO[],
     opts?: FindRelationOptions<Relation>
-  ): Promise<Map<DTO, Relation | undefined>>;
+  ): Promise<Map<DTO, Relation | undefined>>
 
   /**
    * Finds a single relation.
@@ -155,7 +155,7 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     relationName: string,
     dto: DTO,
     opts?: FindRelationOptions<Relation>
-  ): Promise<Relation | undefined>;
+  ): Promise<Relation | undefined>
 
   async findRelation<Relation>(
     RelationClass: Class<Relation>,
@@ -164,53 +164,53 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     opts?: FindRelationOptions<Relation>
   ): Promise<(Relation | undefined) | Map<DTO, Relation | undefined>> {
     if (Array.isArray(dto)) {
-      return this.proxied.findRelation(RelationClass, relationName, dto, opts);
+      return this.proxied.findRelation(RelationClass, relationName, dto, opts)
     }
-    return this.proxied.findRelation(RelationClass, relationName, dto, opts);
+    return this.proxied.findRelation(RelationClass, relationName, dto, opts)
   }
 
   createMany(items: C[]): Promise<DTO[]> {
-    return this.proxied.createMany(items);
+    return this.proxied.createMany(items)
   }
 
   createOne(item: C): Promise<DTO> {
-    return this.proxied.createOne(item);
+    return this.proxied.createOne(item)
   }
 
   async deleteMany(filter: Filter<DTO>): Promise<DeleteManyResponse> {
-    return this.proxied.deleteMany(filter);
+    return this.proxied.deleteMany(filter)
   }
 
   deleteOne(id: number | string, opts?: DeleteOneOptions<DTO>): Promise<DTO> {
-    return this.proxied.deleteOne(id, opts);
+    return this.proxied.deleteOne(id, opts)
   }
 
   async findById(id: string | number, opts?: FindByIdOptions<DTO>): Promise<DTO | undefined> {
-    return this.proxied.findById(id, opts);
+    return this.proxied.findById(id, opts)
   }
 
   getById(id: string | number, opts?: GetByIdOptions<DTO>): Promise<DTO> {
-    return this.proxied.getById(id, opts);
+    return this.proxied.getById(id, opts)
   }
 
   query(query: Query<DTO>): Promise<DTO[]> {
-    return this.proxied.query(query);
+    return this.proxied.query(query)
   }
 
   aggregate(filter: Filter<DTO>, query: AggregateQuery<DTO>): Promise<AggregateResponse<DTO>[]> {
-    return this.proxied.aggregate(filter, query);
+    return this.proxied.aggregate(filter, query)
   }
 
   count(filter: Filter<DTO>): Promise<number> {
-    return this.proxied.count(filter);
+    return this.proxied.count(filter)
   }
 
   updateMany(update: U, filter: Filter<DTO>): Promise<UpdateManyResponse> {
-    return this.proxied.updateMany(update, filter);
+    return this.proxied.updateMany(update, filter)
   }
 
   updateOne(id: string | number, update: U, opts?: UpdateOneOptions<DTO>): Promise<DTO> {
-    return this.proxied.updateOne(id, update, opts);
+    return this.proxied.updateOne(id, update, opts)
   }
 
   aggregateRelations<Relation>(
@@ -219,14 +219,14 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     dto: DTO,
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>
-  ): Promise<AggregateResponse<Relation>[]>;
+  ): Promise<AggregateResponse<Relation>[]>
   aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
     dtos: DTO[],
     filter: Filter<Relation>,
     aggregate: AggregateQuery<Relation>
-  ): Promise<Map<DTO, AggregateResponse<Relation>[]>>;
+  ): Promise<Map<DTO, AggregateResponse<Relation>[]>>
   async aggregateRelations<Relation>(
     RelationClass: Class<Relation>,
     relationName: string,
@@ -235,8 +235,8 @@ export class ProxyQueryService<DTO, C = DeepPartial<DTO>, U = DeepPartial<DTO>> 
     aggregate: AggregateQuery<Relation>
   ): Promise<AggregateResponse<Relation>[] | Map<DTO, AggregateResponse<Relation>[]>> {
     if (Array.isArray(dto)) {
-      return this.proxied.aggregateRelations(RelationClass, relationName, dto, filter, aggregate);
+      return this.proxied.aggregateRelations(RelationClass, relationName, dto, filter, aggregate)
     }
-    return this.proxied.aggregateRelations(RelationClass, relationName, dto, filter, aggregate);
+    return this.proxied.aggregateRelations(RelationClass, relationName, dto, filter, aggregate)
   }
 }

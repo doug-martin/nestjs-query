@@ -76,7 +76,6 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;
 
 exports[`DeleteResolver #deleteMany should not expose delete many method if disabled 1`] = `
@@ -102,7 +101,6 @@ input DeleteOneTestResolverDTOInput {
   """The id of the record to delete."""
   id: ID!
 }
-
 `;
 
 exports[`DeleteResolver #deleteOne should not expose delete one method if disabled 1`] = `
@@ -169,7 +167,6 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;
 
 exports[`DeleteResolver #deleteOne should use the provided DeleteOneInput type 1`] = `
@@ -247,7 +244,6 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;
 
 exports[`DeleteResolver deleted subscription should add subscription types if enableSubscriptions is true 1`] = `
@@ -342,7 +338,6 @@ input TestResolverDTOSubscriptionFilter {
   id: IDFilterComparison
   stringField: StringFieldComparison
 }
-
 `;
 
 exports[`DeleteResolver deleted subscription should add subscription types if many.enableSubscriptions is true 1`] = `
@@ -424,7 +419,6 @@ input StringFieldComparison {
 type Subscription {
   deletedManyTestResolverDTOS: DeleteManyResponse!
 }
-
 `;
 
 exports[`DeleteResolver deleted subscription should add subscription types if one.enableSubscriptions is true 1`] = `
@@ -518,7 +512,6 @@ input TestResolverDTOSubscriptionFilter {
   id: IDFilterComparison
   stringField: StringFieldComparison
 }
-
 `;
 
 exports[`DeleteResolver deleted subscription should not expose subscriptions if enableSubscriptions is false 1`] = `
@@ -596,7 +589,6 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;
 
 exports[`DeleteResolver should create a DeleteResolver for the DTO 1`] = `
@@ -674,7 +666,6 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;
 
 exports[`DeleteResolver should not expose delete methods if disabled 1`] = `
@@ -686,7 +677,6 @@ type TestResolverDTO {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`DeleteResolver should use the dtoName if provided 1`] = `
@@ -764,7 +754,6 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;
 
 exports[`DeleteResolver should use the many.name option for the deleteMany if provided 1`] = `
@@ -842,7 +831,6 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;
 
 exports[`DeleteResolver should use the one.name option for the deleteOne if provided 1`] = `
@@ -920,5 +908,4 @@ input StringFieldComparison {
   in: [String!]
   notIn: [String!]
 }
-
 `;

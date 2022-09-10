@@ -6,22 +6,15 @@ const target = process.argv[2]
 const headRef = process.argv[5]
 const baseRef = process.argv[6]
 
-const nxArgs = headRef !== baseRef && baseRef !== 'empty'
-  ? `--head=${headRef} --base=${baseRef}`
-  : '--all'
+const nxArgs = headRef !== baseRef && baseRef !== 'empty' ? `--head=${headRef} --base=${baseRef}` : '--all'
 
-const buildAffectedCommand = [
-  'npx nx print-affected',
-  `--target=${target !== 'publish' ? target : 'version'}`,
-  nxArgs
-]
+const buildAffectedCommand = ['npx nx print-affected', `--target=${target !== 'publish' ? target : 'version'}`, nxArgs]
 
 const affectedCommand = buildAffectedCommand.join(' ')
 
 logger.info(`Running: ${affectedCommand}`)
 
-const affected = execSync(affectedCommand)
-  .toString('utf-8')
+const affected = execSync(affectedCommand).toString('utf-8')
 
 const affectedProjects = JSON.parse(affected)
   .tasks.map((task) => task.target.project)
@@ -33,26 +26,19 @@ if (affectedProjects.length > 0) {
     while (affectedProjects.length > 0) {
       const project = affectedProjects.shift()
 
+      if (['workspace', 'documentation'].includes(project)) {
+        continue
+      }
+
       // Try to Publish the package
       try {
         execSync(`npm publish ./dist/packages/${project} --access public`, { stdio: 'inherit' })
-
       } catch (err) {
         core.warning(`Error publishing ${project}`, err)
       }
     }
-
   } else {
-    const execCommand = [
-      'npx nx run-many',
-      `--target=${target}`,
-      `--projects=${affectedProjects.join(',')}`,
-    ]
-
-    if (target === 'version') {
-      execCommand.push('--baseBranch="master"')
-      execCommand.push('--changelogHeader=" "')
-    }
+    const execCommand = ['npx nx run-many', `--target=${target}`, `--projects=${affectedProjects.join(',')}`]
 
     const command = execCommand.join(' ')
 

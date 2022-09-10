@@ -1,28 +1,29 @@
-import { getQueryServiceToken, QueryService } from '@ptc-org/nestjs-query-core';
-import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { AppModule } from '../src/app.module';
-import { config } from '../src/config';
-import { AUTH_HEADER_NAME, USER_HEADER_NAME } from '../src/auth/constants';
-import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
-import { TagDTO } from '../src/tag/dto/tag.dto';
-import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
-import { refresh } from './fixtures';
-import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments';
-import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import { getQueryServiceToken, QueryService } from '@ptc-org/nestjs-query-core'
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql'
+import request from 'supertest'
+import { Connection } from 'typeorm'
+
+import { AppModule } from '../src/app.module'
+import { AUTH_HEADER_NAME, USER_HEADER_NAME } from '../src/auth/constants'
+import { config } from '../src/config'
+import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto'
+import { TagDTO } from '../src/tag/dto/tag.dto'
+import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto'
+import { TodoItemEntity } from '../src/todo-item/todo-item.entity'
+import { refresh } from './fixtures'
+import { edgeNodes, pageInfoField, subTaskFields, tagFields, todoItemFields } from './graphql-fragments'
 
 describe('TodoItemResolver (hooks - e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule]
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -31,13 +32,13 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         skipMissingProperties: false,
         forbidUnknownValues: true
       })
-    );
+    )
 
-    await app.init();
-    await refresh(app.get(Connection));
-  });
+    await app.init()
+    await refresh(app.get(Connection))
+  })
 
-  afterAll(() => refresh(app.get(Connection)));
+  afterAll(() => refresh(app.get(Connection)))
 
   describe('find one', () => {
     it(`should find a todo item by id`, () =>
@@ -63,8 +64,8 @@ describe('TodoItemResolver (hooks - e2e)', () => {
                 description: null
               }
             }
-          });
-        }));
+          })
+        }))
 
     it(`should throw item not found on non existing todo item`, () =>
       request(app.getHttpServer())
@@ -80,9 +81,9 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it(`should return subTasks as a connection`, () =>
       request(app.getHttpServer())
@@ -101,16 +102,16 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(3);
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
-        }));
+          })
+          expect(edges).toHaveLength(3)
+          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'))
+        }))
 
     it(`should return tags as a connection`, () =>
       request(app.getHttpServer())
@@ -129,17 +130,17 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.todoItem.tags;
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.todoItem.tags
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        }));
-  });
+          })
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home'])
+        }))
+  })
 
   describe('query', () => {
     it(`should return a connection`, () =>
@@ -157,14 +158,14 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-          });
-          expect(edges).toHaveLength(5);
+          })
+          expect(edges).toHaveLength(5)
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null },
             { id: '2', title: 'Create Entity', completed: false, description: null },
@@ -176,8 +177,8 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               completed: false,
               description: null
             }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -194,20 +195,20 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-          });
-          expect(edges).toHaveLength(3);
+          })
+          expect(edges).toHaveLength(3)
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null },
             { id: '2', title: 'Create Entity', completed: false, description: null },
             { id: '3', title: 'Create Entity Service', completed: false, description: null }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying on subTasks`, () =>
       request(app.getHttpServer())
@@ -224,20 +225,20 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-          });
-          expect(edges).toHaveLength(2);
+          })
+          expect(edges).toHaveLength(2)
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null },
             { id: '2', title: 'Create Entity', completed: false, description: null }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow querying on tags`, () =>
       request(app.getHttpServer())
@@ -254,20 +255,20 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-          });
-          expect(edges).toHaveLength(2);
+          })
+          expect(edges).toHaveLength(2)
 
           expect(edges.map((e) => e.node)).toEqual([
             { id: '1', title: 'Create Nest App', completed: true, description: null },
             { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null }
-          ]);
-        }));
+          ])
+        }))
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -284,14 +285,14 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
             endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjV9XX0='
-          });
-          expect(edges).toHaveLength(5);
+          })
+          expect(edges).toHaveLength(5)
           expect(edges.map((e) => e.node)).toEqual([
             {
               id: '5',
@@ -303,8 +304,8 @@ describe('TodoItemResolver (hooks - e2e)', () => {
             { id: '3', title: 'Create Entity Service', completed: false, description: null },
             { id: '2', title: 'Create Entity', completed: false, description: null },
             { id: '1', title: 'Create Nest App', completed: true, description: null }
-          ]);
-        }));
+          ])
+        }))
 
     describe('paging', () => {
       it(`should allow paging with the 'first' field`, () =>
@@ -322,19 +323,19 @@ describe('TodoItemResolver (hooks - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
             expect(pageInfo).toEqual({
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjJ9XX0=',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjF9XX0='
-            });
-            expect(edges).toHaveLength(2);
+            })
+            expect(edges).toHaveLength(2)
             expect(edges.map((e) => e.node)).toEqual([
               { id: '1', title: 'Create Nest App', completed: true, description: null },
               { id: '2', title: 'Create Entity', completed: false, description: null }
-            ]);
-          }));
+            ])
+          }))
 
       it(`should allow paging with the 'first' field and 'after'`, () =>
         request(app.getHttpServer())
@@ -351,14 +352,14 @@ describe('TodoItemResolver (hooks - e2e)', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
             expect(pageInfo).toEqual({
               endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjR9XX0=',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOjN9XX0='
-            });
-            expect(edges).toHaveLength(2);
+            })
+            expect(edges).toHaveLength(2)
             expect(edges.map((e) => e.node)).toEqual([
               { id: '3', title: 'Create Entity Service', completed: false, description: null },
               {
@@ -367,10 +368,10 @@ describe('TodoItemResolver (hooks - e2e)', () => {
                 completed: false,
                 description: null
               }
-            ]);
-          }));
-    });
-  });
+            ])
+          }))
+    })
+  })
 
   describe('create one', () => {
     it('should require a header secret', () =>
@@ -392,9 +393,9 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow creating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -422,7 +423,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               completed: false
             }
           }
-        }));
+        }))
 
     it('should call the beforeCreateOne hook', () =>
       request(app.getHttpServer())
@@ -456,7 +457,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               createdBy: 'e2e@nestjs-query.com'
             }
           }
-        }));
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -479,10 +480,10 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('create many', () => {
     it('should require a header secret', () =>
@@ -505,9 +506,9 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
 
     it('should allow creating multiple todoItems', () =>
       request(app.getHttpServer())
@@ -538,7 +539,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               { id: '9', title: 'Many Test Todo 2', completed: true }
             ]
           }
-        }));
+        }))
 
     it('should call the beforeCreateMany hook when creating multiple todoItems', () =>
       request(app.getHttpServer())
@@ -573,7 +574,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               { id: '11', title: 'Many Create Hook 2', completed: true, createdBy: 'e2e@nestjs-query.com' }
             ]
           }
-        }));
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -596,10 +597,10 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update one', () => {
     it('should require a header secret', () =>
@@ -622,9 +623,9 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow updating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -653,7 +654,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               completed: true
             }
           }
-        }));
+        }))
 
     it('should call the beforeUpdateOne hook', () =>
       request(app.getHttpServer())
@@ -688,7 +689,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               updatedBy: 'e2e@nestjs-query.com'
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -711,9 +712,9 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.')
+        }))
 
     it('should validate an update', () =>
       request(app.getHttpServer())
@@ -737,10 +738,10 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update many', () => {
     it('should require a header secret', () =>
@@ -761,9 +762,9 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow updating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -788,7 +789,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               updatedCount: 2
             }
           }
-        }));
+        }))
 
     it('should call the beforeUpdateMany hook when updating todoItem', () =>
       request(app.getHttpServer())
@@ -819,8 +820,8 @@ describe('TodoItemResolver (hooks - e2e)', () => {
           }
         })
         .then(async () => {
-          const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
-          const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } });
+          const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity))
+          const todoItems = await queryService.query({ filter: { id: { in: [10, 11] } } })
           expect(
             todoItems.map((ti) => ({
               id: ti.id,
@@ -831,8 +832,8 @@ describe('TodoItemResolver (hooks - e2e)', () => {
           ).toEqual([
             { id: 10, title: 'Update Many Hook', completed: true, updatedBy: 'e2e@nestjs-query.com' },
             { id: 11, title: 'Update Many Hook', completed: true, updatedBy: 'e2e@nestjs-query.com' }
-          ]);
-        }));
+          ])
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -853,11 +854,11 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -879,10 +880,10 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('delete one', () => {
     it('should require a header secret', () =>
@@ -902,9 +903,9 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow deleting a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -930,7 +931,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               completed: true
             }
           }
-        }));
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -951,10 +952,10 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.')
+        }))
+  })
 
   describe('delete many', () => {
     it('should require a header secret', () =>
@@ -974,9 +975,9 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow updating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1000,7 +1001,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
               deletedCount: 2
             }
           }
-        }));
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -1019,11 +1020,11 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
             'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
-          );
-        }));
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -1044,10 +1045,10 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('addSubTasksToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -1075,18 +1076,18 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks;
-          expect(body.data.addSubTasksToTodoItem.id).toBe('1');
+          const { edges, pageInfo }: CursorConnectionType<SubTaskDTO> = body.data.addSubTasksToTodoItem.subTasks
+          expect(body.data.addSubTasksToTodoItem.id).toBe('1')
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjU=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(6);
-          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'));
-        }));
-  });
+          })
+          expect(edges).toHaveLength(6)
+          edges.forEach((e) => expect(e.node.todoItemId).toBe('1'))
+        }))
+  })
 
   describe('addTagsToTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -1114,18 +1115,18 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
-          expect(body.data.addTagsToTodoItem.id).toBe('1');
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags
+          expect(body.data.addTagsToTodoItem.id).toBe('1')
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
-        }));
-  });
+          })
+          expect(edges).toHaveLength(5)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked'])
+        }))
+  })
 
   describe('removeTagsFromTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -1153,28 +1154,28 @@ describe('TodoItemResolver (hooks - e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
-          expect(body.data.removeTagsFromTodoItem.id).toBe('1');
+          const { edges, pageInfo }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags
+          expect(body.data.removeTagsFromTodoItem.id).toBe('1')
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
-          });
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        }));
-  });
+          })
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home'])
+        }))
+  })
 
   describe('markAllAsCompleted', () => {
     it('should call the beforeUpdateMany hook when marking all items as completed', async () => {
-      const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
+      const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity))
       const todoItems = await queryService.createMany([
         { title: 'To Be Marked As Completed - 1', completed: false },
         { title: 'To Be Marked As Completed - 2', completed: false }
-      ]);
-      expect(todoItems).toHaveLength(2);
-      const ids = todoItems.map((ti) => ti.id);
+      ])
+      expect(todoItems).toHaveLength(2)
+      const ids = todoItems.map((ti) => ti.id)
       return request(app.getHttpServer())
         .post('/graphql')
         .set({
@@ -1203,7 +1204,7 @@ describe('TodoItemResolver (hooks - e2e)', () => {
           }
         })
         .then(async () => {
-          const updatedTodoItems = await queryService.query({ filter: { id: { in: ids } } });
+          const updatedTodoItems = await queryService.query({ filter: { id: { in: ids } } })
           expect(
             updatedTodoItems.map((ti) => ({
               title: ti.title,
@@ -1213,12 +1214,12 @@ describe('TodoItemResolver (hooks - e2e)', () => {
           ).toEqual([
             { title: 'To Be Marked As Completed - 1', completed: true, updatedBy: 'e2e@nestjs-query.com' },
             { title: 'To Be Marked As Completed - 2', completed: true, updatedBy: 'e2e@nestjs-query.com' }
-          ]);
-        });
-    });
-  });
+          ])
+        })
+    })
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

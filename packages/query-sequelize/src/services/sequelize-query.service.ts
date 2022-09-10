@@ -1,24 +1,25 @@
+import { NotFoundException } from '@nestjs/common'
 import {
-  Query,
-  DeleteManyResponse,
-  UpdateManyResponse,
-  DeepPartial,
-  QueryService,
-  Filter,
   AggregateQuery,
   AggregateResponse,
+  DeepPartial,
+  DeleteManyResponse,
+  DeleteOneOptions,
+  Filter,
   FindByIdOptions,
   GetByIdOptions,
-  UpdateOneOptions,
-  DeleteOneOptions
-} from '@ptc-org/nestjs-query-core';
-import lodashPick from 'lodash.pick';
-import { Model, ModelCtor } from 'sequelize-typescript';
-import { WhereOptions } from 'sequelize';
-import { NotFoundException } from '@nestjs/common';
-import { FilterQueryBuilder, AggregateBuilder } from '../query';
-import { RelationQueryService } from './relation-query.service';
-import { MakeNullishOptional } from 'sequelize/types/utils';
+  Query,
+  QueryService,
+  UpdateManyResponse,
+  UpdateOneOptions
+} from '@ptc-org/nestjs-query-core'
+import lodashPick from 'lodash.pick'
+import { WhereOptions } from 'sequelize'
+import { MakeNullishOptional } from 'sequelize/types/utils'
+import { Model, ModelCtor } from 'sequelize-typescript'
+
+import { AggregateBuilder, FilterQueryBuilder } from '../query'
+import { RelationQueryService } from './relation-query.service'
 
 /**
  * Base class for all query services that use a `sequelize` Model.
@@ -40,11 +41,11 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
   extends RelationQueryService<Entity>
   implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
 {
-  readonly filterQueryBuilder: FilterQueryBuilder<Entity>;
+  readonly filterQueryBuilder: FilterQueryBuilder<Entity>
 
   constructor(readonly model: ModelCtor<Entity>) {
-    super();
-    this.filterQueryBuilder = new FilterQueryBuilder<Entity>(model);
+    super()
+    this.filterQueryBuilder = new FilterQueryBuilder<Entity>(model)
   }
 
   /**
@@ -62,21 +63,21 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    */
   async query(query: Query<Entity>): Promise<Entity[]> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return this.model.findAll<Entity>(this.filterQueryBuilder.findOptions(query));
+    return this.model.findAll<Entity>(this.filterQueryBuilder.findOptions(query))
   }
 
   async aggregate(filter: Filter<Entity>, aggregate: AggregateQuery<Entity>): Promise<AggregateResponse<Entity>[]> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const result = await this.model.findAll(this.filterQueryBuilder.aggregateOptions({ filter }, aggregate));
+    const result = await this.model.findAll(this.filterQueryBuilder.aggregateOptions({ filter }, aggregate))
     if (!result) {
-      return [{}];
+      return [{}]
     }
-    return AggregateBuilder.convertToAggregateResponse(result as unknown as Record<string, unknown>[]);
+    return AggregateBuilder.convertToAggregateResponse(result as unknown as Record<string, unknown>[])
   }
 
   async count(filter: Filter<Entity>): Promise<number> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return this.model.count(this.filterQueryBuilder.countOptions({ filter }));
+    return this.model.count(this.filterQueryBuilder.countOptions({ filter }))
   }
 
   /**
@@ -91,11 +92,11 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    */
   async findById(id: string | number, opts?: FindByIdOptions<Entity>): Promise<Entity | undefined> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const model = await this.model.findOne<Entity>(this.filterQueryBuilder.findByIdOptions(id, opts ?? {}));
+    const model = await this.model.findOne<Entity>(this.filterQueryBuilder.findByIdOptions(id, opts ?? {}))
     if (!model) {
-      return undefined;
+      return undefined
     }
-    return model;
+    return model
   }
 
   /**
@@ -113,11 +114,11 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param opts - Additional options
    */
   async getById(id: string | number, opts?: GetByIdOptions<Entity>): Promise<Entity> {
-    const entity = await this.findById(id, opts ?? {});
+    const entity = await this.findById(id, opts ?? {})
     if (!entity) {
-      throw new NotFoundException(`Unable to find ${this.model.name} with id: ${id}`);
+      throw new NotFoundException(`Unable to find ${this.model.name} with id: ${id}`)
     }
-    return entity;
+    return entity
   }
 
   /**
@@ -130,9 +131,9 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param record - The entity to create.
    */
   async createOne(record: DeepPartial<Entity>): Promise<Entity> {
-    await this.ensureEntityDoesNotExist(record);
-    const changedValues = this.getChangedValues(record);
-    return this.model.create<Entity>(changedValues as MakeNullishOptional<Entity>);
+    await this.ensureEntityDoesNotExist(record)
+    const changedValues = this.getChangedValues(record)
+    return this.model.create<Entity>(changedValues as MakeNullishOptional<Entity>)
   }
 
   /**
@@ -148,9 +149,9 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param records - The entities to create.
    */
   async createMany(records: DeepPartial<Entity>[]): Promise<Entity[]> {
-    await Promise.all(records.map((r) => this.ensureEntityDoesNotExist(r)));
+    await Promise.all(records.map((r) => this.ensureEntityDoesNotExist(r)))
 
-    return this.model.bulkCreate<Entity>(records.map((r) => this.getChangedValues(r) as MakeNullishOptional<Entity>));
+    return this.model.bulkCreate<Entity>(records.map((r) => this.getChangedValues(r) as MakeNullishOptional<Entity>))
   }
 
   /**
@@ -165,12 +166,12 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param opts - Additional options.
    */
   async updateOne(id: number | string, update: DeepPartial<Entity>, opts?: UpdateOneOptions<Entity>): Promise<Entity> {
-    this.ensureIdIsNotPresent(update);
-    const entity = await this.getById(id, opts);
+    this.ensureIdIsNotPresent(update)
+    const entity = await this.getById(id, opts)
 
-    const changedValues = this.getChangedValues(update);
+    const changedValues = this.getChangedValues(update)
 
-    return entity.update(changedValues);
+    return entity.update(changedValues)
   }
 
   /**
@@ -187,12 +188,12 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param filter - A Filter used to find the records to update
    */
   async updateMany(update: DeepPartial<Entity>, filter: Filter<Entity>): Promise<UpdateManyResponse> {
-    this.ensureIdIsNotPresent(update);
+    this.ensureIdIsNotPresent(update)
 
-    const changedValues = this.getChangedValues(update);
+    const changedValues = this.getChangedValues(update)
 
-    const [count] = await this.model.update(changedValues, this.filterQueryBuilder.updateOptions({ filter }));
-    return { updatedCount: count };
+    const [count] = await this.model.update(changedValues, this.filterQueryBuilder.updateOptions({ filter }))
+    return { updatedCount: count }
   }
 
   /**
@@ -208,9 +209,9 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    * @param opts - Additional options.
    */
   async deleteOne(id: string | number, opts?: DeleteOneOptions<Entity>): Promise<Entity> {
-    const entity = await this.getById(id, opts);
-    await entity.destroy();
-    return entity;
+    const entity = await this.getById(id, opts)
+    await entity.destroy()
+    return entity
   }
 
   /**
@@ -228,56 +229,56 @@ export class SequelizeQueryService<Entity extends Model<Entity, Partial<Entity>>
    */
   async deleteMany(filter: Filter<Entity>): Promise<DeleteManyResponse> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const deletedCount = await this.model.destroy(this.filterQueryBuilder.destroyOptions({ filter }));
-    return { deletedCount: deletedCount || 0 };
+    const deletedCount = await this.model.destroy(this.filterQueryBuilder.destroyOptions({ filter }))
+    return { deletedCount: deletedCount || 0 }
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
   private getChangedValues(record: DeepPartial<Entity>): Partial<Entity> {
     if (record instanceof this.model) {
-      const recordEntity = record as Entity;
+      const recordEntity = record as Entity
 
-      const raw = recordEntity.get({ plain: true });
-      const changed = recordEntity.changed();
+      const raw = recordEntity.get({ plain: true })
+      const changed = recordEntity.changed()
       if (changed === false) {
-        return {};
+        return {}
       }
 
-      return lodashPick(raw, changed);
+      return lodashPick(raw, changed)
     }
 
-    return record as Partial<Entity>;
+    return record as Partial<Entity>
   }
 
   private async ensureEntityDoesNotExist(entity: DeepPartial<Entity>): Promise<void> {
-    const pks = this.primaryKeyValues(entity);
+    const pks = this.primaryKeyValues(entity)
 
     if (Object.keys(pks).length) {
-      const found = await this.model.findOne({ where: pks });
+      const found = await this.model.findOne({ where: pks })
 
       if (found) {
-        throw new Error('Entity already exists');
+        throw new Error('Entity already exists')
       }
     }
   }
 
   private ensureIdIsNotPresent(entity: DeepPartial<Entity>): void {
     if (Object.keys(this.primaryKeyValues(entity)).length) {
-      throw new Error('Id cannot be specified when updating');
+      throw new Error('Id cannot be specified when updating')
     }
   }
 
   private primaryKeyValues(entity: DeepPartial<Entity>): WhereOptions<Entity> {
-    const changed = this.getChangedValues(entity);
+    const changed = this.getChangedValues(entity)
 
     return this.model.primaryKeyAttributes.reduce((pks, pk) => {
-      const key = pk as keyof Entity;
+      const key = pk as keyof Entity
 
       if (key in changed && changed[key] !== undefined) {
-        return { ...pks, [pk]: changed[key] } as WhereOptions<Entity>;
+        return { ...pks, [pk]: changed[key] } as WhereOptions<Entity>
       }
 
-      return pks;
-    }, {} as WhereOptions<Entity>);
+      return pks
+    }, {} as WhereOptions<Entity>)
   }
 }

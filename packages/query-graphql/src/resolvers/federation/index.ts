@@ -1,1 +1,1 @@
-export { FederationResolver } from './federation.resolver';
+export { FederationResolver } from './federation.resolver'

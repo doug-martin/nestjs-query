@@ -3,4 +3,4 @@ export const DEFAULT_QUERY_OPTS = {
   maxResultsSize: 50,
   defaultSort: [],
   defaultFilter: {}
-};
+}

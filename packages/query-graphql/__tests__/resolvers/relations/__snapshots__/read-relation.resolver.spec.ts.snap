@@ -99,7 +99,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver many should not add read methods if disableRead is true 1`] = `
@@ -149,7 +148,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver many should not add sorting argument if disableSorting is true 1`] = `
@@ -269,7 +267,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver many should set the field to nullable if set to true 1`] = `
@@ -415,7 +412,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver many should use an offset connection if pagingStrategy is offset 1`] = `
@@ -555,7 +551,6 @@ type TestResolverDTORelationsConnection {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver many should use the dtoName if provided 1`] = `
@@ -701,7 +696,6 @@ type TestResolverDTOTestsConnection {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver many should use the object type name 1`] = `
@@ -847,7 +841,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver one should not add read one methods if disableRead is true 1`] = `
@@ -897,7 +890,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver one should set the field to nullable if set to true 1`] = `
@@ -948,7 +940,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver one should use the dtoName if provided 1`] = `
@@ -999,7 +990,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver one should use the object type name 1`] = `
@@ -1050,7 +1040,6 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;
 
 exports[`ReadRelationsResolver should not add read methods if one and many are empty 1`] = `
@@ -1100,5 +1089,4 @@ type OffsetPageInfo {
 type Query {
   test: TestResolverDTO!
 }
-
 `;

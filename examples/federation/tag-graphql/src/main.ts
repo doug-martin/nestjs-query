@@ -1,9 +1,10 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+
+import { AppModule } from './app.module'
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule)
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -13,10 +14,10 @@ async function bootstrap(): Promise<void> {
       skipMissingProperties: false,
       forbidUnknownValues: true
     })
-  );
+  )
 
-  await app.listen(3003);
+  await app.listen(3003)
 }
 
 // eslint-disable-next-line no-void
-void bootstrap();
+void bootstrap()

@@ -1,6 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsOptional, IsBoolean, IsString, IsNotEmpty } from 'class-validator';
-import { CustomIDScalar } from '../../common/custom-id.scalar';
+import { Field, InputType } from '@nestjs/graphql'
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+
+import { CustomIDScalar } from '../../common/custom-id.scalar'
 
 @InputType('SubTaskUpdate')
 export class SubTaskUpdateDTO {
@@ -8,21 +9,21 @@ export class SubTaskUpdateDTO {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  title?: string;
+  title?: string
 
   @Field({ nullable: true })
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  description?: string;
+  description?: string
 
   @Field({ nullable: true })
   @IsOptional()
   @IsBoolean()
-  completed?: boolean;
+  completed?: boolean
 
   @Field(() => CustomIDScalar, { nullable: true })
   @IsOptional()
   @IsNotEmpty()
-  todoItemId?: string;
+  todoItemId?: string
 }

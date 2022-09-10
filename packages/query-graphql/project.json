@@ -1,4 +1,5 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/query-graphql/src",
   "projectType": "library",
   "targets": {
@@ -29,6 +30,10 @@
         "updateBuildableProjectDepsInPackageJson": true,
         "buildableProjectDepsInPackageJsonType": "dependencies"
       }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {}
     }
   },
   "tags": [],

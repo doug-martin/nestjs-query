@@ -1,7 +1,8 @@
-import { AssemblerDeserializer, AssemblerSerializer } from '@ptc-org/nestjs-query-core';
-import { Table, PrimaryKey, Column, BelongsToMany, HasMany, HasOne, Model } from 'sequelize-typescript';
-import { TestEntityTestRelationEntity } from './test-entity-test-relation.entity';
-import { TestRelation } from './test-relation.entity';
+import { AssemblerDeserializer, AssemblerSerializer } from '@ptc-org/nestjs-query-core'
+import { BelongsToMany, Column, HasMany, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
+
+import { TestEntityTestRelationEntity } from './test-entity-test-relation.entity'
+import { TestRelation } from './test-relation.entity'
 
 @AssemblerSerializer((instance: TestEntity) => instance.get({ plain: true }))
 // eslint-disable-next-line @typescript-eslint/no-use-before-define,@typescript-eslint/ban-types
@@ -10,26 +11,26 @@ import { TestRelation } from './test-relation.entity';
 export class TestEntity extends Model<TestEntity, Partial<TestEntity>> {
   @PrimaryKey
   @Column({ field: 'test_entity_pk' })
-  testEntityPk!: string;
+  testEntityPk!: string
 
   @Column({ field: 'string_type' })
-  stringType!: string;
+  stringType!: string
 
   @Column({ field: 'bool_type' })
-  boolType!: boolean;
+  boolType!: boolean
 
   @Column({ field: 'number_type' })
-  numberType!: number;
+  numberType!: number
 
   @Column({ field: 'date_type' })
-  dateType!: Date;
+  dateType!: Date
 
   @HasMany(() => TestRelation)
-  testRelations?: TestRelation[];
+  testRelations?: TestRelation[]
 
   @BelongsToMany(() => TestRelation, () => TestEntityTestRelationEntity)
-  manyTestRelations?: TestRelation[];
+  manyTestRelations?: TestRelation[]
 
   @HasOne(() => TestRelation, 'oneTestEntityId')
-  oneTestRelation?: TestRelation;
+  oneTestRelation?: TestRelation
 }

@@ -13,5 +13,4 @@ input CreateOne {
 input FakeType {
   field: String!
 }
-
 `;

@@ -1,17 +1,18 @@
-import { Connection } from 'typeorm';
-import { UserEntity } from '../src/user/user.entity';
-import { executeTruncate } from '../../../helpers';
+import { Connection } from 'typeorm'
 
-const tables = ['user'];
-export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables);
+import { executeTruncate } from '../../../helpers'
+import { UserEntity } from '../src/user/user.entity'
+
+const tables = ['user']
+export const truncate = async (connection: Connection): Promise<void> => executeTruncate(connection, tables)
 
 export const refresh = async (connection: Connection): Promise<void> => {
-  await truncate(connection);
+  await truncate(connection)
 
-  const userRepo = connection.getRepository(UserEntity);
+  const userRepo = connection.getRepository(UserEntity)
   await userRepo.save([
     { name: 'User 1', email: 'user1@example.com' },
     { name: 'User 2', email: 'user2@example.com' },
     { name: 'User 3', email: 'user3@example.com' }
-  ]);
-};
+  ])
+}

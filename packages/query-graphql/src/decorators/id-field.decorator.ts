@@ -1,17 +1,18 @@
-import { Class, MetaValue, ValueReflector } from '@ptc-org/nestjs-query-core';
-import { Field, FieldOptions, ReturnTypeFunc } from '@nestjs/graphql';
-import { ID_FIELD_KEY } from './constants';
-import { FilterableField, FilterableFieldOptions } from './filterable-field.decorator';
+import { Field, FieldOptions, ReturnTypeFunc } from '@nestjs/graphql'
+import { Class, MetaValue, ValueReflector } from '@ptc-org/nestjs-query-core'
 
-const reflector = new ValueReflector(ID_FIELD_KEY);
+import { ID_FIELD_KEY } from './constants'
+import { FilterableField, FilterableFieldOptions } from './filterable-field.decorator'
+
+const reflector = new ValueReflector(ID_FIELD_KEY)
 type NoFilterIDFieldOptions = {
-  disableFilter: true;
-} & FieldOptions;
-export type IDFieldOptions = FilterableFieldOptions | NoFilterIDFieldOptions;
+  disableFilter: true
+} & FieldOptions
+export type IDFieldOptions = FilterableFieldOptions | NoFilterIDFieldOptions
 
 export interface IDFieldDescriptor {
-  propertyName: string;
-  returnTypeFunc: ReturnTypeFunc;
+  propertyName: string
+  returnTypeFunc: ReturnTypeFunc
 }
 
 /**
@@ -42,16 +43,16 @@ export function IDField(returnTypeFunc: ReturnTypeFunc, options?: IDFieldOptions
     reflector.set(target.constructor as Class<unknown>, {
       propertyName: propertyName.toString(),
       returnTypeFunc
-    });
-    const disableFilter = options && 'disableFilter' in options;
-    const FieldDecorator = disableFilter ? Field : FilterableField;
+    })
+    const disableFilter = options && 'disableFilter' in options
+    const FieldDecorator = disableFilter ? Field : FilterableField
     if (descriptor) {
-      return FieldDecorator(returnTypeFunc, options)(target, propertyName, descriptor);
+      return FieldDecorator(returnTypeFunc, options)(target, propertyName, descriptor)
     }
-    return FieldDecorator(returnTypeFunc, options)(target, propertyName);
-  };
+    return FieldDecorator(returnTypeFunc, options)(target, propertyName)
+  }
 }
 
 export function getIDField<DTO>(DTOClass: Class<DTO>): MetaValue<IDFieldDescriptor> {
-  return reflector.get<DTO, IDFieldDescriptor>(DTOClass, true);
+  return reflector.get<DTO, IDFieldDescriptor>(DTOClass, true)
 }

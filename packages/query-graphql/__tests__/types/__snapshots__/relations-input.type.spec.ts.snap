@@ -12,7 +12,6 @@ input RelationsCustomParentRelationIdInput {
   """The ids of the relations."""
   relationIds: [String!]!
 }
-
 `;
 
 exports[`RelationsInputType should create an input type with a custom parent id 1`] = `
@@ -27,7 +26,6 @@ input RelationsCustomParentIdInput {
   """The ids of the relations."""
   relationIds: [ID!]!
 }
-
 `;
 
 exports[`RelationsInputType should create an input type with a custom relation id 1`] = `
@@ -42,7 +40,6 @@ input RelationsCustomRelationIdInput {
   """The ids of the relations."""
   relationIds: [String!]!
 }
-
 `;
 
 exports[`RelationsInputType should create an input type with an id and relationIds fields 1`] = `
@@ -57,5 +54,4 @@ input RelationsInput {
   """The ids of the relations."""
   relationIds: [ID!]!
 }
-
 `;

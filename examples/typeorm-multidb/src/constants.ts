@@ -1,1 +1,1 @@
-export const USER_CONNECTION = 'user-connection';
+export const USER_CONNECTION = 'user-connection'

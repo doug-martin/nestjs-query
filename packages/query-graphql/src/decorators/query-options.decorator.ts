@@ -1,16 +1,17 @@
-import { Class, MetaValue, ValueReflector } from '@ptc-org/nestjs-query-core';
-import { QueryArgsTypeOpts } from '../types';
-import { QUERY_OPTIONS_KEY } from './constants';
+import { Class, MetaValue, ValueReflector } from '@ptc-org/nestjs-query-core'
 
-const valueReflector = new ValueReflector(QUERY_OPTIONS_KEY);
+import { QueryArgsTypeOpts } from '../types'
+import { QUERY_OPTIONS_KEY } from './constants'
 
-export type QueryOptionsDecoratorOpts<DTO> = QueryArgsTypeOpts<DTO>;
+const valueReflector = new ValueReflector(QUERY_OPTIONS_KEY)
+
+export type QueryOptionsDecoratorOpts<DTO> = QueryArgsTypeOpts<DTO>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function QueryOptions(opts: QueryOptionsDecoratorOpts<any>) {
   return (target: Class<unknown>): void => {
-    valueReflector.set(target, opts);
-  };
+    valueReflector.set(target, opts)
+  }
 }
 
-export const getQueryOptions = <DTO>(DTOClass: Class<DTO>): MetaValue<QueryArgsTypeOpts<DTO>> => valueReflector.get(DTOClass);
+export const getQueryOptions = <DTO>(DTOClass: Class<DTO>): MetaValue<QueryArgsTypeOpts<DTO>> => valueReflector.get(DTOClass)

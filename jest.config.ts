@@ -12,4 +12,4 @@ module.exports = {
   testTimeout: 10000,
   collectCoverageFrom: ['packages/**/*.ts', '!**/__tests__/**', '!**/dist/**', '!**/node_modules/**'],
   snapshotSerializers: ['jest-snapshot-serializer-raw/always']
-};
+}

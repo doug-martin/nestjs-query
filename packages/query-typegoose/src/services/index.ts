@@ -1,1 +1,1 @@
-export * from './typegoose-query-service';
+export * from './typegoose-query-service'

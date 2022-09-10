@@ -1,3 +1,3 @@
 export function queryTypeorm(): string {
-  return 'query-typeorm';
+  return 'query-typeorm'
 }

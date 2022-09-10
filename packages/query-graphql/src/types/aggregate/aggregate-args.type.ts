@@ -1,11 +1,12 @@
-import { Filter, Class } from '@ptc-org/nestjs-query-core';
-import { Field, ArgsType } from '@nestjs/graphql';
-import { ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { AggregateFilterType } from '../query';
+import { ArgsType, Field } from '@nestjs/graphql'
+import { Class, Filter } from '@ptc-org/nestjs-query-core'
+import { Type } from 'class-transformer'
+import { ValidateNested } from 'class-validator'
+
+import { AggregateFilterType } from '../query'
 
 export interface AggregateArgsType<DTO> {
-  filter?: Filter<DTO>;
+  filter?: Filter<DTO>
 }
 
 /**
@@ -14,13 +15,15 @@ export interface AggregateArgsType<DTO> {
  */
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function AggregateArgsType<DTO>(DTOClass: Class<DTO>): Class<AggregateArgsType<DTO>> {
-  const F = AggregateFilterType(DTOClass);
+  const F = AggregateFilterType(DTOClass)
+
   @ArgsType()
   class AggregateArgs implements AggregateArgsType<DTO> {
     @Type(() => F)
     @ValidateNested()
     @Field(() => F, { nullable: true, description: 'Filter to find records to aggregate on' })
-    filter?: Filter<DTO>;
+    filter?: Filter<DTO>
   }
-  return AggregateArgs;
+
+  return AggregateArgs
 }

@@ -1,36 +1,37 @@
-import { Class, Filter, Query, SortField } from '@ptc-org/nestjs-query-core';
-import { ArgsType, Field } from '@nestjs/graphql';
-import { ValidateNested, Validate } from 'class-validator';
-import { Type } from 'class-transformer';
-import { PropertyMax } from '../../validators/property-max.validator';
-import { DEFAULT_QUERY_OPTS } from './constants';
-import { CursorQueryArgsTypeOpts, QueryType, StaticQueryType } from './interfaces';
-import { PagingStrategies, getOrCreateCursorPagingType, CursorPagingType } from '../paging';
-import { FilterType } from '../filter.type';
-import { getOrCreateSortType } from '../sorting.type';
-import { getOrCreateCursorConnectionType } from '../../connection';
-import { SkipIf } from '../../../decorators';
+import { ArgsType, Field } from '@nestjs/graphql'
+import { Class, Filter, Query, SortField } from '@ptc-org/nestjs-query-core'
+import { Type } from 'class-transformer'
+import { Validate, ValidateNested } from 'class-validator'
 
-export type CursorQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.CURSOR>;
+import { SkipIf } from '../../../decorators'
+import { getOrCreateCursorConnectionType } from '../../connection'
+import { PropertyMax } from '../../validators/property-max.validator'
+import { FilterType } from '../filter.type'
+import { CursorPagingType, getOrCreateCursorPagingType, PagingStrategies } from '../paging'
+import { getOrCreateSortType } from '../sorting.type'
+import { DEFAULT_QUERY_OPTS } from './constants'
+import { CursorQueryArgsTypeOpts, QueryType, StaticQueryType } from './interfaces'
+
+export type CursorQueryArgsType<DTO> = QueryType<DTO, PagingStrategies.CURSOR>
 
 export function createCursorQueryArgsType<DTO>(
   DTOClass: Class<DTO>,
   opts: CursorQueryArgsTypeOpts<DTO> = { ...DEFAULT_QUERY_OPTS, pagingStrategy: PagingStrategies.CURSOR }
 ): StaticQueryType<DTO, PagingStrategies.CURSOR> {
-  const F = FilterType(DTOClass);
-  const S = getOrCreateSortType(DTOClass);
-  const P = getOrCreateCursorPagingType();
-  const C = getOrCreateCursorConnectionType(DTOClass, opts);
+  const F = FilterType(DTOClass)
+  const S = getOrCreateSortType(DTOClass)
+  const P = getOrCreateCursorPagingType()
+  const C = getOrCreateCursorConnectionType(DTOClass, opts)
 
   @ArgsType()
   class QueryArgs implements Query<DTO> {
-    static SortType = S;
+    static SortType = S
 
-    static FilterType = F;
+    static FilterType = F
 
-    static PageType = P;
+    static PageType = P
 
-    static ConnectionType = C;
+    static ConnectionType = C
 
     @Field(() => P, {
       defaultValue: { first: opts.defaultResultSize ?? DEFAULT_QUERY_OPTS.defaultResultSize },
@@ -40,7 +41,7 @@ export function createCursorQueryArgsType<DTO>(
     @Validate(PropertyMax, ['first', opts.maxResultsSize ?? DEFAULT_QUERY_OPTS.maxResultsSize])
     @Validate(PropertyMax, ['last', opts.maxResultsSize ?? DEFAULT_QUERY_OPTS.maxResultsSize])
     @Type(() => P)
-    paging?: CursorPagingType;
+    paging?: CursorPagingType
 
     @SkipIf(
       () => opts.disableFilter,
@@ -52,7 +53,7 @@ export function createCursorQueryArgsType<DTO>(
     )
     @ValidateNested()
     @Type(() => F)
-    filter?: Filter<DTO> = opts.disableFilter ? opts.defaultFilter : undefined;
+    filter?: Filter<DTO> = opts.disableFilter ? opts.defaultFilter : undefined
 
     @SkipIf(
       () => opts.disableSort,
@@ -63,8 +64,8 @@ export function createCursorQueryArgsType<DTO>(
     )
     @ValidateNested()
     @Type(() => S)
-    sorting?: SortField<DTO>[] = opts.disableSort ? opts.defaultSort : undefined;
+    sorting?: SortField<DTO>[] = opts.disableSort ? opts.defaultSort : undefined
   }
 
-  return QueryArgs;
+  return QueryArgs
 }

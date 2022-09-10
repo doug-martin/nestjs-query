@@ -1,11 +1,12 @@
-import { Class } from '@ptc-org/nestjs-query-core';
-import { ArgsType, Field } from '@nestjs/graphql';
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { ArgsType, Field } from '@nestjs/graphql'
+import { Class } from '@ptc-org/nestjs-query-core'
+import { Type } from 'class-transformer'
+import { ValidateNested } from 'class-validator'
 
 export interface MutationArgsType<Input> {
-  input: Input;
+  input: Input
 }
+
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export function MutationArgsType<Input>(InputClass: Class<Input>): Class<MutationArgsType<Input>> {
   @ArgsType()
@@ -13,7 +14,8 @@ export function MutationArgsType<Input>(InputClass: Class<Input>): Class<Mutatio
     @Type(() => InputClass)
     @ValidateNested()
     @Field(() => InputClass)
-    input!: Input;
+    input!: Input
   }
-  return MutationArgs;
+
+  return MutationArgs
 }

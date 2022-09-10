@@ -2,39 +2,40 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToMany,
+  JoinTable,
   ManyToMany,
-  JoinTable
-} from 'typeorm';
-import { SubTaskEntity } from '../sub-task/sub-task.entity';
-import { TagEntity } from '../tag/tag.entity';
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm'
+
+import { SubTaskEntity } from '../sub-task/sub-task.entity'
+import { TagEntity } from '../tag/tag.entity'
 
 @Entity({ name: 'todo_item' })
 export class TodoItemEntity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: number
 
   @Column()
-  title!: string;
+  title!: string
 
   @Column({ nullable: true })
-  description?: string;
+  description?: string
 
   @Column()
-  completed!: boolean;
+  completed!: boolean
 
   @OneToMany(() => SubTaskEntity, (subTask) => subTask.todoItem)
-  subTasks!: SubTaskEntity[];
+  subTasks!: SubTaskEntity[]
 
   @CreateDateColumn()
-  created!: Date;
+  created!: Date
 
   @UpdateDateColumn()
-  updated!: Date;
+  updated!: Date
 
   @ManyToMany(() => TagEntity, (tag) => tag.todoItems)
   @JoinTable()
-  tags!: TagEntity[];
+  tags!: TagEntity[]
 }

@@ -1,19 +1,20 @@
-import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@ptc-org/nestjs-query-core';
+import { AggregateQuery, Filter, getFilterFields, Paging, Query, SortField } from '@ptc-org/nestjs-query-core'
 import sequelize, {
-  FindOptions,
-  Filterable,
+  Association,
+  CountOptions,
   DestroyOptions,
+  Filterable,
+  FindOptions,
+  GroupOption,
   Order,
   OrderItem,
-  UpdateOptions,
-  CountOptions,
-  Association,
   Projectable,
-  GroupOption
-} from 'sequelize';
-import { Model, ModelCtor } from 'sequelize-typescript';
-import { AggregateBuilder } from './aggregate.builder';
-import { WhereBuilder } from './where.builder';
+  UpdateOptions
+} from 'sequelize'
+import { Model, ModelCtor } from 'sequelize-typescript'
+
+import { AggregateBuilder } from './aggregate.builder'
+import { WhereBuilder } from './where.builder'
 
 /**
  * @internal
@@ -21,7 +22,7 @@ import { WhereBuilder } from './where.builder';
  * Interface that for `sequelize` query builders that are sortable.
  */
 interface Sortable {
-  order?: Order;
+  order?: Order
 }
 
 /**
@@ -30,11 +31,12 @@ interface Sortable {
  * Interface for `sequelize` query builders that are pageable.
  */
 interface Pageable {
-  limit?: number;
-  offset?: number;
+  limit?: number
+  offset?: number
 }
+
 interface Groupable {
-  group?: GroupOption;
+  group?: GroupOption
 }
 
 /**
@@ -55,11 +57,11 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    * @param query - the query to apply.
    */
   findOptions(query: Query<Entity>): FindOptions {
-    let opts: FindOptions = this.applyAssociationIncludes({ subQuery: false }, query.filter);
-    opts = this.applyFilter(opts, query.filter);
-    opts = this.applySorting(opts, query.sorting);
-    opts = this.applyPaging(opts, query.paging);
-    return opts;
+    let opts: FindOptions = this.applyAssociationIncludes({ subQuery: false }, query.filter)
+    opts = this.applyFilter(opts, query.filter)
+    opts = this.applySorting(opts, query.sorting)
+    opts = this.applyPaging(opts, query.paging)
+    return opts
   }
 
   /**
@@ -69,14 +71,14 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    * @param query - the query to apply.
    */
   findByIdOptions(pk: string | number | (string | number)[], query: Query<Entity>): FindOptions {
-    let opts: FindOptions = this.applyAssociationIncludes({ subQuery: false }, query.filter);
+    let opts: FindOptions = this.applyAssociationIncludes({ subQuery: false }, query.filter)
     opts = this.applyFilter(opts, {
       ...(query.filter ?? ({} as Filter<Entity>)),
       [this.model.primaryKeyAttribute]: { [Array.isArray(pk) ? 'in' : 'eq']: pk }
-    });
-    opts = this.applySorting(opts, query.sorting);
-    opts = this.applyPaging(opts, query.paging);
-    return opts;
+    })
+    opts = this.applySorting(opts, query.sorting)
+    opts = this.applyPaging(opts, query.paging)
+    return opts
   }
 
   /**
@@ -86,29 +88,29 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    * @param aggregate - the aggregate query
    */
   aggregateOptions(query: Query<Entity>, aggregate: AggregateQuery<Entity>): FindOptions {
-    let opts: FindOptions = { raw: true };
-    opts = this.applyAggregate(opts, aggregate);
-    opts = this.applyFilter(opts, query.filter);
-    opts = this.applyAggregateSorting(opts, aggregate.groupBy);
-    opts = this.applyGroupBy(opts, aggregate.groupBy);
-    return opts;
+    let opts: FindOptions = { raw: true }
+    opts = this.applyAggregate(opts, aggregate)
+    opts = this.applyFilter(opts, query.filter)
+    opts = this.applyAggregateSorting(opts, aggregate.groupBy)
+    opts = this.applyGroupBy(opts, aggregate.groupBy)
+    return opts
   }
 
   relationAggregateOptions(query: Query<Entity>, aggregate: AggregateQuery<Entity>): FindOptions {
     // joinTableAttributes is used by many-to-many relations and must be empty.
-    let opts: FindOptions = { joinTableAttributes: [], raw: true } as FindOptions;
-    opts = this.applyAggregate(opts, aggregate);
-    opts = this.applyFilter(opts, query.filter);
-    opts = this.applyAggregateSorting(opts, aggregate.groupBy);
-    opts = this.applyGroupBy(opts, aggregate.groupBy);
-    return opts;
+    let opts: FindOptions = { joinTableAttributes: [], raw: true } as FindOptions
+    opts = this.applyAggregate(opts, aggregate)
+    opts = this.applyFilter(opts, query.filter)
+    opts = this.applyAggregateSorting(opts, aggregate.groupBy)
+    opts = this.applyGroupBy(opts, aggregate.groupBy)
+    return opts
   }
 
   countOptions(query: Query<Entity>): CountOptions<Entity> {
-    let opts: CountOptions = this.applyAssociationIncludes({}, query.filter);
-    opts.distinct = true;
-    opts = this.applyFilter(opts, query.filter);
-    return opts as CountOptions<Entity>;
+    let opts: CountOptions = this.applyAssociationIncludes({}, query.filter)
+    opts.distinct = true
+    opts = this.applyFilter(opts, query.filter)
+    return opts as CountOptions<Entity>
   }
 
   /**
@@ -117,10 +119,10 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    * @param query - the query to apply.
    */
   destroyOptions(query: Query<Entity>): DestroyOptions {
-    let opts: DestroyOptions = {};
-    opts = this.applyFilter(opts, query.filter);
-    opts = this.applyPaging(opts, query.paging);
-    return opts;
+    let opts: DestroyOptions = {}
+    opts = this.applyFilter(opts, query.filter)
+    opts = this.applyPaging(opts, query.paging)
+    return opts
   }
 
   /**
@@ -129,10 +131,10 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    * @param query - the query to apply.
    */
   updateOptions(query: Query<Entity>): UpdateOptions<Entity['_attributes']> {
-    let opts: UpdateOptions<Entity> = { where: {} };
-    opts = this.applyFilter(opts, query.filter);
-    opts = this.applyPaging(opts, query.paging);
-    return opts;
+    let opts: UpdateOptions<Entity> = { where: {} }
+    opts = this.applyFilter(opts, query.filter)
+    opts = this.applyPaging(opts, query.paging)
+    return opts
   }
 
   /**
@@ -142,17 +144,17 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    */
   applyPaging<P extends Pageable>(qb: P, paging?: Paging): P {
     if (!paging) {
-      return qb;
+      return qb
     }
     if (paging.limit !== undefined) {
       // eslint-disable-next-line no-param-reassign
-      qb.limit = paging.limit;
+      qb.limit = paging.limit
     }
     if (paging.offset !== undefined) {
       // eslint-disable-next-line no-param-reassign
-      qb.offset = paging.offset;
+      qb.offset = paging.offset
     }
-    return qb;
+    return qb
   }
 
   /**
@@ -163,11 +165,11 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    */
   applyFilter<Where extends Filterable>(filterable: Where, filter?: Filter<Entity>): Where {
     if (!filter) {
-      return filterable;
+      return filterable
     }
     // eslint-disable-next-line no-param-reassign
-    filterable.where = this.whereBuilder.build(filter, this.getReferencedRelations(filter));
-    return filterable;
+    filterable.where = this.whereBuilder.build(filter, this.getReferencedRelations(filter))
+    return filterable
   }
 
   /**
@@ -177,49 +179,49 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
    */
   applySorting<T extends Sortable>(qb: T, sorts?: SortField<Entity>[]): T {
     if (!sorts) {
-      return qb;
+      return qb
     }
     // eslint-disable-next-line no-param-reassign
     qb.order = sorts.map(({ field, direction, nulls }): OrderItem => {
-      const col = `${field as string}`;
-      const dir: string[] = [direction];
+      const col = `${field as string}`
+      const dir: string[] = [direction]
       if (nulls) {
-        dir.push(nulls);
+        dir.push(nulls)
       }
-      return [col, dir.join(' ')];
-    });
-    return qb;
+      return [col, dir.join(' ')]
+    })
+    return qb
   }
 
   private applyAggregate<P extends Projectable>(opts: P, aggregate: AggregateQuery<Entity>): P {
     // eslint-disable-next-line no-param-reassign
-    opts.attributes = this.aggregateBuilder.build(aggregate).attributes;
-    return opts;
+    opts.attributes = this.aggregateBuilder.build(aggregate).attributes
+    return opts
   }
 
   applyGroupBy<T extends Groupable>(qb: T, groupBy?: (keyof Entity)[]): T {
     if (!groupBy) {
-      return qb;
+      return qb
     }
     // eslint-disable-next-line no-param-reassign
     qb.group = groupBy.map((field) => {
-      const colName = this.model.rawAttributes[field as string].field;
-      return sequelize.col(colName ?? (field as string));
-    });
-    return qb;
+      const colName = this.model.rawAttributes[field as string].field
+      return sequelize.col(colName ?? (field as string))
+    })
+    return qb
   }
 
   applyAggregateSorting<T extends Sortable>(qb: T, groupBy?: (keyof Entity)[]): T {
     if (!groupBy) {
-      return qb;
+      return qb
     }
     // eslint-disable-next-line no-param-reassign
     qb.order = groupBy.map((field): OrderItem => {
-      const colName = this.model.rawAttributes[field as string].field;
-      const col = sequelize.col(colName ?? (field as string));
-      return [col, 'ASC'];
-    });
-    return qb;
+      const colName = this.model.rawAttributes[field as string].field
+      const col = sequelize.col(colName ?? (field as string))
+      return [col, 'ASC']
+    })
+    return qb
   }
 
   private applyAssociationIncludes<Opts extends FindOptions<Entity> | CountOptions<Entity>>(
@@ -227,25 +229,25 @@ export class FilterQueryBuilder<Entity extends Model<Entity, Partial<Entity>>> {
     filter?: Filter<Entity>
   ): Opts {
     if (!filter) {
-      return findOpts;
+      return findOpts
     }
-    const referencedRelations = this.getReferencedRelations(filter);
+    const referencedRelations = this.getReferencedRelations(filter)
     return [...referencedRelations.values()].reduce((find, association) => {
-      const { include = [] } = find;
+      const { include = [] } = find
       // eslint-disable-next-line no-param-reassign
-      find.include = [...(Array.isArray(include) ? include : [include]), { association, attributes: [] }];
-      return find;
-    }, findOpts);
+      find.include = [...(Array.isArray(include) ? include : [include]), { association, attributes: [] }]
+      return find
+    }, findOpts)
   }
 
   private getReferencedRelations(filter: Filter<Entity>): Map<string, Association> {
-    const { relationNames } = this;
-    const referencedFields = getFilterFields(filter);
-    const referencedRelations = referencedFields.filter((f) => relationNames.includes(f));
-    return referencedRelations.reduce((map, r) => map.set(r, this.model.associations[r]), new Map<string, Association>());
+    const { relationNames } = this
+    const referencedFields = getFilterFields(filter)
+    const referencedRelations = referencedFields.filter((f) => relationNames.includes(f))
+    return referencedRelations.reduce((map, r) => map.set(r, this.model.associations[r]), new Map<string, Association>())
   }
 
   private get relationNames(): string[] {
-    return Object.keys(this.model.associations || {});
+    return Object.keys(this.model.associations || {})
   }
 }

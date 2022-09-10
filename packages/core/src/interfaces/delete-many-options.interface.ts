@@ -1,3 +1,3 @@
-import { DeleteOneOptions } from './delete-one-options.interface';
+import { DeleteOneOptions } from './delete-one-options.interface'
 
-export type DeleteManyOptions<DTO> = DeleteOneOptions<DTO>;
+export type DeleteManyOptions<DTO> = DeleteOneOptions<DTO>

@@ -1,56 +1,57 @@
 import {
-  Table,
+  AllowNull,
+  AutoIncrement,
+  BelongsToMany,
   Column,
+  CreatedAt,
+  DataType,
+  Default,
   HasMany,
   Model,
-  AllowNull,
-  CreatedAt,
-  UpdatedAt,
-  BelongsToMany,
   PrimaryKey,
-  AutoIncrement,
-  DataType,
-  Default
-} from 'sequelize-typescript';
-import { SubTaskEntity } from '../../sub-task/sub-task.entity';
-import { TagEntity } from '../../tag/tag.entity';
-import { TodoItemEntityTags } from './todo-item-tag.entity';
+  Table,
+  UpdatedAt
+} from 'sequelize-typescript'
+
+import { SubTaskEntity } from '../../sub-task/sub-task.entity'
+import { TagEntity } from '../../tag/tag.entity'
+import { TodoItemEntityTags } from './todo-item-tag.entity'
 
 @Table({})
 export class TodoItemEntity extends Model<TodoItemEntity, Partial<TodoItemEntity>> {
   @PrimaryKey
   @AutoIncrement
   @Column
-  id!: number;
+  id!: number
 
   @Column
-  title!: string;
+  title!: string
 
   @AllowNull
   @Column
-  description?: string;
+  description?: string
 
   @Column
-  completed!: boolean;
+  completed!: boolean
 
   @HasMany(() => SubTaskEntity)
-  subTasks!: SubTaskEntity[];
+  subTasks!: SubTaskEntity[]
 
   @CreatedAt
-  created!: Date;
+  created!: Date
 
   @UpdatedAt
-  updated!: Date;
+  updated!: Date
 
   @BelongsToMany(
     () => TagEntity,
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     () => TodoItemEntityTags
   )
-  tags!: TagEntity[];
+  tags!: TagEntity[]
 
   @AllowNull
   @Default(0)
   @Column(DataType.INTEGER)
-  priority!: number;
+  priority!: number
 }

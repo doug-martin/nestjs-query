@@ -1,41 +1,43 @@
-import { Class, Filter, mergeQuery, QueryService } from '@ptc-org/nestjs-query-core';
-import { ArgsType, Resolver } from '@nestjs/graphql';
-import omit from 'lodash.omit';
-import { getDTONames } from '../common';
-import { AuthorizerFilter, HookArgs, ResolverQuery } from '../decorators';
+import { ArgsType, Resolver } from '@nestjs/graphql'
+import { Class, Filter, mergeQuery, QueryService } from '@ptc-org/nestjs-query-core'
+import omit from 'lodash.omit'
+
+import { OperationGroup } from '../auth'
+import { getDTONames } from '../common'
+import { AuthorizerFilter, HookArgs, ResolverQuery } from '../decorators'
+import { HookTypes } from '../hooks'
+import { AuthorizerInterceptor, HookInterceptor } from '../interceptors'
 import {
-  FindOneArgsType,
-  PagingStrategies,
-  QueryArgsTypeOpts,
-  QueryArgsType,
   ConnectionOptions,
-  InferConnectionTypeFromStrategy
-} from '../types';
-import { CursorQueryArgsTypeOpts, QueryType, StaticQueryType } from '../types/query';
-import { BaseServiceResolver, ExtractPagingStrategy, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface';
-import { AuthorizerInterceptor, HookInterceptor } from '../interceptors';
-import { HookTypes } from '../hooks';
-import { OperationGroup } from '../auth';
+  FindOneArgsType,
+  InferConnectionTypeFromStrategy,
+  PagingStrategies,
+  QueryArgsType,
+  QueryArgsTypeOpts
+} from '../types'
+import { CursorQueryArgsTypeOpts, QueryType, StaticQueryType } from '../types/query'
+import { BaseServiceResolver, ExtractPagingStrategy, ResolverClass, ResolverOpts, ServiceResolver } from './resolver.interface'
 
 export type ReadResolverFromOpts<
   DTO,
   Opts extends ReadResolverOpts<DTO>,
   QS extends QueryService<DTO, unknown, unknown>
-> = ReadResolver<DTO, ExtractPagingStrategy<DTO, Opts>, QS>;
+> = ReadResolver<DTO, ExtractPagingStrategy<DTO, Opts>, QS>
 
 export type ReadResolverOpts<DTO> = {
-  QueryArgs?: StaticQueryType<DTO, PagingStrategies>;
+  QueryArgs?: StaticQueryType<DTO, PagingStrategies>
 } & ResolverOpts &
   QueryArgsTypeOpts<DTO> &
-  Pick<ConnectionOptions, 'enableTotalCount'>;
+  Pick<ConnectionOptions, 'enableTotalCount'>
 
 export interface ReadResolver<DTO, PS extends PagingStrategies, QS extends QueryService<DTO, unknown, unknown>>
   extends ServiceResolver<DTO, QS> {
   queryMany(
     query: QueryType<DTO, PagingStrategies>,
     authorizeFilter?: Filter<DTO>
-  ): Promise<InferConnectionTypeFromStrategy<DTO, PS>>;
-  findById(id: FindOneArgsType, authorizeFilter?: Filter<DTO>): Promise<DTO | undefined>;
+  ): Promise<InferConnectionTypeFromStrategy<DTO, PS>>
+
+  findById(id: FindOneArgsType, authorizeFilter?: Filter<DTO>): Promise<DTO | undefined>
 }
 
 /**
@@ -48,13 +50,13 @@ export const Readable =
     opts: ReadOpts
   ) =>
   <B extends Class<ServiceResolver<DTO, QS>>>(BaseClass: B): Class<ReadResolverFromOpts<DTO, ReadOpts, QS>> & B => {
-    const { baseNameLower, pluralBaseNameLower, baseName } = getDTONames(DTOClass, opts);
-    const readOneQueryName = opts.one?.name ?? baseNameLower;
-    const readManyQueryName = opts.many?.name ?? pluralBaseNameLower;
-    const { QueryArgs = QueryArgsType(DTOClass, { ...opts, connectionName: `${baseName}Connection` }) } = opts;
-    const { ConnectionType } = QueryArgs;
+    const { baseNameLower, pluralBaseNameLower, baseName } = getDTONames(DTOClass, opts)
+    const readOneQueryName = opts.one?.name ?? baseNameLower
+    const readManyQueryName = opts.many?.name ?? pluralBaseNameLower
+    const { QueryArgs = QueryArgsType(DTOClass, { ...opts, connectionName: `${baseName}Connection` }) } = opts
+    const { ConnectionType } = QueryArgs
 
-    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection', 'withDeleted');
+    const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection', 'withDeleted')
 
     @ArgsType()
     class QA extends QueryArgs {}
@@ -79,7 +81,7 @@ export const Readable =
         })
         authorizeFilter?: Filter<DTO>
       ): Promise<DTO> {
-        return this.service.getById(input.id, { filter: authorizeFilter, withDeleted: opts?.one?.withDeleted });
+        return this.service.getById(input.id, { filter: authorizeFilter, withDeleted: opts?.one?.withDeleted })
       }
 
       @ResolverQuery(
@@ -101,12 +103,12 @@ export const Readable =
           (q) => this.service.query(q),
           mergeQuery(query, { filter: authorizeFilter }),
           (filter) => this.service.count(filter)
-        );
+        )
       }
     }
 
-    return ReadResolverBase as Class<ReadResolverFromOpts<DTO, ReadOpts, QS>> & B;
-  };
+    return ReadResolverBase as Class<ReadResolverFromOpts<DTO, ReadOpts, QS>> & B
+  }
 // eslint-disable-next-line @typescript-eslint/no-redeclare -- intentional
 export const ReadResolver = <
   DTO,
@@ -115,4 +117,4 @@ export const ReadResolver = <
 >(
   DTOClass: Class<DTO>,
   opts: ReadOpts = {} as ReadOpts
-): ResolverClass<DTO, QS, ReadResolverFromOpts<DTO, ReadOpts, QS>> => Readable(DTOClass, opts)(BaseServiceResolver);
+): ResolverClass<DTO, QS, ReadResolverFromOpts<DTO, ReadOpts, QS>> => Readable(DTOClass, opts)(BaseServiceResolver)

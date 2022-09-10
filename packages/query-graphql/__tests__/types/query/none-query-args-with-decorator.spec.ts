@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
   Args,
   ArgsType,
@@ -11,12 +10,14 @@ import {
   ObjectType,
   Query,
   Resolver
-} from '@nestjs/graphql';
-import { FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '@ptc-org/nestjs-query-graphql';
-import { generateSchema } from '../../__fixtures__';
+} from '@nestjs/graphql'
+import { SortDirection } from '@ptc-org/nestjs-query-core'
+import { FilterableField, PagingStrategies, QueryArgsType, QueryOptions } from '@ptc-org/nestjs-query-graphql'
+
+import { generateSchema } from '../../__fixtures__'
 
 describe('QueryArgsType with decorator options', (): void => {
-  afterEach(() => jest.clearAllMocks());
+  afterEach(() => jest.clearAllMocks())
 
   @ObjectType('NoPagingQueryOptionsDTO')
   @QueryOptions({
@@ -28,52 +29,52 @@ describe('QueryArgsType with decorator options', (): void => {
   })
   class TestDto {
     @FilterableField(() => ID)
-    idField!: number;
+    idField!: number
 
     @FilterableField(() => ID, { nullable: true })
-    idFieldOption?: number;
+    idFieldOption?: number
 
     @FilterableField()
-    stringField!: string;
+    stringField!: string
 
     @FilterableField({ nullable: true })
-    stringFieldOptional?: string;
+    stringFieldOptional?: string
 
     @FilterableField()
-    booleanField!: boolean;
+    booleanField!: boolean
 
     @FilterableField({ nullable: true })
-    booleanFieldOptional?: boolean;
+    booleanFieldOptional?: boolean
 
     @FilterableField()
-    numberField!: number;
+    numberField!: number
 
     @FilterableField({ nullable: true })
-    numberFieldOptional?: number;
+    numberFieldOptional?: number
 
     @FilterableField(() => Float)
-    floatField!: number;
+    floatField!: number
 
     @FilterableField(() => Float, { nullable: true })
-    floatFieldOptional?: number;
+    floatFieldOptional?: number
 
     @FilterableField(() => Int)
-    intField!: number;
+    intField!: number
 
     @FilterableField(() => Int, { nullable: true })
-    intFieldOptional?: number;
+    intFieldOptional?: number
 
     @FilterableField(() => GraphQLTimestamp)
-    timestampField!: Date;
+    timestampField!: Date
 
     @FilterableField(() => GraphQLTimestamp, { nullable: true })
-    timestampFieldOptional?: Date;
+    timestampFieldOptional?: Date
 
     @FilterableField(() => GraphQLISODateTime)
-    date!: Date;
+    date!: Date
 
     @FilterableField(() => GraphQLISODateTime, { nullable: true })
-    dateOptional?: Date;
+    dateOptional?: Date
   }
 
   describe('no paging query args', () => {
@@ -87,12 +88,13 @@ describe('QueryArgsType with decorator options', (): void => {
           @Query(() => String)
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           test(@Args() query: NoPagingQueryOptionsArgs): string {
-            return 'hello';
+            return 'hello'
           }
         }
-        const schema = await generateSchema([TestNoPagingQueryOptionsDecoratorResolver]);
-        expect(schema).toMatchSnapshot();
-      });
-    });
-  });
-});
+
+        const schema = await generateSchema([TestNoPagingQueryOptionsDecoratorResolver])
+        expect(schema).toMatchSnapshot()
+      })
+    })
+  })
+})
