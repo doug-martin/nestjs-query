@@ -49,6 +49,6 @@
     "dataloader": "^2.0.0",
     "graphql": "^15.0.0",
     "graphql-subscriptions": "^1.1.0",
-    "ts-morph": "^11.0.0 || ^12.0.0"
+    "ts-morph": "^13.0.2 || ^14.0.0 || ^15.0.0"
   }
 }
