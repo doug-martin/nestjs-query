@@ -4140,7 +4140,7 @@ __metadata:
     tslib: ^2.4.0
   peerDependencies:
     "@nestjs/common": ^8.0.4
-    class-transformer: ^0.2.3 || 0.3.1 || ^0.5
+    class-transformer: ^0.2.3 || 0.3.1 || 0.4
   languageName: unknown
   linkType: soft
 
@@ -4159,7 +4159,7 @@ __metadata:
     "@nestjs/common": ^8.0.4
     "@nestjs/core": ^8.0.4
     "@nestjs/graphql": ^9.0.0
-    class-transformer: ^0.2.3 || 0.3.1 || ^0.5
+    class-transformer: ^0.2.3 || 0.3.1 || 0.4
     class-validator: ^0.13.0
     dataloader: ^2.0.0
     graphql: ^15.0.0
@@ -4228,7 +4228,7 @@ __metadata:
   peerDependencies:
     "@nestjs/common": 9.0.11
     "@nestjs/typeorm": 9.0.1
-    class-transformer: ^0.2.3 || 0.3.1 || ^0.5
+    class-transformer: ^0.2.3 || 0.3.1 || 0.4
     typeorm: 0.3.8
   languageName: unknown
   linkType: soft
