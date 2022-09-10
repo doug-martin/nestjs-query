@@ -4156,7 +4156,7 @@ __metadata:
     dataloader: ^2.0.0
     graphql: ^15.0.0
     graphql-subscriptions: ^1.1.0
-    ts-morph: ^11.0.0 || ^12.0.0
+    ts-morph: ^13.0.2 || ^14.0.0 || ^15.0.0
   languageName: unknown
   linkType: soft
 
@@ -4475,15 +4475,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-morph/common@npm:~0.11.1":
-  version: 0.11.1
-  resolution: "@ts-morph/common@npm:0.11.1"
+"@ts-morph/common@npm:~0.16.0":
+  version: 0.16.0
+  resolution: "@ts-morph/common@npm:0.16.0"
   dependencies:
-    fast-glob: ^3.2.7
-    minimatch: ^3.0.4
+    fast-glob: ^3.2.11
+    minimatch: ^5.1.0
     mkdirp: ^1.0.4
     path-browserify: ^1.0.1
-  checksum: 2853215cfdfb9b65f96ceef91b15a73ab6591fd27d072801884ea5acc1a8f0becd5ac214d5f3d840f5d650b7654585a9b9df86fc4287872e7be1c6f566381bfd
+  checksum: 0ef97330a164a42b81b0499b042e91db8e39d705bb983ef83cbc80cc32ab36123e26baefb78203953d1a0c6e3b92cad9bc7a5e0ea409623a5e7db90cb3742112
   languageName: node
   linkType: hard
 
@@ -7196,10 +7196,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"code-block-writer@npm:^10.1.1":
-  version: 10.1.1
-  resolution: "code-block-writer@npm:10.1.1"
-  checksum: e048037acbcbda19fca62a3a63e4a64226ea6b5dc0fad7632d34a88c1165b29a357e5e19f0497811e9911472e824ab85f68176f40e439da87e051908956eb47c
+"code-block-writer@npm:^11.0.0":
+  version: 11.0.3
+  resolution: "code-block-writer@npm:11.0.3"
+  checksum: f0a2605f19963d7087267c9b0fd0b05a6638a50e7b29b70f97aa01a514f59475b0626f8aa092188df853ee6d96745426dfa132d6a677795df462c6ce32c21639
   languageName: node
   linkType: hard
 
@@ -13453,7 +13453,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^5.0.1":
+"minimatch@npm:^5.0.1, minimatch@npm:^5.1.0":
   version: 5.1.0
   resolution: "minimatch@npm:5.1.0"
   dependencies:
@@ -13977,7 +13977,7 @@ __metadata:
     ts-jest: 27.1.5
     ts-loader: 9.3.1
     ts-mockito: 2.6.1
-    ts-morph: 12.2.0
+    ts-morph: ^15.0.0
     ts-node: 10.9.1
     tsconfig-extends: 1.0.1
     tsconfig-paths: 3.14.1
@@ -18182,13 +18182,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-morph@npm:12.2.0":
-  version: 12.2.0
-  resolution: "ts-morph@npm:12.2.0"
+"ts-morph@npm:^15.0.0":
+  version: 15.1.0
+  resolution: "ts-morph@npm:15.1.0"
   dependencies:
-    "@ts-morph/common": ~0.11.1
-    code-block-writer: ^10.1.1
-  checksum: c6c066d49da84555d56c1fd16d6de52cb123ea1b6eb71869b29a23ce351849aef3529396d7103a456e9f6e10c56493efe959b4331741e1db7c613d7f5a9de9c9
+    "@ts-morph/common": ~0.16.0
+    code-block-writer: ^11.0.0
+  checksum: 95e026214282850f08d1d4de673e969cdc166cb6d9366e455e1ea0251a204f80cffcb958c8ed7b1f351e56b972c4244e0dc7be0b13df3c4a6f22abdd4d4608e4
   languageName: node
   linkType: hard
 
