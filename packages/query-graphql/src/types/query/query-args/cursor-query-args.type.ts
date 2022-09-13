@@ -49,10 +49,10 @@ export function createCursorQueryArgsType<DTO>(
         defaultValue: !F.hasRequiredFilters ? opts.defaultFilter ?? DEFAULT_QUERY_OPTS.defaultFilter : undefined,
         description: 'Specify to filter the records returned.',
         nullable: false
-      })
+      }),
+      ValidateNested(),
+      Type(() => F)
     )
-    @ValidateNested()
-    @Type(() => F)
     filter?: Filter<DTO> = opts.disableFilter ? opts.defaultFilter : undefined
 
     @SkipIf(
@@ -60,10 +60,10 @@ export function createCursorQueryArgsType<DTO>(
       Field(() => [S], {
         defaultValue: opts.defaultSort ?? DEFAULT_QUERY_OPTS.defaultSort,
         description: 'Specify to sort results.'
-      })
+      }),
+      ValidateNested(),
+      Type(() => S)
     )
-    @ValidateNested()
-    @Type(() => S)
     sorting?: SortField<DTO>[] = opts.disableSort ? opts.defaultSort : undefined
   }
 
