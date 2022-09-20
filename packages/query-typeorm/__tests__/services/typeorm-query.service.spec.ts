@@ -1904,6 +1904,9 @@ describe('TypeOrmQueryService', (): void => {
         const foundEntity = await queryService.findById(entity.testEntityPk)
         expect(foundEntity).toBeUndefined()
 
+        const foundDeletedEntity = await queryService.findById(entity.testEntityPk, { withDeleted: true })
+        expect(foundDeletedEntity).toEqual({ ...entity, deletedAt: expect.any(Date) })
+
         const deletedEntity = await queryService.repo.findOne({
           where: { testEntityPk: entity.testEntityPk },
           withDeleted: true

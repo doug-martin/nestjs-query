@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@ptc-org/nestjs-query-core.svg)](https://www.npmjs.org/package/@ptc-org/nestjs-query-core)
 [![Test](https://github.com/tripss/nestjs-query/workflows/Test/badge.svg?branch=master)](https://github.com/tripss/nestjs-query/actions?query=workflow%3ATest+and+branch%3Amaster+)
-[![Coverage Status](https://coveralls.io/repos/github/tripss/nestjs-query/badge.svg?branch=master)](https://coveralls.io/github/tripss/nestjs-query?branch=master)
+[![Coverage Status](https://codecov.io/gh/TriPSs/nestjs-query/branch/master/graph/badge.svg?token=29EX71ID2P)](https://codecov.io/gh/TriPSs/nestjs-query)
 [![Known Vulnerabilities](https://snyk.io/test/github/tripss/nestjs-query/badge.svg?targetFile=packages/core/package.json)](https://snyk.io/test/github/tripss/nestjs-query?targetFile=packages/core/package.json)
 
 # `@ptc-org/nestjs-query-core`

@@ -13,7 +13,7 @@ module.exports = {
       title: 'Nestjs-query',
       logo: {
         alt: 'Nestjs-query Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.svg'
       },
       items: [
         { to: 'docs/introduction/getting-started', label: 'Docs', position: 'left' },
@@ -24,17 +24,16 @@ module.exports = {
           href: 'https://github.com/tripss/nestjs-query',
           position: 'right',
           className: 'header-github-link',
-          'aria-label': 'GitHub repository',
-        },
-      ],
+          'aria-label': 'GitHub repository'
+        }
+      ]
     },
-    // Disable until we have keys
-    // algolia: {
-
-    //   apiKey: '2bec315c442a99da17e68f485900e339',
-    //   indexName: 'nestjs-query',
-    //   algoliaOptions: {}, // Optional, if provided by Algolia
-    // },
+    algolia: {
+      appId: 'S3RV239NEL',
+      apiKey: '80e3968790612a06bf29d4925bfff655',
+      indexName: 'tripss-nestjs-query',
+      algoliaOptions: {} // Optional, if provided by Algolia
+    },
     footer: {
       links: [
         {
@@ -42,29 +41,29 @@ module.exports = {
           items: [
             {
               label: 'Getting Started',
-              to: 'docs/introduction/getting-started',
+              to: 'docs/introduction/getting-started'
             },
             {
               label: 'Example',
-              to: 'docs/introduction/example',
-            },
-          ],
+              to: 'docs/introduction/example'
+            }
+          ]
         },
         {
           title: 'Social',
           items: [
             {
               label: 'Blog',
-              to: 'blog',
+              to: 'blog'
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/tripss/nestjs-query',
-            },
-          ],
-        },
-      ],
-    },
+              href: 'https://github.com/tripss/nestjs-query'
+            }
+          ]
+        }
+      ]
+    }
   },
   presets: [
     [
@@ -72,17 +71,17 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/tripss/nestjs-query/edit/master/documentation/',
+          editUrl: 'https://github.com/tripss/nestjs-query/edit/master/documentation/'
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl: 'https://github.com/tripss/nestjs-query/edit/master/documentation/blog',
+          editUrl: 'https://github.com/tripss/nestjs-query/edit/master/documentation/blog'
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      },
-    ],
-  ],
-};
+          customCss: require.resolve('./src/css/custom.css')
+        }
+      }
+    ]
+  ]
+}
