@@ -93,3 +93,5 @@ jobs:
 
       - name: nx workspace:version
         run: yarn nx run workspace:version --prod
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
