@@ -1,10 +1,10 @@
 import { Class } from '@nestjs-query/core';
 import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { getHookForType } from '../decorators';
+import { getHooksForType } from '../decorators';
 import { HookTypes, Hook, getHookToken } from '../hooks';
 
-export type HookContext<H extends Hook<unknown>> = { hook?: H };
+export type HookContext<H extends Hook<unknown>> = { hooks?: H[] };
 
 class DefaultHookInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
@@ -13,19 +13,19 @@ class DefaultHookInterceptor implements NestInterceptor {
 }
 
 export function HookInterceptor(type: HookTypes, ...DTOClasses: Class<unknown>[]): Class<NestInterceptor> {
-  const HookedClass = DTOClasses.find((Cls) => getHookForType(type, Cls));
-  if (!HookedClass) {
+  const HookedClasses = DTOClasses.find((Cls) => getHooksForType(type, Cls));
+  if (!HookedClasses) {
     return DefaultHookInterceptor;
   }
-  const hookToken = getHookToken(type, HookedClass);
+  const hookToken = getHookToken(type, HookedClasses);
   @Injectable()
   class Interceptor implements NestInterceptor {
-    constructor(@Inject(hookToken) readonly hook: Hook<typeof HookedClass>) {}
+    constructor(@Inject(hookToken) readonly hooks: Hook<typeof HookedClasses>[]) {}
 
     intercept(context: ExecutionContext, next: CallHandler) {
       const gqlContext = GqlExecutionContext.create(context);
       const ctx = gqlContext.getContext<HookContext<Hook<unknown>>>();
-      ctx.hook = this.hook;
+      ctx.hooks = this.hooks;
       return next.handle();
     }
   }

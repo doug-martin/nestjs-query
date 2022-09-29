@@ -15,7 +15,7 @@ import {
   isHookClass,
 } from '../hooks';
 
-export type HookMetaValue<H extends Hook<unknown>> = MetaValue<Class<H>>;
+export type HookMetaValue<H extends Hook<unknown>> = MetaValue<Class<H>[]>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type HookDecoratorArg<H extends Hook<unknown>> = Class<H> | H['run'];
 
@@ -23,15 +23,21 @@ const hookMetaDataKey = (hookType: HookTypes): string => `nestjs-query:${hookTyp
 
 const hookDecorator = <H extends Hook<unknown>>(hookType: HookTypes) => {
   const key = hookMetaDataKey(hookType);
+
+  const getHook = (hook: HookDecoratorArg<H>) => {
+    if (isHookClass(hook)) {
+      return hook;
+    }
+    const defaultHook = createDefaultHook(hook);
+    return defaultHook;
+  };
+
   // eslint-disable-next-line @typescript-eslint/ban-types
-  return (data: HookDecoratorArg<H>) =>
+  return (data: HookDecoratorArg<H> | HookDecoratorArg<H>[]) =>
     // eslint-disable-next-line @typescript-eslint/ban-types
     (target: Function): void => {
-      if (isHookClass(data)) {
-        return Reflect.defineMetadata(key, data, target);
-      }
-      const hook = createDefaultHook(data);
-      return Reflect.defineMetadata(key, hook, target);
+      const hooks = Array.isArray(data) ? data.map((d) => getHook(d)) : [getHook(data)];
+      return Reflect.defineMetadata(key, hooks, target);
     };
 };
 
@@ -44,7 +50,7 @@ export const BeforeDeleteMany = hookDecorator<BeforeDeleteManyHook<any>>(HookTyp
 export const BeforeQueryMany = hookDecorator<BeforeQueryManyHook<any>>(HookTypes.BEFORE_QUERY_MANY);
 export const BeforeFindOne = hookDecorator<BeforeFindOneHook>(HookTypes.BEFORE_FIND_ONE);
 
-export const getHookForType = <H extends Hook<unknown>>(
+export const getHooksForType = <H extends Hook<unknown>>(
   hookType: HookTypes,
   DTOClass: Class<unknown>,
 ): HookMetaValue<H> => getClassMetadata(DTOClass, hookMetaDataKey(hookType), true);
