@@ -1,4 +1,14 @@
  
+## [1.1.1](https://github.com/TriPSs/nestjs-query/compare/v1.1.0...v1.1.1) (2022-10-05)
+
+
+### Bug Fixes
+
+* **query-typegoose:** Fixed package.json ([b947f06](https://github.com/TriPSs/nestjs-query/commit/b947f06d920feb356815cc35be51520b38aefced))
+* **query-typeorm:** Fixed some typings ([49709ce](https://github.com/TriPSs/nestjs-query/commit/49709cea9aa7bec3e855121404d4e9ca9bb4431b))
+
+
+
 ## [1.0.1](https://github.com/TriPSs/nestjs-query/compare/v2.0.0-alpha.1...v1.0.1) (2022-09-10)
 
 
