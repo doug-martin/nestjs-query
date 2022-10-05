@@ -260,7 +260,7 @@ export class RelationQueryBuilder<Entity, Relation> {
       fromPrimaryKeys,
       joins,
 
-      mapRelations: (entity: Entity, relations: Relation[], rawRelations: any[]): Relation[] => {
+      mapRelations: <RawRelation>(entity: Entity, relations: Relation[], rawRelations: RawRelation[]): Relation[] => {
         // Set the alias to use for the join
         const joinAlias = this.existingAlias?.name || aliasName
 
@@ -275,7 +275,7 @@ export class RelationQueryBuilder<Entity, Relation> {
 
         // First filter the raw relations with the PK of the entity, then filter the relations
         // with the PK of the raw relation
-        return lodashFilter(rawRelations, rawFilter).reduce((entityRelations: Relation[], rawRelation: Relation) => {
+        return lodashFilter(rawRelations, rawFilter).reduce((entityRelations: Relation[], rawRelation: RawRelation) => {
           const filter = this.getRelationPrimaryKeysPropertyNameAndColumnsName().reduce(
             (columns: Partial<Entity>, column) => ({
               ...columns,
@@ -286,7 +286,7 @@ export class RelationQueryBuilder<Entity, Relation> {
           )
 
           return entityRelations.concat(lodashFilter(relations, filter) as Relation[])
-        }, [] as Relation[]) as Relation[]
+        }, [] as Relation[])
       },
 
       batchSelect: (queryBuilder, entities) => {
