@@ -1,5 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import { TypegooseModule } from 'nestjs-typegoose'
+import { TypegooseModule } from '@m8a/nestjs-typegoose'
 
 import { createTypegooseQueryServiceProviders } from './providers'
 import { TypegooseClass, TypegooseClassWithOptions } from './typegoose-interface.helpers'

@@ -3357,6 +3357,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@m8a/nestjs-typegoose@npm:8.0.5":
+  version: 8.0.5
+  resolution: "@m8a/nestjs-typegoose@npm:8.0.5"
+  dependencies:
+    is-class: 0.0.9
+  peerDependencies:
+    "@nestjs/common": ^8.0.0 || ^9.0.0
+    "@nestjs/core": ^8.0.0||^9.0.0
+    "@typegoose/typegoose": ^9.0.0
+    mongoose: ^6.0.0
+  checksum: c193ecacec968c1de8af5410011dd1bbadd2df92dbabfd2d77eb70ef967b802bcbd175cb2ac64501025f3f820c43d3d168102ef5134d8db4f4f49d249c6806f5
+  languageName: node
+  linkType: hard
+
 "@mapbox/node-pre-gyp@npm:^1.0.0":
   version: 1.0.9
   resolution: "@mapbox/node-pre-gyp@npm:1.0.9"
@@ -4208,10 +4222,10 @@ __metadata:
     lodash.merge: ^4.6.2
     tslib: ^2.4.0
   peerDependencies:
+    "@m8a/nestjs-typegoose": ^8.0.5
     "@nestjs/common": ^8.0.0 || ^9.0.0
     "@typegoose/typegoose": ^8.0.0 || ^9.0.0
     mongoose: ^6.3.3
-    nestjs-typegoose: ^7.1.38
   languageName: unknown
   linkType: soft
 
@@ -11389,7 +11403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-class@npm:0.0.9, is-class@npm:^0.0.9":
+"is-class@npm:0.0.9":
   version: 0.0.9
   resolution: "is-class@npm:0.0.9"
   checksum: 4b93ec642f4d9300213399a8ac19f4e629bb676c31cc5d982ce7d94752625c8c3b7c6f911d77e1af446e74068de1f74ae849512d46fe06441257c43176ad4270
@@ -13904,6 +13918,7 @@ __metadata:
     "@docusaurus/module-type-aliases": 2.0.1
     "@docusaurus/preset-classic": 2.0.1
     "@jscutlery/semver": ^2.26.0
+    "@m8a/nestjs-typegoose": 8.0.5
     "@nestjs/apollo": ^10.0.22
     "@nestjs/cli": 8.2.8
     "@nestjs/common": 8.4.7
@@ -13971,7 +13986,6 @@ __metadata:
     mongodb-memory-server: 6.9.6
     mongoose: ^6.5.3
     mysql2: 2.3.3
-    nestjs-typegoose: 7.1.38
     nx: 14.5.10
     passport: 0.6.0
     passport-jwt: 4.0.0
@@ -14002,21 +14016,6 @@ __metadata:
     typescript: 4.4.4
   languageName: unknown
   linkType: soft
-
-"nestjs-typegoose@npm:7.1.38":
-  version: 7.1.38
-  resolution: "nestjs-typegoose@npm:7.1.38"
-  dependencies:
-    is-class: ^0.0.9
-    reflect-metadata: ^0.1.13
-  peerDependencies:
-    "@nestjs/common": ^6.10.1 || ^7.0.0
-    "@nestjs/core": ^6.10.1 || ^7.0.0
-    "@typegoose/typegoose": ^6.2.1 || ^7.0.0
-    mongoose: ^5.10.6
-  checksum: 83389513fe0b8bc7fec0d4da84c944838478f9570aa424801a94670c90e90621ee326967684bc4ceaf20d44b6ddd0137d308acbd7e335a4c59ce5e76ad5c67f9
-  languageName: node
-  linkType: hard
 
 "no-case@npm:^3.0.4":
   version: 3.0.4
