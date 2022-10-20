@@ -26,6 +26,7 @@ export {
   InjectPubSub,
   KeySet,
   MutationHookArgs,
+  ObjectId,
   OffsetConnection,
   QueryOptions,
   Reference,

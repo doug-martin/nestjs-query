@@ -9,7 +9,7 @@ import { getAssemblerSerializer } from './assembler.serializer'
 /**
  * Base assembler that uses class-transformer to transform to and from the DTO/Entity.
  */
-export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAssembler<
+export abstract class ClassTransformerAssembler<DTO, Entity extends DeepPartial<Entity>> extends AbstractAssembler<
   DTO,
   Entity,
   DeepPartial<DTO>,
@@ -54,6 +54,21 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
     return plainToClass(cls, obj)
   }
 
+  isConstructor(x: any) {
+    const handler = {
+      construct() {
+        return handler
+      }
+    }
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      return !!new new Proxy(x, handler)()
+    } catch (e) {
+      return false
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/ban-types
   toPlain(entityOrDto: Entity | DTO): object {
     if (entityOrDto && entityOrDto instanceof this.EntityClass) {
@@ -66,7 +81,7 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
       if (serializer) {
         return serializer(entityOrDto)
       }
-    } else if ('constructor' in entityOrDto) {
+    } else if (entityOrDto && 'constructor' in entityOrDto) {
       // eslint-disable-next-line @typescript-eslint/ban-types
       const serializer = getAssemblerSerializer(entityOrDto.constructor as Class<unknown>)
 
@@ -74,7 +89,6 @@ export abstract class ClassTransformerAssembler<DTO, Entity> extends AbstractAss
         return serializer(entityOrDto)
       }
     }
-    // eslint-disable-next-line @typescript-eslint/ban-types
     return entityOrDto as unknown as object
   }
 }

@@ -28,7 +28,7 @@
     "@m8a/nestjs-typegoose": "^8.0.5",
     "@nestjs/common": "^8.0.0 || ^9.0.0",
     "@typegoose/typegoose": "^8.0.0 || ^9.0.0",
-    "mongoose": "^6.3.3"
+    "mongoose": "^6.5.0"
   },
   "repository": {
     "type": "git",
