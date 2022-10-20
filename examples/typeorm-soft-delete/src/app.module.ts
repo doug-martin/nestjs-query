@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { formatGraphqlError, typeormOrmConfig } from '../../helpers'
+import { formatGraphqlError, typeormOrmConfig } from '../../../examples/helpers'
 import { TodoItemModule } from './todo-item/todo-item.module'
 
 @Module({

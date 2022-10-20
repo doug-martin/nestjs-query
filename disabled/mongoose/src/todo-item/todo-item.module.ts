@@ -1,23 +1,24 @@
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
-import { Module } from '@nestjs/common';
-import { NestjsQueryMongooseModule } from '@ptc-org/nestjs-query-mongoose';
-import { AuthGuard } from '../auth.guard';
-import { TodoItemInputDTO } from './dto/todo-item-input.dto';
-import { TodoItemUpdateDTO } from './dto/todo-item-update.dto';
-import { TodoItemDTO } from './dto/todo-item.dto';
-import { TodoItemAssembler } from './todo-item.assembler';
-import { TodoItemEntity, TodoItemEntitySchema } from './todo-item.entity';
-import { TodoItemResolver } from './todo-item.resolver';
+import { Module } from '@nestjs/common'
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql'
+import { NestjsQueryMongooseModule } from '@ptc-org/nestjs-query-mongoose'
 
-const guards = [AuthGuard];
+import { AuthGuard } from '../auth.guard'
+import { TodoItemDTO } from './dto/todo-item.dto'
+import { TodoItemInputDTO } from './dto/todo-item-input.dto'
+import { TodoItemUpdateDTO } from './dto/todo-item-update.dto'
+import { TodoItemAssembler } from './todo-item.assembler'
+import { TodoItemEntity, TodoItemEntitySchema } from './todo-item.entity'
+import { TodoItemResolver } from './todo-item.resolver'
+
+const guards = [AuthGuard]
 @Module({
   providers: [TodoItemResolver],
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryMongooseModule.forFeature([
-          { document: TodoItemEntity, name: TodoItemEntity.name, schema: TodoItemEntitySchema },
-        ]),
+          { document: TodoItemEntity, name: TodoItemEntity.name, schema: TodoItemEntitySchema }
+        ])
       ],
       assemblers: [TodoItemAssembler],
       resolvers: [
@@ -30,10 +31,10 @@ const guards = [AuthGuard];
           aggregate: { guards },
           create: { guards },
           update: { guards },
-          delete: { guards },
-        },
-      ],
-    }),
-  ],
+          delete: { guards }
+        }
+      ]
+    })
+  ]
 })
 export class TodoItemModule {}

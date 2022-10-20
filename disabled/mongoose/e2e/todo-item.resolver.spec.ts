@@ -1,56 +1,57 @@
-import { AggregateResponse, getQueryServiceToken, QueryService } from '@ptc-org/nestjs-query-core';
-import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { getConnectionToken } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
-import { AppModule } from '../src/app.module';
-import { config } from '../src/config';
-import { AUTH_HEADER_NAME, USER_HEADER_NAME } from '../src/constants';
-import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto';
-import { TagDTO } from '../src/tag/dto/tag.dto';
-import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto';
-import { refresh, TODO_ITEMS } from './fixtures';
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/mongoose'
+import { Test } from '@nestjs/testing'
+import { AggregateResponse, getQueryServiceToken, QueryService } from '@ptc-org/nestjs-query-core'
+import { CursorConnectionType } from '@ptc-org/nestjs-query-graphql'
+import { Types } from 'mongoose'
+import request from 'supertest'
+
+import { AppModule } from '../src/app.module'
+import { config } from '../src/config'
+import { AUTH_HEADER_NAME, USER_HEADER_NAME } from '../src/constants'
+import { SubTaskDTO } from '../src/sub-task/dto/sub-task.dto'
+import { TagDTO } from '../src/tag/dto/tag.dto'
+import { TodoItemDTO } from '../src/todo-item/dto/todo-item.dto'
+import { TodoItemEntity } from '../src/todo-item/todo-item.entity'
+import { refresh, TODO_ITEMS } from './fixtures'
 import {
   edgeNodes,
   pageInfoField,
-  subTaskFields,
-  tagFields,
-  todoItemFields,
-  todoItemAggregateFields,
-  tagAggregateFields,
   subTaskAggregateFields,
-} from './graphql-fragments';
-import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
+  subTaskFields,
+  tagAggregateFields,
+  tagFields,
+  todoItemAggregateFields,
+  todoItemFields
+} from './graphql-fragments'
 
 describe('TodoItemResolver (mongoose - e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+      imports: [AppModule]
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
         skipMissingProperties: false,
-        forbidUnknownValues: true,
-      }),
-    );
+        forbidUnknownValues: true
+      })
+    )
 
-    await app.init();
-    await refresh(app.get(getConnectionToken()));
-  });
+    await app.init()
+    await refresh(app.get(getConnectionToken()))
+  })
 
-  afterEach(() => refresh(app.get(getConnectionToken())));
+  afterEach(() => refresh(app.get(getConnectionToken())))
 
-  const todoItemIds = TODO_ITEMS.map((td) => td.id);
-  const graphqlIds = todoItemIds.map((id) => `"${id}"`);
+  const todoItemIds = TODO_ITEMS.map((td) => td.id)
+  const graphqlIds = todoItemIds.map((id) => `"${id}"`)
   describe('find one', () => {
     it(`should find a todo item by id`, () =>
       request(app.getHttpServer())
@@ -62,7 +63,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           todoItem(id: ${graphqlIds[0]}) {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -73,11 +74,11 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
                 title: 'Create Nest App',
                 completed: true,
                 description: null,
-                age: expect.any(Number),
-              },
-            },
-          });
-        }));
+                age: expect.any(Number)
+              }
+            }
+          })
+        }))
 
     it(`should throw item not found on non existing todo item`, () =>
       request(app.getHttpServer())
@@ -89,13 +90,13 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           todoItem(id: "${new Types.ObjectId().toString()}") {
             ${todoItemFields}
           }
-        }`,
+        }`
         })
-                .expect(200)
+        .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toContain('Unable to find');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toContain('Unable to find')
+        }))
 
     it(`should return subTasks as a connection`, () =>
       request(app.getHttpServer())
@@ -111,21 +112,21 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               totalCount
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<SubTaskDTO> = body.data.todoItem.subTasks
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjI=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(totalCount).toBe(3);
-          expect(edges).toHaveLength(3);
-          edges.forEach((e) => expect(e.node.title).toContain('Create Nest App -'));
-        }));
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
+          })
+          expect(totalCount).toBe(3)
+          expect(edges).toHaveLength(3)
+          edges.forEach((e) => expect(e.node.title).toContain('Create Nest App -'))
+        }))
 
     it(`should return subTasksAggregate`, () =>
       request(app.getHttpServer())
@@ -139,19 +140,19 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               ${subTaskAggregateFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.subTasksAggregate;
+          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.subTasksAggregate
           expect(agg).toEqual([
             {
               count: { completed: 3, description: 0, id: 3, title: 3 },
               max: { description: null, id: '5f74ed936c3afaeaadb8f31c', title: 'Create Nest App - Sub Task 3' },
-              min: { description: null, id: '5f74ed936c3afaeaadb8f31a', title: 'Create Nest App - Sub Task 1' },
-            },
-          ]);
-        }));
+              min: { description: null, id: '5f74ed936c3afaeaadb8f31a', title: 'Create Nest App - Sub Task 1' }
+            }
+          ])
+        }))
 
     it(`should return tags as a connection`, () =>
       request(app.getHttpServer())
@@ -167,21 +168,21 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               totalCount
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.todoItem.tags;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.todoItem.tags
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        }));
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
+          })
+          expect(totalCount).toBe(2)
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home'])
+        }))
 
     it(`should return tagsAggregate`, () =>
       request(app.getHttpServer())
@@ -195,20 +196,20 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               ${tagAggregateFields}
             }
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.tagsAggregate;
+          const agg: AggregateResponse<TagDTO>[] = body.data.todoItem.tagsAggregate
           expect(agg).toEqual([
             {
               count: { createdAt: 2, id: 2, name: 2, updatedAt: 2 },
               max: { id: '5f74ed2686b2bae7bf4b4aac', name: 'Urgent' },
-              min: { id: '5f74ed2686b2bae7bf4b4aab', name: 'Home' },
-            },
-          ]);
-        }));
-  });
+              min: { id: '5f74ed2686b2bae7bf4b4aab', name: 'Home' }
+            }
+          ])
+        }))
+  })
 
   describe('query', () => {
     it(`should return a connection`, () =>
@@ -223,59 +224,58 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
-            endCursor:
-              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjEifV19',
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjEifV19',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor:
-              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19'
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
           expect(edges.map((e) => e.node)).toEqual([
             {
               id: todoItemIds[0],
               title: 'Create Nest App',
               completed: true,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[1],
               title: 'Create Entity',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[2],
               title: 'Create Entity Service',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[3],
               title: 'Add Todo Item Resolver',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[4],
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
-              age: expect.any(Number),
-            },
-          ]);
-        }));
+              age: expect.any(Number)
+            }
+          ])
+        }))
 
     it(`should allow querying`, () =>
       request(app.getHttpServer())
@@ -289,45 +289,44 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
-            endCursor:
-              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWYifV19',
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWYifV19',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor:
-              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
-          });
-          expect(totalCount).toBe(3);
-          expect(edges).toHaveLength(3);
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19'
+          })
+          expect(totalCount).toBe(3)
+          expect(edges).toHaveLength(3)
           expect(edges.map((e) => e.node)).toEqual([
             {
               id: todoItemIds[0],
               title: 'Create Nest App',
               completed: true,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[1],
               title: 'Create Entity',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[2],
               title: 'Create Entity Service',
               completed: false,
               description: null,
-              age: expect.any(Number),
-            },
-          ]);
-        }));
+              age: expect.any(Number)
+            }
+          ])
+        }))
 
     it(`should allow sorting`, () =>
       request(app.getHttpServer())
@@ -341,59 +340,58 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
           expect(pageInfo).toEqual({
-            endCursor:
-              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
+            endCursor: 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
             hasNextPage: false,
             hasPreviousPage: false,
             startCursor:
-              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjEifV19',
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
+              'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjEifV19'
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
           expect(edges.map((e) => e.node)).toEqual([
             {
               id: todoItemIds[4],
               title: 'How to create item With Sub Tasks',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[3],
               title: 'Add Todo Item Resolver',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[2],
               title: 'Create Entity Service',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[1],
               title: 'Create Entity',
               completed: false,
               description: null,
-              age: expect.any(Number),
+              age: expect.any(Number)
             },
             {
               id: todoItemIds[0],
               title: 'Create Nest App',
               completed: true,
               description: null,
-              age: expect.any(Number),
-            },
-          ]);
-        }));
+              age: expect.any(Number)
+            }
+          ])
+        }))
 
     describe('paging', () => {
       it(`should allow paging with the 'first' field`, () =>
@@ -408,38 +406,38 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
             expect(pageInfo).toEqual({
               endCursor:
                 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWUifV19',
               hasNextPage: true,
               hasPreviousPage: false,
               startCursor:
-                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19',
-            });
-            expect(totalCount).toBe(5);
-            expect(edges).toHaveLength(2);
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWQifV19'
+            })
+            expect(totalCount).toBe(5)
+            expect(edges).toHaveLength(2)
             expect(edges.map((e) => e.node)).toEqual([
               {
                 id: todoItemIds[0],
                 title: 'Create Nest App',
                 completed: true,
                 description: null,
-                age: expect.any(Number),
+                age: expect.any(Number)
               },
               {
                 id: todoItemIds[1],
                 title: 'Create Entity',
                 completed: false,
                 description: null,
-                age: expect.any(Number),
-              },
-            ]);
-          }));
+                age: expect.any(Number)
+              }
+            ])
+          }))
 
       it(`should allow paging with the 'first' field and 'after'`, () =>
         request(app.getHttpServer())
@@ -453,40 +451,40 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ${edgeNodes(todoItemFields)}
             totalCount
           }
-        }`,
+        }`
           })
           .expect(200)
           .then(({ body }) => {
-            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems;
+            const { edges, pageInfo, totalCount }: CursorConnectionType<TodoItemDTO> = body.data.todoItems
             expect(pageInfo).toEqual({
               endCursor:
                 'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYjAifV19',
               hasNextPage: true,
               hasPreviousPage: true,
               startCursor:
-                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWYifV19',
-            });
-            expect(totalCount).toBe(5);
-            expect(edges).toHaveLength(2);
+                'eyJ0eXBlIjoia2V5c2V0IiwiZmllbGRzIjpbeyJmaWVsZCI6ImlkIiwidmFsdWUiOiI1Zjc0YWYxMTJmYWUyYjI1MTUxMGUzYWYifV19'
+            })
+            expect(totalCount).toBe(5)
+            expect(edges).toHaveLength(2)
             expect(edges.map((e) => e.node)).toEqual([
               {
                 id: todoItemIds[2],
                 title: 'Create Entity Service',
                 completed: false,
                 description: null,
-                age: expect.any(Number),
+                age: expect.any(Number)
               },
               {
                 id: todoItemIds[3],
                 title: 'Add Todo Item Resolver',
                 completed: false,
                 description: null,
-                age: expect.any(Number),
-              },
-            ]);
-          }));
-    });
-  });
+                age: expect.any(Number)
+              }
+            ])
+          }))
+    })
+  })
 
   describe('aggregate', () => {
     it('should require a header secret', () =>
@@ -499,12 +497,12 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             todoItemAggregate {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
 
     it(`should return a aggregate response`, () =>
       request(app.getHttpServer())
@@ -517,19 +515,19 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           todoItemAggregate {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate
           expect(res).toEqual([
             {
               count: { completed: 5, createdAt: 5, description: 0, id: 5, title: 5, updatedAt: 5 },
               max: { description: null, id: todoItemIds[4], title: 'How to create item With Sub Tasks' },
-              min: { description: null, id: todoItemIds[0], title: 'Add Todo Item Resolver' },
-            },
-          ]);
-        }));
+              min: { description: null, id: todoItemIds[0], title: 'Add Todo Item Resolver' }
+            }
+          ])
+        }))
 
     it(`should return a aggregate response with groupBy`, () =>
       request(app.getHttpServer())
@@ -545,26 +543,26 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               }
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate
           expect(res).toEqual([
             {
               groupBy: { completed: false },
               count: { completed: 4, createdAt: 4, description: 0, id: 4, title: 4, updatedAt: 4 },
               max: { description: null, id: todoItemIds[4], title: 'How to create item With Sub Tasks' },
-              min: { description: null, id: todoItemIds[1], title: 'Add Todo Item Resolver' },
+              min: { description: null, id: todoItemIds[1], title: 'Add Todo Item Resolver' }
             },
             {
               groupBy: { completed: true },
               count: { completed: 1, createdAt: 1, description: 0, id: 1, title: 1, updatedAt: 1 },
               max: { description: null, id: todoItemIds[0], title: 'Create Nest App' },
-              min: { description: null, id: todoItemIds[0], title: 'Create Nest App' },
-            },
-          ]);
-        }));
+              min: { description: null, id: todoItemIds[0], title: 'Create Nest App' }
+            }
+          ])
+        }))
 
     it(`should allow filtering`, () =>
       request(app.getHttpServer())
@@ -577,20 +575,20 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
           todoItemAggregate(filter: { completed: { is: false } }) {
               ${todoItemAggregateFields}
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate;
+          const res: AggregateResponse<TodoItemDTO>[] = body.data.todoItemAggregate
           expect(res).toEqual([
             {
               count: { id: 4, title: 4, description: 0, completed: 4, createdAt: 4, updatedAt: 4 },
               min: { id: todoItemIds[1], title: 'Add Todo Item Resolver', description: null },
-              max: { id: todoItemIds[4], title: 'How to create item With Sub Tasks', description: null },
-            },
-          ]);
-        }));
-  });
+              max: { id: todoItemIds[4], title: 'How to create item With Sub Tasks', description: null }
+            }
+          ])
+        }))
+  })
 
   describe('create one', () => {
     it('should require a header secret', () =>
@@ -609,12 +607,12 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow creating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -632,7 +630,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -641,18 +639,18 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               createOneTodoItem: {
                 id: expect.any(String),
                 title: 'Test Todo',
-                completed: false,
-              },
-            },
-          });
-        }));
+                completed: false
+              }
+            }
+          })
+        }))
 
     it('should call the beforeCreateOne hook', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
+          [USER_HEADER_NAME]: 'E2E Test'
         })
         .send({
           operationName: null,
@@ -668,7 +666,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               completed
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -678,11 +676,11 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
                 id: expect.any(String),
                 title: 'Create One Hook Todo',
                 completed: false,
-                createdBy: 'E2E Test',
-              },
-            },
-          });
-        }));
+                createdBy: 'E2E Test'
+              }
+            }
+          })
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -701,14 +699,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('create many', () => {
     it('should require a header secret', () =>
@@ -727,13 +725,13 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
 
     it('should allow creating multiple todoItems', () =>
       request(app.getHttpServer())
@@ -755,7 +753,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -763,18 +761,18 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             data: {
               createManyTodoItems: [
                 { id: expect.any(String), title: 'Many Test Todo 1', completed: false },
-                { id: expect.any(String), title: 'Many Test Todo 2', completed: true },
-              ],
-            },
-          });
-        }));
+                { id: expect.any(String), title: 'Many Test Todo 2', completed: true }
+              ]
+            }
+          })
+        }))
 
     it('should call the beforeCreateMany hook when creating multiple todoItems', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
+          [USER_HEADER_NAME]: 'E2E Test'
         })
         .send({
           operationName: null,
@@ -793,7 +791,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               completed
               createdBy
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
@@ -801,11 +799,11 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             data: {
               createManyTodoItems: [
                 { id: expect.any(String), title: 'Many Create Hook 1', completed: false, createdBy: 'E2E Test' },
-                { id: expect.any(String), title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' },
-              ],
-            },
-          });
-        }));
+                { id: expect.any(String), title: 'Many Create Hook 2', completed: true, createdBy: 'E2E Test' }
+              ]
+            }
+          })
+        }))
 
     it('should validate a todoItem', () =>
       request(app.getHttpServer())
@@ -824,14 +822,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update one', () => {
     it('should require a header secret', () =>
@@ -851,12 +849,12 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow updating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -875,24 +873,24 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateOneTodoItem: {
               id: todoItemIds[0],
               title: 'Update Test Todo',
-              completed: true,
-            },
-          },
-        }));
+              completed: true
+            }
+          }
+        }))
 
     it('should call the beforeUpdateOne hook', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
+          [USER_HEADER_NAME]: 'E2E Test'
         })
         .send({
           operationName: null,
@@ -909,7 +907,7 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               completed
               updatedBy
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
@@ -917,10 +915,10 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               id: todoItemIds[0],
               title: 'Update One Hook Todo',
               completed: true,
-              updatedBy: 'E2E Test',
-            },
-          },
-        }));
+              updatedBy: 'E2E Test'
+            }
+          }
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -939,15 +937,13 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.',
-          );
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "UpdateOneTodoItemInput.id" of required type "ID!" was not provided.')
+        }))
 
     it('should validate an update', () =>
       request(app.getHttpServer())
@@ -967,14 +963,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('title must be shorter than or equal to 20 characters')
+        }))
+  })
 
   describe('update many', () => {
     it('should require a header secret', () =>
@@ -992,12 +988,12 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow updating a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1014,22 +1010,22 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTodoItems: {
-              updatedCount: 2,
-            },
-          },
-        }));
+              updatedCount: 2
+            }
+          }
+        }))
 
     it('should call the beforeUpdateMany hook when updating todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
         .set({
           [AUTH_HEADER_NAME]: config.auth.header,
-          [USER_HEADER_NAME]: 'E2E Test',
+          [USER_HEADER_NAME]: 'E2E Test'
         })
         .send({
           operationName: null,
@@ -1043,30 +1039,30 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             updateManyTodoItems: {
-              updatedCount: 2,
-            },
-          },
+              updatedCount: 2
+            }
+          }
         })
         .then(async () => {
-          const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity));
-          const todoItems = await queryService.query({ filter: { id: { in: todoItemIds.slice(0, 2) } } });
+          const queryService = app.get<QueryService<TodoItemEntity>>(getQueryServiceToken(TodoItemEntity))
+          const todoItems = await queryService.query({ filter: { id: { in: todoItemIds.slice(0, 2) } } })
           expect(
             todoItems.map((ti) => ({
               id: ti.id,
               title: ti.title,
               completed: ti.completed,
-              updatedBy: ti.updatedBy,
-            })),
+              updatedBy: ti.updatedBy
+            }))
           ).toEqual([
             { id: todoItemIds[0], title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
-            { id: todoItemIds[1], title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' },
-          ]);
-        }));
+            { id: todoItemIds[1], title: 'Update Many Hook', completed: true, updatedBy: 'E2E Test' }
+          ])
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -1083,15 +1079,15 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
-            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.',
-          );
-        }));
+            'Field "UpdateManyTodoItemsInput.filter" of required type "TodoItemUpdateFilter!" was not provided.'
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -1109,14 +1105,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               updatedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('delete one', () => {
     it('should require a header secret', () =>
@@ -1133,12 +1129,12 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow deleting a todoItem', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1154,17 +1150,17 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteOneTodoItem: {
               id: todoItemIds[0],
               title: 'Create Nest App',
-              completed: true,
-            },
-          },
-        }));
+              completed: true
+            }
+          }
+        }))
 
     it('should require an id', () =>
       request(app.getHttpServer())
@@ -1181,16 +1177,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
               title
               completed
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(body.errors[0].message).toBe(
-            'Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.',
-          );
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(body.errors[0].message).toBe('Field "DeleteOneTodoItemInput.id" of required type "ID!" was not provided.')
+        }))
+  })
 
   describe('delete many', () => {
     it('should require a header secret', () =>
@@ -1207,12 +1201,12 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource');
-        }));
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('Forbidden resource')
+        }))
     it('should allow deleting multiple todoItems', () =>
       request(app.getHttpServer())
         .post('/graphql')
@@ -1228,15 +1222,15 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200, {
           data: {
             deleteManyTodoItems: {
-              deletedCount: 2,
-            },
-          },
-        }));
+              deletedCount: 2
+            }
+          }
+        }))
 
     it('should require a filter', () =>
       request(app.getHttpServer())
@@ -1251,15 +1245,15 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
+          expect(body.errors).toHaveLength(1)
           expect(body.errors[0].message).toBe(
-            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.',
-          );
-        }));
+            'Field "DeleteManyTodoItemsInput.filter" of required type "TodoItemDeleteFilter!" was not provided.'
+          )
+        }))
 
     it('should require a non-empty filter', () =>
       request(app.getHttpServer())
@@ -1276,14 +1270,14 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
             ) {
               deletedCount
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.errors).toHaveLength(1);
-          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object');
-        }));
-  });
+          expect(body.errors).toHaveLength(1)
+          expect(JSON.stringify(body.errors[0])).toContain('filter must be a non-empty object')
+        }))
+  })
 
   describe('addTagsToTodoItem', () => {
     it('allow adding tags to a todoItem', () =>
@@ -1308,23 +1302,23 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags;
-          expect(body.data.addTagsToTodoItem.id).toBe(todoItemIds[0]);
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.addTagsToTodoItem.tags
+          expect(body.data.addTagsToTodoItem.id).toBe(todoItemIds[0])
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
-        }));
-  });
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked'])
+        }))
+  })
 
   describe('removeTagsFromTodoItem', () => {
     it('allow adding subTasks to a todoItem', () =>
@@ -1349,23 +1343,23 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags;
-          expect(body.data.removeTagsFromTodoItem.id).toBe(todoItemIds[0]);
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.removeTagsFromTodoItem.tags
+          expect(body.data.removeTagsFromTodoItem.id).toBe(todoItemIds[0])
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjE=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(totalCount).toBe(2);
-          expect(edges).toHaveLength(2);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home']);
-        }));
-  });
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
+          })
+          expect(totalCount).toBe(2)
+          expect(edges).toHaveLength(2)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home'])
+        }))
+  })
 
   describe('setTagsOnTodoItem', () => {
     it('allow settings tags on a todoItem', () =>
@@ -1390,22 +1384,22 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.setTagsOnTodoItem.tags;
-          expect(body.data.setTagsOnTodoItem.id).toBe(todoItemIds[0]);
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.setTagsOnTodoItem.tags
+          expect(body.data.setTagsOnTodoItem.id).toBe(todoItemIds[0])
           expect(pageInfo).toEqual({
             endCursor: 'YXJyYXljb25uZWN0aW9uOjQ=',
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          });
-          expect(totalCount).toBe(5);
-          expect(edges).toHaveLength(5);
-          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked']);
-        }));
+            startCursor: 'YXJyYXljb25uZWN0aW9uOjA='
+          })
+          expect(totalCount).toBe(5)
+          expect(edges).toHaveLength(5)
+          expect(edges.map((e) => e.node.name)).toEqual(['Urgent', 'Home', 'Work', 'Question', 'Blocked'])
+        }))
 
     it('allow settings tags to a todoItem to an empty array', () =>
       request(app.getHttpServer())
@@ -1429,25 +1423,25 @@ describe('TodoItemResolver (mongoose - e2e)', () => {
                 totalCount
               }
             }
-        }`,
+        }`
         })
         .expect(200)
         .then(({ body }) => {
-          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.setTagsOnTodoItem.tags;
-          expect(body.data.setTagsOnTodoItem.id).toBe(todoItemIds[0]);
+          const { edges, pageInfo, totalCount }: CursorConnectionType<TagDTO> = body.data.setTagsOnTodoItem.tags
+          expect(body.data.setTagsOnTodoItem.id).toBe(todoItemIds[0])
           expect(pageInfo).toEqual({
             endCursor: null,
             hasNextPage: false,
             hasPreviousPage: false,
-            startCursor: null,
-          });
-          expect(totalCount).toBe(0);
-          expect(edges).toHaveLength(0);
-          expect(edges.map((e) => e.node.name)).toEqual([]);
-        }));
-  });
+            startCursor: null
+          })
+          expect(totalCount).toBe(0)
+          expect(edges).toHaveLength(0)
+          expect(edges.map((e) => e.node.name)).toEqual([])
+        }))
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
-});
+    await app.close()
+  })
+})

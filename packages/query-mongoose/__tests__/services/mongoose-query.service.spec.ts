@@ -7,10 +7,8 @@ import { Document, Model, Types } from 'mongoose'
 import { NestjsQueryMongooseModule } from '../../src'
 import { MongooseQueryService } from '../../src/services'
 import {
-  closeDbConnection,
-  dropDatabase,
-  getConnectionUri,
-  prepareDb,
+  MongoServer,
+  mongoServer,
   TEST_ENTITIES,
   TEST_REFERENCES,
   TestEntity,
@@ -18,6 +16,8 @@ import {
   TestReference,
   TestReferenceSchema
 } from '../__fixtures__'
+
+let mongo: MongoServer
 
 describe('MongooseQueryService', () => {
   let moduleRef: TestingModule
@@ -39,9 +39,10 @@ describe('MongooseQueryService', () => {
   }
 
   beforeAll(async () => {
+    mongo = await mongoServer()
     moduleRef = await Test.createTestingModule({
       imports: [
-        MongooseModule.forRoot(await getConnectionUri()),
+        MongooseModule.forRoot(mongo.getConnectionUri()),
         NestjsQueryMongooseModule.forFeature([
           { name: TestReference.name, document: TestReference, schema: TestReferenceSchema },
           { name: TestEntity.name, document: TestEntity, schema: TestEntitySchema }
@@ -82,11 +83,11 @@ describe('MongooseQueryService', () => {
     expect(cleansedResults).toEqual(cleansedExpected)
   }
 
-  afterAll(async () => closeDbConnection())
+  afterAll(() => mongo.closeDbConnection())
 
-  beforeEach(() => prepareDb())
+  beforeEach(() => mongo.prepareDb())
 
-  afterEach(() => dropDatabase())
+  afterEach(() => mongo.dropDatabase())
 
   describe('#query', () => {
     it('call find and return the result', async () => {

@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { ObjectId } from '@ptc-org/nestjs-query-graphql'
 import { Document, SchemaTypes, Types } from 'mongoose'
 
 @Schema()

@@ -1,31 +1,35 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SchemaTypes, Types, Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { ObjectId } from '@ptc-org/nestjs-query-graphql'
+import mongoose, { Document, SchemaTypes, Types } from 'mongoose'
 
 @Schema({ timestamps: true })
 export class SubTaskEntity extends Document {
+  @ObjectId()
+  _id: mongoose.Types.ObjectId
+
   @Prop({ required: true })
-  title!: string;
+  title!: string
 
   @Prop()
-  description?: string;
+  description?: string
 
   @Prop({ required: true })
-  completed!: boolean;
+  completed!: boolean
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'TodoItemEntity', required: true })
-  todoItem!: Types.ObjectId;
+  todoItem!: Types.ObjectId
 
   @Prop()
-  createdAt!: Date;
+  createdAt!: Date
 
   @Prop()
-  updatedAt!: Date;
+  updatedAt!: Date
 
   @Prop()
-  createdBy?: string;
+  createdBy?: string
 
   @Prop()
-  updatedBy?: string;
+  updatedBy?: string
 }
 
-export const SubTaskEntitySchema = SchemaFactory.createForClass(SubTaskEntity);
+export const SubTaskEntitySchema = SchemaFactory.createForClass(SubTaskEntity)

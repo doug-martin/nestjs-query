@@ -1,6 +1,6 @@
 import { Connection } from 'typeorm'
 
-import { executeTruncate } from '../../helpers'
+import { executeTruncate } from '../../../examples/helpers'
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity'
 
 const tables = ['todo_item']

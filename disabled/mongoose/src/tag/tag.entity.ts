@@ -1,27 +1,31 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { ObjectId } from '@ptc-org/nestjs-query-graphql'
+import mongoose, { Document } from 'mongoose'
 
 @Schema({ timestamps: true })
 export class TagEntity extends Document {
+  @ObjectId()
+  _id: mongoose.Types.ObjectId
+
   @Prop({ required: true })
-  name!: string;
+  name!: string
 
   @Prop()
-  createdAt!: Date;
+  createdAt!: Date
 
   @Prop()
-  updatedAt!: Date;
+  updatedAt!: Date
 
   @Prop()
-  createdBy?: string;
+  createdBy?: string
 
   @Prop()
-  updatedBy?: string;
+  updatedBy?: string
 }
 
-export const TagEntitySchema = SchemaFactory.createForClass(TagEntity);
+export const TagEntitySchema = SchemaFactory.createForClass(TagEntity)
 TagEntitySchema.virtual('todoItems', {
   ref: 'TodoItemEntity',
   localField: '_id',
-  foreignField: 'tags',
-});
+  foreignField: 'tags'
+})
