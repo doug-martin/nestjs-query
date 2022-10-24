@@ -1,4 +1,15 @@
  
+## [1.1.2](https://github.com/TriPSs/nestjs-query/compare/v1.1.1...v1.1.2) (2022-10-24)
+
+
+### Bug Fixes
+
+* **docs/lint:** update for new @ObjectId decorator - fix linting error ([63f8b94](https://github.com/TriPSs/nestjs-query/commit/63f8b94fde3267a55512f2182fda2adde00084e9))
+* **docs:** update DTO docs too ([bd4a282](https://github.com/TriPSs/nestjs-query/commit/bd4a2825f40dfebcd40cb479586a4b2e9c2f6ee8))
+* **query-typegoose:** update to new nestjs-typegoose package from m8a ([85a4748](https://github.com/TriPSs/nestjs-query/commit/85a4748e4cb12078cbd75e7783c63ca69d8496e5))
+
+
+
 ## [1.1.1](https://github.com/TriPSs/nestjs-query/compare/v1.1.0...v1.1.1) (2022-10-05)
 
 
