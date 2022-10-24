@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { formatGraphqlError, typeormOrmConfig } from '../../helpers'
+import { formatGraphqlError, typeormOrmConfig } from '../../../examples/helpers'
 import { GqlContext } from './auth.guard'
 import { SubTaskModule } from './sub-task/sub-task.module'
 import { TagModule } from './tag/tag.module'

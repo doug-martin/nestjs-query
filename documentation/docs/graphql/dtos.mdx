@@ -162,6 +162,31 @@ by default. In the future if you need to change the type later on it should be a
 that use the `@IDField` decorator to update.
 :::
 
+:::info
+If you are using `query-typegoose`there is a known "won't fix" bug with `class-transformer`, where ObjectIds end up getting new values, instead of the hex value they should be. To remedy this, we have a special decorator called '@ObjectId`. So, DTO's should use this as follow:
+
+```ts 
+import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { CursorConnection, FilterableField, KeySet, ObjectId, QueryOptions } from '@ptc-org/nestjs-query-graphql'
+import mongoose from 'mongoose'
+
+import { AuthGuard } from '../../auth.guard'
+import { SubTaskDTO } from '../../sub-task/dto/sub-task.dto'
+import { TagDTO } from '../../tag/dto/tag.dto'
+
+@ObjectType('TodoItem')
+@KeySet(['id'])
+@QueryOptions({ enableTotalCount: true })
+@CursorConnection('subTasks', () => SubTaskDTO, { disableRemove: true, guards: [AuthGuard] })
+@CursorConnection('tags', () => TagDTO, { guards: [AuthGuard] })
+export class TodoItemDTO {
+  @ObjectId()
+  _id: mongoose.Types.ObjectId
+```
+
+Notice the last two lines of code.
+:::
+
 ### Example
 
 A common use case is to obscure an auto-incremented primary key.

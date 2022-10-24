@@ -1,11 +1,12 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-assignment */
-import { Connection, Types } from 'mongoose';
-import { SubTaskEntity } from '../src/sub-task/sub-task.entity';
-import { TagEntity } from '../src/tag/tag.entity';
-import { TodoItemEntity } from '../src/todo-item/todo-item.entity';
-import { asyncLoop } from '../../../examples/helpers';
+import { Connection, Types } from 'mongoose'
 
-const { ObjectId } = Types;
+import { asyncLoop } from '../../../examples/helpers'
+import { SubTaskEntity } from '../src/sub-task/sub-task.entity'
+import { TagEntity } from '../src/tag/tag.entity'
+import { TodoItemEntity } from '../src/todo-item/todo-item.entity'
+
+const { ObjectId } = Types
 
 export const TAGS = [
   { id: '5f74ed2686b2bae7bf4b4aab', name: 'Urgent' },
@@ -13,7 +14,7 @@ export const TAGS = [
   { id: '5f74ed2686b2bae7bf4b4aad', name: 'Work' },
   { id: '5f74ed2686b2bae7bf4b4aae', name: 'Question' },
   { id: '5f74ed2686b2bae7bf4b4aaf', name: 'Blocked' }
-];
+]
 
 export const TODO_ITEMS = [
   {
@@ -51,7 +52,7 @@ export const TODO_ITEMS = [
     priority: 4,
     tags: [TAGS[3].id, TAGS[4].id]
   }
-];
+]
 
 export const SUB_TASKS = [
   {
@@ -159,21 +160,22 @@ export const SUB_TASKS = [
     title: `${TODO_ITEMS[4].title} - Sub Task 3`,
     todoItem: TODO_ITEMS[4].id
   }
-];
+]
 
-const documents = [TodoItemEntity.name, SubTaskEntity.name, TagEntity.name];
-export const truncate = async (connection: Connection): Promise<void> => (
+const documents = [TodoItemEntity.name, SubTaskEntity.name, TagEntity.name]
+export const truncate = async (connection: Connection): Promise<void> =>
   asyncLoop(documents, (document) => connection.model<TodoItemEntity | TagEntity | SubTaskEntity>(document).remove({}).exec())
-);
 
 export const refresh = async (connection: Connection): Promise<void> => {
-  await truncate(connection);
+  await truncate(connection)
 
-  const TodoModel = connection.model<TodoItemEntity>(TodoItemEntity.name);
-  const TagsModel = connection.model<TagEntity>(TagEntity.name);
-  const SubTaskModel = connection.model<SubTaskEntity>(SubTaskEntity.name);
+  const TodoModel = connection.model<TodoItemEntity>(TodoItemEntity.name)
+  const TagsModel = connection.model<TagEntity>(TagEntity.name)
+  const SubTaskModel = connection.model<SubTaskEntity>(SubTaskEntity.name)
 
-  await Promise.all(TAGS.map(({ id, ...rest }) => new TagsModel({ _id: new ObjectId(id), ...rest }).save()));
-  await Promise.all(TODO_ITEMS.map(({ id, ...rest }) => new TodoModel({ _id: new ObjectId(id), ...rest }).save()));
-  await Promise.all(SUB_TASKS.map(({ id, ...rest }) => new SubTaskModel({ _id: new ObjectId(id), ...rest }).save()));
-};
+  await Promise.all(TAGS.map(({ id, ...rest }) => new TagsModel({ _id: ObjectId.createFromHexString(id), ...rest }).save()))
+  await Promise.all(TODO_ITEMS.map(({ id, ...rest }) => new TodoModel({ _id: ObjectId.createFromHexString(id), ...rest }).save()))
+  await Promise.all(
+    SUB_TASKS.map(({ id, ...rest }) => new SubTaskModel({ _id: ObjectId.createFromHexString(id), ...rest }).save())
+  )
+}

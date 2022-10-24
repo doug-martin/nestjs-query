@@ -1,17 +1,15 @@
 /* eslint-disable no-underscore-dangle,@typescript-eslint/no-unsafe-return */
+import { InjectModel, TypegooseModule } from '@m8a/nestjs-typegoose'
 import { Test, TestingModule } from '@nestjs/testing'
 import { FindRelationOptions, SortDirection } from '@ptc-org/nestjs-query-core'
 import { DocumentType, getModelForClass, mongoose } from '@typegoose/typegoose'
 import { ReturnModelType } from '@typegoose/typegoose/lib/types'
-import { InjectModel, TypegooseModule } from 'nestjs-typegoose'
 
 import { NestjsQueryTypegooseModule } from '../../src'
 import { TypegooseQueryService } from '../../src/services'
 import {
-  closeDbConnection,
-  dropDatabase,
-  getConnectionUri,
-  prepareDb,
+  MongoServer,
+  mongoServer,
   TEST_DISCRIMINATED_ENTITIES,
   TEST_REFERENCES_FOR_DISCRIMINATES,
   TestEntity,
@@ -21,7 +19,9 @@ import { TestDiscriminatedEntity } from '../__fixtures__/test-discriminated.enti
 
 const { Types } = mongoose
 
-describe('TypegooseQueryService', () => {
+let mongo: MongoServer
+
+describe('TypegooseQueryService-With Descriminates', () => {
   let moduleRef: TestingModule
   let TestReferenceModel: ReturnModelType<typeof TestReference>
   let TestDiscriminatedEntityModel: ReturnModelType<typeof TestDiscriminatedEntity>
@@ -41,9 +41,10 @@ describe('TypegooseQueryService', () => {
   }
 
   beforeAll(async () => {
+    mongo = await mongoServer()
     moduleRef = await Test.createTestingModule({
       imports: [
-        TypegooseModule.forRoot(await getConnectionUri()),
+        TypegooseModule.forRoot(mongo.getConnectionUri()),
         NestjsQueryTypegooseModule.forFeature([
           {
             typegooseClass: TestEntity,
@@ -87,11 +88,11 @@ describe('TypegooseQueryService', () => {
     expect(cleansedResults).toEqual(cleansedExpected)
   }
 
-  afterAll(async () => closeDbConnection())
+  afterAll(async () => mongo.closeDbConnection())
 
-  beforeEach(async () => prepareDb())
+  beforeEach(async () => mongo.prepareDb())
 
-  afterEach(async () => dropDatabase())
+  afterEach(async () => mongo.dropDatabase())
 
   describe('#query with discriminated entity', () => {
     it('call find and return the result', async () => {
@@ -103,13 +104,13 @@ describe('TypegooseQueryService', () => {
 
     it('should support eq operator', async () => {
       const queryService = moduleRef.get(TestDiscriminatedEntityService)
-      const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo11' } } })
+      const queryResult = await queryService.query({ filter: { stringType: { eq: 'foo11-descrim' } } })
       expect(convertDocuments(queryResult)).toEqual([TEST_DISCRIMINATED_ENTITIES[0]])
     })
 
     it('should support neq operator', async () => {
       const queryService = moduleRef.get(TestDiscriminatedEntityService)
-      const queryResult = await queryService.query({ filter: { stringType: { neq: 'foo1' } } })
+      const queryResult = await queryService.query({ filter: { stringType: { neq: 'foo1-descrim' } } })
       expect(convertDocuments(queryResult)).toEqual(expect.arrayContaining(TEST_DISCRIMINATED_ENTITIES.slice(1)))
     })
 
@@ -212,13 +213,13 @@ describe('TypegooseQueryService', () => {
           max: {
             dateType: TEST_DISCRIMINATED_ENTITIES[9].dateType,
             numberType: 20,
-            stringType: 'foo20',
+            stringType: 'foo20-descrim',
             id: expect.any(Types.ObjectId)
           },
           min: {
             dateType: TEST_DISCRIMINATED_ENTITIES[0].dateType,
             numberType: 11,
-            stringType: 'foo11',
+            stringType: 'foo11-descrim',
             id: expect.any(Types.ObjectId)
           },
           sum: {
@@ -255,13 +256,13 @@ describe('TypegooseQueryService', () => {
           max: {
             dateType: TEST_DISCRIMINATED_ENTITIES[8].dateType,
             numberType: 19,
-            stringType: 'foo19',
+            stringType: 'foo19-descrim',
             id: expect.any(Types.ObjectId)
           },
           min: {
             dateType: TEST_DISCRIMINATED_ENTITIES[0].dateType,
             numberType: 11,
-            stringType: 'foo11',
+            stringType: 'foo11-descrim',
             id: expect.any(Types.ObjectId)
           },
           sum: {
@@ -281,13 +282,13 @@ describe('TypegooseQueryService', () => {
           max: {
             dateType: TEST_DISCRIMINATED_ENTITIES[9].dateType,
             numberType: 20,
-            stringType: 'foo20',
+            stringType: 'foo20-descrim',
             id: expect.any(Types.ObjectId)
           },
           min: {
             dateType: TEST_DISCRIMINATED_ENTITIES[1].dateType,
             numberType: 12,
-            stringType: 'foo12',
+            stringType: 'foo12-descrim',
             id: expect.any(Types.ObjectId)
           },
           sum: {
@@ -300,7 +301,7 @@ describe('TypegooseQueryService', () => {
     it('call select with the aggregate columns and return the result with a filter', async () => {
       const queryService = moduleRef.get(TestDiscriminatedEntityService)
       const queryResult = await queryService.aggregate(
-        { stringType: { in: ['foo11', 'foo12', 'foo13'] } },
+        { stringType: { in: ['foo11-descrim', 'foo12-descrim', 'foo13-descrim'] } },
         {
           count: ['id'],
           avg: ['numberType'],
@@ -320,13 +321,13 @@ describe('TypegooseQueryService', () => {
           max: {
             dateType: TEST_DISCRIMINATED_ENTITIES[2].dateType,
             numberType: 13,
-            stringType: 'foo13',
+            stringType: 'foo13-descrim',
             id: expect.any(Types.ObjectId)
           },
           min: {
             dateType: TEST_DISCRIMINATED_ENTITIES[0].dateType,
             numberType: 11,
-            stringType: 'foo11',
+            stringType: 'foo11-descrim',
             id: expect.any(Types.ObjectId)
           },
           sum: {
@@ -624,966 +625,966 @@ describe('TypegooseQueryService', () => {
     })
   })
 
-  // describe('#findRelation with discriminated entity', () => {
-  //   describe('with one entity', () => {
-  //     it('call select and return the result', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.findRelation(TestReference, 'testReference', entity);
-  //       expect(queryResult).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES[0]);
-  //     });
-  //
-  //     it('apply the filter option', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult1 = await queryService.findRelation(TestReference, 'testReference', entity, {
-  //         filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[0].referenceName } }
-  //       });
-  //       expect(queryResult1).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES[0]);
-  //
-  //       const queryResult2 = await queryService.findRelation(TestReference, 'testReference', entity, {
-  //         filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
-  //       });
-  //       expect(queryResult2).toBeUndefined();
-  //     });
-  //
-  //     it('should return undefined select if no results are found.', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       await TestDiscriminatedEntityModel.updateOne({ _id: entity._id }, { $set: { testReference: undefined } });
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.findRelation(TestReference, 'testReference', entity);
-  //       expect(queryResult).toBeUndefined();
-  //     });
-  //
-  //     it('throw an error if a relation with that name is not found.', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       return expect(queryService.findRelation(TestReference, 'badReference', entity)).rejects.toThrow(
-  //         'Unable to find reference badReference on TestDiscriminatedEntity'
-  //       );
-  //     });
-  //
-  //     describe('virtual reference', () => {
-  //       it('call select and return the result', async () => {
-  //         const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //         const queryService = moduleRef.get(TestReferenceService);
-  //         const queryResult = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity);
-  //
-  //         expect(queryResult).toEqual(TEST_DISCRIMINATED_ENTITIES[0]);
-  //       });
-  //
-  //       it('apply the filter option', async () => {
-  //         const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //         const queryService = moduleRef.get(TestReferenceService);
-  //         const queryResult1 = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity, {
-  //           filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[0].stringType } }
-  //         });
-  //         expect(queryResult1).toEqual(TEST_DISCRIMINATED_ENTITIES[0]);
-  //
-  //         const queryResult2 = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity, {
-  //           filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
-  //         });
-  //         expect(queryResult2).toBeUndefined();
-  //       });
-  //
-  //       it('should return undefined select if no results are found.', async () => {
-  //         const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //         await TestReferenceModel.updateOne({ _id: entity._id }, { $set: { testEntity: undefined } });
-  //         const queryService = moduleRef.get(TestReferenceService);
-  //         const queryResult = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity);
-  //         expect(queryResult).toBeUndefined();
-  //       });
-  //
-  //       it('throw an error if a relation with that name is not found.', async () => {
-  //         const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //         const queryService = moduleRef.get(TestReferenceService);
-  //         return expect(queryService.findRelation(TestEntity, 'badReference', entity)).rejects.toThrow(
-  //           'Unable to find reference badReference on TestReference'
-  //         );
-  //       });
-  //     });
-  //   });
-  //
-  //   describe('with multiple discriminated entities', () => {
-  //     it('call select and return the result', async () => {
-  //       const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3);
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.findRelation(TestReference, 'testReference', entities, {});
-  //
-  //       expect(queryResult).toEqual(
-  //         new Map([
-  //           [entities[0], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[0])],
-  //           [entities[1], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[3])],
-  //           [entities[2], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[6])]
-  //         ])
-  //       );
-  //     });
-  //
-  //     it('should apply the filter option', async () => {
-  //       const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3);
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const options: FindRelationOptions<TestReference> = {
-  //         filter: {
-  //           _id: { in: [TEST_REFERENCES_FOR_DISCRIMINATES[0]._id, TEST_REFERENCES_FOR_DISCRIMINATES[6]._id] }
-  //         }
-  //       };
-  //       const queryResult = await queryService.findRelation(TestReference, 'testReference', entities, options);
-  //       expect(queryResult).toEqual(
-  //         new Map([
-  //           [entities[0], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[0])],
-  //           [entities[1], undefined],
-  //           [entities[2], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[6])]
-  //         ])
-  //       );
-  //     });
-  //
-  //     it('should return undefined select if no results are found.', async () => {
-  //       const entities: DocumentType<TestDiscriminatedEntity>[] = [
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         { _id: new Types.ObjectId() } as DocumentType<TestDiscriminatedEntity>
-  //       ];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.findRelation(TestReference, 'testReference', entities);
-  //
-  //       expect(queryResult).toEqual(
-  //         new Map([
-  //           [entities[0], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[0])],
-  //           [entities[1], undefined]
-  //         ])
-  //       );
-  //     });
-  //   });
-  // });
-  //
-  // describe('#queryRelations on discriminated entities', () => {
-  //   describe('with one entity', () => {
-  //     it('call select and return the result', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_DISCRIMINATED_ENTITIES[0], {
-  //         filter: { referenceName: { isNot: null } }
-  //       });
-  //       return expect(queryResult).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3));
-  //     });
-  //
-  //     it('should apply a filter', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_DISCRIMINATED_ENTITIES[0], {
-  //         filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
-  //       });
-  //       expect(queryResult).toEqual([TEST_REFERENCES_FOR_DISCRIMINATES[1]]);
-  //     });
-  //
-  //     it('should apply paging', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_DISCRIMINATED_ENTITIES[0], {
-  //         paging: { limit: 2, offset: 1 }
-  //       });
-  //       expect(queryResult).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(1, 3));
-  //     });
-  //   });
-  //
-  //   describe('with virtual discriminated entity', () => {
-  //     it('call select and return the result', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(
-  //         TestReference,
-  //         'virtualTestReferences',
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         {
-  //           filter: { referenceName: { isNot: null } }
-  //         }
-  //       );
-  //       return expect(queryResult).toEqual(expect.arrayContaining(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3)));
-  //     });
-  //
-  //     it('should apply a filter', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(
-  //         TestReference,
-  //         'virtualTestReferences',
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         {
-  //           filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
-  //         }
-  //       );
-  //       expect(queryResult).toEqual([TEST_REFERENCES_FOR_DISCRIMINATES[1]]);
-  //     });
-  //
-  //     it('should apply paging', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(
-  //         TestReference,
-  //         'virtualTestReferences',
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         {
-  //           paging: { limit: 2, offset: 1 },
-  //           sorting: [{ field: 'referenceName', direction: SortDirection.ASC }]
-  //         }
-  //       );
-  //       expect(queryResult).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(1, 3));
-  //     });
-  //   });
-  //
-  //   describe('with multiple discriminated entities', () => {
-  //     it('call return a map of results for each entity', async () => {
-  //       const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3);
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
-  //         filter: { referenceName: { isNot: null } }
-  //       });
-  //       expect(queryResult.size).toBe(3);
-  //       expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3));
-  //       expect(queryResult.get(entities[1])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6));
-  //       expect(queryResult.get(entities[2])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(6, 9));
-  //     });
-  //
-  //     it('should apply a filter per entity', async () => {
-  //       const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3);
-  //       const references = [
-  //         TEST_REFERENCES_FOR_DISCRIMINATES[1],
-  //         TEST_REFERENCES_FOR_DISCRIMINATES[4],
-  //         TEST_REFERENCES_FOR_DISCRIMINATES[7]
-  //       ];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
-  //         filter: { referenceName: { in: references.map((r) => r.referenceName) } }
-  //       });
-  //       expect(queryResult.size).toBe(3);
-  //       expect(queryResult.get(entities[0])).toEqual([references[0]]);
-  //       expect(queryResult.get(entities[1])).toEqual([references[1]]);
-  //       expect(queryResult.get(entities[2])).toEqual([references[2]]);
-  //     });
-  //
-  //     it('should apply paging per entity', async () => {
-  //       const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3);
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
-  //         paging: { limit: 2, offset: 1 }
-  //       });
-  //       expect(queryResult.size).toBe(3);
-  //       expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(1, 3));
-  //       expect(queryResult.get(entities[1])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(4, 6));
-  //       expect(queryResult.get(entities[2])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(7, 9));
-  //     });
-  //
-  //     it('should return an empty array if no results are found.', async () => {
-  //       const entities: DocumentType<TestDiscriminatedEntity>[] = [
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         { _id: new Types.ObjectId() } as DocumentType<TestDiscriminatedEntity>
-  //       ];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
-  //         filter: { referenceName: { isNot: null } }
-  //       });
-  //       expect(queryResult.size).toBe(2);
-  //       expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3));
-  //       expect(queryResult.get(entities[1])).toEqual([]);
-  //     });
-  //   });
-  // });
-  //
-  // describe('#aggregateRelations', () => {
-  //   describe('with one discriminated entity', () => {
-  //     it('should return an aggregate', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const aggResult = await queryService.aggregateRelations(
-  //         TestReference,
-  //         'testReferences',
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         { referenceName: { isNot: null } },
-  //         { count: ['id'] }
-  //       );
-  //       return expect(aggResult).toEqual([
-  //         {
-  //           count: {
-  //             id: 3
-  //           }
-  //         }
-  //       ]);
-  //     });
-  //
-  //     it('should support groupBy when aggregating relations', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const aggResult = await queryService.aggregateRelations(
-  //         TestReference,
-  //         'testReferences',
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         { referenceName: { isNot: null } },
-  //         { groupBy: ['testEntity'], count: ['id'] }
-  //       );
-  //       return expect(aggResult).toEqual([
-  //         {
-  //           groupBy: { testEntity: TEST_DISCRIMINATED_ENTITIES[0]._id },
-  //           count: {
-  //             id: 3
-  //           }
-  //         }
-  //       ]);
-  //     });
-  //   });
-  //
-  //   describe('with virtual relation', () => {
-  //     it('call select and return the result', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const aggResult = await queryService.aggregateRelations(
-  //         TestReference,
-  //         'virtualTestReferences',
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         { referenceName: { isNot: null } },
-  //         { count: ['id'] }
-  //       );
-  //       return expect(aggResult).toEqual([
-  //         {
-  //           count: {
-  //             id: 3
-  //           }
-  //         }
-  //       ]);
-  //     });
-  //   });
-  //
-  //   describe('with multiple entities', () => {
-  //     it('return a relation aggregate for each entity', async () => {
-  //       const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3);
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.aggregateRelations(
-  //         TestReference,
-  //         'testReferences',
-  //         entities,
-  //         { referenceName: { isNot: null } },
-  //         {
-  //           count: ['id', 'referenceName', 'testEntity'],
-  //           min: ['id', 'referenceName', 'testEntity'],
-  //           max: ['id', 'referenceName', 'testEntity']
-  //         }
-  //       );
-  //
-  //       expect(queryResult.size).toBe(3);
-  //       expect(queryResult).toEqual(
-  //         new Map([
-  //           [
-  //             entities[0],
-  //             [
-  //               {
-  //                 count: {
-  //                   referenceName: 3,
-  //                   testEntity: 3,
-  //                   id: 3
-  //                 },
-  //                 max: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName,
-  //                   testEntity: entities[0]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 },
-  //                 min: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[0].referenceName,
-  //                   testEntity: entities[0]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 }
-  //               }
-  //             ]
-  //           ],
-  //           [
-  //             entities[1],
-  //             [
-  //               {
-  //                 count: {
-  //                   referenceName: 3,
-  //                   testEntity: 3,
-  //                   id: 3
-  //                 },
-  //                 max: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[5].referenceName,
-  //                   testEntity: entities[1]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 },
-  //                 min: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[3].referenceName,
-  //                   testEntity: entities[1]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 }
-  //               }
-  //             ]
-  //           ],
-  //           [
-  //             entities[2],
-  //             [
-  //               {
-  //                 count: {
-  //                   referenceName: 3,
-  //                   testEntity: 3,
-  //                   id: 3
-  //                 },
-  //                 max: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[8].referenceName,
-  //                   testEntity: entities[2]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 },
-  //                 min: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[6].referenceName,
-  //                   testEntity: entities[2]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 }
-  //               }
-  //             ]
-  //           ]
-  //         ])
-  //       );
-  //     });
-  //
-  //     it('aggregate and group for each entities relation', async () => {
-  //       const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3);
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.aggregateRelations(
-  //         TestReference,
-  //         'testReferences',
-  //         entities,
-  //         { referenceName: { isNot: null } },
-  //         {
-  //           groupBy: ['testEntity'],
-  //           count: ['id', 'referenceName', 'testEntity'],
-  //           min: ['id', 'referenceName', 'testEntity'],
-  //           max: ['id', 'referenceName', 'testEntity']
-  //         }
-  //       );
-  //
-  //       expect(queryResult.size).toBe(3);
-  //       expect(queryResult).toEqual(
-  //         new Map([
-  //           [
-  //             entities[0],
-  //             [
-  //               {
-  //                 groupBy: { testEntity: entities[0]._id },
-  //                 count: {
-  //                   referenceName: 3,
-  //                   testEntity: 3,
-  //                   id: 3
-  //                 },
-  //                 max: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName,
-  //                   testEntity: entities[0]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 },
-  //                 min: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[0].referenceName,
-  //                   testEntity: entities[0]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 }
-  //               }
-  //             ]
-  //           ],
-  //           [
-  //             entities[1],
-  //             [
-  //               {
-  //                 groupBy: { testEntity: entities[1]._id },
-  //                 count: {
-  //                   referenceName: 3,
-  //                   testEntity: 3,
-  //                   id: 3
-  //                 },
-  //                 max: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[5].referenceName,
-  //                   testEntity: entities[1]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 },
-  //                 min: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[3].referenceName,
-  //                   testEntity: entities[1]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 }
-  //               }
-  //             ]
-  //           ],
-  //           [
-  //             entities[2],
-  //             [
-  //               {
-  //                 groupBy: { testEntity: entities[2]._id },
-  //                 count: {
-  //                   referenceName: 3,
-  //                   testEntity: 3,
-  //                   id: 3
-  //                 },
-  //                 max: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[8].referenceName,
-  //                   testEntity: entities[2]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 },
-  //                 min: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[6].referenceName,
-  //                   testEntity: entities[2]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 }
-  //               }
-  //             ]
-  //           ]
-  //         ])
-  //       );
-  //     });
-  //
-  //     it('should return an empty array if no results are found.', async () => {
-  //       const entities: DocumentType<TestDiscriminatedEntity>[] = [
-  //         TEST_DISCRIMINATED_ENTITIES[0],
-  //         { _id: new Types.ObjectId() } as DocumentType<TestDiscriminatedEntity>
-  //       ];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.aggregateRelations(
-  //         TestReference,
-  //         'testReferences',
-  //         entities,
-  //         { referenceName: { isNot: null } },
-  //         {
-  //           count: ['id', 'referenceName', 'testEntity'],
-  //           min: ['id', 'referenceName', 'testEntity'],
-  //           max: ['id', 'referenceName', 'testEntity']
-  //         }
-  //       );
-  //
-  //       expect(queryResult).toEqual(
-  //         new Map([
-  //           [
-  //             entities[0],
-  //             [
-  //               {
-  //                 count: {
-  //                   referenceName: 3,
-  //                   testEntity: 3,
-  //                   id: 3
-  //                 },
-  //                 max: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName,
-  //                   testEntity: entities[0]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 },
-  //                 min: {
-  //                   referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[0].referenceName,
-  //                   testEntity: entities[0]._id,
-  //                   id: expect.any(Types.ObjectId)
-  //                 }
-  //               }
-  //             ]
-  //           ],
-  //           [entities[1], []]
-  //         ])
-  //       );
-  //     });
-  //   });
-  // });
-  //
-  // describe('#countRelations', () => {
-  //   describe('with one entity', () => {
-  //     it('count the references', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const countResult = await queryService.countRelations(TestReference, 'testReferences', entity, {
-  //         referenceName: {
-  //           in: [TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName, TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName]
-  //         }
-  //       });
-  //       return expect(countResult).toBe(2);
-  //     });
-  //
-  //     it('should return a rejected promise if the relation is not found', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       return expect(
-  //         queryService.countRelations(TestReference, 'badReferences', entity, {
-  //           referenceName: {
-  //             in: [TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName, TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName]
-  //           }
-  //         })
-  //       ).rejects.toThrow('Unable to find reference badReferences on TestDiscriminatedEntity');
-  //     });
-  //   });
-  //
-  //   describe('with virtual entity', () => {
-  //     it('count references', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const countResult = await queryService.countRelations(TestReference, 'virtualTestReferences', entity, {});
-  //       return expect(countResult).toBe(3);
-  //     });
-  //     it('count and return the result', async () => {
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const countResult = await queryService.countRelations(TestReference, 'virtualTestReferences', entity, {
-  //         referenceName: {
-  //           in: [TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName, TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName]
-  //         }
-  //       });
-  //       return expect(countResult).toBe(2);
-  //     });
-  //   });
-  //
-  //   describe('with multiple entities', () => {
-  //     it('call count and return the result', async () => {
-  //       const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3);
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       const queryResult = await queryService.countRelations(TestReference, 'testReferences', entities, {
-  //         referenceName: {
-  //           in: [
-  //             TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName,
-  //             TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName,
-  //             TEST_REFERENCES_FOR_DISCRIMINATES[4].referenceName,
-  //             TEST_REFERENCES_FOR_DISCRIMINATES[5].referenceName,
-  //             TEST_REFERENCES_FOR_DISCRIMINATES[7].referenceName,
-  //             TEST_REFERENCES_FOR_DISCRIMINATES[8].referenceName
-  //           ]
-  //         }
-  //       });
-  //
-  //       expect(queryResult).toEqual(
-  //         new Map([
-  //           [entities[0], 2],
-  //           [entities[1], 2],
-  //           [entities[2], 2]
-  //         ])
-  //       );
-  //     });
-  //   });
-  // });
-  //
-  // describe('#addRelations', () => {
-  //   it('call select and return the result', async () => {
-  //     const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //     const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //     const queryResult = await queryService.addRelations(
-  //       'testReferences',
-  //       entity._id.toHexString(),
-  //       TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString())
-  //     );
-  //     expect(queryResult).toEqual(
-  //       expect.objectContaining({
-  //         _id: entity._id,
-  //         testReferences: expect.arrayContaining(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 6).map((r) => r._id))
-  //       })
-  //     );
-  //
-  //     const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
-  //     expect(relations).toHaveLength(6);
-  //   });
-  //
-  //   it('should not modify relations if relationIds is empty', async () => {
-  //     const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //     const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //     const queryResult = await queryService.addRelations('testReferences', entity._id.toHexString(), []);
-  //     expect(queryResult).toEqual(
-  //       expect.objectContaining({
-  //         _id: entity._id,
-  //         testReferences: expect.arrayContaining(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id))
-  //       })
-  //     );
-  //
-  //     const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
-  //     expect(relations).toHaveLength(3);
-  //   });
-  //
-  //   describe('with virtual reference', () => {
-  //     it('should return a rejected promise', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       return expect(
-  //         queryService.addRelations(
-  //           'virtualTestReferences',
-  //           entity._id.toHexString(),
-  //           TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString())
-  //         )
-  //       ).rejects.toThrow('AddRelations not supported for virtual relation virtualTestReferences');
-  //     });
-  //   });
-  //
-  //   describe('with modify options', () => {
-  //     it('should throw an error if the entity is not found with the id and provided filter', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       return expect(
-  //         queryService.addRelations(
-  //           'testReferences',
-  //           entity._id.toHexString(),
-  //           TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString()),
-  //           {
-  //             filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
-  //           }
-  //         )
-  //       ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`);
-  //     });
-  //
-  //     it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       return expect(
-  //         queryService.addRelations<TestReference>(
-  //           'testReferences',
-  //           entity._id.toHexString(),
-  //           TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString()),
-  //           {
-  //             relationFilter: { referenceName: { like: '%-one' } }
-  //           }
-  //         )
-  //       ).rejects.toThrow('Unable to find all testReferences to add to TestDiscriminatedEntity');
-  //     });
-  //   });
-  // });
-  //
-  // describe('#setRelations', () => {
-  //   it('set all relations on the entity', async () => {
-  //     const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //     const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //     const relationIds = TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id);
-  //     const queryResult = await queryService.setRelations(
-  //       'testReferences',
-  //       entity._id.toHexString(),
-  //       relationIds.map((id) => id.toHexString())
-  //     );
-  //     expect(queryResult).toEqual(
-  //       expect.objectContaining({
-  //         _id: entity._id,
-  //         testReferences: expect.arrayContaining(relationIds)
-  //       })
-  //     );
-  //
-  //     const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
-  //     expect(relations.map((r) => r._id)).toEqual(relationIds);
-  //   });
-  //
-  //   it('should remove all relations if the relationIds is empty', async () => {
-  //     const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //     const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //     const queryResult = await queryService.setRelations('testReferences', entity._id.toHexString(), []);
-  //     expect(queryResult).toEqual(
-  //       expect.objectContaining({
-  //         _id: entity._id,
-  //         testReferences: expect.arrayContaining([])
-  //       })
-  //     );
-  //
-  //     const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
-  //     expect(relations.map((r) => r._id)).toEqual([]);
-  //   });
-  //
-  //   describe('with modify options', () => {
-  //     it('should throw an error if the entity is not found with the id and provided filter', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       return expect(
-  //         queryService.setRelations(
-  //           'testReferences',
-  //           entity._id.toHexString(),
-  //           TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString()),
-  //           {
-  //             filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
-  //           }
-  //         )
-  //       ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`);
-  //     });
-  //
-  //     it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       return expect(
-  //         queryService.setRelations<TestReference>(
-  //           'testReferences',
-  //           entity._id.toHexString(),
-  //           TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString()),
-  //           {
-  //             relationFilter: { referenceName: { like: '%-one' } }
-  //           }
-  //         )
-  //       ).rejects.toThrow('Unable to find all testReferences to set on TestDiscriminatedEntity');
-  //     });
-  //   });
-  // });
-  //
-  // describe('#setRelation', () => {
-  //   it('call select and return the result', async () => {
-  //     const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //     const queryService = moduleRef.get(TestReferenceService);
-  //
-  //     const queryResult = await queryService.setRelation(
-  //       'testEntity',
-  //       entity._id.toHexString(),
-  //       TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString()
-  //     );
-  //
-  //     expect(queryResult).toEqual(expect.objectContaining({ ...entity, testEntity: TEST_DISCRIMINATED_ENTITIES[1]._id }));
-  //
-  //     const relation = await queryService.findRelation(TestEntity, 'testEntity', entity);
-  //     expect(relation).toEqual(TEST_DISCRIMINATED_ENTITIES[1]);
-  //   });
-  //
-  //   it('should reject with a virtual reference', async () => {
-  //     const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //     const queryService = moduleRef.get(TestReferenceService);
-  //     return expect(
-  //       queryService.setRelation('virtualTestEntity', entity._id.toHexString(), TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString())
-  //     ).rejects.toThrow('SetRelation not supported for virtual relation virtualTestEntity');
-  //   });
-  //
-  //   describe('with modify options', () => {
-  //     it('should throw an error if the entity is not found with the id and provided filter', async () => {
-  //       const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //       const queryService = moduleRef.get(TestReferenceService);
-  //       return expect(
-  //         queryService.setRelation('testEntity', entity._id.toHexString(), TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString(), {
-  //           filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
-  //         })
-  //       ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`);
-  //     });
-  //
-  //     it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
-  //       const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //       const queryService = moduleRef.get(TestReferenceService);
-  //       return expect(
-  //         queryService.setRelation<TestDiscriminatedEntity>(
-  //           'TestDiscriminatedEntity',
-  //           entity._id.toHexString(),
-  //           TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString(),
-  //           {
-  //             relationFilter: { stringType: { like: '%-one' } }
-  //           }
-  //         )
-  //       ).rejects.toThrow('Unable to find reference TestDiscriminatedEntity on TestReference');
-  //     });
-  //   });
-  // });
-  //
-  // describe('#removeRelation', () => {
-  //   it('call select and return the result', async () => {
-  //     const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //     const queryService = moduleRef.get(TestReferenceService);
-  //     const queryResult = await queryService.removeRelation(
-  //       'testEntity',
-  //       entity._id.toHexString(),
-  //       TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString()
-  //     );
-  //     const { testEntity, ...expected } = entity;
-  //     expect(queryResult).toEqual(expect.objectContaining(expected));
-  //
-  //     const relation = await queryService.findRelation(TestEntity, 'testEntity', entity);
-  //     expect(relation).toBeUndefined();
-  //   });
-  //
-  //   it('should reject with a virtual reference', async () => {
-  //     const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //     const queryService = moduleRef.get(TestReferenceService);
-  //     return expect(
-  //       queryService.removeRelation(
-  //         'virtualTestEntity',
-  //         entity._id.toHexString(),
-  //         TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString()
-  //       )
-  //     ).rejects.toThrow('RemoveRelation not supported for virtual relation virtualTestEntity');
-  //   });
-  //
-  //   describe('with modify options', () => {
-  //     it('should throw an error if the entity is not found with the id and provided filter', async () => {
-  //       const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //       const queryService = moduleRef.get(TestReferenceService);
-  //       return expect(
-  //         queryService.removeRelation('testEntity', entity._id.toHexString(), TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString(), {
-  //           filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
-  //         })
-  //       ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`);
-  //     });
-  //
-  //     it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
-  //       const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0];
-  //       const queryService = moduleRef.get(TestReferenceService);
-  //       return expect(
-  //         queryService.removeRelation<TestDiscriminatedEntity>(
-  //           'TestDiscriminatedEntity',
-  //           entity._id.toHexString(),
-  //           TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString(),
-  //           {
-  //             relationFilter: { stringType: { like: '%-one' } }
-  //           }
-  //         )
-  //       ).rejects.toThrow('Unable to find reference TestDiscriminatedEntity on TestReference');
-  //     });
-  //   });
-  // });
-  //
-  // describe('#removeRelations', () => {
-  //   it('call select and return the result', async () => {
-  //     const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //     const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //     const queryResult = await queryService.removeRelations(
-  //       'testReferences',
-  //       entity._id.toHexString(),
-  //       TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id.toHexString())
-  //     );
-  //     expect(queryResult.toObject()).toEqual(
-  //       expect.objectContaining({
-  //         _id: entity._id,
-  //         testReferences: []
-  //       })
-  //     );
-  //
-  //     const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
-  //     expect(relations).toHaveLength(0);
-  //   });
-  //
-  //   it('should not modify relations if relationIds is empty', async () => {
-  //     const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //     const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //     const queryResult = await queryService.removeRelations('testReferences', entity._id.toHexString(), []);
-  //     expect(queryResult.toObject()).toEqual(
-  //       expect.objectContaining({
-  //         _id: entity._id,
-  //         testReferences: expect.arrayContaining(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id))
-  //       })
-  //     );
-  //
-  //     const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {});
-  //     expect(relations).toHaveLength(3);
-  //   });
-  //
-  //   describe('with virtual reference', () => {
-  //     it('should return a rejected promise', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       return expect(
-  //         queryService.removeRelations(
-  //           'virtualTestReferences',
-  //           entity._id.toHexString(),
-  //           TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id.toHexString())
-  //         )
-  //       ).rejects.toThrow('RemoveRelations not supported for virtual relation virtualTestReferences');
-  //     });
-  //   });
-  //
-  //   describe('with modify options', () => {
-  //     it('should throw an error if the entity is not found with the id and provided filter', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       return expect(
-  //         queryService.removeRelations(
-  //           'testReferences',
-  //           entity._id.toHexString(),
-  //           TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id.toHexString()),
-  //           {
-  //             filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
-  //           }
-  //         )
-  //       ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`);
-  //     });
-  //
-  //     it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
-  //       const entity = TEST_DISCRIMINATED_ENTITIES[0];
-  //       const queryService = moduleRef.get(TestDiscriminatedEntityService);
-  //       return expect(
-  //         queryService.removeRelations<TestReference>(
-  //           'testReferences',
-  //           entity._id.toHexString(),
-  //           TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id.toHexString()),
-  //           {
-  //             relationFilter: { referenceName: { like: '%-one' } }
-  //           }
-  //         )
-  //       ).rejects.toThrow('Unable to find all testReferences to remove from TestDiscriminatedEntity');
-  //     });
-  //   });
-  // });
+  describe('#findRelation with discriminated entity', () => {
+    describe('with one entity', () => {
+      it('call select and return the result', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.findRelation(TestReference, 'testReference', entity)
+        expect(queryResult).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES[0])
+      })
+
+      it('apply the filter option', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult1 = await queryService.findRelation(TestReference, 'testReference', entity, {
+          filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[0].referenceName } }
+        })
+        expect(queryResult1).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES[0])
+
+        const queryResult2 = await queryService.findRelation(TestReference, 'testReference', entity, {
+          filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
+        })
+        expect(queryResult2).toBeUndefined()
+      })
+
+      it('should return undefined select if no results are found.', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        await TestDiscriminatedEntityModel.updateOne({ _id: entity._id }, { $set: { testReference: null } })
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.findRelation(TestReference, 'testReference', entity)
+        expect(queryResult).toBeUndefined()
+      })
+
+      it('throw an error if a relation with that name is not found.', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        return expect(queryService.findRelation(TestReference, 'badReference', entity)).rejects.toThrow(
+          'Unable to find reference badReference on TestDiscriminatedEntity'
+        )
+      })
+
+      describe('virtual reference', () => {
+        it('call select and return the result', async () => {
+          const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+          const queryService = moduleRef.get(TestReferenceService)
+          const queryResult = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity)
+
+          expect(queryResult).toEqual(TEST_DISCRIMINATED_ENTITIES[0])
+        })
+
+        it('apply the filter option', async () => {
+          const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+          const queryService = moduleRef.get(TestReferenceService)
+          const queryResult1 = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity, {
+            filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[0].stringType } }
+          })
+          expect(queryResult1).toEqual(TEST_DISCRIMINATED_ENTITIES[0])
+
+          const queryResult2 = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity, {
+            filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
+          })
+          expect(queryResult2).toBeUndefined()
+        })
+
+        it('should return undefined select if no results are found.', async () => {
+          const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+          await TestReferenceModel.updateOne({ _id: entity._id }, { $set: { testEntity: null } })
+          const queryService = moduleRef.get(TestReferenceService)
+          const queryResult = await queryService.findRelation(TestEntity, 'virtualTestEntity', entity)
+          expect(queryResult).toBeUndefined()
+        })
+
+        it('throw an error if a relation with that name is not found.', async () => {
+          const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+          const queryService = moduleRef.get(TestReferenceService)
+          return expect(queryService.findRelation(TestEntity, 'badReference', entity)).rejects.toThrow(
+            'Unable to find reference badReference on TestReference'
+          )
+        })
+      })
+    })
+
+    describe('with multiple discriminated entities', () => {
+      it('call select and return the result', async () => {
+        const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3)
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.findRelation(TestReference, 'testReference', entities, {})
+
+        expect(queryResult).toEqual(
+          new Map([
+            [entities[0], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[0])],
+            [entities[1], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[3])],
+            [entities[2], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[6])]
+          ])
+        )
+      })
+
+      it('should apply the filter option', async () => {
+        const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3)
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const options: FindRelationOptions<TestReference> = {
+          filter: {
+            _id: { in: [TEST_REFERENCES_FOR_DISCRIMINATES[0]._id, TEST_REFERENCES_FOR_DISCRIMINATES[6]._id] }
+          }
+        }
+        const queryResult = await queryService.findRelation(TestReference, 'testReference', entities, options)
+        expect(queryResult).toEqual(
+          new Map([
+            [entities[0], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[0])],
+            [entities[1], undefined],
+            [entities[2], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[6])]
+          ])
+        )
+      })
+
+      it('should return undefined select if no results are found.', async () => {
+        const entities: DocumentType<TestDiscriminatedEntity>[] = [
+          TEST_DISCRIMINATED_ENTITIES[0],
+          { _id: new Types.ObjectId() } as DocumentType<TestDiscriminatedEntity>
+        ]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.findRelation(TestReference, 'testReference', entities)
+
+        expect(queryResult).toEqual(
+          new Map([
+            [entities[0], expect.objectContaining(TEST_REFERENCES_FOR_DISCRIMINATES[0])],
+            [entities[1], undefined]
+          ])
+        )
+      })
+    })
+  })
+
+  describe('#queryRelations on discriminated entities', () => {
+    describe('with one entity', () => {
+      it('call select and return the result', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_DISCRIMINATED_ENTITIES[0], {
+          filter: { referenceName: { isNot: null } }
+        })
+        return expect(queryResult).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3))
+      })
+
+      it('should apply a filter', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_DISCRIMINATED_ENTITIES[0], {
+          filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
+        })
+        expect(queryResult).toEqual([TEST_REFERENCES_FOR_DISCRIMINATES[1]])
+      })
+
+      it('should apply paging', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(TestReference, 'testReferences', TEST_DISCRIMINATED_ENTITIES[0], {
+          paging: { limit: 2, offset: 1 }
+        })
+        expect(queryResult).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(1, 3))
+      })
+    })
+
+    describe('with virtual discriminated entity', () => {
+      it('call select and return the result', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(
+          TestReference,
+          'virtualTestReferences',
+          TEST_DISCRIMINATED_ENTITIES[0],
+          {
+            filter: { referenceName: { isNot: null } }
+          }
+        )
+        return expect(queryResult).toEqual(expect.arrayContaining(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3)))
+      })
+
+      it('should apply a filter', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(
+          TestReference,
+          'virtualTestReferences',
+          TEST_DISCRIMINATED_ENTITIES[0],
+          {
+            filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
+          }
+        )
+        expect(queryResult).toEqual([TEST_REFERENCES_FOR_DISCRIMINATES[1]])
+      })
+
+      it('should apply paging', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(
+          TestReference,
+          'virtualTestReferences',
+          TEST_DISCRIMINATED_ENTITIES[0],
+          {
+            paging: { limit: 2, offset: 1 },
+            sorting: [{ field: 'referenceName', direction: SortDirection.ASC }]
+          }
+        )
+        expect(queryResult).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(1, 3))
+      })
+    })
+
+    describe('with multiple discriminated entities', () => {
+      it('call return a map of results for each entity', async () => {
+        const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3)
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
+          filter: { referenceName: { isNot: null } }
+        })
+        expect(queryResult.size).toBe(3)
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3))
+        expect(queryResult.get(entities[1])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6))
+        expect(queryResult.get(entities[2])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(6, 9))
+      })
+
+      it('should apply a filter per entity', async () => {
+        const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3)
+        const references = [
+          TEST_REFERENCES_FOR_DISCRIMINATES[1],
+          TEST_REFERENCES_FOR_DISCRIMINATES[4],
+          TEST_REFERENCES_FOR_DISCRIMINATES[7]
+        ]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
+          filter: { referenceName: { in: references.map((r) => r.referenceName) } }
+        })
+        expect(queryResult.size).toBe(3)
+        expect(queryResult.get(entities[0])).toEqual([references[0]])
+        expect(queryResult.get(entities[1])).toEqual([references[1]])
+        expect(queryResult.get(entities[2])).toEqual([references[2]])
+      })
+
+      it('should apply paging per entity', async () => {
+        const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3)
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
+          paging: { limit: 2, offset: 1 }
+        })
+        expect(queryResult.size).toBe(3)
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(1, 3))
+        expect(queryResult.get(entities[1])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(4, 6))
+        expect(queryResult.get(entities[2])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(7, 9))
+      })
+
+      it('should return an empty array if no results are found.', async () => {
+        const entities: DocumentType<TestDiscriminatedEntity>[] = [
+          TEST_DISCRIMINATED_ENTITIES[0],
+          { _id: new Types.ObjectId() } as DocumentType<TestDiscriminatedEntity>
+        ]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.queryRelations(TestReference, 'testReferences', entities, {
+          filter: { referenceName: { isNot: null } }
+        })
+        expect(queryResult.size).toBe(2)
+        expect(queryResult.get(entities[0])).toEqual(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3))
+        expect(queryResult.get(entities[1])).toEqual([])
+      })
+    })
+  })
+
+  describe('#aggregateRelations', () => {
+    describe('with one discriminated entity', () => {
+      it('should return an aggregate', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const aggResult = await queryService.aggregateRelations(
+          TestReference,
+          'testReferences',
+          TEST_DISCRIMINATED_ENTITIES[0],
+          { referenceName: { isNot: null } },
+          { count: ['id'] }
+        )
+        return expect(aggResult).toEqual([
+          {
+            count: {
+              id: 3
+            }
+          }
+        ])
+      })
+
+      it('should support groupBy when aggregating relations', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const aggResult = await queryService.aggregateRelations(
+          TestReference,
+          'testReferences',
+          TEST_DISCRIMINATED_ENTITIES[0],
+          { referenceName: { isNot: null } },
+          { groupBy: ['testEntity'], count: ['id'] }
+        )
+        return expect(aggResult).toEqual([
+          {
+            groupBy: { testEntity: TEST_DISCRIMINATED_ENTITIES[0]._id },
+            count: {
+              id: 3
+            }
+          }
+        ])
+      })
+    })
+
+    describe('with virtual relation', () => {
+      it('call select and return the result', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const aggResult = await queryService.aggregateRelations(
+          TestReference,
+          'virtualTestReferences',
+          TEST_DISCRIMINATED_ENTITIES[0],
+          { referenceName: { isNot: null } },
+          { count: ['id'] }
+        )
+        return expect(aggResult).toEqual([
+          {
+            count: {
+              id: 3
+            }
+          }
+        ])
+      })
+    })
+
+    describe('with multiple entities', () => {
+      it('return a relation aggregate for each entity', async () => {
+        const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3)
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.aggregateRelations(
+          TestReference,
+          'testReferences',
+          entities,
+          { referenceName: { isNot: null } },
+          {
+            count: ['id', 'referenceName', 'testEntity'],
+            min: ['id', 'referenceName', 'testEntity'],
+            max: ['id', 'referenceName', 'testEntity']
+          }
+        )
+
+        expect(queryResult.size).toBe(3)
+        expect(queryResult).toEqual(
+          new Map([
+            [
+              entities[0],
+              [
+                {
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(Types.ObjectId)
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[0].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(Types.ObjectId)
+                  }
+                }
+              ]
+            ],
+            [
+              entities[1],
+              [
+                {
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[5].referenceName,
+                    testEntity: entities[1]._id,
+                    id: expect.any(Types.ObjectId)
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[3].referenceName,
+                    testEntity: entities[1]._id,
+                    id: expect.any(Types.ObjectId)
+                  }
+                }
+              ]
+            ],
+            [
+              entities[2],
+              [
+                {
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[8].referenceName,
+                    testEntity: entities[2]._id,
+                    id: expect.any(Types.ObjectId)
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[6].referenceName,
+                    testEntity: entities[2]._id,
+                    id: expect.any(Types.ObjectId)
+                  }
+                }
+              ]
+            ]
+          ])
+        )
+      })
+
+      it('aggregate and group for each entities relation', async () => {
+        const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3)
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.aggregateRelations(
+          TestReference,
+          'testReferences',
+          entities,
+          { referenceName: { isNot: null } },
+          {
+            groupBy: ['testEntity'],
+            count: ['id', 'referenceName', 'testEntity'],
+            min: ['id', 'referenceName', 'testEntity'],
+            max: ['id', 'referenceName', 'testEntity']
+          }
+        )
+
+        expect(queryResult.size).toBe(3)
+        expect(queryResult).toEqual(
+          new Map([
+            [
+              entities[0],
+              [
+                {
+                  groupBy: { testEntity: entities[0]._id },
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(Types.ObjectId)
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[0].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(Types.ObjectId)
+                  }
+                }
+              ]
+            ],
+            [
+              entities[1],
+              [
+                {
+                  groupBy: { testEntity: entities[1]._id },
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[5].referenceName,
+                    testEntity: entities[1]._id,
+                    id: expect.any(Types.ObjectId)
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[3].referenceName,
+                    testEntity: entities[1]._id,
+                    id: expect.any(Types.ObjectId)
+                  }
+                }
+              ]
+            ],
+            [
+              entities[2],
+              [
+                {
+                  groupBy: { testEntity: entities[2]._id },
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[8].referenceName,
+                    testEntity: entities[2]._id,
+                    id: expect.any(Types.ObjectId)
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[6].referenceName,
+                    testEntity: entities[2]._id,
+                    id: expect.any(Types.ObjectId)
+                  }
+                }
+              ]
+            ]
+          ])
+        )
+      })
+
+      it('should return an empty array if no results are found.', async () => {
+        const entities: DocumentType<TestDiscriminatedEntity>[] = [
+          TEST_DISCRIMINATED_ENTITIES[0],
+          { _id: new Types.ObjectId() } as DocumentType<TestDiscriminatedEntity>
+        ]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.aggregateRelations(
+          TestReference,
+          'testReferences',
+          entities,
+          { referenceName: { isNot: null } },
+          {
+            count: ['id', 'referenceName', 'testEntity'],
+            min: ['id', 'referenceName', 'testEntity'],
+            max: ['id', 'referenceName', 'testEntity']
+          }
+        )
+
+        expect(queryResult).toEqual(
+          new Map([
+            [
+              entities[0],
+              [
+                {
+                  count: {
+                    referenceName: 3,
+                    testEntity: 3,
+                    id: 3
+                  },
+                  max: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(Types.ObjectId)
+                  },
+                  min: {
+                    referenceName: TEST_REFERENCES_FOR_DISCRIMINATES[0].referenceName,
+                    testEntity: entities[0]._id,
+                    id: expect.any(Types.ObjectId)
+                  }
+                }
+              ]
+            ],
+            [entities[1], []]
+          ])
+        )
+      })
+    })
+  })
+
+  describe('#countRelations', () => {
+    describe('with one entity', () => {
+      it('count the references', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const countResult = await queryService.countRelations(TestReference, 'testReferences', entity, {
+          referenceName: {
+            in: [TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName, TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName]
+          }
+        })
+        return expect(countResult).toBe(2)
+      })
+
+      it('should return a rejected promise if the relation is not found', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        return expect(
+          queryService.countRelations(TestReference, 'badReferences', entity, {
+            referenceName: {
+              in: [TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName, TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName]
+            }
+          })
+        ).rejects.toThrow('Unable to find reference badReferences on TestDiscriminatedEntity')
+      })
+    })
+
+    describe('with virtual entity', () => {
+      it('count references', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const countResult = await queryService.countRelations(TestReference, 'virtualTestReferences', entity, {})
+        return expect(countResult).toBe(3)
+      })
+      it('count and return the result', async () => {
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const countResult = await queryService.countRelations(TestReference, 'virtualTestReferences', entity, {
+          referenceName: {
+            in: [TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName, TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName]
+          }
+        })
+        return expect(countResult).toBe(2)
+      })
+    })
+
+    describe('with multiple entities', () => {
+      it('call count and return the result', async () => {
+        const entities = TEST_DISCRIMINATED_ENTITIES.slice(0, 3)
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        const queryResult = await queryService.countRelations(TestReference, 'testReferences', entities, {
+          referenceName: {
+            in: [
+              TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName,
+              TEST_REFERENCES_FOR_DISCRIMINATES[2].referenceName,
+              TEST_REFERENCES_FOR_DISCRIMINATES[4].referenceName,
+              TEST_REFERENCES_FOR_DISCRIMINATES[5].referenceName,
+              TEST_REFERENCES_FOR_DISCRIMINATES[7].referenceName,
+              TEST_REFERENCES_FOR_DISCRIMINATES[8].referenceName
+            ]
+          }
+        })
+
+        expect(queryResult).toEqual(
+          new Map([
+            [entities[0], 2],
+            [entities[1], 2],
+            [entities[2], 2]
+          ])
+        )
+      })
+    })
+  })
+
+  describe('#addRelations', () => {
+    it('call select and return the result', async () => {
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.addRelations(
+        'testReferences',
+        entity._id.toHexString(),
+        TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString())
+      )
+      expect(queryResult).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 6).map((r) => r._id))
+        })
+      )
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {})
+      expect(relations).toHaveLength(6)
+    })
+
+    it('should not modify relations if relationIds is empty', async () => {
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.addRelations('testReferences', entity._id.toHexString(), [])
+      expect(queryResult).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id))
+        })
+      )
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {})
+      expect(relations).toHaveLength(3)
+    })
+
+    describe('with virtual reference', () => {
+      it('should return a rejected promise', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        return expect(
+          queryService.addRelations(
+            'virtualTestReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString())
+          )
+        ).rejects.toThrow('AddRelations not supported for virtual relation virtualTestReferences')
+      })
+    })
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        return expect(
+          queryService.addRelations(
+            'testReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString()),
+            {
+              filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
+            }
+          )
+        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`)
+      })
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        return expect(
+          queryService.addRelations<TestReference>(
+            'testReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString()),
+            {
+              relationFilter: { referenceName: { like: '%-one' } }
+            }
+          )
+        ).rejects.toThrow('Unable to find all testReferences to add to TestDiscriminatedEntity')
+      })
+    })
+  })
+
+  describe('#setRelations', () => {
+    it('set all relations on the entity', async () => {
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const relationIds = TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id)
+      const queryResult = await queryService.setRelations(
+        'testReferences',
+        entity._id.toHexString(),
+        relationIds.map((id) => id.toHexString())
+      )
+      expect(queryResult).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining(relationIds)
+        })
+      )
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {})
+      expect(relations.map((r) => r._id)).toEqual(relationIds)
+    })
+
+    it('should remove all relations if the relationIds is empty', async () => {
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.setRelations('testReferences', entity._id.toHexString(), [])
+      expect(queryResult).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining([])
+        })
+      )
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {})
+      expect(relations.map((r) => r._id)).toEqual([])
+    })
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        return expect(
+          queryService.setRelations(
+            'testReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString()),
+            {
+              filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
+            }
+          )
+        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`)
+      })
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        return expect(
+          queryService.setRelations<TestReference>(
+            'testReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES_FOR_DISCRIMINATES.slice(3, 6).map((r) => r._id.toHexString()),
+            {
+              relationFilter: { referenceName: { like: '%-one' } }
+            }
+          )
+        ).rejects.toThrow('Unable to find all testReferences to set on TestDiscriminatedEntity')
+      })
+    })
+  })
+
+  describe('#setRelation', () => {
+    it('call select and return the result', async () => {
+      const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+      const queryService = moduleRef.get(TestReferenceService)
+
+      const queryResult = await queryService.setRelation(
+        'testEntity',
+        entity._id.toHexString(),
+        TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString()
+      )
+
+      expect(queryResult).toEqual(expect.objectContaining({ ...entity, testEntity: TEST_DISCRIMINATED_ENTITIES[1]._id }))
+
+      const relation = await queryService.findRelation(TestEntity, 'testEntity', entity)
+      expect(relation).toEqual(TEST_DISCRIMINATED_ENTITIES[1])
+    })
+
+    it('should reject with a virtual reference', async () => {
+      const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+      const queryService = moduleRef.get(TestReferenceService)
+      return expect(
+        queryService.setRelation('virtualTestEntity', entity._id.toHexString(), TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString())
+      ).rejects.toThrow('SetRelation not supported for virtual relation virtualTestEntity')
+    })
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+        const queryService = moduleRef.get(TestReferenceService)
+        return expect(
+          queryService.setRelation('testEntity', entity._id.toHexString(), TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString(), {
+            filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
+          })
+        ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`)
+      })
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+        const queryService = moduleRef.get(TestReferenceService)
+        return expect(
+          queryService.setRelation<TestDiscriminatedEntity>(
+            'TestDiscriminatedEntity',
+            entity._id.toHexString(),
+            TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString(),
+            {
+              relationFilter: { stringType: { like: '%-one' } }
+            }
+          )
+        ).rejects.toThrow('Unable to find reference TestDiscriminatedEntity on TestReference')
+      })
+    })
+  })
+
+  describe('#removeRelation', () => {
+    it('call select and return the result', async () => {
+      const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+      const queryService = moduleRef.get(TestReferenceService)
+      const queryResult = await queryService.removeRelation(
+        'testEntity',
+        entity._id.toHexString(),
+        TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString()
+      )
+      const { testEntity, ...expected } = entity
+      expect(queryResult).toEqual(expect.objectContaining(expected))
+
+      const relation = await queryService.findRelation(TestEntity, 'testEntity', entity)
+      expect(relation).toBeUndefined()
+    })
+
+    it('should reject with a virtual reference', async () => {
+      const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+      const queryService = moduleRef.get(TestReferenceService)
+      return expect(
+        queryService.removeRelation(
+          'virtualTestEntity',
+          entity._id.toHexString(),
+          TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString()
+        )
+      ).rejects.toThrow('RemoveRelation not supported for virtual relation virtualTestEntity')
+    })
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+        const queryService = moduleRef.get(TestReferenceService)
+        return expect(
+          queryService.removeRelation('testEntity', entity._id.toHexString(), TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString(), {
+            filter: { referenceName: { eq: TEST_REFERENCES_FOR_DISCRIMINATES[1].referenceName } }
+          })
+        ).rejects.toThrow(`Unable to find TestReference with id: ${String(entity._id)}`)
+      })
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_REFERENCES_FOR_DISCRIMINATES[0]
+        const queryService = moduleRef.get(TestReferenceService)
+        return expect(
+          queryService.removeRelation<TestDiscriminatedEntity>(
+            'TestDiscriminatedEntity',
+            entity._id.toHexString(),
+            TEST_DISCRIMINATED_ENTITIES[1]._id.toHexString(),
+            {
+              relationFilter: { stringType: { like: '%-one' } }
+            }
+          )
+        ).rejects.toThrow('Unable to find reference TestDiscriminatedEntity on TestReference')
+      })
+    })
+  })
+
+  describe('#removeRelations', () => {
+    it('call select and return the result', async () => {
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.removeRelations(
+        'testReferences',
+        entity._id.toHexString(),
+        TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id.toHexString())
+      )
+      expect(queryResult.toObject()).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: []
+        })
+      )
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {})
+      expect(relations).toHaveLength(0)
+    })
+
+    it('should not modify relations if relationIds is empty', async () => {
+      const entity = TEST_DISCRIMINATED_ENTITIES[0]
+      const queryService = moduleRef.get(TestDiscriminatedEntityService)
+      const queryResult = await queryService.removeRelations('testReferences', entity._id.toHexString(), [])
+      expect(queryResult.toObject()).toEqual(
+        expect.objectContaining({
+          _id: entity._id,
+          testReferences: expect.arrayContaining(TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id))
+        })
+      )
+
+      const relations = await queryService.queryRelations(TestReference, 'testReferences', entity, {})
+      expect(relations).toHaveLength(3)
+    })
+
+    describe('with virtual reference', () => {
+      it('should return a rejected promise', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        return expect(
+          queryService.removeRelations(
+            'virtualTestReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id.toHexString())
+          )
+        ).rejects.toThrow('RemoveRelations not supported for virtual relation virtualTestReferences')
+      })
+    })
+
+    describe('with modify options', () => {
+      it('should throw an error if the entity is not found with the id and provided filter', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        return expect(
+          queryService.removeRelations(
+            'testReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id.toHexString()),
+            {
+              filter: { stringType: { eq: TEST_DISCRIMINATED_ENTITIES[1].stringType } }
+            }
+          )
+        ).rejects.toThrow(`Unable to find TestDiscriminatedEntity with id: ${String(entity._id)}`)
+      })
+
+      it('should throw an error if the relations are not found with the relationIds and provided filter', async () => {
+        const entity = TEST_DISCRIMINATED_ENTITIES[0]
+        const queryService = moduleRef.get(TestDiscriminatedEntityService)
+        return expect(
+          queryService.removeRelations<TestReference>(
+            'testReferences',
+            entity._id.toHexString(),
+            TEST_REFERENCES_FOR_DISCRIMINATES.slice(0, 3).map((r) => r._id.toHexString()),
+            {
+              relationFilter: { referenceName: { like: '%-one' } }
+            }
+          )
+        ).rejects.toThrow('Unable to find all testReferences to remove from TestDiscriminatedEntity')
+      })
+    })
+  })
 })

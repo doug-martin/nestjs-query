@@ -124,6 +124,7 @@ export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity)
 <TabItem value="typegoose">
 
 ```ts title="todo-item.entity.ts"
+import { ObjectId } from '@ptc-org/nestjs-query-graphql'
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Prop, modelOptions, Ref } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
@@ -138,6 +139,11 @@ import { TagEntity } from '../tag/tag.entity';
   },
 })
 export class TodoItemEntity implements Base {
+  @ObjectId()
+  _id!: Types.ObjectId
+
+  id!: string  
+
   @Prop({ required: true })
   title!: string;
 

@@ -211,7 +211,7 @@ export class TypeOrmQueryService<Entity>
       const distinctRecords = await builder.addSelect(`${builder.alias}.id`).getRawMany()
 
       const ids: unknown[] = distinctRecords.map(({ id }) => id as unknown)
-      const idsFilter = { id: { in: ids } } as Filter<Entity>
+      const idsFilter = { id: { in: ids } } as unknown as Filter<Entity>
 
       updateResult = await this.filterQueryBuilder
         .update({ filter: idsFilter })
@@ -274,7 +274,7 @@ export class TypeOrmQueryService<Entity>
       const distinctRecords = await builder.addSelect(`${builder.alias}.id`).getRawMany()
 
       const ids: unknown[] = distinctRecords.map(({ id }) => id as unknown)
-      const idsFilter = { id: { in: ids } } as Filter<Entity>
+      const idsFilter = { id: { in: ids } } as unknown as Filter<Entity>
 
       if (ids.length > 0) {
         if (this.useSoftDelete || opts?.useSoftDelete) {

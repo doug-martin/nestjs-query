@@ -1,8 +1,10 @@
+import { ObjectId } from '@ptc-org/nestjs-query-graphql'
 import { mongoose, prop, Ref } from '@typegoose/typegoose'
 
 import { TestEntity } from './test.entity'
 
 export class TestReference {
+  @ObjectId()
   _id!: mongoose.Types.ObjectId
 
   id!: string
@@ -10,9 +12,11 @@ export class TestReference {
   @prop({ required: true })
   referenceName!: string
 
+  @ObjectId()
   @prop({ ref: () => TestEntity, required: false })
   testEntity?: Ref<TestEntity>
 
+  @ObjectId()
   @prop({
     ref: 'TestEntity',
     localField: 'testEntity',

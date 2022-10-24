@@ -5,6 +5,7 @@ import {
   AssemblerFactory,
   AssemblerQueryService,
   Class,
+  DeepPartial,
   InjectAssemblerQueryService,
   InjectQueryService,
   QueryService
@@ -95,7 +96,7 @@ function createFederatedResolver<DTO, Service>(resolverOpts: FederatedAutoResolv
   return AutoResolver
 }
 
-function createEntityAutoResolver<DTO, Entity, C, U, R, PS extends PagingStrategies>(
+function createEntityAutoResolver<DTO, Entity extends DeepPartial<Entity>, C, U, R, PS extends PagingStrategies>(
   resolverOpts: EntityCRUDAutoResolverOpts<DTO, Entity, C, U, R, PS>
 ): Provider {
   const { DTOClass, EntityClass } = resolverOpts
@@ -157,9 +158,14 @@ function createServiceAutoResolver<DTO, Service, C, U, R, PS extends PagingStrat
   return AutoResolver
 }
 
-function createResolver<DTO, EntityServiceOrAssembler, C, U, R, PS extends PagingStrategies>(
-  resolverOpts: AutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS>
-): Provider {
+function createResolver<
+  DTO,
+  EntityServiceOrAssembler extends DeepPartial<EntityServiceOrAssembler>,
+  C,
+  U,
+  R,
+  PS extends PagingStrategies
+>(resolverOpts: AutoResolverOpts<DTO, EntityServiceOrAssembler, C, U, R, PS>): Provider {
   if (isFederatedResolverOpts(resolverOpts)) {
     return createFederatedResolver(resolverOpts)
   }

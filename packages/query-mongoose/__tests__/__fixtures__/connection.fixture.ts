@@ -3,21 +3,32 @@ import { connections } from 'mongoose'
 
 import { seed } from './seeds'
 
-const mongoServer = new MongoMemoryServer()
-
-export function getConnectionUri(): Promise<string> {
-  return mongoServer.getUri()
+export type MongoServer = {
+  getConnectionUri: () => string
+  dropDatabase: () => Promise<void>
+  prepareDb: () => Promise<void>
+  closeDbConnection: () => Promise<void>
 }
 
-export const dropDatabase = async (): Promise<void> => {
-  await connections[connections.length - 1].dropDatabase()
-}
+export const mongoServer = async (): Promise<MongoServer> => {
+  const mongod = await MongoMemoryServer.create()
 
-export const prepareDb = async (): Promise<void> => {
-  await seed(connections[connections.length - 1])
-}
+  return {
+    getConnectionUri: (): string => {
+      return mongod.getUri()
+    },
 
-export const closeDbConnection = async (): Promise<void> => {
-  await connections[connections.length - 1].close()
-  await mongoServer.stop()
+    dropDatabase: async (): Promise<void> => {
+      await connections[connections.length - 1].dropDatabase()
+    },
+
+    prepareDb: async (): Promise<void> => {
+      await seed(connections[connections.length - 1])
+    },
+
+    closeDbConnection: async (): Promise<void> => {
+      await connections[connections.length - 1].close()
+      await mongod.stop()
+    }
+  }
 }

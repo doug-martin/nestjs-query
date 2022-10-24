@@ -1,6 +1,6 @@
 import { Connection } from 'typeorm'
 
-import { executeTruncate } from '../../helpers'
+import { executeTruncate } from '../../../examples/helpers'
 import { SubTaskEntity } from '../src/sub-task/sub-task.entity'
 import { TagEntity } from '../src/tag/tag.entity'
 import { TodoItemEntity } from '../src/todo-item/todo-item.entity'

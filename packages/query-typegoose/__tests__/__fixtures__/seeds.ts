@@ -21,8 +21,8 @@ export const TEST_DISCRIMINATED_ENTITIES: DocumentType<TestDiscriminatedEntity>[
       boolType: i % 2 === 0,
       dateType: new Date(`2020-02-${i} 12:00`),
       numberType: i,
-      stringType: `foo${i}`,
-      stringType2: `bar${i}`
+      stringType: `foo${i}-descrim`,
+      stringType2: `bar${i}-descrim`
     } as DocumentType<TestDiscriminatedEntity>)
 )
 
@@ -75,7 +75,6 @@ export const seed = async (connection: mongoose.Connection): Promise<void> => {
   )
 
   testReferences.forEach((tr, index) => Object.assign(TEST_REFERENCES[index], tr.toObject({ virtuals: true })))
-
   testReferencesForDiscriminates.forEach((trfd, index) =>
     Object.assign(TEST_REFERENCES_FOR_DISCRIMINATES[index], trfd.toObject({ virtuals: true }))
   )

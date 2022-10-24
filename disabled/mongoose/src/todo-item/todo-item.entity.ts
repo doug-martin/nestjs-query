@@ -1,39 +1,43 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SchemaTypes, Types, Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { ObjectId } from '@ptc-org/nestjs-query-graphql'
+import mongoose, { Document, SchemaTypes, Types } from 'mongoose'
 
 @Schema({ timestamps: true })
 export class TodoItemEntity extends Document {
+  @ObjectId()
+  _id: mongoose.Types.ObjectId
+
   @Prop({ required: true })
-  title!: string;
+  title!: string
 
   @Prop()
-  description?: string;
+  description?: string
 
   @Prop({ required: true })
-  completed!: boolean;
+  completed!: boolean
 
   @Prop({ default: Date.now })
-  createdAt!: Date;
+  createdAt!: Date
 
   @Prop({ default: Date.now })
-  updatedAt!: Date;
+  updatedAt!: Date
 
   @Prop([{ type: SchemaTypes.ObjectId, ref: 'TagEntity' }])
-  tags!: Types.ObjectId[];
+  tags!: Types.ObjectId[]
 
   @Prop({ default: 0 })
-  priority!: number;
+  priority!: number
 
   @Prop()
-  createdBy?: string;
+  createdBy?: string
 
   @Prop()
-  updatedBy?: string;
+  updatedBy?: string
 }
 
-export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity);
+export const TodoItemEntitySchema = SchemaFactory.createForClass(TodoItemEntity)
 TodoItemEntitySchema.virtual('subTasks', {
   ref: 'SubTaskEntity',
   localField: '_id',
-  foreignField: 'todoItem',
-});
+  foreignField: 'todoItem'
+})
