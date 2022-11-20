@@ -27,13 +27,13 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^8.0.4",
-    "@typegoose/typegoose": "^8.0.0-beta.2",
+    "@typegoose/typegoose": "^8.0.0-beta.2 || ^9.0.0",
     "nestjs-typegoose": "^7.1.38"
   },
   "devDependencies": {
     "@nestjs/common": "8.4.0",
     "@nestjs/testing": "8.4.0",
-    "@typegoose/typegoose": "8.0.0-beta.7",
+    "@typegoose/typegoose": "9.12.1",
     "@types/lodash.escaperegexp": "4.1.6",
     "@types/lodash.merge": "4.6.6",
     "class-transformer": "0.4.0",
