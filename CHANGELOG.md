@@ -1,4 +1,13 @@
  
+## [1.1.3](https://github.com/TriPSs/nestjs-query/compare/v1.1.2...v1.1.3) (2022-11-25)
+
+
+### Bug Fixes
+
+* **graphql,tripss#64:** fix of delete subscriptions ([8b56d21](https://github.com/TriPSs/nestjs-query/commit/8b56d21042a569535d55d236c16793cb08109127))
+
+
+
 ## [1.1.2](https://github.com/TriPSs/nestjs-query/compare/v1.1.1...v1.1.2) (2022-10-24)
 
 
