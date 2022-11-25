@@ -184,7 +184,8 @@ export const Deletable =
         { name: deletedOneEvent, filter: deleteOneSubscriptionFilter },
         commonResolverOpts,
         {
-          enableSubscriptions: enableOneSubscriptions
+          enableSubscriptions: enableOneSubscriptions,
+          interceptors: [AuthorizerInterceptor(DTOClass)]
         }
       )
       // input required so graphql subscription filtering will work.
@@ -202,7 +203,8 @@ export const Deletable =
       }
 
       @ResolverSubscription(() => DMR, { name: deletedManyEvent }, commonResolverOpts, {
-        enableSubscriptions: enableManySubscriptions
+        enableSubscriptions: enableManySubscriptions,
+        interceptors: [AuthorizerInterceptor(DTOClass)]
       })
       deletedManySubscription(
         @AuthorizerFilter({ operationGroup: OperationGroup.DELETE, many: true })
