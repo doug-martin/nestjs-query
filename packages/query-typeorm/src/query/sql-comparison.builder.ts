@@ -105,10 +105,10 @@ export class SQLComparisonBuilder<Entity> {
       return { sql: `${col} IS NULL`, params: {} }
     }
     if (val === true) {
-      return { sql: `${col} IS TRUE`, params: {} }
+      return { sql: `${col} = TRUE`, params: {} }
     }
     if (val === false) {
-      return { sql: `${col} IS FALSE`, params: {} }
+      return { sql: `${col} = FALSE`, params: {} }
     }
     throw new Error(`unexpected is operator param ${JSON.stringify(val)}`)
   }
@@ -118,10 +118,10 @@ export class SQLComparisonBuilder<Entity> {
       return { sql: `${col} IS NOT NULL`, params: {} }
     }
     if (val === true) {
-      return { sql: `${col} IS NOT TRUE`, params: {} }
+      return { sql: `${col} != TRUE`, params: {} }
     }
     if (val === false) {
-      return { sql: `${col} IS NOT FALSE`, params: {} }
+      return { sql: `${col} != FALSE`, params: {} }
     }
     throw new Error(`unexpected isNot operator param ${JSON.stringify(val)}`)
   }
