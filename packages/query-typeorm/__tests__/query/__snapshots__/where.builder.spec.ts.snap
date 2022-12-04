@@ -61,7 +61,7 @@ FROM
 WHERE
   ("TestEntity"."number_type" = 1)
   AND ("TestEntity"."string_type" LIKE foo%)
-  AND ("TestEntity"."bool_type" IS TRUE)
+  AND ("TestEntity"."bool_type" = TRUE)
 `;
 
 exports[`WhereBuilder and should properly group AND with a sibling field comparison 1`] = `

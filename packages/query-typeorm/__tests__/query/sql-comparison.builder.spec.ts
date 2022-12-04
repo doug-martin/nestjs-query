@@ -123,14 +123,14 @@ describe('SQLComparisonBuilder', (): void => {
   describe('is comparisons', () => {
     it('should build is true', (): void => {
       expect(createSQLComparisonBuilder().build('boolType', 'is', true, 'TestEntity')).toEqual({
-        sql: 'TestEntity.boolType IS TRUE',
+        sql: 'TestEntity.boolType = TRUE',
         params: {}
       })
     })
 
     it('should build is false', (): void => {
       expect(createSQLComparisonBuilder().build('boolType', 'is', false, 'TestEntity')).toEqual({
-        sql: 'TestEntity.boolType IS FALSE',
+        sql: 'TestEntity.boolType = FALSE',
         params: {}
       })
     })
@@ -153,14 +153,14 @@ describe('SQLComparisonBuilder', (): void => {
   describe('isNot comparisons', () => {
     it('should build is true', (): void => {
       expect(createSQLComparisonBuilder().build('boolType', 'isNot', true, 'TestEntity')).toEqual({
-        sql: 'TestEntity.boolType IS NOT TRUE',
+        sql: 'TestEntity.boolType != TRUE',
         params: {}
       })
     })
 
     it('should build is false', (): void => {
       expect(createSQLComparisonBuilder().build('boolType', 'isNot', false, 'TestEntity')).toEqual({
-        sql: 'TestEntity.boolType IS NOT FALSE',
+        sql: 'TestEntity.boolType != FALSE',
         params: {}
       })
     })
