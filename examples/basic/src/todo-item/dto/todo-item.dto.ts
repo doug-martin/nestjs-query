@@ -17,7 +17,9 @@ export class TodoItemDTO {
   @FilterableField({ nullable: true })
   description?: string
 
-  @FilterableField()
+  @FilterableField({
+    name: 'isCompleted'
+  })
   completed!: boolean
 
   @FilterableField(() => GraphQLISODateTime, { filterOnly: true })

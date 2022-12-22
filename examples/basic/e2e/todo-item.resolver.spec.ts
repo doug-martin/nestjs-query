@@ -53,7 +53,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
         .then(({ body }) => {
           expect(body).toEqual({
             data: {
-              todoItem: { id: '1', title: 'Create Nest App', completed: true, description: null }
+              todoItem: { id: '1', title: 'Create Nest App', isCompleted: true, description: null }
             }
           })
         }))
@@ -180,11 +180,11 @@ describe('TodoItemResolver (basic - e2e)', () => {
           expect(edges).toHaveLength(5)
 
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null },
-            { id: '2', title: 'Create Entity', completed: false, description: null },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
-            { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null }
+            { id: '1', title: 'Create Nest App', isCompleted: true, description: null },
+            { id: '2', title: 'Create Entity', isCompleted: false, description: null },
+            { id: '3', title: 'Create Entity Service', isCompleted: false, description: null },
+            { id: '4', title: 'Add Todo Item Resolver', isCompleted: false, description: null },
+            { id: '5', title: 'How to create item With Sub Tasks', isCompleted: false, description: null }
           ])
         }))
 
@@ -213,9 +213,9 @@ describe('TodoItemResolver (basic - e2e)', () => {
           expect(edges).toHaveLength(3)
 
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null },
-            { id: '2', title: 'Create Entity', completed: false, description: null },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null }
+            { id: '1', title: 'Create Nest App', isCompleted: true, description: null },
+            { id: '2', title: 'Create Entity', isCompleted: false, description: null },
+            { id: '3', title: 'Create Entity Service', isCompleted: false, description: null }
           ])
         }))
 
@@ -246,11 +246,11 @@ describe('TodoItemResolver (basic - e2e)', () => {
           expect(edges).toHaveLength(5)
 
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '1', title: 'Create Nest App', completed: true, description: null },
-            { id: '2', title: 'Create Entity', completed: false, description: null },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
-            { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null }
+            { id: '1', title: 'Create Nest App', isCompleted: true, description: null },
+            { id: '2', title: 'Create Entity', isCompleted: false, description: null },
+            { id: '3', title: 'Create Entity Service', isCompleted: false, description: null },
+            { id: '4', title: 'Add Todo Item Resolver', isCompleted: false, description: null },
+            { id: '5', title: 'How to create item With Sub Tasks', isCompleted: false, description: null }
           ])
         }))
 
@@ -279,11 +279,11 @@ describe('TodoItemResolver (basic - e2e)', () => {
           expect(edges).toHaveLength(5)
 
           expect(edges.map((e) => e.node)).toEqual([
-            { id: '5', title: 'How to create item With Sub Tasks', completed: false, description: null },
-            { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null },
-            { id: '3', title: 'Create Entity Service', completed: false, description: null },
-            { id: '2', title: 'Create Entity', completed: false, description: null },
-            { id: '1', title: 'Create Nest App', completed: true, description: null }
+            { id: '5', title: 'How to create item With Sub Tasks', isCompleted: false, description: null },
+            { id: '4', title: 'Add Todo Item Resolver', isCompleted: false, description: null },
+            { id: '3', title: 'Create Entity Service', isCompleted: false, description: null },
+            { id: '2', title: 'Create Entity', isCompleted: false, description: null },
+            { id: '1', title: 'Create Nest App', isCompleted: true, description: null }
           ])
         }))
 
@@ -313,8 +313,8 @@ describe('TodoItemResolver (basic - e2e)', () => {
             expect(edges).toHaveLength(2)
 
             expect(edges.map((e) => e.node)).toEqual([
-              { id: '1', title: 'Create Nest App', completed: true, description: null },
-              { id: '2', title: 'Create Entity', completed: false, description: null }
+              { id: '1', title: 'Create Nest App', isCompleted: true, description: null },
+              { id: '2', title: 'Create Entity', isCompleted: false, description: null }
             ])
           }))
 
@@ -343,8 +343,8 @@ describe('TodoItemResolver (basic - e2e)', () => {
             expect(edges).toHaveLength(2)
 
             expect(edges.map((e) => e.node)).toEqual([
-              { id: '3', title: 'Create Entity Service', completed: false, description: null },
-              { id: '4', title: 'Add Todo Item Resolver', completed: false, description: null }
+              { id: '3', title: 'Create Entity Service', isCompleted: false, description: null },
+              { id: '4', title: 'Add Todo Item Resolver', isCompleted: false, description: null }
             ])
           }))
     })
@@ -365,7 +365,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })
@@ -374,7 +374,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             createOneTodoItem: {
               id: '6',
               title: 'Test Todo',
-              completed: false
+              isCompleted: false
             }
           }
         }))
@@ -393,7 +393,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })
@@ -422,15 +422,15 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })
         .expect(200, {
           data: {
             createManyTodoItems: [
-              { id: '7', title: 'Many Test Todo 1', completed: false },
-              { id: '8', title: 'Many Test Todo 2', completed: true }
+              { id: '7', title: 'Many Test Todo 1', isCompleted: false },
+              { id: '8', title: 'Many Test Todo 2', isCompleted: true }
             ]
           }
         }))
@@ -449,7 +449,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })
@@ -476,7 +476,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })
@@ -485,7 +485,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             updateOneTodoItem: {
               id: '6',
               title: 'Update Test Todo',
-              completed: true
+              isCompleted: true
             }
           }
         }))
@@ -504,7 +504,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })
@@ -529,7 +529,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })
@@ -627,7 +627,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })
@@ -636,7 +636,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             deleteOneTodoItem: {
               id: null,
               title: 'Update Test Todo',
-              completed: true
+              isCompleted: true
             }
           }
         }))
@@ -653,7 +653,7 @@ describe('TodoItemResolver (basic - e2e)', () => {
             ) {
               id
               title
-              completed
+              isCompleted
             }
         }`
         })

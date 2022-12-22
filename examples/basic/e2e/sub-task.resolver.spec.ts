@@ -171,7 +171,7 @@ describe('SubTaskResolver (basic - e2e)', () => {
           expect(body).toEqual({
             data: {
               subTask: {
-                todoItem: { id: '1', title: 'Create Nest App', completed: true, description: null }
+                todoItem: { id: '1', title: 'Create Nest App', isCompleted: true, description: null }
               }
             }
           })
@@ -712,7 +712,7 @@ describe('SubTaskResolver (basic - e2e)', () => {
               setTodoItemOnSubTask: {
                 id: '1',
                 title: 'Create Nest App - Sub Task 1',
-                todoItem: { id: '2', title: 'Create Entity', completed: false, description: null }
+                todoItem: { id: '2', title: 'Create Entity', isCompleted: false, description: null }
               }
             }
           })

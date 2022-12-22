@@ -1,7 +1,7 @@
 export const todoItemFields = `
     id
     title
-    completed
+    isCompleted
     description
   `
 
