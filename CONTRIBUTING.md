@@ -12,7 +12,7 @@ As such, you must adhere to the following guidelines.
 
 ### Bug Reports
 
-Bug reports are essential to the success of this libary, please follow these guidelines:
+Bug reports are essential to the success of this library, please follow these guidelines:
 * A single bug report per issue
   * Multiple bugs per issue makes it difficult to prioritize and track progress.     
   * Contributors will most likely end up splitting your bug report up into multiple fixes, if you can save them some time by splitting your report up beforehand it is greatly appreciated.  
@@ -89,7 +89,7 @@ Your unit tests should cover as many code paths as possible including error case
 
 ### E2E Tests
 
-`e2e` test cases should cover high level functionaly not focusing on all code paths but ensuring that your code is covered when called all the way through the stack as you expect.
+`e2e` test cases should cover high level functionality not focusing on all code paths but ensuring that your code is covered when called all the way through the stack as you expect.
 
 Most test cases can be included in an example that already exists. If you are including an entirely new feature that you cannot integration tested without changing existing functionality feel free to create a new example.  
 
@@ -101,7 +101,7 @@ To add a new example follow these steps
     * `examples/init-scripts/mysql` - See the [basic example](https://github.com/doug-martin/nestjs-query/blob/master/examples/init-scripts/mysql/init-basic.sql)
     * `examples/init-scripts/postgres` - See the [basic example](https://github.com/doug-martin/nestjs-query/blob/master/examples/init-scripts/postgres/init-basic.sql)
   * All files should match the following format `init-{example-name}.sql`
-    * Your init script should create a `USER`, `DATABASE` and `GRANT PRIVELAGES` to the user for the database.
+    * Your init script should create a `USER`, `DATABASE` and `GRANT PRIVILEGES` to the user for the database.
     * Be sure to use the user you created in your `app.module.ts` file. See [the basic example](https://github.com/doug-martin/nestjs-query/blob/master/examples/basic/src/app.module.ts) 
 * Add your modules and tests.
 
@@ -158,7 +158,7 @@ npm run jest
 
 Format: `<type>(<scope>): <subject>`
 
-`<scope>` is optional, but is typically the scope of the feature either package (e.g. `core`, `grapqql`, `typeorm` etc)
+`<scope>` is optional, but is typically the scope of the feature either package (e.g. `core`, `graphql`, `typeorm` etc)
 
 Example
 ```
@@ -205,8 +205,8 @@ If you find yourself in a situation where you are adding a new feature or docume
 * `introduction` - A quick introduction for developers with installation guides, a feature list and example application.
 * `concepts` - Core concepts required to get started in `nestjs-query`
 * `graphql` - All documentation that is graphql specific.
-* `persistence` - Documentation related to the different persistence libary adapters.
-* `utilities` - Miscellaneous utilties that are useful when building an application.
+* `persistence` - Documentation related to the different persistence library adapters.
+* `utilities` - Miscellaneous utilities that are useful when building an application.
 * `migration-guides` - Documentation on how to upgrade between versions when breaking changes are introduced.
 * `faq.md` - Common questions with links to the relevant documentation.
 
