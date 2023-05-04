@@ -25,7 +25,7 @@ interface RelationMetadata {
  * Base class to house relations loading.
  * @internal
  */
-export abstract class RelationQueryService<Entity> {
+export abstract class RelationQueryService<Entity extends ObjectLiteral> {
   abstract filterQueryBuilder: FilterQueryBuilder<Entity>;
 
   abstract EntityClass: Class<Entity>;
@@ -92,7 +92,7 @@ export abstract class RelationQueryService<Entity> {
     aggregate: AggregateQuery<Relation>,
   ): Promise<AggregateResponse<Relation>[]>;
 
-  async aggregateRelations<Relation>(
+  async aggregateRelations<Relation extends ObjectLiteral>(
     RelationClass: Class<Relation>,
     relationName: string,
     dto: Entity | Entity[],
@@ -308,7 +308,7 @@ export abstract class RelationQueryService<Entity> {
     return entity;
   }
 
-  getRelationQueryBuilder<Relation>(name: string): RelationQueryBuilder<Entity, Relation> {
+  getRelationQueryBuilder<Relation extends ObjectLiteral>(name: string): RelationQueryBuilder<Entity, Relation> {
     return new RelationQueryBuilder(this.repo, name);
   }
 
@@ -348,7 +348,7 @@ export abstract class RelationQueryService<Entity> {
    * @param relationName - The name of relation to query for.
    * @param query - A query to filter, page or sort relations.
    */
-  private async batchAggregateRelations<Relation>(
+  private async batchAggregateRelations<Relation extends ObjectLiteral>(
     RelationClass: Class<Relation>,
     relationName: string,
     entities: Entity[],
@@ -447,7 +447,7 @@ export abstract class RelationQueryService<Entity> {
     return relationMeta.type as Class<unknown>;
   }
 
-  private getRelationsFromPrimaryKeys<Relation>(
+  private getRelationsFromPrimaryKeys<Relation extends ObjectLiteral>(
     relationBuilder: RelationQueryBuilder<Entity, Relation>,
     rawResult: ObjectLiteral,
     relations: Relation[],
@@ -462,7 +462,7 @@ export abstract class RelationQueryService<Entity> {
     return lodashFilter(relations, filter) as Relation[];
   }
 
-  private getRelations<Relation>(
+  private getRelations<Relation extends ObjectLiteral>(
     relationName: string,
     ids: (string | number)[],
     filter?: Filter<Relation>,

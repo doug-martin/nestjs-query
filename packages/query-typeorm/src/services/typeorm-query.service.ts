@@ -14,14 +14,14 @@ import {
   DeleteOneOptions,
   Filterable,
 } from '@codeshine/nestjs-query-core';
-import { Repository, DeleteResult } from 'typeorm';
+import { Repository, DeleteResult, ObjectLiteral } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DeepPartial as TypeOrmDeepPartial } from 'typeorm/common/DeepPartial';
 import { MethodNotAllowedException, NotFoundException } from '@nestjs/common';
 import { FilterQueryBuilder, AggregateBuilder } from '../query';
 import { RelationQueryService } from './relation-query.service';
 
-export interface TypeOrmQueryServiceOpts<Entity> {
+export interface TypeOrmQueryServiceOpts<Entity extends ObjectLiteral> {
   useSoftDelete?: boolean;
   filterQueryBuilder?: FilterQueryBuilder<Entity>;
 }
@@ -42,7 +42,7 @@ export interface TypeOrmQueryServiceOpts<Entity> {
  * }
  * ```
  */
-export class TypeOrmQueryService<Entity>
+export class TypeOrmQueryService<Entity extends ObjectLiteral>
   extends RelationQueryService<Entity>
   implements QueryService<Entity, DeepPartial<Entity>, DeepPartial<Entity>>
 {

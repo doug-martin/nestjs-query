@@ -7,6 +7,7 @@ import {
   UpdateQueryBuilder,
   WhereExpression,
   EntityMetadata,
+  ObjectLiteral,
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 import { AggregateBuilder } from './aggregate.builder';
@@ -18,11 +19,11 @@ import merge from 'lodash.merge';
  *
  * Interface that for Typeorm query builders that are sortable.
  */
-interface Sortable<Entity> extends QueryBuilder<Entity> {
+interface Sortable<Entity extends ObjectLiteral> extends QueryBuilder<Entity> {
   addOrderBy(sort: string, order?: 'ASC' | 'DESC', nulls?: 'NULLS FIRST' | 'NULLS LAST'): this;
 }
 
-interface Groupable<Entity> extends QueryBuilder<Entity> {
+interface Groupable<Entity extends ObjectLiteral> extends QueryBuilder<Entity> {
   addGroupBy(groupBy: string): this;
 }
 
@@ -31,7 +32,7 @@ interface Groupable<Entity> extends QueryBuilder<Entity> {
  *
  * Interface for `typeorm` query builders that are pageable.
  */
-interface Pageable<Entity> extends QueryBuilder<Entity> {
+interface Pageable<Entity extends ObjectLiteral> extends QueryBuilder<Entity> {
   limit(limit?: number): this;
   offset(offset?: number): this;
   skip(skip?: number): this;
@@ -52,7 +53,7 @@ export interface NestedRecord<E = unknown> {
  *
  * Class that will convert a Query into a `typeorm` Query Builder.
  */
-export class FilterQueryBuilder<Entity> {
+export class FilterQueryBuilder<Entity extends ObjectLiteral> {
   constructor(
     readonly repo: Repository<Entity>,
     readonly whereBuilder: WhereBuilder<Entity> = new WhereBuilder<Entity>(),

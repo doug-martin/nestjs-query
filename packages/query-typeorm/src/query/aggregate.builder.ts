@@ -1,4 +1,4 @@
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { AggregateQuery, AggregateResponse } from '@codeshine/nestjs-query-core';
 import { BadRequestException } from '@nestjs/common';
 import { camelCase } from 'camel-case';
@@ -17,7 +17,7 @@ const AGG_REGEXP = /(AVG|SUM|COUNT|MAX|MIN|GROUP_BY)_(.*)/;
  * @internal
  * Builds a WHERE clause from a Filter.
  */
-export class AggregateBuilder<Entity> {
+export class AggregateBuilder<Entity extends ObjectLiteral> {
   // eslint-disable-next-line @typescript-eslint/no-shadow
   static async asyncConvertToAggregateResponse<Entity>(
     responsePromise: Promise<Record<string, unknown>[]>,

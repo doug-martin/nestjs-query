@@ -55,7 +55,7 @@ export type EntityIndexRelation<Relation> = Relation & {
  *
  * Class that will convert a Query into a `typeorm` Query Builder.
  */
-export class RelationQueryBuilder<Entity, Relation> {
+export class RelationQueryBuilder<Entity extends ObjectLiteral, Relation extends ObjectLiteral> {
   private relationMetadata: RelationQuery<Relation, Entity> | undefined;
 
   readonly filterQueryBuilder: FilterQueryBuilder<Relation>;
