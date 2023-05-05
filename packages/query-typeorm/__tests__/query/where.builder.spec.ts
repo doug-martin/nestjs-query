@@ -12,7 +12,7 @@ describe('WhereBuilder', (): void => {
   const createWhereBuilder = () => new WhereBuilder<TestEntity>();
 
   const expectSQLSnapshot = (filter: Filter<TestEntity>): void => {
-    const selectQueryBuilder = createWhereBuilder().build(getQueryBuilder(), filter, {}, 'TestEntity');
+    const selectQueryBuilder = createWhereBuilder().build(getQueryBuilder(), filter, { nested: {} }, 'TestEntity');
     const [sql, params] = selectQueryBuilder.getQueryAndParameters();
     expect(sql).toMatchSnapshot();
     expect(params).toMatchSnapshot();

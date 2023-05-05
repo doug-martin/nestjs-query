@@ -13,6 +13,7 @@ import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBui
 import { AggregateBuilder } from './aggregate.builder';
 import { WhereBuilder } from './where.builder';
 import merge from 'lodash.merge';
+import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 
 /**
  * @internal
@@ -45,7 +46,10 @@ interface Pageable<Entity extends ObjectLiteral> extends QueryBuilder<Entity> {
  * Nested record type
  */
 export interface NestedRecord<E = unknown> {
-  [keys: string]: NestedRecord<E>;
+  metadata?: RelationMetadata;
+  nested: {
+    [keys: string]: NestedRecord<E>;
+  };
 }
 
 /**
@@ -232,11 +236,11 @@ export class FilterQueryBuilder<Entity extends ObjectLiteral> {
     if (!relationsMap) {
       return qb;
     }
-    const referencedRelations = Object.keys(relationsMap);
+    const referencedRelations = Object.keys(relationsMap.nested);
     return referencedRelations.reduce((rqb, relation) => {
       return this.applyRelationJoinsRecursive(
         rqb.leftJoin(`${alias ?? rqb.alias}.${relation}`, relation),
-        relationsMap[relation],
+        relationsMap.nested[relation],
         relation,
       );
     }, qb);
@@ -262,25 +266,41 @@ export class FilterQueryBuilder<Entity extends ObjectLiteral> {
     return referencedFields.filter((f) => relationNames.includes(f));
   }
 
-  getReferencedRelationsRecursive(metadata: EntityMetadata, filter: Filter<unknown> = {}): NestedRecord {
+  getReferencedRelationsRecursive(
+    metadata: EntityMetadata,
+    filter: Filter<unknown> = {},
+    relationMetadata?: RelationMetadata,
+  ): NestedRecord {
     const referencedFields = Array.from(new Set(Object.keys(filter) as (keyof Filter<unknown>)[]));
-    return referencedFields.reduce((prev, curr) => {
-      const currFilterValue = filter[curr];
-      if ((curr === 'and' || curr === 'or') && currFilterValue) {
-        for (const subFilter of currFilterValue) {
-          prev = merge(prev, this.getReferencedRelationsRecursive(metadata, subFilter));
+    return referencedFields.reduce(
+      (prev, curr) => {
+        const currFilterValue = filter[curr];
+
+        if ((curr === 'and' || curr === 'or') && Array.isArray(currFilterValue)) {
+          for (const subFilter of currFilterValue) {
+            prev.nested = merge(prev.nested, this.getReferencedRelationsRecursive(metadata, subFilter).nested);
+          }
+        } else if ((curr === 'exists' || curr === 'notExists') && !Array.isArray(currFilterValue)) {
+          prev.nested = merge(prev.nested, this.getReferencedRelationsRecursive(metadata, currFilterValue).nested);
+        } else {
+          const referencedRelation = metadata.relations.find((r) => r.propertyName === curr);
+
+          if (!referencedRelation) return prev;
+
+          prev.nested[curr] = merge(
+            prev.nested[curr] || { metadata: referencedRelation },
+            this.getReferencedRelationsRecursive(
+              referencedRelation.inverseEntityMetadata,
+              currFilterValue,
+              referencedRelation,
+            ),
+          );
         }
-      }
-      const referencedRelation = metadata.relations.find((r) => r.propertyName === curr);
-      if (!referencedRelation) return prev;
-      return {
-        ...prev,
-        [curr]: merge(
-          (prev as NestedRecord)[curr],
-          this.getReferencedRelationsRecursive(referencedRelation.inverseEntityMetadata, currFilterValue),
-        ),
-      };
-    }, {});
+
+        return prev;
+      },
+      { metadata: relationMetadata, nested: {} } as NestedRecord,
+    );
   }
 
   private get relationNames(): string[] {

@@ -28,6 +28,7 @@ function getOrCreateFilterType<T>(
   TClass: Class<T>,
   name: string,
   filterableRelations: FilterableRelations = {},
+  isRelation = false,
 ): FilterConstructor<T> {
   return reflector.memoize(TClass, name, () => {
     const { allowedBooleanExpressions }: FilterTypeOptions = getQueryOptions(TClass) ?? {};
@@ -69,12 +70,23 @@ function getOrCreateFilterType<T>(
     Object.keys(filterableRelations).forEach((field) => {
       const FieldType = filterableRelations[field];
       if (FieldType) {
-        const FC = getOrCreateFilterType(FieldType, `${name}${getObjectTypeName(FieldType)}Filter`);
+        const FC = getOrCreateFilterType(FieldType, `${name}${getObjectTypeName(FieldType)}Filter`, {}, true);
         ValidateNested()(GraphQLFilter.prototype, field);
         Field(() => FC, { nullable: true })(GraphQLFilter.prototype, field);
         Type(() => FC)(GraphQLFilter.prototype, field);
       }
     });
+    if (isRelation) {
+      const FC = getOrCreateFilterType(TClass, `${name}ExistsNotExistsFilter`, {});
+
+      ValidateNested()(GraphQLFilter.prototype, 'exists');
+      Field(() => FC, { nullable: true })(GraphQLFilter.prototype, 'exists');
+      Type(() => FC)(GraphQLFilter.prototype, 'exists');
+
+      ValidateNested()(GraphQLFilter.prototype, 'notExists');
+      Field(() => FC, { nullable: true })(GraphQLFilter.prototype, 'notExists');
+      Type(() => FC)(GraphQLFilter.prototype, 'notExists');
+    }
     return GraphQLFilter as FilterConstructor<T>;
   });
 }

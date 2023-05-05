@@ -62,6 +62,14 @@ type FilterGrouping<T> = {
    * Group an array of filters with an OR operation.
    */
   or?: Filter<T>[];
+  /**
+   * Group filter with an EXISTS operation.
+   */
+  exists?: Filter<T>;
+  /**
+   * Group filter with an NOT EXISTS operation.
+   */
+  notExists?: Filter<T>;
 };
 
 /**
