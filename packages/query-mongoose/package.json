@@ -34,7 +34,7 @@
     "@nestjs/mongoose": "9.0.0",
     "@nestjs/testing": "8.4.0",
     "@types/lodash.escaperegexp": "4.1.7",
-    "@types/lodash.merge": "4.6.6",
+    "@types/lodash.merge": "4.6.7",
     "@types/mongodb": "4.0.6",
     "class-transformer": "0.4.0",
     "mongodb-memory-server": "6.9.6",
