@@ -33,7 +33,7 @@
     "@nestjs/common": "8.4.0",
     "@nestjs/mongoose": "9.0.0",
     "@nestjs/testing": "8.4.0",
-    "@types/lodash.escaperegexp": "4.1.6",
+    "@types/lodash.escaperegexp": "4.1.7",
     "@types/lodash.merge": "4.6.6",
     "@types/mongodb": "4.0.6",
     "class-transformer": "0.4.0",
