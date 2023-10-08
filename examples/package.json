@@ -59,7 +59,7 @@
     "@types/node": "14.18.63",
     "@types/passport-jwt": "3.0.10",
     "@types/passport-local": "1.0.36",
-    "@types/supertest": "2.0.11",
+    "@types/supertest": "2.0.14",
     "supertest": "6.1.6",
     "ts-loader": "9.2.6",
     "ts-node": "10.4.0",
