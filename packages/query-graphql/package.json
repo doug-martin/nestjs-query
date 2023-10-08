@@ -54,7 +54,7 @@
     "class-transformer": "^0.2.3 || 0.3.1 || 0.4",
     "class-validator": "^0.13.0",
     "dataloader": "^2.0.0",
-    "graphql": "^15.0.0",
+    "graphql": "^15.0.0 || ^16.0.0",
     "graphql-subscriptions": "^1.1.0",
     "ts-morph": "^11.0.0 || ^12.0.0"
   },
@@ -72,7 +72,7 @@
     "class-transformer": "0.4.0",
     "class-validator": "0.13.1",
     "dataloader": "2.0.0",
-    "graphql": "15.7.2",
+    "graphql": "16.8.1",
     "graphql-subscriptions": "1.2.1",
     "ts-mockito": "2.6.1",
     "ts-morph": "12.2.0",
