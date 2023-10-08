@@ -55,7 +55,7 @@
     "class-validator": "^0.13.0",
     "dataloader": "^2.0.0",
     "graphql": "^15.0.0",
-    "graphql-subscriptions": "^1.1.0",
+    "graphql-subscriptions": "^1.1.0 || ^2.0.0",
     "ts-morph": "^11.0.0 || ^12.0.0"
   },
   "devDependencies": {
@@ -73,7 +73,7 @@
     "class-validator": "0.13.1",
     "dataloader": "2.0.0",
     "graphql": "15.7.2",
-    "graphql-subscriptions": "1.2.1",
+    "graphql-subscriptions": "2.0.0",
     "ts-mockito": "2.6.1",
     "ts-morph": "12.2.0",
     "typescript": "4.4.4"
