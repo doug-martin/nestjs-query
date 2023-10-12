@@ -30,18 +30,24 @@ function createArgsDecorator<T, C = unknown>(fn: (arg: T, context: C) => T | Pro
 
 export const HookArgs = <T>(): ParameterDecorator =>
   createArgsDecorator(async (data: T, context: HookContext<Hook<unknown>>) => {
-    if (context.hook) {
-      const hookedArgs = await context.hook.run(data, context);
-      return hookedArgs as T;
+    if (context.hooks) {
+      let hookedArgs = data;
+      for (const hook of context.hooks) {
+        hookedArgs = (await hook.run(hookedArgs, context)) as T;
+      }
+      return hookedArgs;
     }
     return data;
   });
 
 export const MutationHookArgs = <T extends MutationArgsType<unknown>>(): ParameterDecorator =>
   createArgsDecorator(async (data: T, context: HookContext<Hook<unknown>>) => {
-    if (context.hook) {
-      const { input } = data;
-      return { input: await context.hook.run(input, context) } as T;
+    if (context.hooks) {
+      let hookedArgs = data;
+      for (const hook of context.hooks) {
+        hookedArgs = (await hook.run(hookedArgs, context)) as T;
+      }
+      return hookedArgs;
     }
     return data;
   });
