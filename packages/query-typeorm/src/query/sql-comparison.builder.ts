@@ -89,7 +89,7 @@ export class SQLComparisonBuilder<Entity> {
       // notBetween comparison (field NOT BETWEEN x AND y)
       return this.notBetweenComparisonSQL(col, val);
     }
-    throw new Error(`unknown operator ${JSON.stringify(cmp)}`);
+    throw new Error(`unknown operator ${JSON.stringify(cmp)} for field ${JSON.stringify(field)}`);
   }
 
   private createComparisonSQL<F extends keyof Entity>(

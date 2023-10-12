@@ -16,8 +16,13 @@ export const CONNECTION_OPTIONS: ConnectionOptions = {
   logging: false,
 };
 
-export function createTestConnection(): Promise<Connection> {
-  return createConnection(CONNECTION_OPTIONS);
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function createTestConnection(opts?: { extraEntities: (string | Function)[] }): Promise<Connection> {
+  const connOpts: ConnectionOptions = {
+    ...CONNECTION_OPTIONS,
+    entities: [...(CONNECTION_OPTIONS.entities || []), ...(opts?.extraEntities ?? [])],
+  };
+  return createConnection(connOpts);
 }
 
 export function closeTestConnection(): Promise<void> {

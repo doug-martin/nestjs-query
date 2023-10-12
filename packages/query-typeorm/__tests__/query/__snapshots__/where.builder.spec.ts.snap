@@ -11,6 +11,22 @@ Array [
 ]
 `;
 
+exports[`WhereBuilder and and multiple expressions together with custom filters 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" > ?)) AND (("TestEntity"."number_type" < ?)) AND (("TestEntity"."number_type" >= ?)) AND (("TestEntity"."number_type" <= ?)) AND ((("TestEntity"."number_type" % ?) == 0)) AND (((EXTRACT(EPOCH FROM "TestEntity"."date_type") / 3600 / 24) % ?) == 0)) AND ((ST_Distance(TestEntity.fakePointType, ST_MakePoint(?,?)) <= ?)))`;
+
+exports[`WhereBuilder and and multiple expressions together with custom filters 2`] = `
+Array [
+  10,
+  20,
+  30,
+  40,
+  5,
+  3,
+  45.3,
+  9.5,
+  50000,
+]
+`;
+
 exports[`WhereBuilder and and multiple filters together with multiple fields 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" > ?) AND ("TestEntity"."string_type" LIKE ?)) AND (("TestEntity"."number_type" < ?) AND ("TestEntity"."string_type" LIKE ?)))`;
 
 exports[`WhereBuilder and and multiple filters together with multiple fields 2`] = `
@@ -85,6 +101,22 @@ Array [
 ]
 `;
 
+exports[`WhereBuilder or or multiple expressions together with custom filter 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" > ?)) OR (("TestEntity"."number_type" < ?)) OR (("TestEntity"."number_type" >= ?)) OR (("TestEntity"."number_type" <= ?)) OR ((("TestEntity"."number_type" % ?) == 0)) OR (((EXTRACT(EPOCH FROM "TestEntity"."date_type") / 3600 / 24) % ?) == 0)) OR ((ST_Distance(TestEntity.fakePointType, ST_MakePoint(?,?)) <= ?)))`;
+
+exports[`WhereBuilder or or multiple expressions together with custom filter 2`] = `
+Array [
+  10,
+  20,
+  30,
+  40,
+  5,
+  3,
+  45.3,
+  9.5,
+  50000,
+]
+`;
+
 exports[`WhereBuilder or should properly group OR with a sibling field comparison 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ((("TestEntity"."number_type" = ?)) OR (("TestEntity"."number_type" > ?))) AND ("TestEntity"."string_type" = ?)`;
 
 exports[`WhereBuilder or should properly group OR with a sibling field comparison 2`] = `
@@ -109,3 +141,18 @@ Array [
 exports[`WhereBuilder should accept a empty filter 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity"`;
 
 exports[`WhereBuilder should accept a empty filter 2`] = `Array []`;
+
+exports[`WhereBuilder should accept custom filters alongside regular filters 1`] = `SELECT "TestEntity"."test_entity_pk" AS "TestEntity_test_entity_pk", "TestEntity"."string_type" AS "TestEntity_string_type", "TestEntity"."bool_type" AS "TestEntity_bool_type", "TestEntity"."number_type" AS "TestEntity_number_type", "TestEntity"."date_type" AS "TestEntity_date_type", "TestEntity"."oneTestRelationTestRelationPk" AS "TestEntity_oneTestRelationTestRelationPk" FROM "test_entity" "TestEntity" WHERE ("TestEntity"."number_type" >= ? OR "TestEntity"."number_type" <= ? OR ("TestEntity"."number_type" % ?) == 0) AND ((EXTRACT(EPOCH FROM "TestEntity"."date_type") / 3600 / 24) % ?) == 0) AND (ST_Distance(TestEntity.fakePointType, ST_MakePoint(?,?)) <= ?) AND ((SELECT COUNT(*) FROM "test_relation" "tr" WHERE "tr"."number_type" > 82 AND "tr"."test_entity_id" = "TestEntity"."test_entity_pk") > ?)`;
+
+exports[`WhereBuilder should accept custom filters alongside regular filters 2`] = `
+Array [
+  1,
+  10,
+  5,
+  3,
+  45.3,
+  9.5,
+  50000,
+  5,
+]
+`;
