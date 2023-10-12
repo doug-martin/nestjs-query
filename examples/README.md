@@ -18,9 +18,9 @@ docker-compose up -d
 
 To run an example execute `npm run start -- {example_name}` where example name is one of the following.
 
-* [`basic`](./basic`) - A basic todo graphql API.
+* [`basic`](./basic) - A basic todo graphql API.
 * Federation
-  * [`federation:gateway`](./federation/gateway) - Graphql federation gateway
+  * [`federation:gateway`](./federation/graphql-gateway) - Graphql federation gateway
   * [`federation:sub-task`](./federation/sub-task-graphql) - Federated sub-task  GraphQL API
   * [`federation:tag`](./federation/tag-graphql) - Federated tag  GraphQL API
   * [`federation:todo-item`](./federation/todo-item-graphql) - Federated todo-item  GraphQL API
