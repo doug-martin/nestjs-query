@@ -869,7 +869,7 @@ export class TodoItemResolver extends UpdateResolver(TodoItemDTO) {
 The `DeleteResolver` will only expose the `deleteOne` and `deleteMany` endpoints. The [options](#options) described for
 `delete` can be passed to the `DeleteResolver`
 
-For example the following resolver will expose the `updateOneTodoItem` and `updateManyTodoItems` mutations.
+For example the following resolver will expose the `deleteOneTodoItem` and `deleteManyTodoItems` mutations.
 
 ```ts title="todo-item.resolver.ts"
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
