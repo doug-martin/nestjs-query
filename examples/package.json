@@ -12,7 +12,7 @@
     "start": "nest start --watch"
   },
   "dependencies": {
-    "@apollo/federation": "0.33.0",
+    "@apollo/federation": "0.38.1",
     "@nestjs-query/core": "0.30.0",
     "@nestjs-query/query-graphql": "0.30.0",
     "@nestjs-query/query-mongoose": "0.30.0",
@@ -29,8 +29,8 @@
     "@nestjs/sequelize": "8.0.1",
     "@nestjs/typeorm": "8.0.2",
     "@typegoose/typegoose": "8.0.0-beta.7",
-    "apollo-server-core": "3.3.0",
-    "apollo-server-express": "3.3.0",
+    "apollo-server-core": "3.13.0",
+    "apollo-server-express": "3.13.0",
     "apollo-server-plugin-base": "3.4.0",
     "apollo-server-types": "3.4.0",
     "class-validator": "0.13.1",
