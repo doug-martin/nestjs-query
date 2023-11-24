@@ -47,7 +47,7 @@
     "rimraf": "3.0.2",
     "rxjs": "7.4.0",
     "sequelize": "6.9.0",
-    "sequelize-typescript": "2.1.1",
+    "sequelize-typescript": "2.1.6",
     "typeorm": "0.2.40",
     "typeorm-seeding": "1.6.1"
   },
