@@ -22,6 +22,7 @@ module.exports = {
         TypeOrm: [
           'persistence/typeorm/getting-started',
           'persistence/typeorm/custom-service',
+          'persistence/typeorm/custom-filters',
           'persistence/typeorm/multiple-databases',
           'persistence/typeorm/soft-delete',
           'persistence/typeorm/testing-services',
@@ -50,6 +51,7 @@ module.exports = {
       'graphql/dtos',
       'graphql/resolvers',
       'graphql/queries',
+      'graphql/custom-filters',
       'graphql/mutations',
       'graphql/paging',
       'graphql/hooks',

@@ -23,30 +23,33 @@ export const TEST_SOFT_DELETE_ENTITIES: TestSoftDeleteEntity[] = [1, 2, 3, 4, 5,
   };
 });
 
-export const TEST_RELATIONS: TestRelation[] = TEST_ENTITIES.reduce(
-  (relations, te) => [
+// Generate different numberTypes so we can use them for filters later on
+export const TEST_RELATIONS: TestRelation[] = TEST_ENTITIES.reduce((relations, te) => {
+  return [
     ...relations,
     {
       testRelationPk: `test-relations-${te.testEntityPk}-1`,
       relationName: `${te.stringType}-test-relation-one`,
       testEntityId: te.testEntityPk,
       uniDirectionalTestEntityId: te.testEntityPk,
+      numberType: te.numberType * 10 + 1,
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-2`,
       relationName: `${te.stringType}-test-relation-two`,
       testEntityId: te.testEntityPk,
       uniDirectionalTestEntityId: te.testEntityPk,
+      numberType: te.numberType * 10 + 2,
     },
     {
       testRelationPk: `test-relations-${te.testEntityPk}-3`,
       relationName: `${te.stringType}-test-relation-three`,
       testEntityId: te.testEntityPk,
       uniDirectionalTestEntityId: te.testEntityPk,
+      numberType: te.numberType * 10 + 3,
     },
-  ],
-  [] as TestRelation[],
-);
+  ];
+}, [] as TestRelation[]);
 
 export const TEST_RELATIONS_OF_RELATION = TEST_RELATIONS.map<Partial<RelationOfTestRelationEntity>>((testRelation) => ({
   relationName: `test-relation-of-${testRelation.relationName}`,

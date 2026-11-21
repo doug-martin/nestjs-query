@@ -58,6 +58,6 @@ export class FilterBuilder {
       throw new Error(`unknown comparison ${JSON.stringify(fieldOrNested)}`);
     }
     const nestedFilterFn = this.build(value);
-    return (dto?: DTO) => nestedFilterFn(dto ? dto[fieldOrNested] : null);
+    return (dto?: DTO) => nestedFilterFn(dto ? dto[fieldOrNested] : undefined);
   }
 }

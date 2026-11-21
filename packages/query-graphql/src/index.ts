@@ -57,3 +57,4 @@ export {
   BeforeFindOneHook,
 } from './hooks';
 export { AuthorizerInterceptor, AuthorizerContext, HookInterceptor, HookContext } from './interceptors';
+export { registerTypeComparison, registerDTOFieldComparison } from './types/query/field-comparison';

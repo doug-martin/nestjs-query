@@ -1,9 +1,9 @@
-import { Filter, SortDirection } from '@nestjs-query/core';
+import { Filter, getQueryServiceToken, QueryService, SortDirection } from '@nestjs-query/core';
 import { Test, TestingModule } from '@nestjs/testing';
+import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
-import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmQueryService } from '../../src';
+import { NestjsQueryTypeOrmModule, TypeOrmQueryService } from '../../src';
 import { FilterQueryBuilder } from '../../src/query';
 import {
   closeTestConnection,
@@ -12,11 +12,18 @@ import {
   refresh,
   truncate,
 } from '../__fixtures__/connection.fixture';
+import {
+  IsMultipleOfCustomFilter,
+  IsMultipleOfDateCustomFilter,
+  RadiusCustomFilter,
+  TestEntityTestRelationCountFilter,
+} from '../__fixtures__/custom-filters.services';
 import { TEST_ENTITIES, TEST_RELATIONS, TEST_SOFT_DELETE_ENTITIES } from '../__fixtures__/seeds';
 import { TestEntityRelationEntity } from '../__fixtures__/test-entity-relation.entity';
 import { TestRelation } from '../__fixtures__/test-relation.entity';
 import { TestSoftDeleteEntity } from '../__fixtures__/test-soft-delete.entity';
 import { TestEntity } from '../__fixtures__/test.entity';
+import { TestEntityFilter } from '../__fixtures__/types';
 
 describe('TypeOrmQueryService', (): void => {
   let moduleRef: TestingModule;
@@ -39,16 +46,32 @@ describe('TypeOrmQueryService', (): void => {
     }
   }
 
-  afterEach(closeTestConnection);
+  afterEach(() => closeTestConnection());
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(CONNECTION_OPTIONS),
-        TypeOrmModule.forFeature([TestEntity, TestRelation, TestEntityRelationEntity, TestSoftDeleteEntity]),
+        // Use the full module so we can test custom filters well
+        NestjsQueryTypeOrmModule.forFeature(
+          [TestEntity, TestRelation, TestEntityRelationEntity, TestSoftDeleteEntity],
+          undefined,
+          {
+            providers: [
+              // Custom filters
+              IsMultipleOfCustomFilter,
+              IsMultipleOfDateCustomFilter,
+              RadiusCustomFilter,
+              TestEntityTestRelationCountFilter,
+            ],
+          },
+        ),
+        // TypeOrmModule.forFeature([TestEntity, TestRelation, TestEntityRelationEntity, TestSoftDeleteEntity]),
       ],
       providers: [TestEntityService, TestRelationService, TestSoftDeleteEntityService],
     }).compile();
+    // Trigger onModuleInit()
+    await moduleRef.init();
     await refresh();
   });
 
@@ -1862,6 +1885,68 @@ describe('TypeOrmQueryService', (): void => {
           'Restore not allowed for non soft deleted entity TestEntity.',
         );
       });
+    });
+  });
+
+  describe('#custom-filters', () => {
+    it('Simple query without relations', async () => {
+      const queryService: QueryService<TestEntity> = moduleRef.get(getQueryServiceToken(TestEntity));
+      expect(queryService).toBeDefined();
+      // // TODO Remove any typing
+      // prettier-ignore
+      const queryResult = await queryService.query({
+        filter: {
+          and: [
+            { numberType: { gte: 6 } },
+            { numberType: { isMultipleOf: 3 } },
+          ],
+        } as any,
+      });
+      expect(queryResult).toHaveLength(2);
+      // prettier-ignore
+      expect(queryResult).toMatchObject([
+        { testEntityPk: 'test-entity-6' },
+        { testEntityPk: 'test-entity-9' },
+      ]);
+    });
+
+    it('Query relations', async () => {
+      const queryService: QueryService<TestEntity> = moduleRef.get(getQueryServiceToken(TestEntity));
+      expect(queryService).toBeDefined();
+      // // TODO Remove any typing
+      // prettier-ignore
+      const queryResult = await queryService.query({
+        filter: {
+          and: [
+            { testRelations: { numberType: { gte: 30 } } },
+            { testRelations: { numberType: { isMultipleOf: 21 } } },
+          ],
+        } as any,
+      });
+      expect(queryResult).toHaveLength(2);
+      // prettier-ignore
+      expect(queryResult).toMatchObject([
+        { testEntityPk: 'test-entity-4' },
+        { testEntityPk: 'test-entity-6' },
+      ]);
+    });
+
+    it('Subquery filter', async () => {
+      const queryService: QueryService<TestEntity> = moduleRef.get(getQueryServiceToken(TestEntity));
+      expect(queryService).toBeDefined();
+      // // TODO Remove any typing
+      // prettier-ignore
+      const queryResult = await queryService.query({
+        filter: {
+          pendingTestRelations: {gt: 2},
+        } as TestEntityFilter,
+      });
+      expect(queryResult).toHaveLength(2);
+      // prettier-ignore
+      expect(queryResult).toMatchObject([
+        { testEntityPk: 'test-entity-9' }, // result of the count subquery is = 3 (91,92,93)
+        { testEntityPk: 'test-entity-10' }, // result of the count subquery is = 3 (101,102,103)
+      ]);
     });
   });
 });

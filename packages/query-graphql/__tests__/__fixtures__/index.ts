@@ -9,6 +9,7 @@ import { TestService } from './test-resolver.service';
 import { TestResolverDTO } from './test-resolver.dto';
 import { TestResolverAuthorizer } from './test-resolver.authorizer';
 import { getAuthorizerToken } from '../../src/auth';
+import { PointScalar } from './scalars';
 
 export { TestResolverInputDTO } from './test-resolver-input.dto';
 export { TestResolverDTO } from './test-resolver.dto';
@@ -16,17 +17,14 @@ export { TestResolverAuthorizer } from './test-resolver.authorizer';
 export { TestService } from './test-resolver.service';
 export { TestRelationDTO } from './test-relation.dto';
 
-const getOrCreateSchemaFactory = async (): Promise<GraphQLSchemaFactory> => {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const generateSchema = async (resolvers: Function[]): Promise<string> => {
   const moduleRef = await Test.createTestingModule({
     imports: [GraphQLSchemaBuilderModule],
   }).compile();
-  return moduleRef.get(GraphQLSchemaFactory);
-};
+  const sf = moduleRef.get(GraphQLSchemaFactory);
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const generateSchema = async (resolvers: Function[]): Promise<string> => {
-  const sf = await getOrCreateSchemaFactory();
-  const schema = await sf.create(resolvers);
+  const schema = await sf.create(resolvers, [PointScalar]);
   return printSchema(schema);
 };
 

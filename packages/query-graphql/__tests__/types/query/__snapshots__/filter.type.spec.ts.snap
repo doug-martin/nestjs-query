@@ -18,6 +18,8 @@ input TestDtoFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
+  pointField: PointScalarFilterComparison
+  pendingTaskCount: TestFilterDtoPendingTaskCountFilterComparison
 }
 
 input TestFilterDtoDeleteFilter {
@@ -33,6 +35,8 @@ input TestFilterDtoDeleteFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
+  pointField: PointScalarFilterComparison
+  pendingTaskCount: TestFilterDtoPendingTaskCountFilterComparison
 }
 
 input NumberFieldComparison {
@@ -48,6 +52,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -98,6 +103,7 @@ input FloatFieldComparison {
   notIn: [Float!]
   between: FloatFieldComparisonBetween
   notBetween: FloatFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input FloatFieldComparisonBetween {
@@ -118,6 +124,7 @@ input IntFieldComparison {
   notIn: [Int!]
   between: IntFieldComparisonBetween
   notBetween: IntFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input IntFieldComparisonBetween {
@@ -215,6 +222,20 @@ input TimestampFieldComparisonBetween {
   upper: Timestamp!
 }
 
+input PointScalarFilterComparison {
+  distanceFrom: DistanceFilter
+}
+
+input DistanceFilter {
+  lat: Float!
+  lng: Float!
+  radius: Float!
+}
+
+input TestFilterDtoPendingTaskCountFilterComparison {
+  gt: Int
+}
+
 `;
 
 exports[`filter types FilterType allowedBooleanExpressions option no boolean expressions should only expose allowed comparisons 1`] = `
@@ -240,6 +261,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -279,6 +301,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -318,6 +341,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -342,6 +366,8 @@ input TestComparisonDtoFilter {
   intField: TestAllowedComparisonIntFieldFilterComparison
   numberField: TestAllowedComparisonNumberFieldFilterComparison
   stringField: TestAllowedComparisonStringFieldFilterComparison
+  pointField: TestAllowedComparisonPointFieldFilterComparison
+  testVirtualProperty: TestAllowedComparisonTestVirtualPropertyFilterComparison
 }
 
 input TestAllowedComparisonFilter {
@@ -354,6 +380,8 @@ input TestAllowedComparisonFilter {
   intField: TestAllowedComparisonIntFieldFilterComparison
   numberField: TestAllowedComparisonNumberFieldFilterComparison
   stringField: TestAllowedComparisonStringFieldFilterComparison
+  pointField: TestAllowedComparisonPointFieldFilterComparison
+  testVirtualProperty: TestAllowedComparisonTestVirtualPropertyFilterComparison
 }
 
 input NumberFieldComparison {
@@ -369,6 +397,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -398,6 +427,7 @@ input TestAllowedComparisonFloatFieldFilterComparison {
 input TestAllowedComparisonIntFieldFilterComparison {
   lt: Int
   lte: Int
+  isMultipleOf: Int
 }
 
 input TestAllowedComparisonNumberFieldFilterComparison {
@@ -407,11 +437,27 @@ input TestAllowedComparisonNumberFieldFilterComparison {
   gte: Float
   lt: Float
   lte: Float
+  isMultipleOf: Int
 }
 
 input TestAllowedComparisonStringFieldFilterComparison {
   like: String
   notLike: String
+}
+
+input TestAllowedComparisonPointFieldFilterComparison {
+  distanceFrom: DistanceFilter
+}
+
+input DistanceFilter {
+  lat: Float!
+  lng: Float!
+  radius: Float!
+}
+
+input TestAllowedComparisonTestVirtualPropertyFilterComparison {
+  is: Boolean
+  isNot: Boolean
 }
 
 `;
@@ -452,6 +498,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -509,6 +556,8 @@ input TestDtoFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
+  pointField: PointScalarFilterComparison
+  pendingTaskCount: TestFilterDtoPendingTaskCountFilterComparison
   filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
   filterableCursorConnection: TestFilterDtoFilterTestRelationDtoFilter
   filterableOffsetConnection: TestFilterDtoFilterTestRelationDtoFilter
@@ -528,6 +577,8 @@ input TestFilterDtoFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
+  pointField: PointScalarFilterComparison
+  pendingTaskCount: TestFilterDtoPendingTaskCountFilterComparison
   filterableRelation: TestFilterDtoFilterTestRelationDtoFilter
   filterableCursorConnection: TestFilterDtoFilterTestRelationDtoFilter
   filterableOffsetConnection: TestFilterDtoFilterTestRelationDtoFilter
@@ -547,6 +598,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -597,6 +649,7 @@ input FloatFieldComparison {
   notIn: [Float!]
   between: FloatFieldComparisonBetween
   notBetween: FloatFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input FloatFieldComparisonBetween {
@@ -617,6 +670,7 @@ input IntFieldComparison {
   notIn: [Int!]
   between: IntFieldComparisonBetween
   notBetween: IntFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input IntFieldComparisonBetween {
@@ -714,12 +768,32 @@ input TimestampFieldComparisonBetween {
   upper: Timestamp!
 }
 
+input PointScalarFilterComparison {
+  distanceFrom: DistanceFilter
+}
+
+input DistanceFilter {
+  lat: Float!
+  lng: Float!
+  radius: Float!
+}
+
+input TestFilterDtoPendingTaskCountFilterComparison {
+  gt: Int
+}
+
 input TestFilterDtoFilterTestRelationDtoFilter {
   and: [TestFilterDtoFilterTestRelationDtoFilter!]
   or: [TestFilterDtoFilterTestRelationDtoFilter!]
   id: NumberFieldComparison
   relationName: StringFieldComparison
   relationAge: NumberFieldComparison
+  testVirtualProperty: TestRelationDtoTestVirtualPropertyFilterComparison
+}
+
+input TestRelationDtoTestVirtualPropertyFilterComparison {
+  is: Boolean
+  isNot: Boolean
 }
 
 `;
@@ -742,6 +816,8 @@ input TestDtoFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
+  pointField: PointScalarFilterComparison
+  pendingTaskCount: TestFilterDtoPendingTaskCountFilterComparison
 }
 
 input TestFilterDtoSubscriptionFilter {
@@ -757,6 +833,8 @@ input TestFilterDtoSubscriptionFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
+  pointField: PointScalarFilterComparison
+  pendingTaskCount: TestFilterDtoPendingTaskCountFilterComparison
 }
 
 input NumberFieldComparison {
@@ -772,6 +850,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -822,6 +901,7 @@ input FloatFieldComparison {
   notIn: [Float!]
   between: FloatFieldComparisonBetween
   notBetween: FloatFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input FloatFieldComparisonBetween {
@@ -842,6 +922,7 @@ input IntFieldComparison {
   notIn: [Int!]
   between: IntFieldComparisonBetween
   notBetween: IntFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input IntFieldComparisonBetween {
@@ -937,6 +1018,20 @@ scalar Timestamp
 input TimestampFieldComparisonBetween {
   lower: Timestamp!
   upper: Timestamp!
+}
+
+input PointScalarFilterComparison {
+  distanceFrom: DistanceFilter
+}
+
+input DistanceFilter {
+  lat: Float!
+  lng: Float!
+  radius: Float!
+}
+
+input TestFilterDtoPendingTaskCountFilterComparison {
+  gt: Int
 }
 
 `;
@@ -959,6 +1054,8 @@ input TestDtoFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
+  pointField: PointScalarFilterComparison
+  pendingTaskCount: TestFilterDtoPendingTaskCountFilterComparison
 }
 
 input TestFilterDtoUpdateFilter {
@@ -974,6 +1071,8 @@ input TestFilterDtoUpdateFilter {
   stringEnumField: StringEnumFilterComparison
   numberEnumField: NumberEnumFilterComparison
   timestampField: TimestampFieldComparison
+  pointField: PointScalarFilterComparison
+  pendingTaskCount: TestFilterDtoPendingTaskCountFilterComparison
 }
 
 input NumberFieldComparison {
@@ -989,6 +1088,7 @@ input NumberFieldComparison {
   notIn: [Float!]
   between: NumberFieldComparisonBetween
   notBetween: NumberFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input NumberFieldComparisonBetween {
@@ -1039,6 +1139,7 @@ input FloatFieldComparison {
   notIn: [Float!]
   between: FloatFieldComparisonBetween
   notBetween: FloatFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input FloatFieldComparisonBetween {
@@ -1059,6 +1160,7 @@ input IntFieldComparison {
   notIn: [Int!]
   between: IntFieldComparisonBetween
   notBetween: IntFieldComparisonBetween
+  isMultipleOf: Int
 }
 
 input IntFieldComparisonBetween {
@@ -1154,6 +1256,20 @@ scalar Timestamp
 input TimestampFieldComparisonBetween {
   lower: Timestamp!
   upper: Timestamp!
+}
+
+input PointScalarFilterComparison {
+  distanceFrom: DistanceFilter
+}
+
+input DistanceFilter {
+  lat: Float!
+  lng: Float!
+  radius: Float!
+}
+
+input TestFilterDtoPendingTaskCountFilterComparison {
+  gt: Int
 }
 
 `;

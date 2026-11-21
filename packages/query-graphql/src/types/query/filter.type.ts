@@ -1,12 +1,16 @@
 import { Class, Filter, MapReflector } from '@nestjs-query/core';
-import { InputType, Field } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { upperCaseFirst } from 'upper-case-first';
-import { ResolverRelation } from '../../resolvers/relations';
-import { createFilterComparisonType } from './field-comparison';
 import { getDTONames, getGraphqlObjectName } from '../../common';
 import { getFilterableFields, getQueryOptions, getRelations, SkipIf } from '../../decorators';
+import { ResolverRelation } from '../../resolvers/relations';
+import {
+  createFilterComparisonType,
+  createVirtualFilterComparisonType,
+  fieldComparisonRegistry,
+} from './field-comparison';
 import { isInAllowedList } from './helpers';
 
 const reflector = new MapReflector('nestjs-query:filter-type');
@@ -15,8 +19,10 @@ export type FilterTypeOptions = {
   allowedBooleanExpressions?: ('and' | 'or')[];
 };
 export type FilterableRelations = Record<string, Class<unknown>>;
+
 export interface FilterConstructor<T> {
   hasRequiredFilters: boolean;
+
   new (): Filter<T>;
 }
 
@@ -54,6 +60,8 @@ function getOrCreateFilterType<T>(
     }
 
     const { baseName } = getDTONames(TClass);
+    // TODO should we allow combining the built in filterablefields with the (class, field, operation) filters that may be present on the same (field, operation) pair?
+    // Process FilterableFields
     fields.forEach(({ propertyName, target, advancedOptions, returnTypeFunc }) => {
       const FC = createFilterComparisonType({
         FieldType: target,
@@ -66,6 +74,24 @@ function getOrCreateFilterType<T>(
       Field(() => FC, { nullable })(GraphQLFilter.prototype, propertyName);
       Type(() => FC)(GraphQLFilter.prototype, propertyName);
     });
+
+    // Process virtual field based filters
+    const concreteFieldNames = fields.map((f) => f.propertyName);
+    const virtualFields = fieldComparisonRegistry
+      .getDefinedFieldsForDTO(TClass)
+      .filter((f) => !concreteFieldNames.includes(f));
+    for (const field of virtualFields) {
+      const FC = createVirtualFilterComparisonType({
+        DTOClass: TClass,
+        field,
+      });
+      Object.defineProperty(FC, field, { writable: true, enumerable: true });
+      ValidateNested()(GraphQLFilter.prototype, field);
+      Field(() => FC, { nullable: true })(GraphQLFilter.prototype, field);
+      Type(() => FC)(GraphQLFilter.prototype, field);
+    }
+
+    // Process relations
     Object.keys(filterableRelations).forEach((field) => {
       const FieldType = filterableRelations[field];
       if (FieldType) {

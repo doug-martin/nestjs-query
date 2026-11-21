@@ -3,6 +3,7 @@ export const todoItemFields = `
     title
     completed
     description
+    priority
     age
   `;
 

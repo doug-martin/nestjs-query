@@ -3,8 +3,11 @@ import { AggregateQuery, Class, Query } from '@nestjs-query/core';
 import { Repository, SelectQueryBuilder, ObjectLiteral, Brackets } from 'typeorm';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
 import { DriverUtils } from 'typeorm/driver/DriverUtils';
+import { getQueryTypeormMetadata } from '../common';
+import { CustomFilterRegistry } from './custom-filter.registry';
 import { FilterQueryBuilder } from './filter-query.builder';
 import { AggregateBuilder } from './aggregate.builder';
+import { WhereBuilder } from './where.builder';
 
 interface JoinCondition {
   leftHand: string;
@@ -64,9 +67,18 @@ export class RelationQueryBuilder<Entity, Relation> {
 
   private paramCount: number;
 
-  constructor(readonly repo: Repository<Entity>, readonly relation: string) {
+  constructor(
+    readonly repo: Repository<Entity>,
+    readonly relation: string,
+    readonly opts?: { customFilterRegistry?: CustomFilterRegistry },
+  ) {
     this.relationRepo = this.repo.manager.getRepository<Relation>(this.relationMeta.from);
-    this.filterQueryBuilder = new FilterQueryBuilder<Relation>(this.relationRepo);
+    this.filterQueryBuilder = new FilterQueryBuilder<Relation>(
+      this.relationRepo,
+      new WhereBuilder<Relation>(getQueryTypeormMetadata(repo.manager.connection), {
+        customFilterRegistry: opts?.customFilterRegistry,
+      }),
+    );
     this.paramCount = 0;
   }
 
@@ -79,7 +91,8 @@ export class RelationQueryBuilder<Entity, Relation> {
           this.filterQueryBuilder.getReferencedRelationsRecursive(this.relationRepo.metadata, query.filter),
         )
       : relationBuilder;
-    relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
+    const klass = this.repo.metadata.target as Class<never>;
+    relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, klass, query.filter, relationBuilder.alias);
     relationBuilder = this.filterQueryBuilder.applyPaging(relationBuilder, query.paging);
     return this.filterQueryBuilder.applySorting(relationBuilder, query.sorting, relationBuilder.alias);
   }
@@ -120,8 +133,9 @@ export class RelationQueryBuilder<Entity, Relation> {
     aggregateQuery: AggregateQuery<Relation>,
   ): SelectQueryBuilder<Relation> {
     let relationBuilder = this.createRelationQueryBuilder(entity);
+    const klass = this.repo.metadata.target as Class<never>;
     relationBuilder = this.filterQueryBuilder.applyAggregate(relationBuilder, aggregateQuery, relationBuilder.alias);
-    relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, query.filter, relationBuilder.alias);
+    relationBuilder = this.filterQueryBuilder.applyFilter(relationBuilder, klass, query.filter, relationBuilder.alias);
     relationBuilder = this.filterQueryBuilder.applyAggregateSorting(
       relationBuilder,
       aggregateQuery.groupBy,

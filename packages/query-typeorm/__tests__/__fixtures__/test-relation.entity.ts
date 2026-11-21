@@ -1,4 +1,4 @@
-import { ManyToOne, Column, Entity, JoinColumn, ManyToMany, OneToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestEntity } from './test.entity';
 import { RelationOfTestRelationEntity } from './relation-of-test-relation.entity';
@@ -16,6 +16,9 @@ export class TestRelation {
 
   @Column({ name: 'uni_directional_test_entity_id', nullable: true })
   uniDirectionalTestEntityId?: string;
+
+  @Column({ name: 'number_type' })
+  numberType?: number;
 
   @ManyToOne(() => TestEntity, (te) => te.testRelations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'test_entity_id' })

@@ -53,15 +53,15 @@ export type FilterComparisons<T> = {
  * }
  * ```
  */
-type FilterGrouping<T> = {
+type FilterGrouping<T, C = Record<string, unknown>> = {
   /**
    * Group an array of filters with an AND operation.
    */
-  and?: Filter<T>[];
+  and?: Filter<T, C>[];
   /**
    * Group an array of filters with an OR operation.
    */
-  or?: Filter<T>[];
+  or?: Filter<T, C>[];
 };
 
 /**
@@ -111,5 +111,7 @@ type FilterGrouping<T> = {
  * ```
  *
  * @typeparam T - the type of object to filter on.
+ * @typeparam C - custom filters defined for the filter.
  */
-export type Filter<T> = FilterGrouping<T> & FilterComparisons<T>;
+export type Filter<T, C = Record<string, unknown>> = FilterGrouping<T, C> &
+  FilterComparisons<T> & { [K in keyof C]: C[K] };

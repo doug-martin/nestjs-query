@@ -16,7 +16,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select many to many on owning side should work with one entity 1`] = `SELECT "manyTestRelations"."test_relation_pk" AS "manyTestRelations_test_relation_pk", "manyTestRelations"."relation_name" AS "manyTestRelations_relation_name", "manyTestRelations"."test_entity_id" AS "manyTestRelations_test_entity_id", "manyTestRelations"."uni_directional_test_entity_id" AS "manyTestRelations_uni_directional_test_entity_id", "manyTestRelations"."uni_directional_relation_test_entity_id" AS "manyTestRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "manyTestRelations" INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = "manyTestRelations"."test_relation_pk" WHERE ("test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = ?)`;
+exports[`RelationQueryBuilder #select many to many on owning side should work with one entity 1`] = `SELECT "manyTestRelations"."test_relation_pk" AS "manyTestRelations_test_relation_pk", "manyTestRelations"."relation_name" AS "manyTestRelations_relation_name", "manyTestRelations"."test_entity_id" AS "manyTestRelations_test_entity_id", "manyTestRelations"."uni_directional_test_entity_id" AS "manyTestRelations_uni_directional_test_entity_id", "manyTestRelations"."number_type" AS "manyTestRelations_number_type", "manyTestRelations"."uni_directional_relation_test_entity_id" AS "manyTestRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "manyTestRelations" INNER JOIN "test_entity_many_test_relations_test_relation" "test_entity_many_test_relations_test_relation" ON "test_entity_many_test_relations_test_relation"."testRelationTestRelationPk" = "manyTestRelations"."test_relation_pk" WHERE ("test_entity_many_test_relations_test_relation"."testEntityTestEntityPk" = ?)`;
 
 exports[`RelationQueryBuilder #select many to many on owning side should work with one entity 2`] = `
 Array [
@@ -24,7 +24,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select many to many uni-directional many to many should create the correct sql 1`] = `SELECT "manyToManyUniDirectional"."test_relation_pk" AS "manyToManyUniDirectional_test_relation_pk", "manyToManyUniDirectional"."relation_name" AS "manyToManyUniDirectional_relation_name", "manyToManyUniDirectional"."test_entity_id" AS "manyToManyUniDirectional_test_entity_id", "manyToManyUniDirectional"."uni_directional_test_entity_id" AS "manyToManyUniDirectional_uni_directional_test_entity_id", "manyToManyUniDirectional"."uni_directional_relation_test_entity_id" AS "manyToManyUniDirectional_uni_directional_relation_test_entity_id" FROM "test_relation" "manyToManyUniDirectional" INNER JOIN "test_entity_many_to_many_uni_directional_test_relation" "test_entity_many_to_many_uni_directional_test_relation" ON "test_entity_many_to_many_uni_directional_test_relation"."testRelationTestRelationPk" = "manyToManyUniDirectional"."test_relation_pk" WHERE ("test_entity_many_to_many_uni_directional_test_relation"."testEntityTestEntityPk" = ?)`;
+exports[`RelationQueryBuilder #select many to many uni-directional many to many should create the correct sql 1`] = `SELECT "manyToManyUniDirectional"."test_relation_pk" AS "manyToManyUniDirectional_test_relation_pk", "manyToManyUniDirectional"."relation_name" AS "manyToManyUniDirectional_relation_name", "manyToManyUniDirectional"."test_entity_id" AS "manyToManyUniDirectional_test_entity_id", "manyToManyUniDirectional"."uni_directional_test_entity_id" AS "manyToManyUniDirectional_uni_directional_test_entity_id", "manyToManyUniDirectional"."number_type" AS "manyToManyUniDirectional_number_type", "manyToManyUniDirectional"."uni_directional_relation_test_entity_id" AS "manyToManyUniDirectional_uni_directional_relation_test_entity_id" FROM "test_relation" "manyToManyUniDirectional" INNER JOIN "test_entity_many_to_many_uni_directional_test_relation" "test_entity_many_to_many_uni_directional_test_relation" ON "test_entity_many_to_many_uni_directional_test_relation"."testRelationTestRelationPk" = "manyToManyUniDirectional"."test_relation_pk" WHERE ("test_entity_many_to_many_uni_directional_test_relation"."testEntityTestEntityPk" = ?)`;
 
 exports[`RelationQueryBuilder #select many to many uni-directional many to many should create the correct sql 2`] = `
 Array [
@@ -48,7 +48,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select one to many should query with a single entity 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?)`;
+exports[`RelationQueryBuilder #select one to many should query with a single entity 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?)`;
 
 exports[`RelationQueryBuilder #select one to many should query with a single entity 2`] = `
 Array [
@@ -64,7 +64,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select one to one on owning side 1`] = `SELECT "oneTestRelation"."test_relation_pk" AS "oneTestRelation_test_relation_pk", "oneTestRelation"."relation_name" AS "oneTestRelation_relation_name", "oneTestRelation"."test_entity_id" AS "oneTestRelation_test_entity_id", "oneTestRelation"."uni_directional_test_entity_id" AS "oneTestRelation_uni_directional_test_entity_id", "oneTestRelation"."uni_directional_relation_test_entity_id" AS "oneTestRelation_uni_directional_relation_test_entity_id" FROM "test_relation" "oneTestRelation" INNER JOIN "test_entity" "TestEntity" ON "TestEntity"."oneTestRelationTestRelationPk" = "oneTestRelation"."test_relation_pk" WHERE ("TestEntity"."test_entity_pk" = ?)`;
+exports[`RelationQueryBuilder #select one to one on owning side 1`] = `SELECT "oneTestRelation"."test_relation_pk" AS "oneTestRelation_test_relation_pk", "oneTestRelation"."relation_name" AS "oneTestRelation_relation_name", "oneTestRelation"."test_entity_id" AS "oneTestRelation_test_entity_id", "oneTestRelation"."uni_directional_test_entity_id" AS "oneTestRelation_uni_directional_test_entity_id", "oneTestRelation"."number_type" AS "oneTestRelation_number_type", "oneTestRelation"."uni_directional_relation_test_entity_id" AS "oneTestRelation_uni_directional_relation_test_entity_id" FROM "test_relation" "oneTestRelation" INNER JOIN "test_entity" "TestEntity" ON "TestEntity"."oneTestRelationTestRelationPk" = "oneTestRelation"."test_relation_pk" WHERE ("TestEntity"."test_entity_pk" = ?)`;
 
 exports[`RelationQueryBuilder #select one to one on owning side 2`] = `
 Array [
@@ -72,7 +72,22 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with filter should call whereBuilder#build if there is a filter 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) AND ("testRelations"."relation_name" = ?)`;
+exports[`RelationQueryBuilder #select with custom filters should accept custom filters 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) AND ("testRelations"."number_type" >= ? OR "testRelations"."number_type" <= ? OR ("testRelations"."number_type" % ?) == 0) AND ((EXTRACT(EPOCH FROM testRelations.dateType) / 3600 / 24) % ?) == 0) AND (ST_Distance(testRelations.fakePointType, ST_MakePoint(?,?)) <= ?)`;
+
+exports[`RelationQueryBuilder #select with custom filters should accept custom filters 2`] = `
+Array [
+  test-entity-id-1,
+  1,
+  10,
+  5,
+  3,
+  45.3,
+  9.5,
+  50000,
+]
+`;
+
+exports[`RelationQueryBuilder #select with filter should call whereBuilder#build if there is a filter 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) AND ("testRelations"."relation_name" = ?)`;
 
 exports[`RelationQueryBuilder #select with filter should call whereBuilder#build if there is a filter 2`] = `
 Array [
@@ -81,7 +96,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with paging should apply paging args going backward 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) LIMIT 10 OFFSET 10`;
+exports[`RelationQueryBuilder #select with paging should apply paging args going backward 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) LIMIT 10 OFFSET 10`;
 
 exports[`RelationQueryBuilder #select with paging should apply paging args going backward 2`] = `
 Array [
@@ -89,7 +104,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with paging should apply paging args going forward 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) LIMIT 10 OFFSET 11`;
+exports[`RelationQueryBuilder #select with paging should apply paging args going forward 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) LIMIT 10 OFFSET 11`;
 
 exports[`RelationQueryBuilder #select with paging should apply paging args going forward 2`] = `
 Array [
@@ -97,7 +112,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with sorting should apply ASC NULLS_FIRST sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" ASC NULLS FIRST`;
+exports[`RelationQueryBuilder #select with sorting should apply ASC NULLS_FIRST sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" ASC NULLS FIRST`;
 
 exports[`RelationQueryBuilder #select with sorting should apply ASC NULLS_FIRST sorting 2`] = `
 Array [
@@ -105,7 +120,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with sorting should apply ASC NULLS_LAST sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" ASC NULLS LAST`;
+exports[`RelationQueryBuilder #select with sorting should apply ASC NULLS_LAST sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" ASC NULLS LAST`;
 
 exports[`RelationQueryBuilder #select with sorting should apply ASC NULLS_LAST sorting 2`] = `
 Array [
@@ -113,7 +128,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with sorting should apply ASC sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" ASC`;
+exports[`RelationQueryBuilder #select with sorting should apply ASC sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" ASC`;
 
 exports[`RelationQueryBuilder #select with sorting should apply ASC sorting 2`] = `
 Array [
@@ -121,7 +136,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with sorting should apply DESC NULLS_FIRST sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" DESC NULLS FIRST`;
+exports[`RelationQueryBuilder #select with sorting should apply DESC NULLS_FIRST sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" DESC NULLS FIRST`;
 
 exports[`RelationQueryBuilder #select with sorting should apply DESC NULLS_FIRST sorting 2`] = `
 Array [
@@ -129,7 +144,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with sorting should apply DESC NULLS_LAST sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" DESC NULLS LAST`;
+exports[`RelationQueryBuilder #select with sorting should apply DESC NULLS_LAST sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" DESC NULLS LAST`;
 
 exports[`RelationQueryBuilder #select with sorting should apply DESC NULLS_LAST sorting 2`] = `
 Array [
@@ -137,7 +152,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with sorting should apply DESC sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" DESC`;
+exports[`RelationQueryBuilder #select with sorting should apply DESC sorting 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" DESC`;
 
 exports[`RelationQueryBuilder #select with sorting should apply DESC sorting 2`] = `
 Array [
@@ -145,7 +160,7 @@ Array [
 ]
 `;
 
-exports[`RelationQueryBuilder #select with sorting should apply multiple sorts 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" ASC, "testRelations"."test_relation_pk" DESC`;
+exports[`RelationQueryBuilder #select with sorting should apply multiple sorts 1`] = `SELECT "testRelations"."test_relation_pk" AS "testRelations_test_relation_pk", "testRelations"."relation_name" AS "testRelations_relation_name", "testRelations"."test_entity_id" AS "testRelations_test_entity_id", "testRelations"."uni_directional_test_entity_id" AS "testRelations_uni_directional_test_entity_id", "testRelations"."number_type" AS "testRelations_number_type", "testRelations"."uni_directional_relation_test_entity_id" AS "testRelations_uni_directional_relation_test_entity_id" FROM "test_relation" "testRelations" WHERE ("testRelations"."test_entity_id" = ?) ORDER BY "testRelations"."relation_name" ASC, "testRelations"."test_relation_pk" DESC`;
 
 exports[`RelationQueryBuilder #select with sorting should apply multiple sorts 2`] = `
 Array [

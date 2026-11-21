@@ -1,8 +1,21 @@
-import { Column, Entity, OneToMany, ManyToMany, JoinTable, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { WithTypeormQueryFilter } from '../../src';
+import { RadiusCustomFilter, TestEntityTestRelationCountFilter } from './custom-filters.services';
 import { TestEntityRelationEntity } from './test-entity-relation.entity';
 import { TestRelation } from './test-relation.entity';
 
 @Entity()
+// Field level registration
+@WithTypeormQueryFilter({
+  filter: RadiusCustomFilter,
+  fields: ['fakePointType'],
+  operations: ['distanceFrom'],
+})
+@WithTypeormQueryFilter({
+  filter: TestEntityTestRelationCountFilter,
+  fields: ['pendingTestRelations'],
+  operations: ['gt'],
+})
 export class TestEntity {
   @PrimaryColumn({ name: 'test_entity_pk' })
   testEntityPk!: string;

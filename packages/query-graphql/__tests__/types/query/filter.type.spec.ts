@@ -1,35 +1,38 @@
 // eslint-disable-next-line max-classes-per-file
 import { Class, Filter } from '@nestjs-query/core';
-import { plainToClass } from 'class-transformer';
 import {
-  ObjectType,
-  Int,
-  Resolver,
-  Query,
   Args,
+  Field,
   Float,
   GraphQLTimestamp,
-  Field,
   InputType,
+  Int,
+  ObjectType,
+  Query,
   registerEnumType,
+  Resolver,
 } from '@nestjs/graphql';
+import { plainToClass } from 'class-transformer';
+import { IsBoolean, IsInt } from 'class-validator';
 import {
-  FilterableField,
-  FilterType,
-  Relation,
-  UpdateFilterType,
-  DeleteFilterType,
-  SubscriptionFilterType,
-  FilterableRelation,
-  OffsetConnection,
   CursorConnection,
+  DeleteFilterType,
   FilterableCursorConnection,
+  FilterableField,
   FilterableOffsetConnection,
-  UnPagedRelation,
+  FilterableRelation,
   FilterableUnPagedRelation,
+  FilterType,
+  OffsetConnection,
   QueryOptions,
+  Relation,
+  SubscriptionFilterType,
+  UnPagedRelation,
+  UpdateFilterType,
 } from '../../../src';
+import { registerDTOFieldComparison, registerTypeComparison } from '../../../src/types/query/field-comparison';
 import { generateSchema } from '../../__fixtures__';
+import { DistanceFilter, PointScalar } from '../../__fixtures__/scalars';
 
 describe('filter types', (): void => {
   enum NumberEnum {
@@ -106,12 +109,51 @@ describe('filter types', (): void => {
     @FilterableField(() => GraphQLTimestamp)
     timestampField!: Date;
 
+    // Custom scalar for testing custom filters
+    @FilterableField(() => PointScalar)
+    pointField!: unknown;
+
     @Field()
     nonFilterField!: number;
   }
 
+  // Field comparisons on built in properties
+  registerTypeComparison([Number, Int], 'isMultipleOf', { FilterType: Number, GqlType: Int, decorators: [IsInt()] });
+  registerTypeComparison(Float, 'isMultipleOf', { FilterType: Number, GqlType: Int, decorators: [IsInt()] });
+  // Field comparison on custom scalar property
+  registerTypeComparison(PointScalar, 'distanceFrom', {
+    FilterType: DistanceFilter,
+    GqlType: DistanceFilter,
+  });
+  // Field comparison on a virtual property
+  registerDTOFieldComparison(TestRelation, 'testVirtualProperty', 'is', {
+    FilterType: Boolean,
+    decorators: [IsBoolean()],
+  });
+  registerDTOFieldComparison(TestRelation, 'testVirtualProperty', 'isNot', {
+    FilterType: Boolean,
+    decorators: [IsBoolean()],
+  });
+  registerDTOFieldComparison(TestDto, 'pendingTaskCount', 'gt', {
+    FilterType: Number,
+    GqlType: Int,
+    decorators: [IsInt()],
+  });
+
+  describe('DTOField custom filter', () => {
+    it('should throw an error if trying to apply a custom filter on a concrete property', () => {
+      expect(() =>
+        registerDTOFieldComparison(TestDto, 'boolField', 'virtualIs', {
+          FilterType: Boolean,
+          decorators: [IsBoolean()],
+        }),
+      ).toThrow('Cannot define a custom field filter on a non-virtual property');
+    });
+  });
+
   describe('FilterType', () => {
     const TestGraphQLFilter: Class<Filter<TestDto>> = FilterType(TestDto);
+
     @InputType()
     class TestDtoFilter extends TestGraphQLFilter {}
 
@@ -132,6 +174,7 @@ describe('filter types', (): void => {
           return 1;
         }
       }
+
       const schema = await generateSchema([FilterTypeSpec]);
       expect(schema).toMatchSnapshot();
     });
@@ -149,6 +192,7 @@ describe('filter types', (): void => {
       enum EnumField {
         ONE = 'one',
       }
+
       @ObjectType('TestBadField')
       class TestInvalidFilter {
         @FilterableField(() => EnumField)
@@ -186,17 +230,37 @@ describe('filter types', (): void => {
         @FilterableField(() => Float, { allowedComparisons: ['gt', 'gte'] })
         floatField!: number;
 
-        @FilterableField(() => Int, { allowedComparisons: ['lt', 'lte'] })
+        @FilterableField(() => Int, { allowedComparisons: ['lt', 'lte', 'isMultipleOf'] })
         intField!: number;
 
-        @FilterableField({ allowedComparisons: ['eq', 'neq', 'gt', 'gte', 'lt', 'lte'] })
+        @FilterableField({ allowedComparisons: ['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'isMultipleOf'] })
         numberField!: number;
 
         @FilterableField({ allowedComparisons: ['like', 'notLike'] })
         stringField!: string;
+
+        // Custom scalar for testing custom filters
+        @FilterableField(() => PointScalar, { allowedComparisons: ['distanceFrom'] })
+        pointField!: unknown;
       }
 
+      // Field comparison on a virtual property
+      registerDTOFieldComparison(TestAllowedComparisonsDto, 'testVirtualProperty', 'is', {
+        FilterType: Boolean,
+        decorators: [IsBoolean()],
+      });
+      registerDTOFieldComparison(TestAllowedComparisonsDto, 'testVirtualProperty', 'isNot', {
+        FilterType: Boolean,
+        decorators: [IsBoolean()],
+      });
+      registerDTOFieldComparison(TestDto, 'pendingTaskCount', 'gt', {
+        FilterType: Number,
+        GqlType: Int,
+        decorators: [IsInt()],
+      });
+
       const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestAllowedComparisonsDto);
+
       @InputType()
       class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
@@ -209,6 +273,7 @@ describe('filter types', (): void => {
             return 1;
           }
         }
+
         const schema = await generateSchema([FilterTypeSpec]);
         expect(schema).toMatchSnapshot();
       });
@@ -224,6 +289,7 @@ describe('filter types', (): void => {
         }
 
         const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestOnlyAndBooleanExpressionsDto);
+
         @InputType()
         class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
@@ -236,6 +302,7 @@ describe('filter types', (): void => {
               return 1;
             }
           }
+
           const schema = await generateSchema([FilterTypeSpec]);
           expect(schema).toMatchSnapshot();
         });
@@ -250,6 +317,7 @@ describe('filter types', (): void => {
         }
 
         const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestOnlyOrBooleanExpressionsDto);
+
         @InputType()
         class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
@@ -262,6 +330,7 @@ describe('filter types', (): void => {
               return 1;
             }
           }
+
           const schema = await generateSchema([FilterTypeSpec]);
           expect(schema).toMatchSnapshot();
         });
@@ -276,6 +345,7 @@ describe('filter types', (): void => {
         }
 
         const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestNoBooleanExpressionsDto);
+
         @InputType()
         class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
@@ -288,6 +358,7 @@ describe('filter types', (): void => {
               return 1;
             }
           }
+
           const schema = await generateSchema([FilterTypeSpec]);
           expect(schema).toMatchSnapshot();
         });
@@ -308,6 +379,7 @@ describe('filter types', (): void => {
       }
 
       const TestGraphQLComparisonFilter: Class<Filter<TestDto>> = FilterType(TestFilterRequiredDto);
+
       @InputType()
       class TestComparisonDtoFilter extends TestGraphQLComparisonFilter {}
 
@@ -320,6 +392,7 @@ describe('filter types', (): void => {
             return 1;
           }
         }
+
         const schema = await generateSchema([FilterTypeSpec]);
         expect(schema).toMatchSnapshot();
       });
@@ -349,6 +422,7 @@ describe('filter types', (): void => {
           return 1;
         }
       }
+
       const schema = await generateSchema([FilterTypeSpec]);
       expect(schema).toMatchSnapshot();
     });
@@ -366,6 +440,7 @@ describe('filter types', (): void => {
       enum EnumField {
         ONE = 'one',
       }
+
       @ObjectType('TestBadField')
       class TestInvalidFilter {
         @FilterableField(() => EnumField)
@@ -417,6 +492,7 @@ describe('filter types', (): void => {
           return 1;
         }
       }
+
       const schema = await generateSchema([FilterTypeSpec]);
       expect(schema).toMatchSnapshot();
     });
@@ -434,6 +510,7 @@ describe('filter types', (): void => {
       enum EnumField {
         ONE = 'one',
       }
+
       @ObjectType('TestBadField')
       class TestInvalidFilter {
         @FilterableField(() => EnumField)
@@ -485,6 +562,7 @@ describe('filter types', (): void => {
           return 1;
         }
       }
+
       const schema = await generateSchema([FilterTypeSpec]);
       expect(schema).toMatchSnapshot();
     });
@@ -502,6 +580,7 @@ describe('filter types', (): void => {
       enum EnumField {
         ONE = 'one',
       }
+
       @ObjectType('TestBadField')
       class TestInvalidFilter {
         @FilterableField(() => EnumField)
