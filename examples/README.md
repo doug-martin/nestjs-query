@@ -29,7 +29,7 @@ To run an example execute `npm run start -- {example_name}` where example name i
 * [`sequelize`](./sequelize) - Example  GraphQL API using sequelize 
 * [`subscriptions`](./subscriptions) - Example todo-item GraphQL API with subscriptions.
 * [`typeorm`](./typeorm) - Example todo-item  GraphQL API using typeorm
-* [`typeorm-multidb`](./typeorm-multidb) - Example GraphQL API using typeorm with mutliple databases
+* [`typeorm-multidb`](./typeorm-multidb) - Example GraphQL API using typeorm with multiple databases
 * [`typeorm-soft-delete`](./typeorm-soft-delete) -  - Example todo-item GraphQL API using typeorm with soft deletes.
 * [`custom-service`](./custom-service) -  - Example todo with a custom-implemented service class.
 
